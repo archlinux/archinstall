@@ -113,6 +113,7 @@ if __name__ == '__main__':
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
+	if not 'hostname' in args: args['hostname'] = 'Arcinstall'
 	if not 'country' in args: args['country'] = 'SE' #all
 	if not 'packages' in args: args['packages'] = ''
 	print(args)
@@ -141,7 +142,7 @@ if __name__ == '__main__':
 		print('[E] Failed to setup disk encryption.')
 		exit(1)
 
-	#o = run('cryptsetup open {drive}{part2} luksdev --type luks2'.format(**args, part2=second))
+	o = run('cryptsetup open {drive}{part2} luksdev --key-file {pwfile} --type luks2'.format(**args, part2=second)) # --key-file not tested
 	o = run('file /dev/mapper/luksdev') # /dev/dm-0
 	if b'cannot open' in o:
 		print('[E] Could not mount encrypted device.')
