@@ -186,11 +186,11 @@ if __name__ == '__main__':
 	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
-	o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
-	print(o)
+	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
+	o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run('arch-chroot /mnt usermod --password {pin} {user}'.format(**args, pin=PIN))
+		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
