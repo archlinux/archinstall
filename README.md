@@ -1,5 +1,5 @@
 # archinstall
-Just a bare bone [Arch](https://wiki.archlinux.org/index.php/Arch_Linux) install
+Just a bare bone [Arch](https://wiki.archlinux.org/index.php/Arch_Linux) install automation
 
 # Autorun on Arch Live CD
 
