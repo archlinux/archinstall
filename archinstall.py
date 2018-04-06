@@ -142,7 +142,7 @@ if __name__ == '__main__':
 		print('[E] Failed to setup disk encryption.')
 		exit(1)
 
-	o = run('cryptsetup open {drive}{part2} luksdev --key-file {pwfile} --type luks2'.format(**args, part2=second)) # --key-file not tested
+	o = run('cryptsetup open {drive}{part2} luksdev --key-file {pwfile} --type luks2'.format(**args, part2=second))
 	o = run('file /dev/mapper/luksdev') # /dev/dm-0
 	if b'cannot open' in o:
 		print('[E] Could not mount encrypted device.')
