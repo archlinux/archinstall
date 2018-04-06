@@ -189,7 +189,10 @@ if __name__ == '__main__':
 		loader.write('default arch\n')
 		loader.write('timeout 5\n')
 
-	UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
+	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+	## And blkid is wrong in terms of LUKS.
+	#UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
+	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{part2} | awk '{print $9}'".format(basename=os.path.basename(args['drive']), part2=second)).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
