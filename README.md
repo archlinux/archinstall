@@ -46,3 +46,9 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
     --packages='' (Default)
       Which additional packages to install, defaults to none.
       (Space separated as it's passed unchanged to `pacstrap`
+    
+    --user=<name>
+      Adds an additional username to the system (default group Wheel)
+    
+    --post=reboot (Default)
+      After a successful install, reboots into the system.
