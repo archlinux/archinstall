@@ -133,7 +133,8 @@ if __name__ == '__main__':
 			PIN = pw.read().strip()
 
 	print('[!] Disk PASSWORD is: {}'.format(PIN))
-
+	print()
+	print('[N] Setting up {drive}.'.format(**args))
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
 	o = run('parted -s {drive} mklabel gpt'.format(**args))
@@ -148,6 +149,7 @@ if __name__ == '__main__':
 
 	# "--cipher sha512" breaks the shit.
 	# TODO: --use-random instead of --use-urandom
+	print('[N] Adding encryption to {drive}{part2}.'.format(**args, part2=second))
 	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{part2}'.format(**args, part2=second))
 	if not o.decode('UTF-8').strip() == 'Command successful.':
 		print('[E] Failed to setup disk encryption.')
@@ -162,12 +164,14 @@ if __name__ == '__main__':
 	o = run('mkfs.btrfs /dev/mapper/luksdev')
 	o = run('mount /dev/mapper/luksdev /mnt')
 
+	print('[N] Reordering mirrors.')
 	os.makedirs('/mnt/boot')
 	o = run('mount {drive}{part1} /mnt/boot'.format(**args, part1=first))
 	o = run("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
 	o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
 	o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
 
+	print('[N] Straping in packages.')
 	o = run('pacman -Syy')
 	o = run('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args))
 
@@ -212,7 +216,7 @@ if __name__ == '__main__':
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	o = run('umount -R /mnt')
-	if args['post'] == 'reboot':
-		o = run('reboot now')
-	else:
-		print('Done. "reboot" when you\'re done tinkering.')
+	#if args['post'] == 'reboot':
+	#	o = run('reboot now')
+	#else:
+	#	print('Done. "reboot" when you\'re done tinkering.')
