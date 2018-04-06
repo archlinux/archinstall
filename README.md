@@ -22,4 +22,4 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
 
 # Some parameters you can give it
 
-    WIP
+    WIP!
