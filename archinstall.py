@@ -8,7 +8,17 @@ from subprocess import Popen, STDOUT, PIPE
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
 
-print(sys.argv)
+args = {}
+positionals = []
+for arg in sys.argv[1:]:
+	if '--' == arg[:2]:
+		if '=' in arg:
+			key, val = [strip(x) for x in arg[2:].split('=')]
+		else:
+			key, val = arg[2:], True
+		args[key] = val
+	else:
+		positionals.append(arg)
 
 def get_default_gateway_linux():
 	"""Read the default gateway directly from /proc."""
@@ -26,17 +36,26 @@ def get_default_gateway_linux():
 	#			if addr.address in ('127.0.0.1', '::1'): continue
 	#			print(addr)
 
+def run(cmd):
+	#print('[!] {}'.format(cmd))
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT)
+	output = b''
+	while handle.poll() is None:
+		data = handle.stdout.read()
+		if len(data):
+		#	print(data.decode('UTF-8'), end='')
+			output += data
+	output += handle.stdout.read()
+	handle.stdout.close()
+	return output
+
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
-		handle = Popen('git pull', shell='True', stdout=PIPE, stderr=STDOUT)
-		output = b''
-		while handle.poll() is None:
-			output += handle.stdout.read()
-		output += handle.stdout.read()
-
+		output = run('git pull')
+		
 		if b'error:' in output:
-			print('[E] Could not update git source for some reason.')
+			print('[N] Could not update git source for some reason.')
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
@@ -63,6 +82,23 @@ def device_state(name):
 					return
 	return True
 
+def grab_partitions(dev):
+	o = run('parted -m -s {} p'.format(dev)).decode('UTF-8')
+	parts = oDict()
+	for line in o.split('\n'):
+		if ':' in line:
+			data = line.split(':')
+			if data[0].isdigit():
+				parts[int(data[0])] = {
+					'start' : data[1],
+					'end' : data[2],
+					'size' : data[3],
+					'sum' : data[4],
+					'label' : data[5],
+					'options' : data[6]
+				}
+	return parts
+
 def update_drive_list():
 	for path in glob('/sys/block/*/device'):
 		name = re.sub('.*/(.*?)/device', '\g<1>', path)
@@ -73,13 +109,92 @@ if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
 
-	first_drive = list(harddrives.keys())[0]
-	print(harddrives[first_drive])
+	if not 'drive' in args: args['drive'] = list(harddrives.keys())[0] # First drive found
+	if not 'size' in args: args['size'] = '100%'
+	if not 'start' in args: args['start'] = '513MiB'
+	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
+	if not 'country' in args: args['country'] = 'SE' #all
+	if not 'packages' in args: args['packages'] = ''
+	print(args)
 
-	#for part in psutil.disk_partitions():
-	#	print(part)
+	PIN = '0000'
+	with open(args['pwfile'], 'w') as pw:
+		pw.write(PIN)
+	print('[!] Disk PASSWORD is: {}'.format(PIN))
 
-	## Networking
-	#print(psutil.net_if_addrs())
+	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
+	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
+	o = run('parted -s {drive} mklabel gpt'.format(**args))
+	o = run('parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args))
+	o = run('parted -s {drive} name 1 "EFI"'.format(**args))
+	o = run('parted -s {drive} set 1 esp on'.format(**args))
+	o = run('parted -s {drive} set 1 boot on'.format(**args))
+	o = run('parted -s {drive} mkpart primary {start} {size}'.format(**args))
+	
+	first, second = grab_partitions(args['drive']).keys()
+	o = run('mkfs.vfat -F32 {drive}{part1}'.format(**args, part1=first))
 
-	print('Done')
+	# "--cipher sha512" breaks the shit.
+	# TODO: --use-random instead of --use-urandom
+	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{part2}'.format(**args, part2=second))
+	if not o.decode('UTF-8').strip() == 'Command successful.':
+		print('[E] Failed to setup disk encryption.')
+		exit(1)
+
+	#o = run('cryptsetup open {drive}{part2} luksdev --type luks2'.format(**args, part2=second))
+	o = run('file /dev/mapper/luksdev') # /dev/dm-0
+	if b'cannot open' in o:
+		print('[E] Could not mount encrypted device.')
+		exit(1)
+
+	o = run('mkfs.btrfs /dev/mapper/luksdev')
+	o = run('mount /dev/mapper/luksdev /mnt')
+
+	os.makedirs('/mnt/boot')
+	o = run('mount {drive}{part1} /mnt/boot'.format(**args, part1=first))
+	o = run("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
+	o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
+	o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
+
+	o = run('pacman -Syy')
+	o = run('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args))
+
+	o = run('genfstab -pU /mnt >> /mnt/etc/fstab')
+	with open('/mnt/etc/fstab', 'a') as fstab:
+		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
+
+	o = run('arch-chroot /mnt rm /etc/localtime')
+	o = run('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime')
+	o = run('arch-chroot /mnt hwclock --hctosys --localtime')
+	o = run('arch-chroot /mnt {hostname}'.format(**args))
+	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	o = run('arch-chroot /mnt locale-gen')
+	o = run('arch-chroot /mnt chmod 700 /root')
+	o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
+	if 'user' in args:
+		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
+		o = run('arch-chroot /mnt usermod --password {pin} {user}'.format(**args, pin=PIN))
+
+	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
+		## TODO: Don't replace it, in case some update in the future actually adds something.
+		mkinit.write('MODULES=(btrfs)\n')
+		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
+		mkinit.write('FILES=()\n')
+		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+	o = run('arch-chroot /mnt mkinitcpio -p linux')
+	o = run('arch-chroot /mnt bootctl --path=/boot install')
+
+	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
+		loader.write('default arch\n')
+		loader.write('timeout 5\n')
+
+	UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
+	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
+		enstry.write('title Arch Linux\n')
+		enstry.write('linux /vmlinuz-linux\n')
+		enstry.write('initrd /initramfs-linux.img\n')
+		enstry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+
+	o = run('umount -R /mnt')
+	
+	print('Done. "reboot" when you\'re done tinkering.')
