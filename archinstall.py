@@ -191,10 +191,10 @@ if __name__ == '__main__':
 
 	UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
-		enstry.write('title Arch Linux\n')
-		enstry.write('linux /vmlinuz-linux\n')
-		enstry.write('initrd /initramfs-linux.img\n')
-		enstry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		entry.write('title Arch Linux\n')
+		entry.write('linux /vmlinuz-linux\n')
+		entry.write('initrd /initramfs-linux.img\n')
+		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	o = run('umount -R /mnt')
 	
