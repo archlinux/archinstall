@@ -52,6 +52,9 @@ def run(cmd):
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
+		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
+		os.remove('/root/archinstall/archinstall.py')
+		os.remove('/root/archinstall/README.md')
 		output = run('git pull')
 		
 		if b'error:' in output:
