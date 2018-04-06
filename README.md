@@ -5,9 +5,9 @@ Just a bare bone arch install
 
     # cd ~/archlive
     # echo "git" >> packages.both
-    # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airrootfs.sh
+    # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
-    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec ~/archinstall/archinstall.py' >> ./airootfs/etc/skel/.bash_profile
+    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c ~/archinstall/archinstall.py' >> ./airootfs/etc/skel/.zprofile
     
     # rm -v work/build.make_* && ./build.sh -v
 > Note: `~/archlive` might be different on your system, see [ArchISO#Setup](https://wiki.archlinux.org/index.php/archiso#Setup) for more info.
