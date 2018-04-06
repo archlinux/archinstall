@@ -212,7 +212,7 @@ if __name__ == '__main__':
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	o = run('umount -R /mnt')
-	if args['post'] != 'stay':
+	if args['post'] == 'reboot':
 		o = run('reboot now')
 	else:
 		print('Done. "reboot" when you\'re done tinkering.')
