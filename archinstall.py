@@ -119,6 +119,7 @@ if __name__ == '__main__':
 	if not 'hostname' in args: args['hostname'] = 'Arcinstall'
 	if not 'country' in args: args['country'] = 'SE' #all
 	if not 'packages' in args: args['packages'] = ''
+	if not 'post' in args: args['post'] = 'reboot'
 	print(args)
 
 	if not os.path.isfile(args['pwfile']):
@@ -182,6 +183,7 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
 	o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
+	print(o)
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
 		o = run('arch-chroot /mnt usermod --password {pin} {user}'.format(**args, pin=PIN))
@@ -210,5 +212,7 @@ if __name__ == '__main__':
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	o = run('umount -R /mnt')
-	
-	print('Done. "reboot" when you\'re done tinkering.')
+	if args['post'] != 'stay':
+		o = run('reboot now')
+	else:
+		print('Done. "reboot" when you\'re done tinkering.')
