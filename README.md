@@ -4,7 +4,7 @@ Just a bare bone arch install
 # Autorun on Arch Live CD
 
     # cd ~/archlive
-    # echo "git" >> packages.both
+    # echo -e "git\npython-psutil" >> packages.both
     # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
     # echo "chmod +x ~/archinstall/archinstall.py" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
