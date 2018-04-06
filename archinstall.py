@@ -187,6 +187,7 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
 	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
+	#TODO: This doesn't work either: (why the hell not?)
 	o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
@@ -216,7 +217,7 @@ if __name__ == '__main__':
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	o = run('umount -R /mnt')
-	#if args['post'] == 'reboot':
-	#	o = run('reboot now')
-	#else:
-	#	print('Done. "reboot" when you\'re done tinkering.')
+	if args['post'] == 'reboot':
+		o = run('reboot now')
+	else:
+		print('Done. "reboot" when you\'re done tinkering.')
