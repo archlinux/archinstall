@@ -118,9 +118,16 @@ if __name__ == '__main__':
 	if not 'packages' in args: args['packages'] = ''
 	print(args)
 
-	PIN = '0000'
-	with open(args['pwfile'], 'w') as pw:
-		pw.write(PIN)
+	if not os.path.isfile(args['pwfile']):
+		PIN = '0000'
+		with open(args['pwfile'], 'w') as pw:
+			pw.write(PIN)
+	else:
+		## TODO: Convert to `rb` instead.
+		#        We shouldn't discriminate \xfu from being a passwd phrase.
+		with open(args['pwfile'], 'r') as pw:
+			PIN = pw.read().strip()
+
 	print('[!] Disk PASSWORD is: {}'.format(PIN))
 
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
@@ -192,7 +199,7 @@ if __name__ == '__main__':
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
 	#UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
-	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{part2} | awk '{print $9}'".format(basename=os.path.basename(args['drive']), part2=second)).decode('UTF-8').strip()
+	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{part2} | awk '{awk}'".format(basename=os.path.basename(args['drive']), part2=second, awk='{print $9}')).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
