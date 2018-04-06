@@ -6,6 +6,7 @@ Just a bare bone arch install
     # cd ~/archlive
     # echo "git" >> packages.both
     # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
+    # echo "chmod +x ~/archinstall/archinstall.py" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
     # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c ~/archinstall/archinstall.py' >> ./airootfs/etc/skel/.zprofile
     
