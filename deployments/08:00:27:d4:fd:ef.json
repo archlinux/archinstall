@@ -1,5 +1,10 @@
 {
     "install ssh": {
-        "pacman -Syy --noconfirm cmatrix" : null
+        "pacman -Syy --noconfirm git" : null,
+        "useradd -m -G wheel builder" : null,
+        "git https://aur.archlinux.org/wrapaur.git /tmp/wrapaur" : null,
+        "chown -R builder.builder /tmp/wrapaur" : null,
+        "su - builder -c \"cd /tmp/wrapaur; /usr/bin/makepkg -s\"" : null,
+        "pacman -U --noconfirm /tmp/wrapaur/*.xz" : null,
     }
 }
