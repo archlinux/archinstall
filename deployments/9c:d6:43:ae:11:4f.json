@@ -1,5 +1,5 @@
 {
     "install ssh": {
-        "pacman -y -S cmatrix" : null
+        "pacman -Syy --noconfirm cmatrix" : null
     }
 }

@@ -213,7 +213,8 @@ if __name__ == '__main__':
 	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
 	#TODO: This doesn't work either: (why the hell not?)
 	#      echo "newpass" | passwd --stdin root  ?
-	o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
+	#o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
+	o = run('arch-chroot /mnt echo "{pin}" | passwd --stdin root'.format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
 		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
@@ -241,25 +242,28 @@ if __name__ == '__main__':
 		entry.write('initrd /initramfs-linux.img\n')
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-	locmac = get_local_MACs()
-	for mac in locmac:
-		try:
-			instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
-		except urllib.error.HTTPError:
-			print('[N] No instructions for this box on this mac: {}'.format(mac))
-			continue
-		
-		instructions = json.loads(instructions.decode('UTF-8'))
-		
-		for title in instructions:
-			print('[N] {}'.format(title))
-			for command in instructions[title]:
-				o = run(command) # arch-chroot /mnt ...
-				if instructions[title][command]:
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	if get_default_gateway_linux():
+		locmac = get_local_MACs()
+		for mac in locmac:
+			try:
+				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
+			except urllib.error.HTTPError:
+				print('[N] No instructions for this box on this mac: {}'.format(mac))
+				continue
+			
+			instructions = json.loads(instructions.decode('UTF-8'))
+			
+			for title in instructions:
+				print('[N] {}'.format(title))
+				for command in instructions[title]:
+					o = run(command) # arch-chroot /mnt ...
+					#if instructions[title][command]:
 					print(o)
 
-	o = run('umount -R /mnt')
-	if args['post'] == 'reboot':
-		o = run('reboot now')
-	else:
-		print('Done. "reboot" when you\'re done tinkering.')
+	#o = run('umount -R /mnt')
+	#if args['post'] == 'reboot':
+	#	o = run('reboot now')
+	#else:
+	#	print('Done. "reboot" when you\'re done tinkering.')
