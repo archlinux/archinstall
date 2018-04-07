@@ -52,3 +52,7 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
     
     --post=reboot (Default)
       After a successful install, reboots into the system.
+
+## End note
+
+ ![description](description.jpg)
