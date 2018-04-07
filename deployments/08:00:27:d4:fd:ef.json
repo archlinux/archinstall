@@ -6,15 +6,13 @@
     },
     "install slimdhcp": {
         
-        "git clone https://aur.archlinux.org/slimdhcp-git.git /tmp/slimdhcp" : {"cwd" : "/tmp/"},
-        "pwd" : {"cwd" : "/tmp/"},
-        "ls -l /tmp/" : null,
-        "chown -R builder.builder /tmp/slimdhcp" : null,
-        "su - builder -c \"cd /tmp/slimdhcp; /usr/bin/makepkg -s --noconfirm\"" : null,
-        "pacman -U --noconfirm /tmp/slimdhcp/*.xz" : null
+        "git clone https://aur.archlinux.org/slimdhcp-git.git /root/slimdhcp" : {"cwd" : "/tmp/"},
+        "chown -R builder.builder /root/slimdhcp" : null,
+        "su - builder -c \"cd /root/slimdhcp; /usr/bin/makepkg -s --noconfirm\"" : null,
+        "pacman -U --noconfirm /root/slimdhcp/*.xz" : null
     },
     "Remove temp build env": {
-        "rm -rf /tmp/slimdhcp" : null,
+        "rm -rf /root/slimdhcp" : null,
         "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null
     }
 }
