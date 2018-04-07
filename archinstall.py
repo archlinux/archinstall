@@ -218,7 +218,7 @@ if __name__ == '__main__':
 	#TODO: This doesn't work either: (why the hell not?)
 	#      echo "newpass" | passwd --stdin root  ?
 	#o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
-	o = run('arch-chroot /mnt \'echo "{pin}" | passwd --stdin root\''.format(**args, pin=PIN))
+	o = run("arch-chroot /mnt 'echo {pin} | passwd --stdin root".format(pin='"{pin}"'.format(**args, pin=PIN)))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
 		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
@@ -264,7 +264,7 @@ if __name__ == '__main__':
 				print('[N] {}'.format(title))
 				for command in instructions[title]:
 					opts = instructions[title] if instructions[title] else {}
-					print('[N] Command: {} ({])'.format(command, opts))
+					print('[N] Command: {} ({})'.format(command, opts))
 					o = run('arch-chroot /mnt {c}'.format(c=command), echo=True, **opts)
 					if instructions[title][command] and not instructions[title][command] in o:
 						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
