@@ -2,9 +2,13 @@
     "install ssh": {
         "pacman -Syy --noconfirm git" : null,
         "useradd -m -G wheel builder" : null,
-        "git https://aur.archlinux.org/wrapaur.git /tmp/wrapaur" : null,
-        "chown -R builder.builder /tmp/wrapaur" : null,
-        "su - builder -c \"cd /tmp/wrapaur; /usr/bin/makepkg -s\"" : null,
-        "pacman -U --noconfirm /tmp/wrapaur/*.xz" : null,
+        "#Correct way would be to do cat PKGBUILD | grep 'depends=' | head -n 1 | ..." : null,
+        "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null,
+        "git https://aur.archlinux.org/slimdhcp-git.git /tmp/slimdhcp" : null,
+        "chown -R builder.builder /tmp/slimdhcp" : null,
+        "su - builder -c \"cd /tmp/slimdhcp; /usr/bin/makepkg -s --noconfirm\"" : null,
+        "pacman -U --noconfirm /tmp/slimdhcp/*.xz" : null,
+        "rm -rf /tmp/slimdhcp" : null,
+        "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null,
     }
 }
