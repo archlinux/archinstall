@@ -41,13 +41,15 @@ def get_local_MACs():
 				macs[addr.address] = nic
 	return macs
 
-def run(cmd):
+def run(cmd, echo=False):
 	#print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
+			if echo:
+				print(data.decode('UTF-8', end=''))
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	output += handle.stdout.read()
@@ -253,13 +255,14 @@ if __name__ == '__main__':
 				print('[N] No instructions for this box on this mac: {}'.format(mac))
 				continue
 			
-			print('Decoding:', instructions)
+			#print('Decoding:', instructions)
 			instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
 			
 			for title in instructions:
 				print('[N] {}'.format(title))
 				for command in instructions[title]:
-					o = run('arch-chroot /mnt {c}'.format(c=command))
+					print('[N] Command: {}'.format(command))
+					o = run('arch-chroot /mnt {c}'.format(c=command), echo=True)
 					if instructions[title][command] and not instructions[title][command] in o:
 						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 					#print(o)
