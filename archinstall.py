@@ -53,7 +53,7 @@ def run(cmd, echo=False):
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	output += handle.stdout.read()
-	print('Command done:', output)
+	print('Command done:', output, handle.poll())
 	handle.stdout.close()
 	return output
 
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt rm /etc/localtime')
 	o = run('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime')
 	o = run('arch-chroot /mnt hwclock --hctosys --localtime')
-	o = run('arch-chroot /mnt {hostname}'.format(**args))
+	o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
 	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
