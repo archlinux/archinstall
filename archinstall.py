@@ -1,7 +1,9 @@
 #!/usr/bin/python3
-import psutil, os, re, struct, sys
+import psutil, os, re, struct, sys, json
+import urllib.request, urllib.parse
 from glob import glob
-from socket import inet_ntoa, AF_INET, AF_INET6
+#from select import epoll, EPOLLIN, EPOLLHUP
+from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 
@@ -30,11 +32,14 @@ def get_default_gateway_linux():
 
 			return inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
-	#for nic, opts in psutil.net_if_addrs().items():
-	#	for addr in opts:
-	#		if addr.family in (AF_INET, AF_INET6) and addr.address:
-	#			if addr.address in ('127.0.0.1', '::1'): continue
-	#			print(addr)
+def get_local_MACs():
+	macs = {}
+	for nic, opts in psutil.net_if_addrs().items():
+		for addr in opts:
+			#if addr.family in (AF_INET, AF_INET6) and addr.address:
+			if addr.family == AF_PACKET: # MAC
+				macs[addr.address] = nic
+	return macs
 
 def run(cmd):
 	#print('[!] {}'.format(cmd))
@@ -107,6 +112,25 @@ def update_drive_list():
 		name = re.sub('.*/(.*?)/device', '\g<1>', path)
 		if device_state(name):
 			harddrives['/dev/{}'.format(name)] = psutil.disk_usage('/dev/{}'.format(name))
+
+def multisplit(s, splitters):
+	s = [s,]
+	for key in splitters:
+		ns = []
+		for obj in s:
+			x = obj.split(key)
+			for index, part in enumerate(x):
+				if len(part):
+					ns.append(part)
+				if index < len(x)-1:
+					ns.append(key)
+		s = ns
+	return s
+
+def grab_url_data(path):
+	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
+	response = urllib.request.urlopen(safe_path)
+	return response.read()
 
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
@@ -188,6 +212,7 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt chmod 700 /root')
 	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
 	#TODO: This doesn't work either: (why the hell not?)
+	#      echo "newpass" | passwd --stdin root  ?
 	o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
@@ -215,6 +240,23 @@ if __name__ == '__main__':
 		entry.write('linux /vmlinuz-linux\n')
 		entry.write('initrd /initramfs-linux.img\n')
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+
+	locmac = get_local_MACs()
+	for mac in locmac:
+		try:
+			instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
+		except urllib.error.HTTPError:
+			print('[N] No instructions for this box on this mac: {}'.format(mac))
+			continue
+		
+		instructions = json.loads(instructions.decode('UTF-8'))
+		
+		for title in instructions:
+			print('[N] {}'.format(title))
+			for command in instructions[title]:
+				o = run(command) # arch-chroot /mnt ...
+				if instructions[title][command]:
+					print(o)
 
 	o = run('umount -R /mnt')
 	if args['post'] == 'reboot':
