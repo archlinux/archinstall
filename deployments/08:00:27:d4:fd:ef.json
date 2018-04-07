@@ -5,7 +5,6 @@
         "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null
     },
     "install slimdhcp": {
-        
         "git clone https://aur.archlinux.org/slimdhcp-git.git /home/builder/slimdhcp" : null,
         "chown -R builder.builder /home/builder/slimdhcp" : null,
         "su - builder -c \"(cd /home/builder/slimdhcp/; /usr/bin/makepkg -s --noconfirm)\"" : null,
