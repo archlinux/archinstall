@@ -7,7 +7,7 @@
     "install slimdhcp": {
         
         "git clone https://aur.archlinux.org/slimdhcp-git.git /tmp/slimdhcp" : {"cwd" : "/tmp/"},
-        "pwd" : null,
+        "pwd" : {"cwd" : "/tmp/"},
         "ls -l /tmp/" : null,
         "chown -R builder.builder /tmp/slimdhcp" : null,
         "su - builder -c \"cd /tmp/slimdhcp; /usr/bin/makepkg -s --noconfirm\"" : null,
