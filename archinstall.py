@@ -263,7 +263,7 @@ if __name__ == '__main__':
 			for title in instructions:
 				print('[N] {}'.format(title))
 				for command in instructions[title]:
-					opts = instructions[title] if instructions[title] else {}
+					opts = instructions[title][command] if instructions[title][command] else {}
 					print('[N] Command: {} ({})'.format(command, opts))
 					o = run('arch-chroot /mnt {c}'.format(c=command), echo=True, **opts)
 					if instructions[title][command] and not instructions[title][command] in o:
