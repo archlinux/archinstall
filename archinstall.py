@@ -53,6 +53,7 @@ def run(cmd, echo=False):
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	output += handle.stdout.read()
+	print('Command done:', output)
 	handle.stdout.close()
 	return output
 
@@ -62,6 +63,7 @@ def update_git():
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
+		# sh -c 'cd /c && ../a/helloworld'
 		output = run('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
 		
 		if b'error:' in output:
