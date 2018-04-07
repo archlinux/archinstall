@@ -253,7 +253,8 @@ if __name__ == '__main__':
 				print('[N] No instructions for this box on this mac: {}'.format(mac))
 				continue
 			
-			instructions = json.loads(instructions.decode('UTF-8'))
+			print('Decoding:', instructions)
+			instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
 			
 			for title in instructions:
 				print('[N] {}'.format(title))
