@@ -62,7 +62,7 @@ def update_git():
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
-		output = run('git fetch --all') # git reset --hard origin/<branch_name>
+		output = run('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
 		
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
