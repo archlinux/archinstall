@@ -1,0 +1,5 @@
+{
+    "install ssh": {
+        "pacman -y -S openssh" : null
+    }
+}
