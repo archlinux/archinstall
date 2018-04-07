@@ -212,8 +212,10 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt rm /etc/localtime')
 	o = run('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime')
 	o = run('arch-chroot /mnt hwclock --hctosys --localtime')
-	o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
-	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	#o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
+	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
+	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8' > /etc/locale.gen\"")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
 
@@ -223,7 +225,7 @@ if __name__ == '__main__':
 	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
+		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=PIN))
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
