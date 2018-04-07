@@ -2,7 +2,6 @@
     "Setup temp build env": {
         "pacman -Syy --noconfirm git" : null,
         "useradd -m -G wheel builder" : null,
-        "#Correct way would be to do cat PKGBUILD | grep 'depends=' | head -n 1 | ..." : null,
         "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null
     },
     "install slimdhcp": {
