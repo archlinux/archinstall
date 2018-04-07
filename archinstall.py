@@ -1,7 +1,9 @@
 #!/usr/bin/python3
-import psutil, os, re, struct, sys
+import psutil, os, re, struct, sys, json
+import urllib.request, urllib.parse
 from glob import glob
-from socket import inet_ntoa, AF_INET, AF_INET6
+#from select import epoll, EPOLLIN, EPOLLHUP
+from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 
@@ -30,22 +32,30 @@ def get_default_gateway_linux():
 
 			return inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
-	#for nic, opts in psutil.net_if_addrs().items():
-	#	for addr in opts:
-	#		if addr.family in (AF_INET, AF_INET6) and addr.address:
-	#			if addr.address in ('127.0.0.1', '::1'): continue
-	#			print(addr)
+def get_local_MACs():
+	macs = {}
+	for nic, opts in psutil.net_if_addrs().items():
+		for addr in opts:
+			#if addr.family in (AF_INET, AF_INET6) and addr.address:
+			if addr.family == AF_PACKET: # MAC
+				macs[addr.address] = nic
+	return macs
 
-def run(cmd):
+def run(cmd, echo=False, *args, **kwargs):
 	#print('[!] {}'.format(cmd))
-	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT)
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
+			if echo and 'flush':
+				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
-	output += handle.stdout.read()
+	data = handle.stdout.read()
+	if echo:
+		print(data.decode('UTF-8'), end='')
+	output += data
 	handle.stdout.close()
 	return output
 
@@ -53,9 +63,9 @@ def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
-		os.remove('/root/archinstall/archinstall.py')
-		os.remove('/root/archinstall/README.md')
-		output = run('git pull')
+		#os.remove('/root/archinstall/archinstall.py')
+		#os.remove('/root/archinstall/README.md')
+		output = run('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
 		
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
@@ -108,6 +118,25 @@ def update_drive_list():
 		if device_state(name):
 			harddrives['/dev/{}'.format(name)] = psutil.disk_usage('/dev/{}'.format(name))
 
+def multisplit(s, splitters):
+	s = [s,]
+	for key in splitters:
+		ns = []
+		for obj in s:
+			x = obj.split(key)
+			for index, part in enumerate(x):
+				if len(part):
+					ns.append(part)
+				if index < len(x)-1:
+					ns.append(key)
+		s = ns
+	return s
+
+def grab_url_data(path):
+	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
+	response = urllib.request.urlopen(safe_path)
+	return response.read()
+
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
@@ -132,6 +161,7 @@ if __name__ == '__main__':
 		with open(args['pwfile'], 'r') as pw:
 			PIN = pw.read().strip()
 
+	print()
 	print('[!] Disk PASSWORD is: {}'.format(PIN))
 	print()
 	print('[N] Setting up {drive}.'.format(**args))
@@ -182,16 +212,20 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt rm /etc/localtime')
 	o = run('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime')
 	o = run('arch-chroot /mnt hwclock --hctosys --localtime')
-	o = run('arch-chroot /mnt {hostname}'.format(**args))
-	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	#o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
+	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
+	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8' > /etc/locale.gen\"")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
-	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
-	#TODO: This doesn't work either: (why the hell not?)
-	o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
+
+	## == Passwords
+	# o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
+	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=PIN)), echo=True)
+	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=PIN))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
+		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=PIN))
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -215,6 +249,31 @@ if __name__ == '__main__':
 		entry.write('linux /vmlinuz-linux\n')
 		entry.write('initrd /initramfs-linux.img\n')
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	if get_default_gateway_linux():
+		locmac = get_local_MACs()
+		for mac in locmac:
+			try:
+				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
+			except urllib.error.HTTPError:
+				print('[N] No instructions for this box on this mac: {}'.format(mac))
+				continue
+			
+			#print('Decoding:', instructions)
+			instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+			
+			for title in instructions:
+				print('[N] Network Deploy: {}'.format(title))
+				for command in instructions[title]:
+					opts = instructions[title][command] if type(instructions[title][command]) in (dict, oDict) else {}
+
+					#print('[N] Command: {} ({})'.format(command, opts))
+					o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
+					if type(instructions[title][command]) == bytes and len(instructions[title][command]) and not instructions[title][command] in o:
+						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
+					#print(o)
 
 	o = run('umount -R /mnt')
 	if args['post'] == 'reboot':

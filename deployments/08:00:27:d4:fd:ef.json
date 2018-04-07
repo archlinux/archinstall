@@ -1,0 +1,17 @@
+{
+    "Setup temp build env": {
+        "pacman -Syy --noconfirm git" : null,
+        "useradd -m -G wheel builder" : null,
+        "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null
+    },
+    "install slimdhcp": {
+        "git clone https://aur.archlinux.org/slimdhcp-git.git /home/builder/slimdhcp" : null,
+        "chown -R builder.builder /home/builder/slimdhcp" : null,
+        "su - builder -c \"(cd /home/builder/slimdhcp/; /usr/bin/makepkg -s --noconfirm)\"" : null,
+        "sh -c 'pacman -U --noconfirm /home/builder/slimdhcp/*.xz'" : null
+    },
+    "Remove temp build env": {
+        "rm -rf /home/builder/slimdhcp" : null,
+        "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null
+    }
+}
