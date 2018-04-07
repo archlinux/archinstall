@@ -49,7 +49,7 @@ def run(cmd, echo=False):
 		data = handle.stdout.read()
 		if len(data):
 			if echo:
-				print(data.decode('UTF-8', end=''))
+				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	output += handle.stdout.read()
