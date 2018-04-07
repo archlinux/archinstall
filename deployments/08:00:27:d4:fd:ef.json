@@ -12,7 +12,6 @@
         "pacman -U --noconfirm /home/builder/slimdhcp/slimdhcp/*.xz" : null
     },
     "Remove temp build env": {
-        "rm -rf /home/builder/slimdhcp" : null,
         "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null
     }
 }
