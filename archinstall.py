@@ -263,10 +263,11 @@ if __name__ == '__main__':
 			for title in instructions:
 				print('[N] {}'.format(title))
 				for command in instructions[title]:
-					opts = instructions[title][command] if instructions[title][command] else {}
+					opts = instructions[title][command] if type(instructions[title][command]) in (dict, oDict) else {}
+
 					print('[N] Command: {} ({})'.format(command, opts))
 					o = run('arch-chroot /mnt {c}'.format(c=command), echo=True, **opts)
-					if instructions[title][command] and not instructions[title][command] in o:
+					if len(instructions[title][command]) and type(instructions[title][command]) == bytes and not instructions[title][command] in o:
 						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 					#print(o)
 
