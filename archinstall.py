@@ -48,12 +48,14 @@ def run(cmd, echo=False, *args, **kwargs):
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
-			if echo:
+			if echo and 'flush':
 				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
-	output += handle.stdout.read()
-	print('Command done:', output, handle.poll())
+	data = handle.stdout.read()
+	if echo:
+		print(data.decode('UTF-8'), end='')
+	output += data
 	handle.stdout.close()
 	return output
 
@@ -159,6 +161,7 @@ if __name__ == '__main__':
 		with open(args['pwfile'], 'r') as pw:
 			PIN = pw.read().strip()
 
+	print()
 	print('[!] Disk PASSWORD is: {}'.format(PIN))
 	print()
 	print('[N] Setting up {drive}.'.format(**args))
@@ -213,11 +216,13 @@ if __name__ == '__main__':
 	o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
+
+	## == Passwords
 	#o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
 	#TODO: This doesn't work either: (why the hell not?)
 	#      echo "newpass" | passwd --stdin root  ?
 	#o = run("arch-chroot /mnt echo 'root:{pin}' | chpasswd".format(**args, pin=PIN))
-	o = run("arch-chroot /mnt 'echo {pin} | passwd --stdin root".format(pin='"{pin}"'.format(**args, pin=PIN)))
+	o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=PIN)), echo=True)
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
 		o = run("arch-chroot /mnt echo '{user}:{pin}' | chpasswd".format(**args, pin=PIN))
@@ -265,7 +270,7 @@ if __name__ == '__main__':
 					opts = instructions[title][command] if type(instructions[title][command]) in (dict, oDict) else {}
 
 					print('[N] Command: {} ({})'.format(command, opts))
-					o = run('arch-chroot /mnt {c}'.format(c=command), echo=True, **opts)
+					o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
 					if type(instructions[title][command]) == bytes and len(instructions[title][command]) and not instructions[title][command] in o:
 						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 					#print(o)
