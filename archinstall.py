@@ -61,9 +61,8 @@ def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
-		os.remove('/root/archinstall/archinstall.py')
-		os.remove('/root/archinstall/README.md')
-		# sh -c 'cd /c && ../a/helloworld'
+		#os.remove('/root/archinstall/archinstall.py')
+		#os.remove('/root/archinstall/README.md')
 		output = run('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
 		
 		if b'error:' in output:
