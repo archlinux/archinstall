@@ -26,5 +26,6 @@
         "Setup autostarts": {
             "systemctl enable dhcpcd" : null,
             "systemctl enable lighttpd2" : null
+        }
     }
 }
