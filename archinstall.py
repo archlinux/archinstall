@@ -6,6 +6,7 @@ from glob import glob
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
+from time import sleep
 
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
@@ -149,20 +150,46 @@ if __name__ == '__main__':
 	if not 'country' in args: args['country'] = 'SE' #all
 	if not 'packages' in args: args['packages'] = ''
 	if not 'post' in args: args['post'] = 'reboot'
+	if not 'password' in args: args['password'] = '0000'
+
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	if get_default_gateway_linux():
+		locmac = get_local_MACs()
+		for mac in locmac:
+			try:
+				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
+			except urllib.error.HTTPError:
+				print('[N] No instructions for this box on this mac: {}'.format(mac))
+				continue
+			
+			#print('Decoding:', instructions)
+			try:
+				instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+			except:
+				print('[E] JSON instructions failed to load for {}'.format(mac))
+				instructions = {}
+				sleep(5)
+				continue
+
+			if 'args' in instructions:
+				for key, val in instructions['args'].items():
+					args[key] = val
+
 	print(args)
 
 	if not os.path.isfile(args['pwfile']):
-		PIN = '0000'
+		#PIN = '0000'
 		with open(args['pwfile'], 'w') as pw:
-			pw.write(PIN)
-	else:
-		## TODO: Convert to `rb` instead.
-		#        We shouldn't discriminate \xfu from being a passwd phrase.
-		with open(args['pwfile'], 'r') as pw:
-			PIN = pw.read().strip()
+			pw.write(args['password'])
+	#else:
+	#	## TODO: Convert to `rb` instead.
+	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
+	#	with open(args['pwfile'], 'r') as pw:
+	#		PIN = pw.read().strip()
 
 	print()
-	print('[!] Disk PASSWORD is: {}'.format(PIN))
+	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 	print('[N] Setting up {drive}.'.format(**args))
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
@@ -220,12 +247,12 @@ if __name__ == '__main__':
 	o = run('arch-chroot /mnt chmod 700 /root')
 
 	## == Passwords
-	# o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
-	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=PIN)), echo=True)
-	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=PIN))
+	# o = run('arch-chroot /mnt usermod --password {} root'.format(args['password']))
+	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
+	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=PIN))
+		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -250,30 +277,22 @@ if __name__ == '__main__':
 		entry.write('initrd /initramfs-linux.img\n')
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
-	if get_default_gateway_linux():
-		locmac = get_local_MACs()
-		for mac in locmac:
-			try:
-				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
-			except urllib.error.HTTPError:
-				print('[N] No instructions for this box on this mac: {}'.format(mac))
-				continue
-			
-			#print('Decoding:', instructions)
-			instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
-			
-			for title in instructions:
-				print('[N] Network Deploy: {}'.format(title))
-				for command in instructions[title]:
-					opts = instructions[title][command] if type(instructions[title][command]) in (dict, oDict) else {}
+	conf = {}
+	if 'post' in instructions:
+		conf = instructions['post']
+	elif not 'args' in instructions and len(instructions):
+		conf = instructions
 
-					#print('[N] Command: {} ({})'.format(command, opts))
-					o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
-					if type(instructions[title][command]) == bytes and len(instructions[title][command]) and not instructions[title][command] in o:
-						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
-					#print(o)
+	for title in conf:
+		print('[N] Network Deploy: {}'.format(title))
+		for command in conf[title]:
+			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
+
+			#print('[N] Command: {} ({})'.format(command, opts))
+			o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
+			if type(conf[title][command]) == bytes and len(conf[title][command]) and not conf[title][command] in o:
+				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
+			#print(o)
 
 	o = run('umount -R /mnt')
 	if args['post'] == 'reboot':
