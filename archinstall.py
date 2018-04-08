@@ -43,19 +43,20 @@ def get_local_MACs():
 				macs[addr.address] = nic
 	return macs
 
-def run(cmd, echo=False, *args, **kwargs):
+def run(cmd, echo=False, opts=None, *args, **kwargs):
+	if not opts: opts = {}
 	#print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
-			if echo and 'flush':
+			if echo or 'debug' in opts:
 				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	data = handle.stdout.read()
-	if echo:
+	if echo or 'debug' in opts:
 		print(data.decode('UTF-8'), end='')
 	output += data
 	handle.stdout.close()
@@ -297,7 +298,7 @@ if __name__ == '__main__':
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
 
 			#print('[N] Command: {} ({})'.format(command, opts))
-			o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
+			o = run('arch-chroot /mnt {c}'.format(c=command), opts)
 			if type(conf[title][command]) == bytes and len(conf[title][command]) and not conf[title][command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
