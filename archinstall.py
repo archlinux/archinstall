@@ -296,6 +296,8 @@ if __name__ == '__main__':
 		print('[N] Network Deploy: {}'.format(title))
 		for command in conf[title]:
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
+			if len(opts):
+				print('[-] Options: {}'.format(opts))
 
 			#print('[N] Command: {} ({})'.format(command, opts))
 			o = run('arch-chroot /mnt {c}'.format(c=command), opts)
