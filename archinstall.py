@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import traceback
 import psutil, os, re, struct, sys, json
 import urllib.request, urllib.parse
 from glob import glob
@@ -154,27 +155,34 @@ if __name__ == '__main__':
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
+	instructions = {}
 	if get_default_gateway_linux():
 		locmac = get_local_MACs()
-		for mac in locmac:
-			try:
-				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
-			except urllib.error.HTTPError:
-				print('[N] No instructions for this box on this mac: {}'.format(mac))
-				continue
-			
-			#print('Decoding:', instructions)
-			try:
-				instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
-			except:
-				print('[E] JSON instructions failed to load for {}'.format(mac))
-				instructions = {}
-				sleep(5)
-				continue
+		if not len(locmac):
+			print('[N] No network interfaces - No net deploy.')
+		else:
+			for mac in locmac:
+				try:
+					instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
+				except urllib.error.HTTPError:
+					print('[N] No instructions for this box on this mac: {}'.format(mac))
+					continue
+				
+				#print('Decoding:', instructions)
+				try:
+					instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+				except:
+					print('[E] JSON instructions failed to load for {}'.format(mac))
+					traceback.print_exc()
+					instructions = {}
+					sleep(5)
+					continue
 
-			if 'args' in instructions:
-				for key, val in instructions['args'].items():
-					args[key] = val
+				if 'args' in instructions:
+					for key, val in instructions['args'].items():
+						args[key] = val
+	else:
+		print('[N] No gateway - No net deploy')
 
 	print(args)
 
