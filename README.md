@@ -22,6 +22,13 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
     # git clone -b net-deploy --single-branch https://github.com/Torxed/archinstall.git
     # python3 ./archinstall/archinstall.py
 
+# Rerunning a installation
+
+    # umount -R /mnt; cryptsetup close /dev/mapper/luksdev
+    # python3 ./archinstall/archinstall.py
+
+> Note: This assumes `--post=stay` is set to avoid instant reboot at the end.
+
 # Some parameters you can give it
 
     --drive=</dev/sdX>
