@@ -237,6 +237,29 @@ if __name__ == '__main__':
 	o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
 	o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
 
+	pre_conf = {}
+	if 'pre' in instructions:
+		pre_conf = instructions['pre']
+	elif 'prerequisits' in instructions:
+		pre_conf = instructions['prerequisits']
+
+	## Prerequisit steps needs to NOT be executed in arch-chroot.
+	## Mainly because there's no root structure to chroot into.
+	## But partly because some configurations need to be done against the live CD.
+	## (For instance, modifying mirrors are done on LiveCD and replicated intwards)
+	for title in pre_conf:
+		print('[N] Network prerequisit step: {}'.format(title))
+		for command in pre_conf[title]:
+			opts = pre_conf[title][command] if type(pre_conf[title][command]) in (dict, oDict) else {}
+			if len(opts):
+				print('[-] Options: {}'.format(opts))
+
+			#print('[N] Command: {} ({})'.format(command, opts))
+			o = run('{c}'.format(c=command), opts)
+			if type(conf[title][command]) == bytes and len(conf[title][command]) and not conf[title][command] in o:
+				print('[W] Prerequisit step failed: {}'.format(o.decode('UTF-8')))
+			#print(o)
+
 	print('[N] Straping in packages.')
 	o = run('pacman -Syy')
 	o = run('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args))
