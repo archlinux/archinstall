@@ -275,6 +275,7 @@ if __name__ == '__main__':
 	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
 	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8' > /etc/locale.gen\"")
+	o = run("arch-chroot /mnt sh -c \"echo -n 'LANG=en_US.UTF-8' > /etc/locale.conf\"")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
 
@@ -328,8 +329,8 @@ if __name__ == '__main__':
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
 
-	o = run('umount -R /mnt')
 	if args['post'] == 'reboot':
+		o = run('umount -R /mnt')
 		o = run('reboot now')
 	else:
-		print('Done. "reboot" when you\'re done tinkering.')
+		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
