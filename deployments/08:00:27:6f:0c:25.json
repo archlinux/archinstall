@@ -1,6 +1,7 @@
 {
     "args" : {
-        "password" : "0000"
+        "password" : "0000",
+        "post" : "stay"
     },
     "post" : {
         "Installing DNS + Database": {
