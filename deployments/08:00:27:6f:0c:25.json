@@ -13,11 +13,11 @@
             "systemctl start postgresql" : null
         },
         "Setup DNS": {
-            "sh -c \"echo -n -e 'launch=gpgsql\ngpgsql-host=127.0.0.1\ngpgsql-user=pdns\ngpgsql-dbname=pdns\ngpgsql-password={PIN}' >> /etc/powerdns/pdns.conf\"" : null,
+            "sh -c \"echo -e 'launch=gpgsql\ngpgsql-host=127.0.0.1\ngpgsql-user=pdns\ngpgsql-dbname=pdns\ngpgsql-password={PIN}' >> /etc/powerdns/pdns.conf\"" : null,
             "psql -U pdns -d pdns -a -f /usr/share/doc/powerdns/schema.pgsql.sql" : null
         },
         "Install DNS Entries": {
-            
+
         },
         "Setup autostarts": {
             "systemctl enable dhcpcd" : null,
