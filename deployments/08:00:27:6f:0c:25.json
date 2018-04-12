@@ -1,15 +1,14 @@
 {
     "args" : {
-        "password" : "0000",
-        "debug" : true
+        "password" : "0000"
     },
     "post" : {
         "Installing DNS + Database": {
             "pacman -Syy --noconfirm powerdns postgresql" : null
         },
         "Setup Database": {
-            "sh -c \"echo 'postgres:{pin}' | chpasswd\"" : null,
-            "su - postgres -c \"initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'\"" : null,
+            "sh -c \"echo 'postgres:{pin}' | chpasswd\"" : {"debug" : true},
+            "su - postgres -c \"initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'\"" : {"debug" : true},
             "systemctl start postgresql" : null
         },
         "Setup DNS": {
