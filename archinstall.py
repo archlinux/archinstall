@@ -274,7 +274,7 @@ if __name__ == '__main__':
 	#o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
 	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
-	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8' > /etc/locale.gen\"")
+	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"")
 	o = run("arch-chroot /mnt sh -c \"echo -n 'LANG=en_US.UTF-8' > /etc/locale.conf\"")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
