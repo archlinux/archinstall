@@ -45,7 +45,8 @@ def get_local_MACs():
 
 def run(cmd, echo=False, opts=None, *args, **kwargs):
 	if not opts: opts = {}
-	#print('[!] {}'.format(cmd))
+	if echo or 'debug' in opts:
+		print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, **kwargs)
 	output = b''
 	while handle.poll() is None:
@@ -334,3 +335,7 @@ if __name__ == '__main__':
 		o = run('reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
+
+
+
+'su - postgres -c "psql -c \'CREATE USER pdns WITH PASSWORD \\\'SomePassword\\\';\'"'
