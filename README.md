@@ -19,8 +19,11 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
 
 # Manually run it on a booted Live CD
 
+    # pacman -Sy git
     # git clone https://github.com/Torxed/archinstall.git
     # python3 ./archinstall/archinstall.py
+
+> Note: *(You could also wget the `archinstall.py` script and skip installing git)*
 
 # Some parameters you can give it
 
