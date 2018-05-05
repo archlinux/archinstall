@@ -81,9 +81,10 @@ def update_git():
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
-	with open('/sys/block/{}/device/block/{}/removable'.format(name, name)) as f:
-		if f.read(1) == '1':
-			return
+	if os.path.isfile('/sys/block/{}/device/block/{}/removable'.format(name, name)):
+		with open('/sys/block/{}/device/block/{}/removable'.format(name, name)) as f:
+			if f.read(1) == '1':
+				return
 
 	path = rootdir_pattern.sub('', os.readlink('/sys/block/{}'.format(name)))
 	hotplug_buses = ("usb", "ieee1394", "mmc", "pcmcia", "firewire")
@@ -96,20 +97,15 @@ def device_state(name):
 	return True
 
 def grab_partitions(dev):
-	o = run('parted -m -s {} p'.format(dev)).decode('UTF-8')
+	drive_name = os.path.basename(dev)
 	parts = oDict()
-	for line in o.split('\n'):
-		if ':' in line:
-			data = line.split(':')
-			if data[0].isdigit():
-				parts[int(data[0])] = {
-					'start' : data[1],
-					'end' : data[2],
-					'size' : data[3],
-					'sum' : data[4],
-					'label' : data[5],
-					'options' : data[6]
-				}
+	o = run('lsblk -o name -J -b {dev}'.format(dev=dev))
+	r = json.loads(o)
+	for part in r['blockdevices'][0]['children']:
+		parts[part['name'][len(drive_name):]] = {
+			# TODO: Grab partition info and store here?
+		}
+
 	return parts
 
 def update_drive_list():
