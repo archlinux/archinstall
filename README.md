@@ -20,14 +20,15 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
 
 # Manually run it on a booted Live CD
 
+    # pacman -Sy git
     # git clone https://github.com/Torxed/archinstall.git
     # python3 ./archinstall/archinstall.py
+> Note: *(You could also wget the `archinstall.py` script and skip installing git)*
 
 # Rerunning a installation
 
     # umount -R /mnt; cryptsetup close /dev/mapper/luksdev
     # python3 ./archinstall/archinstall.py
-
 > Note: This assumes `--post=stay` is set to avoid instant reboot at the end.
 
 # Some parameters you can give it
