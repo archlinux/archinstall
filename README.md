@@ -5,7 +5,7 @@ Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linu
 
     # cd ~/archlive
     # echo -e "git\npython-psutil" >> packages.both
-    # echo "git clone -b net-deploy --single-branch https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
+    # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
     # echo "chmod +x ~/archinstall/archinstall.py" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
     # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c ~/archinstall/archinstall.py' >> ./airootfs/etc/skel/.zprofile
@@ -19,7 +19,7 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py`.
 
 # Manually run it on a booted Live CD
 
-    # git clone -b net-deploy --single-branch https://github.com/Torxed/archinstall.git
+    # git clone https://github.com/Torxed/archinstall.git
     # python3 ./archinstall/archinstall.py
 
 # Rerunning a installation
