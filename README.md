@@ -5,6 +5,7 @@ Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linu
 
     # cd ~/archlive
     # echo -e "git\npython-psutil" >> packages.both
+    # echo "cd /root" >> ./airootfs/root/customize_airootfs.sh
     # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
     # echo "chmod +x ~/archinstall/archinstall.py" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
