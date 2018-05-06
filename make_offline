@@ -1,0 +1,69 @@
+#!/bin/bash
+
+work_dir=$1
+arch=$2
+offline_mirror_path="/tmp/aur_offline"
+
+# A func to download, build ...
+build_aur () {
+    old_dir=`pwd`
+    package=$1
+    # Prep with a build-user:
+    useradd -m -G wheel builder
+    sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers
+
+    cd /tmp
+    rm -rf ${package} ${package}.tar.gz
+    wget "https://aur.archlinux.org/cgit/aur.git/snapshot/${package}.tar.gz"
+    tar xvzf "${package}.tar.gz"
+
+    cd ${package}
+    build_dir=$(pwd)
+    chown -R builder.builder /tmp/${package}
+    echo " => Buiilding ${package}"
+    su - builder -c "(cd ${build_dir}; makepkg -s --noconfirm)" >/dev/null 2>&1
+
+
+    echo " => Adding ${package} to local AUR mirror"
+    mkdir -p ${offline_mirror_path}
+    sh -c "cp *.xz ${offline_mirror_path}/"
+    sh -c "repo-add ${offline_mirror_path}/aur_offline.db.tar.gz ${offline_mirror_path}/*.xz"
+    if [[ -z $(cat ${old_dir}/packages.both | grep ${package}) ]]; then
+    	# TODO: save a copy of ${old_dir}/packages.both ONCE, if it doesn't excist already.
+    	#       This in order to revert our AUR changes which will affect a re-build.
+        echo " => Adding ${package} to packages.both (from AUR)"
+        echo "${package}" >> ${old_dir}/packages.both
+    fi
+
+    ## Long term storage inside the ISO? (if we want to install to disk, we need to pass this along)
+    # sh -c "mv *.xz ${old_dir}/$2/$1.pkg.tar.xz"
+
+    cd ${old_dir}
+    userdel builder
+    rm -rf /home/builder
+    rm -rf /tmp/${package}
+    rm /tmp/${package}.tar.gz
+}
+
+echo "Starting to sync upstream changes to offline mirror."
+rm -rf /tmp/sync /tmp/local
+
+echo " => Building AUR (Adding packages to packages.both as we go along)"
+build_aur "lighttpd2-git"
+
+if [[ -z $(cat ${work_dir}/pacman.conf | grep '\[aur_offline\]') ]]; then
+    echo " => Adding offline mirror to the chroot environment"
+
+    echo "[aur_offline]" >> ${work_dir}/pacman.conf
+    echo "Server = file:///tmp/aur_offline" >> ${work_dir}/pacman.conf
+    echo "SigLevel = Optional TrustAll" >> ${work_dir}/pacman.conf
+fi
+
+## Long term storage, if we want to be able to index our newly build files
+## while installing down to disk later, we need to index the AUR packages.
+#echo " => Adding packages to offline database"
+#sh -c "repo-add --new ${work_dir}/${arch}/airootfs/srv/http/archlinux/arch_offline/os/${arch}/arch_offline.db.tar.gz ${work_dir}/${arch}/airootfs/srv/http/archlinux/arch_offline/os/${arch}/*.pkg.tar.xz" >/dev/null 2>&1
+
+pacman --config ${work_dir}/pacman.conf -Sy
+pacman -Sy
+echo "Done syncing offline mirror."
