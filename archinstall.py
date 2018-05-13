@@ -253,7 +253,7 @@ if __name__ == '__main__':
 		for mac in locmac:
 			try:
 				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
-			except urllib.error.HTTPError:
+			except (urllib.error.HTTPError, urllib.error.URLError) as e:
 				print('[N] No instructions for this box on this mac: {}'.format(mac))
 				continue
 			
