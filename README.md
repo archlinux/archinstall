@@ -7,7 +7,6 @@ Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linu
     # echo -e "git\npython-psutil" >> packages.both
     # echo "cd /root" >> ./airootfs/root/customize_airootfs.sh
     # echo "git clone https://github.com/Torxed/archinstall.git" >> ./airootfs/root/customize_airootfs.sh
-    # echo "cd archinstall; git checkout net-deploy; cd /root" >> ./airootfs/root/customize_airootfs.sh
     # echo "chmod +x ~/archinstall/archinstall.py" >> ./airootfs/root/customize_airootfs.sh
     # mkdir ./airootfs/etc/skel
     # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c ~/archinstall/archinstall.py' >> ./airootfs/etc/skel/.zprofile
@@ -21,7 +20,7 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py` with 
 
 # Manually run it on a booted Live CD
 
-    # wget https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/archinstall.py
+    # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
     # python3 archinstall.py
 
 # Rerunning a installation
@@ -64,7 +63,8 @@ Whenever this live-cd boots, from here on now - it'll run `archinstall.py` with 
     --post=reboot (Default)
       After a successful install, reboots into the system. Use --post=stay to not reboot.
 
-net-deployment structs support all these and more. Custom arguments with string formatting. See [deployments/workstation.json](https://github.com/Torxed/archinstall/blob/net-deploy/deployments/workstation.json) for examples.
+net-deployment structs support all these and more, among those, custom arguments with string formatting.
+See [deployments/workstation.json](https://github.com/Torxed/archinstall/blob/net-deploy/deployments/workstation.json) for examples.
 
 ## End note
 
