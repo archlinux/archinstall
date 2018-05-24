@@ -1,0 +1,20 @@
+{
+    "args" : {
+        "include" : "workstation",
+        "user" : "anton",
+        "password" : "1111",
+        "drive" : "/dev/sdb",
+        "post" : "don't reboot"
+    },
+    "post" : {
+        "Setup a basic virtual environment": {
+            "mkdir -p /home/{user}/virts" : {"pass-args" : true},
+            "qemu-img create -f qcow2 /home/{user}/virts/test_deploy.qcow2 4G" : {"pass-args" : true},
+            "chown -R {user}.{user} /home/{user}/virts" : {"pass-args" : true}
+        },
+        "Setup user" : {
+            "useradd -m -G wheel -s /bin/bash anton" : null,
+            "sh -c \"echo {user}:{password} | chpasswd\"" : {"pass-args" : true}
+        }
+    }
+}
