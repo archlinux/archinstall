@@ -1,0 +1,29 @@
+{
+    "args" : {
+        "password" : "0000",
+        "post" : "stay"
+    },
+    "post" : {
+        "Installing DNS + Database": {
+            "pacman -Syy --noconfirm powerdns postgresql" : null
+        },
+        "Setup Database": {
+            "sh -c \"echo 'postgres:{pin}' | chpasswd\"" : null,
+            "su - postgres -c \"initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'\"" : null,
+            "systemctl start postgresql" : null,
+            "su - postgres -c \"psql -c \\\"CREATE USER pdns WITH PASSWORD 'SomePassword';\\\"\"" : {"debug" : true}
+        },
+        "Setup DNS": {
+            "sh -c \"echo -e 'launch=gpgsql\ngpgsql-host=127.0.0.1\ngpgsql-user=pdns\ngpgsql-dbname=pdns\ngpgsql-password={PIN}' >> /etc/powerdns/pdns.conf\"" : null,
+            "psql -U pdns -d pdns -a -f /usr/share/doc/powerdns/schema.pgsql.sql" : null
+        },
+        "Install DNS Entries": {
+
+        },
+        "Setup autostarts": {
+            "systemctl enable dhcpcd" : null,
+            "systemctl enable postgresql" : null,
+            "systemctl enable powerdns" : null
+        }
+    }
+}

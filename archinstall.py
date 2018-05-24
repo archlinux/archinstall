@@ -1,14 +1,20 @@
 #!/usr/bin/python3
+import traceback
 import psutil, os, re, struct, sys, json
-import urllib.request, urllib.parse
+import urllib.request, urllib.parse, ssl
 from glob import glob
 #from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
+from time import sleep
+
+## FIXME: dependency checks (fdisk, lsblk etc)
 
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
+
+deploy_target = 'https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments'
 
 args = {}
 positionals = []
@@ -41,19 +47,21 @@ def get_local_MACs():
 				macs[addr.address] = nic
 	return macs
 
-def run(cmd, echo=False, *args, **kwargs):
-	#print('[!] {}'.format(cmd))
+def run(cmd, echo=False, opts=None, *args, **kwargs):
+	if not opts: opts = {}
+	if echo or 'debug' in opts:
+		print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
-			if echo and 'flush':
+			if echo or 'debug' in opts:
 				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	data = handle.stdout.read()
-	if echo:
+	if echo or 'debug' in opts:
 		print(data.decode('UTF-8'), end='')
 	output += data
 	handle.stdout.close()
@@ -101,10 +109,11 @@ def grab_partitions(dev):
 	parts = oDict()
 	o = run('lsblk -o name -J -b {dev}'.format(dev=dev))
 	r = json.loads(o)
-	for part in r['blockdevices'][0]['children']:
-		parts[part['name'][len(drive_name):]] = {
-			# TODO: Grab partition info and store here?
-		}
+	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
+		for part in r['blockdevices'][0]['children']:
+			parts[part['name'][len(drive_name):]] = {
+				# TODO: Grab partition info and store here?
+			}
 
 	return parts
 
@@ -130,35 +139,109 @@ def multisplit(s, splitters):
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
-	response = urllib.request.urlopen(safe_path)
+	ssl_context = ssl.create_default_context()
+	ssl_context.check_hostname = False
+	ssl_context.verify_mode=ssl.CERT_NONE
+	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
+
+def get_instructions(target):
+	instructions = {}
+	try:
+		instructions = grab_url_data('{}/{}.json'.format(deploy_target, target))
+	except urllib.error.HTTPError:
+		print('[N] No instructions found called: {}'.format(target))
+		return instructions
+	
+	print('[N] Found net-deploy instructions called: {}'.format(target))
+	try:
+		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+	except:
+		print('[E] JSON instructions failed to load for {}'.format(target))
+		traceback.print_exc()
+		sleep(5)
+
+	return instructions
+
+def merge_dicts(d1, d2, before=True, overwrite=False):
+	""" Merges d2 into d1 """
+	if before:
+		d1, d2 = d2.copy(), d1.copy()
+		overwrite = True
+
+	for key, val in d2.items():
+		if key in d1:
+			if type(d1[key]) in [dict, oDict] and type(d2[key]) in [dict, oDict]:
+				d1[key] = merge_dicts(d1[key] if not before else d2[key], d2[key] if not before else d1[key], before=before, overwrite=overwrite)
+			elif overwrite:
+				d1[key] = val
+		else:
+			d1[key] = val
+
+	return d1
 
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
+	if not os.path.isdir('/sys/firmware/efi'):
+		print('[E] This script only supports UEFI-booted machines.')
+		exit(1)
 
+	## Setup some defaults (in case no command-line parameters or netdeploy-params were given)
 	if not 'drive' in args: args['drive'] = list(harddrives.keys())[0] # First drive found
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
 	if not 'hostname' in args: args['hostname'] = 'Arcinstall'
-	if not 'country' in args: args['country'] = 'SE' #all
-	if not 'packages' in args: args['packages'] = ''
+	if not 'country' in args: args['country'] = 'SE' # 'all' if we don't want country specific mirrors.
+	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
+	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
+
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	instructions = {}
+	if get_default_gateway_linux():
+		locmac = get_local_MACs()
+		if not len(locmac):
+			print('[N] No network interfaces - No net deploy.')
+		else:
+			for mac in locmac:
+				instructions = get_instructions(mac)
+
+				if 'args' in instructions:
+					## == Recursively fetch instructions if "include" is found under {args: ...}
+					while 'include' in instructions['args']:
+						includes = instructions['args']['include']
+						print('[!] Importing net-deploy target: {}'.format(includes))
+						del(instructions['args']['include'])
+						if type(includes) in (dict, list):
+							for include in includes:
+								instructions = merge_dicts(instructions, get_instructions(include), before=True)
+						else:
+							instructions = merge_dicts(instructions, get_instructions(includes), before=True)
+
+					## Update arguments if we found any
+					for key, val in instructions['args'].items():
+						args[key] = val
+	else:
+		print('[N] No gateway - No net deploy')
+
+	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
 	print(args)
 
 	if not os.path.isfile(args['pwfile']):
-		PIN = '0000'
+		#PIN = '0000'
 		with open(args['pwfile'], 'w') as pw:
-			pw.write(PIN)
-	else:
-		## TODO: Convert to `rb` instead.
-		#        We shouldn't discriminate \xfu from being a passwd phrase.
-		with open(args['pwfile'], 'r') as pw:
-			PIN = pw.read().strip()
+			pw.write(args['password'])
+	#else:
+	#	## TODO: Convert to `rb` instead.
+	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
+	#	with open(args['pwfile'], 'r') as pw:
+	#		PIN = pw.read().strip()
 
 	print()
-	print('[!] Disk PASSWORD is: {}'.format(PIN))
+	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 	print('[N] Setting up {drive}.'.format(**args))
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
@@ -170,36 +253,86 @@ if __name__ == '__main__':
 	o = run('parted -s {drive} set 1 boot on'.format(**args))
 	o = run('parted -s {drive} mkpart primary {start} {size}'.format(**args))
 	
-	first, second = grab_partitions(args['drive']).keys()
-	o = run('mkfs.vfat -F32 {drive}{part1}'.format(**args, part1=first))
+	args['paritions'] = grab_partitions(args['drive'])
+	if len(args['paritions']) <= 0:
+		print('[E] No paritions were created on {drive}'.format(**args), o)
+		exit(1)
+	for index, part_name in enumerate(args['paritions']):
+		args['partition_{}'.format(index+1)] = part_name
+
+	o = run('mkfs.vfat -F32 {drive}{partition_1}'.format(**args))
+	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
+		print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
+		exit(1)
 
 	# "--cipher sha512" breaks the shit.
 	# TODO: --use-random instead of --use-urandom
-	print('[N] Adding encryption to {drive}{part2}.'.format(**args, part2=second))
-	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{part2}'.format(**args, part2=second))
+	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
+	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args))
 	if not o.decode('UTF-8').strip() == 'Command successful.':
-		print('[E] Failed to setup disk encryption.')
+		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
-	o = run('cryptsetup open {drive}{part2} luksdev --key-file {pwfile} --type luks2'.format(**args, part2=second))
+	o = run('cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args))
 	o = run('file /dev/mapper/luksdev') # /dev/dm-0
 	if b'cannot open' in o:
-		print('[E] Could not mount encrypted device.')
+		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
+	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
 	o = run('mkfs.btrfs /dev/mapper/luksdev')
+	if not b'UUID' in o:
+		print('[E] Could not setup btrfs filesystem.', o)
+		exit(1)
 	o = run('mount /dev/mapper/luksdev /mnt')
 
-	print('[N] Reordering mirrors.')
 	os.makedirs('/mnt/boot')
-	o = run('mount {drive}{part1} /mnt/boot'.format(**args, part1=first))
-	o = run("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
-	o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
-	o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
+	o = run('mount {drive}{partition_1} /mnt/boot'.format(**args))
+
+	print('[N] Reordering mirrors.')
+	if 'mirrors' in args and args['mirrors'] and get_default_gateway_linux():
+		o = run("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
+		o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
+		o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
+
+	pre_conf = {}
+	if 'pre' in instructions:
+		pre_conf = instructions['pre']
+	elif 'prerequisits' in instructions:
+		pre_conf = instructions['prerequisits']
+
+	## Prerequisit steps needs to NOT be executed in arch-chroot.
+	## Mainly because there's no root structure to chroot into.
+	## But partly because some configurations need to be done against the live CD.
+	## (For instance, modifying mirrors are done on LiveCD and replicated intwards)
+	for title in pre_conf:
+		print('[N] Network prerequisit step: {}'.format(title))
+		for command in pre_conf[title]:
+			raw_command = command
+			opts = pre_conf[title][raw_command] if type(pre_conf[title][raw_command]) in (dict, oDict) else {}
+			if len(opts):
+				if 'pass-args' in opts or 'format' in opts:
+					command = command.format(**args)
+					if 'pass-args' in opts:
+						del(opts['pass-args'])
+					elif 'format' in opts:
+						del(opts['format'])
+				else:
+					print('[-] Options: {}'.format(opts))
+
+			#print('[N] Command: {} ({})'.format(raw_command, opts))
+			o = run('{c}'.format(c=command), opts)
+			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
+				print('[W] Prerequisit step failed: {}'.format(o.decode('UTF-8')))
+			#print(o)
 
 	print('[N] Straping in packages.')
 	o = run('pacman -Syy')
 	o = run('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args))
+
+	if not os.path.isdir('/mnt/etc'):
+		print('[E] Failed to strap in packages', o)
+		exit(1)
 
 	o = run('genfstab -pU /mnt >> /mnt/etc/fstab')
 	with open('/mnt/etc/fstab', 'a') as fstab:
@@ -211,17 +344,18 @@ if __name__ == '__main__':
 	#o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
 	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
 	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
-	o = run("arch-chroot /mnt sh -c \"echo -n 'en_US.UTF-8' > /etc/locale.gen\"")
+	o = run("arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"")
+	o = run("arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"")
 	o = run('arch-chroot /mnt locale-gen')
 	o = run('arch-chroot /mnt chmod 700 /root')
 
 	## == Passwords
-	# o = run('arch-chroot /mnt usermod --password {} root'.format(PIN))
-	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=PIN)), echo=True)
-	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=PIN))
+	# o = run('arch-chroot /mnt usermod --password {} root'.format(args['password']))
+	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
+	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 	if 'user' in args:
 		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=PIN))
+		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -238,41 +372,38 @@ if __name__ == '__main__':
 
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
-	#UUID = run('blkid -s PARTUUID -o value {drive}{part2}'.format(**args, part2=second)).decode('UTF-8').strip()
-	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{part2} | awk '{awk}'".format(basename=os.path.basename(args['drive']), part2=second, awk='{print $9}')).decode('UTF-8').strip()
+	#UUID = run('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
 		entry.write('initrd /initramfs-linux.img\n')
 		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
-	if get_default_gateway_linux():
-		locmac = get_local_MACs()
-		for mac in locmac:
-			try:
-				instructions = grab_url_data('https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments/{}.json'.format(mac))
-			except (urllib.error.HTTPError, urllib.error.URLError) as e:
-				print('[N] No instructions for this box on this mac: {}'.format(mac))
-				continue
-			
-			#print('Decoding:', instructions)
-			instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
-			
-			for title in instructions:
-				print('[N] Network Deploy: {}'.format(title))
-				for command in instructions[title]:
-					opts = instructions[title][command] if type(instructions[title][command]) in (dict, oDict) else {}
+	conf = {}
+	if 'post' in instructions:
+		conf = instructions['post']
+	elif not 'args' in instructions and len(instructions):
+		conf = instructions
 
-					#print('[N] Command: {} ({})'.format(command, opts))
-					o = run('arch-chroot /mnt {c}'.format(c=command), **opts)
-					if type(instructions[title][command]) == bytes and len(instructions[title][command]) and not instructions[title][command] in o:
-						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
-					#print(o)
+	for title in conf:
+		print('[N] Network Deploy: {}'.format(title))
+		for command in conf[title]:
+			raw_command = command
+			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
+			if len(opts):
+				print('[-] Options: {}'.format(opts))
+			if 'pass-args' in opts and opts['pass-args']:
+				command = command.format(**args)
 
-	o = run('umount -R /mnt')
+			#print('[N] Command: {} ({})'.format(command, opts))
+			o = run('arch-chroot /mnt {c}'.format(c=command), opts)
+			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
+				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
+			#print(o)
+
 	if args['post'] == 'reboot':
+		o = run('umount -R /mnt')
 		o = run('reboot now')
 	else:
-		print('Done. "reboot" when you\'re done tinkering.')
+		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')

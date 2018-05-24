@@ -1,0 +1,31 @@
+{
+    "args" : {
+        "password" : "0001"
+    },
+    "post" : {
+        "Setup temp build env": {
+            "pacman -Syy --noconfirm git" : null,
+            "useradd -m -G wheel builder" : null,
+            "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null
+        },
+        "install lighttpd2-git": {
+            "git clone https://aur.archlinux.org/lighttpd2-git.git /home/builder/lighttpd2" : null,
+            "chown -R builder.builder /home/builder/lighttpd2" : null,
+            "su - builder -c \"(cd /home/builder/lighttpd2/; /usr/bin/makepkg -s --noconfirm)\"" : null,
+            "sh -c 'pacman -U --noconfirm /home/builder/lighttpd2/*.xz'" : null
+        },
+        "Remove temp build env": {
+            "rm -rf /home/builder/lighttpd2" : null,
+            "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null
+        },
+        "Create mirror": {
+            "mkdir -p /srv/http/archlinux/arch_offline/os/x86_64" : null,
+            "pacman --noconfirm --dbpath /tmp/ -Syu -w --cachedir /srv/http/archlinux/arch_offline/os/x86_64 base base-devel git python python-systemd awesome xorg-xinit xorg-server xterm nano screen sudo iptables mesa-libgl dhclient dnsmasq darkhttpd openssh sshfs openssl openvpn gcc openvpn rtorrent powerdns postgresql" : null,
+            "sh -c 'repo-add /srv/http/archlinux/arch_offline/os/x86_64/arch_offline.db.tar.gz /srv/http/archlinux/arch_offline/os/x86_64/*.pkg.tar.xz'" : null
+        },
+        "Setup autostarts": {
+            "systemctl enable dhcpcd" : null,
+            "systemctl enable lighttpd2" : null
+        }
+    }
+}
