@@ -407,7 +407,3 @@ if __name__ == '__main__':
 		o = run('reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
-
-
-
-'su - postgres -c "psql -c \'CREATE USER pdns WITH PASSWORD \\\'SomePassword\\\';\'"'
