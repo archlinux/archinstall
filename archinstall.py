@@ -14,7 +14,9 @@ from time import sleep
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
 
-deploy_target = 'https://raw.githubusercontent.com/Torxed/archinstall/net-deploy/deployments'
+## == Profiles Path can be set via --profiles-path=/path
+##    This just sets the default path if the parameter is omitted.
+profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
 
 args = {}
 positionals = []
@@ -148,7 +150,7 @@ def grab_url_data(path):
 def get_instructions(target):
 	instructions = {}
 	try:
-		instructions = grab_url_data('{}/{}.json'.format(deploy_target, target))
+		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found called: {}'.format(target))
 		return instructions
@@ -197,6 +199,8 @@ if __name__ == '__main__':
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
+	if not 'no-default' in args: args['no-default'] = False
+	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
@@ -226,6 +230,37 @@ if __name__ == '__main__':
 						args[key] = val
 	else:
 		print('[N] No gateway - No net deploy')
+
+	first = True
+	while args['no-default'] and len(instructions) <= 0:
+		profile = input('What template do you want to install: ')
+		instructions = get_instructions(profile)
+		if first and len(instructions) <= 0:
+			print('[E] No instructions by the name of {} was found.'.format(profile))
+			print('    Installation won\'t continue until a valid profile is given.')
+			print('   (this is because --no-default was given and a default installation is prohibited)')
+			first = False
+
+	if 'args' in instructions:
+		## == Recursively fetch instructions if "include" is found under {args: ...}
+		while 'include' in instructions['args']:
+			includes = instructions['args']['include']
+			print('[!] Importing net-deploy target: {}'.format(includes))
+			del(instructions['args']['include'])
+			if type(includes) in (dict, list):
+				for include in includes:
+					instructions = merge_dicts(instructions, get_instructions(include), before=True)
+			else:
+				instructions = merge_dicts(instructions, get_instructions(includes), before=True)
+
+		## Update arguments if we found any
+		for key, val in instructions['args'].items():
+			args[key] = val
+
+	## TODO: Reuseable code, there's to many get_instructions, merge_dictgs and args updating going on.
+	## Update arguments if we found any
+	for key, val in instructions['args'].items():
+		args[key] = val
 
 	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
 	print(args)
@@ -313,6 +348,9 @@ if __name__ == '__main__':
 			if len(opts):
 				if 'pass-args' in opts or 'format' in opts:
 					command = command.format(**args)
+					## FIXME: Instead of deleting the two options
+					##        in order to mute command output further down,
+					##        check for a 'debug' flag per command and delete these two
 					if 'pass-args' in opts:
 						del(opts['pass-args'])
 					elif 'format' in opts:
@@ -365,7 +403,6 @@ if __name__ == '__main__':
 		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
 	o = run('arch-chroot /mnt mkinitcpio -p linux')
 	o = run('arch-chroot /mnt bootctl --path=/boot install')
-	print('bootctl:', o)
 
 	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 		loader.write('default arch\n')
@@ -393,7 +430,17 @@ if __name__ == '__main__':
 			raw_command = command
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
 			if len(opts):
-				print('[-] Options: {}'.format(opts))
+				if 'pass-args' in opts or 'format' in opts:
+					command = command.format(**args)
+					## FIXME: Instead of deleting the two options
+					##        in order to mute command output further down,
+					##        check for a 'debug' flag per command and delete these two
+					if 'pass-args' in opts:
+						del(opts['pass-args'])
+					elif 'format' in opts:
+						del(opts['format'])
+				else:
+					print('[-] Options: {}'.format(opts))
 			if 'pass-args' in opts and opts['pass-args']:
 				command = command.format(**args)
 
