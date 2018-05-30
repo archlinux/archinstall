@@ -365,6 +365,7 @@ if __name__ == '__main__':
 		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
 	o = run('arch-chroot /mnt mkinitcpio -p linux')
 	o = run('arch-chroot /mnt bootctl --path=/boot install')
+	print('bootctl:', o)
 
 	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 		loader.write('default arch\n')
