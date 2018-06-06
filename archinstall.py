@@ -257,10 +257,11 @@ if __name__ == '__main__':
 		for key, val in instructions['args'].items():
 			args[key] = val
 
-	## TODO: Reuseable code, there's to many get_instructions, merge_dictgs and args updating going on.
-	## Update arguments if we found any
-	for key, val in instructions['args'].items():
-		args[key] = val
+	if 'args' in instructions:
+		## TODO: Reuseable code, there's to many get_instructions, merge_dictgs and args updating going on.
+		## Update arguments if we found any
+		for key, val in instructions['args'].items():
+			args[key] = val
 
 	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
 	print(args)
