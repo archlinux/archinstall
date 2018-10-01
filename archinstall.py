@@ -305,7 +305,7 @@ if __name__ == '__main__':
 	# TODO: --use-random instead of --use-urandom
 	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
 	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args))
-	if not o.decode('UTF-8').strip() == 'Command successful.':
+	if not 'Command successful.' in o.decode('UTF-8').strip():
 		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
