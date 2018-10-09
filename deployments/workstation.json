@@ -2,7 +2,7 @@
     "args" : {
         "password" : "<STDIN>",
         "_mediaplayer" : "lollypop gstreamer gst-plugins-good gnome-keyring",
-        "_filebrowser" : "nemo"
+        "_filebrowser" : "nemo",
         "_webbrowser" : "chromium",
         "_window_manager" : "awesome",
         "_keyboard_layout" : "sv-latin1",
