@@ -3,7 +3,6 @@
         "include" : "workstation",
         "user" : "anton",
         "password" : "1111",
-        "drive" : "/dev/sdb",
         "post" : "don't reboot"
     },
     "post" : {
