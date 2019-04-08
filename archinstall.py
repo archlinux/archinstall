@@ -49,6 +49,9 @@ def get_local_MACs():
 				macs[addr.address] = nic
 	return macs
 
+def gen_yubikey_password():
+	return None #TODO: Implement
+
 def run(cmd, echo=False, opts=None, *args, **kwargs):
 	if not opts: opts = {}
 	if echo or 'debug' in opts:
@@ -199,7 +202,8 @@ if __name__ == '__main__':
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
-	if not 'no-default' in args: args['no-default'] = False
+	if not 'default' in args: args['default'] = False
+	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 
 	## == If we got networking,
@@ -231,15 +235,24 @@ if __name__ == '__main__':
 	else:
 		print('[N] No gateway - No net deploy')
 
-	first = True
-	while args['no-default'] and len(instructions) <= 0:
-		profile = input('What template do you want to install: ')
-		instructions = get_instructions(profile)
-		if first and len(instructions) <= 0:
-			print('[E] No instructions by the name of {} was found.'.format(profile))
+	if args['profile'] and not args['default']:
+		instructions = get_instructions(args['profile'])
+		if len(instructions) <= 0:
+			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
 			print('    Installation won\'t continue until a valid profile is given.')
-			print('   (this is because --no-default was given and a default installation is prohibited)')
-			first = False
+			print('   (this is because --profile was given and a --default is not given)')
+			exit(1)
+	else:
+		first = True
+		while not args['default'] and not args['profile'] and len(instructions) <= 0:
+			profile = input('What template do you want to install: ')
+			instructions = get_instructions(profile)
+			if first and len(instructions) <= 0:
+				print('[E] No instructions by the name of {} was found.'.format(profile))
+				print('    Installation won\'t continue until a valid profile is given.')
+				print('   (this is because --default is not instructed and no --profile given)')
+				first = False
+
 
 	if 'args' in instructions:
 		## == Recursively fetch instructions if "include" is found under {args: ...}
@@ -264,6 +277,12 @@ if __name__ == '__main__':
 			args[key] = val
 
 	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
+	elif args['password'] == '<YUBIKEY>':
+		args['password'] = gen_yubikey_password()
+		if not args['password']:
+			print('[E] Failed to setup a yubikey password, is it plugged in?')
+			exit(1)
+
 	print(args)
 
 	if not os.path.isfile(args['pwfile']):
