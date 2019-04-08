@@ -23,7 +23,7 @@ positionals = []
 for arg in sys.argv[1:]:
 	if '--' == arg[:2]:
 		if '=' in arg:
-			key, val = [strip(x) for x in arg[2:].split('=')]
+			key, val = [x.strip() for x in arg[2:].split('=')]
 		else:
 			key, val = arg[2:], True
 		args[key] = val
