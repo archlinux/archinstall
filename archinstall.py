@@ -542,15 +542,15 @@ if __name__ == '__main__':
 				o = run("cd /mnt; mount -t proc /proc proc")
 				o = run("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = run("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = run('chroot /mnt /bin/bash -c "{c}"'.format(c=command))
+				o = run('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
 				o = run("cd /mnt; umount -R dev")
 				o = run("cd /mnt; umount -R sys")
 				o = run("cd /mnt; umount -R proc")
 			else:
 				if 'boot' in opts and opts['boot']:
-					o = run('systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts)
+					o = run('systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts)
 				else:
-					o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
+					o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
