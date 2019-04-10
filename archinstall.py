@@ -537,7 +537,7 @@ if __name__ == '__main__':
 			if 'no-chroot' in opts and opts['no-chroot']:
 				o = run(command, opts)
 			else:
-				o = run('systemd-nspawn -D /mnt --machine temporary "{c}"'.format(c=command), opts)
+				o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
