@@ -552,7 +552,10 @@ if __name__ == '__main__':
 				o = run("cd /mnt; umount -R sys")
 				o = run("cd /mnt; umount -R proc")
 			else:
-				o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
+				if 'boot' in opts and opts['boot']:
+					o = run('systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts)
+				else:
+					o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
