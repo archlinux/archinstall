@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import traceback
-import psutil, os, re, struct, sys, json
+import os, re, struct, sys, json
 import urllib.request, urllib.parse, ssl
 from glob import glob
 #from select import epoll, EPOLLIN, EPOLLHUP
@@ -8,6 +8,64 @@ from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 from time import sleep
+
+try:
+	import psutil
+except:
+	## Time to monkey patch in all the stats and psutil fuctions if it isn't installed.
+
+	class mem():
+		def __init__(self, free, percent=-1):
+			self.free = free
+			self.percent = percent
+
+	class disk():
+		def __init__(self, size, free, percent):
+			self.size = size
+			self.free = free
+			self.percent = percent
+
+	class iostat():
+		def __init__(self, interface, bytes_sent=0, bytes_recv=0):
+			self.interface = interface
+			self.bytes_recv = int(bytes_recv)
+			self.bytes_sent = int(bytes_sent)
+		def __repr__(self, *args, **kwargs):
+			return f'iostat@{self.interface}[bytes_sent: {self.bytes_sent}, bytes_recv: {self.bytes_recv}]'
+
+	class psutil():
+		def cpu_percent(interval=0):
+			## This just counts the ammount of time the CPU has spent. Find a better way!
+			with cmd("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'") as output:
+				for line in output:
+					return float(line.strip().decode('UTF-8'))
+		
+		def virtual_memory():
+			with cmd("grep 'MemFree: ' /proc/meminfo | awk '{free=($2)} END {print free}'") as output:
+				for line in output:
+					return mem(float(line.strip().decode('UTF-8')))
+
+		def disk_usage(partition):
+			disk_stats = os.statvfs(partition)
+			free_size = disk_stats.f_bfree * disk_stats.f_bsize
+			disk_size = disk_stats.f_blocks * disk_stats.f_bsize
+			percent = (100/disk_size)*free_size
+			return disk(disk_size, free_size, percent)
+
+		def net_if_addrs():
+			interfaces = {}
+			for root, folders, files in os.walk('/sys/class/net/'):
+				for name in folders:
+					interfaces[name] = {}
+			return interfaces
+
+		def net_io_counters(pernic=True):
+			data = {}
+			for interface in psutil.net_if_addrs().keys():
+				with cmd("grep '{interface}:' /proc/net/dev | awk '{{recv=$2}}{{send=$10}} END {{print send,recv}}'".format(interface=interface)) as output:
+					for line in output:
+						data[interface] = iostat(interface, *line.strip().decode('UTF-8').split(' ',1))
+			return data
 
 ## FIXME: dependency checks (fdisk, lsblk etc)
 
@@ -287,7 +345,7 @@ if __name__ == '__main__':
 			print('[E] Failed to setup a yubikey password, is it plugged in?')
 			exit(1)
 
-	print(args)
+	print(json.dumps(args, indent=4))
 
 	if not os.path.isfile(args['pwfile']):
 		#PIN = '0000'
