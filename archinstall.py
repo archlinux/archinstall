@@ -224,9 +224,9 @@ def get_instructions(target):
 	try:
 		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
 	except:
-		print('[E] JSON instructions failed to load for {}'.format(target))
+		print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
-		sleep(5)
+		exit(1)
 
 	return instructions
 
@@ -437,6 +437,8 @@ if __name__ == '__main__':
 						del(opts['pass-args'])
 					elif 'format' in opts:
 						del(opts['format'])
+				elif 'debug' in opts and opts['debug']:
+					print('[N] Complete command-string: '.format(command))
 				else:
 					print('[-] Options: {}'.format(opts))
 
@@ -536,6 +538,19 @@ if __name__ == '__main__':
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
 			if 'no-chroot' in opts and opts['no-chroot']:
 				o = run(command, opts)
+			elif 'chroot' in opts and opts['chroot']:
+				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
+				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
+				## **> Prefer if possible to use 'no-chroot' instead which "live boots" the OS and runs the command.
+				o = run("mount /dev/mapper/luksdev /mnt")
+				o = run("cd /mnt; cp /etc/resolv.conf etc")
+				o = run("cd /mnt; mount -t proc /proc proc")
+				o = run("cd /mnt; mount --make-rslave --rbind /sys sys")
+				o = run("cd /mnt; mount --make-rslave --rbind /dev dev")
+				o = run('chroot /mnt /bin/bash -c "{c}"'.format(c=command))
+				o = run("cd /mnt; umount -R dev")
+				o = run("cd /mnt; umount -R sys")
+				o = run("cd /mnt; umount -R proc")
 			else:
 				o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
