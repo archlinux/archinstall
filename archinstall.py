@@ -113,6 +113,10 @@ def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
 	o = run('lsblk -o name -J -b {dev}'.format(dev=dev))
+	if b'not a block device' in o:
+		## TODO: Replace o = run() with code, o = run()
+		##       and make run() return the exit-code, way safer than checking output strings :P
+		return {}
 	r = json.loads(o)
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
@@ -465,7 +469,14 @@ if __name__ == '__main__':
 				command = command.format(**args)
 
 			#print('[N] Command: {} ({})'.format(command, opts))
-			o = run('arch-chroot /mnt {c}'.format(c=command), opts)
+
+			## https://superuser.com/questions/1242978/start-systemd-nspawn-and-execute-commands-inside
+			## !IMPORTANT
+			##
+			## arch-chroot mounts /run into the chroot environment, this breaks name resolves for some reason.
+			## Either skipping mounting /run and using traditional chroot is an option, but using
+			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
+			o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
