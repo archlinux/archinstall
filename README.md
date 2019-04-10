@@ -3,9 +3,22 @@ Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linu
 
 Pre-built ISO's can be found here: https://hvornum.se/archiso/
 
+# Install a basic Arch Linux
+In a live-cd environment, do:
+
+    # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
+    # python3 archinstall.py
+
+> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
+
+This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination.
+
+> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO. Below is examples and a cheat sheet to set up and auto-run this on a ISO.
+
 # Autorun on Arch Live CD (Unattended install)
 
-We'll need to reconfigure the live ISO medium. To do so, we need to add some packages to `packages.x86_64` and add some commands to `customize_airootfs.sh`.
+We'll need to reconfigure the live ISO medium to include Python etc.<br>
+To do so, we need to add some packages to `packages.x86_64` and add some commands to `customize_airootfs.sh`.
 
     # cd ~/archlive
     # echo -e "git\npython\npython-psutil" >> packages.x86_64
@@ -26,9 +39,9 @@ After all those commands are done, you can go ahead and run:
 Whenever this live-cd boots, from here on now - it'll run `archinstall.py` and attempt to unattendely install a default Arch Linux base OS with `base base-devel` as packages.
 Or - if successfull - a MAC-address matches a profile at [/deployments](https://github.com/Torxed/archinstall/tree/master/deployments) for the machine to be installed.
 
-> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (/dev/sda, /dev/nvme0n1 etc).
+> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
 
-## Autorun on Arch Live CD (Unattended profile install)
+## Unattended profile install
 
 Everything in the steps above are the same, except for one line that needs to change to look like this:
 
@@ -36,7 +49,7 @@ Everything in the steps above are the same, except for one line that needs to ch
 
 This will unattendely install the [workstation](https://github.com/Torxed/archinstall/blob/master/deployments/workstation.json) profile.
 
-## Autorun on Arch Live CD (User guided installation (DEFAULT))
+## User guided installation (DEFAULT)
 
 Change the autostart line to match:
 
@@ -47,18 +60,13 @@ When asked, enter `workstation` for instance - to install based on the [workstat
 
 > **CAUTION**: If a MAC-address matches under `/deployments`, that profile will forcefully be installed and have presidence over any other profile information.
 
-## Autorun on Arch Live CD (With custom webserver for deployment profiles)
+## With custom webserver for deployment profiles
 
 Again, one line differs from the other install methods, change the following line:
 
     # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c "~/archinstall/archinstall.py --profiles-path=http://example.com/profiles"' >> ./airootfs/etc/skel/.zprofile
 
 This will cause the script to look at `http://example.com/profiles/<profile>.json` for instructions.
-
-# Manually run it on a booted Live CD
-
-    # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
-    # python3 archinstall.py
 
 # Rerunning a installation
 
