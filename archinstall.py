@@ -114,10 +114,12 @@ def run(cmd, echo=False, opts=None, *args, **kwargs):
 	if not opts: opts = {}
 	if echo or 'debug' in opts:
 		print('[!] {}'.format(cmd))
-	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, **kwargs)
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
+		if b'or press Control-D' in data:
+			handle.stdin.write(b'')
 		if len(data):
 			if echo or 'debug' in opts:
 				print(data.decode('UTF-8'), end='')
@@ -127,6 +129,7 @@ def run(cmd, echo=False, opts=None, *args, **kwargs):
 	if echo or 'debug' in opts:
 		print(data.decode('UTF-8'), end='')
 	output += data
+	handle.stdin.close()
 	handle.stdout.close()
 	return output
 
