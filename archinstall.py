@@ -476,7 +476,7 @@ if __name__ == '__main__':
 			## arch-chroot mounts /run into the chroot environment, this breaks name resolves for some reason.
 			## Either skipping mounting /run and using traditional chroot is an option, but using
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
-			o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts)
+			o = run('systemd-nspawn -D /mnt --machine temporary "{c}"'.format(c=command), opts)
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
