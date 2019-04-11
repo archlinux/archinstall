@@ -205,7 +205,7 @@ def update_git():
 		if os.path.isfile('/root/archinstall/README.md'):
 			os.remove('/root/archinstall/README.md')
 
-		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))') # git reset --hard origin/<branch_name> / git fetch --all
+		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2); git pull)')
 		print(output)
 
 		if b'error:' in output:
@@ -466,8 +466,8 @@ if __name__ == '__main__':
 		exit(1)
 
 	o = sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec()
-	o = sys_command('/usr/bin/file /dev/mapper/luksdev').exec() # /dev/dm-0
-	if b'cannot open' in b''.join(o):
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
+	if b'cannot open' in o:
 		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
