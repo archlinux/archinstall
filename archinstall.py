@@ -172,15 +172,18 @@ class sys_command():
 							print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
 							del(self.opts['triggers'][trigger])
+
+					## Adding a exit trigger:
 					if len(self.opts['triggers']) == 0:
-						alive = False
-						break
+						if b'[root@arcinstall ~]#' in output:
+							alive = False
+							break
 
 				yield output
 
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
-		os.write(child_fd, b'shutdown now')
+		os.write(child_fd, b'shutdown now\n')
 
 		exit_code = os.waitpid(self.pid, 0)[1]
 		if exit_code != 0:
