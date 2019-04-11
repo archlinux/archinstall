@@ -193,11 +193,12 @@ class sys_command():
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
+		print('[N] Updating git!')
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
 
-		output = b''.join(sys_command('(cd /root/archinstall; git fetch --all)').exec()) # git reset --hard origin/<branch_name>
+		output = b''.join(sys_command('(cd /root/archinstall; git update)').exec()) # git reset --hard origin/<branch_name>
 		
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
@@ -209,7 +210,8 @@ def update_git():
 			num_changes = int(tmp[0].split(b' ',1)[0])
 			if(num_changes):
 				## Reboot the script (in same context)
-				os.execv('/usr/bin/python3', ['archinstall.py', 'archinstall.py'] + sys.argv[1:])
+				print('[N] Rebooting the script')
+				os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
@@ -236,6 +238,8 @@ def grab_partitions(dev):
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
 		return {}
+
+	print(o)		
 	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
