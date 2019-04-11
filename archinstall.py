@@ -197,7 +197,7 @@ def update_git():
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
 
-		output = sys_command('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
+		output = sys_command('(cd /root/archinstall; git fetch --all)').exec() # git reset --hard origin/<branch_name>
 		
 		if b'error:' in b''.join(output):
 			print('[N] Could not update git source for some reason.')
@@ -231,7 +231,7 @@ def device_state(name):
 def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	o = sys_command('lsblk -o name -J -b {dev}'.format(dev=dev))
+	o = sys_command('lsblk -o name -J -b {dev}'.format(dev=dev)).exec()
 	if b'not a block device' in b''.join(o):
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
