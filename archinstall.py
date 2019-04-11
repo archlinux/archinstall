@@ -176,19 +176,19 @@ class sys_command():
 
 def simple_command(cmd, opts=None, *args, **kwargs):
 	if not opts: opts = {}
-	if echo or 'debug' in opts:
+	if 'debug' in opts:
 		print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
 		if len(data):
-			if echo or 'debug' in opts:
+			if 'debug' in opts:
 				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	data = handle.stdout.read()
-	if echo or 'debug' in opts:
+	if 'debug' in opts:
 		print(data.decode('UTF-8'), end='')
 	output += data
 	handle.stdin.close()
