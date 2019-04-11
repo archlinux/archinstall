@@ -173,6 +173,7 @@ class sys_command():
 		exit_code = os.waitpid(self.pid, 0)[1]
 		if exit_code != 0:
 			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
+			exit(1)
 
 def simple_command(cmd, opts=None, *args, **kwargs):
 	if not opts: opts = {}
@@ -206,22 +207,22 @@ def update_git():
 			os.remove('/root/archinstall/README.md')
 
 		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2); git pull)')
-		print(output)
 
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
-		tmp = re.findall(b'[0-9]+ file changed', output)
-		print(tmp)
-		if len(tmp):
-			num_changes = int(tmp[0].split(b' ',1)[0])
-			if(num_changes):
-				## Reboot the script (in same context)
-				print('[N] Rebooting the script')
-				os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
-				extit(1)
+		if not b'Already up to date' in output:
+			tmp = re.findall(b'[0-9]+ file changed', output)
+			print(tmp)
+			if len(tmp):
+				num_changes = int(tmp[0].split(b' ',1)[0])
+				if(num_changes):
+					## Reboot the script (in same context)
+					print('[N] Rebooting the script')
+					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
+					extit(1)
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
