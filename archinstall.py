@@ -162,11 +162,13 @@ class sys_command():
 					break
 
 				if 'debug' in self.opts and self.opts['debug']:
-					print(output)
+					if len(output):
+						print(output)
 
 				lower = output.lower()
 				if 'triggers' in self.opts:
 					for trigger in self.opts['triggers']:
+						print(trigger.lower(),'vs', lower)
 						if trigger.lower() in lower:
 							os.write(child_fd, self.opts['triggers'][trigger])
 
@@ -639,7 +641,7 @@ if __name__ == '__main__':
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												b'Archinstall login:' : b'root',
+																												b'Archinstall login' : b'root',
 																												b'Password' : bytes(args['password'], 'UTF-8'),
 																												b'root#' : bytes(command, 'UTF-8'),
 																											}, **opts}).exec())
