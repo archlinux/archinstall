@@ -236,7 +236,7 @@ def grab_partitions(dev):
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
 		return {}
-	r = json.loads(o)
+	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
 			parts[part['name'][len(drive_name):]] = {
