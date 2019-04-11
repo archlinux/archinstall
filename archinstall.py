@@ -168,12 +168,19 @@ class sys_command():
 				lower = output.lower()
 				if 'triggers' in self.opts:
 					for trigger in self.opts['triggers']:
-						print(trigger.lower(),'vs', lower)
 						if trigger.lower() in lower:
 							print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
+							del(self.opts['triggers'][trigger])
+					if len(self.opts['triggers']) == 0:
+						alive = False
+						break
 
 				yield output
+
+		# Since we're in a subsystem, we gotta bail out!
+		# Bail bail bail!
+		os.write(child_fd, b'shutdown now')
 
 		exit_code = os.waitpid(self.pid, 0)[1]
 		if exit_code != 0:
