@@ -205,7 +205,7 @@ def update_git():
 		if os.path.isfile('/root/archinstall/README.md'):
 			os.remove('/root/archinstall/README.md')
 
-		simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))') # git reset --hard origin/<branch_name> / git fetch --all
+		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))') # git reset --hard origin/<branch_name> / git fetch --all
 		print(output)
 
 		if b'error:' in output:
