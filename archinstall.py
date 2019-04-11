@@ -1,13 +1,17 @@
 #!/usr/bin/python3
 import traceback
-import os, re, struct, sys, json
+import os, re, struct, sys, json, pty, shlex
 import urllib.request, urllib.parse, ssl
 from glob import glob
-#from select import epoll, EPOLLIN, EPOLLHUP
+from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 from time import sleep
+
+## == Profiles Path can be set via --profiles-path=/path
+##    This just sets the default path if the parameter is omitted.
+profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
 
 try:
 	import psutil
@@ -72,10 +76,6 @@ except:
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
 
-## == Profiles Path can be set via --profiles-path=/path
-##    This just sets the default path if the parameter is omitted.
-profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
-
 args = {}
 positionals = []
 for arg in sys.argv[1:]:
@@ -110,23 +110,107 @@ def get_local_MACs():
 def gen_yubikey_password():
 	return None #TODO: Implement
 
-def run(cmd, echo=False, opts=None, *args, **kwargs):
+def pid_exists(pid):
+	"""Check whether pid exists in the current process table."""
+	if pid < 0:
+		return False
+	try:
+		os.kill(pid, 0)
+	except (OSError, e):
+		return e.errno == errno.EPERMRM
+	else:
+		return True
+
+class sys_command():
+	def __init__(self, cmd, opts={}):
+		self.cmd = shlex.split(cmd)
+		self.opts = opts
+		self.pid = -1
+	
+	def __enter__(self, *args, **kwargs):
+		## Prep for context management (still block calls)
+		return self.exec()
+
+	def __leave__(self, *args, **kwargs):
+		os.waitpid(self.pid, 0)
+
+	def exec(self):
+		if not self.cmd[0][0] == '/':
+			print('[N] Command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]))
+			o = b''.join(sys_command('/usr/bin/whereis {}'.format(self.cmd[0])).exec())
+			self.cmd[0] = o.split(b' ')[1].decode('UTF-8')
+			print('[N] This is what I\'m going with: {}'.format(self.cmd[0]))
+		# PID = 0 for child, and the PID of the child for the parent    
+		self.pid, child_fd = pty.fork()
+
+		if not self.pid: # Child process
+			# Replace child process with our main process
+			os.execv(self.cmd[0], self.cmd)
+
+		poller = epoll()
+		poller.register(child_fd, EPOLLIN | EPOLLHUP)
+
+		alive = True
+		trace_log = b''
+		while alive:
+			for fileno, event in poller.poll(0.1):
+				try:
+					output = os.read(child_fd, 8192).strip()
+					trace_log += output
+				except OSError:
+					alive = False
+					break
+
+				if 'debug' in self.opts and self.opts['debug']:
+					if len(output):
+						print(output)
+
+				lower = output.lower()
+				if 'triggers' in self.opts:
+					for trigger in list(self.opts['triggers']):
+						if trigger.lower() in lower:
+							if 'debug' in self.opts and self.opts['debug']:
+								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
+							os.write(child_fd, self.opts['triggers'][trigger])
+							del(self.opts['triggers'][trigger])
+
+					## Adding a exit trigger:
+					if len(self.opts['triggers']) == 0:
+						if 'debug' in self.opts and self.opts['debug']:
+							print('[N] Waiting for last command to finish...')
+						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in output.lower():
+							if 'debug' in self.opts and self.opts['debug']:
+								print('[N] Last command finished, exiting subsystem.')
+							alive = False
+							break
+
+				yield output
+
+		# Since we're in a subsystem, we gotta bail out!
+		# Bail bail bail!
+		os.write(child_fd, b'shutdown now\n')
+
+		exit_code = os.waitpid(self.pid, 0)[1]
+		if exit_code != 0:
+			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
+			print(trace_log)
+			exit(1)
+
+def simple_command(cmd, opts=None, *args, **kwargs):
 	if not opts: opts = {}
-	if echo or 'debug' in opts:
+	if 'debug' in opts:
 		print('[!] {}'.format(cmd))
 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
-		if b'or press Control-D' in data:
-			handle.stdin.write(b'')
 		if len(data):
-			if echo or 'debug' in opts:
+			if 'debug' in opts:
 				print(data.decode('UTF-8'), end='')
 		#	print(data.decode('UTF-8'), end='')
 			output += data
 	data = handle.stdout.read()
-	if echo or 'debug' in opts:
+	if 'debug' in opts:
 		print(data.decode('UTF-8'), end='')
 	output += data
 	handle.stdin.close()
@@ -136,22 +220,30 @@ def run(cmd, echo=False, opts=None, *args, **kwargs):
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
+		print('[N] Checking for updates...')
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
-		#os.remove('/root/archinstall/archinstall.py')
-		#os.remove('/root/archinstall/README.md')
-		output = run('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
-		
+		if os.path.isfile('/root/archinstall/archinstall.py'):
+			os.remove('/root/archinstall/archinstall.py')
+		if os.path.isfile('/root/archinstall/README.md'):
+			os.remove('/root/archinstall/README.md')
+
+		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2); git pull)')
+
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
-		tmp = re.findall(b'[0-9]+ file changed', output)
-		if len(tmp):
-			num_changes = int(tmp[0].split(b' ',1)[0])
-			if(num_changes):
-				## Reboot the script (in same context)
-				os.execv('/usr/bin/python3', ['archinstall.py', 'archinstall.py'] + sys.argv[1:])
+		if not b'Already up to date' in output:
+			tmp = re.findall(b'[0-9]+ file changed', output)
+			print(tmp)
+			if len(tmp):
+				num_changes = int(tmp[0].split(b' ',1)[0])
+				if(num_changes):
+					## Reboot the script (in same context)
+					print('[N] Rebooting the script')
+					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
+					extit(1)
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
@@ -173,12 +265,17 @@ def device_state(name):
 def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	o = run('lsblk -o name -J -b {dev}'.format(dev=dev))
+	o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
 	if b'not a block device' in o:
-		## TODO: Replace o = run() with code, o = run()
-		##       and make run() return the exit-code, way safer than checking output strings :P
+		## TODO: Replace o = sys_command() with code, o = sys_command()
+		##       and make sys_command() return the exit-code, way safer than checking output strings :P
 		return {}
-	r = json.loads(o)
+
+	if not o[:1] == b'{':
+		print('[E] Error in getting blk devices:', o)
+		exit(1)
+
+	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
 			parts[part['name'][len(drive_name):]] = {
@@ -262,7 +359,7 @@ if __name__ == '__main__':
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
-	if not 'hostname' in args: args['hostname'] = 'Arcinstall'
+	if not 'hostname' in args: args['hostname'] = 'Archinstall'
 	if not 'country' in args: args['country'] = 'SE' # 'all' if we don't want country specific mirrors.
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
@@ -366,21 +463,21 @@ if __name__ == '__main__':
 	print('[N] Setting up {drive}.'.format(**args))
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = run('parted -s {drive} mklabel gpt'.format(**args))
-	o = run('parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args))
-	o = run('parted -s {drive} name 1 "EFI"'.format(**args))
-	o = run('parted -s {drive} set 1 esp on'.format(**args))
-	o = run('parted -s {drive} set 1 boot on'.format(**args))
-	o = run('parted -s {drive} mkpart primary {start} {size}'.format(**args))
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} mklabel gpt'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} name 1 "EFI"'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
 	
 	args['paritions'] = grab_partitions(args['drive'])
 	if len(args['paritions']) <= 0:
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
 	for index, part_name in enumerate(args['paritions']):
-		args['partition_{}'.format(index+1)] = part_name
+ 		args['partition_{}'.format(index+1)] = part_name
 
-	o = run('mkfs.vfat -F32 {drive}{partition_1}'.format(**args))
+	o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 		print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
 		exit(1)
@@ -388,32 +485,32 @@ if __name__ == '__main__':
 	# "--cipher sha512" breaks the shit.
 	# TODO: --use-random instead of --use-urandom
 	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-	o = run('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args))
-	if not 'Command successful.' in o.decode('UTF-8').strip():
+	o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec())
+	if not b'Command successful.' in o:
 		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
-	o = run('cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args))
-	o = run('file /dev/mapper/luksdev') # /dev/dm-0
+	o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
 	if b'cannot open' in o:
 		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
 	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-	o = run('mkfs.btrfs /dev/mapper/luksdev')
+	o = b''.join(sys_command('/usr/bin/mkfs.btrfs /dev/mapper/luksdev').exec())
 	if not b'UUID' in o:
 		print('[E] Could not setup btrfs filesystem.', o)
 		exit(1)
-	o = run('mount /dev/mapper/luksdev /mnt')
+	o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
 
 	os.makedirs('/mnt/boot')
-	o = run('mount {drive}{partition_1} /mnt/boot'.format(**args))
+	o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
 
 	print('[N] Reordering mirrors.')
 	if 'mirrors' in args and args['mirrors'] and get_default_gateway_linux():
-		o = run("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
-		o = run("sed -i 's/#Server/Server/' /root/mirrorlist")
-		o = run('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
+		o = b''.join(sys_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args)).exec())
+		o = b''.join(sys_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist").exec())
+		o = b''.join(sys_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist').exec())
 
 	pre_conf = {}
 	if 'pre' in instructions:
@@ -446,33 +543,33 @@ if __name__ == '__main__':
 					print('[-] Options: {}'.format(opts))
 
 			#print('[N] Command: {} ({})'.format(raw_command, opts))
-			o = run('{c}'.format(c=command), opts)
-			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
-				print('[W] Prerequisit step failed: {}'.format(o.decode('UTF-8')))
+			o = b''.join(sys_command('{c}'.format(c=command), opts).exec())
+			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in b''.join(o):
+				print('[W] Prerequisit step failed: {}'.format(b''.join(o).decode('UTF-8')))
 			#print(o)
 
 	print('[N] Straping in packages.')
-	o = run('pacman -Syy')
-	o = run('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args))
+	o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
+	o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
 	if not os.path.isdir('/mnt/etc'):
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
-	o = run('genfstab -pU /mnt >> /mnt/etc/fstab')
+	o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab').exec())
 	with open('/mnt/etc/fstab', 'a') as fstab:
 		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-	o = run('arch-chroot /mnt rm /etc/localtime')
-	o = run('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime')
-	o = run('arch-chroot /mnt hwclock --hctosys --localtime')
-	#o = run('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
-	#o = run("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
-	o = run("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args))
-	o = run("arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"")
-	o = run("arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"")
-	o = run('arch-chroot /mnt locale-gen')
-	o = run('arch-chroot /mnt chmod 700 /root')
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec())
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec())
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
+	#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
+	#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec())
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec())
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec())
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen').exec())
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root').exec())
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -480,8 +577,8 @@ if __name__ == '__main__':
 		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 		mkinit.write('FILES=()\n')
 		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-	o = run('arch-chroot /mnt mkinitcpio -p linux')
-	o = run('arch-chroot /mnt bootctl --path=/boot install')
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec())
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --path=/boot install').exec())
 
 	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 		loader.write('default arch\n')
@@ -489,8 +586,8 @@ if __name__ == '__main__':
 
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
-	#UUID = run('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-	UUID = run("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
+	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
+	UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
@@ -532,39 +629,62 @@ if __name__ == '__main__':
 			## Either skipping mounting /run and using traditional chroot is an option, but using
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
 			if 'no-chroot' in opts and opts['no-chroot']:
-				o = run(command, opts)
+				o = simple_command(command, opts)
 			elif 'chroot' in opts and opts['chroot']:
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
 				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
 				## **> Prefer if possible to use 'no-chroot' instead which "live boots" the OS and runs the command.
-				o = run("mount /dev/mapper/luksdev /mnt")
-				o = run("cd /mnt; cp /etc/resolv.conf etc")
-				o = run("cd /mnt; mount -t proc /proc proc")
-				o = run("cd /mnt; mount --make-rslave --rbind /sys sys")
-				o = run("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = run('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
-				o = run("cd /mnt; umount -R dev")
-				o = run("cd /mnt; umount -R sys")
-				o = run("cd /mnt; umount -R proc")
+				o = simple_command("mount /dev/mapper/luksdev /mnt")
+				o = simple_command("cd /mnt; cp /etc/resolv.conf etc")
+				o = simple_command("cd /mnt; mount -t proc /proc proc")
+				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
+				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
+				o = simple_command("cd /mnt; umount -R dev")
+				o = simple_command("cd /mnt; umount -R sys")
+				o = simple_command("cd /mnt; umount -R proc")
 			else:
 				if 'boot' in opts and opts['boot']:
-					o = run('systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts)
+					## So, if we're going to boot this maddafakker up, we'll need to
+					## be able to login. The quickest way is to just add automatic login.. so lessgo!
+					
+					## Turns out.. that didn't work exactly as planned..
+					## 
+					# if not os.path.isdir('/mnt/etc/systemd/system/console-getty.service.d/'):
+					# 	os.makedirs('/mnt/etc/systemd/system/console-getty.service.d/')
+					# with open('/mnt/etc/systemd/system/console-getty.service.d/override.conf', 'w') as fh:
+					# 	fh.write('[Service]\n')
+					# 	fh.write('ExecStart=\n')
+					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
+
+					## So we'll add a bunch of triggers instead and let the sys_command manually react to them.
+					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
+					## since we set the password as the last step. And then the command itself which will be executed by looking for:
+					##    [root@<hostname> ~]#
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
+																												bytes(f'{args["hostname"]} login', 'UTF-8') : b'root\n',
+																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
+																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
+																											}, **opts}).exec())
+
+					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
+					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
-					o = run('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts)
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec())
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
 
 	## == Passwords
-	# o = run('arch-chroot /mnt usermod --password {} root'.format(args['password']))
-	# o = run("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = run("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
+	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
+	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 	if 'user' in args:
-		o = run('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = run("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
+		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	if args['post'] == 'reboot':
-		o = run('umount -R /mnt')
-		o = run('reboot now')
+		o = simple_command('/usr/bin/umount -R /mnt')
+		o = simple_command('/usr/bin/reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
