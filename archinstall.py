@@ -170,7 +170,7 @@ class sys_command():
 					for trigger in self.opts['triggers']:
 						print(trigger.lower(),'vs', lower)
 						if trigger.lower() in lower:
-							print('[N] Writing to subsystem: {}'.format(trigger))
+							print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
 
 				yield output
@@ -644,7 +644,7 @@ if __name__ == '__main__':
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
 																												b'Arcinstall login' : b'root\n',
 																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
-																												b'[root@Archinstall ~]#' : bytes(command+'\n', 'UTF-8'),
+																												b'[root@Arcinstall ~]#' : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
