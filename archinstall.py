@@ -170,31 +170,30 @@ class sys_command():
 
 				yield output
 
-		x = os.waitpid(self.pid, 0)
-		print('Exited with:', x)
+		exit_code = os.waitpid(self.pid, 0)[1]
+		if exit_code != 0:
+			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
 
-# def sys_command(cmd, echo=False, opts=None, *args, **kwargs):
-# 	if not opts: opts = {}
-# 	if echo or 'debug' in opts:
-# 		print('[!] {}'.format(cmd))
-# 	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
-# 	output = b''
-# 	while handle.poll() is None:
-# 		data = handle.stdout.read()
-# 		if b'or press Control-D' in data:
-# 			handle.stdin.write(b'')
-# 		if len(data):
-# 			if echo or 'debug' in opts:
-# 				print(data.decode('UTF-8'), end='')
-# 		#	print(data.decode('UTF-8'), end='')
-# 			output += data
-# 	data = handle.stdout.read()
-# 	if echo or 'debug' in opts:
-# 		print(data.decode('UTF-8'), end='')
-# 	output += data
-# 	handle.stdin.close()
-# 	handle.stdout.close()
-# 	return output
+def simple_command(cmd, opts=None, *args, **kwargs):
+	if not opts: opts = {}
+	if echo or 'debug' in opts:
+		print('[!] {}'.format(cmd))
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
+	output = b''
+	while handle.poll() is None:
+		data = handle.stdout.read()
+		if len(data):
+			if echo or 'debug' in opts:
+				print(data.decode('UTF-8'), end='')
+		#	print(data.decode('UTF-8'), end='')
+			output += data
+	data = handle.stdout.read()
+	if echo or 'debug' in opts:
+		print(data.decode('UTF-8'), end='')
+	output += data
+	handle.stdin.close()
+	handle.stdout.close()
+	return output
 
 def update_git():
 	default_gw = get_default_gateway_linux()
@@ -204,7 +203,7 @@ def update_git():
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
 
-		output = b''.join(sys_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))').exec()) # git reset --hard origin/<branch_name> / git fetch --all
+		simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))') # git reset --hard origin/<branch_name> / git fetch --all
 		print(output)
 
 		if b'error:' in output:
