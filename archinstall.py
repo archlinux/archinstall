@@ -231,8 +231,8 @@ def device_state(name):
 def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	o = sys_command('lsblk -o name -J -b {dev}'.format(dev=dev)).exec()
-	if b'not a block device' in b''.join(o):
+	o = b''.join(sys_command('lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
+	if b'not a block device' in o:
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
 		return {}
