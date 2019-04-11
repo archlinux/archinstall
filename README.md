@@ -13,7 +13,7 @@ In a live-cd environment, do:
 
 This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
 
-> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet to set up and auto-run this on a ISO.
+> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
 
 # Autorun on Arch Live CD (Unattended install)
 
