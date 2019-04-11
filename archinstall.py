@@ -151,10 +151,12 @@ class sys_command():
 		poller.register(child_fd, EPOLLIN | EPOLLHUP)
 
 		alive = True
+		trace_log = b''
 		while alive:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 1024).strip()
+					trace_log += output
 				except OSError:
 					alive = False
 					break
@@ -173,6 +175,7 @@ class sys_command():
 		exit_code = os.waitpid(self.pid, 0)[1]
 		if exit_code != 0:
 			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
+			print(trace_log)
 			exit(1)
 
 def simple_command(cmd, opts=None, *args, **kwargs):
@@ -566,7 +569,7 @@ if __name__ == '__main__':
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
 	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
-	UUID = b''.join(sys_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).exec()).decode('UTF-8').strip()
+	UUID = b''.join(sys_command("/usr/bin/ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).exec()).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
@@ -624,7 +627,21 @@ if __name__ == '__main__':
 				o = b''.join(sys_command("cd /mnt; /usr/bin/umount -R proc").exec())
 			else:
 				if 'boot' in opts and opts['boot']:
+					## So, if we're going to boot this maddafakker up, we'll need to
+					## be able to login. The quickest way is to just add automatic login.. so lessgo!
+					
+					if not os.path.isdir('/mnt/etc/systemd/system/console-getty.service.d/'):
+						os.makedirs('/mnt/etc/systemd/system/console-getty.service.d/')
+					with open('/mnt/etc/systemd/system/console-getty.service.d/override.conf', 'w') as fh:
+						fh.write('[Service]\n')
+						fh.write('ExecStart=\n')
+						fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
+
+					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts).exec())
+
+					## And cleanup after out selves.. Don't want to leave any residue..
+					os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec())
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
