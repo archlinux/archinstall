@@ -200,8 +200,10 @@ def update_git():
 	if(default_gw):
 		print('[N] Updating git!')
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
-		os.remove('/root/archinstall/archinstall.py')
-		os.remove('/root/archinstall/README.md')
+		if os.path.isfile('/root/archinstall/archinstall.py'):
+			os.remove('/root/archinstall/archinstall.py')
+		if os.path.isfile('/root/archinstall/README.md'):
+			os.remove('/root/archinstall/README.md')
 
 		simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))') # git reset --hard origin/<branch_name> / git fetch --all
 		print(output)
