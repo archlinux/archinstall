@@ -155,7 +155,7 @@ class sys_command():
 		while alive:
 			for fileno, event in poller.poll(0.1):
 				try:
-					output = os.read(child_fd, 1024).strip()
+					output = os.read(child_fd, 8192).strip()
 					trace_log += output
 				except OSError:
 					alive = False
@@ -638,7 +638,7 @@ if __name__ == '__main__':
 						fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
 					## And then boot and execute:
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts).exec())
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {b'Graphical Interface' : command}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
 					os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
