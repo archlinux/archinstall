@@ -178,7 +178,7 @@ class sys_command():
 					if len(self.opts['triggers']) == 0:
 						if 'debug' in self.opts and self.opts['debug']:
 							print('[N] Waiting for last command to finish...')
-						if b'[root@Archinstall ~]#' in output:
+						if bytes(f'[root@args["hostname"] ~]#'.lower(), 'UTF-8') in output.lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
@@ -657,9 +657,9 @@ if __name__ == '__main__':
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												b'Archinstall login' : b'root\n',
+																												bytes(f'{args["hostname"]} login', 'UTF-8') : b'root\n',
 																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
-																												b'[root@Archinstall ~]#' : bytes(command+'\n', 'UTF-8'),
+																												bytes(f'[root@args["hostname"] ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
