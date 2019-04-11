@@ -194,12 +194,12 @@ def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
-		#os.remove('/root/archinstall/archinstall.py')
-		#os.remove('/root/archinstall/README.md')
+		os.remove('/root/archinstall/archinstall.py')
+		os.remove('/root/archinstall/README.md')
 
 		output = sys_command('(cd /root/archinstall; git fetch --all)') # git reset --hard origin/<branch_name>
 		
-		if b'error:' in output:
+		if b'error:' in b''.join(output):
 			print('[N] Could not update git source for some reason.')
 			return
 
@@ -447,19 +447,19 @@ if __name__ == '__main__':
 	# TODO: --use-random instead of --use-urandom
 	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
 	o = sys_command('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec()
-	if not 'Command successful.' in o.decode('UTF-8').strip():
+	if not 'Command successful.' in b''.join(o).decode('UTF-8').strip():
 		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
 	o = sys_command('cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec()
 	o = sys_command('file /dev/mapper/luksdev').exec() # /dev/dm-0
-	if b'cannot open' in o:
+	if b'cannot open' in b''.join(o):
 		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
 	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
 	o = sys_command('mkfs.btrfs /dev/mapper/luksdev').exec()
-	if not b'UUID' in o:
+	if not b'UUID' in b''.join(o):
 		print('[E] Could not setup btrfs filesystem.', o)
 		exit(1)
 	o = sys_command('mount /dev/mapper/luksdev /mnt').exec()
