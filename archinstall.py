@@ -167,7 +167,7 @@ class sys_command():
 
 				lower = output.lower()
 				if 'triggers' in self.opts:
-					for trigger in self.opts['triggers']:
+					for trigger in list(self.opts['triggers']):
 						if trigger.lower() in lower:
 							print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
