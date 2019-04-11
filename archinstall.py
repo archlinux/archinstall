@@ -642,7 +642,7 @@ if __name__ == '__main__':
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												b'Archinstall login' : b'root\n',
+																												b'Arcinstall login' : b'root\n',
 																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
 																												b'root#' : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
