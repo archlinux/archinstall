@@ -165,7 +165,8 @@ class sys_command():
 
 				yield output
 
-		os.waitpid(self.pid, 0)
+		x = os.waitpid(self.pid, 0)
+		print('Exited with:', x)
 
 # def sys_command(cmd, echo=False, opts=None, *args, **kwargs):
 # 	if not opts: opts = {}
@@ -198,7 +199,7 @@ def update_git():
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
 
-		output = b''.join(sys_command('(cd /root/archinstall; git update)').exec()) # git reset --hard origin/<branch_name>
+		output = b''.join(sys_command('(cd /root/archinstall; git update)').exec()) # git reset --hard origin/<branch_name> / git fetch --all
 		
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
@@ -206,6 +207,7 @@ def update_git():
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
 		tmp = re.findall(b'[0-9]+ file changed', output)
+		print(tmp)
 		if len(tmp):
 			num_changes = int(tmp[0].split(b' ',1)[0])
 			if(num_changes):
