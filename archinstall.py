@@ -137,7 +137,7 @@ class sys_command():
 	def exec(self):
 		if not self.cmd[0][0] == '/':
 			print('[N] Command is not executed with absolute path, trying to find it..')
-			o = b''.join(sys_command('/usr/bin/whereis {}'.format(self.cmd[0])))
+			o = b''.join(sys_command('/usr/bin/whereis {}'.format(self.cmd[0])).exec())
 			self.cmd[0] = o.split(b' ', 1)[0].decode('UTF-8')
 			print('[N] This is what I\'m going with: {}'.format(self.cmd[0]))
 		# PID = 0 for child, and the PID of the child for the parent    
@@ -204,7 +204,7 @@ def update_git():
 		os.remove('/root/archinstall/archinstall.py')
 		os.remove('/root/archinstall/README.md')
 
-		output = b''.join(sys_command('(cd /root/archinstall; git update)').exec()) # git reset --hard origin/<branch_name> / git fetch --all
+		output = b''.join(sys_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2))').exec()) # git reset --hard origin/<branch_name> / git fetch --all
 		print(output)
 
 		if b'error:' in output:
@@ -220,6 +220,7 @@ def update_git():
 				## Reboot the script (in same context)
 				print('[N] Rebooting the script')
 				os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
+				extit(1)
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
