@@ -205,7 +205,8 @@ def update_git():
 		os.remove('/root/archinstall/README.md')
 
 		output = b''.join(sys_command('(cd /root/archinstall; git update)').exec()) # git reset --hard origin/<branch_name> / git fetch --all
-		
+		print(output)
+
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
 			return
