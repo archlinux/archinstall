@@ -135,6 +135,11 @@ class sys_command():
 		os.waitpid(self.pid, 0)
 
 	def exec(self):
+		if not self.cmd[0][0] == '/':
+			print('[N] Command is not executed with absolute path, trying to find it..')
+			o = b''.join(sys_command('/usr/bin/whereis {}'.format(self.cmd[0])))
+			self.cmd[0] = o.split(b' ', 1)[0].decode('UTF-8')
+			print('[N] This is what I\'m going with: {}'.format(self.cmd[0]))
 		# PID = 0 for child, and the PID of the child for the parent    
 		self.pid, child_fd = pty.fork()
 
@@ -235,7 +240,7 @@ def device_state(name):
 def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	o = b''.join(sys_command('lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
+	o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
 	if b'not a block device' in o:
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
@@ -430,12 +435,12 @@ if __name__ == '__main__':
 	print('[N] Setting up {drive}.'.format(**args))
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = sys_command('parted -s {drive} mklabel gpt'.format(**args)).exec()
-	o = sys_command('parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec()
-	o = sys_command('parted -s {drive} name 1 "EFI"'.format(**args)).exec()
-	o = sys_command('parted -s {drive} set 1 esp on'.format(**args)).exec()
-	o = sys_command('parted -s {drive} set 1 boot on'.format(**args)).exec()
-	o = sys_command('parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} mklabel gpt'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} name 1 "EFI"'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec()
+	o = sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec()
 	
 	args['paritions'] = grab_partitions(args['drive'])
 	if len(args['paritions']) <= 0:
@@ -444,7 +449,7 @@ if __name__ == '__main__':
 	for index, part_name in enumerate(args['paritions']):
 		args['partition_{}'.format(index+1)] = part_name
 
-	o = b''.join(sys_command('mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 		print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
 		exit(1)
@@ -452,32 +457,32 @@ if __name__ == '__main__':
 	# "--cipher sha512" breaks the shit.
 	# TODO: --use-random instead of --use-urandom
 	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-	o = sys_command('cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec()
+	o = sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec()
 	if not 'Command successful.' in b''.join(o).decode('UTF-8').strip():
 		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
-	o = sys_command('cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec()
-	o = sys_command('file /dev/mapper/luksdev').exec() # /dev/dm-0
+	o = sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec()
+	o = sys_command('/usr/bin/file /dev/mapper/luksdev').exec() # /dev/dm-0
 	if b'cannot open' in b''.join(o):
 		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
 	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-	o = sys_command('mkfs.btrfs /dev/mapper/luksdev').exec()
+	o = sys_command('/usr/bin/mkfs.btrfs /dev/mapper/luksdev').exec()
 	if not b'UUID' in b''.join(o):
 		print('[E] Could not setup btrfs filesystem.', o)
 		exit(1)
-	o = sys_command('mount /dev/mapper/luksdev /mnt').exec()
+	o = sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec()
 
 	os.makedirs('/mnt/boot')
-	o = sys_command('mount {drive}{partition_1} /mnt/boot'.format(**args)).exec()
+	o = sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec()
 
 	print('[N] Reordering mirrors.')
 	if 'mirrors' in args and args['mirrors'] and get_default_gateway_linux():
-		o = sys_command("wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args)).exec()
-		o = sys_command("sed -i 's/#Server/Server/' /root/mirrorlist").exec()
-		o = sys_command('rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist').exec()
+		o = sys_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args)).exec()
+		o = sys_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist").exec()
+		o = sys_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist').exec()
 
 	pre_conf = {}
 	if 'pre' in instructions:
@@ -516,27 +521,27 @@ if __name__ == '__main__':
 			#print(o)
 
 	print('[N] Straping in packages.')
-	o = sys_command('pacman -Syy').exec()
-	o = sys_command('pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec()
+	o = sys_command('/usr/bin/pacman -Syy').exec()
+	o = sys_command('/usr/bin/pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec()
 
 	if not os.path.isdir('/mnt/etc'):
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
-	o = sys_command('genfstab -pU /mnt >> /mnt/etc/fstab').exec()
+	o = sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab').exec()
 	with open('/mnt/etc/fstab', 'a') as fstab:
 		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-	o = sys_command('arch-chroot /mnt rm /etc/localtime').exec()
-	o = sys_command('arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec()
-	o = sys_command('arch-chroot /mnt hwclock --hctosys --localtime').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec()
 	#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
 	#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
-	o = sys_command("arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec()
-	o = sys_command("arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec()
-	o = sys_command("arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec()
-	o = sys_command('arch-chroot /mnt locale-gen').exec()
-	o = sys_command('arch-chroot /mnt chmod 700 /root').exec()
+	o = sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec()
+	o = sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec()
+	o = sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt locale-gen').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root').exec()
 
 	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 		## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -544,8 +549,8 @@ if __name__ == '__main__':
 		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 		mkinit.write('FILES=()\n')
 		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-	o = sys_command('arch-chroot /mnt mkinitcpio -p linux').exec()
-	o = sys_command('arch-chroot /mnt bootctl --path=/boot install').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec()
+	o = sys_command('/usr/bin/arch-chroot /mnt bootctl --path=/boot install').exec()
 
 	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 		loader.write('default arch\n')
@@ -601,20 +606,20 @@ if __name__ == '__main__':
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
 				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
 				## **> Prefer if possible to use 'no-chroot' instead which "live boots" the OS and runs the command.
-				o = sys_command("mount /dev/mapper/luksdev /mnt").exec()
+				o = sys_command("/usr/bin/mount /dev/mapper/luksdev /mnt").exec()
 				o = sys_command("cd /mnt; cp /etc/resolv.conf etc").exec()
-				o = sys_command("cd /mnt; mount -t proc /proc proc").exec()
-				o = sys_command("cd /mnt; mount --make-rslave --rbind /sys sys").exec()
-				o = sys_command("cd /mnt; mount --make-rslave --rbind /dev dev").exec()
-				o = sys_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts).exec()
-				o = sys_command("cd /mnt; umount -R dev").exec()
-				o = sys_command("cd /mnt; umount -R sys").exec()
-				o = sys_command("cd /mnt; umount -R proc").exec()
+				o = sys_command("cd /mnt; /usr/bin/mount -t proc /proc proc").exec()
+				o = sys_command("cd /mnt; /usr/bin/mount --make-rslave --rbind /sys sys").exec()
+				o = sys_command("cd /mnt; /usr/bin/mount --make-rslave --rbind /dev dev").exec()
+				o = sys_command('/usr/bin/chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts).exec()
+				o = sys_command("cd /mnt; /usr/bin/umount -R dev").exec()
+				o = sys_command("cd /mnt; /usr/bin/umount -R sys").exec()
+				o = sys_command("cd /mnt; /usr/bin/umount -R proc").exec()
 			else:
 				if 'boot' in opts and opts['boot']:
-					o = sys_command('systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts).exec()
+					o = sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary {c}'.format(c=command), opts=opts).exec()
 				else:
-					o = sys_command('systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec()
+					o = sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec()
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
@@ -622,13 +627,13 @@ if __name__ == '__main__':
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = sys_command("arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec()
+	o = sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec()
 	if 'user' in args:
-		o = sys_command('arch-chroot /mnt useradd -m -G wheel {user}'.format(**args)).exec()
-		o = sys_command("arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec()
+		o = sys_command('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args)).exec()
+		o = sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec()
 
 	if args['post'] == 'reboot':
-		o = sys_command('umount -R /mnt').exec()
-		o = sys_command('reboot now').exec()
+		o = sys_command('/usr/bin/umount -R /mnt').exec()
+		o = sys_command('/usr/bin/reboot now').exec()
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
