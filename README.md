@@ -17,7 +17,8 @@ This will install a basic Arch Linux, without interaction, on the first drive it
 
 # Autorun on Arch Live CD (Unattended install)
 
-We'll need to reconfigure the live ISO medium to include Python etc.<br>
+This guides you on how to create a ISO that has Python and can run the arch installed in **unattended mode.**<br>
+We'll need to reconfigure the **releng** profile after it's been copied, to include Python etc.<br>
 To do so, we need to add some packages to `packages.x86_64` and add some commands to `customize_airootfs.sh`.
 
     # cd ~/archlive
