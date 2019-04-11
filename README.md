@@ -7,7 +7,7 @@ Pre-built ISO's can be found here: https://hvornum.se/archiso/
 In a live-cd environment, do:
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
-    # python3 archinstall.py
+    # python3 archinstall.py --default
 
 > **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
 
