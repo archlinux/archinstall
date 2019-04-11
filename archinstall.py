@@ -638,7 +638,11 @@ if __name__ == '__main__':
 					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
 					## And then boot and execute:
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {b'Graphical Interface' : bytes(command, 'UTF-8')}, **opts}).exec())
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
+																												b'Archinstall login:' : b'root',
+																												b'Password' : bytes(args['password'], 'UTF-8'),
+																												b'root#' : bytes(command, 'UTF-8'),
+																											}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
