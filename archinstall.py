@@ -642,9 +642,9 @@ if __name__ == '__main__':
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												b'Archinstall login' : b'root',
-																												b'Password' : bytes(args['password'], 'UTF-8'),
-																												b'root#' : bytes(command, 'UTF-8'),
+																												b'Archinstall login' : b'root\n',
+																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
+																												b'root#' : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
