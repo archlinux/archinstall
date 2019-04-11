@@ -169,13 +169,18 @@ class sys_command():
 				if 'triggers' in self.opts:
 					for trigger in list(self.opts['triggers']):
 						if trigger.lower() in lower:
-							print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
+							if 'debug' in self.opts and self.opts['debug']:
+								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
 							del(self.opts['triggers'][trigger])
 
 					## Adding a exit trigger:
 					if len(self.opts['triggers']) == 0:
+						if 'debug' in self.opts and self.opts['debug']:
+							print('[N] Waiting for last command to finish...')
 						if b'[root@arcinstall ~]#' in output:
+							if 'debug' in self.opts and self.opts['debug']:
+								print('[N] Last command finished, exiting subsystem.')
 							alive = False
 							break
 
