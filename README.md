@@ -9,11 +9,11 @@ In a live-cd environment, do:
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
     # python3 archinstall.py --default
 
-> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
+> **CAUTION**: If no **other** parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
 
-This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination.
+This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
 
-> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO. Below is examples and a cheat sheet to set up and auto-run this on a ISO.
+> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet to set up and auto-run this on a ISO.
 
 # Autorun on Arch Live CD (Unattended install)
 
