@@ -9,6 +9,10 @@ from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 from time import sleep
 
+## == Profiles Path can be set via --profiles-path=/path
+##    This just sets the default path if the parameter is omitted.
+profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
+
 try:
 	import psutil
 except:
@@ -71,10 +75,6 @@ except:
 
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
-
-## == Profiles Path can be set via --profiles-path=/path
-##    This just sets the default path if the parameter is omitted.
-profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
 
 args = {}
 positionals = []
@@ -202,7 +202,7 @@ def simple_command(cmd, opts=None, *args, **kwargs):
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
-		print('[N] Updating git!')
+		print('[N] Checking for updates...')
 		## Not the most elegant way to make sure git conflicts doesn't occur (yea fml)
 		if os.path.isfile('/root/archinstall/archinstall.py'):
 			os.remove('/root/archinstall/archinstall.py')
@@ -569,7 +569,7 @@ if __name__ == '__main__':
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
 	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
-	UUID = b''.join(sys_command("/usr/bin/ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).exec()).decode('UTF-8').strip()
+	UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
