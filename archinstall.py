@@ -249,7 +249,10 @@ def grab_partitions(dev):
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
 		return {}
 
-	print(o)		
+	if not o[:1] == b'{':
+		print('[E] Error in getting blk devices:', o)
+		exit(1)
+
 	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
@@ -460,8 +463,9 @@ if __name__ == '__main__':
 	# "--cipher sha512" breaks the shit.
 	# TODO: --use-random instead of --use-urandom
 	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-	o = sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec()
-	if not 'Command successful.' in b''.join(o).decode('UTF-8').strip():
+	o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec())
+	print(o)
+	if not b'Command successful.' in o:
 		print('[E] Failed to setup disk encryption.', o)
 		exit(1)
 
