@@ -168,7 +168,6 @@ class sys_command():
 				lower = output.lower()
 				if 'triggers' in self.opts:
 					for trigger in list(self.opts['triggers']):
-						print(trigger.lower(), 'vs', lower)
 						if trigger.lower() in lower:
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
@@ -635,20 +634,22 @@ if __name__ == '__main__':
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
 				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
 				## **> Prefer if possible to use 'no-chroot' instead which "live boots" the OS and runs the command.
-				o = b''.join(sys_command("/usr/bin/mount /dev/mapper/luksdev /mnt").exec())
-				o = b''.join(sys_command("cd /mnt; cp /etc/resolv.conf etc").exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/mount -t proc /proc proc").exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/mount --make-rslave --rbind /sys sys").exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/mount --make-rslave --rbind /dev dev").exec())
-				o = b''.join(sys_command('/usr/bin/chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts).exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/umount -R dev").exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/umount -R sys").exec())
-				o = b''.join(sys_command("cd /mnt; /usr/bin/umount -R proc").exec())
+				o = simple_command("mount /dev/mapper/luksdev /mnt")
+				o = simple_command("cd /mnt; cp /etc/resolv.conf etc")
+				o = simple_command("cd /mnt; mount -t proc /proc proc")
+				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
+				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
+				o = simple_command("cd /mnt; umount -R dev")
+				o = simple_command("cd /mnt; umount -R sys")
+				o = simple_command("cd /mnt; umount -R proc")
 			else:
 				if 'boot' in opts and opts['boot']:
 					## So, if we're going to boot this maddafakker up, we'll need to
 					## be able to login. The quickest way is to just add automatic login.. so lessgo!
 					
+					## Turns out.. that didn't work exactly as planned..
+					## 
 					# if not os.path.isdir('/mnt/etc/systemd/system/console-getty.service.d/'):
 					# 	os.makedirs('/mnt/etc/systemd/system/console-getty.service.d/')
 					# with open('/mnt/etc/systemd/system/console-getty.service.d/override.conf', 'w') as fh:
@@ -656,14 +657,17 @@ if __name__ == '__main__':
 					# 	fh.write('ExecStart=\n')
 					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
-					## And then boot and execute:
+					## So we'll add a bunch of triggers instead and let the sys_command manually react to them.
+					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
+					## since we set the password as the last step. And then the command itself which will be executed by looking for:
+					##    [root@<hostname> ~]#
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
 																												bytes(f'{args["hostname"]} login', 'UTF-8') : b'root\n',
 																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
 																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
-					## And cleanup after out selves.. Don't want to leave any residue..
+					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec())
@@ -674,13 +678,13 @@ if __name__ == '__main__':
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec())
+	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 	if 'user' in args:
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args)).exec())
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password'])).exec())
+		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
+		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	if args['post'] == 'reboot':
-		o = b''.join(sys_command('/usr/bin/umount -R /mnt').exec())
-		o = b''.join(sys_command('/usr/bin/reboot now').exec())
+		o = simple_command('/usr/bin/umount -R /mnt')
+		o = simple_command('/usr/bin/reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
