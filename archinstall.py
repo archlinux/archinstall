@@ -630,18 +630,18 @@ if __name__ == '__main__':
 					## So, if we're going to boot this maddafakker up, we'll need to
 					## be able to login. The quickest way is to just add automatic login.. so lessgo!
 					
-					if not os.path.isdir('/mnt/etc/systemd/system/console-getty.service.d/'):
-						os.makedirs('/mnt/etc/systemd/system/console-getty.service.d/')
-					with open('/mnt/etc/systemd/system/console-getty.service.d/override.conf', 'w') as fh:
-						fh.write('[Service]\n')
-						fh.write('ExecStart=\n')
-						fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
+					# if not os.path.isdir('/mnt/etc/systemd/system/console-getty.service.d/'):
+					# 	os.makedirs('/mnt/etc/systemd/system/console-getty.service.d/')
+					# with open('/mnt/etc/systemd/system/console-getty.service.d/override.conf', 'w') as fh:
+					# 	fh.write('[Service]\n')
+					# 	fh.write('ExecStart=\n')
+					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {b'Graphical Interface' : bytes(command, 'UTF-8')}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
-					os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
+					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec())
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
