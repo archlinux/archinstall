@@ -629,7 +629,7 @@ if __name__ == '__main__':
 			## Either skipping mounting /run and using traditional chroot is an option, but using
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
 			if 'no-chroot' in opts and opts['no-chroot']:
-				o = b''.join(sys_command(command, opts).exec())
+				o = simple_command(command, opts)
 			elif 'chroot' in opts and opts['chroot']:
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
 				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
