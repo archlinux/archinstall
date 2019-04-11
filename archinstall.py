@@ -178,7 +178,7 @@ class sys_command():
 					if len(self.opts['triggers']) == 0:
 						if 'debug' in self.opts and self.opts['debug']:
 							print('[N] Waiting for last command to finish...')
-						if b'[root@arcinstall ~]#' in output:
+						if b'[root@Archinstall ~]#' in output:
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
@@ -359,7 +359,7 @@ if __name__ == '__main__':
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
-	if not 'hostname' in args: args['hostname'] = 'Arcinstall'
+	if not 'hostname' in args: args['hostname'] = 'Archinstall'
 	if not 'country' in args: args['country'] = 'SE' # 'all' if we don't want country specific mirrors.
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
@@ -657,9 +657,9 @@ if __name__ == '__main__':
 
 					## And then boot and execute:
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												b'Arcinstall login' : b'root\n',
+																												b'Archinstall login' : b'root\n',
 																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
-																												b'[root@Arcinstall ~]#' : bytes(command+'\n', 'UTF-8'),
+																												b'[root@Archinstall ~]#' : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
 					## And cleanup after out selves.. Don't want to leave any residue..
