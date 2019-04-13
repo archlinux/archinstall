@@ -15,6 +15,16 @@ This will install a basic Arch Linux, without interaction, on the first drive it
 
 > NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
 
+# Features
+
+ * Unattended install of Arch Linux
+ * User guided install of Arch Linux (Like most other distros have)
+ * YubiKey support for disk and root password (next release)
+ * Profile / Template based installs
+ * Supports offline-installation of Arch Linux
+ * Full disk encryption, locale/region settings and customizable application selection
+ * Never creates post-install/service scripts (usually used to finalize databases etc)
+
 # Autorun on Arch Live CD (Unattended install)
 
 This guides you on how to create a ISO that has Python and can run the arch installed in **unattended mode.**<br>
