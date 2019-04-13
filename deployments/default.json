@@ -1,0 +1,6 @@
+{
+    "args" : {
+        "password" : "<STDIN>",
+        "post" : "reboot"
+    }
+}
