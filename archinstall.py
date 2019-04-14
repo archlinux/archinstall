@@ -224,9 +224,20 @@ def get_drive_from_uuid(uuid):
 	for drive in harddrives:
 		#for partition in psutil.disk_partitions('/dev/{}'.format(name)):
 		#	pass #blkid -s PARTUUID -o value /dev/sda2
-		o = simple_command('blkid -s PTUUID -o value /dev/sda')
-		if len(o):
+		o = simple_command(f'blkid -s PTUUID -o value /dev/{drive}')
+		if len(o) and o == uuid:
 			return drive
+
+	return None
+
+def get_drive_from_part_uuid(partuuid):
+	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
+
+	for drive in harddrives:
+		for partition in grab_partitions(f'/dev/{drive}'):
+			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}')
+			if len(o) and o == partuuid:
+				return drive
 
 	return None
 
@@ -401,7 +412,16 @@ if __name__ == '__main__':
 
 	if args['drive'][0] != '/':
 		## Remap the selected UUID to the device to be formatted.
-		args['drive'] = get_drive_from_uuid(args['drive'])
+		drive = get_drive_from_uuid(args['drive'])
+		if not drive:
+			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
+
+			drive = get_drive_from_part_uuid(args['drive'])
+			if not drive:
+				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
+				exit(1)
+
+		args['drive'] = drive
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
