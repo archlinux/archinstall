@@ -312,6 +312,24 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
+def get_application_instructions(target):
+	instructions = {}
+	try:
+		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target))
+	except urllib.error.HTTPError:
+		print('[N] No instructions found for: {}'.format(target))
+		return instructions
+	
+	print('[N] Found application instructions for: {}'.format(target))
+	try:
+		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+	except:
+		print('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
+		traceback.print_exc()
+		exit(1)
+
+	return instructions
+
 def get_instructions(target):
 	instructions = {}
 	try:
@@ -602,6 +620,9 @@ if __name__ == '__main__':
 
 	for title in conf:
 		print('[N] Network Deploy: {}'.format(title))
+		if type(conf[title]) == str:
+			print('[N] Loading {} configuration'.format(conf[title]))
+			conf[title] = get_application_instructions(conf[title])
 		for command in conf[title]:
 			raw_command = command
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
