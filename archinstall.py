@@ -218,6 +218,18 @@ def simple_command(cmd, opts=None, *args, **kwargs):
 	handle.stdout.close()
 	return output
 
+def get_drive_from_uuid(uuid):
+	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
+
+	for drive in harddrives:
+		#for partition in psutil.disk_partitions('/dev/{}'.format(name)):
+		#	pass #blkid -s PARTUUID -o value /dev/sda2
+		o = simple_command('blkid -s PTUUID -o value /dev/sda')
+		if len(o):
+			return drive
+
+	return None
+
 def update_git():
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
@@ -386,6 +398,10 @@ if __name__ == '__main__':
 	if not 'default' in args: args['default'] = False
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
+
+	if args['drive'][0] != '/':
+		## Remap the selected UUID to the device to be formatted.
+		args['drive'] = get_drive_from_uuid(args['drive'])
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
