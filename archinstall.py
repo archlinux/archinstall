@@ -186,6 +186,7 @@ class sys_command():
 
 				yield output
 
+		print('Debug...')
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
 		os.write(child_fd, b'shutdown now\n')
