@@ -186,16 +186,12 @@ class sys_command():
 
 				yield output
 
-		print('Debug...')
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
 		os.write(child_fd, b'shutdown now\n')
 
-		print('Shutdown initatied')
-
 		exit_code = os.waitpid(self.pid, 0)[1]
 
-		print('Exit code:', exit_code)
 		if exit_code != 0:
 			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
 			print(trace_log)
@@ -641,7 +637,7 @@ if __name__ == '__main__':
 						del(opts['pass-args'])
 					elif 'format' in opts:
 						del(opts['format'])
-				else:
+				elif ('debug' in opts and opts['debug']) or ('debug' in conf and conf['debug']):
 					print('[-] Options: {}'.format(opts))
 			if 'pass-args' in opts and opts['pass-args']:
 				command = command.format(**args)

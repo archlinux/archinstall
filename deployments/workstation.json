@@ -16,21 +16,10 @@
         "Setup virtulization" : {
             "sh -c \"Description=\\\"Bridge for virtual machines\\\"\nInterface=br0\nConnection=bridge\nBindsToInterfaces=(eno1)\nIP=no\nExecUpPost=\\\"ip link set dev br0 address $(cat /sys/class/net/eno1/address); IP=dhcp; ip_set\\\"\nExecDownPre=\\\"IP=dhcp\\\"\n\n## Ignore (R)STP and immediately activate the bridge\nSkipForwardingDelay=yes\"" : null
         },
-        "Setup desktop environment" : {
-            "sed -i 's/^twm &/#&/' /etc/X11/xinit/xinitrc" : null,
-            "sed -i 's/^xclock/#&/' /etc/X11/xinit/xinitrc" : null,
-            "sed -i 's/^xterm/#&/' /etc/X11/xinit/xinitrc" : null,
-            "sed -i 's/^exec xterm/#&/' /etc/X11/xinit/xinitrc" : null,
+        "Setup loclization" : {
             "sh -c \"echo 'setxkbmap se' >> /etc/X11/xinit/xinitrc\"" : null,
-            "sh -c \"echo 'xscreensaver -no-splash &' >> /etc/X11/xinit/xinitrc\"" : null,
-            "sh -c \"echo 'exec {_window_manager}' >> /etc/X11/xinit/xinitrc\"" : {"pass-args" : true},
-            "sh -c \"echo 'KEYMAP={_keyboard_layout}\nFONT=lat9w-16' >> /etc/vconsole.conf\"" : {"pass-args" : true},
-            "sh -c \"sed -i 's/{ \\\"open terminal\\\", terminal/{ \\\"Chromium\\\", \\\"chromium\\\" },\n     &1/' /etc/xdg/awesome/rc.lua\"" : null,
-            "sh -c \"sed -i 's/{ \\\"open terminal\\\", terminal/{ \\\"File handler\\\", \\\"nemo\\\" },\n     &1/' /etc/xdg/awesome/rc.lua\"" : null,
-            "sh -c \"sed -i 's/^globalkeys = gears.table.join(/&\n    awful.key({ modkey,    }, \\\"l\\\",  function() awful.spawn(\\\"xscreensaver-command -lock &\\\") end),\n/' /etc/xdg/awesome/rc.lua\"" : null,
-            "sh -c \"awk -i inplace -v RS='' '{gsub(/awful.key\\({ modkey,.*?}, \\\"Tab\\\",.*?\\\"client\\\"}\\),/, \\\"awful.key({ modkey,      }, \\\"Tab\\\",\n      function ()\n        awful.client.focus.byidx(-1)\n        if client.focus then\n          client.focus:raise()\n        end\n      end),\n    awful.key({ modkey, \\\"Shift\\\"    }, \\\"Tab\\\",\n    function ()\n      awful.client.focus.byidx(1)\n        if client.focus then\n           client.focus.raise()\n        end\n      end),\\\"); print}' /etc/xdg/awesome/rc.lua\"" : null,
-            "gsettings set org.nemo.desktop show-desktop-icons false" : null,
-            "xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search" : null
-        }
+            "sh -c \"echo 'KEYMAP={_keyboard_layout}\nFONT=lat9w-16' >> /etc/vconsole.conf\"" : {"pass-args" : true}
+        },
+        "Configure desktop environment" : "awesome"
     }
 }
