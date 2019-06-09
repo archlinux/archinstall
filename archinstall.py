@@ -526,7 +526,7 @@ if __name__ == '__main__':
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
 	
 	args['paritions'] = grab_partitions(args['drive'])
-	print(f'Partitions: (Boot: {list(args['paritions'].keys())[0]})')
+	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
 	print(json.dumps(args['paritions'], indent=4))
 
 	if len(args['paritions']) <= 0:
