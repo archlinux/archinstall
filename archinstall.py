@@ -564,7 +564,7 @@ if __name__ == '__main__':
 		exit(1)
 
 	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-	o = b''.join(sys_command('/usr/bin/mkfs.btrfs /dev/mapper/luksdev').exec())
+	o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev').exec())
 	if not b'UUID' in o:
 		print('[E] Could not setup btrfs filesystem.', o)
 		exit(1)
