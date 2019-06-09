@@ -290,7 +290,8 @@ def device_state(name):
 def grab_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
+	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
+	o = b''.join(sys_command('/usr/bin/lsblk -J {dev}'.format(dev=dev)).exec())
 	if b'not a block device' in o:
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
@@ -303,10 +304,11 @@ def grab_partitions(dev):
 	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
-			size = os.statvfs(dev + part['name'][len(drive_name):])
+			#size = os.statvfs(dev + part['name'][len(drive_name):])
 			parts[part['name'][len(drive_name):]] = {
-				'size' : size.f_frsize * size.f_bavail,
-				'blocksize' : size.f_frsize * size.f_blocks
+				#'size' : size.f_frsize * size.f_bavail,
+				#'blocksize' : size.f_frsize * size.f_blocks
+				'size' : part['size']
 			}
 
 	return parts
