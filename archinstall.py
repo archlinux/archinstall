@@ -529,6 +529,9 @@ if __name__ == '__main__':
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec())
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec())
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
+	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
+	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
+	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
 	
 	args['paritions'] = grab_partitions(args['drive'])
 	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
