@@ -303,7 +303,7 @@ def grab_partitions(dev):
 
 	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
-		for part in sorted(r['blockdevices'][0]['children']):
+		for part in r['blockdevices'][0]['children']:
 			#size = os.statvfs(dev + part['name'][len(drive_name):])
 			parts[part['name'][len(drive_name):]] = {
 				#'size' : size.f_frsize * size.f_bavail,
@@ -537,7 +537,7 @@ if __name__ == '__main__':
 	if len(args['paritions']) <= 0:
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
-	for index, part_name in enumerate(args['paritions']): # TODO: sorted() here instead? Just to be safe? o0
+	for index, part_name in enumerate(sorted(args['paritions'].keys())):
  		args['partition_{}'.format(index+1)] = part_name
 
 	o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
