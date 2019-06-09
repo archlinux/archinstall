@@ -302,8 +302,9 @@ def grab_partitions(dev):
 	r = json.loads(o.decode('UTF-8'))
 	if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
 		for part in r['blockdevices'][0]['children']:
+			size = os.statvfs(dev + part['name'][len(drive_name):])
 			parts[part['name'][len(drive_name):]] = {
-				# TODO: Grab partition info and store here?
+				'size' : size.f_frsize * size.f_bavail
 			}
 
 	return parts
