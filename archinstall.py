@@ -191,6 +191,7 @@ class sys_command():
 		os.write(child_fd, b'shutdown now\n')
 
 		exit_code = os.waitpid(self.pid, 0)[1]
+
 		if exit_code != 0:
 			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
 			print(trace_log)
@@ -216,6 +217,29 @@ def simple_command(cmd, opts=None, *args, **kwargs):
 	handle.stdin.close()
 	handle.stdout.close()
 	return output
+
+def get_drive_from_uuid(uuid):
+	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
+
+	for drive in harddrives:
+		#for partition in psutil.disk_partitions('/dev/{}'.format(name)):
+		#	pass #blkid -s PARTUUID -o value /dev/sda2
+		o = simple_command(f'blkid -s PTUUID -o value /dev/{drive}')
+		if len(o) and o == uuid:
+			return drive
+
+	return None
+
+def get_drive_from_part_uuid(partuuid):
+	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
+
+	for drive in harddrives:
+		for partition in grab_partitions(f'/dev/{drive}'):
+			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}')
+			if len(o) and o == partuuid:
+				return drive
+
+	return None
 
 def update_git():
 	default_gw = get_default_gateway_linux()
@@ -312,6 +336,24 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
+def get_application_instructions(target):
+	instructions = {}
+	try:
+		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target))
+	except urllib.error.HTTPError:
+		print('[N] No instructions found for: {}'.format(target))
+		return instructions
+	
+	print('[N] Found application instructions for: {}'.format(target))
+	try:
+		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+	except:
+		print('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
+		traceback.print_exc()
+		exit(1)
+
+	return instructions
+
 def get_instructions(target):
 	instructions = {}
 	try:
@@ -355,7 +397,7 @@ if __name__ == '__main__':
 		exit(1)
 
 	## Setup some defaults (in case no command-line parameters or netdeploy-params were given)
-	if not 'drive' in args: args['drive'] = list(harddrives.keys())[0] # First drive found
+	if not 'drive' in args: args['drive'] = sorted(list(harddrives.keys()))[0] # First drive found
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
@@ -367,6 +409,19 @@ if __name__ == '__main__':
 	if not 'default' in args: args['default'] = False
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
+
+	if args['drive'][0] != '/':
+		## Remap the selected UUID to the device to be formatted.
+		drive = get_drive_from_uuid(args['drive'])
+		if not drive:
+			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
+
+			drive = get_drive_from_part_uuid(args['drive'])
+			if not drive:
+				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
+				exit(1)
+
+		args['drive'] = drive
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
@@ -471,6 +526,9 @@ if __name__ == '__main__':
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
 	
 	args['paritions'] = grab_partitions(args['drive'])
+	print(f'Partitions: (Boot: {list(args['paritions'].keys())[0]})')
+	print(json.dumps(args['paritions'], indent=4))
+
 	if len(args['paritions']) <= 0:
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
@@ -602,6 +660,9 @@ if __name__ == '__main__':
 
 	for title in conf:
 		print('[N] Network Deploy: {}'.format(title))
+		if type(conf[title]) == str:
+			print('[N] Loading {} configuration'.format(conf[title]))
+			conf[title] = get_application_instructions(conf[title])
 		for command in conf[title]:
 			raw_command = command
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
@@ -615,7 +676,7 @@ if __name__ == '__main__':
 						del(opts['pass-args'])
 					elif 'format' in opts:
 						del(opts['format'])
-				else:
+				elif ('debug' in opts and opts['debug']) or ('debug' in conf and conf['debug']):
 					print('[-] Options: {}'.format(opts))
 			if 'pass-args' in opts and opts['pass-args']:
 				command = command.format(**args)

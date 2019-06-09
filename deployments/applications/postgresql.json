@@ -1,0 +1,5 @@
+{
+	"pacman -Syy --noconfirm postgresql" : null,
+	"systemctl enable postgresql" : null,
+	"su - postgres -c \"initdb -D /var/lib/postgres/data\"" : null
+}
