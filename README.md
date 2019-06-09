@@ -7,17 +7,28 @@ Pre-built ISO's can be found here: https://hvornum.se/archiso/
 In a live-cd environment, do:
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
-    # python3 archinstall.py
+    # python3 archinstall.py --default
 
-> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
+> **CAUTION**: If no **other** parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
 
-This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination.
+This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
 
-> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO. Below is examples and a cheat sheet to set up and auto-run this on a ISO.
+> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
+
+# Features
+
+ * Unattended install of Arch Linux
+ * User guided install of Arch Linux (Like most other distros have)
+ * YubiKey support for disk and root password (next release)
+ * Profile / Template based installs
+ * Supports offline-installation of Arch Linux
+ * Full disk encryption, locale/region settings and customizable application selection
+ * Never creates post-install/service scripts (usually used to finalize databases etc)
 
 # Autorun on Arch Live CD (Unattended install)
 
-We'll need to reconfigure the live ISO medium to include Python etc.<br>
+This guides you on how to create a ISO that has Python and can run the arch installed in **unattended mode.**<br>
+We'll need to reconfigure the **releng** profile after it's been copied, to include Python etc.<br>
 To do so, we need to add some packages to `packages.x86_64` and add some commands to `customize_airootfs.sh`.
 
     # cd ~/archlive
