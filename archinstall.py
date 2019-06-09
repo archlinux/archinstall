@@ -193,8 +193,9 @@ class sys_command():
 		exit_code = os.waitpid(self.pid, 0)[1]
 
 		if exit_code != 0:
-			print('[E] Command "{}" exited with status code:'.format(self.cmd[0]), exit_code)
+			print('[E] Command "{}" on line ~150 exited with status code:'.format(self.cmd[0]), exit_code)
 			print(trace_log)
+			print('[?] Command executed: {}'.format(self.cmd))
 			exit(1)
 
 def simple_command(cmd, opts=None, *args, **kwargs):
@@ -304,7 +305,8 @@ def grab_partitions(dev):
 		for part in r['blockdevices'][0]['children']:
 			size = os.statvfs(dev + part['name'][len(drive_name):])
 			parts[part['name'][len(drive_name):]] = {
-				'size' : size.f_frsize * size.f_bavail
+				'size' : size.f_frsize * size.f_bavail,
+				'blocksize' : size.f_frsize * size.f_blocks
 			}
 
 	return parts
