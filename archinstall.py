@@ -397,7 +397,7 @@ if __name__ == '__main__':
 		exit(1)
 
 	## Setup some defaults (in case no command-line parameters or netdeploy-params were given)
-	if not 'drive' in args: args['drive'] = list(harddrives.keys())[0] # First drive found
+	if not 'drive' in args: args['drive'] = sorted(list(harddrives.keys()))[0] # First drive found
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
@@ -526,6 +526,9 @@ if __name__ == '__main__':
 	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
 	
 	args['paritions'] = grab_partitions(args['drive'])
+	print(f'Partitions: (Boot: {list(args['paritions'].keys())[0]})')
+	print(json.dumps(args['paritions'], indent=4))
+
 	if len(args['paritions']) <= 0:
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
@@ -720,8 +723,8 @@ if __name__ == '__main__':
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												bytes(f'login:', 'UTF-8') : b'root\n', # {args["hostname"]} login:
-																												#b'Password' : bytes(args['password']+'\n', 'UTF-8'),
+																												bytes(f'{args["hostname"]} login', 'UTF-8') : b'root\n',
+																												b'Password' : bytes(args['password']+'\n', 'UTF-8'),
 																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
