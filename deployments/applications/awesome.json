@@ -5,6 +5,7 @@
     "sed -i 's/^exec xterm/#&/' /etc/X11/xinit/xinitrc" : null,
     "sh -c \"echo 'xscreensaver -no-splash &' >> /etc/X11/xinit/xinitrc\"" : null,
     "sh -c \"echo 'exec {_window_manager}' >> /etc/X11/xinit/xinitrc\"" : {"pass-args" : true},
+    "sed -i 's/xterm/xterm -ls -xrm \\'XTerm*selectToClipboard: true\\'/' /mnt/etc/xdg/awesome/rc.lua" : {"no-chroot" : true},
     "sed -i 's/{ \"open terminal\", terminal/{ \"Chromium\", \"chromium\" },\n     &/' /mnt/etc/xdg/awesome/rc.lua" : {"no-chroot" : true},
     "sed -i 's/{ \"open terminal\", terminal/{ \"File handler\", \"nemo\" },\n     &/' /mnt/etc/xdg/awesome/rc.lua" : {"no-chroot" : true},
     "sed -i 's/^globalkeys = gears.table.join(/&\n    awful.key({ modkey,    }, \"l\",  function() awful.spawn(\"xscreensaver-command -lock &\") end),\n/' /mnt/etc/xdg/awesome/rc.lua" : {"no-chroot" : true},
