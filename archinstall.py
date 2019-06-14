@@ -132,7 +132,11 @@ class sys_command():
 		return self.exec()
 
 	def __leave__(self, *args, **kwargs):
+		if 'debug' in self.opts and self.opts['debug']:
+			print('[N] Leaving subsystem routine.')
 		os.waitpid(self.pid, 0)
+		if 'debug' in self.opts and self.opts['debug']:
+			print('[N] (Bye bye!)')
 
 	def exec(self):
 		if not self.cmd[0][0] == '/':
@@ -183,13 +187,16 @@ class sys_command():
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
 							break
-
 				yield output
 
+		if 'debug' in self.opts and self.opts['debug']:
+			print('[N] Exited subsystem, instructing it to shutdown.')
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
 		os.write(child_fd, b'shutdown now\n')
 
+		if 'debug' in self.opts and self.opts['debug']:
+			print('[N] Waiting for exit code.')
 		exit_code = os.waitpid(self.pid, 0)[1]
 
 		if exit_code != 0:
@@ -197,6 +204,9 @@ class sys_command():
 			print(trace_log)
 			print('[?] Command executed: {}'.format(self.cmd))
 			exit(1)
+
+		if 'debug' in self.opts and self.opts['debug']:
+			print('[N] Subsystem routine complete.')
 
 def simple_command(cmd, opts=None, *args, **kwargs):
 	if not opts: opts = {}
