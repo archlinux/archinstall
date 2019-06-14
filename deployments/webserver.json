@@ -1,0 +1,41 @@
+{
+    "args" : {
+        "password" : "0000",
+        "post" : "stay"
+    },
+    "post" : {
+        "Setup webserver build env": {
+            "pacman -Syy --noconfirm git wget" : null,
+            "useradd -m -G wheel builder" : null,
+            "sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /etc/sudoers" : null
+        },
+        "install lighttpd2-git and PHP": {
+            "git clone https://aur.archlinux.org/lighttpd2-git.git /home/builder/lighttpd2" : null,
+            "chown -R builder.builder /home/builder/lighttpd2" : null,
+            "su - builder -c \"(cd /home/builder/lighttpd2/; /usr/bin/makepkg -s --noconfirm)\"" : null,
+            "sh -c 'pacman -U --noconfirm /home/builder/lighttpd2/*.xz'" : null,
+            "pacman -Syy --noconfirm spawn-fcgi php-cgi php" : null
+        },
+        "Remove webserver build env": {
+            "rm -rf /home/builder/lighttpd2" : null,
+            "sed -i 's/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' /etc/sudoers" : null
+        },
+        "Configure lighttpd2": {
+            "wget https://raw.githubusercontent.com/Torxed/Scripts/master/bash/spawn_php -O /etc/lighttpd2/spawn_php" : null,
+            "wget https://raw.githubusercontent.com/Torxed/Scripts/master/systemd/php.service -O /etc/systemd/system/php.service" : null,
+            "chmod +x /etc/lighttpd2/spawn_php" : null,
+            "touch /etc/lighttpd2/vhost.conf" : null,
+            "sed -i 's/static/#static/' /mnt/etc/lighttpd2/lighttpd.conf" : {"no-chroot" : true, "debug" : true},
+            "sed -i 's/\"mod_dirlist\"/\"mod_dirlist\",\\n\\t\\t\"mod_fastcgi\",\\n\\t\\t\"mod_vhost\"/' /mnt/etc/lighttpd2/lighttpd.conf" : {"no-chroot" : true, "debug" : true},
+            "echo 'include \"/etc/lighttpd2/php.conf\";' >> //mnt/etc/lighttpd2/lighttpd.conf": {"no-chroot" : true},
+            "echo 'include \"/etc/lighttpd2/vhost.conf\";' >> //mnt/etc/lighttpd2/lighttpd.conf": {"no-chroot" : true},
+            "echo 'if phys.path =$ \".php\" { fastcgi \"unix:/tmp/php.sock\"; }' >> /mnt/etc/lighttpd2/php.conf": {"no-chroot" : true},
+            "echo '<?php print(\"Welcome!\"); ?>' >> /mnt/srv/http/index.php": {"no-chroot" : true}
+        },
+        "Setup webserver autostarts": {
+            "systemctl enable dhcpcd" : null,
+            "systemctl enable lighttpd2" : null,
+            "systemctl enable php" : null
+        }
+    }
+}
