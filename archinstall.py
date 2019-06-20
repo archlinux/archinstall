@@ -193,7 +193,7 @@ class sys_command():
 					if len(self.opts['triggers']) == 0:
 						if 'debug' in self.opts and self.opts['debug']:
 							print('[N] Waiting for last command to finish...')
-						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in trace_log[-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
+						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in trace_log[0-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
@@ -226,21 +226,23 @@ class sys_command():
 
 		# We need to flush the output of shutdown now, otherwise the 
 		# Popen() handle will hang and we'll never exit out of os.waitpid() later on.
-		last = time()
-		while time()-last < 5:
+		alive = True
+		while alive:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192).strip()
 					trace_log += output
 				except OSError:
-					last = time() - 60
+					alive = False
 					break
 
 				if 'debug' in self.opts and self.opts['debug']:
 					if len(output):
 						print(output)
 
-				last = time()
+				if b'Container temporary has been shutdown.' in trace_log[0-len('Container temporary has been shutdown.')-5:]:
+					alive = False
+					break
 
 		if 'debug' in self.opts and self.opts['debug']:
 			print('[N] Waiting for exit code.')
