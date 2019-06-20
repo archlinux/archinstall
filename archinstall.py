@@ -572,7 +572,9 @@ if __name__ == '__main__':
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
 
-	o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
+	if b'cannot open' in o:
+		o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
 	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
 	if b'cannot open' in o:
 		print('[E] Could not mount encrypted device.', o)
@@ -739,7 +741,7 @@ if __name__ == '__main__':
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
 				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
 				o = simple_command("cd /mnt; umount -R dev")
-				o = simple_command("cd /mnt; umount -R sys")
+				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
 			else:
 				if 'boot' in opts and opts['boot']:
