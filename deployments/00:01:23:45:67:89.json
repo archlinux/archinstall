@@ -5,14 +5,15 @@
         "packages" : "openssh sudo openvpn easy-rsa",
         "post" : "stay",
         "country" : "SE",
-        "mirrors" : true
+        "mirrors" : true,
+        "rerun" : "install database"
     },
     "post" : {
         "install database": "postgresql",
         "Configure database": {
-            "su - postgres -c \"psql -c \\\"CREATE DATABASE pdns;\\\"\"" : {"boot" : true, "debug" : true},
-            "su - postgres -c \"psql -c \\\"CREATE USER pdns WITH ENCRYPTED PASSWORD 'testpass';\\\"\"" : {"boot" : true, "debug" : true},
-            "su - postgres -c \"psql -c \\\"GRANT ALL PRIVILEGES ON DATABASE pdns TO pdns;\\\"\"" : {"boot" : true, "debug" : true}
+            "su - postgres -c 'psql -c \"CREATE DATABASE pdns;\"'" : {"boot" : true, "debug" : true},
+            "su - postgres -c 'psql -c \"CREATE USER pdns WITH ENCRYPTED PASSWORD 'testpass';\"'" : {"boot" : true, "debug" : true},
+            "su - postgres -c 'psql -c \"GRANT ALL PRIVILEGES ON DATABASE pdns TO pdns;\"'" : {"boot" : true, "debug" : true}
         },
         "Configure OpenVPN" : {
             "mkdir -p /etc/openvpn/server/vpn_ccd" : null,
