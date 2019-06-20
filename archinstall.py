@@ -592,7 +592,9 @@ if __name__ == '__main__':
 		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
 
 	os.makedirs('/mnt/boot', exist_ok=True)
-	o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
+	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot') # /dev/dm-0
+	if len(o) <= 0:
+		o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
