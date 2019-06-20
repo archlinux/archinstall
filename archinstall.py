@@ -425,7 +425,8 @@ if __name__ == '__main__':
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
-	rerun = False
+	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
+	rerun = args['ignore-rerun']
 
 	if args['drive'][0] != '/':
 		## Remap the selected UUID to the device to be formatted.
@@ -533,7 +534,7 @@ if __name__ == '__main__':
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 
-	if not args['rerun']:
+	if not args['rerun'] or args['ignore-rerun']:
 		print('[N] Setting up {drive}.'.format(**args))
 		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
@@ -558,7 +559,7 @@ if __name__ == '__main__':
 		print(f'Partition info: {part_name}')
 		print(json.dumps(args['paritions'][part_name], indent=4))
 
-	if not args['rerun']:
+	if not args['rerun'] or args['ignore-rerun']:
 		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
 		if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 			print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
@@ -580,7 +581,7 @@ if __name__ == '__main__':
 		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
-	if not args['rerun']:
+	if not args['rerun'] or args['ignore-rerun']:
 		print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
 		o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev').exec())
 		if not b'UUID' in o:
