@@ -3,7 +3,7 @@
         "password" : "0000",
         "db_pass" : "<RND_STR>",
         "include" : "webserver",
-        "packages" : "openssh sudo openvpn easy-rsa",
+        "packages" : "openssh sudo openvpn easy-rsa powerdns",
         "post" : "stay",
         "country" : "SE",
         "mirrors" : true,
@@ -26,7 +26,7 @@
         },
         "Configure OpenVPN" : {
             "mkdir -p /etc/openvpn/server/vpn_ccd" : null,
-            "echo 'port 112' >> /mnt/etc/openvpn/server/vpn.hvornum.se.conf": {"no-chroot" : true, "debug" : true},
+            "echo 'port 112' >> /mnt/etc/openvpn/server/vpn.hvornum.se.conf": {"no-chroot" : true},
             "echo 'proto udp' >> /mnt/etc/openvpn/server/vpn.hvornum.se.conf": {"no-chroot" : true},
             "echo 'dev tap' >> /mnt/etc/openvpn/server/vpn.hvornum.se.conf": {"no-chroot" : true},
             "echo 'ca ca.crt' >> /mnt/etc/openvpn/server/vpn.hvornum.se.conf": {"no-chroot" : true},
