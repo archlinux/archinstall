@@ -577,7 +577,7 @@ if __name__ == '__main__':
 		o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
 	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
 	if b'cannot open' in o:
-		print('[E] Could not mount encrypted device.', o)
+		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
 	if not args['rerun']:
@@ -586,7 +586,10 @@ if __name__ == '__main__':
 		if not b'UUID' in o:
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
-	o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
+
+	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt').exec() # /dev/dm-0
+	if len(o) <= 0:
+		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
 
 	os.makedirs('/mnt/boot')
 	o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
