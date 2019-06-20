@@ -156,6 +156,7 @@ class sys_command():
 
 		alive = True
 		trace_log = b''
+		last_trigger_pos = 0
 		while alive:
 			for fileno, event in poller.poll(0.1):
 				try:
@@ -170,20 +171,27 @@ class sys_command():
 						print(output)
 
 				lower = output.lower()
+				broke = False
 				if 'triggers' in self.opts:
 					for trigger in list(self.opts['triggers']):
-						if trigger.lower() in trace_log.lower():
+						if trigger.lower() in trace_log[last_trigger_pos:].lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger].decode('UTF-8')))
+
+							last_trigger_pos = len(trace_log)
 							os.write(child_fd, self.opts['triggers'][trigger])
 							del(self.opts['triggers'][trigger])
+							broke = True
 							break
+
+					if broke:
+						continue
 
 					## Adding a exit trigger:
 					if len(self.opts['triggers']) == 0:
 						if 'debug' in self.opts and self.opts['debug']:
 							print('[N] Waiting for last command to finish...')
-						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in output[-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
+						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in trace_log[-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
