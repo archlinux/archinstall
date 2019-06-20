@@ -172,7 +172,7 @@ class sys_command():
 				lower = output.lower()
 				if 'triggers' in self.opts:
 					for trigger in list(self.opts['triggers']):
-						if trigger.lower() in lower:
+						if trigger.lower() in trace_log.lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger]))
 							os.write(child_fd, self.opts['triggers'][trigger])
