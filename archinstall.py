@@ -279,7 +279,7 @@ def update_git():
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
 				print('[N] Rebooting the script')
-				os.execv('/usr/bin/python3', ['archinstall.py', '--rebooted'] + sys.argv)
+				os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted',])
 				extit(1)
 
 def device_state(name):
