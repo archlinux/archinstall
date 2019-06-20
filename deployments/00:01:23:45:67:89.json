@@ -1,6 +1,7 @@
 {
     "args" : {
         "password" : "0000",
+        "db_pass" : "<RND_STR>",
         "include" : "webserver",
         "packages" : "openssh sudo openvpn easy-rsa",
         "post" : "stay",
@@ -11,9 +12,17 @@
     "post" : {
         "install database": "postgresql",
         "Configure database": {
-            "su - postgres -c 'psql -c \"CREATE DATABASE pdns;\"'" : {"boot" : true, "debug" : true},
-            "su - postgres -c 'psql -c \"CREATE USER pdns WITH ENCRYPTED PASSWORD 'testpass';\"'" : {"boot" : true, "debug" : true},
-            "su - postgres -c 'psql -c \"GRANT ALL PRIVILEGES ON DATABASE pdns TO pdns;\"'" : {"boot" : true, "debug" : true}
+            "su - postgres -c 'psql -c \"CREATE DATABASE pdns;\"'" : {"boot" : true},
+            "su - postgres -c 'psql -c \"CREATE USER pdns WITH ENCRYPTED PASSWORD '{db_pass}';\"'" : {"boot" : true},
+            "su - postgres -c 'psql -c \"GRANT ALL PRIVILEGES ON DATABASE pdns TO pdns;\"'" : {"boot" : true},
+            "psql -U pdns -d pdns -a -f /usr/share/doc/powerdns/schema.pgsql.sql" : {"boot" : true},
+            "echo '{db_pass}' > /mnt/root/db_pass.txt" : {"no-chroot" : true},
+            "echo 'launch=gpgsql' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true},
+            "echo 'gpgsql-host=127.0.0.1' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true},
+            "echo 'gpgsql-port=5432' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true},
+            "echo 'gpgsql-dbname=pdns' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true},
+            "echo 'gpgsql-user=pdns' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true},
+            "echo 'gpgsql-password=\"{db_pass}\"' >> /mnt/etc/powerdns/pdns.conf" : {"no-chroot" : true}
         },
         "Configure OpenVPN" : {
             "mkdir -p /etc/openvpn/server/vpn_ccd" : null,
@@ -47,9 +56,9 @@
             "echo 'push \"redirect-gateway def1 bypass-dhcp\"' >> /mnt/etc/openvpn/server/vpn_ccd/laptop": {"no-chroot" : true}
         },
         "Create vhost table" : {
-            "echo 'defaultzone = { docroot \"/srv/http/default\"; index [\"index.html\"]; };' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true, "debug" : true},
-            "echo 'hvornum = { docroot \"/srv/http/default\"; index [\"index.html\"]; };' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true, "debug" : true},
-            "echo 'vhost.map [default => defaultzone, \\'hvornum.se\\' => hvornum];' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true}
+            "echo 'defaultzone = { docroot \"/srv/http/default\"; index [\"index.html\"]; };' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true},
+            "echo 'hvornum = { docroot \"/srv/http/default\"; index [\"index.html\"]; };' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true},
+            "echo 'vhost.map [default => defaultzone, \"hvornum.se\" => hvornum];' >> /mnt/etc/lighttpd2/vhost.conf": {"no-chroot" : true}
         },
         "Configure helpers" : {
           "echo '[Unit]' >> /mnt/etc/systemd/system/issue.service": {"no-chroot" : true},
@@ -60,7 +69,7 @@
           "echo 'WantedBy=multi-user.target' >> /mnt/etc/systemd/system/issue.service": {"no-chroot" : true},
           "echo '#!/bin/bash' > /mnt/usr/bin/motd_updater": {"no-chroot" : true},
           "echo 'cat /etc/hostname > /etc/issue' >> /mnt/usr/bin/motd_updater": {"no-chroot" : true},
-          "echo 'ip addr | grep \"inet \" | cut -d\"'\" \"'\" -f 2 >> /etc/issue' >> /mnt/usr/bin/motd_updater": {"no-chroot" : true},
+          "hostname -i >> /etc/issue' >> /mnt/usr/bin/motd_updater": {"no-chroot" : true},
           "chmod +x /mnt/usr/bin/motd_updater": {"no-chroot" : true},
           "systemctl enable issue.service": {"boot" : true}
         }
