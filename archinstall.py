@@ -8,6 +8,8 @@ from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
 from time import sleep, time
+from random import choice
+from string import ascii_uppercase, ascii_lowercase, digits
 
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
@@ -198,7 +200,8 @@ class sys_command():
 							break
 				yield output
 
-		print('[N] Waiting for output to settle (5 sec)')
+		# Gracefully wait for the last output to be given to us from the above command.
+		# Or break on OSError (process has died)
 		last = time()
 		while time()-last < 5:
 			for fileno, event in poller.poll(0.1):
@@ -220,7 +223,9 @@ class sys_command():
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
 		os.write(child_fd, b'shutdown now\n')
-		print('[N] Shutdown initated')
+
+		# We need to flush the output of shutdown now, otherwise the 
+		# Popen() handle will hang and we'll never exit out of os.waitpid() later on.
 		last = time()
 		while time()-last < 5:
 			for fileno, event in poller.poll(0.1):
@@ -448,6 +453,9 @@ def merge_dicts(d1, d2, before=True, overwrite=False):
 
 	return d1
 
+def random_string(l):
+	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for i in range(l))
+
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
@@ -555,12 +563,19 @@ if __name__ == '__main__':
 		for key, val in instructions['args'].items():
 			args[key] = val
 
-	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
-	elif args['password'] == '<YUBIKEY>':
-		args['password'] = gen_yubikey_password()
-		if not args['password']:
-			print('[E] Failed to setup a yubikey password, is it plugged in?')
-			exit(1)
+	for key in args:
+		if args[key] == '<STDIN>': args[key] = input(f'Enter a value for {key}: ')
+		elif args[key] == '<RND_STR>': args[key] = random_string(32)
+		elif args[key] == '<YUBIKEY>':
+			args[key] = gen_yubikey_password()
+			if not args[key]:
+				print('[E] Failed to setup a yubikey password, is it plugged in?')
+				exit(1)
+
+#	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
+#	elif args['password'] == '<YUBIKEY>':
+#		args['password'] = gen_yubikey_password()
+#		if not args['password']:
 
 	print(json.dumps(args, indent=4))
 
