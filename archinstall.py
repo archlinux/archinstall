@@ -269,16 +269,17 @@ def update_git():
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
-		if not b'Already up to date' in output:
-			tmp = re.findall(b'[0-9]+ file changed', output)
-			print(tmp)
-			if len(tmp):
-				num_changes = int(tmp[0].split(b' ',1)[0])
-				if(num_changes):
-					## Reboot the script (in same context)
-					print('[N] Rebooting the script')
-					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
-					extit(1)
+		if output != b'Already up to date':
+			#tmp = re.findall(b'[0-9]+ file changed', output)
+			#print(tmp)
+			#if len(tmp):
+			#	num_changes = int(tmp[0].split(b' ',1)[0])
+			#	if(num_changes):
+			
+			## Reboot the script (in same context)
+			print('[N] Rebooting the script')
+			os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv)
+			extit(1)
 
 def device_state(name):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
