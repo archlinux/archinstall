@@ -554,11 +554,11 @@ if __name__ == '__main__':
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
 	for index, part_name in enumerate(sorted(args['paritions'].keys())):
- 		args['partition_{}'.format(index+1)] = part_name
- 		print(f'Partition info: {part_name}')
- 		print(json.dumps(args['paritions'][part_name], indent=4))
+		args['partition_{}'.format(index+1)] = part_name
+		print(f'Partition info: {part_name}')
+		print(json.dumps(args['paritions'][part_name], indent=4))
 
- 	if not args['rerun']:
+	if not args['rerun']:
 		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
 		if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 			print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
@@ -695,7 +695,7 @@ if __name__ == '__main__':
 			continue
 		else:
 			rerun = True
-			
+
 		print('[N] Network Deploy: {}'.format(title))
 		if type(conf[title]) == str:
 			print('[N] Loading {} configuration'.format(conf[title]))
