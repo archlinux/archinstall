@@ -262,7 +262,8 @@ def update_git():
 		if os.path.isfile('/root/archinstall/README.md'):
 			os.remove('/root/archinstall/README.md')
 
-		output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2); git pull)')
+		#output = simple_command('(cd /root/archinstall; git reset --hard origin/$(git branch | grep "*" | cut -d\' \' -f 2); git pull)')
+		output = simple_command('(cd /root/archinstall; git pull)')
 
 		if b'error:' in output:
 			print('[N] Could not update git source for some reason.')
