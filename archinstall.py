@@ -220,6 +220,22 @@ class sys_command():
 		# Since we're in a subsystem, we gotta bail out!
 		# Bail bail bail!
 		os.write(child_fd, b'shutdown now\n')
+		print('[N] Shutdown initated')
+		last = time()
+		while time()-last < 5:
+			for fileno, event in poller.poll(0.1):
+				try:
+					output = os.read(child_fd, 8192).strip()
+					trace_log += output
+				except OSError:
+					last = time() - 60
+					break
+
+				if 'debug' in self.opts and self.opts['debug']:
+					if len(output):
+						print(output)
+
+				last = time()
 
 		if 'debug' in self.opts and self.opts['debug']:
 			print('[N] Waiting for exit code.')
