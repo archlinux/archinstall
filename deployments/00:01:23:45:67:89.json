@@ -6,7 +6,7 @@
         "packages" : "openssh sudo openvpn easy-rsa powerdns",
         "post" : "stay",
         "country" : "SE",
-        "mirrors" : true,
+        "mirrors" : true
     },
     "post" : {
         "install database": "postgresql",
