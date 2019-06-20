@@ -5,7 +5,8 @@
         "packages" : "openssh sudo openvpn easy-rsa",
         "post" : "stay",
         "country" : "SE",
-        "mirrors" : true
+        "mirrors" : true,
+        "rerun" : "install database"
     },
     "post" : {
         "install database": "postgresql",

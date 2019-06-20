@@ -424,6 +424,8 @@ if __name__ == '__main__':
 	if not 'default' in args: args['default'] = False
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
+	if not 'rerun' in args: args['rerun'] = None
+	rerun = False
 
 	if args['drive'][0] != '/':
 		## Remap the selected UUID to the device to be formatted.
@@ -530,18 +532,20 @@ if __name__ == '__main__':
 	print()
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
-	print('[N] Setting up {drive}.'.format(**args))
-	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
-	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} mklabel gpt'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} name 1 "EFI"'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
-	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
-	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
-	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
+
+	if not args['rerun']:
+		print('[N] Setting up {drive}.'.format(**args))
+		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
+		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} mklabel gpt'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} name 1 "EFI"'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
+		# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
+		#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
+		#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
 	
 	args['paritions'] = grab_partitions(args['drive'])
 	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
@@ -554,18 +558,19 @@ if __name__ == '__main__':
  		print(f'Partition info: {part_name}')
  		print(json.dumps(args['paritions'][part_name], indent=4))
 
-	o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
-	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
-		print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
-		exit(1)
+ 	if not args['rerun']:
+		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
+		if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
+			print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
+			exit(1)
 
-	# "--cipher sha512" breaks the shit.
-	# TODO: --use-random instead of --use-urandom
-	print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-	o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec())
-	if not b'Command successful.' in o:
-		print('[E] Failed to setup disk encryption.', o)
-		exit(1)
+		# "--cipher sha512" breaks the shit.
+		# TODO: --use-random instead of --use-urandom
+		print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
+		o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec())
+		if not b'Command successful.' in o:
+			print('[E] Failed to setup disk encryption.', o)
+			exit(1)
 
 	o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
 	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
@@ -573,11 +578,12 @@ if __name__ == '__main__':
 		print('[E] Could not mount encrypted device.', o)
 		exit(1)
 
-	print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-	o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev').exec())
-	if not b'UUID' in o:
-		print('[E] Could not setup btrfs filesystem.', o)
-		exit(1)
+	if not args['rerun']:
+		print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
+		o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev').exec())
+		if not b'UUID' in o:
+			print('[E] Could not setup btrfs filesystem.', o)
+			exit(1)
 	o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
 
 	os.makedirs('/mnt/boot')
@@ -601,6 +607,11 @@ if __name__ == '__main__':
 	## (For instance, modifying mirrors are done on LiveCD and replicated intwards)
 	for title in pre_conf:
 		print('[N] Network prerequisit step: {}'.format(title))
+		if args['rerun'] and args['rerun'] != title and not rerun:
+			continue
+		else:
+			rerun = True
+
 		for command in pre_conf[title]:
 			raw_command = command
 			opts = pre_conf[title][raw_command] if type(pre_conf[title][raw_command]) in (dict, oDict) else {}
@@ -625,51 +636,53 @@ if __name__ == '__main__':
 				print('[W] Prerequisit step failed: {}'.format(b''.join(o).decode('UTF-8')))
 			#print(o)
 
-	print('[N] Straping in packages.')
-	o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
-	o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
+	if not args['rerun'] or rerun:
+		print('[N] Straping in packages.')
+		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
+		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
 	if not os.path.isdir('/mnt/etc'):
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
-	o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab').exec())
-	with open('/mnt/etc/fstab', 'a') as fstab:
-		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
+	if not args['rerun'] or rerun:
+		o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab').exec())
+		with open('/mnt/etc/fstab', 'a') as fstab:
+			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec())
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec())
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
-	#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
-	#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec())
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec())
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec())
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen').exec())
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
+		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
+		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec())
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec())
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root').exec())
 
-	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
-		## TODO: Don't replace it, in case some update in the future actually adds something.
-		mkinit.write('MODULES=(btrfs)\n')
-		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
-		mkinit.write('FILES=()\n')
-		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec())
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --path=/boot install').exec())
+		with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
+			## TODO: Don't replace it, in case some update in the future actually adds something.
+			mkinit.write('MODULES=(btrfs)\n')
+			mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
+			mkinit.write('FILES=()\n')
+			mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --path=/boot install').exec())
 
-	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
-		loader.write('default arch\n')
-		loader.write('timeout 5\n')
+		with open('/mnt/boot/loader/loader.conf', 'w') as loader:
+			loader.write('default arch\n')
+			loader.write('timeout 5\n')
 
-	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-	## And blkid is wrong in terms of LUKS.
-	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
-	UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
-	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
-		entry.write('title Arch Linux\n')
-		entry.write('linux /vmlinuz-linux\n')
-		entry.write('initrd /initramfs-linux.img\n')
-		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+		## And blkid is wrong in terms of LUKS.
+		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
+		UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
+		with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
+			entry.write('title Arch Linux\n')
+			entry.write('linux /vmlinuz-linux\n')
+			entry.write('initrd /initramfs-linux.img\n')
+			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	conf = {}
 	if 'post' in instructions:
@@ -678,6 +691,11 @@ if __name__ == '__main__':
 		conf = instructions
 
 	for title in conf:
+		if args['rerun'] and args['rerun'] != title and not rerun:
+			continue
+		else:
+			rerun = True
+			
 		print('[N] Network Deploy: {}'.format(title))
 		if type(conf[title]) == str:
 			print('[N] Loading {} configuration'.format(conf[title]))
