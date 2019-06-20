@@ -583,8 +583,8 @@ if __name__ == '__main__':
 	os.makedirs('/mnt/boot')
 	o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
 
-	print('[N] Reordering mirrors.')
-	if 'mirrors' in args and args['mirrors'] and get_default_gateway_linux():
+	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
+		print('[N] Reordering mirrors.')
 		o = b''.join(sys_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args)).exec())
 		o = b''.join(sys_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist").exec())
 		o = b''.join(sys_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist').exec())
