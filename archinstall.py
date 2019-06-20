@@ -587,7 +587,7 @@ if __name__ == '__main__':
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
 
-	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt').exec() # /dev/dm-0
+	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt') # /dev/dm-0
 	if len(o) <= 0:
 		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
 
