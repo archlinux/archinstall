@@ -3,7 +3,9 @@
         "password" : "0000",
         "include" : "webserver",
         "packages" : "openssh sudo openvpn easy-rsa",
-        "post" : "stay"
+        "post" : "stay",
+        "country" : "SE",
+        "mirrors" : true
     },
     "post" : {
         "install database": "postgresql",
