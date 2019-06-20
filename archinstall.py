@@ -585,9 +585,9 @@ if __name__ == '__main__':
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
-		o = b''.join(simple_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args)))
-		o = b''.join(simple_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist"))
-		o = b''.join(simple_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist'))
+		o = simple_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
+		o = simple_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")
+		o = simple_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
 
 	pre_conf = {}
 	if 'pre' in instructions:
