@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 import traceback
 import os, re, struct, sys, json, pty, shlex
-import urllib.request, urllib.parse, ssl, time
+import urllib.request, urllib.parse, ssl
 from glob import glob
 from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
-from time import sleep
+from time import sleep, time
 
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
@@ -190,21 +190,21 @@ class sys_command():
 				yield output
 
 		print('[N] Waiting for output to settle (5 sec)')
-		last = time.time()
-		while time.time()-last < 5:
+		last = time()
+		while time()-last < 5:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192).strip()
 					trace_log += output
 				except OSError:
-					last = time.time() - 60
+					last = time() - 60
 					break
 
 				if 'debug' in self.opts and self.opts['debug']:
 					if len(output):
 						print(output)
 
-				last = time.time()
+				last = time()
 
 		if 'debug' in self.opts and self.opts['debug']:
 			print('[N] Exited subsystem, instructing it to shutdown.')
