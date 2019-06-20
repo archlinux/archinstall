@@ -177,12 +177,13 @@ class sys_command():
 								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger].decode('UTF-8')))
 							os.write(child_fd, self.opts['triggers'][trigger])
 							del(self.opts['triggers'][trigger])
+							break
 
 					## Adding a exit trigger:
 					if len(self.opts['triggers']) == 0:
 						if 'debug' in self.opts and self.opts['debug']:
 							print('[N] Waiting for last command to finish...')
-						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in output.lower():
+						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in output[-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
 							if 'debug' in self.opts and self.opts['debug']:
 								print('[N] Last command finished, exiting subsystem.')
 							alive = False
