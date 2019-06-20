@@ -832,7 +832,7 @@ if __name__ == '__main__':
 					##    [root@<hostname> ~]#
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
 																												bytes(f'login:', 'UTF-8') : b'root\n',
-																												b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
+																												#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
 																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
 																											}, **opts}).exec())
 
