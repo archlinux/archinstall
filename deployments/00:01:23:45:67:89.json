@@ -7,7 +7,6 @@
         "post" : "stay",
         "country" : "SE",
         "mirrors" : true,
-        "rerun" : "Configure database"
     },
     "post" : {
         "install database": "postgresql",
