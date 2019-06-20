@@ -270,6 +270,7 @@ def update_git():
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
 		if output != b'Already up to date':
+			print(output)
 			#tmp = re.findall(b'[0-9]+ file changed', output)
 			#print(tmp)
 			#if len(tmp):
