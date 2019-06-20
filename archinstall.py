@@ -535,6 +535,8 @@ if __name__ == '__main__':
 	print()
 
 	if not args['rerun'] or args['ignore-rerun']:
+		o = simple_command('/usr/bin/umount -R /mnt')
+		o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 		print('[N] Setting up {drive}.'.format(**args))
 		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
