@@ -12,7 +12,7 @@
         "install database": "postgresql",
         "Configure database": {
             "su - postgres -c 'psql -c \"CREATE DATABASE pdns;\"'" : {"boot" : true, "debug" : true},
-            "su - postgres -c 'psql -c \"CREATE USER pdns WITH ENCRYPTED PASSWORD '{db_pass}';\"'" : {"boot" : true, "debug" : true},
+            "su - postgres -c 'psql -c \"CREATE USER pdns WITH ENCRYPTED PASSWORD \\'{db_pass}\\';\"'" : {"boot" : true, "debug" : true},
             "su - postgres -c 'psql -c \"GRANT ALL PRIVILEGES ON DATABASE pdns TO pdns;\"'" : {"boot" : true, "debug" : true},
             "psql -U pdns -d pdns -a -f /usr/share/doc/powerdns/schema.pgsql.sql" : {"boot" : true, "debug" : true},
             "echo '{db_pass}' > /mnt/root/db_pass.txt" : {"no-chroot" : true, "pass-args" : true},
