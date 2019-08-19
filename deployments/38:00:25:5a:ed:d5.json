@@ -2,7 +2,7 @@
     "args" : {
         "include" : "workstation",
         "user" : "anton",
-        "password" : "<STDIN>",
+        "password" : "<STDIN>"
     },
     "post" : {
         "Configure laptop" : {
