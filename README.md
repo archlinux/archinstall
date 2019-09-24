@@ -3,6 +3,8 @@ Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linu
 
 Pre-built ISO's can be found here: https://hvornum.se/archiso/
 
+#archinstall@FreeNode :)
+
 # Install a basic Arch Linux
 In a live-cd environment, do:
 
