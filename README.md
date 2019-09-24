@@ -1,11 +1,9 @@
 # archinstall
-Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linux) install with optional network deployment instructions based on MAC-address.
+Just a bare bone automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer *(with optional network deployment instructions based on MAC-address)*.
 
-Pre-built ISO's can be found here: https://hvornum.se/archiso/
+Pre-built ISO's can be found here which autostarts this installer: https://hvornum.se/archiso/
 
-#archinstall@FreeNode :)
-
-# Install a basic Arch Linux
+# Install a basic minimalistic Arch Linux
 In a live-cd environment, do:
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
@@ -19,12 +17,12 @@ Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default
 # Features
 
  * Unattended install of Arch Linux
- * User guided install of Arch Linux (Like most other distros have)
- * YubiKey support for disk and root password (next release)
+ * User guided install of Arch Linux *(Like most other distros have)*
+ * YubiKey support for disk and root password *(TBD / next release)*
  * Profile / Template based installs
- * Supports offline-installation of Arch Linux
+ * Supports offline-installation of Arch Linux *(currently broken)*
  * Full disk encryption, locale/region settings and customizable application selection
- * Never creates post-install/service scripts (usually used to finalize databases etc)
+ * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
 
 # Autorun on Arch Live CD (Unattended install)
 
@@ -136,6 +134,10 @@ This will cause the script to look at `http://example.com/profiles/<profile>.jso
 
 Deployment profile structs support all the above parameters and more, for instance, custom arguments with string formatting.
 See [deployments/workstation.json](https://github.com/Torxed/archinstall/blob/net-deploy/deployments/workstation.json) for examples.
+
+# Contact
+
+IRC: `#archinstall@FreeNode`
 
 ## End note
 
