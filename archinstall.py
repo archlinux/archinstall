@@ -481,10 +481,15 @@ if __name__ == '__main__':
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
-		drives = list(harddrives.keys())
+		drives = sorted(list(harddrives.keys()))
 		if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
-			raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
-		args['drive'] = sorted(drives)[0] # First drive found
+			for index, drive in enumerate(drives):
+				print(f'{index}: {drive} ({harddrives[drive]})')
+			drive = input('Select one of the above disks (by number): ')
+			if not drive.isdigit():
+				raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
+			drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
+		args['drive'] = drives[0] # First drive found
 	rerun = args['ignore-rerun']
 
 	if args['drive'][0] != '/':
