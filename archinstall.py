@@ -482,7 +482,7 @@ if __name__ == '__main__':
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
 		drives = list(harddrives.keys())
-		if len(drives) > 1 and not ('force' in args or 'first-drive' in args or 'default' in args):
+		if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
 			raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
 		args['drive'] = sorted(drives)[0] # First drive found
 	rerun = args['ignore-rerun']
@@ -587,7 +587,7 @@ if __name__ == '__main__':
 	print(json.dumps(args, indent=4))
 	if args['default'] and not 'force' in args:
 		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
-			die(1)
+			exit(1)
 
 	if not os.path.isfile(args['pwfile']):
 		#PIN = '0000'
