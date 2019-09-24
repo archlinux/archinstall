@@ -734,7 +734,7 @@ if __name__ == '__main__':
 		with open('/mnt/etc/fstab', 'a') as fstab:
 			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime').exec())
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)).exec())
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
 		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
