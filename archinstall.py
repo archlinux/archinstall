@@ -466,7 +466,6 @@ if __name__ == '__main__':
 		exit(1)
 
 	## Setup some defaults (in case no command-line parameters or netdeploy-params were given)
-	if not 'drive' in args: args['drive'] = sorted(list(harddrives.keys()))[0] # First drive found
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
@@ -480,6 +479,12 @@ if __name__ == '__main__':
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
+	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
+	if not 'drive' in args:
+		drives = list(harddrives.keys())
+		if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
+			raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
+		args['drive'] = sorted(drives)[0] # First drive found
 	rerun = args['ignore-rerun']
 
 	if args['drive'][0] != '/':
@@ -580,6 +585,9 @@ if __name__ == '__main__':
 #		if not args['password']:
 
 	print(json.dumps(args, indent=4))
+	if args['default'] and not 'force' in args:
+		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
+			exit(1)
 
 	if not os.path.isfile(args['pwfile']):
 		#PIN = '0000'
@@ -722,7 +730,7 @@ if __name__ == '__main__':
 			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm /etc/localtime').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)).exec())
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
 		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
 		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
