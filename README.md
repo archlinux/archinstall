@@ -1,5 +1,5 @@
 # archinstall
-Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linux) install with network deployment instructions based on MAC-address.
+Just a bare bone automated [Arch](https://wiki.archlinux.org/index.php/Arch_Linux) install with optional network deployment instructions based on MAC-address.
 
 Pre-built ISO's can be found here: https://hvornum.se/archiso/
 
@@ -7,13 +7,12 @@ Pre-built ISO's can be found here: https://hvornum.se/archiso/
 In a live-cd environment, do:
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
-    # python3 archinstall.py --default
+    # pacman -S --noconfirm python; python archinstall.py --default
 
-> **CAUTION**: If no **other** parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
+This will install a basic Arch Linux, without interaction, on the first drive it finds *(after user confirms it)*.<br>
+Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
 
-This will install a basic Arch Linux, without interaction, on the first drive it finds. Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
-
-> NOTE: This assumes Python is installed on your ISO, follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/). Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
+> NOTE: Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
 
 # Features
 
