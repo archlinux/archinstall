@@ -24,66 +24,17 @@ Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default
  * Full disk encryption, locale/region settings and customizable application selection
  * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
 
-# Autorun on Arch Live CD (Unattended install)
+# [Build a Arch Linux ISO to autorun archinstall](https://github.com/Torxed/archinstall/wiki/Autorun-on-Arch-Live-CD)
 
-This guides you on how to create a ISO that has Python and can run the arch installed in **unattended mode.**<br>
-We'll need to reconfigure the **releng** profile after it's been copied, to include Python etc.<br>
-To do so, we need to add some packages to `packages.x86_64` and add some commands to `customize_airootfs.sh`.
+More options for the built ISO:
 
-    # cd ~/archlive
-    # echo -e "git\npython\npython-psutil" >> packages.x86_64
-    # cat <<EOF >> ./airootfs/root/customize_airootfs.sh
-    cd /root
-    git clone https://github.com/Torxed/archinstall.git
-    chmod +x ~/archinstall/archinstall.py
-    EOF
-    # mkdir ./airootfs/etc/skel
-    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c "~/archinstall/archinstall.py --default"' >> ./airootfs/etc/skel/.zprofile
+### [Unattended install of a profile](https://github.com/Torxed/archinstall/wiki/Unattended-install-of-a-profile)
 
-> Note: `~/archlive` might be different on your system, see [ArchISO#Setup](https://wiki.archlinux.org/index.php/archiso#Setup) for more info.
+### [User guided install (DEFAULT)](https://github.com/Torxed/archinstall/wiki/User-guided-installation-(DEFAULT))
 
-After all those commands are done, you can go ahead and run:
+### [Custom web-server for deployment profiles](https://github.com/Torxed/archinstall/wiki/Custom-web-server-for-deployment-profiles)
 
-    # rm -v work*; ./build.sh -v
-
-Whenever this live-cd boots, from here on now - it'll run `archinstall.py` and attempt to unattendely install a default Arch Linux base OS with `base base-devel` as packages.
-Or - if successfull - a MAC-address matches a profile at [/deployments](https://github.com/Torxed/archinstall/tree/master/deployments) for the machine to be installed.
-
-> **CAUTION**: If no parameters are given, **it will devour the first disk in your system** (Usually `/dev/sda`, `/dev/nvme0n1` etc).
-
-## Unattended profile install
-
-Everything in the steps above are the same, except for one line that needs to change to look like this:
-
-    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c "~/archinstall/archinstall.py --profile=workstation"' >> ./airootfs/etc/skel/.zprofile
-
-This will unattendely install the [workstation](https://github.com/Torxed/archinstall/blob/master/deployments/workstation.json) profile.
-
-## User guided installation (DEFAULT)
-
-Change the autostart line to match:
-
-    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c "~/archinstall/archinstall.py"' >> ./airootfs/etc/skel/.zprofile
-
-This will cause the script to halt and ask for a profile to install before proceeding.
-When asked, enter `workstation` for instance - to install based on the [workstation](https://github.com/Torxed/archinstall/blob/master/deployments/workstation.json) template.
-
-> **CAUTION**: If a MAC-address matches under `/deployments`, that profile will forcefully be installed and have presidence over any other profile information.
-
-## With custom webserver for deployment profiles
-
-Again, one line differs from the other install methods, change the following line:
-
-    # echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && sh -c "~/archinstall/archinstall.py --profiles-path=http://example.com/profiles"' >> ./airootfs/etc/skel/.zprofile
-
-This will cause the script to look at `http://example.com/profiles/<profile>.json` for instructions.
-
-# Rerunning a installation
-
-    # umount -R /mnt; cryptsetup close /dev/mapper/luksdev
-    # python3 ./archinstall/archinstall.py
-    
-> Note: This assumes `--post=stay` is set to avoid instant reboot at the end or if during any time a user pressed `Ctrl-C` and aborted the installation.
+# [Rerunning the installation](https://github.com/Torxed/archinstall/wiki/Rerunning-the-installation)
 
 # Some parameters you can give it
 
@@ -131,6 +82,14 @@ This will cause the script to look at `http://example.com/profiles/<profile>.jso
     --profiles-path=https://example.com/profiles
       Changes the default path the script looks for deployment profiles.
       The default path is 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
+
+    --rerun="Name of step in profile"
+      Enables you to skip the format, encryption and base install steps.
+      And head straight for a step in the profile specified.
+      (Useful for debugging a step in your profile)
+
+    --localtime="Europe/Stockholm" (Default if --country=SE, otherwise GMT+0)
+      Specify a localtime you're used to.
 
 Deployment profile structs support all the above parameters and more, for instance, custom arguments with string formatting.
 See [deployments/workstation.json](https://github.com/Torxed/archinstall/blob/net-deploy/deployments/workstation.json) for examples.
