@@ -3,16 +3,21 @@ Just a bare bone automated [Arch Linux](https://wiki.archlinux.org/index.php/Arc
 
 Pre-built ISO's can be found here which autostarts this installer: https://hvornum.se/archiso/
 
-# Install a basic minimalistic Arch Linux
-In a live-cd environment, do:
+# How-to / usecases
+
+## Run on Live-CD (Python):
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
     # pacman -S --noconfirm python; python archinstall.py --default
 
-This will install a basic Arch Linux, without interaction, on the first drive it finds *(after user confirms it)*.<br>
-Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default` if you want to get options for your installation.
+This will install a basic Arch Linux, with minimal interaction, on the first drive it finds or on user-selected drive if many exists. *(Use `--drive=/dev/sdb` to change the desired destination to skip interaktion)*
 
 > NOTE: Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
+
+## Run on Live-CD (Binary)
+
+    # wget https://gzip.life/archinstall
+    # chmod +x archinstall; ./archinstall
 
 # Features
 
@@ -23,6 +28,11 @@ Use `--drive=/dev/sdb` etc to change the desired destination, or skip `--default
  * Supports offline-installation of Arch Linux *(currently broken)*
  * Full disk encryption, locale/region settings and customizable application selection
  * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
+
+# Examples:
+
+ * `./archinstall --profile=workstation --drive=/dev/sda` - Installs the workstation template on the drive `/dev/sda`
+
 
 # [Build a Arch Linux ISO to autorun archinstall](https://github.com/Torxed/archinstall/wiki/Autorun-on-Arch-Live-CD)
 
