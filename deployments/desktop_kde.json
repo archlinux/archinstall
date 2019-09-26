@@ -1,0 +1,22 @@
+{
+    "args" : {
+        "password" : "<STDIN>",
+        "_mediaplayer" : "lollypop gstreamer gst-plugins-good gnome-keyring",
+        "_filebrowser" : "nemo gpicview-gtk3",
+        "_webbrowser" : "chromium",
+        "_window_manager" : "awesome",
+        "_keyboard_layout" : "sv-latin1",
+        "_virtulization" : "qemu ovmf",
+        "post" : "don't reboot"
+    },
+    "post" : {
+        "Install workstation packages": {
+            "pacman -Syy --noconfirm openssh sshfs git {_webbrowser} {_mediaplayer} {_window_manager} {_virtulization} {_filebrowser} dhclient gnu-free-fonts ttf-liberation xorg-server xorg-xrandr xorg-xinit xterm nano wget pulseaudio pulseaudio-alsa pavucontrol smbclient cifs-utils xscreensaver" : {"pass-args" : true}
+        },
+        "Setup loclization" : {
+            "sh -c \"echo 'setxkbmap se' >> /etc/X11/xinit/xinitrc\"" : null,
+            "sh -c \"echo 'KEYMAP={_keyboard_layout}\nFONT=lat9w-16' >> /etc/vconsole.conf\"" : {"pass-args" : true}
+        },
+        "Configure desktop environment" : "kde"
+    }
+}

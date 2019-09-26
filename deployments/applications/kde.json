@@ -1,0 +1,6 @@
+{
+    "sed -i 's/^twm &/#&/' /etc/X11/xinit/xinitrc" : null,
+    "sed -i 's/^xclock/#&/' /etc/X11/xinit/xinitrc" : null,
+    "sed -i 's/^xterm/#&/' /etc/X11/xinit/xinitrc" : null,
+    "sed -i 's/^exec xterm/#&/' /etc/X11/xinit/xinitrc" : null,
+}
