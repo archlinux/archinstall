@@ -8,11 +8,11 @@ Pre-built ISO's can be found here which autostarts this installer: https://hvorn
 ## Run on Live-CD (Python):
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
-    # pacman -S --noconfirm python; python archinstall.py --default
+    # pacman -S --noconfirm python; python archinstall.py
 
-This will install a basic Arch Linux, with minimal interaction, on the first drive it finds or on user-selected drive if many exists. *(Use `--drive=/dev/sdb` to change the desired destination to skip interaktion)*
+This will start a guided install. Add `--default` for unattended.
 
-> NOTE: Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Below is examples and a cheat sheet on how to create such a ISO *(with different flavors)*.
+> NOTE: Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Fruther down are examples and cheat sheets on how to create different live ISO's.
 
 ## Run on Live-CD (Binary)
 
