@@ -143,8 +143,8 @@ class sys_command():
 	def exec(self):
 		if not self.cmd[0][0] == '/':
 			print('[N] Command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]))
-			o = b''.join(sys_command('/usr/bin/whereis {}'.format(self.cmd[0])).exec())
-			self.cmd[0] = o.split(b' ')[1].decode('UTF-8')
+			o = b''.join(sys_command('/usr/bin/which {}'.format(self.cmd[0])).exec())
+			self.cmd[0] = o.decode('UTF-8')
 			print('[N] This is what I\'m going with: {}'.format(self.cmd[0]))
 		# PID = 0 for child, and the PID of the child for the parent    
 		self.pid, child_fd = pty.fork()
