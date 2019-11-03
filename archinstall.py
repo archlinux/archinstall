@@ -725,7 +725,7 @@ if __name__ == '__main__':
 	if not args['rerun'] or rerun:
 		print('[N] Straping in packages.')
 		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
-		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
 	if not os.path.isdir('/mnt/etc'):
 		print('[E] Failed to strap in packages', o)
