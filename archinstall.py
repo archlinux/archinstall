@@ -508,7 +508,7 @@ if __name__ == '__main__':
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
-	if not 'support-aur' in args: args['support-aur'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
+	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
@@ -641,13 +641,11 @@ if __name__ == '__main__':
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 
-
-	for i in range(5, 0, -1):
-		print(f'Formatting in {i}...')
-		sleep(1)
-
-
 	if not args['rerun'] or args['ignore-rerun']:
+		for i in range(5, 0, -1):
+			print(f'Formatting {args["drive"]} in {i}...')
+			sleep(1)
+
 		o = simple_command('/usr/bin/umount -R /mnt')
 		o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 		print('[N] Setting up {drive}.'.format(**args))
@@ -726,6 +724,7 @@ if __name__ == '__main__':
 
 	if 'git-branch' in pre_conf:
 		update_git(pre_conf['git-branch'])
+		del(pre_conf['git-branch'])
 
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
@@ -811,7 +810,7 @@ if __name__ == '__main__':
 			entry.write('initrd /initramfs-linux.img\n')
 			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-		if args['support-aur']:
+		if args['aur-support']:
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
 			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
 
@@ -829,7 +828,8 @@ if __name__ == '__main__':
 		conf = instructions
 
 	if 'git-branch' in conf:
-		update_git(pre_conf['git-branch'])
+		update_git(conf['git-branch'])
+		del(conf['git-branch'])
 
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
