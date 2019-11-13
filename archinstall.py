@@ -754,7 +754,8 @@ if __name__ == '__main__':
 			mkinit.write('FILES=()\n')
 			mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --path=/boot install').exec())
+		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --no-variables --path=/boot install').exec())
 
 		with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 			loader.write('default arch\n')
