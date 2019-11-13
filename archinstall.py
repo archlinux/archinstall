@@ -641,13 +641,11 @@ if __name__ == '__main__':
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 
-
-	for i in range(5, 0, -1):
-		print(f'Formatting {args["drive"]} in {i}...')
-		sleep(1)
-
-
 	if not args['rerun'] or args['ignore-rerun']:
+		for i in range(5, 0, -1):
+			print(f'Formatting {args["drive"]} in {i}...')
+			sleep(1)
+
 		o = simple_command('/usr/bin/umount -R /mnt')
 		o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 		print('[N] Setting up {drive}.'.format(**args))
