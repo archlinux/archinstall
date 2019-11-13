@@ -75,7 +75,7 @@ except:
 
 ## FIXME: dependency checks (fdisk, lsblk etc)
 def sig_handler(signal, frame):
-	print('Aborting further installation steps!')
+	print('\nAborting further installation steps!')
 	print(' Here\'s a summary of the commandline:')
 	print(f' {sys.argv}')
 
@@ -420,11 +420,19 @@ def get_application_instructions(target):
 	instructions = {}
 	try:
 		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target))
+		print('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found for: {}'.format(target))
-		return instructions
+		print('[N] Trying local instructions under ./deployments/applications')
+		local_path = './deployments/applications' if isfile('./archinstall.py') else './archinstall/deployments/applications': # Dangerous assumption
+		if isfile(f'{local_path}/deployments/applications/{target}.json'):
+			with open(f'{local_path}/deployments/applications/{target}.json', 'r') as fh:
+				instructions = fh.read()
+
+			print('[N] Found local application instructions for: {}'.format(target))
+		else:
+			return instructions
 	
-	print('[N] Found application instructions for: {}'.format(target))
 	try:
 		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
 	except:
@@ -438,11 +446,19 @@ def get_instructions(target):
 	instructions = {}
 	try:
 		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target))
+		print('[N] Found net-deploy instructions called: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found called: {}'.format(target))
-		return instructions
+		print('[N] Trying local instructions under ./deployments')
+		local_path = './deployments' if isfile('./archinstall.py') else './archinstall/deployments': # Dangerous assumption
+		if isfile(f'{local_path}/deployments/{target}.json'):
+			with open(f'{local_path}/deployments/{target}.json', 'r') as fh:
+				instructions = fh.read()
+
+			print('[N] Found local instructions called: {}'.format(target))
+		else:
+			return instructions
 	
-	print('[N] Found net-deploy instructions called: {}'.format(target))
 	try:
 		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
 	except:
