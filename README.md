@@ -16,7 +16,7 @@ This will start a guided install. Add `--default` for unattended.
 
 ## Run on Live-CD (Binary)
 
-    # wget https://gzip.life/archinstall
+    # wget https://gzip.app/archinstall
     # chmod +x archinstall; ./archinstall
 
 # Features
