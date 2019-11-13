@@ -259,8 +259,8 @@ class sys_command():
 		exit_code = os.waitpid(self.pid, 0)[1]
 
 		if exit_code != 0:
+			print(trace_log.decode('UTF-8'))
 			print('[E] Command "{}" on line ~150 exited with status code:'.format(self.cmd[0]), exit_code)
-			print(trace_log)
 			print('[?] Command executed: {}'.format(self.cmd))
 			exit(1)
 
