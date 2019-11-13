@@ -827,9 +827,10 @@ if __name__ == '__main__':
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"').exec())
-			o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			## Do not remove aibuilder just yet, can be used later for aur packages.
+			#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
 			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 			
 	conf = {}
@@ -852,6 +853,7 @@ if __name__ == '__main__':
 		if type(conf[title]) == str:
 			print('[N] Loading {} configuration'.format(conf[title]))
 			conf[title] = get_application_instructions(conf[title])
+
 		for command in conf[title]:
 			raw_command = command
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
@@ -869,6 +871,10 @@ if __name__ == '__main__':
 					print('[-] Options: {}'.format(opts))
 			if 'pass-args' in opts and opts['pass-args']:
 				command = command.format(**args)
+
+			if 'runas' in opts and f'su - {opts["runas"]} -c' not in command:
+				command = command.replace('"', '\\"')
+				command = f'su - {opts["runas"]} -c "{command}"'
 
 			#print('[N] Command: {} ({})'.format(command, opts))
 
@@ -924,6 +930,11 @@ if __name__ == '__main__':
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
+
+	if args['aur-support']:
+		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
 
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
