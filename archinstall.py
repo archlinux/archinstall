@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import traceback
 import os, re, struct, sys, json, pty, shlex
-import urllib.request, urllib.parse, ssl
+import urllib.request, urllib.parse, ssl, signal
 from glob import glob
 from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
@@ -74,6 +74,14 @@ except:
 			return data
 
 ## FIXME: dependency checks (fdisk, lsblk etc)
+def sig_handler(signal, frame):
+	print('Aborting further installation steps!')
+	print(' Here\'s a summary of the commandline:')
+	print(f' {sys.argv}')
+
+	exit(0)
+signal.signal(signal.SIGINT, sig_handler)
+
 
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
@@ -606,9 +614,17 @@ if __name__ == '__main__':
 	#	with open(args['pwfile'], 'r') as pw:
 	#		PIN = pw.read().strip()
 
+
+
 	print()
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
+
+
+	for i in range(5, 0, -1):
+		print(f'Formatting in {i}...')
+		sleep(1)
+
 
 	if not args['rerun'] or args['ignore-rerun']:
 		o = simple_command('/usr/bin/umount -R /mnt')
