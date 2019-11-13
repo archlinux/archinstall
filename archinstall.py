@@ -336,13 +336,15 @@ def update_git(branch='master'):
 			#	if(num_changes):
 
 			if branch != 'master':
-				print(f'[N] Changing branch to {branch}')
-				output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
-				print('[N] Rebooting the new branch')
-				if not 'rebooted' in args:
-					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted','--rerun'])
-				else:
-					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rerun',])
+				on_branch = simple_command('(cd /root/archinstall; git branch | grep "*" | cut -d\' \' -f 2)')
+				if on_branch.strip().lower() != branch.strip().lower():
+					print(f'[N] Changing branch to {branch}')
+					output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
+					print('[N] Rebooting the new branch')
+					if not 'rebooted' in args:
+						os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted','--rerun'])
+					else:
+						os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rerun',])
 			
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
