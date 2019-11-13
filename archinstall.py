@@ -259,8 +259,8 @@ class sys_command():
 		exit_code = os.waitpid(self.pid, 0)[1]
 
 		if exit_code != 0:
+			print(trace_log.decode('UTF-8'))
 			print('[E] Command "{}" on line ~150 exited with status code:'.format(self.cmd[0]), exit_code)
-			print(trace_log)
 			print('[?] Command executed: {}'.format(self.cmd))
 			exit(1)
 
@@ -336,8 +336,15 @@ def update_git(branch='master'):
 			#	if(num_changes):
 
 			if branch != 'master':
-				print(f'[N] Changing branch to {branch}')
-				output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
+				on_branch = simple_command('(cd /root/archinstall; git branch | grep "*" | cut -d\' \' -f 2)').decode('UTF-8').strip()
+				if on_branch.lower() != branch.lower():
+					print(f'[N] Changing branch from {on_branch} to {branch}')
+					output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
+					print('[N] Rebooting the new branch')
+					if not 'rebooted' in args:
+						os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted','--rerun'])
+					else:
+						os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rerun',])
 			
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
@@ -508,7 +515,7 @@ if __name__ == '__main__':
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
-	if not 'support-aur' in args: args['support-aur'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
+	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
@@ -641,13 +648,11 @@ if __name__ == '__main__':
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
 	print()
 
-
-	for i in range(5, 0, -1):
-		print(f'Formatting in {i}...')
-		sleep(1)
-
-
 	if not args['rerun'] or args['ignore-rerun']:
+		for i in range(5, 0, -1):
+			print(f'Formatting {args["drive"]} in {i}...')
+			sleep(1)
+
 		o = simple_command('/usr/bin/umount -R /mnt')
 		o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 		print('[N] Setting up {drive}.'.format(**args))
@@ -726,6 +731,7 @@ if __name__ == '__main__':
 
 	if 'git-branch' in pre_conf:
 		update_git(pre_conf['git-branch'])
+		del(pre_conf['git-branch'])
 
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
@@ -764,6 +770,8 @@ if __name__ == '__main__':
 
 	if not args['rerun'] or rerun:
 		print('[N] Straping in packages.')
+		if args['aur-support']:
+			args['packages'] += ' git'
 		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
 		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
@@ -811,16 +819,19 @@ if __name__ == '__main__':
 			entry.write('initrd /initramfs-linux.img\n')
 			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-		if args['support-aur']:
+		if args['aur-support']:
+			print('[N] AUR support demanded, building "yay" before running POST steps.')
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
 			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
 
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "git clone https://aur.archlinux.org/yay.git"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder yay"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \"(cd /root/yay; makepkg -si --noconfirm)\" >/dev/null"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"').exec())
+			## Do not remove aibuilder just yet, can be used later for aur packages.
+			#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 			
 	conf = {}
 	if 'post' in instructions:
@@ -829,7 +840,8 @@ if __name__ == '__main__':
 		conf = instructions
 
 	if 'git-branch' in conf:
-		update_git(pre_conf['git-branch'])
+		update_git(conf['git-branch'])
+		del(conf['git-branch'])
 
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
@@ -841,6 +853,7 @@ if __name__ == '__main__':
 		if type(conf[title]) == str:
 			print('[N] Loading {} configuration'.format(conf[title]))
 			conf[title] = get_application_instructions(conf[title])
+
 		for command in conf[title]:
 			raw_command = command
 			opts = conf[title][command] if type(conf[title][command]) in (dict, oDict) else {}
@@ -858,6 +871,10 @@ if __name__ == '__main__':
 					print('[-] Options: {}'.format(opts))
 			if 'pass-args' in opts and opts['pass-args']:
 				command = command.format(**args)
+
+			if 'runas' in opts and f'su - {opts["runas"]} -c' not in command:
+				command = command.replace('"', '\\"')
+				command = f'su - {opts["runas"]} -c "{command}"'
 
 			#print('[N] Command: {} ({})'.format(command, opts))
 
@@ -913,6 +930,11 @@ if __name__ == '__main__':
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
+
+	if args['aur-support']:
+		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
 
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
