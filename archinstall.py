@@ -311,7 +311,7 @@ def get_drive_from_part_uuid(partuuid):
 
 	return None
 
-def update_git():
+def update_git(branch='master'):
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
 		print('[N] Checking for updates...')
@@ -328,12 +328,16 @@ def update_git():
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
-		if output != b'Already up to date':
+		if output != b'Already up to date' or branch != 'master':
 			#tmp = re.findall(b'[0-9]+ file changed', output)
 			#print(tmp)
 			#if len(tmp):
 			#	num_changes = int(tmp[0].split(b' ',1)[0])
 			#	if(num_changes):
+
+			if branch != 'master':
+				print(f'[N] Changing branch to {branch}')
+				output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
 			
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
@@ -488,6 +492,7 @@ if __name__ == '__main__':
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
+	if not 'support-aur' in args: args['support-aur'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
@@ -703,6 +708,9 @@ if __name__ == '__main__':
 	elif 'prerequisits' in instructions:
 		pre_conf = instructions['prerequisits']
 
+	if 'git-branch' in pre_conf:
+		update_git(pre_conf['git-branch'])
+
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
 	## But partly because some configurations need to be done against the live CD.
@@ -743,7 +751,7 @@ if __name__ == '__main__':
 		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
 		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
-	if not os.path.isdir('/mnt/etc'):
+	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
@@ -787,11 +795,25 @@ if __name__ == '__main__':
 			entry.write('initrd /initramfs-linux.img\n')
 			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
+		if args['support-aur']:
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
+			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
+
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "git clone https://aur.archlinux.org/yay.git"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder yay"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \"(cd /root/yay; makepkg -si --noconfirm)\" >/dev/null"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			
 	conf = {}
 	if 'post' in instructions:
 		conf = instructions['post']
 	elif not 'args' in instructions and len(instructions):
 		conf = instructions
+
+	if 'git-branch' in conf:
+		update_git(pre_conf['git-branch'])
 
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
