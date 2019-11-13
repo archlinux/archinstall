@@ -10,7 +10,7 @@
         "_window_manager_dependencies" : "xorg-server xorg-xrandr xorg-xinit xterm",
         "_window_manager_utilities" : "feh slock xscreensaver terminus-font-otb gnu-free-fonts ttf-liberation xsel",
         "_virtulization" : "qemu ovmf",
-        "_utils" : "openssh sshfs git htop pkgfile scrot dhclient wget smbclient cifs-utils",
+        "_utils" : "openssh sshfs git htop pkgfile scrot dhclient wget smbclient cifs-utils libu2f-host",
         "_audio" : "pulseaudio pulseaudio-alsa pavucontrol",
         "post" : "don't reboot"
     },
