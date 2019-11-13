@@ -419,7 +419,7 @@ def grab_url_data(path):
 def get_application_instructions(target):
 	instructions = {}
 	try:
-		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target))
+		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
 		print('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found for: {}'.format(target))
@@ -434,7 +434,7 @@ def get_application_instructions(target):
 			return instructions
 	
 	try:
-		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+		instructions = json.loads(instructions, object_pairs_hook=oDict)
 	except:
 		print('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
@@ -445,7 +445,7 @@ def get_application_instructions(target):
 def get_instructions(target):
 	instructions = {}
 	try:
-		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target))
+		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
 		print('[N] Found net-deploy instructions called: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found called: {}'.format(target))
@@ -460,7 +460,7 @@ def get_instructions(target):
 			return instructions
 	
 	try:
-		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+		instructions = json.loads(instructions, object_pairs_hook=oDict)
 	except:
 		print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
