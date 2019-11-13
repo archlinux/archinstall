@@ -820,6 +820,7 @@ if __name__ == '__main__':
 			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 		if args['aur-support']:
+			print('[N] AUR support demanded, building "yay" before running POST steps.')
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
 			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
 
@@ -829,6 +830,7 @@ if __name__ == '__main__':
 			o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 			
 	conf = {}
 	if 'post' in instructions:
