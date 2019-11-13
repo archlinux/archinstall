@@ -338,6 +338,11 @@ def update_git(branch='master'):
 			if branch != 'master':
 				print(f'[N] Changing branch to {branch}')
 				output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
+				print('[N] Rebooting the new branch')
+				if not 'rebooted' in args:
+					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted','--rerun'])
+				else:
+					os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rerun',])
 			
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
@@ -818,7 +823,7 @@ if __name__ == '__main__':
 
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "git clone https://aur.archlinux.org/yay.git"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder yay"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \"(cd /root/yay; makepkg -si --noconfirm)\" >/dev/null"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /root/yay; makepkg -si --noconfirm)\\" >/dev/null"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
 			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
