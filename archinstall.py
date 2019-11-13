@@ -763,6 +763,8 @@ if __name__ == '__main__':
 
 	if not args['rerun'] or rerun:
 		print('[N] Straping in packages.')
+		if args['aur-support']:
+			args['packages'] += ' git'
 		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
 		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
