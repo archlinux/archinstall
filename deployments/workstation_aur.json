@@ -23,7 +23,7 @@
             "pacman -Syy --noconfirm {_webbrowser} {_utils} {_mediaplayer} {_window_manager} {_window_manager_dependencies} {_window_manager_utilities} {_virtulization} {_filebrowser} {_editor}" : {"pass-args" : true}
         },
         "Install aur packages" : {
-            "yay -Syy --noconfirm {_code_editor}" : {"pass-args" : true}
+            "yay -Syy --noconfirm {_code_editor}" : {"pass-args" : true, "runas" : "aibuilder"}
         },
         "Setup virtulization" : {
             "sh -c \"Description=\\\"Bridge for virtual machines\\\"\nInterface=br0\nConnection=bridge\nBindsToInterfaces=(eno1)\nIP=no\nExecUpPost=\\\"ip link set dev br0 address $(cat /sys/class/net/eno1/address); IP=dhcp; ip_set\\\"\nExecDownPre=\\\"IP=dhcp\\\"\n\n## Ignore (R)STP and immediately activate the bridge\nSkipForwardingDelay=yes\"" : null
