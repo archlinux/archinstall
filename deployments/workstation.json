@@ -4,14 +4,15 @@
         "_mediaplayer" : "lollypop gstreamer gst-plugins-good gnome-keyring",
         "_filebrowser" : "nemo gpicview-gtk3",
         "_webbrowser" : "chromium",
-        "_window_manager" : "awesome",
+        "_window_manager" : "awesome feh",
         "_keyboard_layout" : "sv-latin1",
         "_virtulization" : "qemu ovmf",
+        "_utils" : "htop pkgfile",
         "post" : "don't reboot"
     },
     "post" : {
         "Install workstation packages": {
-            "pacman -Syy --noconfirm openssh sshfs git {_webbrowser} {_mediaplayer} {_window_manager} {_virtulization} {_filebrowser} dhclient gnu-free-fonts ttf-liberation xorg-server xorg-xrandr xorg-xinit xterm nano wget pulseaudio pulseaudio-alsa pavucontrol smbclient cifs-utils xscreensaver" : {"pass-args" : true}
+            "pacman -Syy --noconfirm openssh sshfs git {_webbrowser} {_utils} {_mediaplayer} {_window_manager} {_virtulization} {_filebrowser} dhclient gnu-free-fonts ttf-liberation xorg-server xorg-xrandr xorg-xinit xterm nano wget pulseaudio pulseaudio-alsa pavucontrol smbclient cifs-utils xscreensaver" : {"pass-args" : true}
         },
         "Setup virtulization" : {
             "sh -c \"Description=\\\"Bridge for virtual machines\\\"\nInterface=br0\nConnection=bridge\nBindsToInterfaces=(eno1)\nIP=no\nExecUpPost=\\\"ip link set dev br0 address $(cat /sys/class/net/eno1/address); IP=dhcp; ip_set\\\"\nExecDownPre=\\\"IP=dhcp\\\"\n\n## Ignore (R)STP and immediately activate the bridge\nSkipForwardingDelay=yes\"" : null
