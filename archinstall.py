@@ -425,8 +425,8 @@ def get_application_instructions(target):
 		print('[N] No instructions found for: {}'.format(target))
 		print('[N] Trying local instructions under ./deployments/applications')
 		local_path = './deployments/applications' if os.path.isfile('./archinstall.py') else './archinstall/deployments/applications' # Dangerous assumption
-		if os.path.isfile(f'{local_path}/deployments/applications/{target}.json'):
-			with open(f'{local_path}/deployments/applications/{target}.json', 'r') as fh:
+		if os.path.isfile(f'{local_path}/{target}.json'):
+			with open(f'{local_path}/{target}.json', 'r') as fh:
 				instructions = fh.read()
 
 			print('[N] Found local application instructions for: {}'.format(target))
@@ -451,8 +451,8 @@ def get_instructions(target):
 		print('[N] No instructions found called: {}'.format(target))
 		print('[N] Trying local instructions under ./deployments')
 		local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
-		if os.path.isfile(f'{local_path}/deployments/{target}.json'):
-			with open(f'{local_path}/deployments/{target}.json', 'r') as fh:
+		if os.path.isfile(f'{local_path}/{target}.json'):
+			with open(f'{local_path}/{target}.json', 'r') as fh:
 				instructions = fh.read()
 
 			print('[N] Found local instructions called: {}'.format(target))
