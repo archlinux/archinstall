@@ -424,7 +424,7 @@ def get_application_instructions(target):
 	except urllib.error.HTTPError:
 		print('[N] No instructions found for: {}'.format(target))
 		print('[N] Trying local instructions under ./deployments/applications')
-		local_path = './deployments/applications' if isfile('./archinstall.py') else './archinstall/deployments/applications': # Dangerous assumption
+		local_path = './deployments/applications' if isfile('./archinstall.py') else './archinstall/deployments/applications' # Dangerous assumption
 		if isfile(f'{local_path}/deployments/applications/{target}.json'):
 			with open(f'{local_path}/deployments/applications/{target}.json', 'r') as fh:
 				instructions = fh.read()
