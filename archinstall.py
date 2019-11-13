@@ -336,8 +336,8 @@ def update_git(branch='master'):
 			#	if(num_changes):
 
 			if branch != 'master':
-				on_branch = simple_command('(cd /root/archinstall; git branch | grep "*" | cut -d\' \' -f 2)')
-				if on_branch.strip().lower() != branch.strip().lower():
+				on_branch = simple_command('(cd /root/archinstall; git branch | grep "*" | cut -d\' \' -f 2)').decode('UTF-8').strip()
+				if on_branch.lower() != branch.lower():
 					print(f'[N] Changing branch from {on_branch} to {branch}')
 					output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
 					print('[N] Rebooting the new branch')
