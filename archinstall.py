@@ -643,7 +643,7 @@ if __name__ == '__main__':
 
 
 	for i in range(5, 0, -1):
-		print(f'Formatting in {i}...')
+		print(f'Formatting {args["drive"]} in {i}...')
 		sleep(1)
 
 
@@ -726,6 +726,7 @@ if __name__ == '__main__':
 
 	if 'git-branch' in pre_conf:
 		update_git(pre_conf['git-branch'])
+		del(pre_conf['git-branch'])
 
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
@@ -829,7 +830,8 @@ if __name__ == '__main__':
 		conf = instructions
 
 	if 'git-branch' in conf:
-		update_git(pre_conf['git-branch'])
+		update_git(conf['git-branch'])
+		del(conf['git-branch'])
 
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
