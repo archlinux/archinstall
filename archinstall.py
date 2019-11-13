@@ -75,7 +75,7 @@ except:
 
 ## FIXME: dependency checks (fdisk, lsblk etc)
 def sig_handler(signal, frame):
-	print('Aborting further installation steps!')
+	print('\nAborting further installation steps!')
 	print(' Here\'s a summary of the commandline:')
 	print(f' {sys.argv}')
 
@@ -311,7 +311,7 @@ def get_drive_from_part_uuid(partuuid):
 
 	return None
 
-def update_git():
+def update_git(branch='master'):
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
 		print('[N] Checking for updates...')
@@ -328,12 +328,16 @@ def update_git():
 			return
 
 		# b'From github.com:Torxed/archinstall\n   339d687..80b97f3  master     -> origin/master\nUpdating 339d687..80b97f3\nFast-forward\n README.md | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n'
-		if output != b'Already up to date':
+		if output != b'Already up to date' or branch != 'master':
 			#tmp = re.findall(b'[0-9]+ file changed', output)
 			#print(tmp)
 			#if len(tmp):
 			#	num_changes = int(tmp[0].split(b' ',1)[0])
 			#	if(num_changes):
+
+			if branch != 'master':
+				print(f'[N] Changing branch to {branch}')
+				output = simple_command(f'(cd /root/archinstall; git checkout {branch}; git pull)')
 			
 			if not 'rebooted' in args:
 				## Reboot the script (in same context)
@@ -415,14 +419,22 @@ def grab_url_data(path):
 def get_application_instructions(target):
 	instructions = {}
 	try:
-		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target))
+		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+		print('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found for: {}'.format(target))
-		return instructions
+		print('[N] Trying local instructions under ./deployments/applications')
+		local_path = './deployments/applications' if os.path.isfile('./archinstall.py') else './archinstall/deployments/applications' # Dangerous assumption
+		if os.path.isfile(f'{local_path}/{target}.json'):
+			with open(f'{local_path}/{target}.json', 'r') as fh:
+				instructions = fh.read()
+
+			print('[N] Found local application instructions for: {}'.format(target))
+		else:
+			return instructions
 	
-	print('[N] Found application instructions for: {}'.format(target))
 	try:
-		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+		instructions = json.loads(instructions, object_pairs_hook=oDict)
 	except:
 		print('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
@@ -433,14 +445,22 @@ def get_application_instructions(target):
 def get_instructions(target):
 	instructions = {}
 	try:
-		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target))
+		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+		print('[N] Found net-deploy instructions called: {}'.format(target))
 	except urllib.error.HTTPError:
 		print('[N] No instructions found called: {}'.format(target))
-		return instructions
+		print('[N] Trying local instructions under ./deployments')
+		local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
+		if os.path.isfile(f'{local_path}/{target}.json'):
+			with open(f'{local_path}/{target}.json', 'r') as fh:
+				instructions = fh.read()
+
+			print('[N] Found local instructions called: {}'.format(target))
+		else:
+			return instructions
 	
-	print('[N] Found net-deploy instructions called: {}'.format(target))
 	try:
-		instructions = json.loads(instructions.decode('UTF-8'), object_pairs_hook=oDict)
+		instructions = json.loads(instructions, object_pairs_hook=oDict)
 	except:
 		print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
@@ -704,6 +724,9 @@ if __name__ == '__main__':
 	elif 'prerequisits' in instructions:
 		pre_conf = instructions['prerequisits']
 
+	if 'git-branch' in pre_conf:
+		update_git(pre_conf['git-branch'])
+
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
 	## But partly because some configurations need to be done against the live CD.
@@ -804,6 +827,9 @@ if __name__ == '__main__':
 		conf = instructions['post']
 	elif not 'args' in instructions and len(instructions):
 		conf = instructions
+
+	if 'git-branch' in conf:
+		update_git(pre_conf['git-branch'])
 
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
