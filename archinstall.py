@@ -480,6 +480,7 @@ if __name__ == '__main__':
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
+	if not 'support-aur' in args: args['support-aur'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
@@ -727,7 +728,7 @@ if __name__ == '__main__':
 		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
 		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
 
-	if not os.path.isdir('/mnt/etc'):
+	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
@@ -771,6 +772,17 @@ if __name__ == '__main__':
 			entry.write('initrd /initramfs-linux.img\n')
 			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
+		if args['support-aur']:
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
+			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
+
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "git clone https://aur.archlinux.org/yay.git"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder yay"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \"(cd /root/yay; makepkg -si --noconfirm)\" >/dev/null"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			
 	conf = {}
 	if 'post' in instructions:
 		conf = instructions['post']
