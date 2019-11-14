@@ -1,23 +1,24 @@
 # archinstall
-Just a bare bone automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer *(with optional network deployment instructions based on MAC-address)*.
+Just a bare bone guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer.
 
-Pre-built ISO's can be found here which autostarts this installer: https://hvornum.se/archiso/
+Pre-built ISO's can be found here which autostarts this installer *(in guided mode)*: https://hvornum.se/archiso/
 
 # How-to / usecases
+
+## Run on Live-CD (Binary)
+
+    # wget https://gzip.app/archinstall
+    # chmod +x archinstall; ./archinstall
 
 ## Run on Live-CD (Python):
 
     # wget https://raw.githubusercontent.com/Torxed/archinstall/master/archinstall.py
     # pacman -S --noconfirm python; python archinstall.py
 
-This will start a guided install. Add `--default` for unattended.
+This will start a guided install.<br>
+Add `--default` for unattended.
 
-> NOTE: Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Fruther down are examples and cheat sheets on how to create different live ISO's.
-
-## Run on Live-CD (Binary)
-
-    # wget https://gzip.app/archinstall
-    # chmod +x archinstall; ./archinstall
+> **Creating your own ISO:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
 # Features
 
@@ -30,10 +31,11 @@ This will start a guided install. Add `--default` for unattended.
  * Supports offline-installation of Arch Linux *(currently broken)*
  * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
 
+**Default Installation Contains:** Encrypts drive, btrfs filesystem, `linux` kernel, nano, wpa_supplicant *(and dialog)* 
+
 # Examples:
 
  * `./archinstall --profile=workstation --drive=/dev/sda` - Installs the workstation template on the drive `/dev/sda`
-
 
 # [Build a Arch Linux ISO to autorun archinstall](https://github.com/Torxed/archinstall/wiki/Autorun-on-Arch-Live-CD)
 
@@ -45,7 +47,7 @@ More options for the built ISO:
 
 ### [Custom web-server for deployment profiles](https://github.com/Torxed/archinstall/wiki/Custom-web-server-for-deployment-profiles)
 
-# [Rerunning the installation](https://github.com/Torxed/archinstall/wiki/Rerunning-the-installation)
+### [Rerunning the installation](https://github.com/Torxed/archinstall/wiki/Rerunning-the-installation)
 
 # Some parameters you can give it
 
