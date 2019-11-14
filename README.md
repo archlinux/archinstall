@@ -65,6 +65,8 @@ More options for the built ISO:
         --password="<YUBIKEY>" for setting a unique password on the YubiKey and use that as a password
         (NOTE: This will wipe/replace slot 1 on the YubiKey)
 
+    --aur-support (default)
+
     --pwfile=/tmp/diskpw (Default)
       Which file to store the disk encryption password while sending it to cryptsetup
     
