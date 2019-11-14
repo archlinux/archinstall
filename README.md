@@ -35,7 +35,7 @@ Add `--default` for unattended.
 
 # Examples:
 
- * `./archinstall --profile=workstation --drive=/dev/sda` - Installs the workstation template on the drive `/dev/sda`
+ * `./archinstall --profile=workstation --drive=/dev/sda` - Installs the [workstation](https://github.com/Torxed/archinstall/blob/master/deployments/workstation.json) template on the drive `/dev/sda`
 
 # [Build a Arch Linux ISO to autorun archinstall](https://github.com/Torxed/archinstall/wiki/Autorun-on-Arch-Live-CD)
 
