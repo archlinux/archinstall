@@ -21,12 +21,13 @@ This will start a guided install. Add `--default` for unattended.
 
 # Features
 
- * Unattended install of Arch Linux
  * User guided install of Arch Linux *(Like most other distros have)*
- * YubiKey support for disk and root password *(TBD / next release)*
+ * Supports `AUR` packages.
+ * Unattended install of Arch Linux
  * Profile / Template based installs
- * Supports offline-installation of Arch Linux *(currently broken)*
  * Full disk encryption, locale/region settings and customizable application selection
+ * YubiKey support for disk and root password *(TBD / next release)*
+ * Supports offline-installation of Arch Linux *(currently broken)*
  * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
 
 # Examples:
