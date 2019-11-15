@@ -11,10 +11,13 @@ from time import sleep, time
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 
+if not os.path.isdir('/sys/firmware/efi'):
+	print('[E] This script only supports UEFI-booted machines.')
+	exit(1)
+	
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
 profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
-
 try:
 	import psutil
 except:
@@ -495,14 +498,7 @@ def merge_dicts(d1, d2, before=True, overwrite=False):
 def random_string(l):
 	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for i in range(l))
 
-if __name__ == '__main__':
-	update_git() # Breaks and restarts the script if an update was found.
-	update_drive_list()
-	if not os.path.isdir('/sys/firmware/efi'):
-		print('[E] This script only supports UEFI-booted machines.')
-		exit(1)
-
-	## Setup some defaults (in case no command-line parameters or netdeploy-params were given)
+def setup_args_defaults(args):
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
@@ -542,9 +538,9 @@ if __name__ == '__main__':
 				exit(1)
 
 		args['drive'] = drive
+	return args
 
-	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
+def load_instruction_set():
 	instructions = {}
 	if get_default_gateway_linux():
 		locmac = get_local_MACs()
@@ -571,6 +567,20 @@ if __name__ == '__main__':
 						args[key] = val
 	else:
 		print('[N] No gateway - No net deploy')
+
+	return instructions
+
+if __name__ == '__main__':
+	update_git() # Breaks and restarts the script if an update was found.
+	update_drive_list()
+
+	## Setup some defaults 
+	#  (in case no command-line parameters or netdeploy-params were given)
+	args = setup_args_defaults(args)
+
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	instructions = load_instruction_set()
 
 	if args['profile'] and not args['default']:
 		instructions = get_instructions(args['profile'])
@@ -641,8 +651,6 @@ if __name__ == '__main__':
 	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
 	#	with open(args['pwfile'], 'r') as pw:
 	#		PIN = pw.read().strip()
-
-
 
 	print()
 	print('[!] Disk PASSWORD is: {}'.format(args['password']))
