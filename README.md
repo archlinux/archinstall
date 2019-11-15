@@ -1,9 +1,9 @@
 # archinstall
-Just a bare bone guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer.
+Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer.
 
-Pre-built ISO's can be found here which autostarts this installer *(in guided mode)*: https://hvornum.se/archiso/
+Pre-built ISO's can be found here which autostarts this script *(in guided mode)*: https://hvornum.se/archiso/
 
-# How-to / usecases
+# How-to / Usecases
 
 ## Run on Live-CD (Binary)
 
@@ -16,19 +16,19 @@ Pre-built ISO's can be found here which autostarts this installer *(in guided mo
     # pacman -S --noconfirm python; python archinstall.py
 
 This will start a guided install.<br>
-Add `--default` for unattended.
+Add `--default` for a unattended minimalistic installation of Arch Linux.
 
 > **Creating your own ISO:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
 # Features
 
  * User guided install of Arch Linux *(Like most other distros have)*
- * Supports `AUR` packages.
+ * `AUR` package support.
  * Unattended install of Arch Linux
  * Profile / Template based installs
  * Full disk encryption, locale/region settings and customizable application selection
  * YubiKey support for disk and root password *(TBD / next release)*
- * Supports offline-installation of Arch Linux *(currently broken)*
+ * <strike>Supports offline-installation of Arch Linux</strike>
  * Never creates or leave post-install/service scripts *(usually used to finalize databases etc)*
 
 **Default Installation Contains:** Encrypts drive, btrfs filesystem, `linux` kernel, nano, wpa_supplicant *(and dialog)* 
