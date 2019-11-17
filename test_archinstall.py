@@ -9,5 +9,6 @@ archinstall.setup_args_defaults(archinstall.args, interactive=False)
 instructions = archinstall.load_automatic_instructions(emulate=False)
 profile_instructions = archinstall.get_instructions('workstation', emulate=False)
 profile_instructions = archinstall.merge_in_includes(profile_instructions, emulate=False)
+archinstall.args['password'] = 'test'
 
 print(json.dumps(archinstall.args, indent=4))

@@ -216,7 +216,7 @@ class sys_command():#Thread):
 		if not 'emulate' in kwargs: kwargs['emulate'] = SAFETY_LOCK
 		#Thread.__init__(self)
 		if kwargs['emulate']:
-			print('Starting command in emulation mode.')
+			print(f"Starting command '{cmd}' in emulation mode.")
 		self.cmd = shlex.split(cmd)
 		self.args = args
 		self.kwargs = kwargs
@@ -494,7 +494,10 @@ def get_disk_size(drive):
 		return ''.join(human_readable_size(fh.read().decode('UTF-8').strip()))
 
 def disk_info(drive, *positionals, **kwargs):
-	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **kwargs)).decode('UTF_8'))['blockdevices'][0]
+	lkwargs = {**kwargs}
+	lkwargs['emulate'] = False # This is a emulate-safe function. Does not alter filesystem.
+
+	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **lkwargs)).decode('UTF_8'))['blockdevices'][0]
 	fileformats = []
 	labels = []
 	for child in info['children']:
