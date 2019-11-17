@@ -30,7 +30,8 @@ except:
 
 	class disk():
 		def __init__(self, size, free, percent):
-			self.size = size
+			self.total = size
+			self.used = 0
 			self.free = free
 			self.percent = percent
 
@@ -307,7 +308,7 @@ def get_drive_from_part_uuid(partuuid):
 	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
 
 	for drive in harddrives:
-		for partition in grab_partitions(f'/dev/{drive}'):
+		for partition in get_partitions(f'/dev/{drive}'):
 			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}')
 			if len(o) and o == partuuid:
 				return drive
@@ -372,7 +373,7 @@ def device_state(name):
 					return
 	return True
 
-def grab_partitions(dev):
+def get_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
 	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
@@ -398,11 +399,74 @@ def grab_partitions(dev):
 
 	return parts
 
+def get_disk_model(drive):
+	with open(f'/sys/block/{os.path.basename(drive)}/device/model', 'rb') as fh:
+		return fh.read().decode('UTF-8').strip()
+
+def get_disk_size(drive):
+	dev_short_name = os.path.basename(drive)
+	with open(f'/sys/block/{dev_short_name}/device/block/{dev_short_name}/size', 'rb') as fh:
+		return ''.join(human_readable_size(fh.read().decode('UTF-8').strip()))
+
+def disk_info(drive):
+	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}').exec()).decode('UTF_8'))['blockdevices'][0]
+	fileformats = []
+	labels = []
+	for child in info['children']:
+		if child['fstype'] != None:
+			fileformats.append(child['fstype'])
+		if child['label'] != None:
+			labels.append(child['label'])
+	info['fileformats'] = fileformats
+	info['labels'] = labels
+	info['model'] = get_disk_model(drive)
+	
+	return info
+
 def update_drive_list():
+	# https://github.com/karelzak/util-linux/blob/f920f73d83f8fd52e7a14ec0385f61fab448b491/disk-utils/fdisk-list.c#L52
 	for path in glob('/sys/block/*/device'):
 		name = re.sub('.*/(.*?)/device', '\g<1>', path)
 		if device_state(name):
-			harddrives['/dev/{}'.format(name)] = psutil.disk_usage('/dev/{}'.format(name))
+			harddrives[f'/dev/{name}'] = disk_info(f'/dev/{name}')
+
+def human_readable_size(bits, sizes=[{8 : 'b'}, {1024 : 'kb'}, {1024 : 'mb'}, {1024 : 'gb'}, {1024 : 'tb'}, {1024 : 'zb?'}]):
+	# Not needed if using lsblk.
+	end_human = None
+	for pair in sizes:
+		size, human = list(pair.items())[0]
+
+		if bits / size > 1:
+			bits = bits/size
+			end_human = human
+		else:
+			break
+	return bits, end_human
+
+def human_disk_info(drive):
+	return {
+		'size' : harddrives[drive]['size'],
+		'fileformat' : harddrives[drive]['fileformats'],
+		'labels' : harddrives[drive]['labels']
+	}
+
+def close_disks():
+	o = simple_command('/usr/bin/umount -R /mnt')
+	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
+
+def format_disk(drive, start='512MiB', end='100%'):
+	print(f'[N] Setting up {drive}.')
+	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
+	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}').exec())
+	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
+	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
+	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
 
 def multisplit(s, splitters):
 	s = [s,]
@@ -661,22 +725,10 @@ if __name__ == '__main__':
 			print(f'Formatting {args["drive"]} in {i}...')
 			sleep(1)
 
-		o = simple_command('/usr/bin/umount -R /mnt')
-		o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
-		print('[N] Setting up {drive}.'.format(**args))
-		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
-		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} mklabel gpt'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} name 1 "EFI"'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 esp on'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} set 1 boot on'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/parted -s {drive} mkpart primary {start} {size}'.format(**args)).exec())
-		# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
-		#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
-		#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
+		close_disks()
+		format_disk(args['drive'], start=args['start'], end=args['size'])
 	
-	args['paritions'] = grab_partitions(args['drive'])
+	args['paritions'] = get_partitions(args['drive'])
 	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
 
 	if len(args['paritions']) <= 0:
