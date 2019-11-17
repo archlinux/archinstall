@@ -2,15 +2,16 @@
 import traceback
 import os, re, struct, sys, json, pty, shlex
 import urllib.request, urllib.parse, ssl, signal
+import time
 from glob import glob
 from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
 from subprocess import Popen, STDOUT, PIPE
-from time import sleep, time
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 from hashlib import sha512
+from threading import Thread, enumerate as tenum
 
 if not os.path.isdir('/sys/firmware/efi'):
 	print('[E] This script only supports UEFI-booted machines.')
@@ -24,8 +25,9 @@ else:
 profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
-commandlog = oDict()
-instructions = 
+commandlog = []
+worker_history = oDict()
+instructions = oDict()
 args = {}
 positionals = []
 for arg in sys.argv[1:]:
@@ -60,6 +62,8 @@ class LOG_LEVELS:
 	WARNING = 3
 	INFO = 4
 	DEBUG = 5
+
+LOG_LEVEL = 4
 
 def log(*msg, origin='UNKNOWN', level=5, **kwargs):
 	if level <= LOG_LEVEL:
@@ -102,7 +106,7 @@ except:
 			self.interface = interface
 			self.bytes_recv = int(bytes_recv)
 			self.bytes_sent = int(bytes_sent)
-		def __repr__(self, *args, **kwargs):
+		def __repr__(self, *positionals, **kwargs):
 			return f'iostat@{self.interface}[bytes_sent: {self.bytes_sent}, bytes_recv: {self.bytes_recv}]'
 
 	class psutil():
@@ -152,7 +156,7 @@ signal.signal(signal.SIGINT, sig_handler)
 def gen_uid(entropy_length=256):
 	return sha512(os.urandom(entropy_length)).hexdigest()
 
-def get_default_gateway_linux():
+def get_default_gateway_linux(*args, **kwargs):
 	"""Read the default gateway directly from /proc."""
 	with open("/proc/net/route") as fh:
 		for line in fh:
@@ -185,12 +189,33 @@ def pid_exists(pid):
 	else:
 		return True
 
-class sys_command(Thread):
-	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
+def simple_command(cmd, opts=None, *positionals, **kwargs):
+	if not opts: opts = {}
+	if 'debug' in opts:
+		print('[!] {}'.format(cmd))
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
+	output = b''
+	while handle.poll() is None:
+		data = handle.stdout.read()
+		if len(data):
+			if 'debug' in opts:
+				print(data.decode('UTF-8'), end='')
+		#	print(data.decode('UTF-8'), end='')
+			output += data
+	data = handle.stdout.read()
+	if 'debug' in opts:
+		print(data.decode('UTF-8'), end='')
+	output += data
+	handle.stdin.close()
+	handle.stdout.close()
+	return output
+
+class sys_command():#Thread):
+	def __init__(self, cmd, callback=None, start_callback=None, *positionals, **kwargs):
 		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
 		if not 'emulate' in kwargs: kwargs['emulate'] = SAFETY_LOCK
-		Thread.__init__(self)
-		if self.kwargs['emulate']:
+		#Thread.__init__(self)
+		if kwargs['emulate']:
 			print('Starting command in emulation mode.')
 		self.cmd = shlex.split(cmd)
 		self.args = args
@@ -206,23 +231,31 @@ class sys_command(Thread):
 
 		user_catalogue = os.path.expanduser('~')
 		self.cwd = f"{user_catalogue}/archinstall/cache/workers/{kwargs['worker_id']}/"
-		self.exec_dir = f'{self.cwd}/{basename(self.cmd[0])}_workingdir'
+		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
 			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = b''.join(sys_command('/usr/bin/which {}'.format(self.cmd[0])).exec())
+			o = sys_command('/usr/bin/which {}'.format(self.cmd[0]), emulate=False)
 			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8')
 
-		if not isdir(self.exec_dir):
+		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
 
 		commandlog.append(cmd + ' #emulated')
-		if start_callback: start_callback(self, *args, **kwargs)
-		self.start()
+		if start_callback: start_callback(self, *positionals, **kwargs)
+		#self.start()
+		self.run()
 
-	def __repr__(self, *args, **kwargs):
+	def __iter__(self, *positionals, **kwargs):
+		for line in self.trace_log.split(b'\n'):
+			yield line
+
+	def __repr__(self, *positionals, **kwargs):
 		return self.trace_log.decode('UTF-8')
+
+	def decode(self, fmt='UTF-8'):
+		return self.trace_log.decode(fmt)
 
 	def dump(self):
 		return {
@@ -237,15 +270,15 @@ class sys_command(Thread):
 		}
 
 	def run(self):
-		main = None
-		for t in tenum():
-			if t.name == 'MainThread':
-				main = t
-				break
+		#main = None
+		#for t in tenum():
+		#	if t.name == 'MainThread':
+		#		main = t
+		#		break
 
-		if not main:
-			print('Main thread not existing')
-			return
+		#if not main:
+		#	print('Main thread not existing')
+		#	return
 		
 		self.status = 'running'
 		old_dir = os.getcwd()
@@ -262,7 +295,7 @@ class sys_command(Thread):
 
 		alive = True
 		last_trigger_pos = 0
-		while alive and main and main.isAlive() and not self.kwargs['emulate']:
+		while alive and not self.kwargs['emulate']:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192).strip()
@@ -344,27 +377,6 @@ class sys_command(Thread):
 		if self.callback:
 			self.callback(self, *self.args, **self.kwargs)
 
-def simple_command(cmd, opts=None, *args, **kwargs):
-	if not opts: opts = {}
-	if 'debug' in opts:
-		print('[!] {}'.format(cmd))
-	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
-	output = b''
-	while handle.poll() is None:
-		data = handle.stdout.read()
-		if len(data):
-			if 'debug' in opts:
-				print(data.decode('UTF-8'), end='')
-		#	print(data.decode('UTF-8'), end='')
-			output += data
-	data = handle.stdout.read()
-	if 'debug' in opts:
-		print(data.decode('UTF-8'), end='')
-	output += data
-	handle.stdin.close()
-	handle.stdout.close()
-	return output
-
 def get_drive_from_uuid(uuid):
 	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
 
@@ -429,7 +441,7 @@ def update_git(branch='master'):
 				os.execv('/usr/bin/python3', ['archinstall.py'] + sys.argv + ['--rebooted',])
 				extit(1)
 
-def device_state(name):
+def device_state(name, *positionals, **kwargs):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
 	if os.path.isfile('/sys/block/{}/device/block/{}/removable'.format(name, name)):
 		with open('/sys/block/{}/device/block/{}/removable'.format(name, name)) as f:
@@ -449,8 +461,8 @@ def device_state(name):
 def get_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
-	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)).exec())
-	o = b''.join(sys_command('/usr/bin/lsblk -J {dev}'.format(dev=dev)).exec())
+	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
+	o = b''.join(sys_command('/usr/bin/lsblk -J {dev}'.format(dev=dev)))
 	if b'not a block device' in o:
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
@@ -481,8 +493,8 @@ def get_disk_size(drive):
 	with open(f'/sys/block/{dev_short_name}/device/block/{dev_short_name}/size', 'rb') as fh:
 		return ''.join(human_readable_size(fh.read().decode('UTF-8').strip()))
 
-def disk_info(drive):
-	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}').exec()).decode('UTF_8'))['blockdevices'][0]
+def disk_info(drive, *positionals, **kwargs):
+	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **kwargs)).decode('UTF_8'))['blockdevices'][0]
 	fileformats = []
 	labels = []
 	for child in info['children']:
@@ -506,7 +518,7 @@ def cleanup_args():
 				print('[E] Failed to setup a yubikey password, is it plugged in?')
 				exit(1)
 
-def merge_in_includes(instructions):
+def merge_in_includes(instructions, *positionals, **kwargs):
 	if 'args' in instructions:
 		## == Recursively fetch instructions if "include" is found under {args: ...}
 		while 'include' in instructions['args']:
@@ -515,9 +527,9 @@ def merge_in_includes(instructions):
 			del(instructions['args']['include'])
 			if type(includes) in (dict, list):
 				for include in includes:
-					instructions = merge_dicts(instructions, get_instructions(include), before=True)
+					instructions = merge_dicts(instructions, get_instructions(include, *positionals, **kwargs), before=True)
 			else:
-				instructions = merge_dicts(instructions, get_instructions(includes), before=True)
+				instructions = merge_dicts(instructions, get_instructions(includes), *positionals, **kwargs, before=True)
 
 		## Update arguments if we found any
 		for key, val in instructions['args'].items():
@@ -532,12 +544,12 @@ def merge_in_includes(instructions):
 	return instructions
 
 
-def update_drive_list():
+def update_drive_list(*args, **kwargs):
 	# https://github.com/karelzak/util-linux/blob/f920f73d83f8fd52e7a14ec0385f61fab448b491/disk-utils/fdisk-list.c#L52
 	for path in glob('/sys/block/*/device'):
 		name = re.sub('.*/(.*?)/device', '\g<1>', path)
-		if device_state(name):
-			harddrives[f'/dev/{name}'] = disk_info(f'/dev/{name}')
+		if device_state(name, *positionals, **kwargs):
+			harddrives[f'/dev/{name}'] = disk_info(f'/dev/{name}', *positionals, **kwargs)
 
 def human_readable_size(bits, sizes=[{8 : 'b'}, {1024 : 'kb'}, {1024 : 'mb'}, {1024 : 'gb'}, {1024 : 'tb'}, {1024 : 'zb?'}]):
 	# Not needed if using lsblk.
@@ -567,12 +579,12 @@ def format_disk(drive, start='512MiB', end='100%', emulate=False):
 	print(f'[N] Setting up {drive}.')
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate).exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate).exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate).exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate).exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate).exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}', emulate=emulate))
 	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
 	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
@@ -605,8 +617,7 @@ def get_application_instructions(target):
 		instructions = grab_url_data('{}/applications/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
 		print('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
-		print('[N] No instructions found for: {}'.format(target))
-		print('[N] Trying local instructions under ./deployments/applications')
+		print('[N] Could not find remote instructions. yrying local instructions under ./deployments/applications')
 		local_path = './deployments/applications' if os.path.isfile('./archinstall.py') else './archinstall/deployments/applications' # Dangerous assumption
 		if os.path.isfile(f'{local_path}/{target}.json'):
 			with open(f'{local_path}/{target}.json', 'r') as fh:
@@ -614,6 +625,7 @@ def get_application_instructions(target):
 
 			print('[N] Found local application instructions for: {}'.format(target))
 		else:
+			print('[N] No instructions found for: {}'.format(target))
 			return instructions
 	
 	try:
@@ -625,14 +637,13 @@ def get_application_instructions(target):
 
 	return instructions
 
-def get_instructions(target):
+def get_instructions(target, *positionals, **kwargs):
 	instructions = oDict()
 	try:
 		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
 		print('[N] Found net-deploy instructions called: {}'.format(target))
 	except urllib.error.HTTPError:
-		print('[N] No instructions found called: {}'.format(target))
-		print('[N] Trying local instructions under ./deployments')
+		print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
 		local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
 		if os.path.isfile(f'{local_path}/{target}.json'):
 			with open(f'{local_path}/{target}.json', 'r') as fh:
@@ -640,6 +651,7 @@ def get_instructions(target):
 
 			print('[N] Found local instructions called: {}'.format(target))
 		else:
+			print('[N] No instructions found called: {}'.format(target))
 			return instructions
 	
 	try:
@@ -671,7 +683,7 @@ def merge_dicts(d1, d2, before=True, overwrite=False):
 def random_string(l):
 	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for i in range(l))
 
-def setup_args_defaults(args):
+def setup_args_defaults(args, interactive=True):
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
@@ -688,18 +700,21 @@ def setup_args_defaults(args):
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
-		drives = sorted(list(harddrives.keys()))
-		if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
-			for index, drive in enumerate(drives):
-				print(f'{index}: {drive} ({harddrives[drive]})')
-			drive = input('Select one of the above disks (by number): ')
-			if not drive.isdigit():
-				raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
-			drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
-		args['drive'] = drives[0] # First drive found
+		if interactive:
+			drives = sorted(list(harddrives.keys()))
+			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
+				for index, drive in enumerate(drives):
+					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
+				drive = input('Select one of the above disks (by number): ')
+				if not drive.isdigit():
+					raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
+				drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
+			args['drive'] = drives[0] # First drive found
+		else:
+			args['drive'] = None
 	rerun = args['ignore-rerun']
 
-	if args['drive'][0] != '/':
+	if args['drive'] and args['drive'][0] != '/':
 		## Remap the selected UUID to the device to be formatted.
 		drive = get_drive_from_uuid(args['drive'])
 		if not drive:
@@ -713,15 +728,15 @@ def setup_args_defaults(args):
 		args['drive'] = drive
 	return args
 
-def load_automatic_instructions():
+def load_automatic_instructions(*args, **kwargs):
 	instructions = oDict()
-	if get_default_gateway_linux():
+	if get_default_gateway_linux(*args, **kwargs):
 		locmac = get_local_MACs()
 		if not len(locmac):
 			print('[N] No network interfaces - No net deploy.')
 		else:
 			for mac in locmac:
-				instructions = get_instructions(mac)
+				instructions = get_instructions(mac, *positionals, **kwargs)
 
 				if 'args' in instructions:
 					## == Recursively fetch instructions if "include" is found under {args: ...}
@@ -731,9 +746,9 @@ def load_automatic_instructions():
 						del(instructions['args']['include'])
 						if type(includes) in (dict, list):
 							for include in includes:
-								instructions = merge_dicts(instructions, get_instructions(include), before=True)
+								instructions = merge_dicts(instructions, get_instructions(include, *positionals, **kwargs), before=True)
 						else:
-							instructions = merge_dicts(instructions, get_instructions(includes), before=True)
+							instructions = merge_dicts(instructions, get_instructions(includes, *positionals, **kwargs), before=True)
 
 					## Update arguments if we found any
 					for key, val in instructions['args'].items():
@@ -799,7 +814,7 @@ if __name__ == '__main__':
 	if not args['rerun'] or args['ignore-rerun']:
 		for i in range(5, 0, -1):
 			print(f'Formatting {args["drive"]} in {i}...')
-			sleep(1)
+			time.sleep(1)
 
 		close_disks()
 		format_disk(args['drive'], start=args['start'], end=args['size'])
@@ -816,7 +831,7 @@ if __name__ == '__main__':
 		print(json.dumps(args['paritions'][part_name], indent=4))
 
 	if not args['rerun'] or args['ignore-rerun']:
-		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)))
 		if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 			print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
 			exit(1)
@@ -824,34 +839,34 @@ if __name__ == '__main__':
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
 		print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-		o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)))
 		if not b'Command successful.' in o:
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
 
-	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
 	if b'cannot open' in o:
-		o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)).exec())
-	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev').exec()) # /dev/dm-0
+		o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)))
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
 	if b'cannot open' in o:
 		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
 		print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-		o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev').exec())
+		o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev'))
 		if not b'UUID' in o:
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
 
 	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt') # /dev/dm-0
 	if len(o) <= 0:
-		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt').exec())
+		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt'))
 
 	os.makedirs('/mnt/boot', exist_ok=True)
 	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot') # /dev/dm-0
 	if len(o) <= 0:
-		o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)))
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
@@ -899,7 +914,7 @@ if __name__ == '__main__':
 					print('[-] Options: {}'.format(opts))
 
 			#print('[N] Command: {} ({})'.format(raw_command, opts))
-			o = b''.join(sys_command('{c}'.format(c=command), opts).exec())
+			o = b''.join(sys_command('{c}'.format(c=command), opts))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in b''.join(o):
 				print('[W] Prerequisit step failed: {}'.format(b''.join(o).decode('UTF-8')))
 			#print(o)
@@ -908,28 +923,28 @@ if __name__ == '__main__':
 		print('[N] Straping in packages.')
 		if args['aur-support']:
 			args['packages'] += ' git'
-		o = b''.join(sys_command('/usr/bin/pacman -Syy').exec())
-		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exec())
+		o = b''.join(sys_command('/usr/bin/pacman -Syy'))
+		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)))
 
 	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
 		print('[E] Failed to strap in packages', o)
 		exit(1)
 
 	if not args['rerun'] or rerun:
-		o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab').exec())
+		o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
 		with open('/mnt/etc/fstab', 'a') as fstab:
 			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)).exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime').exec())
-		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args)).exec()
-		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen").exec()
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)).exec())
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\"").exec())
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"").exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
+		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
+		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\""))
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\""))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
 
 		with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
 			## TODO: Don't replace it, in case some update in the future actually adds something.
@@ -937,9 +952,9 @@ if __name__ == '__main__':
 			mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 			mkinit.write('FILES=()\n')
 			mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux'))
 		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --no-variables --path=/boot install').exec())
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --no-variables --path=/boot install'))
 
 		with open('/mnt/boot/loader/loader.conf', 'w') as loader:
 			loader.write('default arch\n')
@@ -947,7 +962,7 @@ if __name__ == '__main__':
 
 		## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 		## And blkid is wrong in terms of LUKS.
-		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').exec().strip()
+		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
 		UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
 		with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 			entry.write('title Arch Linux\n')
@@ -957,16 +972,16 @@ if __name__ == '__main__':
 
 		if args['aur-support']:
 			print('[N] AUR support demanded, building "yay" before running POST steps.')
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"').exec())
-			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers").exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"'))
+			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers"))
 
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"').exec())
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"').exec())
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""'))
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"'))
+			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"'))
 			## Do not remove aibuilder just yet, can be used later for aur packages.
-			#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
-			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
-			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+			#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
+			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
 			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 			
 	conf = {}
@@ -1057,20 +1072,20 @@ if __name__ == '__main__':
 																												bytes(f'login:', 'UTF-8') : b'root\n',
 																												#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
 																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
-																											}, **opts}).exec())
+																											}, **opts}))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts).exec())
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
 
 	if args['aur-support']:
-		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"').exec())
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"').exec())
+		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
 
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
