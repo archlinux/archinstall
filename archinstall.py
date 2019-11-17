@@ -10,14 +10,75 @@ from subprocess import Popen, STDOUT, PIPE
 from time import sleep, time
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
+from hashlib import sha512
 
 if not os.path.isdir('/sys/firmware/efi'):
 	print('[E] This script only supports UEFI-booted machines.')
 	exit(1)
+
+if os.path.isfile('./SAFETY_LOCK'):
+	SAFETY_LOCK = True
+else:
+	SAFETY_LOCK = False
+
+profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
+rootdir_pattern = re.compile('^.*?/devices')
+harddrives = oDict()
+commandlog = oDict()
+args = {}
+positionals = []
+for arg in sys.argv[1:]:
+	if '--' == arg[:2]:
+		if '=' in arg:
+			key, val = [x.strip() for x in arg[2:].split('=')]
+		else:
+			key, val = arg[2:], True
+		args[key] = val
+	else:
+		positionals.append(arg)
+
+
+import logging
+from systemd.journal import JournalHandler
+
+# Custom adapter to pre-pend the 'origin' key.
+# TODO: Should probably use filters: https://docs.python.org/3/howto/logging-cookbook.html#using-filters-to-impart-contextual-information
+class CustomAdapter(logging.LoggerAdapter):
+	def process(self, msg, kwargs):
+		return '[{}] {}'.format(self.extra['origin'], msg), kwargs
+
+logger = logging.getLogger() # __name__
+journald_handler = JournalHandler()
+journald_handler.setFormatter(logging.Formatter('[{levelname}] {message}', style='{'))
+logger.addHandler(journald_handler)
+logger.setLevel(logging.DEBUG)
+
+class LOG_LEVELS:
+	CRITICAL = 1
+	ERROR = 2
+	WARNING = 3
+	INFO = 4
+	DEBUG = 5
+
+def log(*msg, origin='UNKNOWN', level=5, **kwargs):
+	if level <= LOG_LEVEL:
+		msg = [item.decode('UTF-8', errors='backslashreplace') if type(item) == bytes else item for item in msg]
+		msg = [str(item) if type(item) != str else item for item in msg]
+		log_adapter = CustomAdapter(logger, {'origin': origin})
+		if level <= 1:
+			log_adapter.critical(' '.join(msg))
+		elif level <= 2:
+			log_adapter.error(' '.join(msg))
+		elif level <= 3:
+			log_adapter.warning(' '.join(msg))
+		elif level <= 4:
+			log_adapter.info(' '.join(msg))
+		else:
+			log_adapter.debug(' '.join(msg))
+
 	
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
-profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/deployments'
 try:
 	import psutil
 except:
@@ -77,6 +138,7 @@ except:
 						data[interface] = iostat(interface, *line.strip().decode('UTF-8').split(' ',1))
 			return data
 
+
 ## FIXME: dependency checks (fdisk, lsblk etc)
 def sig_handler(signal, frame):
 	print('\nAborting further installation steps!')
@@ -86,21 +148,8 @@ def sig_handler(signal, frame):
 	exit(0)
 signal.signal(signal.SIGINT, sig_handler)
 
-
-rootdir_pattern = re.compile('^.*?/devices')
-harddrives = oDict()
-
-args = {}
-positionals = []
-for arg in sys.argv[1:]:
-	if '--' == arg[:2]:
-		if '=' in arg:
-			key, val = [x.strip() for x in arg[2:].split('=')]
-		else:
-			key, val = arg[2:], True
-		args[key] = val
-	else:
-		positionals.append(arg)
+def gen_uid(entropy_length=256):
+	return sha512(os.urandom(entropy_length)).hexdigest()
 
 def get_default_gateway_linux():
 	"""Read the default gateway directly from /proc."""
@@ -135,68 +184,108 @@ def pid_exists(pid):
 	else:
 		return True
 
-class sys_command():
-	def __init__(self, cmd, opts={}):
+class sys_command(Thread):
+	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
+		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
+		if not 'emulate' in kwargs: kwargs['emulate'] = SAFETY_LOCK
+		Thread.__init__(self)
+		if self.kwargs['emulate']:
+			print('Starting command in emulation mode.')
 		self.cmd = shlex.split(cmd)
-		self.opts = opts
-		self.pid = -1
-	
-	def __enter__(self, *args, **kwargs):
-		## Prep for context management (still block calls)
-		return self.exec()
+		self.args = args
+		self.kwargs = kwargs
+		self.callback = callback
+		self.pid = None
+		self.exit_code = None
+		self.started = time.time()
+		self.ended = None
+		self.worker_id = kwargs['worker_id']
+		self.trace_log = b''
+		self.status = 'starting'
 
-	def __leave__(self, *args, **kwargs):
-		if 'debug' in self.opts and self.opts['debug']:
-			print('[N] Leaving subsystem routine.')
-		os.waitpid(self.pid, 0)
-		if 'debug' in self.opts and self.opts['debug']:
-			print('[N] (Bye bye!)')
+		user_catalogue = os.path.expanduser('~')
+		self.cwd = f"{user_catalogue}/archinstall/cache/workers/{kwargs['worker_id']}/"
+		self.exec_dir = f'{self.cwd}/{basename(self.cmd[0])}_workingdir'
 
-	def exec(self):
 		if not self.cmd[0][0] == '/':
-			print('[N] Command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]))
+			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
 			o = b''.join(sys_command('/usr/bin/which {}'.format(self.cmd[0])).exec())
+			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8')
-			print('[N] This is what I\'m going with: {}'.format(self.cmd[0]))
-		# PID = 0 for child, and the PID of the child for the parent    
-		self.pid, child_fd = pty.fork()
 
+		if not isdir(self.exec_dir):
+			os.makedirs(self.exec_dir)
+
+		commandlog.append(cmd + ' #emulated')
+		if start_callback: start_callback(self, *args, **kwargs)
+		self.start()
+
+	def __repr__(self, *args, **kwargs):
+		return self.trace_log.decode('UTF-8')
+
+	def dump(self):
+		return {
+			'status' : self.status,
+			'worker_id' : self.worker_id,
+			'worker_result' : self.trace_log.decode('UTF-8'),
+			'started' : self.started,
+			'ended' : self.ended,
+			'started_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
+			'ended_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
+			'exit_code' : self.exit_code
+		}
+
+	def run(self):
+		main = None
+		for t in tenum():
+			if t.name == 'MainThread':
+				main = t
+				break
+
+		if not main:
+			print('Main thread not existing')
+			return
+		
+		self.status = 'running'
+		old_dir = os.getcwd()
+		os.chdir(self.exec_dir)
+		self.pid, child_fd = pty.fork()
 		if not self.pid: # Child process
 			# Replace child process with our main process
-			os.execv(self.cmd[0], self.cmd)
+			if not self.kwargs['emulate']:
+				os.execv(self.cmd[0], self.cmd)
+		os.chdir(old_dir)
 
 		poller = epoll()
 		poller.register(child_fd, EPOLLIN | EPOLLHUP)
 
 		alive = True
-		trace_log = b''
 		last_trigger_pos = 0
-		while alive:
+		while alive and main and main.isAlive() and not self.kwargs['emulate']:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192).strip()
-					trace_log += output
+					self.trace_log += output
 				except OSError:
 					alive = False
 					break
 
-				if 'debug' in self.opts and self.opts['debug']:
-					if len(output):
-						print(output)
+				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
+					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
 				lower = output.lower()
 				broke = False
-				if 'triggers' in self.opts:
-					for trigger in list(self.opts['triggers']):
-						if trigger.lower() in trace_log[last_trigger_pos:].lower():
-							trigger_pos_in_log = trace_log[last_trigger_pos:].lower().find(trigger.lower()) + len(trigger)
+				if 'events' in self.kwargs:
+					for trigger in list(self.kwargs['events']):
+						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
+							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
-							if 'debug' in self.opts and self.opts['debug']:
-								print('[N] Writing to subsystem: {}'.format(self.opts['triggers'][trigger].decode('UTF-8')))
+							if 'debug' in self.kwargs and self.kwargs['debug']:
+								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
 
-							last_trigger_pos = trigger_pos_in_log #len(trace_log)
-							os.write(child_fd, self.opts['triggers'][trigger])
-							del(self.opts['triggers'][trigger])
+							last_trigger_pos = trigger_pos
+							os.write(child_fd, self.kwargs['events'][trigger])
+							del(self.kwargs['events'][trigger])
 							broke = True
 							break
 
@@ -204,72 +293,55 @@ class sys_command():
 						continue
 
 					## Adding a exit trigger:
-					if len(self.opts['triggers']) == 0:
-						if 'debug' in self.opts and self.opts['debug']:
-							print('[N] Waiting for last command to finish...')
-						if bytes(f'[root@{args["hostname"]} ~]#'.lower(), 'UTF-8') in trace_log[0-len(f'[root@{args["hostname"]} ~]#')-5:].lower():
-							if 'debug' in self.opts and self.opts['debug']:
-								print('[N] Last command finished, exiting subsystem.')
+					if len(self.kwargs['events']) == 0:
+						if 'debug' in self.kwargs and self.kwargs['debug']:
+							log(f"Waiting for last command {self.cmd[0]} to finish.", origin='spawn', level=4)
+
+						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0-len(f']$')-5:].lower():
+							if 'debug' in self.kwargs and self.kwargs['debug']:
+								log(f"{self.cmd[0]} has finished.", origin='spawn', level=4)
 							alive = False
 							break
-				yield output
 
-		# Gracefully wait for the last output to be given to us from the above command.
-		# Or break on OSError (process has died)
-		last = time()
-		while time()-last < 5:
-			for fileno, event in poller.poll(0.1):
+		self.status = 'done'
+
+		if 'debug' in self.kwargs and self.kwargs['debug']:
+			log(f"{self.cmd[0]} waiting for exit code.", origin='spawn', level=5)
+
+		if not self.kwargs['emulate']:
+			try:
+				self.exit_code = os.waitpid(self.pid, 0)[1]
+			except ChildProcessError:
 				try:
-					output = os.read(child_fd, 8192).strip()
-					trace_log += output
-				except OSError:
-					last = time() - 60
-					break
+					self.exit_code = os.waitpid(child_fd, 0)[1]
+				except ChildProcessError:
+					self.exit_code = 1
+		else:
+			self.exit_code = 0
 
-				if 'debug' in self.opts and self.opts['debug']:
-					if len(output):
-						print(output)
+		if self.exit_code != 0:
+			log(f"{self.cmd[0]} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
+			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
+		else:
+			log(f"{self.cmd[0]} exit nicely.", origin='spawn', level=5)
 
-				last = time()
+		self.ended = time.time()
+		with open(f'{self.cwd}/trace.log', 'wb') as fh:
+			fh.write(self.trace_log)
 
-		if 'debug' in self.opts and self.opts['debug']:
-			print('[N] Exited subsystem, instructing it to shutdown.')
-		# Since we're in a subsystem, we gotta bail out!
-		# Bail bail bail!
-		os.write(child_fd, b'shutdown now\n')
+		worker_history[self.worker_id] = self.dump()
 
-		# We need to flush the output of shutdown now, otherwise the 
-		# Popen() handle will hang and we'll never exit out of os.waitpid() later on.
-		alive = True
-		while alive:
-			for fileno, event in poller.poll(0.1):
-				try:
-					output = os.read(child_fd, 8192).strip()
-					trace_log += output
-				except OSError:
-					alive = False
-					break
+		if 'dependency' in self.kwargs and self.exit_code == 0:
+			## If this had a dependency waiting,
+			## Start it since there's no hook for this yet, the worker has to spawn it's waiting workers.
+			module = self.kwargs['dependency']['module']
+			print(self.cmd[0],'fullfills a dependency:', module)
+			dependency_id = self.kwargs['dependency']['id']
+			dependencies[module][dependency_id]['fullfilled'] = True
+			dependencies[module][dependency_id]['spawn'](*dependencies[module][dependency_id]['args'], **dependencies[module][dependency_id]['kwargs'], start_callback=_worker_started_notification)
 
-				if 'debug' in self.opts and self.opts['debug']:
-					if len(output):
-						print(output)
-
-				if b'Container temporary has been shutdown.' in trace_log[0-len('Container temporary has been shutdown.')-5:]:
-					alive = False
-					break
-
-		if 'debug' in self.opts and self.opts['debug']:
-			print('[N] Waiting for exit code.')
-		exit_code = os.waitpid(self.pid, 0)[1]
-
-		if exit_code != 0:
-			print(trace_log.decode('UTF-8'))
-			print('[E] Command "{}" on line ~150 exited with status code:'.format(self.cmd[0]), exit_code)
-			print('[?] Command executed: {}'.format(self.cmd))
-			exit(1)
-
-		if 'debug' in self.opts and self.opts['debug']:
-			print('[N] Subsystem routine complete.')
+		if self.callback:
+			self.callback(self, *self.args, **self.kwargs)
 
 def simple_command(cmd, opts=None, *args, **kwargs):
 	if not opts: opts = {}
@@ -454,16 +526,16 @@ def close_disks():
 	o = simple_command('/usr/bin/umount -R /mnt')
 	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 
-def format_disk(drive, start='512MiB', end='100%'):
+def format_disk(drive, start='512MiB', end='100%', emulate=False):
 	print(f'[N] Setting up {drive}.')
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt').exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}').exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"').exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on').exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on').exec())
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}').exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate).exec())
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}', emulate=emulate).exec())
 	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
 	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
