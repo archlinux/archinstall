@@ -25,6 +25,7 @@ profiles_path = 'https://raw.githubusercontent.com/Torxed/archinstall/master/dep
 rootdir_pattern = re.compile('^.*?/devices')
 harddrives = oDict()
 commandlog = oDict()
+instructions = 
 args = {}
 positionals = []
 for arg in sys.argv[1:]:
@@ -495,6 +496,42 @@ def disk_info(drive):
 	
 	return info
 
+def cleanup_args():
+	for key in args:
+		if args[key] == '<STDIN>': args[key] = input(f'Enter a value for {key}: ')
+		elif args[key] == '<RND_STR>': args[key] = random_string(32)
+		elif args[key] == '<YUBIKEY>':
+			args[key] = gen_yubikey_password()
+			if not args[key]:
+				print('[E] Failed to setup a yubikey password, is it plugged in?')
+				exit(1)
+
+def merge_in_includes(instructions):
+	if 'args' in instructions:
+		## == Recursively fetch instructions if "include" is found under {args: ...}
+		while 'include' in instructions['args']:
+			includes = instructions['args']['include']
+			print('[!] Importing net-deploy target: {}'.format(includes))
+			del(instructions['args']['include'])
+			if type(includes) in (dict, list):
+				for include in includes:
+					instructions = merge_dicts(instructions, get_instructions(include), before=True)
+			else:
+				instructions = merge_dicts(instructions, get_instructions(includes), before=True)
+
+		## Update arguments if we found any
+		for key, val in instructions['args'].items():
+			args[key] = val
+
+	if 'args' in instructions:
+		## TODO: Reuseable code, there's to many get_instructions, merge_dictgs and args updating going on.
+		## Update arguments if we found any
+		for key, val in instructions['args'].items():
+			args[key] = val
+
+	return instructions
+
+
 def update_drive_list():
 	# https://github.com/karelzak/util-linux/blob/f920f73d83f8fd52e7a14ec0385f61fab448b491/disk-utils/fdisk-list.c#L52
 	for path in glob('/sys/block/*/device'):
@@ -589,7 +626,7 @@ def get_application_instructions(target):
 	return instructions
 
 def get_instructions(target):
-	instructions = {}
+	instructions = oDict()
 	try:
 		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
 		print('[N] Found net-deploy instructions called: {}'.format(target))
@@ -676,8 +713,8 @@ def setup_args_defaults(args):
 		args['drive'] = drive
 	return args
 
-def load_instruction_set():
-	instructions = {}
+def load_automatic_instructions():
+	instructions = oDict()
 	if get_default_gateway_linux():
 		locmac = get_local_MACs()
 		if not len(locmac):
@@ -716,7 +753,7 @@ if __name__ == '__main__':
 
 	## == If we got networking,
 	#     Try fetching instructions for this box and execute them.
-	instructions = load_instruction_set()
+	instructions = load_automatic_instructions()
 
 	if args['profile'] and not args['default']:
 		instructions = get_instructions(args['profile'])
@@ -736,42 +773,9 @@ if __name__ == '__main__':
 				print('   (this is because --default is not instructed and no --profile given)')
 				first = False
 
-
-	if 'args' in instructions:
-		## == Recursively fetch instructions if "include" is found under {args: ...}
-		while 'include' in instructions['args']:
-			includes = instructions['args']['include']
-			print('[!] Importing net-deploy target: {}'.format(includes))
-			del(instructions['args']['include'])
-			if type(includes) in (dict, list):
-				for include in includes:
-					instructions = merge_dicts(instructions, get_instructions(include), before=True)
-			else:
-				instructions = merge_dicts(instructions, get_instructions(includes), before=True)
-
-		## Update arguments if we found any
-		for key, val in instructions['args'].items():
-			args[key] = val
-
-	if 'args' in instructions:
-		## TODO: Reuseable code, there's to many get_instructions, merge_dictgs and args updating going on.
-		## Update arguments if we found any
-		for key, val in instructions['args'].items():
-			args[key] = val
-
-	for key in args:
-		if args[key] == '<STDIN>': args[key] = input(f'Enter a value for {key}: ')
-		elif args[key] == '<RND_STR>': args[key] = random_string(32)
-		elif args[key] == '<YUBIKEY>':
-			args[key] = gen_yubikey_password()
-			if not args[key]:
-				print('[E] Failed to setup a yubikey password, is it plugged in?')
-				exit(1)
-
-#	if args['password'] == '<STDIN>': args['password'] = input('Enter a disk (and root) password: ')
-#	elif args['password'] == '<YUBIKEY>':
-#		args['password'] = gen_yubikey_password()
-#		if not args['password']:
+	# TODO: Might not need to return anything here, passed by reference?
+	instructions = merge_in_includes(instructions)
+	cleanup_args()
 
 	print(json.dumps(args, indent=4))
 	if args['default'] and not 'force' in args:
