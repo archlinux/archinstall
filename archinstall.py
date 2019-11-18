@@ -242,7 +242,10 @@ class sys_command():#Thread):
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
 
-		commandlog.append(cmd + ' #emulated')
+		if self.kwargs['emulate']:
+			commandlog.append(cmd + ' #emulated')
+		else:
+			commandlog.append(cmd)
 		if start_callback: start_callback(self, *positionals, **kwargs)
 		#self.start()
 		self.run()
