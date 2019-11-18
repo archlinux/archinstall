@@ -793,6 +793,52 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 	args['paritions'] = get_partitions(drive, *positionals, **kwargs)
 	return True
 
+def mkfs_fat32(drive, partition, *positionals, **kwargs):
+	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
+	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
+		return None
+	return True
+
+def is_luksdev_mounted(*positionals, **kwargs):
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
+	if b'cannot open' in o:
+		return False 
+	return True
+
+def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
+	if not is_luksdev_mounted():
+		o = b''.join(sys_command(f'/usr/bin/cryptsetup open {drive}{partition} luksdev --key-file {keyfile} --type luks2'.format(**args)))
+	return is_luksdev_mounted()
+
+def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **kwargs):
+	o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {keyfile} --use-urandom luksFormat {drive}{partition}'))
+	if not b'Command successful.' in o:
+		return False
+	return True
+
+def mkfs_btrfs(drive='/dev/mapper/luksdev', *positionals, **kwargs):
+	o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev'))
+	if not b'UUID' in o:
+		return False
+	return True
+
+def mount_luksdev(where='/dev/mapper/luksdev', to='/mnt', *positionals, **kwargs):
+	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt') # /dev/dm-0
+	if len(o) <= 0:
+		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt'))
+	return True
+
+def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs)
+	os.makedirs('/mnt/boot', exist_ok=True)
+	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot') # /dev/dm-0
+	if len(o) <= 0:
+		o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}'))
+	return True
+
+def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot'):
+	mount_luksdev()
+	mount_boot(drive, bootpartition, mountpoint='/mnt/boot')
+
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
@@ -863,42 +909,28 @@ if __name__ == '__main__':
 		print(json.dumps(args['paritions'][part_name], indent=4))
 
 	if not args['rerun'] or args['ignore-rerun']:
-		o = b''.join(sys_command('/usr/bin/mkfs.vfat -F32 {drive}{partition_1}'.format(**args)))
-		if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
-			print('[E] Could not setup {drive}{partition_1}'.format(**args), o)
+		if not mkfs_fat32(args['drive'], args['partition_1'], *positionals, **kwargs):
+			print('[E] Could not setup {drive}{partition_1}'.format(**args))
 			exit(1)
 
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
 		print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-		o = b''.join(sys_command('/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {pwfile} --use-urandom luksFormat {drive}{partition_2}'.format(**args)))
-		if not b'Command successful.' in o:
+		if not encrypt_partition(args['drive'], args['partition_2'], args['pwfile']):
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
 
-	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
-	if b'cannot open' in o:
-		o = b''.join(sys_command('/usr/bin/cryptsetup open {drive}{partition_2} luksdev --key-file {pwfile} --type luks2'.format(**args)))
-	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
-	if b'cannot open' in o:
+	if not mount_luktsdev(args['drive'], args['partition_2'], args['pwfile']):
 		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
 		print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
-		o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev'))
-		if not b'UUID' in o:
+		if not mkfs_btrfs():
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
 
-	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt') # /dev/dm-0
-	if len(o) <= 0:
-		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt'))
-
-	os.makedirs('/mnt/boot', exist_ok=True)
-	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot') # /dev/dm-0
-	if len(o) <= 0:
-		o = b''.join(sys_command('/usr/bin/mount {drive}{partition_1} /mnt/boot'.format(**args)))
+	mount_mountpoints(args['drive'], args['partition_1'])
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
