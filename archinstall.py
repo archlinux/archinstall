@@ -789,7 +789,7 @@ def cache_diskpw_on_disk():
 		with open(args['pwfile'], 'w') as pw:
 			pw.write(args['password'])
 
-def refresh_partition_list(drive):
+def refresh_partition_list(drive, *args, **kwargs):
 	args['paritions'] = get_partitions(drive)
 
 if __name__ == '__main__':
