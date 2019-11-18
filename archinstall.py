@@ -507,7 +507,8 @@ def disk_info(drive, *positionals, **kwargs):
 			if child['label'] != None:
 				labels.append(child['label'])
 	else:
-		labels = ['*Empty drive (no partitions)*']
+		fileformats = ['*Empty Drive*']
+		labels = ['(no partitions)']
 	info['fileformats'] = fileformats
 	info['labels'] = labels
 	info['model'] = get_disk_model(drive)
