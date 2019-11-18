@@ -801,9 +801,7 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
-	print(json.dumps(args, indent=4))
 	drive = args[drive]
-	print(partition, type(partition), args['partitions'], type(args['partitions']))
 	partition = args['partitions'][partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
@@ -852,11 +850,11 @@ def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs)
 		o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}'))
 	return True
 
-def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot'):
+def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs):
 	drive = args[drive]
 	bootpartition = args[bootpartition]
-	mount_luksdev()
-	mount_boot(drive, bootpartition, mountpoint='/mnt/boot')
+	mount_luksdev(*positionals, **kwargs)
+	mount_boot(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs)
 
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
