@@ -870,8 +870,8 @@ def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
 def strap_in_base(*positionals, **kwargs):
 	if args['aur-support']:
 		args['packages'] += ' git'
-	if sys_command('/usr/bin/pacman -Syy').exit_code == 0:
-		if sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exit_code == 0:
+	if sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs).exit_code == 0:
+		if sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs).exit_code == 0:
 			return True
 	return False
 
