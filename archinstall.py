@@ -803,6 +803,7 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
 	print(json.dumps(args, indent=4))
 	drive = args[drive]
+	print(partition, type(partition), args['partitions'], type(args['partitions']))
 	partition = args['partitions'][partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
