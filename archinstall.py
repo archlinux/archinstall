@@ -795,6 +795,7 @@ def cache_diskpw_on_disk():
 def refresh_partition_list(drive, *positionals, **kwargs):
 	drive = args[drive]
 	args['paritions'] = get_partitions(drive, *positionals, **kwargs)
+	print(json.dumps(args['paritions'], indent=4))
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
