@@ -828,7 +828,7 @@ def mount_luksdev(where='/dev/mapper/luksdev', to='/mnt', *positionals, **kwargs
 		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt'))
 	return True
 
-def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs)
+def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs):
 	os.makedirs('/mnt/boot', exist_ok=True)
 	o = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot') # /dev/dm-0
 	if len(o) <= 0:
