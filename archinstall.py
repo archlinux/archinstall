@@ -855,6 +855,7 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals
 	bootpartition = args['partitions'][bootpartition]
 	mount_luksdev(*positionals, **kwargs)
 	mount_boot(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs)
+	return True
 
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
