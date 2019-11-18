@@ -587,7 +587,10 @@ def close_disks():
 	o = simple_command('/usr/bin/umount -R /mnt')
 	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 
-def format_disk(drive=None, start='512MiB', end='100%', emulate=False, *args, **kwargs):
+def format_disk(drive='drive', start='start', end='size', emulate=False, *args, **kwargs):
+	drive = args[drive]
+	start = args[start]
+	end = args[end]
 	if not drive:
 		raise ValueError('Need to supply a drive path, for instance: /dev/sdx')
 	print(f'[N] Setting up {drive}.')
@@ -790,10 +793,13 @@ def cache_diskpw_on_disk():
 			pw.write(args['password'])
 
 def refresh_partition_list(drive, *positionals, **kwargs):
+	drive = args[drive]
 	args['paritions'] = get_partitions(drive, *positionals, **kwargs)
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
+	drive = args[drive]
+	partition = args[partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 		return None
@@ -806,11 +812,17 @@ def is_luksdev_mounted(*positionals, **kwargs):
 	return True
 
 def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
+	drive = args[drive]
+	partition = args[partition]
+	keyfile = args[keyfile]
 	if not is_luksdev_mounted():
 		o = b''.join(sys_command(f'/usr/bin/cryptsetup open {drive}{partition} luksdev --key-file {keyfile} --type luks2'.format(**args)))
 	return is_luksdev_mounted()
 
 def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **kwargs):
+	drive = args[drive]
+	partition = args[partition]
+	keyfile = args[keyfile]
 	o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {keyfile} --use-urandom luksFormat {drive}{partition}'))
 	if not b'Command successful.' in o:
 		return False
@@ -836,6 +848,8 @@ def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs)
 	return True
 
 def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot'):
+	drive = args[drive]
+	bootpartition = args[bootpartition]
 	mount_luksdev()
 	mount_boot(drive, bootpartition, mountpoint='/mnt/boot')
 
@@ -895,9 +909,9 @@ if __name__ == '__main__':
 			time.sleep(1)
 
 		close_disks()
-		format_disk(args['drive'], start=args['start'], end=args['size'])
+		format_disk('drive', start='start', end='size')
 	
-	refresh_partition_list(args['drive'])
+	refresh_partition_list('drive')
 	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
 
 	if len(args['paritions']) <= 0:
@@ -909,18 +923,18 @@ if __name__ == '__main__':
 		print(json.dumps(args['paritions'][part_name], indent=4))
 
 	if not args['rerun'] or args['ignore-rerun']:
-		if not mkfs_fat32(args['drive'], args['partition_1'], *positionals, **kwargs):
+		if not mkfs_fat32('drive', 'partition_1', *positionals, **kwargs):
 			print('[E] Could not setup {drive}{partition_1}'.format(**args))
 			exit(1)
 
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
 		print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-		if not encrypt_partition(args['drive'], args['partition_2'], args['pwfile']):
+		if not encrypt_partition('drive', 'partition_2', 'pwfile'):
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
 
-	if not mount_luktsdev(args['drive'], args['partition_2'], args['pwfile']):
+	if not mount_luktsdev('drive', 'partition_2', 'pwfile'):
 		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
@@ -930,7 +944,7 @@ if __name__ == '__main__':
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
 
-	mount_mountpoints(args['drive'], args['partition_1'])
+	mount_mountpoints('drive', 'partition_1')
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
