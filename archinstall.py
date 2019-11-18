@@ -801,6 +801,7 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
+	print(json.dumps(args, indent=4))
 	drive = args[drive]
 	partition = args['partitions'][partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
