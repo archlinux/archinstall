@@ -712,7 +712,7 @@ def setup_args_defaults(args, interactive=True):
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'drive' in args:
-		if interactive:
+		if interactive and len(harddrives):
 			drives = sorted(list(harddrives.keys()))
 			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
 				for index, drive in enumerate(drives):
