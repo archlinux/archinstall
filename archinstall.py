@@ -587,7 +587,7 @@ def close_disks():
 	o = simple_command('/usr/bin/umount -R /mnt')
 	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 
-def format_disk(drive='drive', start='start', end='size', emulate=False, *args, **kwargs):
+def format_disk(drive='drive', start='start', end='size', emulate=False, *positionals, **kwargs):
 	drive = args[drive]
 	start = args[start]
 	end = args[end]
