@@ -593,15 +593,24 @@ def format_disk(drive=None, start='512MiB', end='100%', emulate=False, *args, **
 	print(f'[N] Setting up {drive}.')
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate))
+	if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate).exit_code != 0:
+		return None
+	if sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate).exit_code != 0:
+		return None
 	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
 	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
+
 
 def multisplit(s, splitters):
 	s = [s,]
