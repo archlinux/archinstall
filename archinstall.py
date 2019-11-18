@@ -587,7 +587,7 @@ def close_disks():
 	o = simple_command('/usr/bin/umount -R /mnt')
 	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 
-def format_disk(drive=None, start='512MiB', end='100%', emulate=False):
+def format_disk(drive=None, start='512MiB', end='100%', emulate=False, *args, **kwargs):
 	if not drive:
 		raise ValueError('Need to supply a drive path, for instance: /dev/sdx')
 	print(f'[N] Setting up {drive}.')
