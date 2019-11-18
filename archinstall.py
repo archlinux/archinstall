@@ -394,11 +394,11 @@ def get_drive_from_uuid(uuid):
 
 	return None
 
-def get_drive_from_part_uuid(partuuid):
+def get_drive_from_part_uuid(partuuid, *positionals, **kwargs):
 	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
 
 	for drive in harddrives:
-		for partition in get_partitions(f'/dev/{drive}'):
+		for partition in get_partitions(f'/dev/{drive}', *positionals, **kwargs):
 			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}')
 			if len(o) and o == partuuid:
 				return drive
@@ -463,7 +463,7 @@ def device_state(name, *positionals, **kwargs):
 					return
 	return True
 
-def get_partitions(dev):
+def get_partitions(dev, *positionals, **kwargs):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
 	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
@@ -790,7 +790,8 @@ def cache_diskpw_on_disk():
 			pw.write(args['password'])
 
 def refresh_partition_list(drive, *positionals, **kwargs):
-	args['paritions'] = get_partitions(drive)
+	args['paritions'] = get_partitions(drive, *positionals, **kwargs)
+	return True
 
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
