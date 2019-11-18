@@ -235,7 +235,7 @@ class sys_command():#Thread):
 
 		if not self.cmd[0][0] == '/':
 			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = sys_command('/usr/bin/which {}'.format(self.cmd[0]), emulate=False)
+			o = sys_command('/usr/bin/which {}'.format(self.cmd[0]), emulate=False, hide_from_log=True)
 			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8')
 
@@ -244,6 +244,8 @@ class sys_command():#Thread):
 
 		if self.kwargs['emulate']:
 			commandlog.append(cmd + ' #emulated')
+		elif 'hide_from_log' in self.kwargs and self.kwargs['hide_from_log']:
+			pass
 		else:
 			commandlog.append(cmd)
 		if start_callback: start_callback(self, *positionals, **kwargs)
@@ -465,7 +467,7 @@ def get_partitions(dev):
 	drive_name = os.path.basename(dev)
 	parts = oDict()
 	#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
-	o = b''.join(sys_command('/usr/bin/lsblk -J {dev}'.format(dev=dev)))
+	o = b''.join(sys_command(f'/usr/bin/lsblk -J {dev}', hide_from_log=True))
 	if b'not a block device' in o:
 		## TODO: Replace o = sys_command() with code, o = sys_command()
 		##       and make sys_command() return the exit-code, way safer than checking output strings :P
