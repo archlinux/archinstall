@@ -799,7 +799,7 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
 	drive = args[drive]
-	partition = args[partition]
+	partition = args['paritions'][partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 		return None
@@ -813,7 +813,7 @@ def is_luksdev_mounted(*positionals, **kwargs):
 
 def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
 	drive = args[drive]
-	partition = args[partition]
+	partition = args['paritions'][partition]
 	keyfile = args[keyfile]
 	if not is_luksdev_mounted():
 		o = b''.join(sys_command(f'/usr/bin/cryptsetup open {drive}{partition} luksdev --key-file {keyfile} --type luks2'.format(**args)))
@@ -821,7 +821,7 @@ def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
 
 def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **kwargs):
 	drive = args[drive]
-	partition = args[partition]
+	partition = args['paritions'][partition]
 	keyfile = args[keyfile]
 	o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {keyfile} --use-urandom luksFormat {drive}{partition}'))
 	if not b'Command successful.' in o:
