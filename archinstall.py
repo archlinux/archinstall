@@ -370,17 +370,38 @@ class sys_command():#Thread):
 
 		worker_history[self.worker_id] = self.dump()
 
-		if 'dependency' in self.kwargs and self.exit_code == 0:
-			## If this had a dependency waiting,
-			## Start it since there's no hook for this yet, the worker has to spawn it's waiting workers.
-			module = self.kwargs['dependency']['module']
-			print(self.cmd[0],'fullfills a dependency:', module)
-			dependency_id = self.kwargs['dependency']['id']
-			dependencies[module][dependency_id]['fullfilled'] = True
-			dependencies[module][dependency_id]['spawn'](*dependencies[module][dependency_id]['args'], **dependencies[module][dependency_id]['kwargs'], start_callback=_worker_started_notification)
+		if 'dependency' in self.kwargs:
+			pass # TODO: Not yet supported (steal it from archinstall_gui)
+			"""
+			dependency = self.kwargs['dependency']
+			if type(dependency) == str:
+				# Dependency is a progress-string. Wait for it to show up.
+				while main and main.isAlive() and dependency not in progress or progress[dependency] is None:
+					time.sleep(0.25)
+				dependency = progress[dependency]
+
+			if type(dependency) == str:
+				log(f"{self.func} waited for progress {dependency} which never showed up. Aborting.", level=2, origin='worker', function='run')
+				self.ended = time.time()
+				self.status = 'aborted'
+				return None
+
+			while main and main.isAlive() and dependency.ended is None:
+				time.sleep(0.25)
+
+			print('  *** Dependency released for:', self.func)
+
+			if dependency.data is None or not main or not main.isAlive():
+				log('Dependency:', dependency.func, 'did not exit clearly. There for,', self.func, 'can not execute.', level=2, origin='worker', function='run')
+				self.ended = time.time()
+				self.status = 'aborted'
+				return None
+			"""
 
 		if self.callback:
-			self.callback(self, *self.args, **self.kwargs)
+			pass # TODO: Not yet supported (steal it from archinstall_gui)
+
+			#self.callback(self, *self.args, **self.kwargs)
 
 def get_drive_from_uuid(uuid):
 	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
