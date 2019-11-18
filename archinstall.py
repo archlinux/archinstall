@@ -598,7 +598,7 @@ def format_disk(drive=None, start='512MiB', end='100%', emulate=False, *args, **
 	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate))
 	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate))
 	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate))
-	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {size}', emulate=emulate))
+	o = b''.join(sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate))
 	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
 	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
