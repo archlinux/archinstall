@@ -502,7 +502,7 @@ def disk_info(drive, *positionals, **kwargs):
 	lkwargs = {**kwargs}
 	lkwargs['emulate'] = False # This is a emulate-safe function. Does not alter filesystem.
 
-	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **lkwargs)).decode('UTF_8'))['blockdevices'][0]
+	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **lkwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices'][0]
 	fileformats = []
 	labels = []
 	if 'children' in info: ## Might not be partitioned yet
@@ -809,7 +809,7 @@ def mkfs_fat32(drive, partition, *positionals, **kwargs):
 	return True
 
 def is_luksdev_mounted(*positionals, **kwargs):
-	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev')) # /dev/dm-0
+	o = b''.join(sys_command('/usr/bin/file /dev/mapper/luksdev', hide_from_log=True)) # /dev/dm-0
 	if b'cannot open' in o:
 		return False 
 	return True
@@ -857,211 +857,84 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals
 	mount_boot(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs)
 	return True
 
-if __name__ == '__main__':
-	update_git() # Breaks and restarts the script if an update was found.
-	update_drive_list()
+def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
+	## TODO: replace wget with urllib.request (no point in calling syscommand)
+	country_list = []
+	for country in countries.split(','):
+		country_list.append(f'country={country}')
+	o = simple_command(f"/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?{'&'.join(country_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist")
+	o = simple_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")
+	o = simple_command('/usr/bin/rankmirrors -n {top} /root/mirrorlist > /etc/pacman.d/mirrorlist')
+	return True
 
-	## Setup some defaults 
-	#  (in case no command-line parameters or netdeploy-params were given)
-	args = setup_args_defaults(args)
+def strap_in_base(*positionals, **kwargs):
+	if args['aur-support']:
+		args['packages'] += ' git'
+	if sys_command('/usr/bin/pacman -Syy').exit_code == 0:
+		if sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)).exit_code == 0:
+			return True
+	return False
 
-	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
-	instructions = load_automatic_instructions()
+def configure_base_system(*positionals, **kwargs):
+	## TODO: Replace a lot of these syscalls with just python native operations.
+	o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
+	with open('/mnt/etc/fstab', 'a') as fstab:
+		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-	if args['profile'] and not args['default']:
-		instructions = get_instructions(args['profile'])
-		if len(instructions) <= 0:
-			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
-			print('    Installation won\'t continue until a valid profile is given.')
-			print('   (this is because --profile was given and a --default is not given)')
-			exit(1)
-	else:
-		first = True
-		while not args['default'] and not args['profile'] and len(instructions) <= 0:
-			profile = input('What template do you want to install: ')
-			instructions = get_instructions(profile)
-			if first and len(instructions) <= 0:
-				print('[E] No instructions by the name of {} was found.'.format(profile))
-				print('    Installation won\'t continue until a valid profile is given.')
-				print('   (this is because --default is not instructed and no --profile given)')
-				first = False
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime'))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
+	#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
+	#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\""))
+	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\""))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen'))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
 
-	# TODO: Might not need to return anything here, passed by reference?
-	instructions = merge_in_includes(instructions)
-	cleanup_args()
+	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
+		## TODO: Don't replace it, in case some update in the future actually adds something.
+		mkinit.write('MODULES=(btrfs)\n')
+		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
+		mkinit.write('FILES=()\n')
+		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux'))
 
-	print(json.dumps(args, indent=4))
-	if args['default'] and not 'force' in args:
-		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
-			exit(1)
+	return True
 
-	cache_diskpw_on_disk()
-	#else:
-	#	## TODO: Convert to `rb` instead.
-	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
-	#	with open(args['pwfile'], 'r') as pw:
-	#		PIN = pw.read().strip()
+def setup_bootloader(*positionals, **kwargs):
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --no-variables --path=/boot install'))
 
-	print()
-	print('[!] Disk PASSWORD is: {}'.format(args['password']))
-	print()
+	with open('/mnt/boot/loader/loader.conf', 'w') as loader:
+		loader.write('default arch\n')
+		loader.write('timeout 5\n')
 
-	if not args['rerun'] or args['ignore-rerun']:
-		for i in range(5, 0, -1):
-			print(f'Formatting {args["drive"]} in {i}...')
-			time.sleep(1)
+	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+	## And blkid is wrong in terms of LUKS.
+	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+	UUID = simple_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(args['drive'])}{args['partitions']['2']} | awk '{{print $9}}'").decode('UTF-8').strip()
+	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
+		entry.write('title Arch Linux\n')
+		entry.write('linux /vmlinuz-linux\n')
+		entry.write('initrd /initramfs-linux.img\n')
+		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
-		close_disks()
-		format_disk('drive', start='start', end='size')
-	
-	refresh_partition_list('drive')
-	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
+	return True
 
-	if len(args['partitions']) <= 0:
-		print('[E] No partitions were created on {drive}'.format(**args), o)
-		exit(1)
+def add_AUR_support(*positionals, **kwargs):
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"'))
+	o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers"))
 
-	if not args['rerun'] or args['ignore-rerun']:
-		if not mkfs_fat32('drive', '1', *positionals, **kwargs):
-			print(f'[E] Could not setup {args["drive"]}{args["partitions"]["1"]}')
-			exit(1)
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""'))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"'))
+	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"'))
+	## Do not remove aibuilder just yet, can be used later for aur packages.
+	#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
+	#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
+	#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
+	return True
 
-		# "--cipher sha512" breaks the shit.
-		# TODO: --use-random instead of --use-urandom
-		print(f'[N] Adding encryption to {drive}{partitions["2"]}.')
-		if not encrypt_partition('drive', '2', 'pwfile'):
-			print('[E] Failed to setup disk encryption.', o)
-			exit(1)
-
-	if not mount_luktsdev('drive', '2', 'pwfile'):
-		print('[E] Could not open encrypted device.', o)
-		exit(1)
-
-	if not args['rerun'] or args['ignore-rerun']:
-		print(f'[N] Creating btrfs filesystem inside {args["drive"]}{args["partitions"]["2"]}')
-		if not mkfs_btrfs():
-			print('[E] Could not setup btrfs filesystem.', o)
-			exit(1)
-
-	mount_mountpoints('drive', '1')
-
-	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
-		print('[N] Reordering mirrors.')
-		o = simple_command("/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?country={country}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist".format(**args))
-		o = simple_command("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")
-		o = simple_command('/usr/bin/rankmirrors -n 6 /root/mirrorlist > /etc/pacman.d/mirrorlist')
-
-	pre_conf = {}
-	if 'pre' in instructions:
-		pre_conf = instructions['pre']
-	elif 'prerequisits' in instructions:
-		pre_conf = instructions['prerequisits']
-
-	if 'git-branch' in pre_conf:
-		update_git(pre_conf['git-branch'])
-		del(pre_conf['git-branch'])
-
-	## Prerequisit steps needs to NOT be executed in arch-chroot.
-	## Mainly because there's no root structure to chroot into.
-	## But partly because some configurations need to be done against the live CD.
-	## (For instance, modifying mirrors are done on LiveCD and replicated intwards)
-	for title in pre_conf:
-		print('[N] Network prerequisit step: {}'.format(title))
-		if args['rerun'] and args['rerun'] != title and not rerun:
-			continue
-		else:
-			rerun = True
-
-		for command in pre_conf[title]:
-			raw_command = command
-			opts = pre_conf[title][raw_command] if type(pre_conf[title][raw_command]) in (dict, oDict) else {}
-			if len(opts):
-				if 'pass-args' in opts or 'format' in opts:
-					command = command.format(**args)
-					## FIXME: Instead of deleting the two options
-					##        in order to mute command output further down,
-					##        check for a 'debug' flag per command and delete these two
-					if 'pass-args' in opts:
-						del(opts['pass-args'])
-					elif 'format' in opts:
-						del(opts['format'])
-				elif 'debug' in opts and opts['debug']:
-					print('[N] Complete command-string: '.format(command))
-				else:
-					print('[-] Options: {}'.format(opts))
-
-			#print('[N] Command: {} ({})'.format(raw_command, opts))
-			o = b''.join(sys_command('{c}'.format(c=command), opts))
-			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in b''.join(o):
-				print('[W] Prerequisit step failed: {}'.format(b''.join(o).decode('UTF-8')))
-			#print(o)
-
-	if not args['rerun'] or rerun:
-		print('[N] Straping in packages.')
-		if args['aur-support']:
-			args['packages'] += ' git'
-		o = b''.join(sys_command('/usr/bin/pacman -Syy'))
-		o = b''.join(sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args)))
-
-	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
-		print('[E] Failed to strap in packages', o)
-		exit(1)
-
-	if not args['rerun'] or rerun:
-		o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
-		with open('/mnt/etc/fstab', 'a') as fstab:
-			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
-
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime'))
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)))
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
-		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
-		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\""))
-		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\""))
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen'))
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
-
-		with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
-			## TODO: Don't replace it, in case some update in the future actually adds something.
-			mkinit.write('MODULES=(btrfs)\n')
-			mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
-			mkinit.write('FILES=()\n')
-			mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux'))
-		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
-		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt bootctl --no-variables --path=/boot install'))
-
-		with open('/mnt/boot/loader/loader.conf', 'w') as loader:
-			loader.write('default arch\n')
-			loader.write('timeout 5\n')
-
-		## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-		## And blkid is wrong in terms of LUKS.
-		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-		UUID = simple_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(args['drive'])}{args['partitions']['2']} | awk '{{print $9}}'").decode('UTF-8').strip()
-		with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
-			entry.write('title Arch Linux\n')
-			entry.write('linux /vmlinuz-linux\n')
-			entry.write('initrd /initramfs-linux.img\n')
-			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
-
-		if args['aur-support']:
-			print('[N] AUR support demanded, building "yay" before running POST steps.')
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "useradd -m -G wheel aibuilder"'))
-			o = b''.join(sys_command("/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' /mnt/etc/sudoers"))
-
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""'))
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"'))
-			o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"'))
-			## Do not remove aibuilder just yet, can be used later for aur packages.
-			#o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
-			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
-			#o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
-			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
-			
+def run_post_install_steps(*positionals, **kwargs):
 	conf = {}
 	if 'post' in instructions:
 		conf = instructions['post']
@@ -1159,6 +1032,164 @@ if __name__ == '__main__':
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
+
+if __name__ == '__main__':
+	update_git() # Breaks and restarts the script if an update was found.
+	update_drive_list()
+
+	## Setup some defaults 
+	#  (in case no command-line parameters or netdeploy-params were given)
+	args = setup_args_defaults(args)
+
+	## == If we got networking,
+	#     Try fetching instructions for this box and execute them.
+	instructions = load_automatic_instructions()
+
+	if args['profile'] and not args['default']:
+		instructions = get_instructions(args['profile'])
+		if len(instructions) <= 0:
+			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
+			print('    Installation won\'t continue until a valid profile is given.')
+			print('   (this is because --profile was given and a --default is not given)')
+			exit(1)
+	else:
+		first = True
+		while not args['default'] and not args['profile'] and len(instructions) <= 0:
+			profile = input('What template do you want to install: ')
+			instructions = get_instructions(profile)
+			if first and len(instructions) <= 0:
+				print('[E] No instructions by the name of {} was found.'.format(profile))
+				print('    Installation won\'t continue until a valid profile is given.')
+				print('   (this is because --default is not instructed and no --profile given)')
+				first = False
+
+	# TODO: Might not need to return anything here, passed by reference?
+	instructions = merge_in_includes(instructions)
+	cleanup_args()
+
+	print(json.dumps(args, indent=4))
+	if args['default'] and not 'force' in args:
+		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
+			exit(1)
+
+	cache_diskpw_on_disk()
+	#else:
+	#	## TODO: Convert to `rb` instead.
+	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
+	#	with open(args['pwfile'], 'r') as pw:
+	#		PIN = pw.read().strip()
+
+	print()
+	print('[!] Disk PASSWORD is: {}'.format(args['password']))
+	print()
+
+	if not args['rerun'] or args['ignore-rerun']:
+		for i in range(5, 0, -1):
+			print(f'Formatting {args["drive"]} in {i}...')
+			time.sleep(1)
+
+		close_disks()
+		format_disk('drive', start='start', end='size')
+	
+	refresh_partition_list('drive')
+	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
+
+	if len(args['partitions']) <= 0:
+		print('[E] No partitions were created on {drive}'.format(**args), o)
+		exit(1)
+
+	if not args['rerun'] or args['ignore-rerun']:
+		if not mkfs_fat32('drive', '1', *positionals, **kwargs):
+			print(f'[E] Could not setup {args["drive"]}{args["partitions"]["1"]}')
+			exit(1)
+
+		# "--cipher sha512" breaks the shit.
+		# TODO: --use-random instead of --use-urandom
+		print(f'[N] Adding encryption to {drive}{partitions["2"]}.')
+		if not encrypt_partition('drive', '2', 'pwfile'):
+			print('[E] Failed to setup disk encryption.', o)
+			exit(1)
+
+	if not mount_luktsdev('drive', '2', 'pwfile'):
+		print('[E] Could not open encrypted device.', o)
+		exit(1)
+
+	if not args['rerun'] or args['ignore-rerun']:
+		print(f'[N] Creating btrfs filesystem inside {args["drive"]}{args["partitions"]["2"]}')
+		if not mkfs_btrfs():
+			print('[E] Could not setup btrfs filesystem.', o)
+			exit(1)
+
+	mount_mountpoints('drive', '1')
+
+	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
+		print('[N] Reordering mirrors.')
+		filter_mirrors_by_country(args['country'])
+
+	pre_conf = {}
+	if 'pre' in instructions:
+		pre_conf = instructions['pre']
+	elif 'prerequisits' in instructions:
+		pre_conf = instructions['prerequisits']
+
+	if 'git-branch' in pre_conf:
+		update_git(pre_conf['git-branch'])
+		del(pre_conf['git-branch'])
+
+	## Prerequisit steps needs to NOT be executed in arch-chroot.
+	## Mainly because there's no root structure to chroot into.
+	## But partly because some configurations need to be done against the live CD.
+	## (For instance, modifying mirrors are done on LiveCD and replicated intwards)
+	for title in pre_conf:
+		print('[N] Network prerequisit step: {}'.format(title))
+		if args['rerun'] and args['rerun'] != title and not rerun:
+			continue
+		else:
+			rerun = True
+
+		for command in pre_conf[title]:
+			raw_command = command
+			opts = pre_conf[title][raw_command] if type(pre_conf[title][raw_command]) in (dict, oDict) else {}
+			if len(opts):
+				if 'pass-args' in opts or 'format' in opts:
+					command = command.format(**args)
+					## FIXME: Instead of deleting the two options
+					##        in order to mute command output further down,
+					##        check for a 'debug' flag per command and delete these two
+					if 'pass-args' in opts:
+						del(opts['pass-args'])
+					elif 'format' in opts:
+						del(opts['format'])
+				elif 'debug' in opts and opts['debug']:
+					print('[N] Complete command-string: '.format(command))
+				else:
+					print('[-] Options: {}'.format(opts))
+
+			#print('[N] Command: {} ({})'.format(raw_command, opts))
+			o = b''.join(sys_command('{c}'.format(c=command), opts))
+			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in b''.join(o):
+				print('[W] Prerequisit step failed: {}'.format(b''.join(o).decode('UTF-8')))
+			#print(o)
+
+	if not args['rerun'] or rerun:
+		print('[N] Straping in packages.')
+		strap_in_base() # TODO: check return here? we return based off pacstrap exit code.. Never tired it tho.
+
+	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
+		print('[E] Failed to strap in packages', o)
+		exit(1)
+
+	if not args['rerun'] or rerun:
+		configure_base_system()
+		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
+		setup_bootloader()
+
+		if args['aur-support']:
+			print('[N] AUR support demanded, building "yay" before running POST steps.')
+			add_AUR_support()
+			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
+			
+	run_post_install_steps()
 
 	if args['aur-support']:
 		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
