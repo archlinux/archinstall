@@ -797,7 +797,7 @@ def refresh_partition_list(drive, *positionals, **kwargs):
 	if not 'partitions' in args:
 		args['partitions'] = oDict()
 	for index, part_name in enumerate(sorted(get_partitions(drive, *positionals, **kwargs).keys())):
-		args['partitions'][index+1] = part_name
+		args['partitions'][str(index+1)] = part_name
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
