@@ -770,6 +770,12 @@ def load_automatic_instructions(*args, **kwargs):
 
 	return instructions
 
+def cache_diskpw_on_disk():
+	if not os.path.isfile(args['pwfile']):
+		#PIN = '0000'
+		with open(args['pwfile'], 'w') as pw:
+			pw.write(args['password'])
+
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
@@ -809,10 +815,7 @@ if __name__ == '__main__':
 		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
 			exit(1)
 
-	if not os.path.isfile(args['pwfile']):
-		#PIN = '0000'
-		with open(args['pwfile'], 'w') as pw:
-			pw.write(args['password'])
+	cache_diskpw_on_disk()
 	#else:
 	#	## TODO: Convert to `rb` instead.
 	#	#        We shouldn't discriminate \xfu from being a passwd phrase.
