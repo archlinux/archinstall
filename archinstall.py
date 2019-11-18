@@ -500,11 +500,12 @@ def disk_info(drive, *positionals, **kwargs):
 	info = json.loads(b''.join(sys_command(f'lsblk -J -o "NAME,SIZE,FSTYPE,LABEL" {drive}', *positionals, **lkwargs)).decode('UTF_8'))['blockdevices'][0]
 	fileformats = []
 	labels = []
-	for child in info['children']:
-		if child['fstype'] != None:
-			fileformats.append(child['fstype'])
-		if child['label'] != None:
-			labels.append(child['label'])
+	if 'children' in info: ## Might not be partitioned yet
+		for child in info['children']:
+			if child['fstype'] != None:
+				fileformats.append(child['fstype'])
+			if child['label'] != None:
+				labels.append(child['label'])
 	info['fileformats'] = fileformats
 	info['labels'] = labels
 	info['model'] = get_disk_model(drive)
