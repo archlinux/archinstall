@@ -399,7 +399,7 @@ def get_drive_from_part_uuid(partuuid, *positionals, **kwargs):
 
 	for drive in harddrives:
 		for partition in get_partitions(f'/dev/{drive}', *positionals, **kwargs):
-			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}')
+			o = simple_command(f'blkid -s PARTUUID -o value /dev/{drive}{partition}')
 			if len(o) and o == partuuid:
 				return drive
 
@@ -794,8 +794,9 @@ def cache_diskpw_on_disk():
 
 def refresh_partition_list(drive, *positionals, **kwargs):
 	drive = args[drive]
-	args['paritions'] = get_partitions(drive, *positionals, **kwargs)
-	print(json.dumps(args['paritions'], indent=4))
+	partitions = oDict()
+	for index, part_name in enumerate(sorted(get_partitions(drive, *positionals, **kwargs).keys())):
+		args['partitions'][index+1] = part_name
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
@@ -918,34 +919,30 @@ if __name__ == '__main__':
 	if len(args['paritions']) <= 0:
 		print('[E] No paritions were created on {drive}'.format(**args), o)
 		exit(1)
-	for index, part_name in enumerate(sorted(args['paritions'].keys())):
-		args['partition_{}'.format(index+1)] = part_name
-		print(f'Partition info: {part_name}')
-		print(json.dumps(args['paritions'][part_name], indent=4))
 
 	if not args['rerun'] or args['ignore-rerun']:
-		if not mkfs_fat32('drive', 'partition_1', *positionals, **kwargs):
-			print('[E] Could not setup {drive}{partition_1}'.format(**args))
+		if not mkfs_fat32('drive', '1', *positionals, **kwargs):
+			print(f'[E] Could not setup {args["drive"]}{args["paritions"]["1"]}')
 			exit(1)
 
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
-		print('[N] Adding encryption to {drive}{partition_2}.'.format(**args))
-		if not encrypt_partition('drive', 'partition_2', 'pwfile'):
+		print(f'[N] Adding encryption to {drive}{partitions["2"]}.')
+		if not encrypt_partition('drive', '2', 'pwfile'):
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
 
-	if not mount_luktsdev('drive', 'partition_2', 'pwfile'):
+	if not mount_luktsdev('drive', '2', 'pwfile'):
 		print('[E] Could not open encrypted device.', o)
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
-		print('[N] Creating btrfs filesystem inside {drive}{partition_2}'.format(**args))
+		print(f'[N] Creating btrfs filesystem inside {args["drive"]}{args["partitions"]["2"]}')
 		if not mkfs_btrfs():
 			print('[E] Could not setup btrfs filesystem.', o)
 			exit(1)
 
-	mount_mountpoints('drive', 'partition_1')
+	mount_mountpoints('drive', '1')
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
@@ -1042,7 +1039,7 @@ if __name__ == '__main__':
 		## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 		## And blkid is wrong in terms of LUKS.
 		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-		UUID = simple_command("ls -l /dev/disk/by-uuid/ | grep {basename}{partition_2} | awk '{{print $9}}'".format(basename=os.path.basename(args['drive']), **args)).decode('UTF-8').strip()
+		UUID = simple_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(args['drive'])}{args['partitions']['2']} | awk '{{print $9}}'").decode('UTF-8').strip()
 		with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 			entry.write('title Arch Linux\n')
 			entry.write('linux /vmlinuz-linux\n')
