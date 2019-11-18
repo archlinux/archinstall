@@ -611,7 +611,7 @@ def format_disk(drive='drive', start='start', end='size', emulate=False, *positi
 	if sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate).exit_code != 0:
 		return None
 
-	# TODO: grab paritions after each parted/partition step instead of guessing which partiton is which later on.
+	# TODO: grab partitions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
 	#       This "assumption" has bit me in the ass so many times now I've stoped counting.. Jerker is right.. Don't do it like this :P
 
@@ -794,14 +794,15 @@ def cache_diskpw_on_disk():
 
 def refresh_partition_list(drive, *positionals, **kwargs):
 	drive = args[drive]
-	partitions = oDict()
+	if not 'partitions' in args:
+		args['partitions'] = oDict()
 	for index, part_name in enumerate(sorted(get_partitions(drive, *positionals, **kwargs).keys())):
 		args['partitions'][index+1] = part_name
 	return True
 
 def mkfs_fat32(drive, partition, *positionals, **kwargs):
 	drive = args[drive]
-	partition = args['paritions'][partition]
+	partition = args['partitions'][partition]
 	o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {drive}{partition}'))
 	if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 		return None
@@ -815,7 +816,7 @@ def is_luksdev_mounted(*positionals, **kwargs):
 
 def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
 	drive = args[drive]
-	partition = args['paritions'][partition]
+	partition = args['partitions'][partition]
 	keyfile = args[keyfile]
 	if not is_luksdev_mounted():
 		o = b''.join(sys_command(f'/usr/bin/cryptsetup open {drive}{partition} luksdev --key-file {keyfile} --type luks2'.format(**args)))
@@ -823,7 +824,7 @@ def mount_luktsdev(drive, partition, keyfile, *positionals, **kwargs):
 
 def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **kwargs):
 	drive = args[drive]
-	partition = args['paritions'][partition]
+	partition = args['partitions'][partition]
 	keyfile = args[keyfile]
 	o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash sha512 --key-size 512 --iter-time 10000 --key-file {keyfile} --use-urandom luksFormat {drive}{partition}'))
 	if not b'Command successful.' in o:
@@ -914,15 +915,15 @@ if __name__ == '__main__':
 		format_disk('drive', start='start', end='size')
 	
 	refresh_partition_list('drive')
-	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
+	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
 
-	if len(args['paritions']) <= 0:
-		print('[E] No paritions were created on {drive}'.format(**args), o)
+	if len(args['partitions']) <= 0:
+		print('[E] No partitions were created on {drive}'.format(**args), o)
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
 		if not mkfs_fat32('drive', '1', *positionals, **kwargs):
-			print(f'[E] Could not setup {args["drive"]}{args["paritions"]["1"]}')
+			print(f'[E] Could not setup {args["drive"]}{args["partitions"]["1"]}')
 			exit(1)
 
 		# "--cipher sha512" breaks the shit.
