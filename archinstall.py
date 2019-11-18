@@ -257,7 +257,7 @@ class sys_command():#Thread):
 			yield line
 
 	def __repr__(self, *positionals, **kwargs):
-		return self.trace_log.decode('UTF-8')
+		return f"{self.cmd, self.trace_log}"
 
 	def decode(self, fmt='UTF-8'):
 		return self.trace_log.decode(fmt)
@@ -891,7 +891,10 @@ def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
 def strap_in_base(*positionals, **kwargs):
 	if args['aur-support']:
 		args['packages'] += ' git'
-	if sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs).exit_code == 0:
+	x = sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs)
+	print(x)
+	print(x.exit_code)
+	if x.exit_code == 0:
 		if sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs).exit_code == 0:
 			return True
 	return False
