@@ -156,7 +156,7 @@ signal.signal(signal.SIGINT, sig_handler)
 def gen_uid(entropy_length=256):
 	return sha512(os.urandom(entropy_length)).hexdigest()
 
-def get_default_gateway_linux(*args, **kwargs):
+def get_default_gateway_linux(*positionals, **kwargs):
 	"""Read the default gateway directly from /proc."""
 	with open("/proc/net/route") as fh:
 		for line in fh:
@@ -556,7 +556,7 @@ def merge_in_includes(instructions, *positionals, **kwargs):
 	return instructions
 
 
-def update_drive_list(*args, **kwargs):
+def update_drive_list(*positionals, **kwargs):
 	# https://github.com/karelzak/util-linux/blob/f920f73d83f8fd52e7a14ec0385f61fab448b491/disk-utils/fdisk-list.c#L52
 	for path in glob('/sys/block/*/device'):
 		name = re.sub('.*/(.*?)/device', '\g<1>', path)
@@ -753,9 +753,9 @@ def setup_args_defaults(args, interactive=True):
 		args['drive'] = drive
 	return args
 
-def load_automatic_instructions(*args, **kwargs):
+def load_automatic_instructions(*positionals, **kwargs):
 	instructions = oDict()
-	if get_default_gateway_linux(*args, **kwargs):
+	if get_default_gateway_linux(*positionals, **kwargs):
 		locmac = get_local_MACs()
 		if not len(locmac):
 			print('[N] No network interfaces - No net deploy.')
@@ -789,7 +789,7 @@ def cache_diskpw_on_disk():
 		with open(args['pwfile'], 'w') as pw:
 			pw.write(args['password'])
 
-def refresh_partition_list(drive, *args, **kwargs):
+def refresh_partition_list(drive, *positionals, **kwargs):
 	args['paritions'] = get_partitions(drive)
 
 if __name__ == '__main__':
