@@ -612,6 +612,7 @@ def human_disk_info(drive):
 	}
 
 def close_disks():
+	o = simple_command('/usr/bin/umount -R /mnt/boot')
 	o = simple_command('/usr/bin/umount -R /mnt')
 	o = simple_command('/usr/bin/cryptsetup close /dev/mapper/luksdev')
 
