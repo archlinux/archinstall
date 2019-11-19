@@ -892,8 +892,8 @@ def strap_in_base(*positionals, **kwargs):
 	if args['aur-support']:
 		args['packages'] += ' git'
 	x = sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs)
-	print(x)
-	print(x.exit_code)
+	print('Handle:', x)
+	print('Exit code:', x.exit_code)
 	if x.exit_code == 0:
 		if sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs).exit_code == 0:
 			return True
