@@ -292,7 +292,14 @@ class sys_command():#Thread):
 		if not self.pid: # Child process
 			# Replace child process with our main process
 			if not self.kwargs['emulate']:
-				os.execv(self.cmd[0], self.cmd)
+				try:
+					os.execv(self.cmd[0], self.cmd)
+				except FileNotFoundError:
+					self.status = 'done'
+					log(f"{self.cmd[0]} does not exist.", origin='spawn', level=2)
+					self.exit_code = 1
+					return False
+
 		os.chdir(old_dir)
 
 		poller = epoll()
