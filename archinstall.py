@@ -873,9 +873,11 @@ def mount_luksdev(where='/dev/mapper/luksdev', to='/mnt', *positionals, **kwargs
 
 def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs):
 	os.makedirs('/mnt/boot', exist_ok=True)
-	o = b''.join(sys_command('/usr/bin/mount | /usr/bin/grep /mnt/boot')) # /dev/dm-0
+	o = b''.join(sys_command('/usr/bin/mount | /usr/bin/grep /mnt/boot', *positionals, **kwargs)) # /dev/dm-0
+	print('MOUNT STUFF:', o)
 	if len(o) <= 0:
-		o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}'))
+		o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}', *positionals, **kwargs))
+		print('MOUNT STUFF2:', o)
 	return True
 
 def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs):
