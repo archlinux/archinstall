@@ -886,7 +886,9 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals
 	return True
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	o = b''.join(sys_command(('/usr/bin/rankmirrors -n {top} /root/mirrorlist > /etc/pacman.d/mirrorlist')))
+	if sys_command(('/usr/bin/rankmirrors -n {top} /root/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
+		return True
+	return False
 
 def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
 	## TODO: replace wget with urllib.request (no point in calling syscommand)
@@ -895,7 +897,9 @@ def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
 		country_list.append(f'country={country}')
 	o = b''.join(sys_command((f"/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?{'&'.join(country_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist")))
 	o = b''.join(sys_command(("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")))
-	re_rank_mirrors(top, *positionals, **kwargs)
+	
+	if not re_rank_mirrors(top, *positionals, **kwargs) or not os.path.isfile('/etc/pacman.d/mirrorlist'):
+		o = b''.join(sys_command(("/usr/bin/mv /root/mirrorlist /etc/pacman.d/")))
 	return True
 
 def strap_in_base(*positionals, **kwargs):
