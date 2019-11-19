@@ -866,22 +866,22 @@ def mkfs_btrfs(drive='/dev/mapper/luksdev', *positionals, **kwargs):
 	return True
 
 def mount_luksdev(where='/dev/mapper/luksdev', to='/mnt', *positionals, **kwargs):
-	o = b''.join(sys_command('/usr/bin/mount | /usr/bin/grep /mnt')) # /dev/dm-0
-	if len(o) <= 0:
-		o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt'))
+	check_mounted = simple_command('/usr/bin/mount | /usr/bin/grep /mnt', *positionals, **kwargs).decode('UTF-8').strip()# /dev/dm-0
+	if len(check_mounted):
+		return False
+
+	o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt', *positionals, **kwargs))
 	return True
 
 def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs):
 	os.makedirs('/mnt/boot', exist_ok=True)
 	#o = b''.join(sys_command('/usr/bin/mount | /usr/bin/grep /mnt/boot', *positionals, **kwargs)) # /dev/dm-0
 
-	check_mount = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot', *positionals, **kwargs).decode('UTF-8').strip()
-	if len(check_mount):
+	check_mounted = simple_command('/usr/bin/mount | /usr/bin/grep /mnt/boot', *positionals, **kwargs).decode('UTF-8').strip()
+	if len(check_mounted):
 		return False
 
 	o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}', *positionals, **kwargs))
-	print('MOUNT STUFF2:', o)
-
 	return True
 
 def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs):
