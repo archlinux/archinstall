@@ -193,7 +193,7 @@ def simple_command(cmd, opts=None, *positionals, **kwargs):
 	if not opts: opts = {}
 	if 'debug' in opts:
 		print('[!] {}'.format(cmd))
-	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE, **kwargs)
+	handle = Popen(cmd, shell='True', stdout=PIPE, stderr=STDOUT, stdin=PIPE)
 	output = b''
 	while handle.poll() is None:
 		data = handle.stdout.read()
