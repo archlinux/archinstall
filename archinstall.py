@@ -622,7 +622,6 @@ def format_disk(drive='drive', start='start', end='size', emulate=False, *positi
 	end = args[end]
 	if not drive:
 		raise ValueError('Need to supply a drive path, for instance: /dev/sdx')
-	print(f'[N] Setting up {drive}.')
 	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
 	if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
@@ -914,8 +913,6 @@ def strap_in_base(*positionals, **kwargs):
 		args['packages'] += ' git'
 	if sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs).exit_code == 0:
 		x = sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs)
-		print(x)
-		print(x.exit_code)
 		if x.exit_code == 0:
 			return True
 	return False
@@ -1134,6 +1131,7 @@ if __name__ == '__main__':
 			time.sleep(1)
 
 		close_disks()
+		print(f'[N] Setting up {drive}.')
 		format_disk('drive', start='start', end='size')
 	
 	refresh_partition_list('drive')
