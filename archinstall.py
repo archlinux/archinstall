@@ -885,7 +885,7 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals
 	mount_boot(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs)
 	return True
 
-def re_rank_mirrors(top=10, *positionals, **kwargs)
+def re_rank_mirrors(top=10, *positionals, **kwargs):
 	o = simple_command('/usr/bin/rankmirrors -n {top} /root/mirrorlist > /etc/pacman.d/mirrorlist')
 
 def filter_mirrors_by_country(countries, top=10, *positionals, **kwargs):
