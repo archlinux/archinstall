@@ -235,7 +235,7 @@ class sys_command():#Thread):
 
 		if not self.cmd[0][0] == '/':
 			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = check_output(['which', self.cmd[0]])
+			o = check_output(['/usr/bin/which', self.cmd[0]])
 			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8').strip()
 
