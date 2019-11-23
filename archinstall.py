@@ -7,7 +7,7 @@ from glob import glob
 from select import epoll, EPOLLIN, EPOLLHUP
 from socket import socket, inet_ntoa, AF_INET, AF_INET6, AF_PACKET
 from collections import OrderedDict as oDict
-from subprocess import Popen, STDOUT, PIPE
+from subprocess import Popen, STDOUT, PIPE, check_output
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
 from hashlib import sha512
@@ -235,9 +235,10 @@ class sys_command():#Thread):
 
 		if not self.cmd[0][0] == '/':
 			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = sys_command('/usr/bin/which {}'.format(self.cmd[0]), emulate=False, hide_from_log=True)
+			o = check_output(['which', self.cmd[0]])
+			##o = sys_command('sh which {}'.format(self.cmd[0]), emulate=False, hide_from_log=True)
 			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
-			self.cmd[0] = o.decode('UTF-8')
+			self.cmd[0] = o.decode('UTF-8').strip()
 
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
