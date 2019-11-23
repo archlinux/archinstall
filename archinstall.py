@@ -235,8 +235,10 @@ class sys_command():#Thread):
 
 		if not self.cmd[0][0] == '/':
 			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = check_output(['which', self.cmd[0]])
-			##o = sys_command('sh which {}'.format(self.cmd[0]), emulate=False, hide_from_log=True)
+			x = Popen(f'/usr/bin/sh -c "which {self.cmd[0]}"', shell=True, stdout=PIPE)
+			while x.poll() is None:
+				pass
+			o = x.stdout.read()
 			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8').strip()
 
