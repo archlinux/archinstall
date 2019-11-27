@@ -781,6 +781,7 @@ def setup_args_defaults(args, interactive=True):
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
 	if not 'default' in args: args['default'] = False
 	if not 'profile' in args: args['profile'] = None
+	if not 'skip-encrypt' in args: args['skip-encrypt'] = False
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
 	if not 'aur-keep' in args: args['aur-keep'] = False
@@ -902,7 +903,7 @@ def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **k
 	return True
 
 def mkfs_btrfs(drive='/dev/mapper/luksdev', *positionals, **kwargs):
-	o = b''.join(sys_command('/usr/bin/mkfs.btrfs -f /dev/mapper/luksdev'))
+	o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {drive}'))
 	if not b'UUID' in o:
 		return False
 	return True
@@ -913,6 +914,17 @@ def mount_luksdev(where='/dev/mapper/luksdev', to='/mnt', *positionals, **kwargs
 		return False
 
 	o = b''.join(sys_command('/usr/bin/mount /dev/mapper/luksdev /mnt', *positionals, **kwargs))
+	return True
+
+def mount_part(drive, partition, mountpoint='/mnt', *positionals, **kwargs):
+	os.makedirs(mountpoint, exist_ok=True)
+	#o = b''.join(sys_command('/usr/bin/mount | /usr/bin/grep /mnt/boot', *positionals, **kwargs)) # /dev/dm-0
+
+	check_mounted = simple_command(f'/usr/bin/mount | /usr/bin/grep {mountpoint}', *positionals, **kwargs).decode('UTF-8').strip()
+	if len(check_mounted):
+		return False
+
+	o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}', *positionals, **kwargs))
 	return True
 
 def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs):
@@ -926,11 +938,13 @@ def mount_boot(drive, partition, mountpoint='/mnt/boot', *positionals, **kwargs)
 	o = b''.join(sys_command(f'/usr/bin/mount {drive}{partition} {mountpoint}', *positionals, **kwargs))
 	return True
 
-def mount_mountpoints(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs):
+def mount_mountpoints(drive, bootpartition, mountpoint='/mnt', *positionals, **kwargs):
 	drive = args[drive]
-	bootpartition = args['partitions'][bootpartition]
-	mount_luksdev(*positionals, **kwargs)
-	mount_boot(drive, bootpartition, mountpoint='/mnt/boot', *positionals, **kwargs)
+	if args['skip-encrypt']:
+		mount_part(drive, args['partitions']["2"], mountpoint, *positionals, **kwargs)
+	else:
+		mount_luksdev(*positionals, **kwargs)
+	mount_boot(drive, args['partitions'][bootpartition], mountpoint=f'{mountpoint}/boot', *positionals, **kwargs)
 	return True
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
@@ -998,12 +1012,17 @@ def setup_bootloader(*positionals, **kwargs):
 	## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 	## And blkid is wrong in terms of LUKS.
 	#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-	UUID = simple_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(args['drive'])}{args['partitions']['2']} | awk '{{print $9}}'").decode('UTF-8').strip()
 	with open('/mnt/boot/loader/entries/arch.conf', 'w') as entry:
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
 		entry.write('initrd /initramfs-linux.img\n')
-		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		if args['skip-encrypt']:
+			## NOTE: We could use /dev/disk/by-partuuid but blkid does the same and a lot cleaner
+			UUID = simple_command(f"blkid -s PARTUUID -o value /dev/{os.path.basename(args['drive'])}{args['partitions']['2']}").decode('UTF-8').strip()
+			entry.write('options root=PARTUUID={UUID} rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		else:
+			UUID = simple_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(args['drive'])}{args['partitions']['2']} | awk '{{print $9}}'").decode('UTF-8').strip()
+			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	return True
 
@@ -1166,7 +1185,10 @@ if __name__ == '__main__':
 	#		PIN = pw.read().strip()
 
 	print()
-	print('[!] Disk PASSWORD is: {}'.format(args['password']))
+	if not args['skip-encrypt']:
+		print('[!] Disk & root PASSWORD is: {}'.format(args['password']))
+	else:
+		print('[!] root PASSWORD is: {}'.format(args['password']))
 	print()
 
 	if not args['rerun'] or args['ignore-rerun']:
@@ -1190,21 +1212,27 @@ if __name__ == '__main__':
 			print(f'[E] Could not setup {args["drive"]}{args["partitions"]["1"]}')
 			exit(1)
 
-		# "--cipher sha512" breaks the shit.
-		# TODO: --use-random instead of --use-urandom
-		print(f'[N] Adding encryption to {args["drive"]}{args["partitions"]["2"]}.')
-		if not encrypt_partition('drive', '2', 'pwfile'):
-			print('[E] Failed to setup disk encryption.', o)
-			exit(1)
+		if not args['skip-encrypt']:
+			# "--cipher sha512" breaks the shit.
+			# TODO: --use-random instead of --use-urandom
+			print(f'[N] Adding encryption to {args["drive"]}{args["partitions"]["2"]}.')
+			if not encrypt_partition('drive', '2', 'pwfile'):
+				print('[E] Failed to setup disk encryption.', o)
+				exit(1)
 
-	if not mount_luktsdev('drive', '2', 'pwfile'):
-		print('[E] Could not open encrypted device.', o)
-		exit(1)
+	if not args['skip-encrypt']:
+		if not mount_luktsdev('drive', '2', 'pwfile'):
+			print('[E] Could not open encrypted device.', o)
+			exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
 		print(f'[N] Creating btrfs filesystem inside {args["drive"]}{args["partitions"]["2"]}')
-		if not mkfs_btrfs():
-			print('[E] Could not setup btrfs filesystem.', o)
+
+		on_part = '/dev/mapper/luksdev'
+		if args['skip-encrypt']:
+			on_part = f'{args["drive"]}{args["partitions"]["2"]}'
+		if not mkfs_btrfs(on_part):
+			print('[E] Could not setup btrfs filesystem.')
 			exit(1)
 
 	mount_mountpoints('drive', '1')
