@@ -752,7 +752,7 @@ def get_external_ip(*positionals, **kwargs):
 	result = urllib.request.urlopen("https://hvornum.se/ip/?f=json").read().decode('UTF-8')
 	return json.loads(result)['ip']
 
-def guess_country(*positionals, **kwargs):
+def guess_country(ip, *positionals, **kwargs):
 	# python-pygeoip
 	# geoip-database
 	result = None
@@ -761,6 +761,7 @@ def guess_country(*positionals, **kwargs):
 		try:
 			import pygeoip
 		except:
+			## TODO: Do a best-effort-guess based off the hostname given off the IP instead, if GoeIP doesn't exist.
 			return result
 
 		gi = pygeoip.GeoIP(GEOIP_DB)
@@ -818,9 +819,7 @@ def setup_args_defaults(args, interactive=True):
 		country = None
 		if get_default_gateway_linux():
 			ip = get_external_ip()
-			print('IP:', ip)
 			country = guess_country(ip)
-			print('Country:', country)
 		args['country'] = 'all' if not country else country
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 
