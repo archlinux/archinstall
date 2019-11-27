@@ -755,6 +755,7 @@ def setup_args_defaults(args, interactive=True):
 	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
+	if not 'phone-home' in args: args['phone-home'] = False
 	if not 'drive' in args:
 		if interactive and len(harddrives):
 			drives = sorted(list(harddrives.keys()))
@@ -1218,7 +1219,9 @@ if __name__ == '__main__':
 
 	if not args['rerun'] or rerun:
 		print('[N] Straping in packages.')
-		strap_in_base() # TODO: check return here? we return based off pacstrap exit code.. Never tired it tho.
+		base_return_code = strap_in_base() # TODO: check return here? we return based off pacstrap exit code.. Never tired it tho.
+	else:
+		base_return_code = None
 
 	if not os.path.isdir('/mnt/etc'): # TODO: This might not be the most long term stable thing to rely on...
 		print('[E] Failed to strap in packages', o)
@@ -1254,3 +1257,15 @@ if __name__ == '__main__':
 		o = simple_command('/usr/bin/reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
+
+	if args['phone-home']:
+		payload = json.dumps({"hostname": args['hostname'],
+							"done" : time(),
+							"profile": args['profile'],
+							"drive": args['drive'],
+							"base_status": base_return_code
+		}).encode('utf8')
+		request = urllib.request.Request(args['phone-home'],
+										data=payload,
+									 	headers={'content-type': 'application/json'})
+		response = urllib.request.urlopen(request)
