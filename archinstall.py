@@ -1269,3 +1269,5 @@ if __name__ == '__main__':
 										data=payload,
 									 	headers={'content-type': 'application/json'})
 		response = urllib.request.urlopen(request)
+		print(response)
+		time.sleep(2)
