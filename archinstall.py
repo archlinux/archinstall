@@ -739,6 +739,15 @@ def merge_dicts(d1, d2, before=True, overwrite=False):
 def random_string(l):
 	return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for i in range(l))
 
+def phone_home(url):
+	payload = json.dumps({"hostname": args['hostname'],
+						"done" : time.time(),
+						"profile": args['profile'],
+						"drive": args['drive'],
+						"base_status": base_return_code}).encode('utf8')
+	request = urllib.request.Request(url, data=payload, headers={'content-type': 'application/json'})
+	response = urllib.request.urlopen(request)
+
 def setup_args_defaults(args, interactive=True):
 	if not 'size' in args: args['size'] = '100%'
 	if not 'start' in args: args['start'] = '513MiB'
@@ -752,6 +761,7 @@ def setup_args_defaults(args, interactive=True):
 	if not 'profile' in args: args['profile'] = None
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
 	if not 'rerun' in args: args['rerun'] = None
+	if not 'aur-keep' in args: args['aur-keep'] = False
 	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
@@ -1228,36 +1238,29 @@ if __name__ == '__main__':
 		exit(1)
 
 	if not args['rerun'] or rerun:
+		print('[N] Configuring base system.')
 		configure_base_system()
 		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
+		print('[N] Setting up bootloader.')
 		setup_bootloader()
 
 		if args['aur-support']:
 			print('[N] AUR support demanded, building "yay" before running POST steps.')
 			add_AUR_support()
 			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
-			
-	run_post_install_steps()
 
-	if args['aur-support']:
+	print('[N] Running post installation steps.')
+	run_post_install_steps()
+	time.sleep(2)
+
+	if args['aur-support'] and not args['aur-keep']:
 		o = b''.join(sys_command('/usr/bin/sed -i \'s/%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/\' /mnt/etc/sudoers'))
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
 
 	if args['phone-home']:
-		payload = json.dumps({"hostname": args['hostname'],
-							"done" : time.time(),
-							"profile": args['profile'],
-							"drive": args['drive'],
-							"base_status": base_return_code
-		}).encode('utf8')
-		request = urllib.request.Request(args['phone-home'],
-										data=payload,
-									 	headers={'content-type': 'application/json'})
-		response = urllib.request.urlopen(request)
-		print(response)
-		time.sleep(2)
-		
+		phone_home(args['phone-home'])
+
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
