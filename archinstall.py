@@ -748,12 +748,34 @@ def phone_home(url):
 	request = urllib.request.Request(url, data=payload, headers={'content-type': 'application/json'})
 	response = urllib.request.urlopen(request)
 
+def get_external_ip(*positionals, **kwargs):
+	result = urllib.request.urlopen("https://hvornum.se/ip/?f=json").read().decode('UTF-8')
+	return json.loads(result)['ip']
+
+def guess_country(ip, *positionals, **kwargs):
+	# python-pygeoip
+	# geoip-database
+	result = None
+	GEOIP_DB = '/usr/share/GeoIP/GeoIP.dat'
+	if os.path.isfile(GEOIP_DB):
+		try:
+			import pygeoip
+		except:
+			## TODO: Do a best-effort-guess based off the hostname given off the IP instead, if GoeIP doesn't exist.
+			return result
+
+		gi = pygeoip.GeoIP(GEOIP_DB)
+		result = gi.country_code_by_addr(ip)
+	else:
+		log(f'Missing GeoIP database: {GEOIP_DB}', origin='guess_country', level=LOG_LEVELS.ERROR)
+	return result
+
 def setup_args_defaults(args, interactive=True):
 	if not 'size' in args: args['size'] = '100%'
+	if not 'mirrors' in args: args['mirrors'] = True
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
 	if not 'hostname' in args: args['hostname'] = 'Archinstall'
-	if not 'country' in args: args['country'] = 'SE' # 'all' if we don't want country specific mirrors.
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
@@ -764,7 +786,6 @@ def setup_args_defaults(args, interactive=True):
 	if not 'aur-keep' in args: args['aur-keep'] = False
 	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
-	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 	if not 'phone-home' in args: args['phone-home'] = False
 	if not 'drive' in args:
 		if interactive and len(harddrives):
@@ -793,6 +814,16 @@ def setup_args_defaults(args, interactive=True):
 				exit(1)
 
 		args['drive'] = drive
+
+	# Setup locales if we didn't get one.
+	if not 'country' in args:
+		country = None
+		if get_default_gateway_linux():
+			ip = get_external_ip()
+			country = guess_country(ip)
+		args['country'] = 'all' if not country else country
+	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
+
 	return args
 
 def load_automatic_instructions(*positionals, **kwargs):
@@ -1148,7 +1179,7 @@ if __name__ == '__main__':
 		format_disk('drive', start='start', end='size')
 	
 	refresh_partition_list('drive')
-	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
+	print(f'[N] Partitions: {len(args["partitions"])} (Boot: {list(args["partitions"].keys())[0]})')
 
 	if len(args['partitions']) <= 0:
 		print(f'[E] No partitions were created on {args["drive"]}', o)
@@ -1180,7 +1211,7 @@ if __name__ == '__main__':
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
-		filter_mirrors_by_country_list([args['country']])
+		filter_mirrors_by_country_list(args['country'])
 
 	pre_conf = {}
 	if 'pre' in instructions:
