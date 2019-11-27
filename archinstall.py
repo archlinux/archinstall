@@ -1144,7 +1144,7 @@ if __name__ == '__main__':
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
-		if not mkfs_fat32('drive', '1', *positionals, **kwargs):
+		if not mkfs_fat32('drive', '1'):
 			print(f'[E] Could not setup {args["drive"]}{args["partitions"]["1"]}')
 			exit(1)
 
