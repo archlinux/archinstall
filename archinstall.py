@@ -765,7 +765,7 @@ def guess_country(ip, *positionals, **kwargs):
 			return result
 
 		gi = pygeoip.GeoIP(GEOIP_DB)
-		result = gi.country_name_by_addr(ip)
+		result = gi.country_code_by_addr(ip)
 	else:
 		log(f'Missing GeoIP database: {GEOIP_DB}', origin='guess_country', level=LOG_LEVELS.ERROR)
 	return result
