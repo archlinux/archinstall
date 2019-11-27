@@ -410,7 +410,7 @@ class sys_command():#Thread):
 
 			#self.callback(self, *self.args, **self.kwargs)
 
-def get_drive_from_uuid(uuid):
+def get_drive_from_uuid(drive):
 	if len(harddrives) <= 0: raise ValueError("No hard drives to iterate in order to find: {}".format(uuid))
 
 	for drive in harddrives:
@@ -1133,14 +1133,14 @@ if __name__ == '__main__':
 			time.sleep(1)
 
 		close_disks()
-		print(f'[N] Setting up {drive}.')
+		print(f'[N] Setting up {args["drive"]}.')
 		format_disk('drive', start='start', end='size')
 	
 	refresh_partition_list('drive')
 	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
 
 	if len(args['partitions']) <= 0:
-		print('[E] No partitions were created on {drive}'.format(**args), o)
+		print(f'[E] No partitions were created on {args["drive"]}', o)
 		exit(1)
 
 	if not args['rerun'] or args['ignore-rerun']:
@@ -1150,7 +1150,7 @@ if __name__ == '__main__':
 
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
-		print(f'[N] Adding encryption to {drive}{partitions["2"]}.')
+		print(f'[N] Adding encryption to {args["drive"]}{partitions["2"]}.')
 		if not encrypt_partition('drive', '2', 'pwfile'):
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
