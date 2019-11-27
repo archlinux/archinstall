@@ -1211,7 +1211,7 @@ if __name__ == '__main__':
 
 	if 'mirrors' in args and args['mirrors'] and 'country' in args and get_default_gateway_linux():
 		print('[N] Reordering mirrors.')
-		filter_mirrors_by_country_list([args['country']])
+		filter_mirrors_by_country_list(args['country'])
 
 	pre_conf = {}
 	if 'pre' in instructions:
