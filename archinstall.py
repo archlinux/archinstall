@@ -1150,7 +1150,7 @@ if __name__ == '__main__':
 
 		# "--cipher sha512" breaks the shit.
 		# TODO: --use-random instead of --use-urandom
-		print(f'[N] Adding encryption to {args["drive"]}{partitions["2"]}.')
+		print(f'[N] Adding encryption to {args["drive"]}{args["partitions"]["2"]}.')
 		if not encrypt_partition('drive', '2', 'pwfile'):
 			print('[E] Failed to setup disk encryption.', o)
 			exit(1)
