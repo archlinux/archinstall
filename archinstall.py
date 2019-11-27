@@ -817,7 +817,10 @@ def setup_args_defaults(args, interactive=True):
 	if not 'country' in args:
 		country = None
 		if get_default_gateway_linux():
-			country = guess_country(get_external_ip())
+			ip = get_external_ip()
+			print('IP:', ip)
+			country = guess_country(ip)
+			print('Country:', country)
 		args['country'] = 'all' if not country else country
 	if not 'localtime' in args: args['localtime'] = 'Europe/Stockholm' if args['country'] == 'SE' else 'GMT+0' # TODO: Arbitrary for now
 
