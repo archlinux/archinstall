@@ -772,6 +772,7 @@ def guess_country(ip, *positionals, **kwargs):
 
 def setup_args_defaults(args, interactive=True):
 	if not 'size' in args: args['size'] = '100%'
+	if not 'mirrors' in args: args['mirrors'] = True
 	if not 'start' in args: args['start'] = '513MiB'
 	if not 'pwfile' in args: args['pwfile'] = '/tmp/diskpw'
 	if not 'hostname' in args: args['hostname'] = 'Archinstall'
@@ -1178,7 +1179,7 @@ if __name__ == '__main__':
 		format_disk('drive', start='start', end='size')
 	
 	refresh_partition_list('drive')
-	print(f'Partitions: (Boot: {list(args["partitions"].keys())[0]})')
+	print(f'[N] Partitions: {len(args["partitions"])} (Boot: {list(args["partitions"].keys())[0]})')
 
 	if len(args['partitions']) <= 0:
 		print(f'[E] No partitions were created on {args["drive"]}', o)
