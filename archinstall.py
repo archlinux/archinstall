@@ -1244,6 +1244,20 @@ if __name__ == '__main__':
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "userdel aibuilder"'))
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt sh -c "rm -rf /home/aibuilder"'))
 
+	if args['phone-home']:
+		payload = json.dumps({"hostname": args['hostname'],
+							"done" : time.time(),
+							"profile": args['profile'],
+							"drive": args['drive'],
+							"base_status": base_return_code
+		}).encode('utf8')
+		request = urllib.request.Request(args['phone-home'],
+										data=payload,
+									 	headers={'content-type': 'application/json'})
+		response = urllib.request.urlopen(request)
+		print(response)
+		time.sleep(2)
+		
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
@@ -1257,17 +1271,3 @@ if __name__ == '__main__':
 		o = simple_command('/usr/bin/reboot now')
 	else:
 		print('Done. "umount -R /mnt; reboot" when you\'re done tinkering.')
-
-	if args['phone-home']:
-		payload = json.dumps({"hostname": args['hostname'],
-							"done" : time(),
-							"profile": args['profile'],
-							"drive": args['drive'],
-							"base_status": base_return_code
-		}).encode('utf8')
-		request = urllib.request.Request(args['phone-home'],
-										data=payload,
-									 	headers={'content-type': 'application/json'})
-		response = urllib.request.urlopen(request)
-		print(response)
-		time.sleep(2)
