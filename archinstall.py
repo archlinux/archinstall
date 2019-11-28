@@ -1017,7 +1017,10 @@ def setup_bootloader(*positionals, **kwargs):
 		entry.write('title Arch Linux\n')
 		entry.write('linux /vmlinuz-linux\n')
 		entry.write('initrd /initramfs-linux.img\n')
-		entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		if args['skip-encrypt']:
+			entry.write('options root=PARTUUID={UUID} rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+		else:
+			entry.write('options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'.format(UUID=UUID))
 
 	return True
 
