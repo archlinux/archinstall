@@ -903,9 +903,7 @@ def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **k
 	return True
 
 def mkfs_btrfs(drive='/dev/mapper/luksdev', *positionals, **kwargs):
-	print('On drive:', drive)
 	o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {drive}'))
-	print(o)
 	if not b'UUID' in o:
 		return False
 	return True
