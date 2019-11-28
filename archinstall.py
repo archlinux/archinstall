@@ -1225,7 +1225,7 @@ if __name__ == '__main__':
 
 		on_part = '/dev/mapper/luksdev'
 		if args['skip-encrypt']:
-			on_part = f'{args["drive"]}/{args["partitions"]["2"]}'
+			on_part = f'{args["drive"]}{args["partitions"]["2"]}'
 		if not mkfs_btrfs(on_part):
 			print('[E] Could not setup btrfs filesystem.')
 			exit(1)
