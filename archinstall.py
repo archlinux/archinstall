@@ -1184,10 +1184,12 @@ if __name__ == '__main__':
 	#	with open(args['pwfile'], 'r') as pw:
 	#		PIN = pw.read().strip()
 
+	print()
 	if not args['skip-encrypt']:
-		print()
-		print('[!] Disk PASSWORD is: {}'.format(args['password']))
-		print()
+		print('[!] Disk & root PASSWORD is: {}'.format(args['password']))
+	else:
+		print('[!] root PASSWORD is: {}'.format(args['password']))
+	print()
 
 	if not args['rerun'] or args['ignore-rerun']:
 		for i in range(5, 0, -1):
