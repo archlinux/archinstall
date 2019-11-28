@@ -903,7 +903,9 @@ def encrypt_partition(drive, partition, keyfile='/tmp/diskpw', *positionals, **k
 	return True
 
 def mkfs_btrfs(drive='/dev/mapper/luksdev', *positionals, **kwargs):
+	print('On drive:', drive)
 	o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {drive}'))
+	print(o)
 	if not b'UUID' in o:
 		return False
 	return True
@@ -1179,9 +1181,10 @@ if __name__ == '__main__':
 	#	with open(args['pwfile'], 'r') as pw:
 	#		PIN = pw.read().strip()
 
-	print()
-	print('[!] Disk PASSWORD is: {}'.format(args['password']))
-	print()
+	if not args['skip-encrypt']:
+		print()
+		print('[!] Disk PASSWORD is: {}'.format(args['password']))
+		print()
 
 	if not args['rerun'] or args['ignore-rerun']:
 		for i in range(5, 0, -1):
@@ -1224,7 +1227,7 @@ if __name__ == '__main__':
 		if args['skip-encrypt']:
 			on_part = f'{args["drive"]}/{args["partitions"]["2"]}'
 		if not mkfs_btrfs(on_part):
-			print('[E] Could not setup btrfs filesystem.', o)
+			print('[E] Could not setup btrfs filesystem.')
 			exit(1)
 
 	mount_mountpoints('drive', '1')
