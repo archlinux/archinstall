@@ -2,5 +2,14 @@
     "args" : {
         "password" : "<STDIN>",
         "post" : "reboot"
+    },
+    "post" : {
+    	"test exit codes" : {
+    		"exit 1" : {"ignore_errors" : true},
+    		"echo 'test1'; read moo; echo 'test2'; read mooo" : {"events" : {
+    			"test1" : "something",
+    			"test2" : "something"
+    		}, "boot" : true}
+    	}
     }
 }
