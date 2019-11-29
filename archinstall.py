@@ -1138,7 +1138,7 @@ if __name__ == '__main__':
 
 	## == If we got networking,
 	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
-	if args['profile'] is None:
+	if args['profile'] is None and not args['minimal']:
 		instructions = load_automatic_instructions()
 
 	elif args['profile'] and not args['minimal']:
