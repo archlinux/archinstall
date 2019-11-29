@@ -781,7 +781,7 @@ def guess_country(ip, *positionals, **kwargs):
 		log(f'Missing GeoIP database: {GEOIP_DB}', origin='guess_country', level=LOG_LEVELS.ERROR)
 	return result
 
-def setup_args_defaults(args, interactive=True):
+def setup_args_defaults(args, *positionals, **kwargs):
 	if not 'size' in args: args['size'] = '100%'
 	if not 'mirrors' in args: args['mirrors'] = True
 	if not 'start' in args: args['start'] = '513MiB'
@@ -1160,7 +1160,7 @@ if __name__ == '__main__':
 
 	## If no drive was found in args, select one.
 	if not 'drive' in args:
-		if interactive and len(harddrives):
+		if len(harddrives):
 			drives = sorted(list(harddrives.keys()))
 			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
 				for index, drive in enumerate(drives):
