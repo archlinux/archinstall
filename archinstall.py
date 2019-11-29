@@ -1229,7 +1229,9 @@ if __name__ == '__main__':
 
 		close_disks()
 		print(f'[N] Setting up {args["drive"]}.')
-		format_disk('drive', start='start', end='size')
+		if not format_disk('drive', start='start', end='size', debug=True):
+			pritn(f'[E] Coult not format drive {args["drive"]}')
+			exit(1)
 	
 	refresh_partition_list('drive')
 	print(f'[N] Partitions: {len(args["partitions"])} (Boot: {list(args["partitions"].keys())[0]})')
