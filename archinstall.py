@@ -1116,9 +1116,9 @@ def run_post_install_steps(*positionals, **kwargs):
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
 					defaults = {
-						bytes(f'login:', 'UTF-8') : b'root\n',
-						#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
-						bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
+						'login:' : 'root\n',
+						#b'Password:' : bytes(args['password']+'\n',
+						'[root@{args["hostname"]} ~]#' : command+'\n',
 					}
 					if not 'events' in opts: opts['events'] = {}
 					events = {**defaults, **opts['events']}
