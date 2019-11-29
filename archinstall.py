@@ -365,6 +365,9 @@ class sys_command():#Thread):
 		else:
 			self.exit_code = 0
 
+		if 'ignore_errors' in self.kwargs:
+			self.exit_code = 0
+
 		if self.exit_code != 0:
 			log(f"{self.cmd[0]} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
 			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
@@ -550,7 +553,11 @@ def disk_info(drive, *positionals, **kwargs):
 
 def cleanup_args():
 	for key in args:
-		if args[key] == '<STDIN>': args[key] = input(f'Enter a value for {key}: ')
+		if args[key] == '<STDIN>':
+			if not args['unattended']:
+				args[key] = input(f'Enter a value for {key}: ')
+			else:
+				args[key] = random_string(32)
 		elif args[key] == '<RND_STR>': args[key] = random_string(32)
 		elif args[key] == '<YUBIKEY>':
 			args[key] = gen_yubikey_password()
@@ -693,29 +700,37 @@ def get_application_instructions(target):
 
 	return instructions
 
+def get_local_instructions(target):
+	instructions = oDict()
+	local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
+	if os.path.isfile(f'{local_path}/{target}.json'):
+		with open(f'{local_path}/{target}.json', 'r') as fh:
+			instructions = fh.read()
+
+		print('[N] Found local instructions called: {}'.format(target))
+	else:
+		print('[N] No instructions found called: {}'.format(target))
+	return instructions
+
 def get_instructions(target, *positionals, **kwargs):
 	instructions = oDict()
-	try:
-		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
-		print('[N] Found net-deploy instructions called: {}'.format(target))
-	except urllib.error.HTTPError:
-		print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
-		local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
-		if os.path.isfile(f'{local_path}/{target}.json'):
-			with open(f'{local_path}/{target}.json', 'r') as fh:
-				instructions = fh.read()
+	if get_default_gateway_linux():
+		try:
+			instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+			print('[N] Found net-deploy instructions called: {}'.format(target))
+		except urllib.error.HTTPError:
+			print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
+			isntructions = get_local_instructions(target, *positionals)
+	else:
+		isntructions = get_local_instructions(target, *positionals)
 
-			print('[N] Found local instructions called: {}'.format(target))
-		else:
-			print('[N] No instructions found called: {}'.format(target))
-			return instructions
-	
-	try:
-		instructions = json.loads(instructions, object_pairs_hook=oDict)
-	except:
-		print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
-		traceback.print_exc()
-		exit(1)
+	if type(instructions) not in (dict, oDict,):
+		try:
+			instructions = json.loads(instructions, object_pairs_hook=oDict)
+		except:
+			print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
+			traceback.print_exc()
+			exit(1)
 
 	return instructions
 
@@ -770,7 +785,7 @@ def guess_country(ip, *positionals, **kwargs):
 		log(f'Missing GeoIP database: {GEOIP_DB}', origin='guess_country', level=LOG_LEVELS.ERROR)
 	return result
 
-def setup_args_defaults(args, interactive=True):
+def setup_args_defaults(args, *positionals, **kwargs):
 	if not 'size' in args: args['size'] = '100%'
 	if not 'mirrors' in args: args['mirrors'] = True
 	if not 'start' in args: args['start'] = '513MiB'
@@ -779,7 +794,8 @@ def setup_args_defaults(args, interactive=True):
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
-	if not 'default' in args: args['default'] = False
+	if not 'minimal' in args: args['minimal'] = False
+	if not 'unattended' in args: args['unattended'] = False
 	if not 'profile' in args: args['profile'] = None
 	if not 'skip-encrypt' in args: args['skip-encrypt'] = False
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
@@ -788,33 +804,6 @@ def setup_args_defaults(args, interactive=True):
 	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'phone-home' in args: args['phone-home'] = False
-	if not 'drive' in args:
-		if interactive and len(harddrives):
-			drives = sorted(list(harddrives.keys()))
-			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
-				for index, drive in enumerate(drives):
-					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
-				drive = input('Select one of the above disks (by number): ')
-				if not drive.isdigit():
-					raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
-				drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
-			args['drive'] = drives[0] # First drive found
-		else:
-			args['drive'] = None
-	rerun = args['ignore-rerun']
-
-	if args['drive'] and args['drive'][0] != '/':
-		## Remap the selected UUID to the device to be formatted.
-		drive = get_drive_from_uuid(args['drive'])
-		if not drive:
-			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
-
-			drive = get_drive_from_part_uuid(args['drive'])
-			if not drive:
-				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
-				exit(1)
-
-		args['drive'] = drive
 
 	# Setup locales if we didn't get one.
 	if not 'country' in args:
@@ -1050,6 +1039,7 @@ def run_post_install_steps(*positionals, **kwargs):
 		update_git(conf['git-branch'])
 		del(conf['git-branch'])
 
+	rerun = args['ignore-rerun']
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
 			continue
@@ -1102,7 +1092,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; mount -t proc /proc proc")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), events=opts)
 				o = simple_command("cd /mnt; umount -R dev")
 				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
@@ -1124,16 +1114,16 @@ def run_post_install_steps(*positionals, **kwargs):
 					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												bytes(f'login:', 'UTF-8') : b'root\n',
-																												#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
-																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
-																											}, **opts}))
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events={
+																											bytes(f'login:', 'UTF-8') : b'root\n',
+																											#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
+																											bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
+																										}, **opts))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts))
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), **opts))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
@@ -1147,33 +1137,62 @@ if __name__ == '__main__':
 	args = setup_args_defaults(args)
 
 	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
-	instructions = load_automatic_instructions()
+	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
+	if args['profile'] is None and not args['minimal']:
+		instructions = load_automatic_instructions()
 
-	if args['profile'] and not args['default']:
+	elif args['profile'] and not args['minimal']:
 		instructions = get_instructions(args['profile'])
 		if len(instructions) <= 0:
 			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
 			print('    Installation won\'t continue until a valid profile is given.')
 			print('   (this is because --profile was given and a --default is not given)')
 			exit(1)
-	else:
-		first = True
-		while not args['default'] and not args['profile'] and len(instructions) <= 0:
-			profile = input('What template do you want to install: ')
-			instructions = get_instructions(profile)
-			if first and len(instructions) <= 0:
-				print('[E] No instructions by the name of {} was found.'.format(profile))
-				print('    Installation won\'t continue until a valid profile is given.')
-				print('   (this is because --default is not instructed and no --profile given)')
-				first = False
+	
+	first = True
+	while not args['minimal'] and not args['profile'] and len(instructions) <= 0:
+		profile = input('What template do you want to install: ')
+		instructions = get_instructions(profile)
+		if first and len(instructions) <= 0:
+			print('[E] No instructions by the name of {} was found.'.format(profile))
+			print('    Installation won\'t continue until a valid profile is given.')
+			print('   (this is because --default is not instructed and no --profile given)')
+			first = False
 
 	# TODO: Might not need to return anything here, passed by reference?
 	instructions = merge_in_includes(instructions)
 	cleanup_args()
 
+	## If no drive was found in args, select one.
+	if not 'drive' in args:
+		if len(harddrives):
+			drives = sorted(list(harddrives.keys()))
+			if len(drives) > 1 and 'force' not in args and not 'unattended' in args and ('minimal' in args and 'first-drive' not in args):
+				for index, drive in enumerate(drives):
+					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
+				drive = input('Select one of the above disks (by number): ')
+				if not drive.isdigit():
+					raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
+				drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
+			args['drive'] = drives[0] # First drive found
+		else:
+			args['drive'] = None
+
+	if args['drive'] and args['drive'][0] != '/':
+		## Remap the selected UUID to the device to be formatted.
+		drive = get_drive_from_uuid(args['drive'])
+		if not drive:
+			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
+
+			drive = get_drive_from_part_uuid(args['drive'])
+			if not drive:
+				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
+				exit(1)
+
+		args['drive'] = drive
+
 	print(json.dumps(args, indent=4))
-	if args['default'] and not 'force' in args:
+	if args['minimal'] and not 'force' in args and not 'unattended' in args:
 		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
 			exit(1)
 
