@@ -1,7 +1,7 @@
 {
     "args" : {
         "password" : "<STDIN>",
-        "post" : "reboot"
+        "post" : "stay"
     },
     "post" : {
     	"test exit codes" : {
