@@ -799,33 +799,6 @@ def setup_args_defaults(args, interactive=True):
 	if not 'aur-support' in args: args['aur-support'] = True # Support adds yay (https://github.com/Jguer/yay) in installation steps.
 	if not 'ignore-rerun' in args: args['ignore-rerun'] = False
 	if not 'phone-home' in args: args['phone-home'] = False
-	if not 'drive' in args:
-		if interactive and len(harddrives):
-			drives = sorted(list(harddrives.keys()))
-			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
-				for index, drive in enumerate(drives):
-					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
-				drive = input('Select one of the above disks (by number): ')
-				if not drive.isdigit():
-					raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
-				drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
-			args['drive'] = drives[0] # First drive found
-		else:
-			args['drive'] = None
-	rerun = args['ignore-rerun']
-
-	if args['drive'] and args['drive'][0] != '/':
-		## Remap the selected UUID to the device to be formatted.
-		drive = get_drive_from_uuid(args['drive'])
-		if not drive:
-			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
-
-			drive = get_drive_from_part_uuid(args['drive'])
-			if not drive:
-				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
-				exit(1)
-
-		args['drive'] = drive
 
 	# Setup locales if we didn't get one.
 	if not 'country' in args:
@@ -1061,6 +1034,7 @@ def run_post_install_steps(*positionals, **kwargs):
 		update_git(conf['git-branch'])
 		del(conf['git-branch'])
 
+	rerun = args['ignore-rerun']
 	for title in conf:
 		if args['rerun'] and args['rerun'] != title and not rerun:
 			continue
@@ -1183,6 +1157,34 @@ if __name__ == '__main__':
 	# TODO: Might not need to return anything here, passed by reference?
 	instructions = merge_in_includes(instructions)
 	cleanup_args()
+
+	## If no drive was found in args, select one.
+	if not 'drive' in args:
+		if interactive and len(harddrives):
+			drives = sorted(list(harddrives.keys()))
+			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
+				for index, drive in enumerate(drives):
+					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
+				drive = input('Select one of the above disks (by number): ')
+				if not drive.isdigit():
+					raise KeyError("Multiple disks found, --drive=/dev/X not specified (or --force/--first-drive)")
+				drives = [drives[int(drive)]] # Make sure only the selected drive is in the list of options
+			args['drive'] = drives[0] # First drive found
+		else:
+			args['drive'] = None
+
+	if args['drive'] and args['drive'][0] != '/':
+		## Remap the selected UUID to the device to be formatted.
+		drive = get_drive_from_uuid(args['drive'])
+		if not drive:
+			print(f'[N] Could not map UUID "{args["drive"]}" to a device. Trying to match via PARTUUID instead!')
+
+			drive = get_drive_from_part_uuid(args['drive'])
+			if not drive:
+				print(f'[E] Could not map UUID "{args["drive"]}" to a device. Aborting!')
+				exit(1)
+
+		args['drive'] = drive
 
 	print(json.dumps(args, indent=4))
 	if args['default'] and not 'force' in args:
