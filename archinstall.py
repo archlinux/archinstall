@@ -318,7 +318,7 @@ class sys_command():#Thread):
 				if 'events' in self.kwargs:
 					for trigger in list(self.kwargs['events']):
 						if type(trigger) != bytes:
-							original = self.kwargs['events'][trigger]
+							original = trigger
 							trigger = bytes(original, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][original]
 							del(self.kwargs['events'][original])
