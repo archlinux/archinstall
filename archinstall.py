@@ -322,16 +322,17 @@ class sys_command():#Thread):
 							del(self.kwargs['events'][trigger])
 							trigger = bytes(key, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][key]
+						if type(self.kwargs['events'][key]) != bytes:
+							self.kwargs['events'][key] = bytes(self.kwargs['events'][key], 'UTF-8')
 
 						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
+								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}")
 								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
 
 							last_trigger_pos = trigger_pos
-							if type(self.kwargs['events'][trigger]) != bytes:
-								self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 							os.write(child_fd, self.kwargs['events'][trigger])
 							del(self.kwargs['events'][trigger])
 							broke = True
