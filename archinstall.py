@@ -317,7 +317,12 @@ class sys_command():#Thread):
 				broke = False
 				if 'events' in self.kwargs:
 					for trigger in list(self.kwargs['events']):
-						if type(trigger) != bytes: trigger = bytes(trigger, 'UTF-8')
+						if type(trigger) != bytes:
+							key = self.kwargs['events'][trigger]
+							del(self.kwargs['events'][trigger])
+							trigger = bytes(key, 'UTF-8')
+							self.kwargs['events'][trigger] = self.kwargs['events'][key]
+
 						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
@@ -325,6 +330,8 @@ class sys_command():#Thread):
 								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
 
 							last_trigger_pos = trigger_pos
+							if type(self.kwargs['events'][trigger]) != bytes:
+								self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 							os.write(child_fd, self.kwargs['events'][trigger])
 							del(self.kwargs['events'][trigger])
 							broke = True
@@ -1117,7 +1124,7 @@ def run_post_install_steps(*positionals, **kwargs):
 					##    [root@<hostname> ~]#
 					defaults = {
 						'login:' : 'root\n',
-						#b'Password:' : bytes(args['password']+'\n',
+						#'Password:' : args['password']+'\n',
 						'[root@{args["hostname"]} ~]#' : command+'\n',
 					}
 					if not 'events' in opts: opts['events'] = {}
