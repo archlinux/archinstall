@@ -306,6 +306,7 @@ class sys_command():#Thread):
 					break
 
 				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
+					print(self.cmd[0], 'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
 				lower = output.lower()
@@ -1230,7 +1231,7 @@ if __name__ == '__main__':
 		close_disks()
 		print(f'[N] Setting up {args["drive"]}.')
 		if not format_disk('drive', start='start', end='size', debug=True):
-			pritn(f'[E] Coult not format drive {args["drive"]}')
+			print(f'[E] Coult not format drive {args["drive"]}')
 			exit(1)
 	
 	refresh_partition_list('drive')
