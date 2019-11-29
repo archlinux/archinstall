@@ -11,7 +11,8 @@
 									    			"continue connecting" : "yes",
 									    			"s password" : "test"
 									    	 	},
-									    	 	"boot" : true
+									    	 	"boot" : true,
+									    	 	"debug" : true
 									    	 }
     	}
     }

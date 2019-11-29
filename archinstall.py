@@ -294,6 +294,10 @@ class sys_command():#Thread):
 		poller = epoll()
 		poller.register(child_fd, EPOLLIN | EPOLLHUP)
 
+		if 'events' in self.kwargs and 'debug' in self.kwargs:
+			print(f'[D] Using triggers for command: {self.cmd}')
+			print(json.dumps(self.kwargs['events']))
+
 		alive = True
 		last_trigger_pos = 0
 		while alive and not self.kwargs['emulate']:
