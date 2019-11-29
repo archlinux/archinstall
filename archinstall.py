@@ -696,29 +696,37 @@ def get_application_instructions(target):
 
 	return instructions
 
+def get_local_instructions(target):
+	instructions = oDict()
+	local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
+	if os.path.isfile(f'{local_path}/{target}.json'):
+		with open(f'{local_path}/{target}.json', 'r') as fh:
+			instructions = fh.read()
+
+		print('[N] Found local instructions called: {}'.format(target))
+	else:
+		print('[N] No instructions found called: {}'.format(target))
+	return instructions
+
 def get_instructions(target, *positionals, **kwargs):
 	instructions = oDict()
-	try:
-		instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
-		print('[N] Found net-deploy instructions called: {}'.format(target))
-	except urllib.error.HTTPError:
-		print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
-		local_path = './deployments' if os.path.isfile('./archinstall.py') else './archinstall/deployments' # Dangerous assumption
-		if os.path.isfile(f'{local_path}/{target}.json'):
-			with open(f'{local_path}/{target}.json', 'r') as fh:
-				instructions = fh.read()
+	if get_default_gateway_linux():
+		try:
+			instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+			print('[N] Found net-deploy instructions called: {}'.format(target))
+		except urllib.error.HTTPError:
+			print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
+			isntructions = get_local_instructions(target, *positionals)
+	else:
+		isntructions = get_local_instructions(target, *positionals)
 
-			print('[N] Found local instructions called: {}'.format(target))
-		else:
-			print('[N] No instructions found called: {}'.format(target))
-			return instructions
-	
-	try:
-		instructions = json.loads(instructions, object_pairs_hook=oDict)
-	except:
-		print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
-		traceback.print_exc()
-		exit(1)
+	if type(instructions) in (dict, oDict):
+		try:
+			instructions = json.loads(instructions, object_pairs_hook=oDict)
+		except:
+			print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
+			traceback.print_exc()
+			exit(1)
 
 	return instructions
 
