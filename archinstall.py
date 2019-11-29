@@ -1360,6 +1360,8 @@ if __name__ == '__main__':
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
 	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+	print(o)
+	time.sleep(5)
 	if 'user' in args:
 		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
 		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
