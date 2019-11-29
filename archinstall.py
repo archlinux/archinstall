@@ -329,10 +329,11 @@ class sys_command():#Thread):
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
-								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}")
-								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
+								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger]}")
+								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger]}", origin='spawn', level=5)
 
 							last_trigger_pos = trigger_pos
+							# last_trigger_pos += len(self.kwargs['events'][trigger])
 							os.write(child_fd, self.kwargs['events'][trigger])
 							del(self.kwargs['events'][trigger])
 							broke = True
@@ -1120,7 +1121,7 @@ def run_post_install_steps(*positionals, **kwargs):
 					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
 					## So we'll add a bunch of triggers instead and let the sys_command manually react to them.
-					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
+					## "<hostname> login" followed by "Password" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
 					defaults = {
