@@ -553,7 +553,11 @@ def disk_info(drive, *positionals, **kwargs):
 
 def cleanup_args():
 	for key in args:
-		if args[key] == '<STDIN>': args[key] = input(f'Enter a value for {key}: ')
+		if args[key] == '<STDIN>':
+			if not args['unattended']:
+				args[key] = input(f'Enter a value for {key}: ')
+			else:
+				args[key] = random_string(32)
 		elif args[key] == '<RND_STR>': args[key] = random_string(32)
 		elif args[key] == '<YUBIKEY>':
 			args[key] = gen_yubikey_password()
@@ -790,7 +794,8 @@ def setup_args_defaults(args, *positionals, **kwargs):
 	if not 'packages' in args: args['packages'] = '' # extra packages other than default
 	if not 'post' in args: args['post'] = 'reboot'
 	if not 'password' in args: args['password'] = '0000' # Default disk passord, can be <STDIN> or a fixed string
-	if not 'default' in args: args['default'] = False
+	if not 'minimal' in args: args['minimal'] = False
+	if not 'unattended' in args: args['unattended'] = False
 	if not 'profile' in args: args['profile'] = None
 	if not 'skip-encrypt' in args: args['skip-encrypt'] = False
 	if not 'profiles-path' in args: args['profiles-path'] = profiles_path
@@ -1136,7 +1141,7 @@ if __name__ == '__main__':
 	if args['profile'] is None:
 		instructions = load_automatic_instructions()
 
-	elif args['profile'] and not args['default']:
+	elif args['profile'] and not args['minimal']:
 		instructions = get_instructions(args['profile'])
 		if len(instructions) <= 0:
 			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
@@ -1145,7 +1150,7 @@ if __name__ == '__main__':
 			exit(1)
 	
 	first = True
-	while not args['default'] and not args['profile'] and len(instructions) <= 0:
+	while not args['minimal'] and not args['profile'] and len(instructions) <= 0:
 		profile = input('What template do you want to install: ')
 		instructions = get_instructions(profile)
 		if first and len(instructions) <= 0:
@@ -1162,7 +1167,7 @@ if __name__ == '__main__':
 	if not 'drive' in args:
 		if len(harddrives):
 			drives = sorted(list(harddrives.keys()))
-			if len(drives) > 1 and 'force' not in args and ('default' in args and 'first-drive' not in args):
+			if len(drives) > 1 and 'force' not in args and not 'unattended' in args and ('minimal' in args and 'first-drive' not in args):
 				for index, drive in enumerate(drives):
 					print(f"{index}: {drive} ({harddrives[drive]['size'], harddrives[drive]['fstype'], harddrives[drive]['label']})")
 				drive = input('Select one of the above disks (by number): ')
@@ -1187,7 +1192,7 @@ if __name__ == '__main__':
 		args['drive'] = drive
 
 	print(json.dumps(args, indent=4))
-	if args['default'] and not 'force' in args:
+	if args['minimal'] and not 'force' in args and not 'unattended' in args:
 		if(input('Are these settings OK? (No return beyond this point) N/y: ').lower() != 'y'):
 			exit(1)
 
