@@ -1158,26 +1158,27 @@ if __name__ == '__main__':
 	args = setup_args_defaults(args)
 
 	## == If we got networking,
-	#     Try fetching instructions for this box and execute them.
-	instructions = load_automatic_instructions()
+	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
+	if args['profile'] is None:
+		instructions = load_automatic_instructions()
 
-	if args['profile'] and not args['default']:
+	elif args['profile'] and not args['default']:
 		instructions = get_instructions(args['profile'])
 		if len(instructions) <= 0:
 			print('[E] No instructions by the name of {} was found.'.format(args['profile']))
 			print('    Installation won\'t continue until a valid profile is given.')
 			print('   (this is because --profile was given and a --default is not given)')
 			exit(1)
-	else:
-		first = True
-		while not args['default'] and not args['profile'] and len(instructions) <= 0:
-			profile = input('What template do you want to install: ')
-			instructions = get_instructions(profile)
-			if first and len(instructions) <= 0:
-				print('[E] No instructions by the name of {} was found.'.format(profile))
-				print('    Installation won\'t continue until a valid profile is given.')
-				print('   (this is because --default is not instructed and no --profile given)')
-				first = False
+	
+	first = True
+	while not args['default'] and not args['profile'] and len(instructions) <= 0:
+		profile = input('What template do you want to install: ')
+		instructions = get_instructions(profile)
+		if first and len(instructions) <= 0:
+			print('[E] No instructions by the name of {} was found.'.format(profile))
+			print('    Installation won\'t continue until a valid profile is given.')
+			print('   (this is because --default is not instructed and no --profile given)')
+			first = False
 
 	# TODO: Might not need to return anything here, passed by reference?
 	instructions = merge_in_includes(instructions)
