@@ -365,7 +365,7 @@ class sys_command():#Thread):
 		else:
 			self.exit_code = 0
 
-		if 'ignore_error' in self.kwargs:
+		if 'ignore_errors' in self.kwargs:
 			self.exit_code = 0
 
 		if self.exit_code != 0:
