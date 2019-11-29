@@ -1297,6 +1297,8 @@ if __name__ == '__main__':
 		update_git(pre_conf['git-branch'])
 		del(pre_conf['git-branch'])
 
+	rerun = args['ignore-rerun']
+
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
 	## But partly because some configurations need to be done against the live CD.
