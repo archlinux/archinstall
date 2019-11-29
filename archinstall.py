@@ -1109,11 +1109,15 @@ def run_post_install_steps(*positionals, **kwargs):
 					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events={
-																											bytes(f'login:', 'UTF-8') : b'root\n',
-																											#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
-																											bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
-																										}, **opts))
+					defaults = {
+						bytes(f'login:', 'UTF-8') : b'root\n',
+						#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
+						bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
+					}
+					if not 'events' in opts: opts['events'] = {}
+					events = {**defaults, **opts['events']}
+					del(opts['events'])
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events=events, **opts))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
