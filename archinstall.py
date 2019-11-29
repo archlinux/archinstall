@@ -28,6 +28,7 @@ harddrives = oDict()
 commandlog = []
 worker_history = oDict()
 instructions = oDict()
+args = {}
 
 import logging
 from systemd.journal import JournalHandler
@@ -1122,7 +1123,7 @@ if __name__ == '__main__':
 
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
-	args = setup_args_defaults()
+	args = setup_args_defaults(args)
 	positionals = []
 	for arg in sys.argv[1:]:
 		if '--' == arg[:2]:
