@@ -1125,7 +1125,7 @@ def run_post_install_steps(*positionals, **kwargs):
 					##    [root@<hostname> ~]#
 					defaults = {
 						'login:' : 'root\n',
-						#'Password:' : args['password']+'\n',
+						'Password:' : args['password']+'\n',
 						'[root@{args["hostname"]} ~]#' : command+'\n',
 					}
 					if not 'events' in opts: opts['events'] = {}
