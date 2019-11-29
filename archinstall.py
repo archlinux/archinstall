@@ -365,6 +365,9 @@ class sys_command():#Thread):
 		else:
 			self.exit_code = 0
 
+		if 'ignore_error' in self.kwargs:
+			self.exit_code = 0
+
 		if self.exit_code != 0:
 			log(f"{self.cmd[0]} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
 			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
@@ -1102,7 +1105,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; mount -t proc /proc proc")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), events=opts)
 				o = simple_command("cd /mnt; umount -R dev")
 				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
@@ -1124,16 +1127,16 @@ def run_post_install_steps(*positionals, **kwargs):
 					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', opts={'triggers' : {
-																												bytes(f'login:', 'UTF-8') : b'root\n',
-																												#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
-																												bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
-																											}, **opts}))
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events={
+																											bytes(f'login:', 'UTF-8') : b'root\n',
+																											#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
+																											bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
+																										}, **opts))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), opts=opts))
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), **opts))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
