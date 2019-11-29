@@ -576,6 +576,9 @@ def merge_in_includes(instructions, *positionals, **kwargs):
 		## Update arguments if we found any
 		for key, val in instructions['args'].items():
 			args[key] = val
+		if 'user_args' in kwargs:
+			for key, val in kwargs['user_args'].items():
+				args[key] = val
 
 	return instructions
 
@@ -830,6 +833,9 @@ def load_automatic_instructions(*positionals, **kwargs):
 					## Update arguments if we found any
 					for key, val in instructions['args'].items():
 						args[key] = val
+					if 'user_args' in kwargs:
+						for key, val in kwargs['user_args'].items():
+							args[key] = val
 	else:
 		print('[N] No gateway - No net deploy')
 
@@ -1121,6 +1127,7 @@ if __name__ == '__main__':
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
 	args = setup_args_defaults(args)
+	user_args = {}
 	positionals = []
 	for arg in sys.argv[1:]:
 		if '--' == arg[:2]:
@@ -1129,6 +1136,7 @@ if __name__ == '__main__':
 			else:
 				key, val = arg[2:], True
 			args[key] = val
+			user_args[key] = val
 		else:
 			positionals.append(arg)
 
@@ -1138,7 +1146,7 @@ if __name__ == '__main__':
 	## == If we got networking,
 	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
 	if args['profile'] is None and not args['minimal']:
-		instructions = load_automatic_instructions()
+		instructions = load_automatic_instructions(user_args=user_args)
 
 	elif args['profile'] and not args['minimal']:
 		instructions = get_instructions(args['profile'])
@@ -1159,7 +1167,7 @@ if __name__ == '__main__':
 			first = False
 
 	# TODO: Might not need to return anything here, passed by reference?
-	instructions = merge_in_includes(instructions)
+	instructions = merge_in_includes(instructions, user_args=user_args)
 	cleanup_args()
 
 	## If no drive was found in args, select one.
