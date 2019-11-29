@@ -306,7 +306,7 @@ class sys_command():#Thread):
 					break
 
 				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
-					print(self.cmd[0], 'gave:', output.decode('UTF-8'), origin='spawn', level=4)
+					print(self.cmd[0], 'gave:', output.decode('UTF-8'))
 					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
 				lower = output.lower()
