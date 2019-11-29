@@ -1356,6 +1356,14 @@ if __name__ == '__main__':
 			add_AUR_support()
 			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 
+	## == Passwords
+	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
+	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
+	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+	if 'user' in args:
+		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
+		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+
 	print('[N] Running post installation steps.')
 	run_post_install_steps()
 	time.sleep(2)
@@ -1367,14 +1375,6 @@ if __name__ == '__main__':
 
 	if args['phone-home']:
 		phone_home(args['phone-home'])
-
-	## == Passwords
-	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
-	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
-	if 'user' in args:
-		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	if args['post'] == 'reboot':
 		o = simple_command('/usr/bin/umount -R /mnt')
