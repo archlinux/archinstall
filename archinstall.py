@@ -29,17 +29,6 @@ commandlog = []
 worker_history = oDict()
 instructions = oDict()
 args = {}
-positionals = []
-for arg in sys.argv[1:]:
-	if '--' == arg[:2]:
-		if '=' in arg:
-			key, val = [x.strip() for x in arg[2:].split('=')]
-		else:
-			key, val = arg[2:], True
-		args[key] = val
-	else:
-		positionals.append(arg)
-
 
 import logging
 from systemd.journal import JournalHandler
@@ -305,6 +294,10 @@ class sys_command():#Thread):
 		poller = epoll()
 		poller.register(child_fd, EPOLLIN | EPOLLHUP)
 
+		if 'events' in self.kwargs and 'debug' in self.kwargs:
+			print(f'[D] Using triggers for command: {self.cmd}')
+			print(json.dumps(self.kwargs['events']))
+
 		alive = True
 		last_trigger_pos = 0
 		while alive and not self.kwargs['emulate']:
@@ -317,16 +310,26 @@ class sys_command():#Thread):
 					break
 
 				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
+					print(self.cmd[0], 'gave:', output.decode('UTF-8'))
 					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
 				lower = output.lower()
 				broke = False
 				if 'events' in self.kwargs:
 					for trigger in list(self.kwargs['events']):
+						if type(trigger) != bytes:
+							original = trigger
+							trigger = bytes(original, 'UTF-8')
+							self.kwargs['events'][trigger] = self.kwargs['events'][original]
+							del(self.kwargs['events'][original])
+						if type(self.kwargs['events'][trigger]) != bytes:
+							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
+
 						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
+								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}")
 								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
 
 							last_trigger_pos = trigger_pos
@@ -587,6 +590,9 @@ def merge_in_includes(instructions, *positionals, **kwargs):
 		## Update arguments if we found any
 		for key, val in instructions['args'].items():
 			args[key] = val
+		if 'user_args' in kwargs:
+			for key, val in kwargs['user_args'].items():
+				args[key] = val
 
 	return instructions
 
@@ -841,6 +847,9 @@ def load_automatic_instructions(*positionals, **kwargs):
 					## Update arguments if we found any
 					for key, val in instructions['args'].items():
 						args[key] = val
+					if 'user_args' in kwargs:
+						for key, val in kwargs['user_args'].items():
+							args[key] = val
 	else:
 		print('[N] No gateway - No net deploy')
 
@@ -1092,7 +1101,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; mount -t proc /proc proc")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), events=opts)
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
 				o = simple_command("cd /mnt; umount -R dev")
 				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
@@ -1114,11 +1123,15 @@ def run_post_install_steps(*positionals, **kwargs):
 					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events={
-																											bytes(f'login:', 'UTF-8') : b'root\n',
-																											#b'Password:' : bytes(args['password']+'\n', 'UTF-8'),
-																											bytes(f'[root@{args["hostname"]} ~]#', 'UTF-8') : bytes(command+'\n', 'UTF-8'),
-																										}, **opts))
+					defaults = {
+						'login:' : 'root\n',
+						'Password:' : args['password']+'\n',
+						'[root@{args["hostname"]} ~]#' : command+'\n',
+					}
+					if not 'events' in opts: opts['events'] = {}
+					events = {**defaults, **opts['events']}
+					del(opts['events'])
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events=events, **opts))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
@@ -1129,17 +1142,29 @@ def run_post_install_steps(*positionals, **kwargs):
 			#print(o)
 
 if __name__ == '__main__':
-	update_git() # Breaks and restarts the script if an update was found.
-	update_drive_list()
-
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
 	args = setup_args_defaults(args)
+	user_args = {}
+	positionals = []
+	for arg in sys.argv[1:]:
+		if '--' == arg[:2]:
+			if '=' in arg:
+				key, val = [x.strip() for x in arg[2:].split('=')]
+			else:
+				key, val = arg[2:], True
+			args[key] = val
+			user_args[key] = val
+		else:
+			positionals.append(arg)
+
+	update_git() # Breaks and restarts the script if an update was found.
+	update_drive_list()
 
 	## == If we got networking,
 	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
 	if args['profile'] is None and not args['minimal']:
-		instructions = load_automatic_instructions()
+		instructions = load_automatic_instructions(user_args=user_args)
 
 	elif args['profile'] and not args['minimal']:
 		instructions = get_instructions(args['profile'])
@@ -1160,7 +1185,7 @@ if __name__ == '__main__':
 			first = False
 
 	# TODO: Might not need to return anything here, passed by reference?
-	instructions = merge_in_includes(instructions)
+	instructions = merge_in_includes(instructions, user_args=user_args)
 	cleanup_args()
 
 	## If no drive was found in args, select one.
@@ -1217,7 +1242,9 @@ if __name__ == '__main__':
 
 		close_disks()
 		print(f'[N] Setting up {args["drive"]}.')
-		format_disk('drive', start='start', end='size')
+		if not format_disk('drive', start='start', end='size', debug=True):
+			print(f'[E] Coult not format drive {args["drive"]}')
+			exit(1)
 	
 	refresh_partition_list('drive')
 	print(f'[N] Partitions: {len(args["partitions"])} (Boot: {list(args["partitions"].keys())[0]})')
@@ -1269,6 +1296,8 @@ if __name__ == '__main__':
 	if 'git-branch' in pre_conf:
 		update_git(pre_conf['git-branch'])
 		del(pre_conf['git-branch'])
+
+	rerun = args['ignore-rerun']
 
 	## Prerequisit steps needs to NOT be executed in arch-chroot.
 	## Mainly because there's no root structure to chroot into.
@@ -1327,6 +1356,16 @@ if __name__ == '__main__':
 			add_AUR_support()
 			print('[N] AUR support added. use "yay -Syy --noconfirm <package>" to deploy in POST.')
 
+	## == Passwords
+	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
+	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
+	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+	print(o)
+	time.sleep(5)
+	if 'user' in args:
+		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
+		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+
 	print('[N] Running post installation steps.')
 	run_post_install_steps()
 	time.sleep(2)
@@ -1338,14 +1377,6 @@ if __name__ == '__main__':
 
 	if args['phone-home']:
 		phone_home(args['phone-home'])
-
-	## == Passwords
-	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
-	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
-	if 'user' in args:
-		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
 
 	if args['post'] == 'reboot':
 		o = simple_command('/usr/bin/umount -R /mnt')
