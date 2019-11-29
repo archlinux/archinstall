@@ -1118,9 +1118,6 @@ def run_post_install_steps(*positionals, **kwargs):
 			#print(o)
 
 if __name__ == '__main__':
-	update_git() # Breaks and restarts the script if an update was found.
-	update_drive_list()
-
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
 	args = setup_args_defaults(args)
@@ -1134,6 +1131,9 @@ if __name__ == '__main__':
 			args[key] = val
 		else:
 			positionals.append(arg)
+
+	update_git() # Breaks and restarts the script if an update was found.
+	update_drive_list()
 
 	## == If we got networking,
 	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
