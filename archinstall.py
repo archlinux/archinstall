@@ -319,10 +319,9 @@ class sys_command():#Thread):
 					for trigger in list(self.kwargs['events']):
 						if type(trigger) != bytes:
 							original = self.kwargs['events'][trigger]
-							del(self.kwargs['events'][trigger])
-
 							trigger = bytes(original, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][original]
+							del(self.kwargs['events'][original])
 						if type(self.kwargs['events'][trigger]) != bytes:
 							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 
