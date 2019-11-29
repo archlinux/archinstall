@@ -312,6 +312,7 @@ class sys_command():#Thread):
 				broke = False
 				if 'events' in self.kwargs:
 					for trigger in list(self.kwargs['events']):
+						if type(trigger) != bytes: trigger = bytes(trigger, 'UTF-8')
 						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
@@ -1087,7 +1088,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; mount -t proc /proc proc")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), events=opts)
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
 				o = simple_command("cd /mnt; umount -R dev")
 				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
