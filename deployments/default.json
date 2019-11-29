@@ -1,15 +1,18 @@
 {
     "args" : {
-        "password" : "<STDIN>",
+        "password" : "0000",
         "post" : "stay"
     },
     "post" : {
     	"test exit codes" : {
     		"exit 1" : {"ignore_errors" : true},
-    		"echo 'test1'; read moo; echo 'test2'; read mooo" : {"events" : {
-    			"test1" : "something",
-    			"test2" : "something"
-    		}, "boot" : true}
+    		"echo 'ssh test@77.80.220.176" : {
+    											"events" : {
+									    			"continue connecting" : "yes",
+									    			"s password" : "test"
+									    	 	},
+									    	 	"boot" : true
+									    	 }
     	}
     }
 }
