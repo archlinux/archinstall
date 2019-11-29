@@ -318,12 +318,13 @@ class sys_command():#Thread):
 				if 'events' in self.kwargs:
 					for trigger in list(self.kwargs['events']):
 						if type(trigger) != bytes:
-							key = self.kwargs['events'][trigger]
+							original = self.kwargs['events'][trigger]
 							del(self.kwargs['events'][trigger])
-							trigger = bytes(key, 'UTF-8')
-							self.kwargs['events'][trigger] = self.kwargs['events'][key]
-						if type(self.kwargs['events'][key]) != bytes:
-							self.kwargs['events'][key] = bytes(self.kwargs['events'][key], 'UTF-8')
+
+							trigger = bytes(original, 'UTF-8')
+							self.kwargs['events'][trigger] = self.kwargs['events'][original]
+						if type(self.kwargs['events'][trigger]) != bytes:
+							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 
 						if trigger.lower() in self.trace_log[last_trigger_pos:].lower():
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
