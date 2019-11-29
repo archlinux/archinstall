@@ -720,7 +720,7 @@ def get_instructions(target, *positionals, **kwargs):
 	else:
 		isntructions = get_local_instructions(target, *positionals)
 
-	if type(instructions) in (dict, oDict):
+	if type(instructions) not in (dict, oDict,):
 		try:
 			instructions = json.loads(instructions, object_pairs_hook=oDict)
 		except:
