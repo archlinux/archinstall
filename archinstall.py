@@ -28,18 +28,6 @@ harddrives = oDict()
 commandlog = []
 worker_history = oDict()
 instructions = oDict()
-args = {}
-positionals = []
-for arg in sys.argv[1:]:
-	if '--' == arg[:2]:
-		if '=' in arg:
-			key, val = [x.strip() for x in arg[2:].split('=')]
-		else:
-			key, val = arg[2:], True
-		args[key] = val
-	else:
-		positionals.append(arg)
-
 
 import logging
 from systemd.journal import JournalHandler
@@ -1134,7 +1122,17 @@ if __name__ == '__main__':
 
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
-	args = setup_args_defaults(args)
+	args = setup_args_defaults()
+	positionals = []
+	for arg in sys.argv[1:]:
+		if '--' == arg[:2]:
+			if '=' in arg:
+				key, val = [x.strip() for x in arg[2:].split('=')]
+			else:
+				key, val = arg[2:], True
+			args[key] = val
+		else:
+			positionals.append(arg)
 
 	## == If we got networking,
 	#     Try fetching instructions for this box unless a specific profile was given, and execute them.
