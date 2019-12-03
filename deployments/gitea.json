@@ -7,7 +7,7 @@
     },
     "post" : {
         "Install workstation packages": {
-            "pacman -Syy --noconfirm {{_utils}  {_editor}" : {"pass-args" : true}
+            "pacman -Syy --noconfirm {_utils}  {_editor}" : {"pass-args" : true}
         }
     }
 }
