@@ -1,0 +1,13 @@
+{
+    "args" : {
+        "password" : "<STDIN>",
+        "_editor" : "nano",
+        "_utils" : "openssh git curl dhclient",
+        "post" : "don't reboot"
+    },
+    "post" : {
+        "Install workstation packages": {
+            "pacman -Syy --noconfirm {_utils}  {_editor}" : {"pass-args" : true}
+        }
+    }
+}

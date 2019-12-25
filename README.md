@@ -53,6 +53,9 @@ More options for the built ISO:
 
     --drive=</dev/sdX>
       Which drive to install arch on, if absent, the first disk under /dev/ is used
+
+    --minimal
+    Starts a minimal installation, and skips looking for profiles.
     
     --size=100% (Default)
       Sets the size of the root filesystem (btrfs)
@@ -75,8 +78,10 @@ More options for the built ISO:
     --hostname=Arcinstall (Default)
       Sets the hostname of the box
     
-    --country=SE (Default)
+    --country=all (Default)
       Default mirror allocation for fetching packages.
+      If network is found, archinstall will try to attempt and guess which country the
+      install originates from, basing it off GeoIP off your public IP (uses https://hvornu.se/ip/ for lookups)
     
     --packages='' (Default)
       Which additional packages to install, defaults to none.
@@ -88,7 +93,7 @@ More options for the built ISO:
     --post=reboot (Default)
       After a successful install, reboots into the system. Use --post=stay to not reboot.
 
-    --default
+    --unattended
       This parameter causes the installation script to install arch unattended on the first disk
 
     --profile=<name>

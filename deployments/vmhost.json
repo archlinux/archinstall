@@ -1,0 +1,26 @@
+{
+    "args" : {
+        "password" : "<STDIN>",
+        "_keyboard_layout" : "us",
+        "_editor" : "vim",
+        "_window_manager" : "i3",
+        "_window_manager_dependencies" : "xorg-server xorg-xrandr xorg-xinit xterm",
+        "_window_manager_utilities" : "slock xscreensaver terminus-font-otb gnu-free-fonts ttf-liberation xsel",
+        "_virtulization" : "qemu ovmf",
+        "_utils" : "git htop dhclient curl",
+        "post" : "don't reboot"
+    },
+    "post" : {
+        "Install workstation packages": {
+            "pacman -Syy --noconfirm {_editor} {_utils} {_window_manager} {_window_manager_dependencies} {_window_manager_utilities} {_virtulization}" : {"pass-args" : true}
+        },
+        "Setup virtulization" : {
+            "sh -c \"Description=\\\"Bridge for virtual machines\\\"\nInterface=br0\nConnection=bridge\nBindsToInterfaces=(eno1)\nIP=no\nExecUpPost=\\\"ip link set dev br0 address $(cat /sys/class/net/eno1/address); IP=dhcp; ip_set\\\"\nExecDownPre=\\\"IP=dhcp\\\"\n\n## Ignore (R)STP and immediately activate the bridge\nSkipForwardingDelay=yes\"" : null
+        },
+        "Setup localization" : {
+            "sh -c \"echo 'setxkbmap us' >> /etc/X11/xinit/xinitrc\"" : null,
+            "sh -c \"echo 'KEYMAP={_keyboard_layout}\nFONT=lat9w-16' >> /etc/vconsole.conf\"" : {"pass-args" : true}
+        },
+        "Configure desktop environment" : "i3"
+    }
+}
