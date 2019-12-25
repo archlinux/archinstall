@@ -778,6 +778,9 @@ def cache_diskpw_on_disk():
 		with open(args['pwfile'], 'w') as pw:
 			pw.write(args['password'])
 
+def refresh_partition_list(drive):
+	args['paritions'] = get_partitions(drive)
+
 if __name__ == '__main__':
 	update_git() # Breaks and restarts the script if an update was found.
 	update_drive_list()
@@ -836,7 +839,7 @@ if __name__ == '__main__':
 		close_disks()
 		format_disk(args['drive'], start=args['start'], end=args['size'])
 	
-	args['paritions'] = get_partitions(args['drive'])
+	refresh_partition_list(args['drive'])
 	print(f'Partitions: (Boot: {list(args["paritions"].keys())[0]})')
 
 	if len(args['paritions']) <= 0:
