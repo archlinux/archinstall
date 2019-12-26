@@ -720,6 +720,7 @@ def get_local_instructions(target):
 
 def get_instructions(target, *positionals, **kwargs):
 	instructions = oDict()
+	if target[0-len('.json'):] == '.json': target = target[:0-len('.json')]
 	log(f'Fetching instructions for {target}', level=4, origin='get_instructions')
 	if get_default_gateway_linux():
 		try:
