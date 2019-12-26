@@ -329,11 +329,10 @@ class sys_command():#Thread):
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
-								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger]}")
-								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger]}", origin='spawn', level=5)
+								print(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}")
+								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
 
 							last_trigger_pos = trigger_pos
-							# last_trigger_pos += len(self.kwargs['events'][trigger])
 							os.write(child_fd, self.kwargs['events'][trigger])
 							del(self.kwargs['events'][trigger])
 							broke = True
@@ -1039,6 +1038,7 @@ def add_AUR_support(*positionals, **kwargs):
 	return True
 
 def run_post_install_steps(*positionals, **kwargs):
+	log(f'Running post installation with input data {instructions}.', level=4, origin='run_post_install_steps')
 	conf = {}
 	if 'post' in instructions:
 		conf = instructions['post']
@@ -1051,6 +1051,7 @@ def run_post_install_steps(*positionals, **kwargs):
 
 	rerun = args['ignore-rerun']
 	for title in conf:
+		log(f'Running post installation step {title}', level=4, origin='run_post_install_steps')
 		if args['rerun'] and args['rerun'] != title and not rerun:
 			continue
 		else:
@@ -1059,6 +1060,7 @@ def run_post_install_steps(*positionals, **kwargs):
 		print('[N] Network Deploy: {}'.format(title))
 		if type(conf[title]) == str:
 			print('[N] Loading {} configuration'.format(conf[title]))
+			log(f'Loading {conf[title]} configuration', level=4, origin='run_post_install_steps')
 			conf[title] = get_application_instructions(conf[title])
 
 		for command in conf[title]:
@@ -1092,8 +1094,10 @@ def run_post_install_steps(*positionals, **kwargs):
 			## Either skipping mounting /run and using traditional chroot is an option, but using
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
 			if 'no-chroot' in opts and opts['no-chroot']:
+				log(f'Executing {command} as simple command from live-cd.', level=4, origin='run_post_install_steps')
 				o = simple_command(command, opts)
 			elif 'chroot' in opts and opts['chroot']:
+				log(f'Executing {command} in chroot.', level=4, origin='run_post_install_steps')
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
 				## This is a bit risky in case the file systems changes over the years, but we'll probably be safe adding this as an option.
 				## **> Prefer if possible to use 'no-chroot' instead which "live boots" the OS and runs the command.
@@ -1108,6 +1112,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; umount -R proc")
 			else:
 				if 'boot' in opts and opts['boot']:
+					log(f'Executing {command} in boot mode.', level=4, origin='run_post_install_steps')
 					## So, if we're going to boot this maddafakker up, we'll need to
 					## be able to login. The quickest way is to just add automatic login.. so lessgo!
 					
@@ -1121,7 +1126,7 @@ def run_post_install_steps(*positionals, **kwargs):
 					# 	fh.write('ExecStart=-/usr/bin/agetty --autologin root -s %I 115200,38400,9600 vt102\n')
 
 					## So we'll add a bunch of triggers instead and let the sys_command manually react to them.
-					## "<hostname> login" followed by "Password" in case it's been set in a previous step.. usually this shouldn't be nessecary
+					## "<hostname> login" followed by "Passwodd" in case it's been set in a previous step.. usually this shouldn't be nessecary
 					## since we set the password as the last step. And then the command itself which will be executed by looking for:
 					##    [root@<hostname> ~]#
 					defaults = {
@@ -1137,10 +1142,14 @@ def run_post_install_steps(*positionals, **kwargs):
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
+					log(f'Executing {command} in with systemd-nspawn without boot.', level=4, origin='run_post_install_steps')
 					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), **opts))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
+				log(f'{command} failed: {o.decode("UTF-8")}', level=4, origin='run_post_install_steps')
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
+
+	return True
 
 if __name__ == '__main__':
 	## Setup some defaults 
