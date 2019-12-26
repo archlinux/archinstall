@@ -720,12 +720,15 @@ def get_local_instructions(target):
 
 def get_instructions(target, *positionals, **kwargs):
 	instructions = oDict()
+	log(f'Fetching instructions for {target}', level=4, origin='get_instructions')
 	if get_default_gateway_linux():
 		try:
 			instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+			log(f'Found net-deploy instructions for {target}', level=4, origin='get_instructions')
 			print('[N] Found net-deploy instructions called: {}'.format(target))
 		except urllib.error.HTTPError:
 			print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
+			log(f'Could not find remote instructions. Trying local instructions under ./deployments', level=4, origin='get_instructions')
 			isntructions = get_local_instructions(target, *positionals)
 	else:
 		isntructions = get_local_instructions(target, *positionals)
@@ -734,10 +737,12 @@ def get_instructions(target, *positionals, **kwargs):
 		try:
 			instructions = json.loads(instructions, object_pairs_hook=oDict)
 		except:
+			log(f'JSON syntax error in: {target}', level=4, origin='get_instructions')
 			print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
 			traceback.print_exc()
 			exit(1)
 
+	log(f'Final instructions are: {instructions}', level=4, origin='get_instructions')
 	return instructions
 
 def merge_dicts(d1, d2, before=True, overwrite=False):
