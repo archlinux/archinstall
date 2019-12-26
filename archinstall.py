@@ -1038,6 +1038,7 @@ def add_AUR_support(*positionals, **kwargs):
 	return True
 
 def run_post_install_steps(*positionals, **kwargs):
+	log(f'Running post installation with input data {instructions}.', level=4, origin='run_post_install_steps')
 	conf = {}
 	if 'post' in instructions:
 		conf = instructions['post']
