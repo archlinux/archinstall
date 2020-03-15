@@ -439,6 +439,11 @@ def get_drive_from_part_uuid(partuuid, *positionals, **kwargs):
 
 	return None
 
+def set_password(user, password, *positionals, **kwargs):
+	if not SAFETY_LOCK:
+		o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+	return True
+
 def update_git(branch='master'):
 	default_gw = get_default_gateway_linux()
 	if(default_gw):
@@ -1405,8 +1410,7 @@ if __name__ == '__main__':
 	## == Passwords
 	# o = sys_command('arch-chroot /mnt usermod --password {} root'.format(args['password']))
 	# o = sys_command("arch-chroot /mnt sh -c 'echo {pin} | passwd --stdin root'".format(pin='"{pin}"'.format(**args, pin=args['password'])), echo=True)
-	o = simple_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'root:{pin}' | chpasswd\"".format(**args, pin=args['password']))
-	print(o)
+	set_password(user='root', password=args['password'])
 	time.sleep(5)
 	if 'user' in args:
 		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
