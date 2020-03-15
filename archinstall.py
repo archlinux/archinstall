@@ -639,8 +639,8 @@ def format_disk(drive='drive', start='start', end='size', emulate=False, *positi
 	if not SAFETY_LOCK:
 		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
 		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-		if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-			return None
+		#if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+		#	return None
 		if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
 			return None
 		if sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate, *positionals, **kwargs).exit_code != 0:
@@ -954,7 +954,7 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt', *positionals, **k
 	return True
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if sys_command(('/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
+	if sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
 		return True
 	return False
 
@@ -1008,6 +1008,10 @@ def strap_in_base(*positionals, **kwargs):
 def configure_base_system(*positionals, **kwargs):
 	## TODO: Replace a lot of these syscalls with just python native operations.
 	o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
+	if not os.path.isfile('/mnt/etc/fstab'):
+		log(f'Could not locate fstab, strapping in packages most likely failed.', level=3, origin='configure_base_system')
+		return False
+
 	with open('/mnt/etc/fstab', 'a') as fstab:
 		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
