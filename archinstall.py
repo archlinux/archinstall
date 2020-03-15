@@ -635,22 +635,24 @@ def format_disk(drive='drive', start='start', end='size', emulate=False, *positi
 	end = args[end]
 	if not drive:
 		raise ValueError('Need to supply a drive path, for instance: /dev/sdx')
-	# dd if=/dev/random of=args['drive'] bs=4096 status=progress
-	# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
-	if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
-	if sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate, *positionals, **kwargs).exit_code != 0:
-		return None
+
+	if not SAFETY_LOCK:
+		# dd if=/dev/random of=args['drive'] bs=4096 status=progress
+		# https://github.com/dcantrell/pyparted	would be nice, but isn't officially in the repo's #SadPanda
+		if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} mklabel gpt', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} mkpart primary FAT32 1MiB {start}', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} name 1 "EFI"', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} set 1 esp on', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} set 1 boot on', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
+		if sys_command(f'/usr/bin/parted -s {drive} mkpart primary {start} {end}', emulate=emulate, *positionals, **kwargs).exit_code != 0:
+			return None
 
 	# TODO: grab partitions after each parted/partition step instead of guessing which partiton is which later on.
 	#       Create one, grab partitions - dub that to "boot" or something. do the next partition, grab that and dub it "system".. or something..
@@ -961,13 +963,23 @@ def filter_mirrors_by_country_list(countries, top=None, *positionals, **kwargs):
 	country_list = []
 	for country in countries.split(','):
 		country_list.append(f'country={country}')
-	o = b''.join(sys_command((f"/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?{'&'.join(country_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist")))
-	o = b''.join(sys_command(("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")))
-	o = b''.join(sys_command(("/usr/bin/mv /root/mirrorlist /etc/pacman.d/")))
-	
-	if top:
-		re_rank_mirrors(top, *positionals, **kwargs) or not os.path.isfile('/etc/pacman.d/mirrorlist')
 
+	if not SAFETY_LOCK:
+		o = b''.join(sys_command((f"/usr/bin/wget 'https://www.archlinux.org/mirrorlist/?{'&'.join(country_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O /root/mirrorlist")))
+		o = b''.join(sys_command(("/usr/bin/sed -i 's/#Server/Server/' /root/mirrorlist")))
+		o = b''.join(sys_command(("/usr/bin/mv /root/mirrorlist /etc/pacman.d/")))
+	
+		if top:
+			re_rank_mirrors(top, *positionals, **kwargs) or not os.path.isfile('/etc/pacman.d/mirrorlist')
+
+	return True
+
+def add_specific_mirrors(mirrors, *positionals, **kwargs):
+	with open('/etc/pacman.d/mirrorlist', 'a') as mirrorlist:
+		mirrorlist.write('\n')
+		for url in mirrors:
+			mirrorlist.write(f'# {mirrors[url]}\n')
+			mirrorlist.write(f'Server = {url}\n')
 	return True
 
 def strap_in_base(*positionals, **kwargs):
