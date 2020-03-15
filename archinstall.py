@@ -209,6 +209,7 @@ class sys_command():#Thread):
 		self.cmd = shlex.split(cmd)
 		self.args = args
 		self.kwargs = kwargs
+		if not 'client' in self.kwargs: self.kwargs['client'] = None
 		self.callback = callback
 		self.pid = None
 		self.exit_code = None
@@ -314,7 +315,7 @@ class sys_command():#Thread):
 					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
 				if 'on_output' in self.kwargs:
-					self.kwargs['on_output'](self, output)
+					self.kwargs['on_output'](self.kwargs['client'], output)
 
 				lower = output.lower()
 				broke = False
