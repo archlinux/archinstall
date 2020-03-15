@@ -992,6 +992,10 @@ def flush_all_mirrors(*positionals, **kwargs):
 			mirrorlist.write('\n') # TODO: Not needed.
 	return True
 
+def reboot(*positionals, **kwargs):
+	simple_command('/usr/bin/sync', *positionals, **kwargs).decode('UTF-8').strip()
+	simple_command('/usr/bin/reboot', *positionals, **kwargs).decode('UTF-8').strip()
+
 def strap_in_base(*positionals, **kwargs):
 	if args['aur-support']:
 		args['packages'] += ' git'
