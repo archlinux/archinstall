@@ -313,6 +313,9 @@ class sys_command():#Thread):
 					print(self.cmd[0], 'gave:', output.decode('UTF-8'))
 					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
 
+				if 'on_output' in self.kwargs:
+					self.kwargs['on_output'](self, output)
+
 				lower = output.lower()
 				broke = False
 				if 'events' in self.kwargs:
