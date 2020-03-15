@@ -975,11 +975,12 @@ def filter_mirrors_by_country_list(countries, top=None, *positionals, **kwargs):
 	return True
 
 def add_specific_mirrors(mirrors, *positionals, **kwargs):
-	with open('/etc/pacman.d/mirrorlist', 'a') as mirrorlist:
-		mirrorlist.write('\n')
-		for url in mirrors:
-			mirrorlist.write(f'# {mirrors[url]}\n')
-			mirrorlist.write(f'Server = {url}\n')
+	if not SAFETY_LOCK:
+		with open('/etc/pacman.d/mirrorlist', 'a') as mirrorlist:
+			mirrorlist.write('\n')
+			for url in mirrors:
+				mirrorlist.write(f'# {mirrors[url]}\n')
+				mirrorlist.write(f'Server = {url}\n')
 	return True
 
 def strap_in_base(*positionals, **kwargs):
