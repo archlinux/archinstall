@@ -232,7 +232,7 @@ class sys_command():#Thread):
 			os.makedirs(self.exec_dir)
 
 		if self.kwargs['emulate']:
-			commandlog.append(cmd + ' #emulated')
+			commandlog.append(cmd + ' # (emulated)')
 		elif 'hide_from_log' in self.kwargs and self.kwargs['hide_from_log']:
 			pass
 		else:
@@ -976,15 +976,18 @@ def filter_mirrors_by_country_list(countries, top=None, *positionals, **kwargs):
 
 def add_specific_mirrors(mirrors, *positionals, **kwargs):
 	if not SAFETY_LOCK:
+		commandlog.append('# Adding mirrors to /etc/pacman.d/mirrorlist')
 		with open('/etc/pacman.d/mirrorlist', 'a') as mirrorlist:
 			mirrorlist.write('\n')
 			for url in mirrors:
+				commandlog.append(f'# {url}')
 				mirrorlist.write(f'# {mirrors[url]}\n')
 				mirrorlist.write(f'Server = {url}\n')
 	return True
 
 def flush_all_mirrors(*positionals, **kwargs):
 	if not SAFETY_LOCK:
+		commandlog.append('# Flushed /etc/pacman.d/mirrorlist')
 		with open('/etc/pacman.d/mirrorlist', 'w') as mirrorlist:
 			mirrorlist.write('\n') # TODO: Not needed.
 	return True
