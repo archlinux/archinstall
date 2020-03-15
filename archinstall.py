@@ -983,6 +983,12 @@ def add_specific_mirrors(mirrors, *positionals, **kwargs):
 				mirrorlist.write(f'Server = {url}\n')
 	return True
 
+def flush_all_mirrors(*positionals, **kwargs):
+	if not SAFETY_LOCK:
+		with open('/etc/pacman.d/mirrorlist', 'w') as mirrorlist:
+			mirrorlist.write('\n') # TODO: Not needed.
+	return True
+
 def strap_in_base(*positionals, **kwargs):
 	if args['aur-support']:
 		args['packages'] += ' git'
