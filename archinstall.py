@@ -971,8 +971,9 @@ def mount_mountpoints(drive, bootpartition, mountpoint='/mnt', *positionals, **k
 	return True
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
+	if (cmd := sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist'))).exit_code == 0:
 		return True
+	log(f"Could not re-rank mirrors: {cmd.trace_log}", level=3, origin='re_rank_mirrors')
 	return False
 
 def filter_mirrors_by_country_list(countries, top=None, *positionals, **kwargs):
