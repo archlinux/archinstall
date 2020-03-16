@@ -558,10 +558,12 @@ def disk_info(drive, *positionals, **kwargs):
 	
 	return info
 
-def cleanup_args():
+def cleanup_args(*positionals, **kwargs):
 	for key in args:
 		if args[key] == '<STDIN>':
 			if not args['unattended']:
+				if 'input_redirect' in kwargs:
+					args[key] = kwargs['input_redirect'](key)
 				args[key] = input(f'Enter a value for {key}: ')
 			else:
 				args[key] = random_string(32)
@@ -725,12 +727,13 @@ def get_local_instructions(target):
 	return instructions
 
 def get_instructions(target, *positionals, **kwargs):
+	if not 'profiles-path' in kwargs: kwargs['profiles-path'] = args['profiles-path']
 	instructions = oDict()
 	if target[0-len('.json'):] == '.json': target = target[:0-len('.json')]
 	log(f'Fetching instructions for {target}', level=4, origin='get_instructions')
 	if get_default_gateway_linux():
 		try:
-			instructions = grab_url_data('{}/{}.json'.format(args['profiles-path'], target)).decode('UTF-8')
+			instructions = grab_url_data(f"{kwargs['profiles-path']}/{target}.json").decode('UTF-8')
 			log(f'Found net-deploy instructions for {target}', level=4, origin='get_instructions')
 			print('[N] Found net-deploy instructions called: {}'.format(target))
 		except urllib.error.HTTPError:
@@ -745,7 +748,7 @@ def get_instructions(target, *positionals, **kwargs):
 			instructions = json.loads(instructions, object_pairs_hook=oDict)
 		except:
 			log(f'JSON syntax error in: {target}', level=4, origin='get_instructions')
-			print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(args['profiles-path'], target)))
+			print('[E] JSON syntax error in {}'.format('{}/{}.json'.format(kwargs['profiles-path'], target)))
 			traceback.print_exc()
 			exit(1)
 
