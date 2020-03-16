@@ -26,45 +26,54 @@ worker_history = oDict()
 instructions = oDict()
 args = {}
 
-import logging
-from systemd.journal import JournalHandler
+create_log = True
 
-# Custom adapter to pre-pend the 'origin' key.
-# TODO: Should probably use filters: https://docs.python.org/3/howto/logging-cookbook.html#using-filters-to-impart-contextual-information
-class CustomAdapter(logging.LoggerAdapter):
-	def process(self, msg, kwargs):
-		return '[{}] {}'.format(self.extra['origin'], msg), kwargs
+try:
+	if 'log' in __builtins__.__dict__:
+		create_log = False
+except:
+	if 'log' in __builtins__:
+		create_log = False
 
-logger = logging.getLogger() # __name__
-journald_handler = JournalHandler()
-journald_handler.setFormatter(logging.Formatter('[{levelname}] {message}', style='{'))
-logger.addHandler(journald_handler)
-logger.setLevel(logging.DEBUG)
+if create_log:
+	import logging
+	from systemd.journal import JournalHandler
 
-class LOG_LEVELS:
-	CRITICAL = 1
-	ERROR = 2
-	WARNING = 3
-	INFO = 4
-	DEBUG = 5
+	# Custom adapter to pre-pend the 'origin' key.
+	# TODO: Should probably use filters: https://docs.python.org/3/howto/logging-cookbook.html#using-filters-to-impart-contextual-information
+	class CustomAdapter(logging.LoggerAdapter):
+		def process(self, msg, kwargs):
+			return '[{}] {}'.format(self.extra['origin'], msg), kwargs
 
-LOG_LEVEL = 4
+	logger = logging.getLogger() # __name__
+	journald_handler = JournalHandler()
+	journald_handler.setFormatter(logging.Formatter('[{levelname}] {message}', style='{'))
+	logger.addHandler(journald_handler)
+	logger.setLevel(logging.DEBUG)
 
-def log(*msg, origin='UNKNOWN', level=5, **kwargs):
-	if level <= LOG_LEVEL:
-		msg = [item.decode('UTF-8', errors='backslashreplace') if type(item) == bytes else item for item in msg]
-		msg = [str(item) if type(item) != str else item for item in msg]
-		log_adapter = CustomAdapter(logger, {'origin': origin})
-		if level <= 1:
-			log_adapter.critical(' '.join(msg))
-		elif level <= 2:
-			log_adapter.error(' '.join(msg))
-		elif level <= 3:
-			log_adapter.warning(' '.join(msg))
-		elif level <= 4:
-			log_adapter.info(' '.join(msg))
-		else:
-			log_adapter.debug(' '.join(msg))
+	class LOG_LEVELS:
+		CRITICAL = 1
+		ERROR = 2
+		WARNING = 3
+		INFO = 4
+		DEBUG = 5
+
+	LOG_LEVEL = 4
+	def log(*msg, origin='UNKNOWN', level=5, **kwargs):
+		if level <= LOG_LEVEL:
+			msg = [item.decode('UTF-8', errors='backslashreplace') if type(item) == bytes else item for item in msg]
+			msg = [str(item) if type(item) != str else item for item in msg]
+			log_adapter = CustomAdapter(logger, {'origin': origin})
+			if level <= 1:
+				log_adapter.critical(' '.join(msg))
+			elif level <= 2:
+				log_adapter.error(' '.join(msg))
+			elif level <= 3:
+				log_adapter.warning(' '.join(msg))
+			elif level <= 4:
+				log_adapter.info(' '.join(msg))
+			else:
+				log_adapter.debug(' '.join(msg))
 	
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
