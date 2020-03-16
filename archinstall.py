@@ -979,6 +979,17 @@ def filter_mirrors_by_country_list(countries, top=None, *positionals, **kwargs):
 
 	return True
 
+def add_custom_mirror(name, url, *positionals, **kwargs):
+	if not SAFETY_LOCK:
+		commandlog.append('# Adding custom mirror to /etc/pacman.conf')
+		with open('/etc/pacman.conf', 'a') as mirrorlist:
+			commandlog.append(f'# {name} @ {url}')
+			mirrorlist.write('\n')
+			mirrorlist.write(f'[{name}]\n')
+			mirrorlist.write(f'Server = {url}\n')
+			mirrorlist.write(f'SigLevel = Optional TrustAll\n')
+	return True
+
 def add_specific_mirrors(mirrors, *positionals, **kwargs):
 	if not SAFETY_LOCK:
 		commandlog.append('# Adding mirrors to /etc/pacman.d/mirrorlist')
