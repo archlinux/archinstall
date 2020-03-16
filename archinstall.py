@@ -13,10 +13,6 @@ from string import ascii_uppercase, ascii_lowercase, digits
 from hashlib import sha512
 from threading import Thread, enumerate as tenum
 
-if not os.path.isdir('/sys/firmware/efi'):
-	print('[E] This script only supports UEFI-booted machines.')
-	exit(1)
-
 if os.path.isfile('./SAFETY_LOCK'):
 	SAFETY_LOCK = True
 else:
@@ -1219,7 +1215,18 @@ def create_user(username, password='', groups=[]):
 				o = (f'/usr/bin/arch-chroot /mnt gpasswd -a {username} {group}')
 	return True
 
+def prerequisit_check():
+	if not os.path.isdir('/sys/firmware/efi'):
+		return False, 'Archinstall only supports UEFI-booted machines.'
+
+	return True
+
 if __name__ == '__main__':
+	
+	if not (prereq := prerequisit_check()) is True:
+		print(f'[E] {prereq[1]}')
+		exit(1)
+
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
 	args = setup_args_defaults(args)
