@@ -1029,7 +1029,7 @@ def strap_in_base(*positionals, **kwargs):
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=3, origin='strap_in_base')
 	return False
 
-def set_locale(fmt):
+def set_locale(fmt, *positionals, **kwargs):
 	if not '.' in fmt:
 		if fmt.lower() == 'se':
 			fmt = 'en_SE.UTF-8 UTF-8'
