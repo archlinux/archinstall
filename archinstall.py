@@ -65,7 +65,6 @@ def log(*msg, origin='UNKNOWN', level=5, **kwargs):
 			log_adapter.info(' '.join(msg))
 		else:
 			log_adapter.debug(' '.join(msg))
-
 	
 ## == Profiles Path can be set via --profiles-path=/path
 ##    This just sets the default path if the parameter is omitted.
@@ -1056,8 +1055,8 @@ def configure_base_system(*positionals, **kwargs):
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
 		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
 		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+
 		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
-		set_locale('en_US.UTF-8 UTF-8')
 		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
 
 		with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
@@ -1447,6 +1446,7 @@ if __name__ == '__main__':
 
 	if not args['rerun'] or rerun:
 		print('[N] Configuring base system.')
+		set_locale('en_US.UTF-8 UTF-8')
 		configure_base_system()
 		## WORKAROUND: https://github.com/systemd/systemd/issues/13603#issuecomment-552246188
 		print('[N] Setting up bootloader.')
