@@ -1232,6 +1232,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 			#print(o)
 
+	print('run_post_install_steps() is complete.')
 	return True
 
 def create_user(username, password='', groups=[]):
