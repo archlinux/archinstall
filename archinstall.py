@@ -1013,12 +1013,17 @@ def reboot(*positionals, **kwargs):
 	simple_command('/usr/bin/reboot', *positionals, **kwargs).decode('UTF-8').strip()
 
 def strap_in_base(*positionals, **kwargs):
-	if args['aur-support']:
-		args['packages'] += ' git'
-	if sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs).exit_code == 0:
-		x = sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs)
-		if x.exit_code == 0:
-			return True
+	if not SAFETY_LOCK:
+		if args['aur-support']:
+			args['packages'] += ' git'
+		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy', *positionals, **kwargs)).exit_code == 0:
+			x = sys_command('/usr/bin/pacstrap /mnt base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog {packages}'.format(**args), *positionals, **kwargs)
+			if x.exit_code == 0:
+				return True
+			else:
+				log(f'Could not strap in base: {x.exit_code}', level=3, origin='strap_in_base')
+		else:
+			log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=3, origin='strap_in_base')
 	return False
 
 def set_locale(fmt):
