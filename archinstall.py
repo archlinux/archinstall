@@ -1168,7 +1168,7 @@ def run_post_install_steps(*positionals, **kwargs):
 			## `systemd-nspawn -D /mnt --machine temporary` might be a more flexible solution in case of file structure changes.
 			if 'no-chroot' in opts and opts['no-chroot']:
 				log(f'Executing {command} as simple command from live-cd.', level=4, origin='run_post_install_steps')
-				o = simple_command(command, opts)
+				o = simple_command(command, opts, *positionals, **kwargs)
 			elif 'chroot' in opts and opts['chroot']:
 				log(f'Executing {command} in chroot.', level=4, origin='run_post_install_steps')
 				## Run in a manually set up version of arch-chroot (arch-chroot will break namespaces).
@@ -1179,7 +1179,7 @@ def run_post_install_steps(*positionals, **kwargs):
 				o = simple_command("cd /mnt; mount -t proc /proc proc")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /sys sys")
 				o = simple_command("cd /mnt; mount --make-rslave --rbind /dev dev")
-				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts)
+				o = simple_command('chroot /mnt /bin/bash -c "{c}"'.format(c=command), opts=opts, *positionals, **kwargs)
 				o = simple_command("cd /mnt; umount -R dev")
 				o = simple_command("cd /mnt; umount -R sys") 	
 				o = simple_command("cd /mnt; umount -R proc")
@@ -1210,13 +1210,13 @@ def run_post_install_steps(*positionals, **kwargs):
 					if not 'events' in opts: opts['events'] = {}
 					events = {**defaults, **opts['events']}
 					del(opts['events'])
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', events=events, **opts))
+					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt -b --machine temporary', *positionals, **{'events' : events, **kwargs, **opts}))
 
 					## Not needed anymore: And cleanup after out selves.. Don't want to leave any residue..
 					# os.remove('/mnt/etc/systemd/system/console-getty.service.d/override.conf')
 				else:
 					log(f'Executing {command} in with systemd-nspawn without boot.', level=4, origin='run_post_install_steps')
-					o = b''.join(sys_command('/usr/bin/systemd-nspawn -D /mnt --machine temporary {c}'.format(c=command), **opts))
+					o = b''.join(sys_command(f'/usr/bin/systemd-nspawn -D /mnt --machine temporary {command}', *positionals, **{**kwargs, **opts}))
 			if type(conf[title][raw_command]) == bytes and len(conf[title][raw_command]) and not conf[title][raw_command] in o:
 				log(f'{command} failed: {o.decode("UTF-8")}', level=4, origin='run_post_install_steps')
 				print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
