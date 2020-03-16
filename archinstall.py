@@ -564,7 +564,8 @@ def cleanup_args(*positionals, **kwargs):
 			if not args['unattended']:
 				if 'input_redirect' in kwargs:
 					args[key] = kwargs['input_redirect'](key)
-				args[key] = input(f'Enter a value for {key}: ')
+				else:
+					args[key] = input(f'Enter a value for {key}: ')
 			else:
 				args[key] = random_string(32)
 		elif args[key] == '<RND_STR>': args[key] = random_string(32)
