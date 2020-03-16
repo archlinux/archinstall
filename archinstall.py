@@ -1209,6 +1209,16 @@ def run_post_install_steps(*positionals, **kwargs):
 
 	return True
 
+def create_user(username, password='', groups=[]):
+	if username:
+		o = (f'/usr/bin/arch-chroot /mnt useradd -m -G wheel {username}')
+		if password:
+			o = (f"/usr/bin/arch-chroot /mnt sh -c \"echo '{username}:{password}' | chpasswd\"")
+		if groups:
+			for group in groups:
+				o = (f'/usr/bin/arch-chroot /mnt gpasswd -a {username} {group}')
+	return True
+
 if __name__ == '__main__':
 	## Setup some defaults 
 	#  (in case no command-line parameters or netdeploy-params were given)
@@ -1430,8 +1440,7 @@ if __name__ == '__main__':
 	set_password(user='root', password=args['password'])
 	time.sleep(5)
 	if 'user' in args:
-		o = ('/usr/bin/arch-chroot /mnt useradd -m -G wheel {user}'.format(**args))
-		o = ("/usr/bin/arch-chroot /mnt sh -c \"echo '{user}:{pin}' | chpasswd\"".format(**args, pin=args['password']))
+		create_user(args['user'], args['password'])#, groups=['wheel'])
 
 	print('[N] Running post installation steps.')
 	run_post_install_steps()
