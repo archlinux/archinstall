@@ -371,7 +371,7 @@ class sys_command():#Thread):
 			self.exit_code = 0
 
 		if self.exit_code != 0:
-			log(f"{self.cmd[0]} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
+			log(f"{self.cmd} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
 			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
 		else:
 			log(f"{self.cmd[0]} exit nicely.", origin='spawn', level=5)
