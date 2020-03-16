@@ -1014,34 +1014,47 @@ def strap_in_base(*positionals, **kwargs):
 			return True
 	return False
 
+def set_locale(fmt):
+	if not '.' in fmt:
+		if fmt.lower() == 'se':
+			fmt = 'en_SE.UTF-8 UTF-8'
+		else:
+			fmt = 'en_US.UTF-8 UTF-8'
+
+	if not SAFETY_LOCK:
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot /mnt sh -c \"echo '{fmt}' > /etc/locale.gen\""))
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG={fmt.split(' ')[0]}' > /etc/locale.conf\""))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen'))
+
+	return True
+
 def configure_base_system(*positionals, **kwargs):
-	## TODO: Replace a lot of these syscalls with just python native operations.
-	o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
-	if not os.path.isfile('/mnt/etc/fstab'):
-		log(f'Could not locate fstab, strapping in packages most likely failed.', level=3, origin='configure_base_system')
-		return False
+	if not SAFETY_LOCK:
+		## TODO: Replace a lot of these syscalls with just python native operations.
+		o = b''.join(sys_command('/usr/bin/genfstab -pU /mnt >> /mnt/etc/fstab'))
+		if not os.path.isfile('/mnt/etc/fstab'):
+			log(f'Could not locate fstab, strapping in packages most likely failed.', level=3, origin='configure_base_system')
+			return False
 
-	with open('/mnt/etc/fstab', 'a') as fstab:
-		fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
+		with open('/mnt/etc/fstab', 'a') as fstab:
+			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
 
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime'))
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)))
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
-	#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
-	#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen\""))
-	o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\""))
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt locale-gen'))
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt rm -f /etc/localtime'))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt ln -s /usr/share/zoneinfo/{localtime} /etc/localtime'.format(**args)))
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime'))
+		#o = sys_command('arch-chroot /mnt echo "{hostname}" > /etc/hostname'.format(**args))
+		#o = sys_command("arch-chroot /mnt sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen")
+		o = b''.join(sys_command("/usr/bin/arch-chroot /mnt sh -c \"echo '{hostname}' > /etc/hostname\"".format(**args)))
+		set_locale('en_US.UTF-8 UTF-8')
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt chmod 700 /root'))
 
-	with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
-		## TODO: Don't replace it, in case some update in the future actually adds something.
-		mkinit.write('MODULES=(btrfs)\n')
-		mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
-		mkinit.write('FILES=()\n')
-		mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
-	o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux'))
+		with open('/mnt/etc/mkinitcpio.conf', 'w') as mkinit:
+			## TODO: Don't replace it, in case some update in the future actually adds something.
+			mkinit.write('MODULES=(btrfs)\n')
+			mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
+			mkinit.write('FILES=()\n')
+			mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+		o = b''.join(sys_command('/usr/bin/arch-chroot /mnt mkinitcpio -p linux'))
 
 	return True
 
