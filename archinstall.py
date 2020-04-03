@@ -749,9 +749,9 @@ def get_instructions(target, *positionals, **kwargs):
 		except urllib.error.HTTPError:
 			print('[N] Could not find remote instructions. Trying local instructions under ./deployments')
 			log(f'Could not find remote instructions. Trying local instructions under ./deployments', level=4, origin='get_instructions')
-			isntructions = get_local_instructions(target, *positionals)
+			instructions = get_local_instructions(target, *positionals)
 	else:
-		isntructions = get_local_instructions(target, *positionals)
+		instructions = get_local_instructions(target, *positionals)
 
 	if type(instructions) not in (dict, oDict,):
 		try:
