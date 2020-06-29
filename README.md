@@ -1,7 +1,9 @@
 # <img src="logo.png" alt="drawing" width="200"/>
-Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer.
+A guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer.
 
-Pre-built ISO's can be found here which autostarts this script *(in guided mode)*: https://hvornum.se/archiso/
+
+ * archinstall [discord](https://discord.gg/cqXU88y) server
+ * archinstall guided install ISO's: https://hvornum.se/archiso/
 
 # How-to / Usecases
 
