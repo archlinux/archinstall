@@ -33,32 +33,34 @@ This assumes tho that Python and Pip is present (not always the case on the defa
 So, assuming you're building your own ISO and want to create an automated install.<br>
 This is probably what you'll need, a minimal example of how to install using the library.
 
-    import archinstall, getpass
+```python
+import archinstall, getpass
 
 
-    selected_hdd = archinstall.select_disk(archinstall.all_disks())
-    disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
+selected_hdd = archinstall.select_disk(archinstall.all_disks())
+disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 
-    with archinstall.Filesystem(selected_hdd, archinstall.GPT) as fs:
-        fs.use_entire_disk('luks2')
-        with archinstall.luks2(fs) as crypt:
-            if selected_hdd.partition[1]['size'] == '512M':
-                raise OSError('Trying to encrypt the boot partition for petes sake..')
+with archinstall.Filesystem(selected_hdd, archinstall.GPT) as fs:
+    fs.use_entire_disk('luks2')
+    with archinstall.luks2(fs) as crypt:
+        if selected_hdd.partition[1]['size'] == '512M':
+            raise OSError('Trying to encrypt the boot partition for petes sake..')
 
-            key_file = crypt.encrypt(selected_hdd.partition[1], password=disk_password, key_size=512, hash_type='sha512', iter_time=10000, key_file='./pwfile')
-            crypt.mount(selected_hdd.partition[1], 'luksloop', key_file)
-        
-        with archinstall.installer(root_partition, hostname='testmachine') as installation:
-            if installation.minimal_installation():
-                installation.add_bootloader()
+        key_file = crypt.encrypt(selected_hdd.partition[1], password=disk_password, key_size=512, hash_type='sha512', iter_time=10000, key_file='./pwfile')
+        crypt.mount(selected_hdd.partition[1], 'luksloop', key_file)
 
-                installation.add_additional_packages(['nano', 'wget', 'git'])
-                installation.install_profile('desktop')
+    with archinstall.installer(root_partition, hostname='testmachine') as installation:
+        if installation.minimal_installation():
+            installation.add_bootloader()
 
-                installation.user_create('anton', 'test')
-                installation.user_set_pw('root', 'toor')
+            installation.add_additional_packages(['nano', 'wget', 'git'])
+            installation.install_profile('desktop')
 
-                installation.add_AUR_support()
+            installation.user_create('anton', 'test')
+            installation.user_set_pw('root', 'toor')
+
+            installation.add_AUR_support()
+```
 
 This installer will perform the following:
 
