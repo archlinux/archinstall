@@ -16,9 +16,9 @@ class sys_command():#Thread):
 	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
 		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
 		if not 'emulate' in kwargs: kwargs['emulate'] = False
-		#Thread.__init__(self)
 		if kwargs['emulate']:
 			log(f"Starting command '{cmd}' in emulation mode.")
+		self.raw_cmd = cmd
 		self.cmd = shlex.split(cmd)
 		self.args = args
 		self.kwargs = kwargs
@@ -37,22 +37,15 @@ class sys_command():#Thread):
 		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
-			log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
+			#log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
 			o = check_output(['/usr/bin/which', self.cmd[0]])
-			log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
+			#log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = o.decode('UTF-8').strip()
 
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
 
-		if self.kwargs['emulate']:
-			commandlog.append(cmd + ' # (emulated)')
-		elif 'hide_from_log' in self.kwargs and self.kwargs['hide_from_log']:
-			pass
-		else:
-			commandlog.append(cmd)
 		if start_callback: start_callback(self, *args, **kwargs)
-		#self.start()
 		self.run()
 
 	def __iter__(self, *args, **kwargs):
@@ -78,16 +71,6 @@ class sys_command():#Thread):
 		}
 
 	def run(self):
-		#main = None
-		#for t in tenum():
-		#	if t.name == 'MainThread':
-		#		main = t
-		#		break
-
-		#if not main:
-		#	log('Main thread not existing')
-		#	return
-		
 		self.status = 'running'
 		old_dir = os.getcwd()
 		os.chdir(self.exec_dir)
@@ -124,8 +107,7 @@ class sys_command():#Thread):
 					break
 
 				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
-					log(self.cmd[0], 'gave:', output.decode('UTF-8'))
-					log(self.cmd[0],'gave:', output.decode('UTF-8'), origin='spawn', level=4)
+					log(self.cmd, 'gave:', output.decode('UTF-8'))
 
 				if 'on_output' in self.kwargs:
 					self.kwargs['on_output'](self.kwargs['worker'], output)
@@ -189,10 +171,10 @@ class sys_command():#Thread):
 			self.exit_code = 0
 
 		if self.exit_code != 0:
-			log(f"{self.cmd} did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
+			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
 			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
-		else:
-			log(f"{self.cmd[0]} exit nicely.", origin='spawn', level=5)
+		#else:
+			#log(f"{self.cmd[0]} exit nicely.", origin='spawn', level=5)
 
 		self.ended = time.time()
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
