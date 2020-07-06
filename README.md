@@ -6,7 +6,7 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
  * ~~archinstall [documentation](#)~~ *(TBA)*
- * archinstall guided install ISO's: https://hvornum.se/archiso/
+ * ~~archinstall guided install ISO's: https://hvornum.se/archiso/~~ *(Being re-built to v2.0)*
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
 
 # Usage
