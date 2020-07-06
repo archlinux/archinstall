@@ -16,6 +16,7 @@ class BlockDevice():
 	def __init__(self, path, info):
 		self.path = path
 		self.info = info
+		self.part_cache = OrderedDict()
 
 	@property
 	def device(self):
@@ -45,7 +46,6 @@ class BlockDevice():
 	def partitions(self):
 		o = b''.join(sys_command(f'partprobe {self.path}'))
 
-		parts = OrderedDict()
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
 		if b'not a block device' in o:
@@ -59,9 +59,11 @@ class BlockDevice():
 			root_path = f"/dev/{r['blockdevices'][0]['name']}"
 			for part in r['blockdevices'][0]['children']:
 				part_id = part['name'][len(os.path.basename(self.path)):]
-				parts[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
+				if part_id not in self.part_cache:
+					## TODO: Force over-write even if in cache?
+					self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
 
-		return {k: parts[k] for k in sorted(parts)}
+		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
 	@property
 	def partition(self):
@@ -86,26 +88,26 @@ class Partition():
 		self.size = size # TODO: Refresh?
 
 	def __repr__(self, *args, **kwargs):
-		return f'Partition({self.path})'
+		return f'Partition({self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
 	def format(self, filesystem):
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if not b'UUID' in o:
-				return False
+				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
 			self.filesystem = 'btrfs'
 		elif filesystem == 'fat32':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {self.path}'))
 			if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
-				return None
-			return True
+				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
+			self.filesystem = 'fat32'
 		else:
 			raise DiskError(f'Fileformat {filesystem} is not yet implemented.')
 		return True
 
 	def mount(self, target, fs=None, options=''):
 		if not fs:
-			if not self.filesystem: raise DiskError('Need to format (or define) the filesystem before mounting.')
+			if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 			fs = self.filesystem
 		# TODO: Move this to the BlockDevice or something.
 		ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
