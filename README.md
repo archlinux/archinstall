@@ -82,4 +82,4 @@ This installer will perform the following:
 
 ## End note
 
- ![description](https://github.com/Torxed/archinstall/raw/annotations/docs/description.jpg)
+![description](https://github.com/Torxed/archinstall/raw/annotations/docs/description.jpg)
