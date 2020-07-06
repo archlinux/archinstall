@@ -38,7 +38,7 @@ This will ask for a disk and a password before **wiping the entire disk**.
 
 ~~This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.~~
 
-Currently not supported, but is planned for v2.0.5 or v2.1.0.
+only `pip install archinstall` is currently supported, running as a module is planned for v2.0.5 or v2.1.0.
 
 ## Scripting an installation
 
