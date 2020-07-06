@@ -1,4 +1,4 @@
-from exceptions import *
+from .exceptions import *
 
 def select_disk(dict_o_disks):
 	drives = sorted(list(dict_o_disks.keys()))

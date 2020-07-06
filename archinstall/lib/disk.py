@@ -1,12 +1,13 @@
 import glob, re, os, json
 from collections import OrderedDict
-#import ctypes
-#import ctypes.util
-from exceptions import *
-from helpers.general import sys_command
+from .exceptions import *
+from .general import sys_command
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
+
+#import ctypes
+#import ctypes.util
 #libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
 #libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
@@ -89,6 +90,7 @@ class Partition():
 		return f'Partition({self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
 	def format(self, filesystem):
+		print(f'Formatting {self} -> {filesystem}')
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if not b'UUID' in o:
@@ -104,6 +106,7 @@ class Partition():
 		return True
 
 	def mount(self, target, fs=None, options=''):
+		print(f'Mounting {self} to {target}')
 		if not fs:
 			if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 			fs = self.filesystem
@@ -127,9 +130,11 @@ class luks2():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
+		print(args)
 		return True
 
 	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
+		print(f'Encrypting {partition}')
 		if not key_file: key_file = f'/tmp/{os.path.basename(self.filesystem.blockdevice.device)}.disk_pw' #TODO: Make disk-pw-file randomly unique?
 		if type(password) != bytes: password = bytes(password, 'UTF-8')
 
@@ -177,7 +182,12 @@ class Filesystem():
 			raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
 	def __exit__(self, *args, **kwargs):
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+		if len(args) >= 2 and args[1]:
+			raise args[1]
+		print(args)
 		b''.join(sys_command(f'sync'))
+		return True
 
 	def raw_parted(self, string:str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
@@ -204,6 +214,7 @@ class Filesystem():
 			self.add_partition('primary', start='1MiB', end='513MiB', format='ext4')
 
 	def add_partition(self, type, start, end, format=None):
+		print(f'Adding partition to {self.blockdevice}')
 		if format:
 			return self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:

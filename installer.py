@@ -10,25 +10,20 @@ harddrive = archinstall.all_disks()['/dev/loop0']
 disk_password = '1234' # getpass.getpass(prompt='Disk password (won\'t echo): ')
 
 with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
-	print(f'Formatting {harddrive}')
 	fs.use_entire_disk('luks2')
 	with archinstall.luks2(fs) as crypt:
 		if harddrive.partition[1].size == '512M':
 			raise OSError('Trying to encrypt the boot partition for petes sake..')
 
-		print(f'Encrypting {harddrive.partition[1]}')
 		key_file = crypt.encrypt(harddrive.partition[1], password=disk_password, key_size=512, hash_type='sha512', iter_time=10000, key_file='./pwfile')
 
 		unlocked_device = crypt.unlock(harddrive.partition[1], 'luksloop', key_file)
 		
-		print('Formatting partitions.')
 		harddrive.partition[0].format('fat32')
 		unlocked_device.format('btrfs')
 		
 		with archinstall.Installer(unlocked_device, hostname='testmachine') as installation:
-			print('Installing minimal installation to disk.')
 			if installation.minimal_installation():
-				print('Adding bootloader.')
 				installation.add_bootloader(harddrive.partition[0])
 
 				installation.add_additional_packages(['nano', 'wget', 'git'])
