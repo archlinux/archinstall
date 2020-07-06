@@ -9,6 +9,20 @@ def log(*args, **kwargs):
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
+def multisplit(s, splitters):
+	s = [s,]
+	for key in splitters:
+		ns = []
+		for obj in s:
+			x = obj.split(key)
+			for index, part in enumerate(x):
+				if len(part):
+					ns.append(part)
+				if index < len(x)-1:
+					ns.append(key)
+		s = ns
+	return s
+
 class sys_command():#Thread):
 	"""
 	Stolen from archinstall_gui
@@ -20,7 +34,10 @@ class sys_command():#Thread):
 		if kwargs['emulate']:
 			log(f"Starting command '{cmd}' in emulation mode.")
 		self.raw_cmd = cmd
-		self.cmd = shlex.split(cmd)
+		try:
+			self.cmd = shlex.split(cmd)
+		except Exception as e:
+			raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
 		self.args = args
 		self.kwargs = kwargs
 		if not 'worker' in self.kwargs: self.kwargs['worker'] = None

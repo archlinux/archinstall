@@ -4,6 +4,7 @@ from .exceptions import *
 from .disk import *
 from .general import *
 from .user_interaction import *
+from .profiles import Profile
 
 class Installer():
 	def __init__(self, partition, *, profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
@@ -22,7 +23,7 @@ class Installer():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		print(args)
+		print('Installation completed without any errors.')
 		return True
 
 	def pacstrap(self, *packages):
@@ -75,8 +76,10 @@ class Installer():
 		self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		print(f'[STUB] Installing network profile {profile}')
-		pass
+		profile = Profile(self, profile)
+
+		print(f'Installing network profile {profile}')
+		profile.install()
 
 	def user_create(self, user :str, password=None, groups=[]):
 		print(f'Creating user {user}')

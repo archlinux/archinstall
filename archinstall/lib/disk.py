@@ -78,12 +78,12 @@ class BlockDevice():
 		return self.info[key]
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1):
+	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None):
 		if not part_id: part_id = os.path.basename(path)
 		self.path = path
 		self.part_id = part_id
-		self.mountpoint = None
-		self.filesystem = None # TODO: Autodetect if we're reusing a partition
+		self.mountpoint = mountpoint
+		self.filesystem = filesystem # TODO: Autodetect if we're reusing a partition
 		self.size = size # TODO: Refresh?
 
 	def __repr__(self, *args, **kwargs):
@@ -106,63 +106,19 @@ class Partition():
 		return True
 
 	def mount(self, target, fs=None, options=''):
-		print(f'Mounting {self} to {target}')
-		if not fs:
-			if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
-			fs = self.filesystem
-		## libc has some issues with loop devices, defaulting back to sys calls
-	#	ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
-	#	if ret < 0:
-	#		errno = ctypes.get_errno()
-	#		raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
-		if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
-			self.mountpoint = target
-			return True
-
-class luks2():
-	def __init__(self, filesystem):
-		self.filesystem = filesystem
-
-	def __enter__(self):
-		return self
-
-	def __exit__(self, *args, **kwargs):
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-		if len(args) >= 2 and args[1]:
-			raise args[1]
-		print(args)
-		return True
-
-	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
-		print(f'Encrypting {partition}')
-		if not key_file: key_file = f'/tmp/{os.path.basename(self.filesystem.blockdevice.device)}.disk_pw' #TODO: Make disk-pw-file randomly unique?
-		if type(password) != bytes: password = bytes(password, 'UTF-8')
-
-		with open(key_file, 'wb') as fh:
-			fh.write(password)
-
-		o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}'))
-		if not b'Command successful.' in o:
-			raise DiskError(f'Could not encrypt volume "{partition.path}": {o}')
-	
-		return key_file
-
-	def unlock(self, partition, mountpoint, key_file):
-		"""
-		Mounts a lukts2 compatible partition to a certain mountpoint.
-		Keyfile must be specified as there's no way to interact with the pw-prompt atm.
-
-		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
-		:type mountpoint: str
-		"""
-		if '/' in mountpoint: os.path.basename(mountpoint) # TODO: Raise exception instead?
-		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
-		if os.path.islink(f'/dev/mapper/{mountpoint}'):
-			return Partition(f'/dev/mapper/{mountpoint}')
-
-	def close(self, mountpoint):
-		sys_command(f'cryptsetup close /dev/mapper/{mountpoint}')
-		return os.path.islink(f'/dev/mapper/{mountpoint}') is False
+		if not self.mountpoint:
+			print(f'Mounting {self} to {target}')
+			if not fs:
+				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
+				fs = self.filesystem
+			## libc has some issues with loop devices, defaulting back to sys calls
+		#	ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
+		#	if ret < 0:
+		#		errno = ctypes.get_errno()
+		#		raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
+			if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
+				self.mountpoint = target
+				return True
 		
 class Filesystem():
 	# TODO:
@@ -185,7 +141,6 @@ class Filesystem():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		print(args)
 		b''.join(sys_command(f'sync'))
 		return True
 
@@ -211,7 +166,7 @@ class Filesystem():
 		if prep_mode == 'luks2':
 			self.add_partition('primary', start='513MiB', end='100%')
 		else:
-			self.add_partition('primary', start='1MiB', end='513MiB', format='ext4')
+			self.add_partition('primary', start='513MiB', end='513MiB', format='ext4')
 
 	def add_partition(self, type, start, end, format=None):
 		print(f'Adding partition to {self.blockdevice}')
