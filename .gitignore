@@ -1,2 +1,8 @@
 **/**__pycache__
 SAFETY_LOCK
+**/**old.*
+**/**.img
+**/**pwfile
+**/**build
+**/**dist
+**/**.egg*
