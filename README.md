@@ -1,4 +1,4 @@
-# <img src="docs/logo.png" alt="drawing" width="200"/>
+# <img src="https://github.com/Torxed/archinstall/raw/annotations/docs/logo.png" alt="drawing" width="200"/>
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to access each individual installation step for customized installs.
 
@@ -82,4 +82,4 @@ This installer will perform the following:
 
 ## End note
 
- ![description](docs/description.jpg)
+ ![description](https://github.com/Torxed/archinstall/raw/annotations/docs/description.jpg)

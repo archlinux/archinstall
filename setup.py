@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="archinstall-Torxed", # Replace with your own username
+    name="archinstall",
     version="2.0.0",
     author="Anton Hvornum",
     author_email="anton@hvornum.se",
@@ -14,9 +14,9 @@ setuptools.setup(
     url="https://github.com/Torxed/archinstall",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GPL 3.0 License",
-        "Operating System :: Arch Linux",
+        "Programming Language :: Python :: 3.8",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.8',
 )
