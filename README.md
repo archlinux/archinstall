@@ -5,38 +5,45 @@ The installer also doubles as a python library to access each individual install
 Pre-built ISO's can be found here which autostarts archinstall *(in a safe guided mode)*: https://hvornum.se/archiso/
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
+ * ~~archinstall [documentation](#)~~ *(TBA)*
  * archinstall guided install ISO's: https://hvornum.se/archiso/
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
 
 # Usage
 
-## Run on Live-CD (Binary)
+## ~~Run on Live-CD (Binary)~~
+
+Currently this method is not supported until v2.1.0, this due to the rework of the contextualized approach.
 
     # wget https://gzip.app/archinstall
     # chmod +x archinstall; ./archinstall
 
-This downloads and runs a "compiled" *(using nuitka)* version of the project.<br>
-It defaults to starting a guided install with some safety checks in place.
+~~This downloads and runs a "compiled" *(using nuitka)* version of the project.<br>
+It defaults to starting a guided install with some safety checks in place.~~
+
 
 ## Run on Live-CD with Python:
 
-    # wget https://raw.githubusercontent.com/Torxed/archinstall/master/installer.py
-    # pacman -S --noconfirm python; python install.py
+    # wget https://github.com/Torxed/archinstall/archive/v2.0.1.tar.gz
+    # tar xvzf v2.0.1.tar.gz
+    # cd archinstall-2.0.1
+    # pacman -S --noconfirm python; python examples/main_example.py
 
-This will start a guided install with the same safety checks as previous.<br>
+This will ask for a disk and a password before **wiping the entire disk**.
 
 ## Run using PIP and Python module:
 
     # pip install archinstall
-    # python -m archinstall
+    # python -m archinstall examples/main_example.py
 
-Again, a guided install starts with safety checks.<br>
-This assumes tho that Python and Pip is present (not always the case on the default Arch Linux ISO), see above for pre-built ISO's containing Python+pip
+~~This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.~~
+
+Currently not supported, but is planned for v2.0.5 or v2.1.0.
 
 ## Scripting an installation
 
 Assuming you're building your own ISO and want to create an automated install process.<br>
-This is probably what you'll need, a minimal example of how to install using archinstall as a Python library.
+This is probably what you'll need, a [minimal example](examples/main_example.py) of how to install using archinstall as a Python library.
 
 ```python
 import archinstall, getpass
@@ -81,7 +88,7 @@ This installer will perform the following:
  * Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
  * Installs and configures a bootloader
  * Install additional packages *(nano, wget, git)*
- * Installs a network-profile called `desktop` *(more on network profiles in the docs)*
+ * Installs a network-profile called `workstation` *(more on network profiles in the docs)*
  * Adds AUR support by compiling and installing [yay](https://github.com/Jguer/yay)
 
 > **Creating your own ISO:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
