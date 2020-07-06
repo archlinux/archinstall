@@ -3,7 +3,7 @@ from collections import OrderedDict
 from .general import multisplit, sys_command, log
 from .exceptions import *
 
-UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/annotations/deployments'
+UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/annotations/profiles'
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
