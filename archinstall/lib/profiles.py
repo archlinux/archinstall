@@ -37,8 +37,8 @@ def get_application_instructions(target):
 		instructions = grab_url_data(f'{UPSTREAM_URL}/applications/{target}.json').decode('UTF-8')
 		print('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
-		print('[N] Could not find remote instructions. yrying local instructions under ./deployments/applications')
-		local_path = './deployments/applications' if os.path.isfile('./archinstall.py') else './archinstall/deployments/applications' # Dangerous assumption
+		print('[N] Could not find remote instructions. yrying local instructions under ./profiles/applications')
+		local_path = './profiles/applications' if os.path.isfile('./archinstall.py') else './archinstall/profiles/applications' # Dangerous assumption
 		if os.path.isfile(f'{local_path}/{target}.json'):
 			with open(f'{local_path}/{target}.json', 'r') as fh:
 				instructions = fh.read()
