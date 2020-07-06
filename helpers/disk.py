@@ -1,16 +1,14 @@
 import glob, re, os, json
 from collections import OrderedDict
-from helpers.general import sys_command
+#import ctypes
+#import ctypes.util
 from exceptions import *
-import ctypes
-import ctypes.util
-import os
+from helpers.general import sys_command
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
-libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
-libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
-
+#libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
+#libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
 class BlockDevice():
 	def __init__(self, path, info):
@@ -109,13 +107,14 @@ class Partition():
 		if not fs:
 			if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 			fs = self.filesystem
-		# TODO: Move this to the BlockDevice or something.
-		ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
-		if ret < 0:
-			errno = ctypes.get_errno()
-			raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
-		self.mountpoint = target
-
+		## libc has some issues with loop devices, defaulting back to sys calls
+	#	ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
+	#	if ret < 0:
+	#		errno = ctypes.get_errno()
+	#		raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
+		if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
+			self.mountpoint = target
+			return True
 
 class luks2():
 	def __init__(self, filesystem):

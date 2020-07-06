@@ -53,5 +53,5 @@ class Installer():
 			## so we'll use the old manual method until we get that sorted out.
 			# UUID = simple_command(f"blkid -s PARTUUID -o value /dev/{os.path.basename(args['drive'])}{args['partitions']['2']}").decode('UTF-8').strip()
 			# entry.write('options root=PARTUUID={UUID} rw intel_pstate=no_hwp\n'.format(UUID=UUID))
-			UUID = b''.join(sys_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(partition['path'])} | awk '{{print $9}}'")).decode('UTF-8').strip()
+			UUID = b''.join(sys_command(f"ls -l /dev/disk/by-uuid/ | grep {os.path.basename(partition.path)} | awk '{{print $9}}'")).decode('UTF-8').strip()
 			entry.write(f'options cryptdevice=UUID={UUID}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
