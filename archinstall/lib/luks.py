@@ -1,6 +1,6 @@
 import os
 from .exceptions import *
-from .general import sys_command
+from .general import *
 from .disk import Partition
 
 class luks2():
@@ -22,7 +22,7 @@ class luks2():
 		return True
 
 	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
-		print(f'Encrypting {partition}')
+		log(f'Encrypting {partition}')
 		if not key_file: key_file = f'/tmp/{os.path.basename(self.partition.path)}.disk_pw' #TODO: Make disk-pw-file randomly unique?
 		if type(password) != bytes: password = bytes(password, 'UTF-8')
 

@@ -1,7 +1,7 @@
 import glob, re, os, json
 from collections import OrderedDict
 from .exceptions import *
-from .general import sys_command
+from .general import *
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -90,7 +90,7 @@ class Partition():
 		return f'Partition({self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
 	def format(self, filesystem):
-		print(f'Formatting {self} -> {filesystem}')
+		log(f'Formatting {self} -> {filesystem}')
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if not b'UUID' in o:
@@ -101,13 +101,17 @@ class Partition():
 			if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
 			self.filesystem = 'fat32'
+		elif filesystem == 'ext4':
+			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {self.path}')).exit_code != 0:
+				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+			self.filesystem = 'fat32'
 		else:
 			raise DiskError(f'Fileformat {filesystem} is not yet implemented.')
 		return True
 
 	def mount(self, target, fs=None, options=''):
 		if not self.mountpoint:
-			print(f'Mounting {self} to {target}')
+			log(f'Mounting {self} to {target}')
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
@@ -166,10 +170,10 @@ class Filesystem():
 		if prep_mode == 'luks2':
 			self.add_partition('primary', start='513MiB', end='100%')
 		else:
-			self.add_partition('primary', start='513MiB', end='513MiB', format='ext4')
+			self.add_partition('primary', start='513MiB', end='100%', format='ext4')
 
 	def add_partition(self, type, start, end, format=None):
-		print(f'Adding partition to {self.blockdevice}')
+		log(f'Adding partition to {self.blockdevice}')
 		if format:
 			return self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:

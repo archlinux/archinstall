@@ -23,26 +23,26 @@ class Installer():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		print('Installation completed without any errors.')
+		log('Installation completed without any errors.', bg='black', fg='green')
 		return True
 
 	def pacstrap(self, *packages):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
-		print(f'Installing packages: {packages}')
+		log(f'Installing packages: {packages}')
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
 			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}')).exit_code == 0:
 				return True
 			else:
-				print(f'Could not strap in packages: {pacstrap.exit_code}')
+				log(f'Could not strap in packages: {pacstrap.exit_code}')
 		else:
-			print(f'Could not sync mirrors: {sync_mirrors.exit_code}')
+			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
 
 	def minimal_installation(self):
 		return self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))
 
 	def add_bootloader(self, partition):
-		print(f'Adding bootloader to {partition}')
+		log(f'Adding bootloader to {partition}')
 		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
 		partition.mount(f'{self.mountpoint}/boot')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
@@ -78,11 +78,11 @@ class Installer():
 	def install_profile(self, profile):
 		profile = Profile(self, profile)
 
-		print(f'Installing network profile {profile}')
+		log(f'Installing network profile {profile}')
 		profile.install()
 
 	def user_create(self, user :str, password=None, groups=[]):
-		print(f'Creating user {user}')
+		log(f'Creating user {user}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
@@ -91,12 +91,13 @@ class Installer():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))
 
 	def user_set_pw(self, user, password):
-		print(f'Setting password for {user}')
+		log(f'Setting password for {user}')
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.mountpoint} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
 	def add_AUR_support(self):
-		print(f'Building and installing yay support into {self.mountpoint}')
+		log(f'Building and installing yay support into {self.mountpoint}')
+		self.add_additional_packages(['git', 'base-devel']) # TODO: Remove if not explicitly added at one point
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "useradd -m -G wheel aibuilder"'))
 		o = b''.join(sys_command(f"/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' {self.mountpoint}/etc/sudoers"))
 

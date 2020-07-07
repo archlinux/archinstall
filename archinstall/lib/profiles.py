@@ -35,23 +35,23 @@ def get_application_instructions(target):
 
 	try:
 		instructions = grab_url_data(f'{UPSTREAM_URL}/applications/{target}.json').decode('UTF-8')
-		print('[N] Found application instructions for: {}'.format(target))
+		log('[N] Found application instructions for: {}'.format(target))
 	except urllib.error.HTTPError:
-		print('[N] Could not find remote instructions. yrying local instructions under ./profiles/applications')
+		log('[N] Could not find remote instructions. yrying local instructions under ./profiles/applications')
 		local_path = './profiles/applications' if os.path.isfile('./archinstall.py') else './archinstall/profiles/applications' # Dangerous assumption
 		if os.path.isfile(f'{local_path}/{target}.json'):
 			with open(f'{local_path}/{target}.json', 'r') as fh:
 				instructions = fh.read()
 
-			print('[N] Found local application instructions for: {}'.format(target))
+			log('[N] Found local application instructions for: {}'.format(target))
 		else:
-			print('[N] No instructions found for: {}'.format(target))
+			log('[N] No instructions found for: {}'.format(target))
 			return instructions
 	
 	try:
 		instructions = json.loads(instructions, object_pairs_hook=oDict)
 	except:
-		print('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
+		log('[E] JSON syntax error in {}'.format('{}/applications/{}.json'.format(args['profiles-path'], target)))
 		traceback.print_exc()
 		exit(1)
 
@@ -108,9 +108,9 @@ class Profile():
 		for title in instructions:
 			log(f'Running post installation step {title}')
 
-			print('[N] Network Deploy: {}'.format(title))
+			log('[N] Network Deploy: {}'.format(title))
 			if type(instructions[title]) == str:
-				print('[N] Loading {} configuration'.format(instructions[title]))
+				log('[N] Loading {} configuration'.format(instructions[title]))
 				log(f'Loading {instructions[title]} configuration')
 				instructions[title] = Application(self.installer, instructions[title], args=self.args)
 				instructions[title].install()
@@ -170,7 +170,7 @@ class Profile():
 							o = b''.join(sys_command(f'/usr/bin/systemd-nspawn -D {self.installer.mountpoint} --machine temporary {command}'))
 					if type(instructions[title][raw_command]) == bytes and len(instructions['post'][title][raw_command]) and not instructions['post'][title][raw_command] in o:
 						log(f'{command} failed: {o.decode("UTF-8")}')
-						print('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
+						log('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
 
 class Application(Profile):
 	@property

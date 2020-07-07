@@ -6,7 +6,12 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_error
 
 # Select a harddrive and a disk password
 harddrive = archinstall.select_disk(archinstall.all_disks())
-disk_password = getpass.getpass(prompt='Disk password (If empty, won\'t use disk encryption): ')
+while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
+	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
+	if disk_password != disk_password_verification:
+		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
+		continue
+	break
 
 def perform_installation(device, boot_partition):
 	hostname = input('Desired hostname for the installation: ')
@@ -15,7 +20,7 @@ def perform_installation(device, boot_partition):
 			installation.add_bootloader(boot_partition)
 
 			packages = input('Additional packages aside from base (space separated): ').split(' ')
-			if len(packages):
+			if len(packages) and packages[0] != '':
 				installation.add_additional_packages(packages)
 
 			profile = input('Any particular profile you want to install: ')
@@ -28,18 +33,22 @@ def perform_installation(device, boot_partition):
 				new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
 				new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
 				if new_user_passwd != new_user_passwd_verify:
-					print(' * Passwords did not match * ')
+					archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 					continue
 
 				installation.user_create(new_user, new_user_passwd)
 
-			root_pw = getpass.getpass(prompt='Enter root password: ')
-			if len(root_pw.strip()):
+			while (root_pw := getpass.getpass(prompt='Enter root password (leave blank for no password): ')):
+				root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
+				if root_pw != root_pw_verification:
+					archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
+					continue
 				installation.user_set_pw('root', root_pw)
+				break
 
 			aur = input('Would you like AUR support? (leave blank for no): ')
 			if len(aur.strip()):
-				print(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)')
+				archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
 				installation.add_AUR_support()
 
 with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
