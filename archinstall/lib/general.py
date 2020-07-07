@@ -233,8 +233,9 @@ class sys_command():#Thread):
 			self.exit_code = 0
 
 		if self.exit_code != 0 and not self.kwargs['surpress_errors']:
-			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", origin='spawn', level=3)
-			log(self.trace_log.decode('UTF-8'), origin='spawn', level=3)
+			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.")
+			log(self.trace_log.decode('UTF-8'))
+			raise SysCallError(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.\n{self.trace_log.decode('UTF-8')}")
 
 		self.ended = time.time()
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:

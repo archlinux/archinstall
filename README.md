@@ -48,22 +48,15 @@ This is probably what you'll need, a [minimal example](examples/main_example.py)
 ```python
 import archinstall, getpass
 
-# Unmount and close previous runs
-archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
-archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_errors=True)
-
 # Select a harddrive and a disk password
 harddrive = archinstall.select_disk(archinstall.all_disks())
 disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 
 with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
-    # Use the entire disk instead of setting up partitions on your own
+    # use_entire_disk() is a helper to not have to format manually
     fs.use_entire_disk('luks2')
 
-    if harddrive.partition[1].size == '512M':
-        raise OSError('Trying to encrypt the boot partition for petes sake..')
     harddrive.partition[0].format('fat32')
-
     with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
         unlocked_device.format('btrfs')
         
@@ -83,15 +76,29 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 This installer will perform the following:
 
  * Prompt the user to select a disk and disk-password
- * Proceed to wipe said disk
- * Sets up a default 100% used disk with encryption
+ * Proceed to wipe the selected disk with a `GPT` partition table.
+ * Sets up a default 100% used disk with encryption.
  * Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
- * Installs and configures a bootloader
+ * Installs and configures a bootloader to partition 0.
  * Install additional packages *(nano, wget, git)*
- * Installs a network-profile called `workstation` *(more on network profiles in the docs)*
+ * Installs a network-profile called [workstation](https://github.com/Torxed/archinstall/blob/master/profiles/workstation.json) *(more on network profiles in the docs)*
  * Adds AUR support by compiling and installing [yay](https://github.com/Jguer/yay)
 
-> **Creating your own ISO:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
+> **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
+
+# Testing
+
+To test this, the simplest approach is to use a local image and create a loop device.<br>
+This can be done by installing `pacman -S arch-install-scripts util-linux` locally and do the following:
+
+    # dd if=/dev/zero of=./testimage.img bs=1G count=5
+    # losetup -fP ./testimage.img
+    # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
+    # pip install archinstall
+    # python -m archinstall guided
+
+This will create a *5GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
+`archinstall` is installed and executed in [guided mode](#docs-todo).
 
 ## End note
 
