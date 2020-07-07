@@ -24,17 +24,17 @@ It defaults to starting a guided install with some safety checks in place.~~
 
 ## Run on Live-CD with Python:
 
-    # wget https://github.com/Torxed/archinstall/archive/v2.0.1.tar.gz
-    # tar xvzf v2.0.1.tar.gz
-    # cd archinstall-2.0.1
-    # pacman -S --noconfirm python; python examples/main_example.py
+    # wget https://github.com/Torxed/archinstall/archive/v2.0.2.tar.gz
+    # tar xvzf v2.0.2.tar.gz
+    # cd archinstall-2.0.2
+    # pacman -S --noconfirm python; python examples/guided.py
 
-This will ask for a disk and a password before **wiping the entire disk**.
+This will ask for a disk and start a guided installation.
 
 ## Run using PIP and Python module:
 
     # pip install archinstall
-    # python -m archinstall examples/main_example.py
+    # python -m archinstall guided
 
 This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.
 
