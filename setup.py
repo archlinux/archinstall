@@ -1,4 +1,4 @@
-import setuptools
+import setuptools, glob
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -19,4 +19,5 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.8',
+    data_files=[('examples', glob.glob('examples/*.py'))],
 )

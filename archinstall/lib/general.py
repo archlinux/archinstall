@@ -2,6 +2,7 @@ import os, json, hashlib, shlex, sys
 import time, pty
 from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
+from .exceptions import *
 
 def log(*args, **kwargs):
 	string = ' '.join([str(x) for x in args])

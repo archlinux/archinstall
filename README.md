@@ -88,8 +88,8 @@ This installer will perform the following:
 
 # Testing
 
-To test this, the simplest approach is to use a local image and create a loop device.<br>
-This can be done by installing `pacman -S arch-install-scripts util-linux` locally and do the following:
+To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
+This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
     # dd if=/dev/zero of=./testimage.img bs=1G count=5
     # losetup -fP ./testimage.img
