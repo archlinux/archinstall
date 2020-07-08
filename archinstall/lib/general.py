@@ -65,6 +65,14 @@ def supports_color():
 	is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
 	return supported_platform and is_a_tty
 
+def locate_binary(name):
+	for PATH in os.environ['PATH']:
+		for root, folders, files in os.walk(PATH):
+			for file in files:
+				if file == name:
+					return os.path.join(root, file)
+			break # Don't recurse
+
 class sys_command():#Thread):
 	"""
 	Stolen from archinstall_gui
@@ -97,10 +105,12 @@ class sys_command():#Thread):
 		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
+			# "which" doesn't work as it's a builin to bash.
+			# It used to work, but for whatever reason it doesn't anymore. So back to square one..
+			
 			#log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			o = check_output(['/usr/bin/which', self.cmd[0]])
 			#log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
-			self.cmd[0] = o.decode('UTF-8').strip()
+			self.cmd[0] = locate_binary(self.cmd[0])
 
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
