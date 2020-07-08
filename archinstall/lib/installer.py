@@ -43,7 +43,6 @@ class Installer():
 
 	def minimal_installation(self):
 		if (x := self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))):
-			print(list(os.walk(f'{self.mountpoint}/boot')))
 			return x
 
 	def add_bootloader(self):
@@ -65,25 +64,21 @@ class Installer():
 			
 
 			if self.partition.encrypted:
-				print(f'Trying to locate {self.partition} under /dev/disk/by-partuuid')
-				for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
+				for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 					for uid in uids:
 						real_path = os.path.realpath(os.path.join(root, uid))
 						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
-						entry.write(f'options cryptdevice=PARTUUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
-						print(list(os.walk(f'{self.mountpoint}/boot')))
+						entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 						return True
 					break
 			else:
-				print(f'Trying to locate {os.path.basename(self.partition.path)} under /dev/disk/by-uuid')
-				for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+				for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 					for uid in uids:
 						real_path = os.path.realpath(os.path.join(root, uid))
 						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
-						print(list(os.walk(f'{self.mountpoint}/boot')))
 						return True
 					break
 		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
