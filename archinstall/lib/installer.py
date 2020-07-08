@@ -85,6 +85,8 @@ class Installer():
 				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
+		return True
+
 	def add_bootloader(self):
 		log(f'Adding bootloader to {self.boot_partition}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))

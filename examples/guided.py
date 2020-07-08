@@ -13,8 +13,30 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		continue
 	break
 
+while (root_pw := getpass.getpass(prompt='Enter root password (leave blank for no password): ')):
+	root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
+	if root_pw != root_pw_verification:
+		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
+		continue
+	break
+
+users = {}
+while 1:
+	new_user = input('Any additional users to install (leave blank for no users): ')
+	if not len(new_user.strip()): break
+	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
+	new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
+	if new_user_passwd != new_user_passwd_verify:
+		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
+		continue
+
+	users[new_user] = new_user_passwd
+
+aur = input('Would you like AUR support? (leave blank for no): ')
+if len(aur.strip()):
+	archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
+
 def perform_installation(device, boot_partition):
-	hostname = input('Desired hostname for the installation: ')
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if installation.minimal_installation():
 			installation.add_bootloader()
@@ -27,28 +49,13 @@ def perform_installation(device, boot_partition):
 			if len(profile.strip()):
 				installation.install_profile(profile)
 
-			while 1:
-				new_user = input('Any additional users to install (leave blank for no users): ')
-				if not len(new_user.strip()): break
-				new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
-				new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
-				if new_user_passwd != new_user_passwd_verify:
-					archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
-					continue
+			for user, password in users.items():
+				installation.user_create(user, password)
 
-				installation.user_create(new_user, new_user_passwd)
-
-			while (root_pw := getpass.getpass(prompt='Enter root password (leave blank for no password): ')):
-				root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
-				if root_pw != root_pw_verification:
-					archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
-					continue
+			if root_pw:
 				installation.user_set_pw('root', root_pw)
-				break
 
-			aur = input('Would you like AUR support? (leave blank for no): ')
 			if len(aur.strip()):
-				archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
 				installation.add_AUR_support()
 
 with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
@@ -61,6 +68,8 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 	if harddrive.partition[1].size == '512M':
 		raise OSError('Trying to encrypt the boot partition for petes sake..')
 	harddrive.partition[0].format('fat32')
+
+	hostname = input('Desired hostname for the installation: ')
 
 	if disk_password:
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
