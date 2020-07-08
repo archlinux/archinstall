@@ -1,10 +1,14 @@
-import archinstall, getpass
+import archinstall, getpass, time
 
 # Unmount and close previous runs
 archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_errors=True)
 
-# Select a harddrive and a disk password
+"""
+  First, we'll ask the user for a bunch of user input.
+  Not until we're satisfied with what we want to install
+  will we continue with the actual installation steps.
+"""
 harddrive = archinstall.select_disk(archinstall.all_disks())
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -12,6 +16,8 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
 	break
+hostname = input('Desired hostname for the installation: ')
+if len(hostname) == 0: hostname = 'ArchInstall'
 
 while (root_pw := getpass.getpass(prompt='Enter root password (leave blank for no password): ')):
 	root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -36,16 +42,32 @@ aur = input('Would you like AUR support? (leave blank for no): ')
 if len(aur.strip()):
 	archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
 
+profile = input('Any particular profile you want to install: ')
+packages = input('Additional packages aside from base (space separated): ').split(' ')
+
+
+"""
+	Issue a final warning before we continue with something un-revertable.
+"""
+print(f' ! Formatting {harddrive} in 5...')
+time.sleep(1)
+print(f' ! Formatting {harddrive} in 4...')
+time.sleep(1)
+print(f' ! Formatting {harddrive} in 3...')
+time.sleep(1)
+print(f' ! Formatting {harddrive} in 2...')
+time.sleep(1)
+print(f' ! Formatting {harddrive} in 1...')
+time.sleep(1)
+
 def perform_installation(device, boot_partition):
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if installation.minimal_installation():
 			installation.add_bootloader()
 
-			packages = input('Additional packages aside from base (space separated): ').split(' ')
 			if len(packages) and packages[0] != '':
 				installation.add_additional_packages(packages)
 
-			profile = input('Any particular profile you want to install: ')
 			if len(profile.strip()):
 				installation.install_profile(profile)
 
@@ -68,8 +90,6 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 	if harddrive.partition[1].size == '512M':
 		raise OSError('Trying to encrypt the boot partition for petes sake..')
 	harddrive.partition[0].format('fat32')
-
-	hostname = input('Desired hostname for the installation: ')
 
 	if disk_password:
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
