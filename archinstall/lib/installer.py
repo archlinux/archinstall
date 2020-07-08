@@ -41,10 +41,10 @@ class Installer():
 	def minimal_installation(self):
 		return self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))
 
-	def add_bootloader(self, partition):
-		log(f'Adding bootloader to {partition}')
+	def add_bootloader(self, boot_partition):
+		log(f'Adding bootloader to {boot_partition}')
 		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
-		partition.mount(f'{self.mountpoint}/boot')
+		boot_partition.mount(f'{self.mountpoint}/boot')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
 
 		with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
@@ -65,7 +65,7 @@ class Installer():
 			for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 				for uid in uids:
 					real_path = os.path.realpath(os.path.join(root, uid))
-					if not os.path.basename(real_path) == os.path.basename(partition.path): continue
+					if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 					entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 					return True
