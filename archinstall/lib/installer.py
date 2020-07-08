@@ -41,9 +41,49 @@ class Installer():
 		else:
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
 
+	def genfstab(self, flags='-Pu'):
+		o = b''.join(sys_command(f'/usr/bin/genfstab -pU {self.mountpoint} >> {self.mountpoint}/etc/fstab'))
+		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
+		return True
+
+	def set_hostname(self, hostname=None):
+		if not hostname: hostname = self.hostname
+		with open(f'{self.mountpoint}/etc/hostname', 'w') as fh:
+			fh.write(self.hostname + '\n')
+
+	def set_locale(self, locale, encoding='UTF-8'):
+		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as locale:
+			locale.write(f'{locale} {encoding}\n')
+		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as locale:
+			locale.write(f'LANG={locale}\n')
+		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen')
+
 	def minimal_installation(self):
-		if (x := self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))):
-			return x
+		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))
+		self.genfstab()
+
+		with open(f'{self.mountpoint}/etc/fstab', 'a') as fstab:
+			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
+
+		## TODO: Support locale and timezone
+		#os.remove(f'{self.mountpoint}/etc/localtime')
+		#sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
+		#sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
+		self.set_hostname()
+		self.set_locale('en_US.UTF-8')
+
+		# TODO: Use python functions for this
+		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} chmod 700 /root')
+
+		if self.partition.filesystem == 'btrfs':
+			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
+				## TODO: Don't replace it, in case some update in the future actually adds something.
+				mkinit.write('MODULES=(btrfs)\n')
+				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
+				mkinit.write('FILES=()\n')
+				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 	def add_bootloader(self):
 		log(f'Adding bootloader to {self.boot_partition}')
