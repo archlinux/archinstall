@@ -62,18 +62,27 @@ class Installer():
 			## so we'll use the old manual method until we get that sorted out.
 			
 
-			for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
-				for uid in uids:
-					real_path = os.path.realpath(os.path.join(root, uid))
-					if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+			if self.partition.encrypted:
+				print(f'Trying to locate {os.path.basename(self.partition.path)} under /dev/disk/by-partuuid')
+				for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
+					for uid in uids:
+						real_path = os.path.realpath(os.path.join(root, uid))
+						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
-					if self.partition.encrypted:
 						entry.write(f'options cryptdevice=PARTUUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
-					else:
+						return True
+					break
+			else:
+				print(f'Trying to locate {os.path.basename(self.partition.path)} under /dev/disk/by-uuid')
+				for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+					for uid in uids:
+						real_path = os.path.realpath(os.path.join(root, uid))
+						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+
 						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
-					return True
-				break
-		raise RequirementError(f'Could not identify the UUID of {partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
+						return True
+					break
+		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
 
 	def add_additional_packages(self, *packages):
 		self.pacstrap(*packages)
