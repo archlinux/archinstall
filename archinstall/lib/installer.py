@@ -88,6 +88,7 @@ class Installer():
 	def add_bootloader(self):
 		log(f'Adding bootloader to {self.boot_partition}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
+		print('BOOT:', o)
 		with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
 			loader.write('default arch\n')
 			loader.write('timeout 5\n')
