@@ -8,7 +8,7 @@ class ProfileNotFound(BaseException):
 #       (I summon thee dark spawn of cPython)
 
 def find_examples():
-	cwd = os.path.abspath(f'{os.path.dirname(__file__)}/../')
+	cwd = os.path.abspath(f'{os.path.dirname(__file__)}')
 	examples = f"{cwd}/examples"
 
 	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}

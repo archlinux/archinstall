@@ -3,11 +3,9 @@ import setuptools, glob, shutil
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-#shutil.copytree('examples', 'archinstall/examples')
-
 setuptools.setup(
     name="archinstall",
-    version="2.0.3rc5",
+    version="2.0.3rc6",
     author="Anton Hvornum",
     author_email="anton@hvornum.se",
     description="Arch Linux installer - guided, templates etc.",
@@ -21,7 +19,5 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.8',
-    package_data={'archinstall': glob.glob('examples/*.py')},
+    package_data={'archinstall': glob.glob('examples/*.py') + glob.glob('profiles/*.py')},
 )
-
-#shutil.rmtree('archinstall/examples')

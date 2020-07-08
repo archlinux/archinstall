@@ -6,3 +6,4 @@ SAFETY_LOCK
 **/**build
 **/**dist
 **/**.egg*
+**/**.sh
