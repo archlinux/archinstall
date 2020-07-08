@@ -15,9 +15,9 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 
 def perform_installation(device, boot_partition):
 	hostname = input('Desired hostname for the installation: ')
-	with archinstall.Installer(device, hostname=hostname) as installation:
+	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if installation.minimal_installation():
-			installation.add_bootloader(boot_partition)
+			installation.add_bootloader()
 
 			packages = input('Additional packages aside from base (space separated): ').split(' ')
 			if len(packages) and packages[0] != '':

@@ -7,15 +7,18 @@ from .user_interaction import *
 from .profiles import Profile
 
 class Installer():
-	def __init__(self, partition, *, profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
+	def __init__(self, partition, boot_partition, *, profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
 
 		self.partition = partition
+		self.boot_partition = boot_partition
 
 	def __enter__(self, *args, **kwargs):
 		self.partition.mount(self.mountpoint)
+		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
+		self.boot_partition.mount(f'{self.mountpoint}/boot')
 		return self
 
 	def __exit__(self, *args, **kwargs):
@@ -39,16 +42,13 @@ class Installer():
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
 
 	def minimal_installation(self):
-		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '), debug=True)
+		if (x := self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))):
+			print(list(os.walk(f'{self.mountpoint}/boot')))
+			return x
 
-	def add_bootloader(self, boot_partition):
-		log(f'Adding bootloader to {boot_partition}')
-		import time
-		time.sleep(10000)
-		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
-		boot_partition.mount(f'{self.mountpoint}/boot')
+	def add_bootloader(self):
+		log(f'Adding bootloader to {self.boot_partition}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
-
 		with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
 			loader.write('default arch\n')
 			loader.write('timeout 5\n')
@@ -72,6 +72,7 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
 						entry.write(f'options cryptdevice=PARTUUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+						print(list(os.walk(f'{self.mountpoint}/boot')))
 						return True
 					break
 			else:
@@ -82,6 +83,7 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+						print(list(os.walk(f'{self.mountpoint}/boot')))
 						return True
 					break
 		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
