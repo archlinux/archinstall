@@ -53,10 +53,10 @@ class Installer():
 			fh.write(self.hostname + '\n')
 
 	def set_locale(self, locale, encoding='UTF-8'):
-		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as locale:
-			locale.write(f'{locale} {encoding}\n')
-		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as locale:
-			locale.write(f'LANG={locale}\n')
+		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as fh:
+			fh.write(f'{locale} {encoding}\n')
+		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as fh:
+			fh.write(f'LANG={locale}\n')
 		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen')
 
 	def minimal_installation(self):
