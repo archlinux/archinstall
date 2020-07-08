@@ -39,10 +39,12 @@ class Installer():
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
 
 	def minimal_installation(self):
-		return self.pacstrap('base base-devel linux linux-firmware mkinitcpio btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '), debug=True)
+		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '), debug=True)
 
 	def add_bootloader(self, boot_partition):
 		log(f'Adding bootloader to {boot_partition}')
+		import time
+		time.sleep(10000)
 		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
 		boot_partition.mount(f'{self.mountpoint}/boot')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
