@@ -93,7 +93,7 @@ class sys_command():#Thread):
 		self.status = 'starting'
 
 		user_catalogue = os.path.expanduser('~')
-		self.cwd = f"{user_catalogue}/archinstall/cache/workers/{kwargs['worker_id']}/"
+		self.cwd = f"{user_catalogue}/.cache/archinstall/workers/{kwargs['worker_id']}/"
 		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
