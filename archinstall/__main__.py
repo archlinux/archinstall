@@ -26,4 +26,4 @@ if __name__ == '__main__':
 	spec = importlib.util.spec_from_file_location(library[f'{profile}.py'], library[f'{profile}.py'])
 	imported_path = importlib.util.module_from_spec(spec)
 	spec.loader.exec_module(imported_path)
-	sys.modules[library[f'{profile}.py']] = imported_path	
+	sys.modules[library[f'{profile}.py']] = imported_path
