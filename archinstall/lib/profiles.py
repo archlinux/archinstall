@@ -88,6 +88,7 @@ class Profile():
 	def install(self):
 		instructions = self.load_instructions()
 		if type(instructions) == Imported:
+			__builtins__['installation'] = self.installer # There's no easy way to give the imported profile the installer instance unless we require the profile-programmer to create a certain function that must be the same for all.. Which is a bit inconvenient so lets just make it truly global
 			with instructions as runtime:
 				log(f'Profile {self.name} finished successfully.')
 		else:
