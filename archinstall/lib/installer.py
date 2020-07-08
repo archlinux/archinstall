@@ -26,12 +26,12 @@ class Installer():
 		log('Installation completed without any errors.', bg='black', fg='green')
 		return True
 
-	def pacstrap(self, *packages):
+	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
 		log(f'Installing packages: {packages}')
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}')).exit_code == 0:
+			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
 				log(f'Could not strap in packages: {pacstrap.exit_code}')
@@ -39,7 +39,7 @@ class Installer():
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
 
 	def minimal_installation(self):
-		return self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '))
+		return self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano wpa_supplicant dialog'.split(' '), debug=True)
 
 	def add_bootloader(self, boot_partition):
 		log(f'Adding bootloader to {boot_partition}')
