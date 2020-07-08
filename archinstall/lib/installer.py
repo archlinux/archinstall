@@ -62,7 +62,7 @@ class Installer():
 			## so we'll use the old manual method until we get that sorted out.
 			# UUID = simple_command(f"blkid -s PARTUUID -o value /dev/{os.path.basename(args['drive'])}{args['partitions']['2']}").decode('UTF-8').strip()
 			# entry.write('options root=PARTUUID={UUID} rw intel_pstate=no_hwp\n'.format(UUID=UUID))
-			for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+			for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 				for uid in uids:
 					real_path = os.path.realpath(os.path.join(root, uid))
 					if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
