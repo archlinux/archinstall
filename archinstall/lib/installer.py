@@ -63,11 +63,11 @@ class Installer():
 			
 
 			if self.partition.encrypted:
-				print(f'Trying to locate {os.path.basename(self.partition.path)} under /dev/disk/by-partuuid')
+				print(f'Trying to locate {self.partition} under /dev/disk/by-partuuid')
 				for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 					for uid in uids:
 						real_path = os.path.realpath(os.path.join(root, uid))
-						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
 						entry.write(f'options cryptdevice=PARTUUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 						return True
