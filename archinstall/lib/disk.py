@@ -78,13 +78,14 @@ class BlockDevice():
 		return self.info[key]
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None):
+	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
 		if not part_id: part_id = os.path.basename(path)
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
 		self.filesystem = filesystem # TODO: Autodetect if we're reusing a partition
 		self.size = size # TODO: Refresh?
+		self.encrypted = encrypted
 
 	def __repr__(self, *args, **kwargs):
 		return f'Partition({self.path}, fs={self.filesystem}, mounted={self.mountpoint})'

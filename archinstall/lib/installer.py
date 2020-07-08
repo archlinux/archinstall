@@ -60,14 +60,17 @@ class Installer():
 			entry.write('initrd /initramfs-linux.img\n')
 			## blkid doesn't trigger on loopback devices really well,
 			## so we'll use the old manual method until we get that sorted out.
-			# UUID = simple_command(f"blkid -s PARTUUID -o value /dev/{os.path.basename(args['drive'])}{args['partitions']['2']}").decode('UTF-8').strip()
-			# entry.write('options root=PARTUUID={UUID} rw intel_pstate=no_hwp\n'.format(UUID=UUID))
+			
+
 			for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 				for uid in uids:
 					real_path = os.path.realpath(os.path.join(root, uid))
 					if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
-					entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+					if self.partition.encrypted:
+						entry.write(f'options cryptdevice=PARTUUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+					else:
+						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
 					return True
 				break
 		raise RequirementError(f'Could not identify the UUID of {partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')

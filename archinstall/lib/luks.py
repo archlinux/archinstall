@@ -46,7 +46,7 @@ class luks2():
 		if '/' in mountpoint: os.path.basename(mountpoint) # TODO: Raise exception instead?
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
-			return Partition(f'/dev/mapper/{mountpoint}')
+			return Partition(f'/dev/mapper/{mountpoint}', encrypted=True)
 
 	def close(self, mountpoint):
 		sys_command(f'cryptsetup close /dev/mapper/{mountpoint}')
