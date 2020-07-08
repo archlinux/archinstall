@@ -36,9 +36,7 @@ This will ask for a disk and a password before **wiping the entire disk**.
     # pip install archinstall
     # python -m archinstall examples/main_example.py
 
-~~This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.~~
-
-only `pip install archinstall` is currently supported, running as a module is planned for v2.0.5 or v2.1.0.
+This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.
 
 ## Scripting an installation
 
