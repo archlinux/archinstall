@@ -66,7 +66,7 @@ def supports_color():
 	return supported_platform and is_a_tty
 
 def locate_binary(name):
-	for PATH in os.environ['PATH']:
+	for PATH in os.environ['PATH'].split(':'):
 		for root, folders, files in os.walk(PATH):
 			for file in files:
 				if file == name:
