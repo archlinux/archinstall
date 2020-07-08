@@ -19,9 +19,9 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 	with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 		unlocked_device.format('btrfs')
 		
-		with archinstall.Installer(unlocked_device, hostname='testmachine') as installation:
+		with archinstall.Installer(unlocked_device, boot_partition=harddrive.partition[0], hostname='testmachine') as installation:
 			if installation.minimal_installation():
-				installation.add_bootloader(harddrive.partition[0])
+				installation.add_bootloader()
 
 				installation.add_additional_packages(['nano', 'wget', 'git'])
 				installation.install_profile('workstation')
