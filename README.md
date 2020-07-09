@@ -6,10 +6,10 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
  * ~~archinstall [documentation](#)~~ *(TBA)*
- * ~~archinstall guided install ISO's: https://hvornum.se/archiso/~~ *(Being re-built to v2.0)*
+ * archinstall ISO's: https://hvornum.se/archiso/
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
 
-# Usage
+# Installation & Usage
 
 ## ~~Run on Live-CD (Binary)~~
 
@@ -18,27 +18,26 @@ Currently this method is not supported until v2.1.0, this due to the rework of t
     # wget https://gzip.app/archinstall
     # chmod +x archinstall; ./archinstall
 
-~~This downloads and runs a "compiled" *(using nuitka)* version of the project.<br>
-It defaults to starting a guided install with some safety checks in place.~~
+~~This downloads and runs a "compiled" *(using nuitka3)* version of the project.<br>
+It will ask fora disk and start a guided installation.~~
 
+## Install Python on Live-CD and run manually:
 
-## Run on Live-CD with Python:
-
-    # wget https://github.com/Torxed/archinstall/archive/v2.0.2.tar.gz
+    # wget https://github.com/Torxed/archinstall/archive/v2.0.3.tar.gz
     # tar xvzf v2.0.2.tar.gz
     # cd archinstall-2.0.2
     # pacman -S --noconfirm python; python examples/guided.py
 
 This will ask for a disk and start a guided installation.
 
-## Run using PIP and Python module:
+## Install using `pip` and run as a Python module:
 
     # pip install archinstall
     # python -m archinstall guided
 
 This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.
 
-## Scripting an installation
+## Scripting an installation to put on a ISO media
 
 Assuming you're building your own ISO and want to create an automated install process.<br>
 This is probably what you'll need, a [minimal example](examples/main_example.py) of how to install using archinstall as a Python library.
@@ -102,11 +101,10 @@ This will create a *5GB* `testimage.img` and create a loop device which we can u
 
 You can also run a pre-built ISO with pip and python
 
-    # qemu-system-x86_64 -enable-kvm -cdrom /home/user/Downloads/archlinux-2020.07.08-x86_64.iso -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
+    # qemu-system-x86_64 -enable-kvm -cdrom /home/user/Downloads/archinstall-2020.07.08-x86_64.iso -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
 and once inside, just do
 
-    # pip install archlinux
     # python -m archlinux guided
 
 ## End note
