@@ -22,5 +22,7 @@ package() {
 
 	echo '#!/bin/bash' > "${pkgdir}/usr/bin/archinstall"
 	echo '(cd /var/lib/archinstall && exec ./archinstall)' >> "${pkgdir}/usr/bin/archinstall"
+
 	chmod +x "${pkgdir}/var/lib/archinstall/archinstall"
+	chmod +x "${pkgdir}/usr/bin/archinstall"
 }
