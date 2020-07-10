@@ -11,15 +11,16 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
 
 # Installation & Usage
 
-## ~~Run on Live-CD (Binary)~~
-
-Currently this method is not supported until v2.1.0, this due to the rework of the contextualized approach.
+## Run as stand-alone binary on Live-CD
 
     # wget https://gzip.app/archinstall
-    # chmod +x archinstall; ./archinstall
+    # tar xvzf archinstall*.tar.gz
+    # cd archinstall-v2.0.3
+    # chmod +x archinstall
+    # ./archinstall
 
-~~This downloads and runs a "compiled" *(using nuitka3)* version of the project.<br>
-It will ask fora disk and start a guided installation.~~
+This downloads and runs a *compiled (using nuitka3)* version of the project.<br>
+It will ask fora disk and start a guided installation.
 
 ## Install Python on Live-CD and run manually:
 
