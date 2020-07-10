@@ -7,3 +7,12 @@ SAFETY_LOCK
 **/**dist
 **/**.egg*
 **/**.sh
+**/**.egg-info/
+**/**build/
+**/**src/
+**/**pkg/
+**/**dist/
+**/**archinstall.build/
+**/**archinstall-v*/
+**/**.pkg.*.xz
+**/**archinstall-*.tar.gz
