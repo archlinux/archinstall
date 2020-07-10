@@ -9,11 +9,11 @@ license=('GPLv3')
 provides=("${pkgname}")
 md5sums=('SKIP')
 arch=('x86_64')
-source=("${pkgname}-${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}-x86_64.tar.gz")
 #makedepends=('python>=3.8')
 
 package() {
-	cd "${pkgname}-${pkgver}"
+	cd "${pkgname}-${pkgver}-x86_64"
 
 	mkdir -p "${pkgdir}/var/lib/archinstall/"
 	mkdir -p "${pkgdir}/usr/bin"
