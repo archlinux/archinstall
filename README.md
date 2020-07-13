@@ -13,14 +13,23 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
 
 ## Run as stand-alone binary on Live-CD
 
-    # wget https://gzip.app/archinstall
-    # tar xvzf archinstall*.tar.gz
+    # curl -L https://gzip.app/archinstall > archinstall.tar.gz
+    # tar xvzf archinstall.tar.gz
     # cd archinstall-v2.0.3
     # chmod +x archinstall
     # ./archinstall
 
 This downloads and runs a *compiled (using nuitka3)* version of the project.<br>
 It will ask fora disk and start a guided installation.
+
+## Install with `pacman` on Live-CD
+
+    # curl -L https://gzip.app/archinstall.xz > archinstall.pkg.tar.xz
+    # pacman -U archinstall.pkg.tar.xz
+    # archinstall guided
+
+This requires that the RAM on your machine is sufficient for a installation *(tested on 1024MB of RAM)*.<br>
+But this will utilize `pacman` to install the pre-compiled binary from above and place archinstall in `PATH`.
 
 ## Install Python on Live-CD and run manually:
 
