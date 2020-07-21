@@ -13,9 +13,8 @@ def find_examples():
 
 	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}
 
-
 if __name__ == '__main__':
-	if len(sys.argv) == 1: sys.arv.append('guided')
+	if len(sys.argv) == 1: sys.argv.append('guided')
 
 	profile = sys.argv[1]
 	library = find_examples()
