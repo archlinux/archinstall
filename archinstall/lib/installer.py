@@ -7,6 +7,29 @@ from .user_interaction import *
 from .profiles import Profile
 
 class Installer():
+	"""
+	`Installer()` is the wrapper for most basic installation steps.
+	It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
+
+	:param partition: Requires a partition as the first argument, this is
+	    so that the installer can mount to `mountpoint` and strap packages there.
+	:type partition: class:`archinstall.Partition`
+	
+	:param boot_partition: There's two reasons for needing a boot partition argument,
+	    The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
+	    during the `pacstrap` or `linux` and the base packages for a minimal installation.
+	    The second being when :py:func:`~archinstall.Installer.add_bootloader` is called,
+	    A `boot_partition` must be known to the installer before this is called.
+	:type boot_partition: class:`archinstall.Partition`
+
+	:param profile: A profile to install, this is optional and can be called later manually.
+	    This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
+	:type profile: str, optional
+	
+	:param hostname: The given /etc/hostname for the machine.
+	:type hostname: str, optional
+
+	"""
 	def __init__(self, partition, boot_partition, *, profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
 		self.profile = profile
 		self.hostname = hostname
