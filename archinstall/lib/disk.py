@@ -17,6 +17,21 @@ class BlockDevice():
 		self.info = info
 		self.part_cache = OrderedDict()
 
+	def __repr__(self, *args, **kwargs):
+		return f"BlockDevice({self.device})"
+
+	def __getitem__(self, key, *args, **kwargs):
+		if not key in self.info:
+			raise KeyError(f'{self} does not contain information: "{key}"')
+		return self.info[key]
+
+	def __dump__(self):
+		return {
+			'path' : self.path,
+			'info' : self.info,
+			'partition_cache' : self.part_cache
+		}
+
 	@property
 	def device(self):
 		"""
@@ -69,13 +84,6 @@ class BlockDevice():
 		all_partitions = self.partitions
 		return [all_partitions[k] for k in all_partitions]
 
-	def __repr__(self, *args, **kwargs):
-		return f"BlockDevice({self.device})"
-
-	def __getitem__(self, key, *args, **kwargs):
-		if not key in self.info:
-			raise KeyError(f'{self} does not contain information: "{key}"')
-		return self.info[key]
 
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
