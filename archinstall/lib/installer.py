@@ -70,17 +70,26 @@ class Installer():
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
 		return True
 
-	def set_hostname(self, hostname=None):
+	def set_hostname(self, hostname=None, *args, **kwargs):
 		if not hostname: hostname = self.hostname
 		with open(f'{self.mountpoint}/etc/hostname', 'w') as fh:
 			fh.write(self.hostname + '\n')
 
-	def set_locale(self, locale, encoding='UTF-8'):
+	def set_locale(self, locale, encoding='UTF-8', *args, **kwargs):
+		if not len(locale): return True
+
 		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as fh:
 			fh.write(f'{locale} {encoding}\n')
 		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as fh:
 			fh.write(f'LANG={locale}\n')
-		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen')
+
+		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
+
+	def set_timezone(self, zone, *args, **kwargs):
+		if not len(zone): return True
+
+		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
+		return True
 
 	def minimal_installation(self):
 		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano'.split(' '))
