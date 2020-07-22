@@ -91,10 +91,10 @@ class Installer():
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
 		return True
 
-	def run_command(self, cmd):
+	def run_command(self, cmd, *args, **kwargs):
 		return sys_command(f'/usr/bin/arch-chroot {self.mountpoint} {cmd}')
 
-	def arch_chroot(self, cmd):
+	def arch_chroot(self, cmd, *args, **kwargs):
 		return self.run_command(cmd)
 
 	def minimal_installation(self):
@@ -197,3 +197,25 @@ class Installer():
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"'))
 
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "userdel aibuilder; rm -rf /hoem/aibuilder"'))
+		o = b''.join(sys_command(f"/usr/bin/sed -i 's/^%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' {self.mountpoint}/etc/sudoers"))
+
+	def yay(self, *packages, **kwargs):
+		if type(packages[0]) in (list, tuple): packages = packages[0]
+		log(f'Installing AUR packages: {packages}')
+
+		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
+			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "useradd -m -G wheel aibuilder"'))
+			o = b''.join(sys_command(f"/usr/bin/sed -i 's/# %wheel ALL=(ALL) NO/%wheel ALL=(ALL) NO/' {self.mountpoint}/etc/sudoers"))
+
+			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "su - aibuilder -c \\"/usr/bin/yay -S --noconfirm {" ".join(packages)}\\" >/dev/null"'))
+
+			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "userdel aibuilder; rm -rf /hoem/aibuilder"'))
+			o = b''.join(sys_command(f"/usr/bin/sed -i 's/^%wheel ALL=(ALL) NO/# %wheel ALL=(ALL) NO/' {self.mountpoint}/etc/sudoers"))
+
+			return True
+		else:
+			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
+
+
+	def add_AUR_packages(self, *packages):
+		return self.yay(*packages)
