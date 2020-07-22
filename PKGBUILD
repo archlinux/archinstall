@@ -1,9 +1,9 @@
 # Maintainer: Anton Hvornum anton@hvornum.se
 # Contributor: Anton Hvornum anton@hvornum.se
 pkgname="archinstall"
-pkgver="v2.0.3"
+pkgver="v2.0.4rc2"
 pkgdesc="Installs a pre-built binary of ${pkgname}"
-pkgrel=1
+pkgrel=2
 url="https://github.com/Torxed/archinstall"
 license=('GPLv3')
 provides=("${pkgname}")
