@@ -91,6 +91,12 @@ class Installer():
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
 		return True
 
+	def run_command(self, cmd):
+		return sys_command(f'/usr/bin/arch-chroot {self.mountpoint} {cmd}')
+
+	def arch_chroot(self, cmd):
+		return self.run_command(cmd)
+
 	def minimal_installation(self):
 		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano'.split(' '))
 		self.genfstab()
@@ -158,13 +164,13 @@ class Installer():
 		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
 
 	def add_additional_packages(self, *packages):
-		self.pacstrap(*packages)
+		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
 		profile = Profile(self, profile)
 
 		log(f'Installing network profile {profile}')
-		profile.install()
+		return profile.install()
 
 	def user_create(self, user :str, password=None, groups=[]):
 		log(f'Creating user {user}')

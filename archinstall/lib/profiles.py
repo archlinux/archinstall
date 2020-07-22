@@ -40,6 +40,9 @@ class Profile():
 
 	@property
 	def path(self, *args, **kwargs):
+		if os.path.isfile(f'{self.name}'):
+			return os.path.abspath(f'{self.name}')
+
 		for path in ['./profiles', '/etc/archinstall', '/etc/archinstall/profiles', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles')]: # Step out of /lib
 			if os.path.isfile(f'{path}/{self.name}.json'):
 				return os.path.abspath(f'{path}/{self.name}.json')
@@ -86,11 +89,21 @@ class Profile():
 		raise ProfileError(f'No such profile ({self.name}) was found either locally or in {UPSTREAM_URL}')
 
 	def install(self):
+		# To avoid profiles importing the wrong 'archinstall',
+		# we need to ensure that this current archinstall is in sys.path
+		archinstall_path = os.path.abspath(f'{os.path.dirname(__file__)}/../../')
+		if not archinstall_path in sys.path:
+			sys.path.insert(0, archinstall_path)
+
 		instructions = self.load_instructions()
 		if type(instructions) == Imported:
-			__builtins__['installation'] = self.installer # There's no easy way to give the imported profile the installer instance unless we require the profile-programmer to create a certain function that must be the same for all.. Which is a bit inconvenient so lets just make it truly global
+			# There's no easy way to give the imported profile the installer instance unless we require the profile-programmer to create a certain function that must be the same for all..
+			# Which is a bit inconvenient so we'll make a a truly global installer for now, in the future archinstall main __init__.py should setup the 'installation' variable..
+			# but to avoid circular imports and other traps, this works for now.
+			# TODO: Remove
+			__builtins__['installation'] = self.installer
 			with instructions as runtime:
-				log(f'Profile {self.name} finished successfully.')
+				log(f'Profile {self.name} finished successfully.', bg='black', fg='green')
 		else:
 			if 'args' in instructions:
 				self.args = instructions['args']
@@ -163,18 +176,27 @@ class Profile():
 						if type(instructions[title][raw_command]) == bytes and len(instructions['post'][title][raw_command]) and not instructions['post'][title][raw_command] in o:
 							log(f'{command} failed: {o.decode("UTF-8")}')
 							log('[W] Post install command failed: {}'.format(o.decode('UTF-8')))
+		return True
 
 class Application(Profile):
+	def __repr__(self, *args, **kwargs):
+		return f'Application({self.name} <"{self.path}">)'
+
 	@property
 	def path(self, *args, **kwargs):
-		for path in ['./applications', './profiles/applications', '/etc/archinstall/applications', '/etc/archinstall/profiles/applications']:
-			if os.path.isfile(f'{path}/{self.name}.json'):
+		if os.path.isfile(f'{self.name}'):
+			return os.path.abspath(f'{self.name}')
+
+		for path in ['./applications', './profiles/applications', '/etc/archinstall/applications', '/etc/archinstall/profiles/applications', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles/applications')]:
+			if os.path.isfile(f'{path}/{self.name}.py'):
+				return os.path.abspath(f'{path}/{self.name}.py')
+			elif os.path.isfile(f'{path}/{self.name}.json'):
 				return os.path.abspath(f'{path}/{self.name}.json')
 
 		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/{self.name}.json')):
+			if (cache := grab_url_data(f'{UPSTREAM_URL}/applications/{self.name}.py')):
 				self._cache = cache
-				return f'{UPSTREAM_URL}/{self.name}.json'
+				return f'{UPSTREAM_URL}/applications/{self.name}.py'
 		except urllib.error.HTTPError:
 			pass
 		try:
