@@ -10,6 +10,6 @@ tar -czvf archinstall-v2.0.4rc3.tar.gz archinstall-v2.0.4rc3-x86_64
 makepkg -f
 
 python3 setup.py sdist bdist_wheel
-echo 'python3 -m twine upload dist/*'
+echo 'python3 -m twine upload dist/*; rm -rf dist/'
 
-rm -rf archinstall.egg-info/ build/ dist/ src/ pkg/ archinstall.build/ archinstall-v2.0.4rc3-x86_64/
+rm -rf archinstall.egg-info/ build/ src/ pkg/ archinstall.build/ archinstall-v2.0.4rc3-x86_64/
