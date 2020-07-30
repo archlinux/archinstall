@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="archinstall",
-    version="v2.0.4rc2",
+    version="v2.0.4rc3",
     author="Anton Hvornum",
     author_email="anton@hvornum.se",
     description="Arch Linux installer - guided, templates etc.",
