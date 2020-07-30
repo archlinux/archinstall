@@ -18,6 +18,21 @@ def filter_mirrors_by_region(regions, *args, **kwargs):
 	
 	return True
 
+def add_custom_mirrors(mirrors:list, *args, **kwargs):
+	"""
+	This will append custom mirror definitions in pacman.conf
+
+	:param mirrors: A list of mirror data according to: `{'url': 'http://url.com', 'signcheck': 'Optional', 'signoptions': 'TrustAll', 'name': 'testmirror'}`
+	:type mirrors: dict
+	"""
+	with open('/etc/pacman.conf', 'a') as pacman:
+		for mirror in mirrors:
+			pacman.write(f"[{mirror['name']}]\n")
+			pacman.write(f"SigLevel = {mirror['signcheck']} {mirror['signoptions']}\n")
+			pacman.write(f"Server = {mirror['url']}\n")
+
+	return True
+
 def insert_mirrors(mirrors, *args, **kwargs):
 	"""
 	This function will insert a given mirror-list at the top of `/etc/pacman.d/mirrorlist`.
