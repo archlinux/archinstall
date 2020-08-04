@@ -79,9 +79,9 @@ class Installer():
 		if not len(locale): return True
 
 		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale} {encoding}\n')
+			fh.write(f'{locale}.{encoding} {encoding}\n')
 		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}\n')
+			fh.write(f'LANG={locale}.{encoding}\n')
 
 		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
 
@@ -90,6 +90,15 @@ class Installer():
 
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
 		return True
+
+	def activate_ntp(self):
+		if self.pacstrap('ntp'):
+			if self.enable_service('ntpd'):
+				return True
+
+	def enable_service(self, service):
+		log(f'Enabling service {service}')
+		return self.arch_chroot(f'systemctl enable {service}').exit_code == 0
 
 	def run_command(self, cmd, *args, **kwargs):
 		return sys_command(f'/usr/bin/arch-chroot {self.mountpoint} {cmd}')
