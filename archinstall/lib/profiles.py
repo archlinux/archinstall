@@ -54,7 +54,7 @@ class Profile():
 			return os.path.abspath(f'{self.name}')
 
 		for path in ['./profiles', '/etc/archinstall', '/etc/archinstall/profiles', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles')]: # Step out of /lib
-			elif os.path.isfile(f'{path}/{self.name}.py'):
+			if os.path.isfile(f'{path}/{self.name}.py'):
 				return os.path.abspath(f'{path}/{self.name}.py')
 
 		try:
