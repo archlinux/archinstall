@@ -14,6 +14,16 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
+def list_profiles(base='./profiles/'):
+	# TODO: Grab from github page as well, not just local static files
+	cache = {}
+	for root, folders, files in os.walk(base):
+		for file in files:
+			if os.path.splitext(file)[1] == '.py':
+				cache[file] = os.path.join(root, file)
+		break
+	return cache
+
 class Imported():
 	def __init__(self, spec, imported):
 		self.spec = spec
@@ -44,8 +54,6 @@ class Profile():
 			return os.path.abspath(f'{self.name}')
 
 		for path in ['./profiles', '/etc/archinstall', '/etc/archinstall/profiles', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles')]: # Step out of /lib
-			if os.path.isfile(f'{path}/{self.name}.json'):
-				return os.path.abspath(f'{path}/{self.name}.json')
 			elif os.path.isfile(f'{path}/{self.name}.py'):
 				return os.path.abspath(f'{path}/{self.name}.py')
 
@@ -53,18 +61,6 @@ class Profile():
 			if (cache := grab_url_data(f'{UPSTREAM_URL}/{self.name}.py')):
 				self._cache = cache
 				return f'{UPSTREAM_URL}/{self.name}.py'
-		except urllib.error.HTTPError:
-			pass
-		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/{self.name}.json')):
-				self._cache = cache
-				return f'{UPSTREAM_URL}/{self.name}.json'
-		except urllib.error.HTTPError:
-			pass
-		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/{self.name}.json')):
-				self._cache = cache
-				return f'{UPSTREAM_URL}/{self.name}.json'
 		except urllib.error.HTTPError:
 			pass
 
@@ -80,11 +76,8 @@ class Profile():
 				imported = importlib.util.module_from_spec(spec)
 				sys.modules[os.path.basename(absolute_path)] = imported
 				return Imported(spec, imported)
-			elif absolute_path[:4] == 'http':
-				return json.loads(self._cache)
-
-			with open(absolute_path, 'r') as fh:
-				return json.load(fh)
+			else:
+				raise ProfileError(f'Extension {os.path.splitext(absolute_path)[1]} is not a supported profile model. Only .py is supported.')
 
 		raise ProfileError(f'No such profile ({self.name}) was found either locally or in {UPSTREAM_URL}')
 
@@ -190,19 +183,11 @@ class Application(Profile):
 		for path in ['./applications', './profiles/applications', '/etc/archinstall/applications', '/etc/archinstall/profiles/applications', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles/applications')]:
 			if os.path.isfile(f'{path}/{self.name}.py'):
 				return os.path.abspath(f'{path}/{self.name}.py')
-			elif os.path.isfile(f'{path}/{self.name}.json'):
-				return os.path.abspath(f'{path}/{self.name}.json')
 
 		try:
 			if (cache := grab_url_data(f'{UPSTREAM_URL}/applications/{self.name}.py')):
 				self._cache = cache
 				return f'{UPSTREAM_URL}/applications/{self.name}.py'
-		except urllib.error.HTTPError:
-			pass
-		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/applications/{self.name}.json')):
-				self._cache = cache
-				return f'{UPSTREAM_URL}/applications/{self.name}.json'
 		except urllib.error.HTTPError:
 			pass
 

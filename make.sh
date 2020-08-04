@@ -6,7 +6,7 @@ rm -rf archinstall.egg-info/ build/ src/ pkg/ dist/ archinstall.build/ archinsta
 nuitka3 --standalone --show-progress archinstall
 cp -r examples/ archinstall.dist/
 mv archinstall.dist archinstall-v2.0.4rc4-x86_64
-tar -czvf archinstall-v2.0.4rc4.tar.gz archinstall-v2.0.4rc4-x86_64
+tar -czvf archinstall-v2.0.4rc4-x86_64.tar.gz archinstall-v2.0.4rc4-x86_64
 makepkg -f
 
 python3 setup.py sdist bdist_wheel
