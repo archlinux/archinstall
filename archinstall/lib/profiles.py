@@ -23,9 +23,10 @@ def list_profiles(base='./profiles/'):
 				description = ''
 				with open(os.path.join(root, file), 'r') as fh:
 					first_line = fh.readline()
+					print(first_line)
 					if first_line[0] == '#':
 						description = first_line.strip()
-				
+
 				cache[file] = {'path' : os.path.join(root, file), 'description' : ''}
 		break
 	return cache
