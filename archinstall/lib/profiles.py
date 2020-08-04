@@ -20,7 +20,13 @@ def list_profiles(base='./profiles/'):
 	for root, folders, files in os.walk(base):
 		for file in files:
 			if os.path.splitext(file)[1] == '.py':
-				cache[file] = os.path.join(root, file)
+				description = ''
+				with open(os.path.join(root, file), 'r') as fh:
+					first_line = fh.readline()
+					if first_line[0] == '#':
+						description = first_line.strip()
+				
+				cache[file] = {'path' : os.path.join(root, file), 'description' : ''}
 		break
 	return cache
 
