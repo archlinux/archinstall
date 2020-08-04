@@ -1,5 +1,0 @@
-{
-	"pacman -Syy --noconfirm postgresql" : {"debug" : true},
-	"systemctl enable postgresql" : {"debug" : true},
-	"su - postgres -c \"initdb -D /var/lib/postgres/data\"" : {"debug" : true}
-}
