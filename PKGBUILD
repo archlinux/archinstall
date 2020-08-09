@@ -7,12 +7,33 @@ pkgrel=1
 url="https://github.com/Torxed/archinstall"
 license=('GPLv3')
 provides=("${pkgname}")
-md5sums=('SKIP')
+#md5sums=('SKIP')
 arch=('x86_64')
-source=("${pkgname}-${pkgver}-x86_64.tar.gz")
-#makedepends=('python>=3.8')
+#source=("${pkgname}-${pkgver}-x86_64.tar.gz")
+makedepends=('nuitka' 'git')
+
+build() {
+	rm -rf archinstall
+
+	git clone "${url}.git"
+	cd ./archinstall
+
+	nuitka3 --standalone --show-progress archinstall
+	cp -r examples/ archinstall.dist/
+	mv archinstall.dist archinstall-${pkgver}-x86_64
+	tar -czvf archinstall-${pkgver}-x86_64.tar.gz archinstall-${pkgver}-x86_64
+
+	mv archinstall-${pkgver}-x86_64.tar.gz ../
+	cd ..
+	pkgsrc=$(pwd)
+}
 
 package() {
+	cd "${pkgsrc}"
+	pwd
+	ls -l
+	tar xvzf archinstall-${pkgver}-x86_64.tar.gz
+
 	cd "${pkgname}-${pkgver}-x86_64"
 
 	mkdir -p "${pkgdir}/var/lib/archinstall/"
