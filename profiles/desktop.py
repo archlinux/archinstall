@@ -1,3 +1,5 @@
+# A desktop environemtn using "Awesome" window manager.
+
 import archinstall
 
 arguments = {
