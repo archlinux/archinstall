@@ -20,32 +20,33 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
     # ./archinstall
 
 This downloads and runs a *compiled (using nuitka3)* version of the project.<br>
-It will ask fora disk and start a guided installation.
+It will guide you through all the installation steps.
 
 ## Install with `pacman` on Live-CD
 
-    # curl -L https://gzip.app/archinstall.xz > archinstall.pkg.tar.xz
+    # curl -L https://archlinux.life/bin/archinstall.xz > archinstall.pkg.tar.xz
     # pacman -U archinstall.pkg.tar.xz
-    # archinstall guided
+    # archinstall
 
-This requires that the RAM on your machine is sufficient for a installation *(tested on 1024MB of RAM)*.<br>
-But this will utilize `pacman` to install the pre-compiled binary from above and place archinstall in `PATH`.
+This requires that the RAM and squashfs on your machine is sufficient for an installation.<br>
+But this will utilize `pacman` to install the pre-compiled binary from above and place archinstall in `$PATH`.
 
 ## Install Python on Live-CD and run manually:
 
     # wget https://github.com/Torxed/archinstall/archive/v2.0.4.tar.gz
     # tar xvzf v2.0.4.tar.gz
     # cd archinstall-2.0.4
-    # pacman -S --noconfirm python; python examples/guided.py
+    # pacman -S --noconfirm python pip
+    python examples/guided.py
 
-This will ask for a disk and start a guided installation.
+This assumes the same criteria as the `pacman` installation. It will also guide you through a basic installation.
 
 ## Install using `pip` and run as a Python module:
 
     # pip install archinstall
     # python -m archinstall guided
 
-This assumes tho that `python >= 3.8` and `pip` is present *(not always the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](docs/) to see how to build an ISO yourself.
+This assumes tho that `python >= 3.8` and `pip` is present *(not the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](wiki/) to see how to build an ISO yourself.
 
 ## Scripting an installation to put on a ISO media
 
@@ -101,7 +102,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # dd if=/dev/zero of=./testimage.img bs=1G count=5
     # losetup -fP ./testimage.img
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
-    # pip install archinstall
+    # pip install --upgrade archinstall
     # python -m archinstall guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
