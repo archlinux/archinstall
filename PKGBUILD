@@ -1,7 +1,7 @@
 # Maintainer: Anton Hvornum anton@hvornum.se
 # Contributor: Anton Hvornum anton@hvornum.se
 pkgname="archinstall"
-pkgver="v2.0.4rc3"
+pkgver="2.0.4rc4"
 pkgdesc="Installs a pre-built binary of ${pkgname}"
 pkgrel=1
 url="https://github.com/Torxed/archinstall"
@@ -9,16 +9,25 @@ license=('GPLv3')
 provides=("${pkgname}")
 md5sums=('SKIP')
 arch=('x86_64')
-source=("${pkgname}-${pkgver}-x86_64.tar.gz")
-#makedepends=('python>=3.8')
+source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
+depends=('python>=3.8')
+makedepends=('python>=3.8' 'nuitka')
 
+build() {
+	cd "${pkgname}-${pkgver}"
+
+	nuitka3 --standalone --show-progress archinstall
+	cp -r examples/ archinstall.dist/
+}
+ 
 package() {
-	cd "${pkgname}-${pkgver}-x86_64"
+	echo "${srcdir}"
+	cd "${pkgname}-${pkgver}"
 
 	mkdir -p "${pkgdir}/var/lib/archinstall/"
 	mkdir -p "${pkgdir}/usr/bin"
 
-	mv * "${pkgdir}/var/lib/archinstall/"
+	mv archinstall.dist/* "${pkgdir}/var/lib/archinstall/"
 
 	echo '#!/bin/bash' > "${pkgdir}/usr/bin/archinstall"
 	echo '(cd /var/lib/archinstall && exec ./archinstall)' >> "${pkgdir}/usr/bin/archinstall"

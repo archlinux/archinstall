@@ -2,20 +2,20 @@
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to access each individual installation step for customized installs.
 
-Pre-built ISO's can be found here which autostarts archinstall *(in a safe guided mode)*: https://hvornum.se/archiso/
+Pre-built ISO's can be found here which autostarts archinstall *(in a safe guided mode)*: https://archlinux.life/
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
  * ~~archinstall [documentation](#)~~ *(TBA)*
- * archinstall ISO's: https://hvornum.se/archiso/
+ * archinstall ISO's: https://archlinux.life/
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
 
 # Installation & Usage
 
 ## Run as stand-alone binary on Live-CD
 
-    # curl -L https://gzip.app/archinstall > archinstall.tar.gz
+    # curl -L https://archlinux.life/bin/archinstall > archinstall.tar.gz
     # tar xvzf archinstall.tar.gz
-    # cd archinstall-v2.0.3
+    # cd archinstall-v2.0.4
     # chmod +x archinstall
     # ./archinstall
 
@@ -33,9 +33,9 @@ But this will utilize `pacman` to install the pre-compiled binary from above and
 
 ## Install Python on Live-CD and run manually:
 
-    # wget https://github.com/Torxed/archinstall/archive/v2.0.3.tar.gz
-    # tar xvzf v2.0.2.tar.gz
-    # cd archinstall-2.0.2
+    # wget https://github.com/Torxed/archinstall/archive/v2.0.4.tar.gz
+    # tar xvzf v2.0.4.tar.gz
+    # cd archinstall-2.0.4
     # pacman -S --noconfirm python; python examples/guided.py
 
 This will ask for a disk and start a guided installation.
