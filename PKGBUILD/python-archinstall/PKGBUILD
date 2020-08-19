@@ -1,6 +1,6 @@
 # Maintainer: Anton Hvornum anton@hvornum.se
 # Contributor: Anton Hvornum anton@hvornum.se
-pkgname="archinstall"
+pkgname="python-archinstall"
 pkgver="2.0.4rc4"
 pkgdesc="Installs ${pkgname} as a python library."
 pkgrel=1
@@ -14,13 +14,13 @@ depends=('python>=3.8')
 #optdepends=('python-pip: Adds pip version handling and management.')
 
 build() {
-	cd "${pkgname}-${pkgver}"
+	cd "archinstall-${pkgver}"
 
 	python3 setup.py build
 }
  
 package() {
-	cd "${pkgname}-${pkgver}"
+	cd "archinstall-${pkgver}"
 
 	python setup.py install --prefix=/usr --root="${pkgdir}" --optimize=1
 }
