@@ -10,8 +10,9 @@ provides=("${pkgname}")
 md5sums=('SKIP')
 arch=('x86_64')
 source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
-depends=('python>=3.8')
+#depends=('python>=3.8')
 makedepends=('python>=3.8' 'nuitka')
+#optdepends=('python>=3.8: Installs archinstall as a python library (same as pip install --upgrade archinstall)')
 
 build() {
 	cd "${pkgname}-${pkgver}"
