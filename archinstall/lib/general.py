@@ -258,3 +258,5 @@ def prerequisit_check():
 
 	return True
 
+def reboot():
+	o = b''.join(sys_command(("/usr/bin/reboot")))

@@ -92,7 +92,7 @@ class Installer():
 		return True
 
 	def activate_ntp(self):
-		log(f'Adding bootloader to {self.boot_partition}')
+		log(f'Installing and activating NTP.')
 		if self.pacstrap('ntp'):
 			if self.enable_service('ntpd'):
 				return True

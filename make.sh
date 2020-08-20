@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Binary builder for https://archlinux.life/bin/
 
-VERSION="2.0.4rc4"
+VERSION=$(cat VERSION)
 
 rm -rf archinstall.egg-info/ build/ src/ pkg/ dist/ archinstall.build/ "archinstall-v${VERSION}-x86_64/" *.pkg.*.xz archinstall-*.tar.gz
 
@@ -12,6 +12,6 @@ tar -czvf "archinstall-v${VERSION}.tar.gz" "archinstall-v${VERSION}-x86_64"
 
 # makepkg -f
 # python3 setup.py sdist bdist_wheel
-# echo 'python3 -m twine upload dist/*; rm -rf dist/'
+# echo 'python3 -m twine upload dist/* && rm -rf dist/'
 
 rm -rf archinstall.egg-info/ build/ src/ pkg/ archinstall.build/ "archinstall-v${VERSION}-x86_64/"

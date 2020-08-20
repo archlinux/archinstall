@@ -3,9 +3,12 @@ import setuptools, glob, shutil
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open('VERSION', 'r') as fh:
+    VERSION = fh.read()
+
 setuptools.setup(
     name="archinstall",
-    version="v2.0.4rc4",
+    version=VERSION,
     author="Anton Hvornum",
     author_email="anton@hvornum.se",
     description="Arch Linux installer - guided, templates etc.",
