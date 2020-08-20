@@ -24,7 +24,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 				installation.add_bootloader()
 
 				installation.add_additional_packages(['nano', 'wget', 'git'])
-				installation.install_profile('workstation')
+				installation.install_profile('awesome')
 
 				installation.user_create('anton', 'test')
 				installation.user_set_pw('root', 'toor')

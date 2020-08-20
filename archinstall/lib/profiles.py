@@ -26,7 +26,7 @@ def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
 			tailored = False
 			if os.path.splitext(file)[1] == '.py':
 				if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
-					if filter_irrelevant_macs and mac[0][0] not in local_macs::
+					if filter_irrelevant_macs and mac[0][0] not in local_macs:
 						continue
 					tailored = True
 
@@ -36,7 +36,7 @@ def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
 					if first_line[0] == '#':
 						description = first_line[1:].strip()
 
-				cache[file] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
+				cache[file[:-2]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
 		break
 	return cache
 
