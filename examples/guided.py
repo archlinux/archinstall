@@ -19,7 +19,7 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 hostname = input('Desired hostname for the installation: ')
 if len(hostname) == 0: hostname = 'ArchInstall'
 
-while (root_pw := getpass.getpass(prompt='Enter root password (leave blank for no password): ')):
+while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to leave root disabled): ')):
 	root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
 	if root_pw != root_pw_verification:
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')

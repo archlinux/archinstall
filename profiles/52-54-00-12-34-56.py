@@ -38,4 +38,4 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 				req = urllib.request.Request("https://archlinux.life/build/successful",
 												data=json.dumps(conditions).encode('utf8'),
 												headers={'content-type': 'application/json'})
-				urllib.request.urlopen(req)
+				urllib.request.urlopen(req, timeout=5)
