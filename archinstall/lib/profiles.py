@@ -1,8 +1,9 @@
-import os, urllib.request, urllib.parse, ssl, json
+import os, urllib.request, urllib.parse, ssl, json, re
 import importlib.util, sys
 from collections import OrderedDict
 from .general import multisplit, sys_command, log
 from .exceptions import *
+from .networking import *
 
 UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles'
 
@@ -14,19 +15,28 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(base='./profiles/'):
+def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
 	# TODO: Grab from github page as well, not just local static files
+	if filter_irrelevant_macs:
+		local_macs = list_interfaces()
+
 	cache = {}
 	for root, folders, files in os.walk(base):
 		for file in files:
+			tailored = False
 			if os.path.splitext(file)[1] == '.py':
+				if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
+					if filter_irrelevant_macs and mac[0][0] not in local_macs::
+						continue
+					tailored = True
+
 				description = ''
 				with open(os.path.join(root, file), 'r') as fh:
 					first_line = fh.readline()
 					if first_line[0] == '#':
 						description = first_line[1:].strip()
 
-				cache[file] = {'path' : os.path.join(root, file), 'description' : description}
+				cache[file] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
 		break
 	return cache
 

@@ -6,3 +6,4 @@ from .lib.installer import *
 from .lib.profiles import *
 from .lib.luks import *
 from .lib.mirrors import *
+from .lib.networking import *
