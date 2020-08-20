@@ -112,7 +112,7 @@ class Profile():
 			# TODO: Remove
 			__builtins__['installation'] = self.installer
 			with instructions as runtime:
-				log(f'Profile {self._path} finished successfully.', bg='black', fg='green')
+				log(f'{self} finished successfully.', bg='black', fg='green')
 		
 		return True
 

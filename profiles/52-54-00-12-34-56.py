@@ -1,4 +1,6 @@
-import archinstall, getpass
+import archinstall
+import json
+import urllib.request
 
 # Unmount and close previous runs
 archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
@@ -30,3 +32,10 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 				installation.user_set_pw('root', 'toor')
 
 				installation.add_AUR_support()
+
+
+				conditions = {"profile" : "52-54-00-12-34-56", "status" : "successful"} 
+				req = urllib.request.Request("https://archlinux.life/build/successful",
+												data=json.dumps(conditions).encode('utf8'),
+												headers={'content-type': 'application/json'})
+				urllib.request.urlopen(req)
