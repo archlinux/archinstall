@@ -35,8 +35,11 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 				installation.add_AUR_support()
 
 				repo = git.Repo('./')
+				commit = repo.head.commit.hexsha[:7]
 
-				conditions = {"project" : "archinstall", "profile" : "52-54-00-12-34-56", "status" : "success", "commit" : repo.head.commit.hexsha[:7]} 
+				print(f'Submitting {commit}: success')
+
+				conditions = {"project" : "archinstall", "profile" : "52-54-00-12-34-56", "status" : "success", "commit" : commit} 
 				req = urllib.request.Request("https://archlinux.life/build/success",
 												data=json.dumps(conditions).encode('utf8'),
 												headers={'content-type': 'application/json'})
