@@ -40,7 +40,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 				print(f'Submitting {commit}: success')
 
 				conditions = {"project" : "archinstall", "profile" : "52-54-00-12-34-56", "status" : "success", "commit" : commit} 
-				req = urllib.request.Request("https://archlinux.life/build/success",
+				req = urllib.request.Request("https://api.archlinux.life/build/success",
 												data=json.dumps(conditions).encode('utf8'),
 												headers={'content-type': 'application/json'})
 				try:
