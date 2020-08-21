@@ -9,8 +9,8 @@ Pre-built ISO's can be found here which autostarts archinstall *(in a safe guide
  * archinstall ISO's: https://archlinux.life/
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
  
-Last guided build test:<br>
-![buildstatus](https://api.archlinux.life/build/archinstall)
+Latest executed [guided](examples/guided.py) build test:<br>
+![buildstatus](https://api.archlinux.life/build/archinstall.svg?commit=HEAD)
 
 # Installation & Usage
 
