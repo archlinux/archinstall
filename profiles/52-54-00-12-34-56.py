@@ -1,6 +1,7 @@
 import archinstall
 import json
 import urllib.request
+import git
 
 # Unmount and close previous runs
 archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
@@ -33,8 +34,9 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
 				installation.add_AUR_support()
 
+				repo = git.Repo('./')
 
-				conditions = {"profile" : "52-54-00-12-34-56", "status" : "successful"} 
+				conditions = {"project" : "archinstall", "profile" : "52-54-00-12-34-56", "status" : "successful", "commit" : repo.head.commit.hexsha[:7]} 
 				req = urllib.request.Request("https://archlinux.life/build/successful",
 												data=json.dumps(conditions).encode('utf8'),
 												headers={'content-type': 'application/json'})
