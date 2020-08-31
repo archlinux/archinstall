@@ -35,7 +35,7 @@ while 1:
 	new_user = input(new_user_text)
 	if len(new_user.strip()) == 0:
 		if len(root_pw.strip()) == 0:
-			archinstall.log(' * Since root is disabled, you need to create a least one user!', bg='black', fg='red')
+			archinstall.log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
 			continue
 		break
 	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')

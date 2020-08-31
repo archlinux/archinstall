@@ -223,7 +223,7 @@ class Installer():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))
 
 		if sudo:
-			with open(f'{mountpoint}/etc/sudoers', 'a') as sudoers:
+			with open(f'{self.mountpoint}/etc/sudoers', 'a') as sudoers:
 				sudoers.write(f'{user}\n')
 
 			self.helper_flags['user'] = True
