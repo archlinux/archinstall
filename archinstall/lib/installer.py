@@ -35,6 +35,12 @@ class Installer():
 		self.hostname = hostname
 		self.mountpoint = mountpoint
 
+		self.helper_flags = {
+			'bootloader' : False,
+			'base' : False,
+			'user' : False # Root counts as a user, if additional users are skipped.
+		}
+
 		self.base_packages = base_packages.split(' ')
 
 		self.partition = partition
@@ -51,8 +57,18 @@ class Installer():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		log('Installation completed without any errors.', bg='black', fg='green')
-		return True
+
+		if not (missing_steps := self.post_install_check()):
+			log('Installation completed without any errors.', bg='black', fg='green')
+			return True
+		else:
+			log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red')
+			for step in missing_steps:
+				log(f' - {step}', bg='black', fg='red')
+			return False
+
+	def post_install_check(self, *args, **kwargs):
+		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
@@ -143,6 +159,7 @@ class Installer():
 				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
+		self.helper_flags['base'] = True
 		return True
 
 	def add_bootloader(self):
@@ -170,6 +187,8 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
 						entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+						
+						self.helper_flags['bootloader'] = True
 						return True
 					break
 			else:
@@ -179,6 +198,8 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+						
+						self.helper_flags['bootloader'] = True
 						return True
 					break
 		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
@@ -192,7 +213,7 @@ class Installer():
 		log(f'Installing network profile {profile}')
 		return profile.install()
 
-	def user_create(self, user :str, password=None, groups=[]):
+	def user_create(self, user :str, password=None, groups=[], sudo=False):
 		log(f'Creating user {user}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
 		if password:
@@ -201,8 +222,19 @@ class Installer():
 			for group in groups:
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))
 
+		if sudo:
+			with open(f'{mountpoint}/etc/sudoers', 'a') as sudoers:
+				sudoers.write(f'{user}\n')
+
+			self.helper_flags['user'] = True
+
 	def user_set_pw(self, user, password):
 		log(f'Setting password for {user}')
+
+		if user == 'root':
+			# This means the root account isn't locked/disabled with * in /etc/passwd
+			self.helper_flags['user'] = True
+
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.mountpoint} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
