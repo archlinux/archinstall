@@ -30,10 +30,12 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
+	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
+
+		self.base_packages = base_packages.split(' ')
 
 		self.partition = partition
 		self.boot_partition = boot_partition
@@ -108,7 +110,15 @@ class Installer():
 		return self.run_command(cmd)
 
 	def minimal_installation(self):
-		self.pacstrap('base base-devel linux linux-firmware btrfs-progs efibootmgr nano'.split(' '))
+		## Add nessecary packages if encrypting the drive
+		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
+		## TODO: Perhaps this should be living in the function which dictates
+		##       the partitioning. Leaving here for now.
+		if self.partition.filesystem == 'btrfs':
+		#if self.partition.encrypted:
+			self.base_packages.append('btrfs-progs')
+		
+		self.pacstrap(self.base_packages)
 		self.genfstab()
 
 		with open(f'{self.mountpoint}/etc/fstab', 'a') as fstab:
