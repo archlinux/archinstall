@@ -45,6 +45,7 @@ while 1:
 		continue
 
 	users[new_user] = new_user_passwd
+	break
 
 aur = input('Would you like AUR support? (leave blank for no): ')
 if len(aur.strip()):
