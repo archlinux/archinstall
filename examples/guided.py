@@ -27,9 +27,17 @@ while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to le
 	break
 
 users = {}
+new_user_text = 'Any additional users to install (leave blank for no users): '
+if len(root_pw.strip()) == 0:
+	new_user_text = 'Create a super-user with sudo privileges: '
+
 while 1:
-	new_user = input('Any additional users to install (leave blank for no users): ')
-	if not len(new_user.strip()): break
+	new_user = input(new_user_text)
+	if len(new_user.strip()) == 0:
+		if len(root_pw.strip()) == 0:
+			archinstall.log(' * Since root is disabled, you need to create a least one user!', bg='black', fg='red')
+			continue
+		break
 	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
 	new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
 	if new_user_passwd != new_user_passwd_verify:
@@ -72,7 +80,11 @@ def perform_installation(device, boot_partition):
 				installation.install_profile(profile)
 
 			for user, password in users.items():
-				installation.user_create(user, password)
+				sudo = False
+				if len(root_pw.strip()) == 0:
+					sudo = True
+
+				installation.user_create(user, password, sudo=sudo)
 
 			if root_pw:
 				installation.user_set_pw('root', root_pw)
