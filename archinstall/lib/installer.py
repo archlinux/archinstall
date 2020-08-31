@@ -59,7 +59,7 @@ class Installer():
 			raise args[1]
 
 		if not (missing_steps := self.post_install_check()):
-			log('Installation completed without any errors.', bg='black', fg='green')
+			log('Installation completed without any errors. You may now reboot.', bg='black', fg='green')
 			return True
 		else:
 			log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red')
@@ -213,19 +213,23 @@ class Installer():
 		log(f'Installing network profile {profile}')
 		return profile.install()
 
+	def enable_sudo(self, entity :str, group=False):
+		log(f'Enabling sudo permissions for {entity}.')
+		with open(f'{self.mountpoint}/etc/sudoers', 'a') as sudoers:
+			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
+		return True
+
 	def user_create(self, user :str, password=None, groups=[], sudo=False):
 		log(f'Creating user {user}')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
+		
 		if groups:
 			for group in groups:
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))
 
-		if sudo:
-			with open(f'{self.mountpoint}/etc/sudoers', 'a') as sudoers:
-				sudoers.write(f'{user}\n')
-
+		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
 
 	def user_set_pw(self, user, password):
