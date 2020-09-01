@@ -58,6 +58,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 			print(f"{index}: {region}")
 
 		print(' -- You can enter ? or help to search for more regions --')
+		print(' -- (You can use Shift + PageUp to scroll in the list --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
 		if selected_mirror.lower() in ('?', 'help'):
 			filter_string = input('Search for a region containing (example: "united"): ').strip().lower()
@@ -67,8 +68,8 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 
 			return selected_mirrors
 
-		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(languages)-1:
-			region = sorted(list(mirrors.keys()))[int(selected_mirror)]
+		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(regions)-1:
+			region = regions[int(selected_mirror)]
 			selected_mirrors[region] = mirrors[region]
 		# I'm leaving "mirrors" on purpose here.
 		# Since region possibly contains a known region of
@@ -78,8 +79,8 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		elif selected_mirror in mirrors:
 			selected_mirrors[selected_mirror] = mirrors[mirrors.index(selected_mirror)]
 		else:
-			RequirementError("Selected language does not exist.")
+			RequirementError("Selected region does not exist.")
 		
 		return selected_mirrors
 
-	raise RequirementError("Selecting languages require a least one language to be given as an option.")
+	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
