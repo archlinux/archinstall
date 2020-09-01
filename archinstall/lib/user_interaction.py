@@ -50,7 +50,7 @@ def select_language(options, show_only_country_codes=True):
 
 def select_mirror_regions(mirrors, show_top_mirrors=True):
 	# TODO: Support multiple options and country ycodes, SE,UK for instance.
-	regions = sorted(list(regions.keys()))
+	regions = sorted(list(mirrors.keys()))
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
