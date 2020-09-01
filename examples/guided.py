@@ -8,8 +8,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 	"""
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		while archinstall.service_state('reflector') != 'dead':
+			print(archinstall.service_state('reflector'))
 			time.sleep(0.25)
-			
+
 		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
 		if installation.minimal_installation():
 			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
