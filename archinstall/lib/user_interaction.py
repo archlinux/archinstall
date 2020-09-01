@@ -54,7 +54,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		for index, region in enumerate(regionss):
+		for index, region in enumerate(regions):
 			print(f"{index}: {region}")
 
 		print(' -- You can enter ? or help to search for more regions --')
