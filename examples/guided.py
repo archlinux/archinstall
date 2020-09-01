@@ -1,6 +1,6 @@
 import archinstall, getpass, time
 
-def perform_installation(device, boot_partition):
+def perform_installation(device, boot_partition, language):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -8,6 +8,7 @@ def perform_installation(device, boot_partition):
 	"""
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if installation.minimal_installation():
+			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
 			if len(packages) and packages[0] != '':
@@ -26,7 +27,7 @@ def perform_installation(device, boot_partition):
 			if root_pw:
 				installation.user_set_pw('root', root_pw)
 
-			if len(aur.strip()):
+			if len(aur.strip()) and aur.strip().lower() != 'no':
 				installation.add_AUR_support()
 
 # Unmount and close previous runs (in case the installer is restarted)
@@ -82,7 +83,7 @@ while 1:
 	break
 
 aur = input('Would you like AUR support? (leave blank for no): ')
-if len(aur.strip()):
+if len(aur.strip()) and aur.lower() != 'no':
 	archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
 
 profile = input('Any particular profile you want to install: ')
@@ -125,7 +126,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 			unlocked_device.format('btrfs')
 			
-			perform_installation(unlocked_device, harddrive.partition[0])
+			perform_installation(unlocked_device, harddrive.partition[0], keyboard_language)
 	else:
 		harddrive.partition[1].format('ext4')
-		perform_installation(harddrive.partition[1], harddrive.partition[0])
+		perform_installation(harddrive.partition[1], harddrive.partition[0], keyboard_language)

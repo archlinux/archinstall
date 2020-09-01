@@ -242,6 +242,12 @@ class Installer():
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.mountpoint} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
+	def set_keyboard_language(language):
+		with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
+			vconsole.write(f'KEYMAP={language}\n')
+			vconsole.write(f'FONT=lat9w-16\n')
+		return True
+
 	def add_AUR_support(self):
 		log(f'Building and installing yay support into {self.mountpoint}')
 		self.add_additional_packages(['git', 'base-devel']) # TODO: Remove if not explicitly added at one point
@@ -250,6 +256,8 @@ class Installer():
 
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "su - aibuilder -c \\"(cd /home/aibuilder; git clone https://aur.archlinux.org/yay.git)\\""'))
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "chown -R aibuilder.aibuilder /home/aibuilder/yay"'))
+
+		log(f'Building and installing yay.')
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "su - aibuilder -c \\"(cd /home/aibuilder/yay; makepkg -si --noconfirm)\\" >/dev/null"'))
 
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} sh -c "userdel aibuilder; rm -rf /hoem/aibuilder"'))
