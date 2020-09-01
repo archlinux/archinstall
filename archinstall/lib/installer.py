@@ -242,7 +242,7 @@ class Installer():
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.mountpoint} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
-	def set_keyboard_language(language):
+	def set_keyboard_language(self, language):
 		with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
 			vconsole.write(f'KEYMAP={language}\n')
 			vconsole.write(f'FONT=lat9w-16\n')
