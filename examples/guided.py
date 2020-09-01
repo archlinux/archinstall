@@ -131,7 +131,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 			unlocked_device.format('btrfs')
 			
-			perform_installation(unlocked_device, harddrive.partition[0], keyboard_language)
+			perform_installation(unlocked_device, harddrive.partition[0], keyboard_language, mirror_regions)
 	else:
 		harddrive.partition[1].format('ext4')
-		perform_installation(harddrive.partition[1], harddrive.partition[0], keyboard_language)
+		perform_installation(harddrive.partition[1], harddrive.partition[0], keyboard_language, mirror_regions)
