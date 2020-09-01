@@ -7,8 +7,12 @@ def perform_installation(device, boot_partition, language, mirrors):
 	formatted and setup prior to entering this function.
 	"""
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
+		while archinstall.service_state('reflector') != 'dead':
+			time.sleep(0.25)
+			
+		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
 		if installation.minimal_installation():
-			installation.set_mirrors(mirrors)
+			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
@@ -46,7 +50,6 @@ archinstall.set_keyboard_language(keyboard_language)
 
 # Set which region to download packages from during the installation
 mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
-archinstall.use_mirrors(mirror_regions)
 
 harddrive = archinstall.select_disk(archinstall.all_disks())
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
