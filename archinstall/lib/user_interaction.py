@@ -38,12 +38,48 @@ def select_language(options, show_only_country_codes=True):
 		# I'm leaving "options" on purpose here.
 		# Since languages possibly contains a filtered version of
 		# all possible language layouts, and we might want to write
-		# for instance sv-latin1 (if we know that exists) without havnig to
+		# for instance sv-latin1 (if we know that exists) without having to
 		# go through the search step.
 		elif selected_language in options:
 			selected_language = options[options.index(selected_language)]
 		else:
 			RequirementError("Selected language does not exist.")
 		return selected_language
+
+	raise RequirementError("Selecting languages require a least one language to be given as an option.")
+
+def select_mirror_regions(mirrors, show_top_mirrors=True):
+	# TODO: Support multiple options and country ycodes, SE,UK for instance.
+	regions = sorted(list(regions.keys()))
+	selected_mirrors = {}
+
+	if len(regions) >= 1:
+		for index, region in enumerate(regionss):
+			print(f"{index}: {region}")
+
+		print(' -- You can enter ? or help to search for more regions --')
+		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
+		if selected_mirror.lower() in ('?', 'help'):
+			filter_string = input('Search for a region containing (example: "united"): ').strip().lower()
+			for region in mirrors:
+				if filter_string in region.lower():
+					selected_mirrors[region] = mirrors[region]
+
+			return selected_mirrors
+
+		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(languages)-1:
+			region = sorted(list(mirrors.keys()))[int(selected_mirror)]
+			selected_mirrors[region] = mirrors[region]
+		# I'm leaving "mirrors" on purpose here.
+		# Since region possibly contains a known region of
+		# all possible regions, and we might want to write
+		# for instance Sweden (if we know that exists) without having to
+		# go through the search step.
+		elif selected_mirror in mirrors:
+			selected_mirrors[selected_mirror] = mirrors[mirrors.index(selected_mirror)]
+		else:
+			RequirementError("Selected language does not exist.")
+		
+		return selected_mirrors
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
