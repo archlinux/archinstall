@@ -1,6 +1,35 @@
 import archinstall, getpass, time
 
-# Unmount and close previous runs
+def perform_installation(device, boot_partition):
+	"""
+	Performs the installation steps on a block device.
+	Only requirement is that the block devices are
+	formatted and setup prior to entering this function.
+	"""
+	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
+		if installation.minimal_installation():
+			installation.add_bootloader()
+
+			if len(packages) and packages[0] != '':
+				installation.add_additional_packages(packages)
+
+			if len(profile.strip()):
+				installation.install_profile(profile)
+
+			for user, password in users.items():
+				sudo = False
+				if len(root_pw.strip()) == 0:
+					sudo = True
+
+				installation.user_create(user, password, sudo=sudo)
+
+			if root_pw:
+				installation.user_set_pw('root', root_pw)
+
+			if len(aur.strip()):
+				installation.add_AUR_support()
+
+# Unmount and close previous runs (in case the installer is restarted)
 archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_errors=True)
 
@@ -9,6 +38,10 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_error
   Not until we're satisfied with what we want to install
   will we continue with the actual installation steps.
 """
+
+keyboard_language = archinstall.select_language(archinstall.list_keyboard_languages())
+archinstall.set_keyboard_language(keyboard_language)
+
 harddrive = archinstall.select_disk(archinstall.all_disks())
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -16,6 +49,7 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
 	break
+
 hostname = input('Desired hostname for the installation: ')
 if len(hostname) == 0: hostname = 'ArchInstall'
 
@@ -69,30 +103,10 @@ time.sleep(1)
 print(f' ! Formatting {harddrive} in 1...')
 time.sleep(1)
 
-def perform_installation(device, boot_partition):
-	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
-		if installation.minimal_installation():
-			installation.add_bootloader()
-
-			if len(packages) and packages[0] != '':
-				installation.add_additional_packages(packages)
-
-			if len(profile.strip()):
-				installation.install_profile(profile)
-
-			for user, password in users.items():
-				sudo = False
-				if len(root_pw.strip()) == 0:
-					sudo = True
-
-				installation.user_create(user, password, sudo=sudo)
-
-			if root_pw:
-				installation.user_set_pw('root', root_pw)
-
-			if len(aur.strip()):
-				installation.add_AUR_support()
-
+"""
+	Setup the blockdevice, filesystem (and optionally encryption).
+	Once that's done, we'll hand over to perform_installation()
+"""
 with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 	# Use partitioning helper to set up the disk partitions.
 	if disk_password:
@@ -106,6 +120,8 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
 	if disk_password:
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
+		# archinstall.luks2() encrypts the partition when entering the with context manager, and
+		# unlocks the drive so that it can be used as a normal block-device within archinstall.
 		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 			unlocked_device.format('btrfs')
 			
