@@ -11,7 +11,7 @@ mv archinstall.dist "archinstall-v${VERSION}-x86_64"
 tar -czvf "archinstall-v${VERSION}.tar.gz" "archinstall-v${VERSION}-x86_64"
 
 # makepkg -f
-# python3 setup.py sdist bdist_wheel
-# echo 'python3 -m twine upload dist/* && rm -rf dist/'
+python3 setup.py sdist bdist_wheel
+echo 'python3 -m twine upload dist/* && rm -rf dist/'
 
 rm -rf archinstall.egg-info/ build/ src/ pkg/ archinstall.build/ "archinstall-v${VERSION}-x86_64/"
