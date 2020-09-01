@@ -1,6 +1,6 @@
 import archinstall, getpass, time
 
-def perform_installation(device, boot_partition, language):
+def perform_installation(device, boot_partition, language, mirrors):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -8,6 +8,7 @@ def perform_installation(device, boot_partition, language):
 	"""
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if installation.minimal_installation():
+			installation.set_mirrors(mirrors)
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 

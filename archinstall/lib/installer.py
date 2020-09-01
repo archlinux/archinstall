@@ -5,6 +5,7 @@ from .disk import *
 from .general import *
 from .user_interaction import *
 from .profiles import Profile
+from .mirrors import *
 
 class Installer():
 	"""
@@ -81,6 +82,9 @@ class Installer():
 				log(f'Could not strap in packages: {pacstrap.exit_code}')
 		else:
 			log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
+
+	def set_mirrors(self, mirrors):
+		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-Pu'):
 		o = b''.join(sys_command(f'/usr/bin/genfstab -pU {self.mountpoint} >> {self.mountpoint}/etc/fstab'))
