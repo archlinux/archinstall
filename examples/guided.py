@@ -9,9 +9,10 @@ def perform_installation(device, boot_partition, language, mirrors):
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
 		if len(mirrors):
 			archinstall.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
-			while archinstall.service_state('reflector') != 'dead':
-				print(archinstall.service_state('reflector'))
+			while (status := archinstall.service_state('reflector')) != 'dead':
+				print([status], status != 'dead')
 				time.sleep(0.25)
+			print('Completed.')
 
 		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
 		if installation.minimal_installation():
