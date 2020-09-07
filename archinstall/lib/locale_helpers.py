@@ -7,7 +7,7 @@ def list_keyboard_languages(layout='qwerty'):
 	locale_dir = '/usr/share/kbd/keymaps/'
 
 	if not os.path.isdir(locale_dir):
-		raise RequirementError(f'Directory containing locales does not excist: {locale_dir}')
+		raise RequirementError(f'Directory containing locales does not exist: {locale_dir}')
 
 	for root, folders, files in os.walk(locale_dir):
 		# Since qwerty is under /i386/ but other layouts are
