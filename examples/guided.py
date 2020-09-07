@@ -37,9 +37,6 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if root_pw:
 				installation.user_set_pw('root', root_pw)
 
-			if len(aur.strip()) and aur.strip().lower() != 'no':
-				installation.add_AUR_support()
-
 # Unmount and close previous runs (in case the installer is restarted)
 archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_errors=True)
@@ -94,10 +91,6 @@ while 1:
 
 	users[new_user] = new_user_passwd
 	break
-
-aur = input('Would you like AUR support? (leave blank for no): ')
-if len(aur.strip()) and aur.lower() != 'no':
-	archinstall.log(' - AUR support provided by yay (https://aur.archlinux.org/packages/yay/)', bg='black', fg='white')
 
 profile = input('Any particular profile you want to install: ')
 packages = input('Additional packages aside from base (space separated): ').split(' ')
