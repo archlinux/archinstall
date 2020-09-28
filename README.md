@@ -1,8 +1,8 @@
 # <img src="https://github.com/Torxed/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
-The installer also doubles as a python library to access each individual installation step for customized installs.
+The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
 
-Pre-built ISO's can be found here which autostarts archinstall *(in a safe guided mode)*: https://archlinux.life/
+Pre-built ISO's can be found over at https://archlinux.life which autostarts archinstall *(in a safe guided mode)*.
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
  * archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
