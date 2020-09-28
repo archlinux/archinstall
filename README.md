@@ -5,7 +5,7 @@ The installer also doubles as a python library to access each individual install
 Pre-built ISO's can be found here which autostarts archinstall *(in a safe guided mode)*: https://archlinux.life/
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
- * ~~archinstall [documentation](#)~~ *(TBA)*
+ * archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
  * archinstall ISO's: https://archlinux.life/
  * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
  
