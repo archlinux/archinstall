@@ -17,6 +17,33 @@ def select_disk(dict_o_disks):
 
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
+def select_profile(options):
+	profiles = sorted(list(options))
+
+	if len(profiles) >= 1:
+		for index, profile in enumerate(profiles):
+			print(f"{index}: {profile}")
+
+		print(' -- The above list is pre-programmed profiles. --')
+		print(' -- They might make it easier to install things like desktop environments. --')
+		print(' -- (Leave blank to skip this next optional step) --')
+		selected_profile = input('Any particular pre-programmed profile you want to install: ')
+
+		#print(' -- You can enter ? or help to search for more profiles --')
+		#if selected_profile.lower() in ('?', 'help'):
+		#	filter_string = input('Search for layout containing (example: "sv-"): ')
+		#	new_options = search_keyboard_layout(filter_string)
+		#	return select_language(new_options)
+		if selected_profile.isdigit() and (pos := int(selected_profile)) <= len(profiles)-1:
+			selected_profile = profiles[pos]
+		elif selected_profile in options:
+			selected_profile = options[options.index(selected_profile)]
+		else:
+			RequirementError("Selected profile does not exist.")
+		return selected_profile
+
+	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
+
 def select_language(options, show_only_country_codes=True):
 	if show_only_country_codes:
 		languages = sorted([language for language in list(options) if len(language) == 2])

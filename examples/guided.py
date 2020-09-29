@@ -92,7 +92,8 @@ while 1:
 	users[new_user] = new_user_passwd
 	break
 
-profile = input('Any particular profile you want to install: ')
+profile = archinstall.select_profile(archinstall.list_profiles())
+
 packages = input('Additional packages aside from base (space separated): ').split(' ')
 
 
