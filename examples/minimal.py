@@ -28,5 +28,3 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
 				installation.user_create('anton', 'test')
 				installation.user_set_pw('root', 'toor')
-
-				installation.add_AUR_support()
