@@ -4,20 +4,20 @@ import archinstall
 
 AVAILABLE_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
-	# and sets are a list of packages to be installed
+	# and lists are a list of packages to be installed
 	'AMD / ATI' : {
-		'amd' : {'xf86-video-amdgpu'},
-		'ati' : {'xf86-video-ati'}
+		'amd' : ['xf86-video-amdgpu'],
+		'ati' : ['xf86-video-ati']
 	},
-	'intel' : {'xf86-video-intel'}
+	'intel' : ['xf86-video-intel'],
 	'nvidia' : {
-		'open source' : {'xf86-video-nouveau'},
-		'proprietary' : {'nvidia'}
+		'open source' : ['xf86-video-nouveau'],
+		'proprietary' : ['nvidia']
 	},
-	'mesa' : {'mesa'},
-	'fbdev' : {'xf86-video-fbdev'},
-	'vesa' : {'xf86-video-vesa'},
-	'vmware' : {'xf86-video-vmware'}
+	'mesa' : ['mesa'],
+	'fbdev' : ['xf86-video-fbdev'],
+	'vesa' : ['xf86-video-vesa'],
+	'vmware' : ['xf86-video-vmware']
 }
 
 def select_driver(options):
@@ -27,8 +27,6 @@ def select_driver(options):
 
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
-
-	# TODO: Add "lspci | grep -e VGA -e 3D" auto-detect-helpers?
 	"""
 	drivers = sorted(list(options))
 
@@ -39,7 +37,16 @@ def select_driver(options):
 		print(' -- The above list are supported graphic card drivers. --')
 		print(' -- You need to select (and read about) which one you need. --')
 
+		lspci = archinstall.sys_command(f'/usr/bin/lspci')
+		for line in lspci.trace_log.split(b'\r\n'):
+			if b' vga ' in line.lower():
+				if b'nvidia' in line.lower():
+					print(' ** nvidia card detected, suggested driver: nvidia **')
+				elif b'amd' in line.lower():
+					print(' ** AMD card detected, suggested driver: AMD / ATI **')
+
 		selected_driver = input('Select your graphics card driver: ')
+		initial_option = selected_driver
 
 		#print(' -- You can enter ? or help to search for more drivers --')
 		#if selected_driver.lower() in ('?', 'help'):
@@ -47,23 +54,24 @@ def select_driver(options):
 		#	new_options = search_keyboard_layout(filter_string)
 		#	return select_language(new_options)
 		if selected_driver.isdigit() and (pos := int(selected_driver)) <= len(drivers)-1:
-			selected_driver = drivers[pos]
+			selected_driver = options[drivers[pos]]
 		elif selected_driver in options:
 			selected_driver = options[options.index(selected_driver)]
 		else:
 			RequirementError("Selected driver does not exist.")
 
 		if type(selected_driver) == dict:
-			for index, driver_package_group in enumerate(selected_driver):
+			driver_options = sorted(list(selected_driver))
+			for index, driver_package_group in enumerate(driver_options):
 				print(f"{index}: {driver_package_group}")
 
-			selected_driver_package_group = input(f'Which driver-type do you want for {selected_driver}: ')
-			if selected_driver_package_group.isdigit() and (pos := int(selected_driver_package_group)) <= len(drivers)-1:
-				selected_driver_package_group = drivers[pos]
-			elif selected_driver_package_group in options:
-				selected_driver_package_group = options[options.index(selected_driver_package_group)]
+			selected_driver_package_group = input(f'Which driver-type do you want for {initial_option}: ')
+			if selected_driver_package_group.isdigit() and (pos := int(selected_driver_package_group)) <= len(driver_options)-1:
+				selected_driver_package_group = selected_driver[driver_options[pos]]
+			elif selected_driver_package_group in selected_driver:
+				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
 			else:
-				RequirementError(f"Selected driver-type does not exist for {selected_driver}.")
+				RequirementError(f"Selected driver-type does not exist for {initial_option}.")
 
 			return selected_driver_package_group
 
@@ -81,11 +89,9 @@ def _prep_function(*args, **kwargs):
 	print('You need to select which graphics card you\'re using.')
 	print('This in order to setup the required graphics drivers.')
 
-	__builtins__.__dict__['_gfx_driver'] = select_driver(AVAILABLE_DRIVERS)
+	__builtins__.__dict__['_gfx_driver_packages'] = select_driver(AVAILABLE_DRIVERS)
 
 	return True
-
-_prep_function()
 
 # installation.add_additional_packages("xorg-server xorg-xinit")
 

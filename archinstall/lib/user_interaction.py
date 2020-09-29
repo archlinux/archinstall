@@ -1,6 +1,9 @@
 from .exceptions import *
 from .locale_helpers import search_keyboard_layout
 
+## TODO: Some inconsistencies between the selection processes.
+##       Some return the keys from the options, some the values?
+
 def select_disk(dict_o_disks):
 	drives = sorted(list(dict_o_disks.keys()))
 	if len(drives) >= 1:
