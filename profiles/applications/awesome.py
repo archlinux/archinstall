@@ -5,9 +5,15 @@ installation.add_additional_packages("awesome xorg-server xorg-xrandr xorg-xinit
 with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'r') as xinitrc:
 	xinitrc_data = xinitrc.read()
 
-xinitrc_data = xinitrc_data.replace('twm &', '# twm &').replace('\nxclock ', '\n# xclock').replace('exec xterm', '# exec xterm')
-xinitrc_data += '\nxscreensaver -no-splash &\n'
+for line in xinitrc_data.split('\n'):
+	if 'twm &' in line: xinitrc_data.replace(line, f"# {line}")
+	if 'xclock' in line: xinitrc_data.replace(line, f"# {line}")
+	if 'xterm' in line: xinitrc_data.replace(line, f"# {line}")
+
+xinitrc_data += '\n'
+xinitrc_data += 'xscreensaver -no-splash &\n'
 xinitrc_data += 'exec awesome\n'
+
 with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
 	xinitrc.write(xinitrc_data)
 
