@@ -19,7 +19,7 @@ We'll use the later for this example as it's less of a process to explain.
 
 Setup pacman to use https://archlinux.life as a mirror by modifying `/etc/pacman.conf` to contain the following:
 
-.. code-block::
+.. code-block:: console
 
     [archlife]
     Server = https://archlinux.life/$repo/os/$arch
@@ -27,7 +27,7 @@ Setup pacman to use https://archlinux.life as a mirror by modifying `/etc/pacman
 
 You can now update your mirror-list and install `archinstall`.
 
-.. code-block::
+.. code-block:: console
 
     sudo pacman -Syy
     sudo pacman -S archinstall
@@ -39,13 +39,13 @@ The `source <https://github.com/Torxed/archinstall>`_ contains a binary `PKGBUIL
 
 Once you've obtained the `PKGBUILD`, building it is pretty straight forward.
 
-.. code-block::
+.. code-block:: console
 
     makepkg -s
 
 Which should produce a `archinstall-X.x.z-1.pkg.tar.zst` that can be installed using:
 
-.. code-block::
+.. code-block:: console
 
     sudo pacman -U archinstall-X.x.z-1.pkg.tar.zst
 
@@ -59,7 +59,7 @@ Manual compilation
 You can compile the source manually without using a custom mirror or the `PKGBUILD` that is shipped.
 Simply clone or download the source, and while standing in the cloned folder `./archinstall`, execute:
 
-.. code-block::
+.. code-block:: console
 
     nuitka3  --standalone --show-progress archinstall
 

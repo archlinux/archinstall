@@ -15,7 +15,7 @@ As an example we'll use the `guided <https://github.com/Torxed/archinstall/blob/
 To run the `guided` installed, all you have to do *(after installing or compiling the binary)*, is run:
 
 
-.. code-block::
+.. code-block:: console
 
     ./archinstall guided
 

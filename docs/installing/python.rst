@@ -15,13 +15,13 @@ Using PyPi
 The basic concept of PyPi applies using `pip`.
 Either as a global library:
 
-.. code-block::
+.. code-block:: console
 
     sudo pip install archinstall
 
 Or as a user module:
 
-.. code-block::
+.. code-block:: console
 
     pip --user install archinstall
 
@@ -35,7 +35,7 @@ Manual installation
 You can either download the github repo as a zip archive.
 Or you can clone it, we'll clone it here but both methods work the same.
 
-.. code-block::
+.. code-block:: console
 
     git clone https://github.com/Torxed/archinstall
 
@@ -47,6 +47,6 @@ Either you can move the folder into your project and simply do
 
 Or you can use `setuptools <https://pypi.org/project/setuptools/>`_ to install it into the module path.
 
-.. code-block::
+.. code-block:: console
 
     sudo python setup.py install

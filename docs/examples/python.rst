@@ -48,7 +48,7 @@ Calling a module
 
 Assuming you've followed the example in `Creating a script`_, you can now safely call it with:
 
-.. code-block::
+.. code-block:: console
     python -m archinstall test_installer
 
 This should now print all available drives on your system.
