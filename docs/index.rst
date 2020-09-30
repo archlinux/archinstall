@@ -6,6 +6,8 @@ python-archinstall Documentation
 | 
 | Here's a `demo <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_ using the guided installer.
 
+.. warning::
+    This installer currently requires that your machine has EFI-mode enabled.
 
 Some of the features of Archinstall are:
 
@@ -17,20 +19,27 @@ Some of the features of Archinstall are:
 
 .. toctree::
    :maxdepth: 3
-   :caption: Running on ISO
+   :caption: Running the installer
 
    installing/guided
 
 .. toctree::
    :maxdepth: 3
-   :caption: Installing
+   :caption: Getting help
+
+   help/discord
+   help/issues
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Installing the library
 
    installing/python
    installing/binary
 
 .. toctree::
    :maxdepth: 3
-   :caption: Usage & Examples
+   :caption: Using the library
 
    examples/python
    examples/binary
@@ -42,13 +51,6 @@ Some of the features of Archinstall are:
 
    programming_guide/requirements
    programming_guide/basic_concept
-
-.. toctree::
-   :maxdepth: 3
-   :caption: Getting help
-
-   help/discord
-   help/issues
 
 .. toctree::
    :maxdepth: 3

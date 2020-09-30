@@ -6,6 +6,9 @@ Python library
 Archinstall shipps on `PyPi <https://pypi.org/>`_ as `archinstall <pypi.org/project/archinstall/>`_.
 But the library can be installed manually as well.
 
+.. warning::
+    This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
+
 Using PyPi
 ----------
 

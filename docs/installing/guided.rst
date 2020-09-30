@@ -5,6 +5,8 @@ Guided installation
 
 This is the installer you'll encounter on the *(currently)* inofficial Arch Linux Archinstall ISO found on `archlinux.life <https://archlinux.life>`_.
 
+You'll obviously need a physical machine or a virtual machine and have a basic understanding of how ISO-files work, where and how to mount them in order to boot the installer.
+
 It runs you through a set of questions in order to determine what the system should look like. Then the guided installer performs the required installation steps for you. Some additional steps might show up depending on your chosen input at some of the steps - those steps should be self explanatory and won't be covered here.
 
 .. note::
@@ -102,3 +104,8 @@ Some additional packages can be installed if need be. This step allows you to li
 
 .. warning::
     When selecting *(or skipping)* this step. The installation will begin and your selected hard drive will be wiped after a 5 second countdown.
+
+Post installation
+-----------------
+
+Once the installation is complete, green text should appear saying that it's safe to `reboot`, which is also the command you use to reboot.
