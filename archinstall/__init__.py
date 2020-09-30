@@ -9,3 +9,4 @@ from .lib.mirrors import *
 from .lib.networking import *
 from .lib.locale_helpers import *
 from .lib.services import *
+from .lib.packages import *

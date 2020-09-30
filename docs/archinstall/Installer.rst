@@ -1,7 +1,7 @@
 .. _archinstall.Installer:
 
-Installer
-=========
+archinstall.Installer
+=====================
 
 The installer is the main class for accessing a installation-instance.
 You can look at this class as the installation you have or will perform.
