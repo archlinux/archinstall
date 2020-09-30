@@ -2,6 +2,9 @@
 
 import archinstall
 
+# Install dependency profiles
+archinstall.install_profile('xorg')
+
 arguments = {
 	'keyboard_layout' : 'sv-latin1',
 	"editor" : "nano",

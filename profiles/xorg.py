@@ -1,6 +1,6 @@
 # A desktop environemtn using "Awesome" window manager.
 
-import archinstall
+import archinstall, os
 
 AVAILABLE_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
@@ -48,6 +48,8 @@ def select_driver(options):
 		selected_driver = input('Select your graphics card driver: ')
 		initial_option = selected_driver
 
+		# Disabled search for now, only a few profiles exist anyway
+		#
 		#print(' -- You can enter ? or help to search for more drivers --')
 		#if selected_driver.lower() in ('?', 'help'):
 		#	filter_string = input('Search for layout containing (example: "sv-"): ')
@@ -89,18 +91,24 @@ def _prep_function(*args, **kwargs):
 	print('You need to select which graphics card you\'re using.')
 	print('This in order to setup the required graphics drivers.')
 
-	__builtins__.__dict__['_gfx_driver_packages'] = select_driver(AVAILABLE_DRIVERS)
+	__builtins__['_gfx_driver_packages'] = select_driver(AVAILABLE_DRIVERS)
 
 	return True
 
-# installation.add_additional_packages("xorg-server xorg-xinit")
+# Absolute import, not conventional import.
+# Ensures that this code only gets executed if executed
+# through importlib.util.spec_from_file_location("/somewhere/xorg.py")
+if os.path.basename(__name__) == 'xorg.py':
+	print('This should not be printed!')
 
-# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
-# 	X11.write('setxkbmap se\n')
+	installation.add_additional_packages("xorg-server xorg-xinit")
 
-# with open(f'{installation.mountpoint}/etc/vconsole.conf', 'a') as vconsole:
-# 	vconsole.write('KEYMAP={keyboard_layout}\n'.format(**arguments))
-# 	vconsole.write('FONT=lat9w-16\n')
+	# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
+	# 	X11.write('setxkbmap se\n')
 
-# awesome = archinstall.Application(installation, 'awesome')
-# awesome.install()
+	# with open(f'{installation.mountpoint}/etc/vconsole.conf', 'a') as vconsole:
+	# 	vconsole.write('KEYMAP={keyboard_layout}\n'.format(**arguments))
+	# 	vconsole.write('FONT=lat9w-16\n')
+
+	# awesome = archinstall.Application(installation, 'awesome')
+	# awesome.install()

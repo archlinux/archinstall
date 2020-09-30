@@ -82,8 +82,8 @@ class Profile():
 
 		return None
 
-	def py_exec_mock(self):
-		spec.loader.exec_module(imported)
+#	def py_exec_mock(self):
+#		spec.loader.exec_module(imported)
 
 	def load_instructions(self):
 		if (absolute_path := self.path):
