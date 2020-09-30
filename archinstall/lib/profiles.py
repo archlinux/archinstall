@@ -47,7 +47,7 @@ class Imported():
 
 	def __enter__(self, *args, **kwargs):
 		self.spec.loader.exec_module(self.imported)
-		return self
+		return self.imported
 
 	def __exit__(self, *args, **kwargs):
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager

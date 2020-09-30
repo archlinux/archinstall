@@ -94,7 +94,7 @@ while 1:
 
 while 1:
 	profile = archinstall.select_profile(archinstall.list_profiles())
-	if profile != str: # Got a imported profile
+	if type(profile) != str: # Got a imported profile
 		if not profile[1]._prep_function():
 			archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
 			continue

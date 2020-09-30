@@ -11,7 +11,7 @@ def _prep_function(*args, **kwargs):
 	"""
 
 	profile = archinstall.Profile(None, 'xorg')
-	with profile.load_instructions() as imported:
+	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
 			return imported._prep_function()
 		else:
