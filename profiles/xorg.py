@@ -93,13 +93,19 @@ def _prep_function(*args, **kwargs):
 
 	__builtins__['_gfx_driver_packages'] = select_driver(AVAILABLE_DRIVERS)
 
+	# TODO: Add language section and/or merge it with the locale selected
+	#       earlier in for instance guided.py installer.
+
 	return True
 
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("xorg", "/somewhere/xorg.py")
 # or through conventional import xorg
 if __name__ == 'xorg':
-	installation.add_additional_packages("xorg-server xorg-xinit")
+	try:
+		installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+	except:
+		installation.add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
 
 	# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
 	# 	X11.write('setxkbmap se\n')
