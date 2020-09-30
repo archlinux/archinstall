@@ -42,7 +42,7 @@ if __name__ == 'kde':
 				bash_profile.write('fi\n')
 		break
 
-	with open(f'{mountpoint}/etc/skel/.bash_profile', 'a') as bash_profile:
+	with open(f'{installation.mountpoint}/etc/skel/.bash_profile', 'a') as bash_profile:
 		bash_profile.write('\n')
 		bash_profile.write('if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then\n')
 		bash_profile.write('  exec startx\n') # Possibly do 'startx' only to remain logged in if KDE crashes.
