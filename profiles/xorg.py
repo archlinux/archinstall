@@ -95,12 +95,10 @@ def _prep_function(*args, **kwargs):
 
 	return True
 
-# Absolute import, not conventional import.
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("/somewhere/xorg.py")
-if os.path.basename(__name__) == 'xorg.py':
-	print('This should not be printed!')
-
+# through importlib.util.spec_from_file_location("xorg", "/somewhere/xorg.py")
+# or through conventional import xorg
+if __name__ == 'xorg':
 	installation.add_additional_packages("xorg-server xorg-xinit")
 
 	# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:

@@ -92,10 +92,18 @@ while 1:
 	users[new_user] = new_user_passwd
 	break
 
-profile = archinstall.select_profile(archinstall.list_profiles())
+while 1:
+	profile = archinstall.select_profile(archinstall.list_profiles())
+	if profile != str: # Got a imported profile
+		if not profile[1]._prep_function():
+			archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
+			continue
+		profile = profile[0]._path # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
+		break
+	else:
+		break
 
 packages = input('Additional packages aside from base (space separated): ').split(' ')
-
 
 """
 	Issue a final warning before we continue with something un-revertable.

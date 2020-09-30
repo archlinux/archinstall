@@ -88,9 +88,10 @@ class Profile():
 	def load_instructions(self):
 		if (absolute_path := self.path):
 			if os.path.splitext(absolute_path)[1] == '.py':
-				spec = importlib.util.spec_from_file_location(absolute_path, absolute_path)
+				namespace = os.path.splitext(os.path.basename(absolute_path))[0]
+				spec = importlib.util.spec_from_file_location(namespace, absolute_path)
 				imported = importlib.util.module_from_spec(spec)
-				sys.modules[os.path.basename(absolute_path)] = imported
+				sys.modules[namespace] = imported
 				return Imported(spec, imported)
 			else:
 				raise ProfileError(f'Extension {os.path.splitext(absolute_path)[1]} is not a supported profile model. Only .py is supported.')

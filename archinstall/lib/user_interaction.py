@@ -1,4 +1,5 @@
 from .exceptions import *
+from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
 
 ## TODO: Some inconsistencies between the selection processes.
@@ -43,6 +44,18 @@ def select_profile(options):
 			selected_profile = options[options.index(selected_profile)]
 		else:
 			RequirementError("Selected profile does not exist.")
+
+		profile = Profile(None, selected_profile)
+		with open(profile.path, 'r') as source:
+			source_data = source.read()
+
+			# Some crude safety checks, make sure the imported profile has
+			# a __name__ check and if so, check if it's got a _prep_function()
+			# we can call to ask for more user input.
+			if '__name__' in source_data and '_prep_function' in source_data
+				with profile.load_instructions() as imported:
+					if hasattr(imported, '_prep_function'):
+						return profile, imported
 		return selected_profile
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
