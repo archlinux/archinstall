@@ -36,7 +36,7 @@ def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
 					if first_line[0] == '#':
 						description = first_line[1:].strip()
 
-				cache[file[:-2]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
+				cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
 		break
 	return cache
 
