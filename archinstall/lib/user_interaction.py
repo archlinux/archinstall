@@ -125,7 +125,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		# for instance Sweden (if we know that exists) without having to
 		# go through the search step.
 		elif selected_mirror in mirrors:
-			selected_mirrors[selected_mirror] = mirrors[mirrors.index(selected_mirror)]
+			selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		else:
 			RequirementError("Selected region does not exist.")
 		
