@@ -85,10 +85,11 @@ class Profile():
 #	def py_exec_mock(self):
 #		spec.loader.exec_module(imported)
 
-	def load_instructions(self):
+	def load_instructions(self, namespace=None):
 		if (absolute_path := self.path):
 			if os.path.splitext(absolute_path)[1] == '.py':
-				namespace = os.path.splitext(os.path.basename(absolute_path))[0]
+				if not namespace:
+					namespace = os.path.splitext(os.path.basename(absolute_path))[0]
 				spec = importlib.util.spec_from_file_location(namespace, absolute_path)
 				imported = importlib.util.module_from_spec(spec)
 				sys.modules[namespace] = imported
