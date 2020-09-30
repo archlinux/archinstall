@@ -14,10 +14,10 @@ with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
 with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as awesome_rc_lua:
 	awesome = awesome_rc_lua.read()
 
-awesome = awesome.replace('xterm', 'xterm -ls -xrm "XTerm*selectToClipboard: true"')
-awesome = awesome.replace('{ "open terminal", terminal, ','{ "Chromium", "chromium" },\n    "open terminal", terminal, ')
-awesome = awesome.replace('{ "open terminal", terminal, ', '{ "File handler", "nemo" },\n    "open terminal", terminal, ')
-awesome = awesome.replace('\nglobalkeys = gears.table.join(', 'globalkeys = gears.table.join(\n    awful.key({ modkey,    }, \"l\",  function() awful.spawn(\"xscreensaver-command -lock &\") end),\n')
+awesome = awesome.replace('xterm', 'xterm -ls -xrm \\"XTerm*selectToClipboard: true\\"')
+#awesome = awesome.replace('{ "open terminal", terminal, ','{ "Chromium", "chromium" },\n    "open terminal", terminal, ')
+#awesome = awesome.replace('{ "open terminal", terminal, ', '{ "File handler", "nemo" },\n    "open terminal", terminal, ')
+awesome = awesome.replace('\nglobalkeys = gears.table.join(', 'globalkeys = gears.table.join(\n    awful.key({ modkey,    }, \"l\",  function() awful.spawn(\"xscreensaver-command -lock &\") end,\n')
 # "awk -i inplace -v RS='' '{gsub(/awful.key\\({ modkey,.*?}, \"Tab\",.*?\"client\"}\\),/, \"awful.key({ modkey,      }, \"Tab\",\n      function ()\n        awful.client.focus.byidx(-1)\n        if client.focus then\n          client.focus:raise()\n        end\n      end),\n    awful.key({ modkey, \"Shift\"    }, \"Tab\",\n    function ()\n      awful.client.focus.byidx(1)\n        if client.focus then\n           client.focus.raise()\n        end\n      end),\"); print}' {installation.mountpoint}/etc/xdg/awesome/rc.lua" : {"no-chroot" : true},
 
 with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as awesome_rc_lua:
