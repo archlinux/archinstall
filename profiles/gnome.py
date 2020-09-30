@@ -20,9 +20,9 @@ def _prep_function(*args, **kwargs):
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("awesome", "/somewhere/awesome.py")
-# or through conventional import awesome
-if __name__ == 'awesome':
+# through importlib.util.spec_from_file_location("gnome", "/somewhere/gnome.py")
+# or through conventional import gnome
+if __name__ == 'gnome':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
