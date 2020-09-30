@@ -52,8 +52,12 @@ def select_profile(options):
 			# Some crude safety checks, make sure the imported profile has
 			# a __name__ check and if so, check if it's got a _prep_function()
 			# we can call to ask for more user input.
+			#
+			# If the requirements are met, import with .py in the namespace to not
+			# trigger a traditional:
+			#     if __name__ == 'moduleName'
 			if '__name__' in source_data and '_prep_function' in source_data:
-				with profile.load_instructions() as imported:
+				with profile.load_instructions(namespace=f"{selected_profile}.py") as imported:
 					if hasattr(imported, '_prep_function'):
 						return profile, imported
 
