@@ -9,6 +9,7 @@ license=('GPLv3')
 provides=("${pkgname}")
 md5sums=('SKIP')
 arch=('x86_64')
+source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
 depends=('python-archinstall')
  
 package() {

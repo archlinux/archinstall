@@ -16,3 +16,4 @@ SAFETY_LOCK
 **/**archinstall-v*/
 **/**.pkg.*.xz
 **/**archinstall-*.tar.gz
+**/**.zst
