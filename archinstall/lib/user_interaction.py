@@ -6,6 +6,16 @@ from .locale_helpers import search_keyboard_layout
 ##       Some return the keys from the options, some the values?
 
 def select_disk(dict_o_disks):
+	"""
+	Asks the user to select a harddrive from the `dict_o_disks` selection.
+	Usually this is combined with :ref:`archinstall.list_drives`.
+
+	:param dict_o_disks: A `dict` where keys are the drive-name, value should be a dict containing drive information.
+	:type dict_o_disks: dict
+
+	:return: The name/path (the dictionary key) of the selected drive
+	:rtype: str
+	"""
 	drives = sorted(list(dict_o_disks.keys()))
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
@@ -22,6 +32,16 @@ def select_disk(dict_o_disks):
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 def select_profile(options):
+	"""
+	Asks the user to select a profile from the `options` dictionary parameter.
+	Usually this is combined with :ref:`archinstall.list_profiles`.
+
+	:param options: A `dict` where keys are the profile name, value should be a dict containing profile information.
+	:type options: dict
+
+	:return: The name/dictionary key of the selected profile
+	:rtype: str
+	"""
 	profiles = sorted(list(options))
 
 	if len(profiles) >= 1:
@@ -66,6 +86,19 @@ def select_profile(options):
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
 def select_language(options, show_only_country_codes=True):
+	"""
+	Asks the user to select a language from the `options` dictionary parameter.
+	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
+
+	:param options: A `dict` where keys are the language name, value should be a dict containing language information.
+	:type options: dict
+
+	:param show_only_country_codes: Filters out languages that are not len(lang) == 2. This to limit the number of results from stuff like dvorak and x-latin1 alternatives.
+	:type show_only_country_codes: bool
+
+	:return: The language/dictionary key of the selected language
+	:rtype: str
+	"""
 	if show_only_country_codes:
 		languages = sorted([language for language in list(options) if len(language) == 2])
 	else:
@@ -97,6 +130,20 @@ def select_language(options, show_only_country_codes=True):
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
 def select_mirror_regions(mirrors, show_top_mirrors=True):
+	"""
+	Asks the user to select a mirror or region from the `mirrors` dictionary parameter.
+	Usually this is combined with :ref:`archinstall.list_mirrors`.
+
+	:param mirrors: A `dict` where keys are the mirror region name, value should be a dict containing mirror information.
+	:type mirrors: dict
+
+	:param show_top_mirrors: Will limit the list to the top 10 fastest mirrors based on rank-mirror *(Currently not implemented but will be)*.
+	:type show_top_mirrors: bool
+
+	:return: The dictionary information about a mirror/region.
+	:rtype: dict
+	"""
+
 	# TODO: Support multiple options and country ycodes, SE,UK for instance.
 	regions = sorted(list(mirrors.keys()))
 	selected_mirrors = {}
