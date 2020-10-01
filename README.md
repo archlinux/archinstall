@@ -88,7 +88,6 @@ This installer will perform the following:
  * Installs and configures a bootloader to partition 0.
  * Install additional packages *(nano, wget, git)*
  * Installs a network-profile called [workstation](https://github.com/Torxed/archinstall/blob/master/profiles/workstation.json) *(more on network profiles in the docs)*
- * Adds AUR support by compiling and installing [yay](https://github.com/Jguer/yay)
 
 > **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
