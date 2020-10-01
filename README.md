@@ -15,7 +15,7 @@ Pre-built ISO's can be found over at https://archlinux.life which autostarts arc
 
     # curl -L https://archlinux.life/bin/archinstall > archinstall.tar.gz
     # tar xvzf archinstall.tar.gz
-    # cd archinstall-v2.0.4
+    # cd archinstall-v2.0.5
     # chmod +x archinstall
     # ./archinstall
 
@@ -33,9 +33,9 @@ But this will utilize `pacman` to install the pre-compiled binary from above and
 
 ## Install Python on Live-CD and run manually:
 
-    # wget https://github.com/Torxed/archinstall/archive/v2.0.4.tar.gz
-    # tar xvzf v2.0.4.tar.gz
-    # cd archinstall-2.0.4
+    # wget https://github.com/Torxed/archinstall/archive/v2.0.5.tar.gz
+    # tar xvzf v2.0.5.tar.gz
+    # cd archinstall-2.0.5
     # pacman -S --noconfirm python pip
     python examples/guided.py
 
