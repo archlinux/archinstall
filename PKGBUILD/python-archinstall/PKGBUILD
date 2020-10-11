@@ -11,7 +11,7 @@ md5sums=('SKIP')
 arch=('x86_64')
 source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
 depends=('python>=3.8')
-#optdepends=('python-pip: Adds pip version handling and management.')
+optdepends=('pyttsx3: Adds text-to-speach support for log/screen output.')
 
 build() {
 	cd "archinstall-${pkgver}"
