@@ -11,46 +11,25 @@ Pre-built ISO's can be found over at https://archlinux.life which autostarts arc
 
 # Installation & Usage
 
-## Run as stand-alone binary on Live-CD
+    $ sudo pip install archinstall
 
-    # curl -L https://archlinux.life/bin/archinstall > archinstall.tar.gz
-    # tar xvzf archinstall.tar.gz
-    # cd archinstall-v2.0.5
-    # chmod +x archinstall
-    # ./archinstall
+Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
+Or run the pre-compiled binary attached in every release as `archinstall-v[ver].tar.gz`.
 
-This downloads and runs a *compiled (using nuitka3)* version of the project.<br>
-It will guide you through all the installation steps.
+There's also `PKGBUILD`'s for all the above scenarios.
+And they're also availale as Arch Linux packages over at unofficial mirror [https://archlinux.life](https://archlinux.life/).
 
-## Install with `pacman` on Live-CD
+## Running the [guided](examples/guided.py) installer
 
-    # curl -L https://archlinux.life/bin/archinstall.xz > archinstall.pkg.tar.xz
-    # pacman -U archinstall.pkg.tar.xz
-    # archinstall
+Assuming you're on a Arch Linux live-ISO and booted into EFI mode.
 
-This requires that the RAM and squashfs on your machine is sufficient for an installation.<br>
-But this will utilize `pacman` to install the pre-compiled binary from above and place archinstall in `$PATH`.
-
-## Install Python on Live-CD and run manually:
-
-    # wget https://github.com/Torxed/archinstall/archive/v2.0.5.tar.gz
-    # tar xvzf v2.0.5.tar.gz
-    # cd archinstall-2.0.5
-    # pacman -S --noconfirm python pip
-    python examples/guided.py
-
-This assumes the same criteria as the `pacman` installation. It will also guide you through a basic installation.
-
-## Install using `pip` and run as a Python module:
-
-    # pip install archinstall
     # python -m archinstall guided
 
-This assumes tho that `python >= 3.8` and `pip` is present *(not the case on the default Arch Linux ISO)*, see above for pre-built ISO's containing Python+pip or follow the [docs](wiki/) to see how to build an ISO yourself.
+# Scripting your own installation
 
-## Scripting an installation to put on a ISO media
+You could just copy [guided.py](examples/guided.py) as a starting point.
 
-Assuming you're building your own ISO and want to create an automated install process.<br>
+But assuming you're building your own ISO and want to create an automated install process, or you want to install virtual machines on to local disk images.<br>
 This is probably what you'll need, a [minimal example](examples/main_example.py) of how to install using archinstall as a Python library.
 
 ```python
