@@ -93,7 +93,3 @@ You can also run a pre-built ISO with pip and python
 and once inside, just do
 
     # python -m archlinux guided
-
-## End note
-
-![description](https://github.com/Torxed/archinstall/raw/master/docs/description.jpg)
