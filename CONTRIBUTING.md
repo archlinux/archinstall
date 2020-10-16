@@ -40,4 +40,4 @@ Also, do not squash your commits after you have submitted a pull request, as thi
 At present the core developers are (alphabetically):
 
  * Anton Hvornum (@Torxed)
- * jaybent (@jaybent)
+ * Jerker Bengtsson (@jaybent)
