@@ -5,6 +5,34 @@ from .locale_helpers import search_keyboard_layout
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
 
+def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
+	"""
+	A generic select function that does not output anything
+	other than the options and their indexs. As an example:
+
+	generic_select(["first", "second", "third option"])
+	1: first
+	2: second
+	3: third option
+	"""
+
+	if type(options) == dict: options = list(options)
+	if sort: options = sorted(list(options))
+	if len(options) <= 0: raise RequirementError('generic_select() requires at least one option to operate.')
+
+	for index, option in enumerate(options):
+		print(f"{index}: {option}")
+
+	selected_option = input(input_text)
+	if selected_option.isdigit():
+		selected_option = options[int(selected_option)]
+	elif selected_option in options:
+		pass # We gave a correct absolute value
+	else:
+		raise RequirementError(f'Selected option "{selected_option}" does not exist in available options: {options}')
+	
+	return selected_option
+
 def select_disk(dict_o_disks):
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.

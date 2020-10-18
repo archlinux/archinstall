@@ -1,5 +1,4 @@
 import sys
-from .tts import TTS
 
 # Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
 # And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
@@ -45,6 +44,3 @@ def log(*args, **kwargs):
 		string = stylize_output(string, **kwargs)
 
 	print(string)
-	with TTS() as tts_instance:
-		if tts_instance.is_available:
-			tts_instance.speak(string.replace('-', '').strip().lstrip())
