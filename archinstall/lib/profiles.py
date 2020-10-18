@@ -61,6 +61,9 @@ class Profile():
 		self._cache = None
 		self.args = args
 
+	def __dump__(self, *args, **kwargs):
+		return {'path' : self._path}
+
 	def __repr__(self, *args, **kwargs):
 		return f'Profile({self._path} <"{self.path}">)'
 
