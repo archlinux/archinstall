@@ -17,12 +17,6 @@ If this pull-request fixes an issue or a bug, please mention the issues with the
 If possible, mention any tests you have made with the current code base included in the pull-requests.<br>
 Any core-developer will also run tests, but this helps speed things up. Below is a template that can be used:
 
-```
-**Test Configuration**:
-* Hardware:
-* Specific steps:
-```
-
 As an example:
 
 **Test Configuration**:
