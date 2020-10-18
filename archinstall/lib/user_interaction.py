@@ -25,8 +25,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	selected_option = input(input_text)
 	if selected_option.isdigit():
-		selected_option = dict_o_disks[int(selected_option)-1]
-	elif selected_option in dict_o_disks:
+		selected_option = options[int(selected_option)-1]
+	elif selected_option in options:
 		pass # We gave a correct absolute value
 	else:
 		raise RequirementError(f'Selected option "{selected_option}" does not exist in available options: {options}')
