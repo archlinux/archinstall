@@ -183,6 +183,8 @@ for i in range(5, 0, -1):
 		SIG_TRIGGER = False
 		signal.signal(signal.SIGINT, sig_handler)
 print()
+signal.signal(signal.SIGINT, kill_handler)
+
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
 	Once that's done, we'll hand over to perform_installation()
