@@ -1,6 +1,5 @@
 import archinstall
 import getpass, time, json, sys, signal
-from select import epoll, EPOLLIN
 
 """
 This signal-handler chain (and global variable)
@@ -166,8 +165,6 @@ print()
 
 print(f' ! Formatting {harddrive} in ', end='')
 
-poller = epoll()
-poller.register(sys.stdin.fileno(), EPOLLIN)
 for i in range(5, 0, -1):
 	print(f"{i}", end='')
 
@@ -176,7 +173,7 @@ for i in range(5, 0, -1):
 		time.sleep(0.25)
 		print(".", end='')
 
-	if list(poller.poll(0.25)) or SIG_TRIGGER:
+	if SIG_TRIGGER:
 		abort = input('\nDo you really want to abort (y/n)? ')
 		if abort.strip() != 'n':
 			exit(0)
