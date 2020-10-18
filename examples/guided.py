@@ -24,7 +24,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if len(packages) and packages[0] != '':
 				installation.add_additional_packages(packages)
 
-			if len(profile.strip()):
+			if profile and len(profile.strip()):
 				installation.install_profile(profile)
 
 			for user, password in users.items():
