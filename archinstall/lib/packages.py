@@ -1,6 +1,6 @@
 import urllib.request, urllib.parse
 import ssl, json
-from .lib.exceptions import *
+from .exceptions import *
 
 BASE_URL = 'https://www.archlinux.org/packages/search/json/?name={package}'
 
