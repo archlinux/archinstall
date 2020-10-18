@@ -1,5 +1,6 @@
 import urllib.request, urllib.parse
 import ssl, json
+from .lib.exceptions import *
 
 BASE_URL = 'https://www.archlinux.org/packages/search/json/?name={package}'
 
@@ -25,3 +26,18 @@ def find_packages(*names):
 	for package in names:
 		result[package] = find_package(package)
 	return result
+
+def validate_package_list(packages :list):
+	"""
+	Validates a list of given packages.
+	Raises `RequirementError` if one or more packages are not found.
+	"""
+	invalid_packages = []
+	for package in packages:
+		if not find_package(package)['results']:
+			invalid_packages.append(package)
+	
+	if invalid_packages:
+		raise RequirementError(f"Invalid package names: {invalid_packages}")
+
+	return True
