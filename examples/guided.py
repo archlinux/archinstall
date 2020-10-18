@@ -115,7 +115,7 @@ while 1:
 	try:
 		if packages and archinstall.validate_package_list(packages):
 			break
-	except RequirementError as e:
+	except archinstall.RequirementError as e:
 		print(e)
 
 # TODO: Print a summary here of all the options chosen.
