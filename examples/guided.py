@@ -1,5 +1,20 @@
 import archinstall
-import getpass, time, json, sys
+import getpass, time, json, sys, signal
+from select import epoll, EPOLLIN
+
+"""
+This signal-handler chain (and global variable)
+is used to trigger the "Are you sure you want to abort?" question.
+"""
+SIG_TRIGGER = False
+def kill_handler(sig, frame):
+	print()
+	exit(0)
+def sig_handler(sig, frame):
+	global SIG_TRIGGER
+	SIG_TRIGGER = True
+	signal.signal(signal.SIGINT, kill_handler)
+signal.signal(signal.SIGINT, sig_handler)
 
 def perform_installation(device, boot_partition, language, mirrors):
 	"""
@@ -148,7 +163,11 @@ print()
 	Issue a final warning before we continue with something un-revertable.
 	We mention the drive one last time, and count from 5 to 0.
 """
+
 print(f' ! Formatting {harddrive} in ', end='')
+
+poller = epoll()
+poller.register(sys.stdin.fileno(), EPOLLIN)
 for i in range(5, 0, -1):
 	print(f"{i}", end='')
 
@@ -156,6 +175,16 @@ for i in range(5, 0, -1):
 		sys.stdout.flush()
 		time.sleep(0.25)
 		print(".", end='')
+
+	if list(poller.poll(0.25)) or SIG_TRIGGER:
+		abort = input('\nDo you really want to abort (y/n)? ')
+		if abort.strip() != 'n':
+			exit(0)
+
+		if SIG_TRIGGER is False:
+			sys.stdin.read()
+		SIG_TRIGGER = False
+		signal.signal(signal.SIGINT, sig_handler)
 print()
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
