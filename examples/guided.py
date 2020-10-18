@@ -13,6 +13,7 @@ def sig_handler(sig, frame):
 	global SIG_TRIGGER
 	SIG_TRIGGER = True
 	signal.signal(signal.SIGINT, kill_handler)
+original_sigint_handler = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, sig_handler)
 
 def perform_installation(device, boot_partition, language, mirrors):
@@ -183,7 +184,7 @@ for i in range(5, 0, -1):
 		SIG_TRIGGER = False
 		signal.signal(signal.SIGINT, sig_handler)
 print()
-signal.signal(signal.SIGINT, kill_handler)
+signal.signal(signal.SIGINT, original_sigint_handler)
 
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
