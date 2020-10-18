@@ -137,7 +137,7 @@ while 1:
 	except archinstall.RequirementError as e:
 		print(e)
 
-print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True))
+print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON))
 
 """
 	Issue a final warning before we continue with something un-revertable.
