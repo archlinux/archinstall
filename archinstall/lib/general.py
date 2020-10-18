@@ -31,9 +31,6 @@ def locate_binary(name):
 					return os.path.join(root, file)
 			break # Don't recurse
 
-def to_json(dictionary):
-	return json.dumps(dictionary, cls=)
-
 class JSON_Encoder:
 	def _encode(obj):
 		if isinstance(obj, dict):
