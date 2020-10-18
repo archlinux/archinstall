@@ -81,11 +81,9 @@ def select_profile(options):
 		print(' -- (Leave blank to skip this next optional step) --')
 		selected_profile = input('Any particular pre-programmed profile you want to install: ')
 
-		#print(' -- You can enter ? or help to search for more profiles --')
-		#if selected_profile.lower() in ('?', 'help'):
-		#	filter_string = input('Search for layout containing (example: "sv-"): ')
-		#	new_options = search_keyboard_layout(filter_string)
-		#	return select_language(new_options)
+		if len(selected_profile.strip()) <= 0:
+			return None
+			
 		if selected_profile.isdigit() and (pos := int(selected_profile)) <= len(profiles)-1:
 			selected_profile = profiles[pos]
 		elif selected_profile in options:

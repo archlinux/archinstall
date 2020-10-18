@@ -24,7 +24,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if len(packages) and packages[0] != '':
 				installation.add_additional_packages(packages)
 
-			if len(profile.strip()):
+			if profile and len(profile.strip()):
 				installation.install_profile(profile)
 
 			for user, password in users.items():
@@ -53,6 +53,7 @@ archinstall.set_keyboard_language(keyboard_language)
 # Set which region to download packages from during the installation
 mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
 
+# Ask which harddrive/block-device we will install to
 harddrive = archinstall.select_disk(archinstall.all_disks())
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -61,9 +62,11 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		continue
 	break
 
+# Ask for a hostname
 hostname = input('Desired hostname for the installation: ')
 if len(hostname) == 0: hostname = 'ArchInstall'
 
+# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to leave root disabled): ')):
 	root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
 	if root_pw != root_pw_verification:
@@ -71,6 +74,7 @@ while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to le
 		continue
 	break
 
+# Ask for additional users (super-user if root pw was not set)
 users = {}
 new_user_text = 'Any additional users to install (leave blank for no users): '
 if len(root_pw.strip()) == 0:
@@ -92,9 +96,10 @@ while 1:
 	users[new_user] = new_user_passwd
 	break
 
+# Ask for archinstall-specific profiles (such as desktop environments etc)
 while 1:
 	profile = archinstall.select_profile(archinstall.list_profiles())
-	if type(profile) != str: # Got a imported profile
+	if profile and type(profile) != str: # Got a imported profile
 		if not profile[1]._prep_function():
 			archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
 			continue
@@ -103,7 +108,22 @@ while 1:
 	else:
 		break
 
-packages = input('Additional packages aside from base (space separated): ').split(' ')
+# Additional packages (with some light weight error handling for invalid package names)
+while 1:
+	packages = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
+
+	if not packages:
+		break
+
+	try:
+		if archinstall.validate_package_list(packages):
+			break
+	except archinstall.RequirementError as e:
+		print(e)
+
+# TODO: Print a summary here of all the options chosen.
+#       Ideally, archinstall should keep track of this internally
+#       and there should be something like print(archinstall.config).
 
 """
 	Issue a final warning before we continue with something un-revertable.
