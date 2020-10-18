@@ -1,6 +1,6 @@
 import os, json, hashlib, shlex, sys
 import time, pty
-from datetime import datetime
+from datetime import datetime, date
 from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
