@@ -139,7 +139,10 @@ while 1:
 	except archinstall.RequirementError as e:
 		print(e)
 
+print()
+print('This is your chosen configuration:')
 print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON))
+print()
 
 """
 	Issue a final warning before we continue with something un-revertable.
