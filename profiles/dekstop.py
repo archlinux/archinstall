@@ -11,20 +11,20 @@ def _prep_function(*args, **kwargs):
 	"""
 
 	supported_desktops = ['gnome', 'kde', 'awesome']
-	dektop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environemtn: ')
+	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environemtn: ')
 
 	# Temporarly store the selected desktop profile
 	# in a session-safe location, since this module will get re-loaded
 	# the next time it gets executed.
 	archinstall.storage['_desktop_profile'] = desktop
 
-	profile = archinstall.Profile(None, dektop)
+	profile = archinstall.Profile(None, desktop)
 	# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
-	with profile.load_instructions(namespace=f"{dektop}.py") as imported:
+	with profile.load_instructions(namespace=f"{desktop}.py") as imported:
 		if hasattr(imported, '_prep_function'):
 			return imported._prep_function()
 		else:
-			print(f"Deprecated (??): {dektop} profile has no _prep_function() anymore")
+			print(f"Deprecated (??): {desktop} profile has no _prep_function() anymore")
 
 if __name__ == 'desktop':
 	"""
