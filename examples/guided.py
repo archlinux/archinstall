@@ -112,8 +112,11 @@ while 1:
 while 1:
 	packages = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
 
+	if not packages:
+		break
+
 	try:
-		if packages and archinstall.validate_package_list(packages):
+		if archinstall.validate_package_list(packages):
 			break
 	except archinstall.RequirementError as e:
 		print(e)
