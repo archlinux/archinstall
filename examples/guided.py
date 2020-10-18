@@ -99,7 +99,7 @@ while 1:
 # Ask for archinstall-specific profiles (such as desktop environments etc)
 while 1:
 	profile = archinstall.select_profile(archinstall.list_profiles())
-	if type(profile) != str: # Got a imported profile
+	if profile and type(profile) != str: # Got a imported profile
 		if not profile[1]._prep_function():
 			archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
 			continue
