@@ -1,4 +1,4 @@
-import archinstall, getpass, time
+import archinstall, getpass, time, json
 
 def perform_installation(device, boot_partition, language, mirrors):
 	"""
@@ -50,8 +50,13 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_error
 keyboard_language = archinstall.select_language(archinstall.list_keyboard_languages())
 archinstall.set_keyboard_language(keyboard_language)
 
+# Create a storage structure for all our information.
+# We'll print this right before the user gets informed about the formatting timer.
+archinstall.storage['_guided'] = {}
+
 # Set which region to download packages from during the installation
 mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
+archinstall.storage['_guided']['mirrors'] = mirror_regions
 
 # Ask which harddrive/block-device we will install to
 harddrive = archinstall.select_disk(archinstall.all_disks())
@@ -61,10 +66,12 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
 	break
+archinstall.storage['_guided']['harddrive'] = harddrive
 
 # Ask for a hostname
 hostname = input('Desired hostname for the installation: ')
 if len(hostname) == 0: hostname = 'ArchInstall'
+archinstall.storage['_guided']['hostname'] = hostname
 
 # Ask for a root password (optional, but triggers requirement for super-user if skipped)
 while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to leave root disabled): ')):
@@ -87,6 +94,10 @@ while 1:
 			archinstall.log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
 			continue
 		break
+
+	if 'users' not in archinstall.storage['_guided']: archinstall.storage['_guided']['users'] = []
+	archinstall.storage['_guided']['users'].append(new_user)
+
 	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
 	new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
 	if new_user_passwd != new_user_passwd_verify:
@@ -99,12 +110,16 @@ while 1:
 # Ask for archinstall-specific profiles (such as desktop environments etc)
 while 1:
 	profile = archinstall.select_profile(archinstall.list_profiles())
-	if profile and type(profile) != str: # Got a imported profile
-		if not profile[1]._prep_function():
-			archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
-			continue
-		profile = profile[0]._path # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
-		break
+	if profile:
+		archinstall.storage['_guided']['profile'] = profile
+
+		if type(profile) != str: # Got a imported profile
+			if not profile[1]._prep_function():
+				archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
+				continue
+
+			profile = profile[0]._path # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
+			break
 	else:
 		break
 
@@ -117,28 +132,26 @@ while 1:
 
 	try:
 		if archinstall.validate_package_list(packages):
+			archinstall.storage['_guided']['packages'] = packages
 			break
 	except archinstall.RequirementError as e:
 		print(e)
 
-# TODO: Print a summary here of all the options chosen.
-#       Ideally, archinstall should keep track of this internally
-#       and there should be something like print(archinstall.config).
+print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True))
 
 """
 	Issue a final warning before we continue with something un-revertable.
+	We mention the drive one last time, and count from 5 to 0.
 """
-print(f' ! Formatting {harddrive} in 5...')
-time.sleep(1)
-print(f' ! Formatting {harddrive} in 4...')
-time.sleep(1)
-print(f' ! Formatting {harddrive} in 3...')
-time.sleep(1)
-print(f' ! Formatting {harddrive} in 2...')
-time.sleep(1)
-print(f' ! Formatting {harddrive} in 1...')
-time.sleep(1)
+print(f' ! Formatting {harddrive} in ', end='')
+for i in range(5, 0, -1):
+	print(f"{i}", end='')
 
+	for x in range(4):
+		sys.stdout.flush()
+		time.sleep(0.25)
+		print(".", end='')
+print()
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
 	Once that's done, we'll hand over to perform_installation()
