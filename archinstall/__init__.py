@@ -11,3 +11,4 @@ from .lib.locale_helpers import *
 from .lib.services import *
 from .lib.packages import *
 from .lib.output import *
+from .lib.storage import *

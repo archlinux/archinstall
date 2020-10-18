@@ -13,6 +13,11 @@ def _prep_function(*args, **kwargs):
 	supported_desktops = ['gnome', 'kde', 'awesome']
 	dektop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environemtn: ')
 
+	# Temporarly store the selected desktop profile
+	# in a session-safe location, since this module will get re-loaded
+	# the next time it gets executed.
+	archinstall.storage['_desktop_profile'] = desktop
+
 	profile = archinstall.Profile(None, dektop)
 	# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
 	with profile.load_instructions(namespace=f"{dektop}.py") as imported:
@@ -22,11 +27,19 @@ def _prep_function(*args, **kwargs):
 			print(f"Deprecated (??): {dektop} profile has no _prep_function() anymore")
 
 if __name__ == 'desktop':
-	print('The desktop.py profile should never be executed as a stand-alone.')
-
 	"""
 	This "profile" is a meta-profile.
-	It will not return itself, there for this __name__ will never
-	be executed. Instead, whatever profile was selected will have
-	it's handle returned and that __name__ will be executed later on.
+	There are no specific desktop-steps, it simply routes
+	the installer to whichever desktop environment/window manager was chosen.
+
+	Maybe in the future, a network manager or similar things *could* be added here.
+	We should honor that Arch Linux does not officially endorse a desktop-setup, nor is
+	it trying to be a turn-key desktop distribution.
+
+	There are plenty of desktop-turn-key-solutions based on Arch Linux,
+	this is therefor just a helper to get started
 	"""
+
+	# TODO: Remove magic variable 'installation' and place it
+	#       in archinstall.storage or archinstall.session/archinstall.installation
+	installation.install_profile(archinstall.storage['_desktop_profile'])
