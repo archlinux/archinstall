@@ -25,6 +25,16 @@ class BlockDevice():
 			raise KeyError(f'{self} does not contain information: "{key}"')
 		return self.info[key]
 
+	def json(self):
+		"""
+		json() has precedence over __dump__, so this is a way
+		to give less/partial information for user readability.
+		"""
+		return {
+			'path' : self.path,
+			'size' : self.info['size'] if 'size' in self.info else '<unknown>'
+		}
+
 	def __dump__(self):
 		return {
 			'path' : self.path,

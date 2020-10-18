@@ -1,5 +1,6 @@
 import os, json, hashlib, shlex, sys
 import time, pty
+from datetime import datetime, date
 from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
@@ -29,6 +30,43 @@ def locate_binary(name):
 				if file == name:
 					return os.path.join(root, file)
 			break # Don't recurse
+
+class JSON_Encoder:
+	def _encode(obj):
+		if isinstance(obj, dict):
+			## We'll need to iterate not just the value that default() usually gets passed
+			## But also iterate manually over each key: value pair in order to trap the keys.
+			
+			for key, val in list(obj.items()):
+				if isinstance(val, dict):
+					val = json.loads(json.dumps(val, cls=JSON)) # This, is a EXTREMELY ugly hack..
+                                                            # But it's the only quick way I can think of to 
+                                                            # trigger a encoding of sub-dictionaries.
+				else:
+					val = JSON_Encoder._encode(val)
+				del(obj[key])
+				obj[JSON_Encoder._encode(key)] = val
+			return obj
+		elif hasattr(obj, 'json'):
+			return obj.json()
+		elif hasattr(obj, '__dump__'):
+			return obj.__dump__()
+		elif isinstance(obj, (datetime, date)):
+			return obj.isoformat()
+		elif isinstance(obj, (list, set, tuple)):
+			r = []
+			for item in obj:
+				r.append(json.loads(json.dumps(item, cls=JSON)))
+			return r
+		else:
+			return obj
+
+class JSON(json.JSONEncoder, json.JSONDecoder):
+	def _encode(self, obj):
+		return JSON_Encoder._encode(obj)
+
+	def encode(self, obj):
+		return super(JSON, self).encode(self._encode(obj))
 
 class sys_command():#Thread):
 	"""
