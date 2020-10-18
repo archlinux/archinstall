@@ -115,6 +115,7 @@ while 1:
 		archinstall.storage['_guided']['profile'] = profile
 
 		if type(profile) != str: # Got a imported profile
+			archinstall.storage['_guided']['profile'] = profile[0] # The second return is a module, and not a handle/object.
 			if not profile[1]._prep_function():
 				archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
 				continue
