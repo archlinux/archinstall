@@ -66,6 +66,8 @@ class Installer():
 			log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red')
 			for step in missing_steps:
 				log(f' - {step}', bg='black', fg='red')
+			log(f"Detailed error logs can be found at: {log_path}")
+			log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues")
 			return False
 
 	def post_install_check(self, *args, **kwargs):
@@ -168,47 +170,51 @@ class Installer():
 		self.helper_flags['base'] = True
 		return True
 
-	def add_bootloader(self):
-		log(f'Adding bootloader to {self.boot_partition}')
-		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
-		with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
-			loader.write('default arch\n')
-			loader.write('timeout 5\n')
+	def add_bootloader(self, bootloader='systemd-bootctl'):
+		log(f'Adding bootloader {bootloader} to {self.boot_partition}')
 
-		## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-		## And blkid is wrong in terms of LUKS.
-		#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-		with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
-			entry.write('title Arch Linux\n')
-			entry.write('linux /vmlinuz-linux\n')
-			entry.write('initrd /initramfs-linux.img\n')
-			## blkid doesn't trigger on loopback devices really well,
-			## so we'll use the old manual method until we get that sorted out.
+		if bootloader == 'systemd-bootctle':
+			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
+			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
+				loader.write('default arch\n')
+				loader.write('timeout 5\n')
+
+			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+			## And blkid is wrong in terms of LUKS.
+			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+			with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
+				entry.write('title Arch Linux\n')
+				entry.write('linux /vmlinuz-linux\n')
+				entry.write('initrd /initramfs-linux.img\n')
+				## blkid doesn't trigger on loopback devices really well,
+				## so we'll use the old manual method until we get that sorted out.
 
 
-			if self.partition.encrypted:
-				for root, folders, uids in os.walk('/dev/disk/by-uuid'):
-					for uid in uids:
-						real_path = os.path.realpath(os.path.join(root, uid))
-						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
+				if self.partition.encrypted:
+					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+						for uid in uids:
+							real_path = os.path.realpath(os.path.join(root, uid))
+							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
-						entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 
-						self.helper_flags['bootloader'] = True
-						return True
-					break
-			else:
-				for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
-					for uid in uids:
-						real_path = os.path.realpath(os.path.join(root, uid))
-						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+							self.helper_flags['bootloader'] = bootloader
+							return True
+						break
+				else:
+					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
+						for uid in uids:
+							real_path = os.path.realpath(os.path.join(root, uid))
+							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
-						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+							entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
 
-						self.helper_flags['bootloader'] = True
-						return True
-					break
-		raise RequirementError(f'Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.')
+							self.helper_flags['bootloader'] = bootloader
+							return True
+						break
+			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+		else:
+			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)
