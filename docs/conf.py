@@ -1,17 +1,18 @@
-import sys, os
+import os
+import re
+import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import re
 
 def process_docstring(app, what, name, obj, options, lines):
-    spaces_pat = re.compile(r"( {8})")
-    ll = []
-    for l in lines:
-        ll.append(spaces_pat.sub("    ",l))
-    lines[:] = ll
+	spaces_pat = re.compile(r"( {8})")
+	ll = []
+	for l in lines:
+		ll.append(spaces_pat.sub("    ", l))
+	lines[:] = ll
 
 def setup(app):
-    app.connect('autodoc-process-docstring', process_docstring)
+	app.connect('autodoc-process-docstring', process_docstring)
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -110,8 +111,10 @@ htmlhelp_basename = 'slimhttpdoc'
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'archinstall', u'archinstall Documentation',
-     [u'Anton Hvornum'], 1)
+	(
+		"index", "archinstall", u"archinstall Documentation",
+		[u"Anton Hvornum"], 1
+	)
 ]
 
 # If true, show URL addresses after external links.
@@ -124,6 +127,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'archinstall', u'archinstall Documentation',
-   u'Anton Hvornum', 'archinstall', 'Simple and minimal HTTP server.'),
+	(
+		"index", "archinstall", u"archinstall Documentation",
+		u"Anton Hvornum", "archinstall", "Simple and minimal HTTP server."
+	),
 ]

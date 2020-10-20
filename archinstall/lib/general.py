@@ -73,9 +73,10 @@ class sys_command():#Thread):
 	Stolen from archinstall_gui
 	"""
 	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
-		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
-		if not 'emulate' in kwargs: kwargs['emulate'] = False
-		if not 'suppress_errors' in kwargs: kwargs['suppress_errors'] = False
+		kwargs.setdefault("worker_id", gen_uid())
+		kwargs.setdefault("emulate", False)
+		kwargs.setdefault("suppress_errors", False)
+
 		if kwargs['emulate']:
 			log(f"Starting command '{cmd}' in emulation mode.")
 		self.raw_cmd = cmd
@@ -85,7 +86,8 @@ class sys_command():#Thread):
 			raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
 		self.args = args
 		self.kwargs = kwargs
-		if not 'worker' in self.kwargs: self.kwargs['worker'] = None
+
+		self.kwargs.setdefault("worker", None)
 		self.callback = callback
 		self.pid = None
 		self.exit_code = None
@@ -110,7 +112,8 @@ class sys_command():#Thread):
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
 
-		if start_callback: start_callback(self, *args, **kwargs)
+		if start_callback:
+			start_callback(self, *args, **kwargs)
 		self.run()
 
 	def __iter__(self, *args, **kwargs):
@@ -125,14 +128,14 @@ class sys_command():#Thread):
 
 	def dump(self):
 		return {
-			'status' : self.status,
-			'worker_id' : self.worker_id,
-			'worker_result' : self.trace_log.decode('UTF-8'),
-			'started' : self.started,
-			'ended' : self.ended,
-			'started_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
-			'ended_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
-			'exit_code' : self.exit_code
+			'status': self.status,
+			'worker_id': self.worker_id,
+			'worker_result': self.trace_log.decode('UTF-8'),
+			'started': self.started,
+			'ended': self.ended,
+			'started_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
+			'ended_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
+			'exit_code': self.exit_code
 		}
 
 	def run(self):
@@ -255,4 +258,4 @@ def prerequisite_check():
 	return True
 
 def reboot():
-	o = b''.join(sys_command(("/usr/bin/reboot")))
+	o = b''.join(sys_command("/usr/bin/reboot"))

@@ -88,7 +88,8 @@ archinstall.storage['_guided']['harddrive'] = harddrive
 
 # Ask for a hostname
 hostname = input('Desired hostname for the installation: ')
-if len(hostname) == 0: hostname = 'ArchInstall'
+if len(hostname) == 0:
+	hostname = 'ArchInstall'
 archinstall.storage['_guided']['hostname'] = hostname
 
 # Ask for a root password (optional, but triggers requirement for super-user if skipped)

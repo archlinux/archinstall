@@ -11,7 +11,7 @@ def find_package(name):
 	"""
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
-	ssl_context.verify_mode=ssl.CERT_NONE
+	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(BASE_URL.format(package=name), context=ssl_context)
 	data = response.read().decode('UTF-8')
 	return json.loads(data)

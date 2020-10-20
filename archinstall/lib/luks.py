@@ -23,14 +23,15 @@ class luks2():
 
 	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		log(f'Encrypting {partition}')
-		if not key_file: key_file = f'/tmp/{os.path.basename(self.partition.path)}.disk_pw' #TODO: Make disk-pw-file randomly unique?
+		if not key_file:
+			key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
 		if type(password) != bytes: password = bytes(password, 'UTF-8')
 
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
 		o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}'))
-		if not b'Command successful.' in o:
+		if b'Command successful.' not in o:
 			raise DiskError(f'Could not encrypt volume "{partition.path}": {o}')
 	
 		return key_file
@@ -43,7 +44,8 @@ class luks2():
 		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
 		:type mountpoint: str
 		"""
-		if '/' in mountpoint: os.path.basename(mountpoint) # TODO: Raise exception instead?
+		if '/' in mountpoint:
+			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			return Partition(f'/dev/mapper/{mountpoint}', encrypted=True)

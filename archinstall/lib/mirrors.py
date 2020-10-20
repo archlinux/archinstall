@@ -78,16 +78,16 @@ def list_mirrors():
 
 	region = 'Unknown region'
 	for line in response.readlines():
-		if len(line.strip()) == 0: continue
+		if len(line.strip()) == 0:
+			continue
 
 		line = line.decode('UTF-8').strip('\n').strip('\r')
 		if line[:3] == '## ':
 			region = line[3:]
 		elif line[:10] == '#Server = ':
-			if not region in regions:
-				regions[region] = {}
+			regions.setdefault(region, {})
 
-			url = line[1:].lstrip('Server = ')
+			url = line.lstrip('#Server = ')
 			regions[region][url] = True
 
 	return regions

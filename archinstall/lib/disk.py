@@ -1,6 +1,6 @@
 import glob, re, os, json
 from collections import OrderedDict
-from .exceptions import *
+from .exceptions import DiskError
 from .general import *
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
@@ -21,7 +21,7 @@ class BlockDevice():
 		return f"BlockDevice({self.device})"
 
 	def __getitem__(self, key, *args, **kwargs):
-		if not key in self.info:
+		if key not in self.info:
 			raise KeyError(f'{self} does not contain information: "{key}"')
 		return self.info[key]
 
@@ -37,9 +37,9 @@ class BlockDevice():
 
 	def __dump__(self):
 		return {
-			'path' : self.path,
-			'info' : self.info,
-			'partition_cache' : self.part_cache
+			'path': self.path,
+			'info': self.info,
+			'partition_cache': self.part_cache
 		}
 
 	@property
@@ -50,7 +50,8 @@ class BlockDevice():
 		If it's a ATA-drive it returns the /dev/X device
 		And if it's a crypto-device it returns the parent device
 		"""
-		if not 'type' in self.info: raise DiskError(f'Could not locate backplane info for "{self.path}"')
+		if "type" not in self.info:
+			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
 			for drive in json.loads(b''.join(sys_command(f'losetup --json', hide_from_log=True)).decode('UTF_8'))['loopdevices']:
@@ -60,7 +61,8 @@ class BlockDevice():
 		elif self.info['type'] == 'disk':
 			return self.path
 		elif self.info['type'] == 'crypt':
-			if not 'pkname' in self.info: raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
+			if 'pkname' not in self.info:
+				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
 
 	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
@@ -97,7 +99,8 @@ class BlockDevice():
 
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
-		if not part_id: part_id = os.path.basename(path)
+		if not part_id:
+			part_id = os.path.basename(path)
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
@@ -115,7 +118,7 @@ class Partition():
 		log(f'Formatting {self} -> {filesystem}')
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
-			if not b'UUID' in o:
+			if b'UUID' not in o:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
 			self.filesystem = 'btrfs'
 		elif filesystem == 'fat32':
@@ -244,7 +247,7 @@ def device_state(name, *args, **kwargs):
 
 # lsblk --json -l -n -o path
 def all_disks(*args, **kwargs):
-	if not 'partitions' in kwargs: kwargs['partitions'] = False
+	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	#for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
 	for drive in json.loads(b''.join(sys_command(f'lsblk --json -l -n -o path,size,type,mountpoint,label,pkname', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:

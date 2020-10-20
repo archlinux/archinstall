@@ -22,7 +22,11 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 	with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 		unlocked_device.format('btrfs')
 		
-		with archinstall.Installer(unlocked_device, boot_partition=harddrive.partition[0], hostname='testmachine') as installation:
+		with archinstall.Installer(
+				unlocked_device,
+				boot_partition=harddrive.partition[0],
+				hostname="testmachine"
+		) as installation:
 			if installation.minimal_installation():
 				installation.add_bootloader()
 
@@ -37,7 +41,12 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
 				print(f'Submitting {commit}: success')
 
-				conditions = {"project" : "archinstall", "profile" : "52-54-00-12-34-56", "status" : "success", "commit" : commit} 
+				conditions = {
+					"project": "archinstall",
+					"profile": "52-54-00-12-34-56",
+					"status": "success",
+					"commit": commit
+				}
 				req = urllib.request.Request("https://api.archlinux.life/build/success",
 												data=json.dumps(conditions).encode('utf8'),
 												headers={'content-type': 'application/json'})

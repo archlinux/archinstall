@@ -30,11 +30,14 @@ def run_as_a_module():
 	profile = sys.argv[1]
 	library = find_examples()
 
-	if not f'{profile}.py' in library:
+	if f'{profile}.py' not in library:
 		raise ProfileNotFound(f'Could not locate {profile}.py among the example files.')
 
 	# Import and execute the chosen `<profile>.py`:
-	spec = importlib.util.spec_from_file_location(library[f'{profile}.py'], library[f'{profile}.py'])
+	spec = importlib.util.spec_from_file_location(
+		library[f"{profile}.py"],
+		library[f"{profile}.py"]
+	)
 	imported_path = importlib.util.module_from_spec(spec)
 	spec.loader.exec_module(imported_path)
 	sys.modules[library[f'{profile}.py']] = imported_path

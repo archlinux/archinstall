@@ -3,7 +3,6 @@ import socket
 import struct
 from collections import OrderedDict
 
-from .exceptions import *
 
 def getHwAddr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,7 +12,8 @@ def getHwAddr(ifname):
 def list_interfaces(skip_loopback=True):
 	interfaces = OrderedDict()
 	for index, iface in socket.if_nameindex():
-		if skip_loopback and iface == 'lo': continue
+		if skip_loopback and iface == "lo":
+			continue
 
 		mac = getHwAddr(iface).replace(':', '-')
 		interfaces[mac] = iface
