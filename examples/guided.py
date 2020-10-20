@@ -9,10 +9,12 @@ SIG_TRIGGER = False
 def kill_handler(sig, frame):
 	print()
 	exit(0)
+
 def sig_handler(sig, frame):
 	global SIG_TRIGGER
 	SIG_TRIGGER = True
 	signal.signal(signal.SIGINT, kill_handler)
+
 original_sigint_handler = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, sig_handler)
 
@@ -111,7 +113,8 @@ while 1:
 			continue
 		break
 
-	if 'users' not in archinstall.storage['_guided']: archinstall.storage['_guided']['users'] = []
+	if 'users' not in archinstall.storage['_guided']:
+		archinstall.storage['_guided']['users'] = []
 	archinstall.storage['_guided']['users'].append(new_user)
 
 	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
@@ -129,13 +132,17 @@ while 1:
 	if profile:
 		archinstall.storage['_guided']['profile'] = profile
 
-		if type(profile) != str: # Got a imported profile
-			archinstall.storage['_guided']['profile'] = profile[0] # The second return is a module, and not a handle/object.
+		if type(profile) != str:  # Got a imported profile
+			archinstall.storage['_guided']['profile'] = profile[0]  # The second return is a module, and not a handle/object.
 			if not profile[1]._prep_function():
-				archinstall.log(' * Profile\'s preperation requirements was not fulfilled.', bg='black', fg='red')
+				archinstall.log(
+					' * Profile\'s preparation requirements was not fulfilled.',
+					bg='black',
+					fg='red'
+				)
 				continue
 
-			profile = profile[0]._path # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
+			profile = profile[0]._path  # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
 			break
 	else:
 		break
@@ -207,7 +214,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 		# unlocks the drive so that it can be used as a normal block-device within archinstall.
 		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 			unlocked_device.format('btrfs')
-			
+
 			perform_installation(unlocked_device, harddrive.partition[0], keyboard_language, mirror_regions)
 	else:
 		harddrive.partition[1].format('ext4')

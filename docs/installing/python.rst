@@ -3,7 +3,7 @@
 Python library
 ==============
 
-Archinstall shipps on `PyPi <https://pypi.org/>`_ as `archinstall <pypi.org/project/archinstall/>`_.
+Archinstall ships on `PyPi <https://pypi.org/>`_ as `archinstall <pypi.org/project/archinstall/>`_.
 But the library can be installed manually as well.
 
 .. warning::

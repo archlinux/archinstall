@@ -3,14 +3,14 @@
 Guided installation
 ===================
 
-This is the installer you'll encounter on the *(currently)* inofficial Arch Linux Archinstall ISO found on `archlinux.life <https://archlinux.life>`_.
+This is the installer you'll encounter on the *(currently)* unofficial Arch Linux Archinstall ISO found on `archlinux.life <https://archlinux.life>`_.
 
 You'll obviously need a physical machine or a virtual machine and have a basic understanding of how ISO-files work, where and how to mount them in order to boot the installer.
 
 It runs you through a set of questions in order to determine what the system should look like. Then the guided installer performs the required installation steps for you. Some additional steps might show up depending on your chosen input at some of the steps - those steps should be self explanatory and won't be covered here.
 
 .. note::
-    There are some limitations with the installer, such as that it will not configure WiFi during the installation proceedure. And it will not perform a post-installation network configuration either. So you need to read up on `Arch Linux networking <https://wiki.archlinux.org/index.php/Network_configuration>`_ to get that to work.
+    There are some limitations with the installer, such as that it will not configure WiFi during the installation procedure. And it will not perform a post-installation network configuration either. So you need to read up on `Arch Linux networking <https://wiki.archlinux.org/index.php/Network_configuration>`_ to get that to work.
 
 Features
 --------
@@ -18,7 +18,7 @@ Features
 The guided installer currently supports:
 
  * *(optional)* Setting up disk encryption
- * *(optional)* Installing some simpel desktop environments
+ * *(optional)* Installing some simple desktop environments
  * Choosing between a super-user or root based user setup
 
 Installation steps

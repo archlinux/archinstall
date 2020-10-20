@@ -137,12 +137,14 @@ class Installer():
 		if self.partition.filesystem == 'btrfs':
 		#if self.partition.encrypted:
 			self.base_packages.append('btrfs-progs')
-		
+
 		self.pacstrap(self.base_packages)
 		self.genfstab()
 
-		with open(f'{self.mountpoint}/etc/fstab', 'a') as fstab:
-			fstab.write('\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n') # Redundant \n at the start? who knoes?
+		with open(f"{self.mountpoint}/etc/fstab", "a") as fstab:
+			fstab.write(
+				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
+			)  # Redundant \n at the start? who knows?
 
 		## TODO: Support locale and timezone
 		#os.remove(f'{self.mountpoint}/etc/localtime')
@@ -182,7 +184,7 @@ class Installer():
 			entry.write('initrd /initramfs-linux.img\n')
 			## blkid doesn't trigger on loopback devices really well,
 			## so we'll use the old manual method until we get that sorted out.
-			
+
 
 			if self.partition.encrypted:
 				for root, folders, uids in os.walk('/dev/disk/by-uuid'):
@@ -191,7 +193,7 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
 						entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
-						
+
 						self.helper_flags['bootloader'] = True
 						return True
 					break
@@ -202,7 +204,7 @@ class Installer():
 						if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 						entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
-						
+
 						self.helper_flags['bootloader'] = True
 						return True
 					break
@@ -228,7 +230,7 @@ class Installer():
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
-		
+
 		if groups:
 			for group in groups:
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))

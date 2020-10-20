@@ -21,7 +21,7 @@ def find_examples():
 
 def run_as_a_module():
 	"""
-	Ssince we're running this as a 'python -m archinstall' module OR
+	Since we're running this as a 'python -m archinstall' module OR
 	a nuitka3 compiled version of the project.
 	This function and the file __main__ acts as a entry point.
 	"""

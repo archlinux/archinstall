@@ -17,7 +17,7 @@ Or simply `git clone` the repo as it has no external dependencies *(but there ar
 Or run the pre-compiled binary attached in every release as `archinstall-v[ver].tar.gz`.
 
 There's also `PKGBUILD`'s for all the above scenarios.
-And they're also availale as Arch Linux packages over at the unofficial mirror [https://archlinux.life](https://archlinux.life/).
+And they're also available as Arch Linux packages over at the unofficial mirror [https://archlinux.life](https://archlinux.life/).
 
 ## Running the [guided](examples/guided.py) installer
 

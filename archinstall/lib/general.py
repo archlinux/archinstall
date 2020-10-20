@@ -100,9 +100,9 @@ class sys_command():#Thread):
 		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
-			# "which" doesn't work as it's a builin to bash.
+			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore. So back to square one..
-			
+
 			#log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
 			#log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = locate_binary(self.cmd[0])
@@ -247,9 +247,10 @@ class sys_command():#Thread):
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
 			fh.write(self.trace_log)
 
-def prerequisit_check():
-	if not os.path.isdir('/sys/firmware/efi'):
-		raise RequirementError('Archinstall only supports machines in UEFI mode.')
+
+def prerequisite_check():
+	if not os.path.isdir("/sys/firmware/efi"):
+		raise RequirementError("Archinstall only supports machines in UEFI mode.")
 
 	return True
 

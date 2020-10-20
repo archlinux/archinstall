@@ -1,4 +1,4 @@
-# A desktop environemtn using "Awesome" window manager.
+# A system with "xorg" installed
 
 import archinstall, os
 
