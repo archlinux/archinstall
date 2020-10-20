@@ -73,9 +73,10 @@ class sys_command():#Thread):
 	Stolen from archinstall_gui
 	"""
 	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
-		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
-		if not 'emulate' in kwargs: kwargs['emulate'] = False
-		if not 'surpress_errors' in kwargs: kwargs['surpress_errors'] = False
+		kwargs.setdefault("worker_id", gen_uid())
+		kwargs.setdefault("emulate", False)
+		kwargs.setdefault("suppress_errors", False)
+
 		if kwargs['emulate']:
 			log(f"Starting command '{cmd}' in emulation mode.")
 		self.raw_cmd = cmd
@@ -85,7 +86,8 @@ class sys_command():#Thread):
 			raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
 		self.args = args
 		self.kwargs = kwargs
-		if not 'worker' in self.kwargs: self.kwargs['worker'] = None
+
+		self.kwargs.setdefault("worker", None)
 		self.callback = callback
 		self.pid = None
 		self.exit_code = None
@@ -100,9 +102,9 @@ class sys_command():#Thread):
 		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
-			# "which" doesn't work as it's a builin to bash.
+			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore. So back to square one..
-			
+
 			#log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
 			#log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = locate_binary(self.cmd[0])
@@ -110,7 +112,8 @@ class sys_command():#Thread):
 		if not os.path.isdir(self.exec_dir):
 			os.makedirs(self.exec_dir)
 
-		if start_callback: start_callback(self, *args, **kwargs)
+		if start_callback:
+			start_callback(self, *args, **kwargs)
 		self.run()
 
 	def __iter__(self, *args, **kwargs):
@@ -125,14 +128,14 @@ class sys_command():#Thread):
 
 	def dump(self):
 		return {
-			'status' : self.status,
-			'worker_id' : self.worker_id,
-			'worker_result' : self.trace_log.decode('UTF-8'),
-			'started' : self.started,
-			'ended' : self.ended,
-			'started_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
-			'ended_pprint' : '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
-			'exit_code' : self.exit_code
+			'status': self.status,
+			'worker_id': self.worker_id,
+			'worker_result': self.trace_log.decode('UTF-8'),
+			'started': self.started,
+			'ended': self.ended,
+			'started_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
+			'ended_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
+			'exit_code': self.exit_code
 		}
 
 	def run(self):
@@ -238,7 +241,7 @@ class sys_command():#Thread):
 		if 'ignore_errors' in self.kwargs:
 			self.exit_code = 0
 
-		if self.exit_code != 0 and not self.kwargs['surpress_errors']:
+		if self.exit_code != 0 and not self.kwargs['suppress_errors']:
 			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.")
 			log(self.trace_log.decode('UTF-8'))
 			raise SysCallError(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.\n{self.trace_log.decode('UTF-8')}")
@@ -247,11 +250,12 @@ class sys_command():#Thread):
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
 			fh.write(self.trace_log)
 
-def prerequisit_check():
-	if not os.path.isdir('/sys/firmware/efi'):
-		raise RequirementError('Archinstall only supports machines in UEFI mode.')
+
+def prerequisite_check():
+	if not os.path.isdir("/sys/firmware/efi"):
+		raise RequirementError("Archinstall only supports machines in UEFI mode.")
 
 	return True
 
 def reboot():
-	o = b''.join(sys_command(("/usr/bin/reboot")))
+	o = b''.join(sys_command("/usr/bin/reboot"))

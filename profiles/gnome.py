@@ -1,4 +1,4 @@
-# A desktop environemtn using "Awesome" window manager.
+# A desktop environment using "Gnome"
 
 import archinstall
 

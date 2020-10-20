@@ -1,6 +1,7 @@
-# A desktop environemtn using "Awesome" window manager.
+# A desktop environment using "Awesome" window manager.
 
 import archinstall
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -18,6 +19,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("awesome", "/somewhere/awesome.py")
 # or through conventional import awesome
@@ -32,17 +34,19 @@ if __name__ == 'awesome':
 	# Then setup and configure the desktop environment: awesome
 	arguments = {
 		#'keyboard_layout' : 'sv-latin1',
-		"editor" : "nano",
-		"mediaplayer" : "lollypop gstreamer gst-plugins-good gnome-keyring",
-		"filebrowser" : "nemo gpicview-gtk3",
-		"webbrowser" : "chromium",
-		"window_manager" : "awesome",
-		"virtulization" : "qemu ovmf",
-		"utils" : "openssh sshfs git htop pkgfile scrot dhclient wget smbclient cifs-utils libu2f-host",
-		"audio" : "pulseaudio pulseaudio-alsa pavucontrol"
+		"editor": "nano",
+		"mediaplayer": "lollypop gstreamer gst-plugins-good gnome-keyring",
+		"filebrowser": "nemo gpicview-gtk3",
+		"webbrowser": "chromium",
+		"window_manager": "awesome",
+		"virtulization": "qemu ovmf",
+		"utils": "openssh sshfs git htop pkgfile scrot dhclient wget smbclient cifs-utils libu2f-host",
+		"audio": "pulseaudio pulseaudio-alsa pavucontrol"
 	}
 
-	installation.add_additional_packages("{webbrowser} {utils} {mediaplayer} {window_manager} {virtulization} {filebrowser} {editor}".format(**arguments))
+	installation.add_additional_packages(
+		"{webbrowser} {utils} {mediaplayer} {window_manager} {virtulization} {filebrowser} {editor}".format(
+			**arguments))
 
 	#with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
 	#	X11.write('setxkbmap se\n')
@@ -56,7 +60,10 @@ if __name__ == 'awesome':
 		awesome_lua = awesome_rc_lua.read()
 
 	# Insert slock as a shortcut on Modkey+l   (window+l)
-	awesome_lua = awesome_lua.replace('\nglobalkeys = gears.table.join(', 'globalkeys = gears.table.join(\n    awful.key({ modkey,    }, \"l\",  function() awful.spawn(\"slock &\") end,\n')
+	awesome_lua = awesome_lua.replace(
+		"\nglobalkeys = gears.table.join(",
+		"globalkeys = gears.table.join(\n    awful.key({ modkey,    }, \"l\",  function() awful.spawn(\"slock &\") end,\n"
+	)
 
 	# Insert some useful applications:
 	#awesome = awesome.replace('{ "open terminal", terminal, ','{ "Chromium", "chromium" },\n    "open terminal", terminal, ')
@@ -75,5 +82,6 @@ if __name__ == 'awesome':
 		awesome_rc_lua.write(awesome_lua)
 	
 	# Remove some interfering nemo settings
-	installation.arch_chroot('gsettings set org.nemo.desktop show-desktop-icons false')
-	installation.arch_chroot('xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search')
+	installation.arch_chroot("gsettings set org.nemo.desktop show-desktop-icons false")
+	installation.arch_chroot(
+		"xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search")

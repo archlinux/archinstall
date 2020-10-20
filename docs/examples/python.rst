@@ -8,7 +8,7 @@ The way the library is invoked in module mode is limited to executing scripts un
 
 It's there for important to place any script or profile you wish to invoke in the examples folder prior to building and installing.
 
-Pre-requisits
+Pre-requisites
 -------------
 
 We'll assume you've followed the `installing.python.manual`_ method.

@@ -170,7 +170,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	:rtype: dict
 	"""
 
-	# TODO: Support multiple options and country ycodes, SE,UK for instance.
+	# TODO: Support multiple options and country codes, SE,UK for instance.
 	regions = sorted(list(mirrors.keys()))
 	selected_mirrors = {}
 
@@ -205,7 +205,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 			selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		else:
 			RequirementError("Selected region does not exist.")
-		
+
 		return selected_mirrors
 
 	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")

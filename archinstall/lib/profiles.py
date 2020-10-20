@@ -106,7 +106,7 @@ class Profile():
 		# To avoid profiles importing the wrong 'archinstall',
 		# we need to ensure that this current archinstall is in sys.path
 		archinstall_path = os.path.abspath(f'{os.path.dirname(__file__)}/../../')
-		if not archinstall_path in sys.path:
+		if archinstall_path not in sys.path:
 			sys.path.insert(0, archinstall_path)
 
 		instructions = self.load_instructions()
