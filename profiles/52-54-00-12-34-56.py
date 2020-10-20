@@ -4,8 +4,8 @@ import urllib.request
 import git
 
 # Unmount and close previous runs (Mainly only used for re-runs, but won't hurt.)
-archinstall.sys_command(f'umount -R /mnt', surpress_errors=True)
-archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', surpress_errors=True)
+archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
+archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
 
 # Select a harddrive and a disk password
 harddrive = archinstall.all_disks()['/dev/sda']

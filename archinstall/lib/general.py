@@ -75,7 +75,7 @@ class sys_command():#Thread):
 	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
 		if not 'worker_id' in kwargs: kwargs['worker_id'] = gen_uid()
 		if not 'emulate' in kwargs: kwargs['emulate'] = False
-		if not 'surpress_errors' in kwargs: kwargs['surpress_errors'] = False
+		if not 'suppress_errors' in kwargs: kwargs['suppress_errors'] = False
 		if kwargs['emulate']:
 			log(f"Starting command '{cmd}' in emulation mode.")
 		self.raw_cmd = cmd
@@ -238,7 +238,7 @@ class sys_command():#Thread):
 		if 'ignore_errors' in self.kwargs:
 			self.exit_code = 0
 
-		if self.exit_code != 0 and not self.kwargs['surpress_errors']:
+		if self.exit_code != 0 and not self.kwargs['suppress_errors']:
 			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.")
 			log(self.trace_log.decode('UTF-8'))
 			raise SysCallError(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.\n{self.trace_log.decode('UTF-8')}")
