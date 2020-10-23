@@ -45,7 +45,6 @@ def run_as_a_module():
     
 		try:
 				profile = find(sys.argv[1])
-				print(profile)
 		except ProfileNotFound as err:
 				print(f"Couldn't find file: {err}")
 				sys.exit(1)
