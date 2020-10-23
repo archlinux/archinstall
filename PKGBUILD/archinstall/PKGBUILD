@@ -7,27 +7,20 @@ pkgrel=1
 url="https://github.com/Torxed/archinstall"
 license=('GPLv3')
 provides=("${pkgname}")
-md5sums=('SKIP')
 arch=('x86_64')
 source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
 depends=('python-archinstall')
+md5sums=('a23ec87d901d9dc28a8a36dd7427200f')
  
 package() {
 	mkdir -p "${pkgdir}/usr/bin"
 
 	# Install a guided profile
-	echo '#!/bin/bash' > "${pkgdir}/usr/bin/archinstall-guided"
-	echo 'python -m archinstall guided' >> "${pkgdir}/usr/bin/archinstall-guided"
+	cat - > "${pkgdir}/usr/bin/archinstall" <<EOF
+#!/bin/sh
 
-	# Install a minimal profile
-	echo '#!/bin/bash' > "${pkgdir}/usr/bin/archinstall-minimal"
-	echo 'python -m archinstall minimal' >> "${pkgdir}/usr/bin/archinstall-minimal"
+python -m archinstall $@
+EOF
 
-	# Install a unattended profile (safely aborts if no machine specific instructions are found)
-	#echo '#!/bin/bash' > "${pkgdir}/usr/bin/archinstall-unattended"
-	#echo 'python -m archinstall unattended' >> "${pkgdir}/usr/bin/archinstall-unattended"
-
-	chmod +x "${pkgdir}/usr/bin/archinstall-guided"
-	chmod +x "${pkgdir}/usr/bin/archinstall-minimal"
-	#chmod +x "${pkgdir}/usr/bin/archinstall-unattended"
+	chmod +x "${pkgdir}/usr/bin/archinstall"
 }
