@@ -1,5 +1,5 @@
-# Maintainer: Anton Hvornum anton@hvornum.se
-# Contributor: Anton Hvornum anton@hvornum.se
+# Maintainer: Anton Hvornum <anton@hvornum.se>
+# Contributor: demostanis worlds <demostanis@protonmail.com>
 pkgname="archinstall"
 pkgver="2.0.5"
 pkgdesc="Installs launcher scripts for archinstall"
@@ -24,3 +24,6 @@ EOF
 
 	chmod +x "${pkgdir}/usr/bin/archinstall"
 }
+
+# vim:ft=sh
+
