@@ -33,6 +33,10 @@ def run_as_a_module():
 	if f'{profile}.py' not in library:
 		raise ProfileNotFound(f'Could not locate {profile}.py among the example files.')
 
+	# Swap the working dir, otherwise certain relative lookups won't work within archinstall.
+	# Mainly to avoid https://github.com/Torxed/archinstall/issues/59
+	os.chdir(os.path.abspath(os.path.dirname(__file__)))
+	
 	# Import and execute the chosen `<profile>.py`:
 	spec = importlib.util.spec_from_file_location(
 		library[f"{profile}.py"],
