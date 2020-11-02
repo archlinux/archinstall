@@ -1,11 +1,17 @@
-import archinstall, sys, os, glob
-import importlib.util
+from urllib.parse import urlparse
+import archinstall
+import sys
+import os
+import glob
+import urllib.request
 
 # TODO: Learn the dark arts of argparse...
-#       (I summon thee dark spawn of cPython)
+#	   (I summon thee dark spawn of cPython)
+
 
 class ProfileNotFound(BaseException):
 	pass
+
 
 def find_examples():
 	"""
@@ -19,32 +25,47 @@ def find_examples():
 
 	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}
 
+
+def find(url):
+	parsed_url = urlparse(url)
+	if not parsed_url.scheme:
+		examples = find_examples()
+		if f"{url}.py" in examples:
+			return open(examples[f"{url}.py"]).read()
+		try:
+			return open(url, 'r').read()
+		except FileNotFoundError:
+			return ProfileNotFound(f"File {url} does not exist")
+	elif parsed_url.scheme in ('https', 'http'):
+		return urllib.request.urlopen(url).read().decode('utf-8')
+	else:
+		return ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
+
+
 def run_as_a_module():
 	"""
 	Since we're running this as a 'python -m archinstall' module OR
 	a nuitka3 compiled version of the project.
 	This function and the file __main__ acts as a entry point.
 	"""
-	if len(sys.argv) == 1: sys.argv.append('guided')
 
-	profile = sys.argv[1]
-	library = find_examples()
+	if len(sys.argv) == 1:
+		sys.argv.append('guided')
 
-	if f'{profile}.py' not in library:
-		raise ProfileNotFound(f'Could not locate {profile}.py among the example files.')
+	try:
+		profile = find(sys.argv[1])
+	except ProfileNotFound as err:
+		print(f"Couldn't find file: {err}")
+		sys.exit(1)
 
-	# Swap the working dir, otherwise certain relative lookups won't work within archinstall.
-	# Mainly to avoid https://github.com/Torxed/archinstall/issues/59
 	os.chdir(os.path.abspath(os.path.dirname(__file__)))
-	
-	# Import and execute the chosen `<profile>.py`:
-	spec = importlib.util.spec_from_file_location(
-		library[f"{profile}.py"],
-		library[f"{profile}.py"]
-	)
-	imported_path = importlib.util.module_from_spec(spec)
-	spec.loader.exec_module(imported_path)
-	sys.modules[library[f'{profile}.py']] = imported_path
 
+	try:
+		exec(profile)  # Is this is very safe?
+	except Exception as err:
+		print(f"Failed to run profile... {err}")
+		sys.exit(1)  # Should prompt for another profile path instead
+
+		
 if __name__ == '__main__':
 	run_as_a_module()
