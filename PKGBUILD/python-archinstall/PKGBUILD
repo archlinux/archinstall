@@ -13,7 +13,7 @@ arch=('x86_64')
 depends=('python>=3.8')
 makedepends=('python-setuptools')
 optdepends=('pyttsx3: Adds text-to-speech support for log/screen output.')
-md5sums=('a23ec87d901d9dc28a8a36dd7427200f')
+sha256sums=('04176c096d13589b874083aecbb9b1d34e676d2b784f55e5368f4ab83ff38c2e')
 
 build() {
 	cd "archinstall-${pkgver}"
