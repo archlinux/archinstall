@@ -74,16 +74,6 @@ def stylize_output(text :str, *opts, **kwargs):
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
 def log(*args, **kwargs):
-	if 'level' in kwargs:
-		if 'LOG_LEVEL' not in storage:
-			storage['LOG_LEVEL'] = LOG_LEVELS.Info
-
-		if kwargs['level'] >= storage['LOG_LEVEL']:
-			print(f"Level {kwargs['level']} is higher than storage log level {storage['LOG_LEVEL']}.")
-			# Level on log message was Debug, but output level is set to Info.
-			# In that case, we'll drop it.
-			return None
-
 	string = orig_string = ' '.join([str(x) for x in args])
 
 	if supports_color():
@@ -91,6 +81,7 @@ def log(*args, **kwargs):
 		string = stylize_output(string, **kwargs)
 
 	# Log to a file output unless specifically told to suppress this feature.
+	# (level has no effect on the log file, everything will be written there)
 	if 'file' in kwargs and not 'suppress' in kwargs and kwargs['suppress']:
 		if type(kwargs['file']) is str:
 			with open(kwargs['file'], 'a') as log_file:
@@ -99,10 +90,23 @@ def log(*args, **kwargs):
 			kwargs['file'].write(f"{orig_string}\n")
 
 	# If we assigned a level, try to log it to systemd's journald.
+	# Unless the level is higher than we've decided to output interactively.
+	# (Remember, log files still get *ALL* the output despite level restrictions)
 	if 'level' in kwargs:
+		if 'LOG_LEVEL' not in storage:
+			storage['LOG_LEVEL'] = LOG_LEVELS.Info
+
+		if kwargs['level'] > storage['LOG_LEVEL']:
+			print(f"Level {kwargs['level']} is higher than storage log level {storage['LOG_LEVEL']}.")
+			# Level on log message was Debug, but output level is set to Info.
+			# In that case, we'll drop it.
+			return None
+
 		try:
 			journald.log(string, level=kwargs['level'])
 		except ModuleNotFoundError:
 			pass # Ignore writing to journald
 
+	# Finally, print the log unless we skipped it based on level.
+	# And we print the string which may or may not contain color formatting.
 	print(string)
