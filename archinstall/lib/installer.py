@@ -78,14 +78,14 @@ class Installer():
 			raise args[1]
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green')
+			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red')
+			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			for step in missing_steps:
-				self.log(f' - {step}', bg='black', fg='red')
-			self.log(f"Detailed error logs can be found at: {log_path}")
-			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues")
+				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
+			self.log(f"Detailed error logs can be found at: {log_path}", level=LOG_LEVELS.Warning)
+			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues", level=LOG_LEVELS.Warning)
 			return False
 
 	def post_install_check(self, *args, **kwargs):
@@ -93,15 +93,15 @@ class Installer():
 
 	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
-		self.log(f'Installing packages: {packages}')
+		self.log(f'Installing packages: {packages}', level=LOG_LEVELS.Info)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
 			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}')
+				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=LOG_LEVELS.Info)
 		else:
-			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}')
+			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=LOG_LEVELS.Info)
 
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
@@ -134,13 +134,13 @@ class Installer():
 		return True
 
 	def activate_ntp(self):
-		self.log(f'Installing and activating NTP.')
+		self.log(f'Installing and activating NTP.', level=LOG_LEVELS.Info)
 		if self.pacstrap('ntp'):
 			if self.enable_service('ntpd'):
 				return True
 
 	def enable_service(self, service):
-		self.log(f'Enabling service {service}')
+		self.log(f'Enabling service {service}', level=LOG_LEVELS.Info)
 		return self.arch_chroot(f'systemctl enable {service}').exit_code == 0
 
 	def run_command(self, cmd, *args, **kwargs):
@@ -189,7 +189,7 @@ class Installer():
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
-		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}')
+		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
 			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
@@ -240,17 +240,17 @@ class Installer():
 	def install_profile(self, profile):
 		profile = Profile(self, profile)
 
-		self.log(f'Installing network profile {profile}')
+		self.log(f'Installing network profile {profile}', level=LOG_LEVELS.Info)
 		return profile.install()
 
 	def enable_sudo(self, entity :str, group=False):
-		self.log(f'Enabling sudo permissions for {entity}.')
+		self.log(f'Enabling sudo permissions for {entity}.', level=LOG_LEVELS.Info)
 		with open(f'{self.mountpoint}/etc/sudoers', 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
 	def user_create(self, user :str, password=None, groups=[], sudo=False):
-		self.log(f'Creating user {user}')
+		self.log(f'Creating user {user}', level=LOG_LEVELS.Info)
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
@@ -263,7 +263,7 @@ class Installer():
 			self.helper_flags['user'] = True
 
 	def user_set_pw(self, user, password):
-		self.log(f'Setting password for {user}')
+		self.log(f'Setting password for {user}', level=LOG_LEVELS.Info)
 
 		if user == 'root':
 			# This means the root account isn't locked/disabled with * in /etc/passwd

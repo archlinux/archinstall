@@ -97,7 +97,6 @@ def log(*args, **kwargs):
 			storage['LOG_LEVEL'] = LOG_LEVELS.Info
 
 		if kwargs['level'] > storage['LOG_LEVEL']:
-			print(f"Level {kwargs['level']} is higher than storage log level {storage['LOG_LEVEL']}.")
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
