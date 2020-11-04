@@ -2,6 +2,7 @@ import abc
 import os
 import sys
 import logging
+from .storage import storage
 
 class LOG_LEVELS:
 	Critical = 0b001
@@ -72,25 +73,16 @@ def stylize_output(text :str, *opts, **kwargs):
 		text = '%s\x1b[%sm' % (text or '', RESET)
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
-GLOB_IMP_ERR_NOTIFIED = False
 def log(*args, **kwargs):
 	if 'level' in kwargs:
-		try:
-			import archinstall
-			if 'LOG_LEVEL' not in archinstall.storage:
-				archinstall.storage['LOG_LEVEL'] = LOG_LEVELS.Info
+		if 'LOG_LEVEL' not in storage:
+			storage['LOG_LEVEL'] = LOG_LEVELS.Info
 
-			if kwargs['level'] >= archinstall.storage['LOG_LEVEL']:
-				# Level on log message was Debug, but output level is set to Info.
-				# In that case, we'll drop it.
-				return None
-		except ModuleNotFoundError:
-			global GLOB_IMP_ERR_NOTIFIED
-
-			if GLOB_IMP_ERR_NOTIFIED is False:
-				print('[Error] Archinstall not found in global import path. Can not determain log level for log messages.')
-
-			GLOB_IMP_ERR_NOTIFIED = True
+		if kwargs['level'] >= storage['LOG_LEVEL']:
+			print(f"Level {kwargs['level']} is higher than storage log level {storage['LOG_LEVEL']}.")
+			# Level on log message was Debug, but output level is set to Info.
+			# In that case, we'll drop it.
+			return None
 
 	string = orig_string = ' '.join([str(x) for x in args])
 
