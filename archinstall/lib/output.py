@@ -82,7 +82,7 @@ def log(*args, **kwargs):
 
 	# Log to a file output unless specifically told to suppress this feature.
 	# (level has no effect on the log file, everything will be written there)
-	if 'file' in kwargs and not 'suppress' in kwargs and kwargs['suppress']:
+	if 'file' in kwargs and ('suppress' not in kwargs or kwargs['suppress'] == False):
 		if type(kwargs['file']) is str:
 			with open(kwargs['file'], 'a') as log_file:
 				log_file.write(f"{orig_string}\n")
