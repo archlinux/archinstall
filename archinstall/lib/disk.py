@@ -3,6 +3,7 @@ from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
 from .output import log, LOG_LEVELS
+from .storage import storage
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
