@@ -42,3 +42,4 @@ At present the core developers are (alphabetically):
  * Anton Hvornum (@Torxed)
  * Jerker Bengtsson (@jaybent)
  * Varun Madiath (@vamega)
+ * demostanis (@demostanis)
