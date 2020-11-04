@@ -4,6 +4,7 @@ from collections import OrderedDict
 from .general import multisplit, sys_command, log
 from .exceptions import *
 from .networking import *
+from .output import log, LOG_LEVELS
 
 UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles'
 
@@ -117,7 +118,7 @@ class Profile():
 			# TODO: Remove
 			__builtins__['installation'] = self.installer
 			with instructions as runtime:
-				log(f'{self} finished successfully.', bg='black', fg='green')
+				log(f'{self} finished successfully.', bg='black', fg='green', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 		
 		return True
 

@@ -1,4 +1,39 @@
+import abc
+import os
 import sys
+import logging
+
+class LOG_LEVELS:
+	Critical = 0b001
+	Error = 0b010
+	Warning = 0b011
+	Info = 0b101
+	Debug = 0b111
+
+class journald(dict):
+	@abc.abstractmethod
+	def log(message, level=LOG_LEVELS.Debug):
+		import systemd.journal
+		log_adapter = logging.getLogger('archinstall')
+		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
+		log_ch = systemd.journal.JournalHandler()
+		log_ch.setFormatter(log_fmt)
+		log_adapter.addHandler(log_ch)
+		log_adapter.setLevel(logging.DEBUG)
+		
+		if level == LOG_LEVELS.Critical:
+			log_adapter.critical(message)
+		elif level == LOG_LEVELS.Error:
+			log_adapter.error(message)
+		elif level == LOG_LEVELS.Warning:
+			log_adapter.warning(message)
+		elif level == LOG_LEVELS.Info:
+			log_adapter.info(message)
+		elif level == LOG_LEVELS.Debug:
+			log_adapter.debug(message)
+		else:
+			# Fallback logger
+			log_adapter.debug(message)
 
 # Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
 # And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
@@ -37,10 +72,45 @@ def stylize_output(text :str, *opts, **kwargs):
 		text = '%s\x1b[%sm' % (text or '', RESET)
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
+GLOB_IMP_ERR_NOTIFIED = False
 def log(*args, **kwargs):
-	string = ' '.join([str(x) for x in args])
+	if 'level' in kwargs:
+		try:
+			import archinstall
+			if 'LOG_LEVEL' not in archinstall.storage:
+				archinstall.storage['LOG_LEVEL'] = LOG_LEVELS.Info
+
+			if kwargs['level'] >= archinstall.storage['LOG_LEVEL']:
+				# Level on log message was Debug, but output level is set to Info.
+				# In that case, we'll drop it.
+				return None
+		except ModuleNotFoundError:
+			global GLOB_IMP_ERR_NOTIFIED
+
+			if GLOB_IMP_ERR_NOTIFIED is False:
+				print('[Error] Archinstall not found in global import path. Can not determain log level for log messages.')
+
+			GLOB_IMP_ERR_NOTIFIED = True
+
+	string = orig_string = ' '.join([str(x) for x in args])
+
 	if supports_color():
 		kwargs = {'bg' : 'black', 'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
+
+	# Log to a file output unless specifically told to suppress this feature.
+	if 'file' in kwargs and not 'suppress' in kwargs and kwargs['suppress']:
+		if type(kwargs['file']) is str:
+			with open(kwargs['file'], 'a') as log_file:
+				log_file.write(f"{orig_string}\n")
+		else:
+			kwargs['file'].write(f"{orig_string}\n")
+
+	# If we assigned a level, try to log it to systemd's journald.
+	if 'level' in kwargs:
+		try:
+			journald.log(string, level=kwargs['level'])
+		except ModuleNotFoundError:
+			pass # Ignore writing to journald
 
 	print(string)

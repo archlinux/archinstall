@@ -4,7 +4,7 @@ from datetime import datetime, date
 from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
-from .output import *
+from .output import log, LOG_LEVELS
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -77,8 +77,11 @@ class sys_command():#Thread):
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
 
+		self.log = kwargs.get('log', log)
+
 		if kwargs['emulate']:
-			log(f"Starting command '{cmd}' in emulation mode.")
+			self.log(f"Starting command '{cmd}' in emulation mode.", level=LOG_LEVELS.Debug)
+
 		self.raw_cmd = cmd
 		try:
 			self.cmd = shlex.split(cmd)
@@ -105,8 +108,8 @@ class sys_command():#Thread):
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore. So back to square one..
 
-			#log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			#log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
+			#self.log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
+			#self.log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = locate_binary(self.cmd[0])
 
 		if not os.path.isdir(self.exec_dir):
@@ -150,7 +153,7 @@ class sys_command():#Thread):
 					os.execv(self.cmd[0], self.cmd)
 				except FileNotFoundError:
 					self.status = 'done'
-					log(f"{self.cmd[0]} does not exist.", origin='spawn', level=2)
+					self.log(f"{self.cmd[0]} does not exist.", level=LOG_LEVELS.Debug)
 					self.exit_code = 1
 					return False
 
@@ -160,8 +163,8 @@ class sys_command():#Thread):
 		poller.register(child_fd, EPOLLIN | EPOLLHUP)
 
 		if 'events' in self.kwargs and 'debug' in self.kwargs:
-			log(f'[D] Using triggers for command: {self.cmd}')
-			log(json.dumps(self.kwargs['events']))
+			self.log(f'[D] Using triggers for command: {self.cmd}', level=LOG_LEVELS.Debug)
+			self.log(json.dumps(self.kwargs['events']), level=LOG_LEVELS.Debug)
 
 		alive = True
 		last_trigger_pos = 0
@@ -175,7 +178,7 @@ class sys_command():#Thread):
 					break
 
 				if 'debug' in self.kwargs and self.kwargs['debug'] and len(output):
-					log(self.cmd, 'gave:', output.decode('UTF-8'))
+					self.log(self.cmd, 'gave:', output.decode('UTF-8'), level=LOG_LEVELS.Debug)
 
 				if 'on_output' in self.kwargs:
 					self.kwargs['on_output'](self.kwargs['worker'], output)
@@ -196,8 +199,8 @@ class sys_command():#Thread):
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
-								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}")
-								log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", origin='spawn', level=5)
+								self.log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", level=LOG_LEVELS.Debug)
+								self.log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", level=LOG_LEVELS.Debug)
 
 							last_trigger_pos = trigger_pos
 							os.write(child_fd, self.kwargs['events'][trigger])
@@ -211,18 +214,18 @@ class sys_command():#Thread):
 					## Adding a exit trigger:
 					if len(self.kwargs['events']) == 0:
 						if 'debug' in self.kwargs and self.kwargs['debug']:
-							log(f"Waiting for last command {self.cmd[0]} to finish.", origin='spawn', level=4)
+							self.log(f"Waiting for last command {self.cmd[0]} to finish.", level=LOG_LEVELS.Debug)
 
 						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0-len(f']$')-5:].lower():
 							if 'debug' in self.kwargs and self.kwargs['debug']:
-								log(f"{self.cmd[0]} has finished.")
+								self.log(f"{self.cmd[0]} has finished.", level=LOG_LEVELS.Debug)
 							alive = False
 							break
 
 		self.status = 'done'
 
 		if 'debug' in self.kwargs and self.kwargs['debug']:
-			log(f"{self.cmd[0]} waiting for exit code.")
+			self.log(f"{self.cmd[0]} waiting for exit code.", level=LOG_LEVELS.Debug)
 
 		if not self.kwargs['emulate']:
 			try:
@@ -236,14 +239,14 @@ class sys_command():#Thread):
 			self.exit_code = 0
 
 		if 'debug' in self.kwargs and self.kwargs['debug']:
-			log(f"{self.cmd[0]} got exit code: {self.exit_code}")
+			self.log(f"{self.cmd[0]} got exit code: {self.exit_code}", level=LOG_LEVELS.Debug)
 
 		if 'ignore_errors' in self.kwargs:
 			self.exit_code = 0
 
 		if self.exit_code != 0 and not self.kwargs['suppress_errors']:
-			log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.")
-			log(self.trace_log.decode('UTF-8'))
+			self.log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", level=LOG_LEVELS.Debug)
+			self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
 			raise SysCallError(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.\n{self.trace_log.decode('UTF-8')}")
 
 		self.ended = time.time()
