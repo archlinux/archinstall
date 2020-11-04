@@ -52,8 +52,7 @@ class Installer():
 		self.partition = partition
 		self.boot_partition = boot_partition
 
-	@property
-	def log(self, message, *args, level=LOG_LEVELS.Debug, file=None, **kwargs):
+	def log(self, *args, level=LOG_LEVELS.Debug, file=None, **kwargs):
 		if not file:
 			if 'logfile' not in storage:
 				log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
@@ -64,7 +63,7 @@ class Installer():
 
 			file = storage['logfile']
 
-		log(message, *args, level=level, file=file, **kwargs)
+		log(*args, level=level, file=file, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
 		self.partition.mount(self.mountpoint)
