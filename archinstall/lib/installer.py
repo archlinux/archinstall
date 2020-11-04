@@ -192,7 +192,7 @@ class Installer():
 	def add_bootloader(self, bootloader='systemd-bootctl'):
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}')
 
-		if bootloader == 'systemd-bootctle':
+		if bootloader == 'systemd-bootctl':
 			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
 			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
 				loader.write('default arch\n')
