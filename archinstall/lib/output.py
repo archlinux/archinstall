@@ -80,6 +80,9 @@ def log(*args, **kwargs):
 		kwargs = {'bg' : 'black', 'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
 
+	if (logfile := storage.get('logfile', None)) and 'file' not in kwargs:
+		kwargs['file'] = logfile
+
 	# Log to a file output unless specifically told to suppress this feature.
 	# (level has no effect on the log file, everything will be written there)
 	if 'file' in kwargs and ('suppress' not in kwargs or kwargs['suppress'] == False):
