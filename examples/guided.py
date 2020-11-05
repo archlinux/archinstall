@@ -175,9 +175,11 @@ while 1:
 	except archinstall.RequirementError as e:
 		print(e)
 
+
 print()
 print('This is your chosen configuration:')
-print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON))
+archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
+archinstall.log(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
 print()
 
 """
