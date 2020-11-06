@@ -5,6 +5,7 @@ from .general import multisplit, sys_command, log
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
+from .storage import storage
 
 UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles'
 
