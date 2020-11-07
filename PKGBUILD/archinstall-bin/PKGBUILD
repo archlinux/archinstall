@@ -7,12 +7,12 @@ pkgrel=1
 url="https://github.com/Torxed/archinstall"
 license=('GPLv3')
 provides=("${pkgname}")
-md5sums=('SKIP')
 arch=('x86_64')
 source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
 #depends=('python>=3.8')
 makedepends=('python>=3.8' 'nuitka')
 optdepends=('pyttsx3: Adds text-to-speach support for log/screen output.')
+sha256sums=('3df8d6c422202d79ae4be83366a8c288e99fe24fff256112b6cdd4c0288907e6')
 
 build() {
 	cd "${pkgname}-${pkgver}"
