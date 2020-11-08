@@ -7,7 +7,7 @@ log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
 if not os.path.isdir(log_root):
 	os.makedirs(log_root)
 
-init_time = time.strftime('%Y-%m-%d %H:%M:%S')
+init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 milliseconds = int(str(time.time()).split('.')[1])
 archinstall.storage['logfile'] = f"{log_root}/install-session_{init_time}.{milliseconds}.log"
 

@@ -37,7 +37,7 @@ class Installer():
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
-		self.init_time = time.strftime('%Y-%m-%d %H:%M:%S')
+		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
 		self.helper_flags = {
