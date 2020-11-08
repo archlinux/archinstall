@@ -6,3 +6,5 @@ class ProfileError(BaseException):
 	pass
 class SysCallError(BaseException):
 	pass
+class ProfileNotFound(BaseException):
+	pass

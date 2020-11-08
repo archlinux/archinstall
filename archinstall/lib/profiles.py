@@ -1,5 +1,5 @@
 import os, urllib.request, urllib.parse, ssl, json, re
-import importlib.util, sys
+import importlib.util, sys, glob, hashlib
 from collections import OrderedDict
 from .general import multisplit, sys_command, log
 from .exceptions import *
@@ -42,6 +42,36 @@ def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
 		break
 	return cache
 
+def find_examples():
+	"""
+	Used to locate the examples, bundled with the module or executable.
+
+	:return: {'guided.py' : './examples/guided.py', '<profile #2>' : '<path #2>'}
+	:rtype: dict
+	"""
+	cwd = os.path.abspath(f'{os.path.dirname(__file__)}')
+	examples = f"{cwd}/examples"
+
+	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}
+
+def find_installation_script(profile):
+	parsed_url = urllib.parse.urlparse(profile)
+	if not parsed_url.scheme:
+		examples = find_examples()
+		if f"{profile}.py" in examples:
+			with open(examples[f"{profile}.py"]) as file:
+				return Script(file.read(), filename=os.path.basename(profile)+".py")
+		try:
+			with open(profile, 'r') as file:
+				return Script(file.read(), filename=os.path.basename(profile))
+		except FileNotFoundError:
+			return ProfileNotFound(f"File {profile} does not exist")
+	elif parsed_url.scheme in ('https', 'http'):
+		return Script(urllib.request.urlopen(profile).read().decode('utf-8'), filename=os.path.basename(profile))
+	else:
+		return ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
+
+
 class Imported():
 	def __init__(self, spec, imported):
 		self.spec = spec
@@ -55,6 +85,31 @@ class Imported():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
+
+
+class Script():
+	def __init__(self, content, filename=''):
+		self.content = content
+		self.filename = filename
+
+	@property
+	def path(self):
+		temp_file_path = f"/tmp/{self.filename}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+
+		with open(temp_file_path, "w") as temp_file:
+			temp_file.write(self.content)
+
+		return temp_file_path
+
+	def execute(self):
+		spec = importlib.util.spec_from_file_location(
+			"tempscript",
+			self.path
+		)
+		imported_path = importlib.util.module_from_spec(spec)
+		spec.loader.exec_module(imported_path)
+		sys.modules["tempscript"] = imported_path
+
 
 class Profile():
 	def __init__(self, installer, path, args={}):
