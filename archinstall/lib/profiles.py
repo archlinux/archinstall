@@ -65,11 +65,13 @@ def find_installation_script(profile):
 			with open(profile, 'r') as file:
 				return Script(file.read(), filename=os.path.basename(profile))
 		except FileNotFoundError:
-			return ProfileNotFound(f"File {profile} does not exist")
+			cwd = os.path.abspath(f'{os.path.dirname(__file__)}')
+			examples = f"{cwd}/examples"
+			raise ProfileNotFound(f"File {profile} does not exist in {examples}")
 	elif parsed_url.scheme in ('https', 'http'):
 		return Script(urllib.request.urlopen(profile).read().decode('utf-8'), filename=os.path.basename(profile))
 	else:
-		return ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
+		raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
 
 class Imported():
