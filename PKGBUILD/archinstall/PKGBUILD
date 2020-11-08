@@ -1,7 +1,7 @@
 # Maintainer: Anton Hvornum <anton@hvornum.se>
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 pkgname="archinstall"
-pkgver="2.0.6rc9"
+pkgver="2.0.6rc10"
 pkgdesc="Installs launcher scripts for archinstall"
 pkgrel=1
 url="https://github.com/Torxed/archinstall"
