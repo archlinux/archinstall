@@ -3,6 +3,7 @@ import archinstall
 import sys
 import os
 import glob
+import traceback
 import urllib.request
 
 # TODO: Learn the dark arts of argparse...
@@ -64,6 +65,7 @@ def run_as_a_module():
 		exec(profile)  # Is this is very safe?
 	except Exception as err:
 		print(f"Error in profile {sys.argv[1]}: {err}")
+		traceback.print_exc(file=sys.stdout)
 		sys.exit(1)  # Should prompt for another profile path instead
 
 		
