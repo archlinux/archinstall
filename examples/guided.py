@@ -57,14 +57,14 @@ def perform_installation(device, boot_partition, language, mirrors):
 
 			for user in archinstall.storage['_guided']['users']:
 				password = users[user]
-				
+
 				sudo = False
-				if len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
+				if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
 					sudo = True
 
 				installation.user_create(user, password, sudo=sudo)
 
-			if archinstall.storage['_guided_hidden']['root_pw']:
+			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
 				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
 
 # Unmount and close previous runs (in case the installer is restarted)
