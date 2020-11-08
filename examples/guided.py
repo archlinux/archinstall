@@ -34,7 +34,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(device, boot_partition=boot_partition, hostname=hostname) as installation:
+	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.storage['_guided']['hostname']) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist

@@ -63,7 +63,7 @@ def run_as_a_module():
 	try:
 		exec(profile)  # Is this is very safe?
 	except Exception as err:
-		print(f"Failed to run profile... {err}")
+		print(f"Error in profile {sys.argv[1]}: {err}")
 		sys.exit(1)  # Should prompt for another profile path instead
 
 		
