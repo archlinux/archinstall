@@ -1,7 +1,7 @@
 # Maintainer: Anton Hvornum anton@hvornum.se
 # Contributor: Anton Hvornum anton@hvornum.se
 pkgname="archinstall-bin"
-pkgver="2.0.6rc1"
+pkgver="2.0.6rc3"
 pkgdesc="Installs a pre-built binary of ${pkgname}"
 pkgrel=1
 url="https://github.com/Torxed/archinstall"
@@ -12,7 +12,7 @@ source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinst
 #depends=('python>=3.8')
 makedepends=('python>=3.8' 'nuitka')
 optdepends=('pyttsx3: Adds text-to-speach support for log/screen output.')
-sha256sums=('3df8d6c422202d79ae4be83366a8c288e99fe24fff256112b6cdd4c0288907e6')
+sha256sums=('db25333c66896068efc758c3b93020f52df44a876a1124ccad65a3e708711a6a')
 
 build() {
 	cd "${pkgname}-${pkgver}"
