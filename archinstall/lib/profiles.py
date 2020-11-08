@@ -49,7 +49,10 @@ def find_examples():
 	:return: {'guided.py' : './examples/guided.py', '<profile #2>' : '<path #2>'}
 	:rtype: dict
 	"""
-	cwd = os.path.abspath(f'{os.path.dirname(__file__)}')
+
+	# We need to traverse backwards one step with /../ because
+	# We're living in src/lib/ and we're not executing from src/ anymore.
+	cwd = os.path.abspath(f'{os.path.dirname(__file__)}/../')
 	examples = f"{cwd}/examples"
 
 	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}
@@ -65,7 +68,9 @@ def find_installation_script(profile):
 			with open(profile, 'r') as file:
 				return Script(file.read(), filename=os.path.basename(profile))
 		except FileNotFoundError:
-			cwd = os.path.abspath(f'{os.path.dirname(__file__)}')
+			# We need to traverse backwards one step with /../ because
+			# We're living in src/lib/ and we're not executing from src/ anymore.
+			cwd = os.path.abspath(f'{os.path.dirname(__file__)}/../')
 			examples = f"{cwd}/examples"
 			raise ProfileNotFound(f"File {profile} does not exist in {examples}")
 	elif parsed_url.scheme in ('https', 'http'):

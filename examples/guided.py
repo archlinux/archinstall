@@ -55,7 +55,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if 'profile' in archinstall.storage['_guided'] and len(profile := archinstall.storage['_guided']['profile']['path'].strip()):
 				installation.install_profile(profile)
 
-			for user, password in archinstall.storage['_guided']['users'].items():
+			for user in archinstall.storage['_guided']['users']:
+				password = users[user]
+				
 				sudo = False
 				if len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
 					sudo = True
