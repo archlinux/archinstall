@@ -1,5 +1,15 @@
+import getpass, time, json, sys, signal, os
 import archinstall
-import getpass, time, json, sys, signal
+
+# Setup a global log file.
+# Archinstall will honor storage['logfile'] in most of it's functions log handle.
+log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
+if not os.path.isdir(log_root):
+	os.makedirs(log_root)
+
+init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
+milliseconds = int(str(time.time()).split('.')[1])
+archinstall.storage['logfile'] = f"{log_root}/install-session_{init_time}.{milliseconds}.log"
 
 """
 This signal-handler chain (and global variable)
@@ -29,7 +39,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		archinstall.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
+		installation.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
 		while 'dead' not in (status := archinstall.service_state('reflector')):
 			time.sleep(1)
 
@@ -136,6 +146,9 @@ while 1:
 		if type(profile) != str:  # Got a imported profile
 			archinstall.storage['_guided']['profile'] = profile[0]  # The second return is a module, and not a handle/object.
 			if not profile[1]._prep_function():
+				# TODO: See how we can incorporate this into
+				#       the general log flow. As this is pre-installation
+				#       session setup. Which creates the installation.log file.
 				archinstall.log(
 					' * Profile\'s preparation requirements was not fulfilled.',
 					bg='black',
@@ -162,9 +175,11 @@ while 1:
 	except archinstall.RequirementError as e:
 		print(e)
 
+
 print()
 print('This is your chosen configuration:')
-print(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON))
+archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
+archinstall.log(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
 print()
 
 """

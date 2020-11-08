@@ -2,6 +2,8 @@ import os
 from .exceptions import *
 from .general import *
 from .disk import Partition
+from .output import log, LOG_LEVELS
+from .storage import storage
 
 class luks2():
 	def __init__(self, partition, mountpoint, password, *args, **kwargs):
@@ -22,7 +24,10 @@ class luks2():
 		return True
 
 	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
-		log(f'Encrypting {partition}')
+		# TODO: We should be able to integrate this into the main log some how.
+		#       Perhaps post-mortem?
+		log(f'Encrypting {partition}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+
 		if not key_file:
 			key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
 		if type(password) != bytes: password = bytes(password, 'UTF-8')

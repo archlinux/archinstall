@@ -2,6 +2,8 @@ import urllib.request
 
 from .exceptions import *
 from .general import *
+from .output import log
+from .storage import storage
 
 def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs):
 	"""
@@ -57,7 +59,7 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
-	log(f'A new package mirror-list has been created: {destination}')
+	log(f'A new package mirror-list has been created: {destination}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 	for region, mirrors in regions.items():
 		with open(destination, 'w') as mirrorlist:
 			for mirror in mirrors:

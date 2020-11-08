@@ -70,6 +70,11 @@ This installer will perform the following:
 
 > **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
+# Help
+
+Submit an issue on Github, or submit a post in the discord help channel.<br>
+When doing so, attach any `install-session_*.log` to the issue ticket which can be found under `~/.cache/archinstall/`.
+
 # Testing
 
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>

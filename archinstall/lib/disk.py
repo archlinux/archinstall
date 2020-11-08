@@ -2,6 +2,8 @@ import glob, re, os, json
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
+from .output import log, LOG_LEVELS
+from .storage import storage
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -115,7 +117,7 @@ class Partition():
 			return f'Partition(path={self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
 	def format(self, filesystem):
-		log(f'Formatting {self} -> {filesystem}')
+		log(f'Formatting {self} -> {filesystem}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if b'UUID' not in o:
@@ -154,7 +156,7 @@ class Partition():
 
 	def mount(self, target, fs=None, options=''):
 		if not self.mountpoint:
-			log(f'Mounting {self} to {target}')
+			log(f'Mounting {self} to {target}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
@@ -216,7 +218,7 @@ class Filesystem():
 			self.add_partition('primary', start='513MiB', end='100%', format='ext4')
 
 	def add_partition(self, type, start, end, format=None):
-		log(f'Adding partition to {self.blockdevice}')
+		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 		if format:
 			return self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
