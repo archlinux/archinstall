@@ -2,7 +2,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname="python-archinstall"
-pkgver="2.0.6rc8"
+pkgver="2.0.6rc9"
 pkgdesc="Installs ${pkgname} as a python library."
 pkgrel=1
 url="https://github.com/Torxed/archinstall"
