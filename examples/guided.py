@@ -49,21 +49,21 @@ def perform_installation(device, boot_partition, language, mirrors):
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
-			if len(packages) and packages[0] != '':
-				installation.add_additional_packages(packages)
+			if len(archinstall.storage['_guided']['packages']) and archinstall.storage['_guided']['packages'][0] != '':
+				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
 
-			if profile and len(profile.strip()):
-				installation.install_profile(profile)
+			if archinstall.storage['_guided']['profile'] and len(archinstall.storage['_guided']['profile'].strip()):
+				installation.install_profile(archinstall.storage['_guided']['profile'])
 
-			for user, password in users.items():
+			for user, password in archinstall.storage['_guided']['users'].items():
 				sudo = False
-				if len(root_pw.strip()) == 0:
+				if len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
 					sudo = True
 
 				installation.user_create(user, password, sudo=sudo)
 
-			if root_pw:
-				installation.user_set_pw('root', root_pw)
+			if archinstall.storage['_guided_hidden']['root_pw']:
+				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
 
 # Unmount and close previous runs (in case the installer is restarted)
 archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
@@ -81,6 +81,7 @@ archinstall.set_keyboard_language(keyboard_language)
 # Create a storage structure for all our information.
 # We'll print this right before the user gets informed about the formatting timer.
 archinstall.storage['_guided'] = {}
+archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
 
 # Set which region to download packages from during the installation
 mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
@@ -108,6 +109,8 @@ while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to le
 	if root_pw != root_pw_verification:
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
+
+	archinstall.storage['_guided_hidden']['root_pw'] = root_pw
 	break
 
 # Ask for additional users (super-user if root pw was not set)
