@@ -22,5 +22,5 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.8',
-    package_data={'archinstall': glob.glob('examples/*.py') + glob.glob('profiles/*.py')},
+    package_data={'archinstall': glob.glob('examples/*.py') + glob.glob('profiles/*.py'), 'VERSION' : 'VERSION'},
 )
