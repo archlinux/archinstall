@@ -3,6 +3,23 @@ import ssl, json
 from .exceptions import *
 
 BASE_URL = 'https://www.archlinux.org/packages/search/json/?name={package}'
+BASE_GROUP_URL = 'https://www.archlinux.org/groups/x86_64/{group}/'
+
+def find_group(name):
+	ssl_context = ssl.create_default_context()
+	ssl_context.check_hostname = False
+	ssl_context.verify_mode = ssl.CERT_NONE
+	try:
+		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
+	except urllib.error.HTTPError as err:
+		if err.code == 404:
+			return False
+		else:
+			raise err
+	
+	# Just to be sure some code didn't slip through the exception
+	if response.code == 200:
+		return True
 
 def find_package(name):
 	"""
@@ -34,7 +51,7 @@ def validate_package_list(packages :list):
 	"""
 	invalid_packages = []
 	for package in packages:
-		if not find_package(package)['results']:
+		if not find_package(package)['results'] and not find_group(package):
 			invalid_packages.append(package)
 	
 	if invalid_packages:
