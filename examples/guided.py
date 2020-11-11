@@ -82,8 +82,8 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_error
   will we continue with the actual installation steps.
 """
 
-keyboard_language = archinstall.select_language(archinstall.list_keyboard_languages())
-archinstall.set_keyboard_language(keyboard_language)
+if len(keyboard_language := archinstall.select_language(archinstall.list_keyboard_languages()).strip()):
+	archinstall.set_keyboard_language(keyboard_language)
 
 # Create a storage structure for all our information.
 # We'll print this right before the user gets informed about the formatting timer.
