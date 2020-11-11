@@ -49,6 +49,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
+			if archinstall.storage['_guided']['network']:
+				archinstall.configure_nic(**archinstall.storage['_guided']['network'])
+
 			if len(archinstall.storage['_guided']['packages']) and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
 
@@ -180,6 +183,33 @@ while 1:
 	except archinstall.RequirementError as e:
 		print(e)
 
+# Optionally configure one network interface.
+while 1:
+	interfaces = archinstall.list_interfaces()
+	archinstall.storage['_guided']['network'] = None
+
+	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
+	if nic:
+		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+		if mode == 'IP (static)':
+			while 1:
+				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
+				if ip:
+					break
+				else:
+					ArchInstall.log(
+						"You need to enter a valid IP in IP-config mode.",
+						level=archinstall.LOG_LEVELS.Warning,
+						bg='black',
+						fg='red'
+					)
+
+			gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
+			dns = input('Enter your DNS servers (space separated, blank for none): ').strip().split(' ')
+
+			archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
+		else:
+			archinstall.storage['_guided']['network'] = {'nic': nic}
 
 print()
 print('This is your chosen configuration:')
