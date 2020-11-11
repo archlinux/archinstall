@@ -135,7 +135,7 @@ while 1:
 			continue
 		break
 
-	if 'users' not in archinstall.storage['_guided']:
+	if not archinstall.storage['_guided']['users']:
 		archinstall.storage['_guided']['users'] = []
 	archinstall.storage['_guided']['users'].append(new_user)
 
