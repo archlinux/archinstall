@@ -292,7 +292,8 @@ class Installer():
 		pass
 
 	def set_keyboard_language(self, language):
-		with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
-			vconsole.write(f'KEYMAP={language}\n')
-			vconsole.write(f'FONT=lat9w-16\n')
+		if len(language.strip()):
+			with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
+				vconsole.write(f'KEYMAP={language}\n')
+				vconsole.write(f'FONT=lat9w-16\n')
 		return True
