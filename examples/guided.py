@@ -58,14 +58,15 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if 'profile' in archinstall.storage['_guided'] and len(profile := archinstall.storage['_guided']['profile']['path'].strip()):
 				installation.install_profile(profile)
 
-			for user in archinstall.storage['_guided']['users']:
-				password = users[user]
+			if archinstall.storage['_guided']['users']:
+				for user in archinstall.storage['_guided']['users']:
+					password = users[user]
 
-				sudo = False
-				if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
-					sudo = True
+					sudo = False
+					if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
+						sudo = True
 
-				installation.user_create(user, password, sudo=sudo)
+					installation.user_create(user, password, sudo=sudo)
 
 			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
 				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
@@ -124,6 +125,7 @@ new_user_text = 'Any additional users to install (leave blank for no users): '
 if len(root_pw.strip()) == 0:
 	new_user_text = 'Create a super-user with sudo privileges: '
 
+archinstall.storage['_guided']['users'] = None
 while 1:
 	new_user = input(new_user_text)
 	if len(new_user.strip()) == 0:
