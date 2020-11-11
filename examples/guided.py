@@ -49,20 +49,25 @@ def perform_installation(device, boot_partition, language, mirrors):
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
-			if len(archinstall.storage['_guided']['packages']) and archinstall.storage['_guided']['packages'][0] != '':
+			if archinstall.storage['_guided']['network']:
+				installation.configure_nic(**archinstall.storage['_guided']['network'])
+				installation.enable_service('systemd-networkd')
+
+			if archinstall.storage['_guided']['packages'] and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
 
 			if 'profile' in archinstall.storage['_guided'] and len(profile := archinstall.storage['_guided']['profile']['path'].strip()):
 				installation.install_profile(profile)
 
-			for user in archinstall.storage['_guided']['users']:
-				password = users[user]
+			if archinstall.storage['_guided']['users']:
+				for user in archinstall.storage['_guided']['users']:
+					password = users[user]
 
-				sudo = False
-				if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
-					sudo = True
+					sudo = False
+					if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
+						sudo = True
 
-				installation.user_create(user, password, sudo=sudo)
+					installation.user_create(user, password, sudo=sudo)
 
 			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
 				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
@@ -77,8 +82,8 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_error
   will we continue with the actual installation steps.
 """
 
-keyboard_language = archinstall.select_language(archinstall.list_keyboard_languages())
-archinstall.set_keyboard_language(keyboard_language)
+if len(keyboard_language := archinstall.select_language(archinstall.list_keyboard_languages()).strip()):
+	archinstall.set_keyboard_language(keyboard_language)
 
 # Create a storage structure for all our information.
 # We'll print this right before the user gets informed about the formatting timer.
@@ -121,6 +126,7 @@ new_user_text = 'Any additional users to install (leave blank for no users): '
 if len(root_pw.strip()) == 0:
 	new_user_text = 'Create a super-user with sudo privileges: '
 
+archinstall.storage['_guided']['users'] = None
 while 1:
 	new_user = input(new_user_text)
 	if len(new_user.strip()) == 0:
@@ -129,7 +135,7 @@ while 1:
 			continue
 		break
 
-	if 'users' not in archinstall.storage['_guided']:
+	if not archinstall.storage['_guided']['users']:
 		archinstall.storage['_guided']['users'] = []
 	archinstall.storage['_guided']['users'].append(new_user)
 
@@ -167,6 +173,7 @@ while 1:
 		break
 
 # Additional packages (with some light weight error handling for invalid package names)
+archinstall.storage['_guided']['packages'] = None
 while 1:
 	packages = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
 
@@ -179,6 +186,38 @@ while 1:
 			break
 	except archinstall.RequirementError as e:
 		print(e)
+
+# Optionally configure one network interface.
+#while 1:
+interfaces = archinstall.list_interfaces() # {MAC: Ifname}
+archinstall.storage['_guided']['network'] = None
+
+nic = archinstall.generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
+if nic:
+	mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+	if mode == 'IP (static)':
+		while 1:
+			ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
+			if ip:
+				break
+			else:
+				ArchInstall.log(
+					"You need to enter a valid IP in IP-config mode.",
+					level=archinstall.LOG_LEVELS.Warning,
+					bg='black',
+					fg='red'
+				)
+
+		if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
+			gateway = None
+
+		dns = None
+		if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
+			dns = dns_input.split(' ')
+
+		archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
+	else:
+		archinstall.storage['_guided']['network'] = {'nic': nic}
 
 
 print()

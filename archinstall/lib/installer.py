@@ -6,6 +6,7 @@ from .general import *
 from .user_interaction import *
 from .profiles import Profile
 from .mirrors import *
+from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
 
@@ -149,6 +150,24 @@ class Installer():
 	def arch_chroot(self, cmd, *args, **kwargs):
 		return self.run_command(cmd)
 
+	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
+		if dhcp:
+			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
+		else:
+			assert ip
+
+			network = {"Address": ip}
+			if gateway:
+				network["Gateway"] = gateway
+			if dns:
+				assert type(dns) == list
+				network["DNS"] = dns
+
+			conf = Networkd(Match={"Name": nic}, Network=network)
+		
+		with open(f"{self.mountpoint}/etc/systemd/network/10-{nic}.network", "a") as netconf:
+			netconf.write(str(conf))
+
 	def minimal_installation(self):
 		## Add nessecary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
@@ -273,7 +292,8 @@ class Installer():
 		pass
 
 	def set_keyboard_language(self, language):
-		with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
-			vconsole.write(f'KEYMAP={language}\n')
-			vconsole.write(f'FONT=lat9w-16\n')
+		if len(language.strip()):
+			with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
+				vconsole.write(f'KEYMAP={language}\n')
+				vconsole.write(f'FONT=lat9w-16\n')
 		return True

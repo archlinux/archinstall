@@ -24,7 +24,9 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		print(f"{index}: {option}")
 
 	selected_option = input(input_text)
-	if selected_option.isdigit():
+	if len(selected_option.strip()) <= 0:
+		return None
+	elif selected_option.isdigit():
 		selected_option = options[int(selected_option)]
 	elif selected_option in options:
 		pass # We gave a correct absolute value
