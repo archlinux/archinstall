@@ -204,8 +204,11 @@ if nic:
 					fg='red'
 				)
 
-		gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
-		dns = input('Enter your DNS servers (space separated, blank for none): ').strip().split(' ')
+		if gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
+
+		dns = None
+		if len(dns := input('Enter your DNS servers (space separated, blank for none): ').strip()):
+			dns = dns.split(' ')
 
 		archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
 	else:
