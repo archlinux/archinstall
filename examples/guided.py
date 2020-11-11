@@ -52,7 +52,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.storage['_guided']['network']:
 				installation.configure_nic(**archinstall.storage['_guided']['network'])
 
-			if len(archinstall.storage['_guided']['packages']) and archinstall.storage['_guided']['packages'][0] != '':
+			if archinstall.storage['_guided']['packages'] and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
 
 			if 'profile' in archinstall.storage['_guided'] and len(profile := archinstall.storage['_guided']['profile']['path'].strip()):
@@ -170,6 +170,7 @@ while 1:
 		break
 
 # Additional packages (with some light weight error handling for invalid package names)
+archinstall.storage['_guided']['packages'] = None
 while 1:
 	packages = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
 
