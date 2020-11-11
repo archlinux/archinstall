@@ -208,8 +208,8 @@ if nic:
 			gateway = None
 
 		dns = None
-		if len(dns := input('Enter your DNS servers (space separated, blank for none): ').strip()):
-			dns = dns.split(' ')
+		if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
+			dns = dns_input.split(' ')
 
 		archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
 	else:
