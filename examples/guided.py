@@ -188,9 +188,9 @@ while 1:
 	interfaces = archinstall.list_interfaces()
 	archinstall.storage['_guided']['network'] = None
 
-	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
+	nic = archinstall.generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
 	if nic:
-		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+		mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 		if mode == 'IP (static)':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
