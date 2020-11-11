@@ -17,3 +17,5 @@ SAFETY_LOCK
 **/**.pkg.*.xz
 **/**archinstall-*.tar.gz
 **/**.zst
+**/**.network
+**/**.target
