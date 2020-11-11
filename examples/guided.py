@@ -185,10 +185,10 @@ while 1:
 
 # Optionally configure one network interface.
 while 1:
-	interfaces = archinstall.list_interfaces()
+	interfaces = archinstall.list_interfaces() # {MAC: Ifname}
 	archinstall.storage['_guided']['network'] = None
 
-	nic = archinstall.generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
+	nic = archinstall.generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic:
 		mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 		if mode == 'IP (static)':
