@@ -50,7 +50,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			installation.add_bootloader()
 
 			if archinstall.storage['_guided']['network']:
-				archinstall.configure_nic(**archinstall.storage['_guided']['network'])
+				installation.configure_nic(**archinstall.storage['_guided']['network'])
 
 			if len(archinstall.storage['_guided']['packages']) and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
