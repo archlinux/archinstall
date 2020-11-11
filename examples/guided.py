@@ -204,7 +204,8 @@ if nic:
 					fg='red'
 				)
 
-		if gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
+		if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
+			gateway = None
 
 		dns = None
 		if len(dns := input('Enter your DNS servers (space separated, blank for none): ').strip()):
