@@ -10,7 +10,7 @@ provides=("${pkgname}")
 arch=('x86_64')
 source=("${pkgname}-v${pkgver}-x86_64.tar.gz::https://github.com/Torxed/archinstall/archive/v$pkgver.tar.gz")
 depends=('python-archinstall')
-sha256sums=('db25333c66896068efc758c3b93020f52df44a876a1124ccad65a3e708711a6a')
+sha256sums=('fb64065af6d26cbe5125452d17887dbb930ff254858ea5dabc9bb543747a6675')
  
 package() {
 	mkdir -p "${pkgdir}/usr/bin"
