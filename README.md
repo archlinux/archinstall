@@ -5,9 +5,11 @@ The installer also doubles as a python library to install Arch Linux and manage 
 Pre-built ISO's can be found over at https://archlinux.life which autostarts archinstall *(in a safe guided mode)*.
 
  * archinstall [discord](https://discord.gg/cqXU88y) server
+ * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
+ * archinstall [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
  * archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
  * archinstall ISO's: https://archlinux.life/
- * archinstall on [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
+
 
 # Installation & Usage
 
