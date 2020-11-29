@@ -64,25 +64,10 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	return cache
 
-def find_examples():
-	"""
-	Used to locate the examples, bundled with the module or executable.
-
-	:return: {'guided.py' : './examples/guided.py', '<profile #2>' : '<path #2>'}
-	:rtype: dict
-	"""
-
-	# We need to traverse backwards one step with /../ because
-	# We're living in src/lib/ and we're not executing from src/ anymore.
-	cwd = os.path.abspath(f'{os.path.dirname(__file__)}/../')
-	examples = f"{cwd}/examples"
-
-	return {os.path.basename(path): path for path in glob.glob(f'{examples}/*.py')}
-
 def find_installation_script(profile):
 	parsed_url = urllib.parse.urlparse(profile)
 	if not parsed_url.scheme:
-		examples = find_examples()
+		examples = list_profiles()
 		if f"{profile}.py" in examples:
 			with open(examples[f"{profile}.py"]) as file:
 				return Script(file.read(), filename=os.path.basename(profile)+".py")
