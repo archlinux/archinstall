@@ -89,7 +89,7 @@ def log(*args, **kwargs):
 		if type(kwargs['file']) is str:
 			with open(kwargs['file'], 'a') as log_file:
 				log_file.write(f"{orig_string}\n")
-		else:
+		elif kwargs['file']:
 			kwargs['file'].write(f"{orig_string}\n")
 
 	# If we assigned a level, try to log it to systemd's journald.
