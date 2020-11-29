@@ -1,8 +1,8 @@
 import archinstall
 import time
 
-archinstall.UPSTREAM_URL = 'https://archlinux.life/profiles'
-archinstall.UPSTREAM_DB = 'index.db'
+archinstall.storage['UPSTREAM_URL'] = 'https://archlinux.life/profiles'
+archinstall.storage['PROFILE_DB'] = 'index.db'
 
 for name, info in archinstall.list_profiles().items():
 	# Tailored means it's a match for this machine
