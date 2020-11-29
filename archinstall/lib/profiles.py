@@ -43,13 +43,14 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	# Grab profiles from upstream URL
 	if storage['PROFILE_DB']:
+		profiles_url = os.path.join(storage["UPSTREAM_URL"], storage['PROFILE_DB'])
 		try:
-			profile_list = json.loads(grab_url_data(os.path.join(storage["UPSTREAM_URL"], storage['PROFILE_DB'])))
+			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
-			print(f'Error: Listing profiles on URL "{storage["UPSTREAM_URL"]}" resulted in:', err)
+			print(f'Error: Listing profiles on URL "{profiles_url}" resulted in:', err)
 			return cache
 		except:
-			print(f'Error: Could not decode "{storage["UPSTREAM_URL"]}" result as JSON:', err)
+			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
 			return cache
 		
 		for profile in profile_list:
