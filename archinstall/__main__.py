@@ -16,7 +16,7 @@ def run_as_a_module():
 		sys.argv.append('guided')
 
 	try:
-		script = archinstall.find_installation_script(sys.argv[1])
+		script = archinstall.Script(sys.argv[1])
 	except archinstall.ProfileNotFound as err:
 		print(f"Couldn't find file: {err}")
 		sys.exit(1)

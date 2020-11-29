@@ -65,28 +65,6 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	return cache
 
-def find_installation_script(profile):
-	parsed_url = urllib.parse.urlparse(profile)
-	if not parsed_url.scheme:
-		examples = list_profiles()
-		if f"{profile}.py" in examples:
-			with open(examples[f"{profile}.py"]) as file:
-				return Script(file.read(), filename=os.path.basename(profile)+".py")
-		try:
-			with open(profile, 'r') as file:
-				return Script(file.read(), filename=os.path.basename(profile))
-		except FileNotFoundError:
-			# We need to traverse backwards one step with /../ because
-			# We're living in src/lib/ and we're not executing from src/ anymore.
-			cwd = os.path.abspath(f'{os.path.dirname(__file__)}/../')
-			examples = f"{cwd}/examples"
-			raise ProfileNotFound(f"File {profile} does not exist in {examples}")
-	elif parsed_url.scheme in ('https', 'http'):
-		return Script(urllib.request.urlopen(profile).read().decode('utf-8'), filename=os.path.basename(profile))
-	else:
-		raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
-
-
 class Imported():
 	def __init__(self, spec, imported):
 		self.spec = spec
@@ -103,18 +81,45 @@ class Imported():
 
 
 class Script():
-	def __init__(self, content, filename=''):
-		self.content = content
-		self.filename = filename
+	def __init__(self, profile):
+		# profile: https://hvornum.se/something.py
+		# profile: desktop
+		# profile: /path/to/profile.py
+		self.profile = profile
+		self.converted_path = None
+
+	def localize_path(profile_path):
+		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
+			temp_file_path = f"/tmp/{self.profile}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+
+			with open(temp_file_path, "w") as temp_file:
+				temp_file.write(urllib.request.urlopen(url).read().decode('utf-8'))
+
+			return temp_file_path
+		else:
+			return profile_path
 
 	@property
 	def path(self):
-		temp_file_path = f"/tmp/{self.filename}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+		parsed_url = urllib.parse.urlparse(self.profile)
 
-		with open(temp_file_path, "w") as temp_file:
-			temp_file.write(self.content)
+		# The Profile was not a direct match on a remote URL
+		if not parsed_url.scheme:
+			# Try to locate all local or known URL's
+			examples = list_profiles()
 
-		return temp_file_path
+			if f"{self.profile}.py" in examples:
+				return self.localize_path(examples[f"{self.profile}.py"]['path'])
+
+			# Path was not found in any known examples, check if it's an abolute path
+			if os.path.isfile(self.profile):
+				return os.path.basename(self.profile)
+
+			raise ProfileNotFound(f"File {self.profile} does not exist in {examples}")
+		elif parsed_url.scheme in ('https', 'http'):
+			return self.localize_path(self.profile)
+		else:
+			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
 	def execute(self):
 		spec = importlib.util.spec_from_file_location(
