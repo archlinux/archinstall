@@ -110,7 +110,7 @@ class Script():
 			examples = list_profiles()
 
 			if f"{self.profile}" in examples:
-				return self.localize_path(examples[f"{self.profile}.py"]['path'])
+				return self.localize_path(examples[self.profile]['path'])
 			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
 			elif f"{self.profile}.py" in examples:
 				return self.localize_path(examples[f"{self.profile}.py"]['path'])
