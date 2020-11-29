@@ -93,6 +93,7 @@ class Script():
 			if not self.converted_path:
 				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
 
+				print('Opening URL:', url)
 				with open(self.converted_path, "w") as temp_file:
 					temp_file.write(urllib.request.urlopen(url).read().decode('utf-8'))
 
