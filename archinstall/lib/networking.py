@@ -20,4 +20,4 @@ def list_interfaces(skip_loopback=True):
 	return interfaces
 
 def get_interface_from_mac(mac):
-	return list_interfaces().get(mac, None)
+	return list_interfaces().get(mac.lower(), None)
