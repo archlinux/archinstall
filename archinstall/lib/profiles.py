@@ -5,7 +5,7 @@ from .general import multisplit, sys_command, log
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
-from .storage import storage, UPSTREAM_URL, PROFILE_DB
+from .storage import storage, UPSTREAM_URL, PROFILE_DB, PROFILE_PATH
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
@@ -42,9 +42,9 @@ def list_profiles(filter_irrelevant_macs=True):
 			break
 
 	# Grab profiles from upstream URL
-	if UPSTREAM_DB:
+	if PROFILE_DB:
 		try:
-			profile_list = json.loads(grab_url_data(os.path.join(UPSTREAM_URL, UPSTREAM_DB)))
+			profile_list = json.loads(grab_url_data(os.path.join(UPSTREAM_URL, PROFILE_DB)))
 		except urllib.error.UTTPError as err:
 			print(f'Error: Listing profiles on URL "{UPSTREAM_URL}" resulted in:', err)
 			return cache

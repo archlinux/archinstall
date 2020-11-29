@@ -1,3 +1,5 @@
+import os
+
 storage = {}
 
 # There's a few scenarios of execution:
