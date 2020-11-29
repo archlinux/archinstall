@@ -160,7 +160,7 @@ class Profile():
 			else:
 				raise ProfileError(f'Extension {os.path.splitext(absolute_path)[1]} is not a supported profile model. Only .py is supported.')
 
-		raise ProfileError(f'No such profile ({self._path}) was found either locally or in {storage["UPSTREAM_URL"]}')
+		raise ProfileError(f'No such profile ({self.path}) was found either locally or in {storage["UPSTREAM_URL"]}')
 
 	def install(self):
 		# To avoid profiles importing the wrong 'archinstall',
