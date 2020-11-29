@@ -57,7 +57,7 @@ def list_profiles(filter_irrelevant_macs=True):
 			if os.path.splitext(profile)[1] == '.py':
 				tailored = False
 				if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', profile)):
-					if filter_irrelevant_macs and mac[0][0] not in local_macs:
+					if filter_irrelevant_macs and mac[0][0].lower() not in local_macs:
 						continue
 					tailored = True
 
