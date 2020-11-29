@@ -146,7 +146,7 @@ class Profile():
 
 	@property
 	def path(self, *args, **kwargs):
-		self._path.path
+		return self._path.path
 
 	def load_instructions(self, namespace=None):
 		if (absolute_path := self.path):
