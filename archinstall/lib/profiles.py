@@ -91,7 +91,7 @@ class Script():
 	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
-				self.converted_path = f"/tmp/{self.profile}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
 
 				with open(self.converted_path, "w") as temp_file:
 					temp_file.write(urllib.request.urlopen(url).read().decode('utf-8'))
