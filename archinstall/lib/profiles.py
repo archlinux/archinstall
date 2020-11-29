@@ -88,7 +88,7 @@ class Script():
 		self.profile = profile
 		self.converted_path = None
 
-	def localize_path(profile_path):
+	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
 				self.converted_path = f"/tmp/{self.profile}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
