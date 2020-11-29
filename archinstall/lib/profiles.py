@@ -45,7 +45,7 @@ def list_profiles(filter_irrelevant_macs=True):
 	if storage['PROFILE_DB']:
 		try:
 			profile_list = json.loads(grab_url_data(os.path.join(storage["UPSTREAM_URL"], storage['PROFILE_DB'])))
-		except urllib.error.UTTPError as err:
+		except urllib.error.HTTPError as err:
 			print(f'Error: Listing profiles on URL "{storage["UPSTREAM_URL"]}" resulted in:', err)
 			return cache
 		except:
