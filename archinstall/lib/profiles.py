@@ -5,7 +5,7 @@ from .general import multisplit, sys_command, log
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
-from .storage import storage, UPSTREAM_URL, PROFILE_DB, PROFILE_PATH
+from .storage import storage
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
@@ -22,13 +22,13 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
-	for PATH_ITEM in PROFILE_PATH:
+	for PATH_ITEM in storage['PROFILE_PATH']:
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
 					if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
-						if filter_irrelevant_macs and mac[0][0] not in local_macs:
+						if filter_irrelevant_macs and mac[0][0].lower() not in local_macs:
 							continue
 						tailored = True
 
@@ -42,14 +42,14 @@ def list_profiles(filter_irrelevant_macs=True):
 			break
 
 	# Grab profiles from upstream URL
-	if PROFILE_DB:
+	if storage['PROFILE_DB']:
 		try:
-			profile_list = json.loads(grab_url_data(os.path.join(UPSTREAM_URL, PROFILE_DB)))
+			profile_list = json.loads(grab_url_data(os.path.join(storage["UPSTREAM_URL"], storage['PROFILE_DB'])))
 		except urllib.error.UTTPError as err:
-			print(f'Error: Listing profiles on URL "{UPSTREAM_URL}" resulted in:', err)
+			print(f'Error: Listing profiles on URL "{storage["UPSTREAM_URL"]}" resulted in:', err)
 			return cache
 		except:
-			print(f'Error: Could not decode "{UPSTREAM_URL}" result as JSON:', err)
+			print(f'Error: Could not decode "{storage["UPSTREAM_URL"]}" result as JSON:', err)
 			return cache
 		
 		for profile in profile_list:
@@ -60,7 +60,7 @@ def list_profiles(filter_irrelevant_macs=True):
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path' : os.path.join(UPSTREAM_URL, profile), 'description' : profile_list[profile], 'tailored' : tailored}
+				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"], profile), 'description' : profile_list[profile], 'tailored' : tailored}
 
 	return cache
 
@@ -148,9 +148,9 @@ class Profile():
 				return os.path.abspath(f'{path}/{self._path}.py')
 
 		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/{self._path}.py')):
+			if (cache := grab_url_data(f'{storage["UPSTREAM_URL"]}/{self._path}.py')):
 				self._cache = cache
-				return f'{UPSTREAM_URL}/{self._path}.py'
+				return f'{storage["UPSTREAM_URL"]}/{self._path}.py'
 		except urllib.error.HTTPError:
 			pass
 
@@ -171,7 +171,7 @@ class Profile():
 			else:
 				raise ProfileError(f'Extension {os.path.splitext(absolute_path)[1]} is not a supported profile model. Only .py is supported.')
 
-		raise ProfileError(f'No such profile ({self._path}) was found either locally or in {UPSTREAM_URL}')
+		raise ProfileError(f'No such profile ({self._path}) was found either locally or in {storage["UPSTREAM_URL"]}')
 
 	def install(self):
 		# To avoid profiles importing the wrong 'archinstall',
@@ -206,9 +206,9 @@ class Application(Profile):
 				return os.path.abspath(f'{path}/{self._path}.py')
 
 		try:
-			if (cache := grab_url_data(f'{UPSTREAM_URL}/applications/{self._path}.py')):
+			if (cache := grab_url_data(f'{storage["UPSTREAM_URL"]}/applications/{self._path}.py')):
 				self._cache = cache
-				return f'{UPSTREAM_URL}/applications/{self._path}.py'
+				return f'{storage["UPSTREAM_URL"]}/applications/{self._path}.py'
 		except urllib.error.HTTPError:
 			pass
 

@@ -1,17 +1,19 @@
 import os
 
-storage = {}
-
 # There's a few scenarios of execution:
 #   1. In the git repository, where ./profiles/ exist
 #   2. When executing from a remote directory, but targeted a script that starts from the git repository
 #   3. When executing as a python -m archinstall module where profiles exist one step back for library reasons.
 #   (4. Added the ~/.config directory as a additional option for future reasons)
-PROFILE_PATH = [
-	'./profiles',
-	'~/.config/archinstall/profiles',
-	os.path.join(os.path.dirname(os.path.abspath(__file__)), 'profiles'),
-	os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
-]
-UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles'
-PROFILE_DB = None # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
+#
+# And Keeping this in dict ensures that variables are shared across imports.
+storage = {
+	'PROFILE_PATH' : [
+		'./profiles',
+		'~/.config/archinstall/profiles',
+		os.path.join(os.path.dirname(os.path.abspath(__file__)), 'profiles'),
+		os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
+	],
+	'UPSTREAM_URL' : 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles',
+	'PROFILE_DB' : None # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
+}

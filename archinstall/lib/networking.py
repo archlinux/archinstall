@@ -15,6 +15,6 @@ def list_interfaces(skip_loopback=True):
 		if skip_loopback and iface == "lo":
 			continue
 
-		mac = getHwAddr(iface).replace(':', '-')
+		mac = getHwAddr(iface).replace(':', '-').lower()
 		interfaces[mac] = iface
 	return interfaces
