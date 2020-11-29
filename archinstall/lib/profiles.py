@@ -5,9 +5,7 @@ from .general import multisplit, sys_command, log
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
-from .storage import storage
-
-UPSTREAM_URL = 'https://raw.githubusercontent.com/Torxed/archinstall/master/profiles'
+from .storage import storage, UPSTREAM_URL, PROFILE_DB
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
@@ -17,29 +15,53 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(base='./profiles/', filter_irrelevant_macs=True):
+def list_profiles(filter_irrelevant_macs=True):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
 
 	cache = {}
-	for root, folders, files in os.walk(base):
-		for file in files:
-			tailored = False
-			if os.path.splitext(file)[1] == '.py':
-				if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
+	# Grab all local profiles found in PROFILE_PATH
+	for PATH_ITEM in PROFILE_PATH:
+		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM))):
+			for file in files:
+				if os.path.splitext(file)[1] == '.py':
+					tailored = False
+					if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
+						if filter_irrelevant_macs and mac[0][0] not in local_macs:
+							continue
+						tailored = True
+
+					description = ''
+					with open(os.path.join(root, file), 'r') as fh:
+						first_line = fh.readline()
+						if first_line[0] == '#':
+							description = first_line[1:].strip()
+
+					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
+			break
+
+	# Grab profiles from upstream URL
+	if UPSTREAM_DB:
+		try:
+			profile_list = json.loads(grab_url_data(os.path.join(UPSTREAM_URL, UPSTREAM_DB)))
+		except urllib.error.UTTPError as err:
+			print(f'Error: Listing profiles on URL "{UPSTREAM_URL}" resulted in:', err)
+			return cache
+		except:
+			print(f'Error: Could not decode "{UPSTREAM_URL}" result as JSON:', err)
+			return cache
+		
+		for profile in profile_list:
+			if os.path.splitext(profile)[1] == '.py':
+				tailored = False
+				if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', profile)):
 					if filter_irrelevant_macs and mac[0][0] not in local_macs:
 						continue
 					tailored = True
 
-				description = ''
-				with open(os.path.join(root, file), 'r') as fh:
-					first_line = fh.readline()
-					if first_line[0] == '#':
-						description = first_line[1:].strip()
+				cache[profile[:-3]] = {'path' : os.path.join(UPSTREAM_URL, profile), 'description' : profile_list[profile], 'tailored' : tailored}
 
-				cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
-		break
 	return cache
 
 def find_examples():
