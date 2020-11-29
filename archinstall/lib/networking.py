@@ -18,3 +18,6 @@ def list_interfaces(skip_loopback=True):
 		mac = getHwAddr(iface).replace(':', '-').lower()
 		interfaces[mac] = iface
 	return interfaces
+
+def get_interface_from_mac(mac):
+	return list_interfaces().get(mac, None)
