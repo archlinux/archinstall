@@ -109,7 +109,10 @@ class Script():
 			# Try to locate all local or known URL's
 			examples = list_profiles()
 
-			if f"{self.profile}.py" in examples:
+			if f"{self.profile}" in examples:
+				return self.localize_path(examples[f"{self.profile}.py"]['path'])
+			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
+			elif f"{self.profile}.py" in examples:
 				return self.localize_path(examples[f"{self.profile}.py"]['path'])
 
 			# Path was not found in any known examples, check if it's an abolute path
