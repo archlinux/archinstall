@@ -90,12 +90,13 @@ class Script():
 
 	def localize_path(profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
-			temp_file_path = f"/tmp/{self.profile}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+			if not self.converted_path:
+				self.converted_path = f"/tmp/{self.profile}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
 
-			with open(temp_file_path, "w") as temp_file:
-				temp_file.write(urllib.request.urlopen(url).read().decode('utf-8'))
+				with open(self.converted_path, "w") as temp_file:
+					temp_file.write(urllib.request.urlopen(url).read().decode('utf-8'))
 
-			return temp_file_path
+			return self.converted_path
 		else:
 			return profile_path
 
@@ -130,40 +131,22 @@ class Script():
 		spec.loader.exec_module(imported_path)
 		sys.modules["tempscript"] = imported_path
 
-
 class Profile():
 	def __init__(self, installer, path, args={}):
-		self._path = path
+		self._path = Script(path)
 		self.installer = installer
 		self._cache = None
 		self.args = args
 
 	def __dump__(self, *args, **kwargs):
-		return {'path' : self._path}
+		return {'path' : self.path}
 
 	def __repr__(self, *args, **kwargs):
-		return f'Profile({self._path} <"{self.path}">)'
+		return f'Profile({self.path})'
 
 	@property
 	def path(self, *args, **kwargs):
-		if os.path.isfile(f'{self._path}'):
-			return os.path.abspath(f'{self._path}')
-
-		for path in ['./profiles', '/etc/archinstall', '/etc/archinstall/profiles', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles')]: # Step out of /lib
-			if os.path.isfile(f'{path}/{self._path}.py'):
-				return os.path.abspath(f'{path}/{self._path}.py')
-
-		try:
-			if (cache := grab_url_data(f'{storage["UPSTREAM_URL"]}/{self._path}.py')):
-				self._cache = cache
-				return f'{storage["UPSTREAM_URL"]}/{self._path}.py'
-		except urllib.error.HTTPError:
-			pass
-
-		return None
-
-#	def py_exec_mock(self):
-#		spec.loader.exec_module(imported)
+		self._path.path
 
 	def load_instructions(self, namespace=None):
 		if (absolute_path := self.path):
