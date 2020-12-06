@@ -89,9 +89,8 @@ class Installer():
 			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues", level=LOG_LEVELS.Warning)
 			return False
 
-	def mount(self, mountpoint, partition):
+	def mount(self, partition, mountpoint):
 		partition.mount(f'{self.mountpoint}/srv/http')
-
 
 	def post_install_check(self, *args, **kwargs):
 		return [step for step, flag in self.helper_flags.items() if flag is False]
