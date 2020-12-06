@@ -13,7 +13,6 @@ def run_as_a_module():
 	"""
 
 	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
-	print('ID in module:', id(archinstall.storage), archinstall.storage)
 	archinstall.storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
 
 	if len(sys.argv) == 1:

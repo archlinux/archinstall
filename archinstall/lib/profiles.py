@@ -22,7 +22,6 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
-	print('ID in profiles:', id(storage), storage)
 	for PATH_ITEM in storage['PROFILE_PATH']:
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
@@ -75,6 +74,7 @@ class Script():
 		self.installer = installer
 		self.converted_path = None
 		self.spec = None
+		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 
 	def __enter__(self, *args, **kwargs):
@@ -105,13 +105,14 @@ class Script():
 		# The Profile was not a direct match on a remote URL
 		if not parsed_url.scheme:
 			# Try to locate all local or known URL's
-			examples = list_profiles()
+			if not self.examples:
+				self.examples = list_profiles()
 
-			if f"{self.profile}" in examples:
-				return self.localize_path(examples[self.profile]['path'])
+			if f"{self.profile}" in self.examples:
+				return self.localize_path(self.examples[self.profile]['path'])
 			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
-			elif f"{self.profile}.py" in examples:
-				return self.localize_path(examples[f"{self.profile}.py"]['path'])
+			elif f"{self.profile}.py" in self.examples:
+				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
 
 			# Path was not found in any known examples, check if it's an abolute path
 			if os.path.isfile(self.profile):
@@ -167,7 +168,8 @@ class Application(Profile):
 		# The Profile was not a direct match on a remote URL
 		if not parsed_url.scheme:
 			# Try to locate all local or known URL's
-			examples = list_profiles(subpath='/applications')
+			if not self.examples:
+				self.examples = list_profiles(subpath='/applications')
 
 			if f"{self.profile}" in examples:
 				return self.localize_path(examples[self.profile]['path'])
