@@ -278,4 +278,4 @@ def harddrive(size=None, model=None, fuzzy=False):
 		if model and (collection[drive]['model'] is None or collection[drive]['model'].lower() != model.lower()):
 			continue
 
-		return drive
+		return BlockDevice(drive['path'], drive)
