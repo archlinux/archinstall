@@ -38,7 +38,7 @@ copyright = '2020, Anton Hvornum'
 author = 'Anton Hvornum'
 
 # The full version, including alpha/beta/rc tags
-release = 'v2.0.4'
+release = 'v2.0.6'
 
 
 # -- General configuration ---------------------------------------------------
@@ -104,7 +104,7 @@ html_show_sourcelink = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'slimhttpdoc'
+htmlhelp_basename = 'archinstalldoc'
 
 # -- Options for manual page output --------------------------------------------
 
