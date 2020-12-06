@@ -226,6 +226,8 @@ archinstall.log("-- Guided template chosen (with below config) --", level=archin
 archinstall.log(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
 print()
 
+input('Press Enter to continue.')
+
 """
 	Issue a final warning before we continue with something un-revertable.
 	We mention the drive one last time, and count from 5 to 0.

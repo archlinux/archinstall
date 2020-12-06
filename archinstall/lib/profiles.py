@@ -15,7 +15,7 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(filter_irrelevant_macs=True, sub_path=''):
+def list_profiles(filter_irrelevant_macs=True, subpath=''):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
@@ -23,7 +23,7 @@ def list_profiles(filter_irrelevant_macs=True, sub_path=''):
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+sub_path))):
+		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
@@ -43,7 +43,7 @@ def list_profiles(filter_irrelevant_macs=True, sub_path=''):
 
 	# Grab profiles from upstream URL
 	if storage['PROFILE_DB']:
-		profiles_url = os.path.join(storage["UPSTREAM_URL"]+sub_path, storage['PROFILE_DB'])
+		profiles_url = os.path.join(storage["UPSTREAM_URL"]+subpath, storage['PROFILE_DB'])
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
@@ -61,7 +61,7 @@ def list_profiles(filter_irrelevant_macs=True, sub_path=''):
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+sub_path, profile), 'description' : profile_list[profile], 'tailored' : tailored}
+				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+subpath, profile), 'description' : profile_list[profile], 'tailored' : tailored}
 
 	return cache
 
