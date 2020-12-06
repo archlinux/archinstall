@@ -116,7 +116,7 @@ class Script():
 			if os.path.isfile(self.profile):
 				return self.profile
 
-			raise ProfileNotFound(f"File {self.profile} does not exist in {examples}")
+			raise ProfileNotFound(f"File {self.profile} does not exist in {storage['PROFILE_PATH']}")
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:
