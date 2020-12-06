@@ -23,5 +23,5 @@ setuptools.setup(
 	],
 	python_requires='>=3.8',
 	setup_requires=['wheel'],
-	package_data={'archinstall': glob.glob('examples/*.py') + glob.glob('profiles/*.py')},
+	package_data={'archinstall': glob.glob('examples/*.py') + glob.glob('profiles/*.py') + glob.glob('profiles/applications/*.py')},
 )

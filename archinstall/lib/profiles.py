@@ -25,7 +25,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 	for PATH_ITEM in storage['PROFILE_PATH']:
 		import time
 		print('Walking:', os.path.abspath(os.path.expanduser(PATH_ITEM+subpath)))
-		time.sleep(10)
+		time.sleep(3)
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
