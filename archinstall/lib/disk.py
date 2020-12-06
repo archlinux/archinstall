@@ -34,7 +34,8 @@ class BlockDevice():
 		"""
 		return {
 			'path' : self.path,
-			'size' : self.info['size'] if 'size' in self.info else '<unknown>'
+			'size' : self.info['size'] if 'size' in self.info else '<unknown>',
+			'model' : self.info['model'] if 'model' in self.info else '<unknown>'
 		}
 
 	def __dump__(self):
@@ -252,8 +253,29 @@ def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	#for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
-	for drive in json.loads(b''.join(sys_command(f'lsblk --json -l -n -o path,size,type,mountpoint,label,pkname', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
+	for drive in json.loads(b''.join(sys_command(f'lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part': continue
 
 		drives[drive['path']] = BlockDevice(drive['path'], drive)
 	return drives
+
+def convert_to_gigabytes(string):
+	unit = string.strip()[-1]
+	size = float(string.strip()[:-1])
+
+	if unit == 'M':
+		size = size/1024
+	elif unit == 'T':
+		size = size*1024
+
+	return size
+
+def harddrive(size=None, model=None, fuzzy=False):
+	collection = all_disks()
+	for drive in collection:
+		if size and convert_to_gigabytes(collection[drive]['size']) != size:
+			continue
+		if model and (collection[drive]['model'] is None or collection[drive]['model'].lower() != model.lower()):
+			continue
+
+		return drive
