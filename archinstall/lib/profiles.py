@@ -114,7 +114,7 @@ class Script():
 
 			# Path was not found in any known examples, check if it's an abolute path
 			if os.path.isfile(self.profile):
-				return os.path.basename(self.profile)
+				return self.profile
 
 			raise ProfileNotFound(f"File {self.profile} does not exist in {examples}")
 		elif parsed_url.scheme in ('https', 'http'):
