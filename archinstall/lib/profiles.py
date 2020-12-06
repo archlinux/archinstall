@@ -65,21 +65,6 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	return cache
 
-class Imported():
-	def __init__(self, spec, imported):
-		self.spec = spec
-		self.imported = imported
-
-	def __enter__(self, *args, **kwargs):
-		self.spec.loader.exec_module(self.imported)
-		return self.imported
-
-	def __exit__(self, *args, **kwargs):
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-		if len(args) >= 2 and args[1]:
-			raise args[1]
-
-
 class Script():
 	def __init__(self, profile):
 		# profile: https://hvornum.se/something.py
@@ -87,6 +72,7 @@ class Script():
 		# profile: /path/to/profile.py
 		self.profile = profile
 		self.converted_path = None
+		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 
 	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
@@ -125,21 +111,30 @@ class Script():
 		else:
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
-	def execute(self):
-		spec = importlib.util.spec_from_file_location(
-			"tempscript",
-			self.path
-		)
-		imported_path = importlib.util.module_from_spec(spec)
-		spec.loader.exec_module(imported_path)
-		sys.modules["tempscript"] = imported_path
+	def load_instructions(self, namespace=None):
+		if namespace:
+			self.namespace = namespace
 
-class Profile():
+		spec = importlib.util.spec_from_file_location(namespace, self.path)
+		imported = importlib.util.module_from_spec(spec)
+		sys.modules[self.namespace] = imported
+		
+		return imported
+
+	def execute(self):
+		if not self.namespace in sys.modules:
+			self.load_instructions()
+
+		__builtins__['installation'] = self.installer # TODO: Replace this with a import archinstall.session instead
+		spec.loader.exec_module(sys.modules[self.namespace])
+
+		return True
+
+class Profile(Script):
 	def __init__(self, installer, path, args={}):
-		self._path = Script(path)
+		super(Profile, self).__init__(path)
 		self.installer = installer
 		self._cache = None
-		self.args = args
 
 	def __dump__(self, *args, **kwargs):
 		return {'path' : self.path}
@@ -147,42 +142,8 @@ class Profile():
 	def __repr__(self, *args, **kwargs):
 		return f'Profile({self.path})'
 
-	@property
-	def path(self, *args, **kwargs):
-		return self._path.path
-
-	def load_instructions(self, namespace=None):
-		if (absolute_path := self.path):
-			if os.path.splitext(absolute_path)[1] == '.py':
-				if not namespace:
-					namespace = os.path.splitext(os.path.basename(absolute_path))[0]
-				spec = importlib.util.spec_from_file_location(namespace, absolute_path)
-				imported = importlib.util.module_from_spec(spec)
-				sys.modules[namespace] = imported
-				return Imported(spec, imported)
-			else:
-				raise ProfileError(f'Extension {os.path.splitext(absolute_path)[1]} is not a supported profile model. Only .py is supported.')
-
-		raise ProfileError(f'No such profile ({self.path}) was found either locally or in {storage["UPSTREAM_URL"]}')
-
 	def install(self):
-		# To avoid profiles importing the wrong 'archinstall',
-		# we need to ensure that this current archinstall is in sys.path
-		archinstall_path = os.path.abspath(f'{os.path.dirname(__file__)}/../../')
-		if archinstall_path not in sys.path:
-			sys.path.insert(0, archinstall_path)
-
-		instructions = self.load_instructions()
-		if type(instructions) == Imported:
-			# There's no easy way to give the imported profile the installer instance unless we require the profile-programmer to create a certain function that must be the same for all..
-			# Which is a bit inconvenient so we'll make a a truly global installer for now, in the future archinstall main __init__.py should setup the 'installation' variable..
-			# but to avoid circular imports and other traps, this works for now.
-			# TODO: Remove
-			__builtins__['installation'] = self.installer
-			with instructions as runtime:
-				log(f'{self} finished successfully.', bg='black', fg='green', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
-		
-		return True
+		return self.execute()
 
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):
