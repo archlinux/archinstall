@@ -23,6 +23,9 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
+		import time
+		print('Walking:', os.path.abspath(os.path.expanduser(PATH_ITEM+subpath)))
+		time.sleep(10)
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
@@ -178,8 +181,8 @@ class Application(Profile):
 			if os.path.isfile(self.profile):
 				return os.path.basename(self.profile)
 
-			raise ProfileNotFound(f"File {self.profile} does not exist in {examples}")
+			raise ProfileNotFound(f"Application file {self.profile} does not exist in {examples}")
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:
-			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
+			raise ProfileNotFound(f"Application cannot handle scheme {parsed_url.scheme}")
