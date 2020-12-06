@@ -130,7 +130,7 @@ class Script():
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
 		
-		return imported
+		return self
 
 	def execute(self):
 		if not self.namespace in sys.modules or self.spec is None:
