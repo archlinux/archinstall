@@ -23,7 +23,6 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		print('Walking:', PATH_ITEM)
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
