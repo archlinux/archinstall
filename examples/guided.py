@@ -166,8 +166,6 @@ while 1:
 					fg='red'
 				)
 				continue
-
-			profile = profile[0]._path  # Once the prep is done, replace the selected profile with the profile name ("path") given from select_profile()
 			break
 	else:
 		break
