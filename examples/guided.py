@@ -56,6 +56,8 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.storage['_guided']['packages'] and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
 
+			print('Installing:', archinstall.storage['_guided']['profile']['path'].strip())
+			time.sleep(10)
 			if 'profile' in archinstall.storage['_guided'] and len(profile := archinstall.storage['_guided']['profile']['path'].strip()):
 				installation.install_profile(profile)
 
