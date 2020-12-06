@@ -168,6 +168,14 @@ class Application(Profile):
 			# Try to locate all local or known URL's
 			examples = list_profiles(subpath='/applications')
 
+			import time
+			print(self.profile)
+			print('Examples:', examples)
+			print(f"{self.profile}" in examples)
+			print(f"{self.profile}.py" in examples)
+			print(os.path.isfile(self.profile))
+			time.sleep(30)
+
 			if f"{self.profile}" in examples:
 				return self.localize_path(examples[self.profile]['path'])
 			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
