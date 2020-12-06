@@ -22,6 +22,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
+	print(id(storage), storage)
 	for PATH_ITEM in storage['PROFILE_PATH']:
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
