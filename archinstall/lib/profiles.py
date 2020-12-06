@@ -73,6 +73,7 @@ class Script():
 		self.profile = profile
 		self.installer = installer
 		self.converted_path = None
+		self.spec = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 
 	def localize_path(self, profile_path):
@@ -116,18 +117,18 @@ class Script():
 		if namespace:
 			self.namespace = namespace
 
-		spec = importlib.util.spec_from_file_location(self.namespace, self.path)
-		imported = importlib.util.module_from_spec(spec)
+		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
+		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
 		
 		return imported
 
 	def execute(self):
-		if not self.namespace in sys.modules:
+		if not self.namespace in sys.modules or self.spec is None:
 			self.load_instructions()
 
 		__builtins__['installation'] = self.installer # TODO: Replace this with a import archinstall.session instead
-		spec.loader.exec_module(sys.modules[self.namespace])
+		self.spec.loader.exec_module(sys.modules[self.namespace])
 
 		return True
 
