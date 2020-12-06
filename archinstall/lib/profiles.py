@@ -150,14 +150,14 @@ class Profile(Script):
 		return {'path' : self.path}
 
 	def __repr__(self, *args, **kwargs):
-		return f'Profile({self.path})'
+		return f'Profile({os.path.basename(self.profile)})'
 
 	def install(self):
 		return self.execute()
 
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):
-		return f'Application({self._path} <"{self.path}">)'
+		return f'Application({os.path.basename(self.profile)})'
 
 	@property
 	def path(self):
