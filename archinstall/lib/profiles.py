@@ -66,11 +66,12 @@ def list_profiles(filter_irrelevant_macs=True):
 	return cache
 
 class Script():
-	def __init__(self, profile):
+	def __init__(self, profile, installer=None):
 		# profile: https://hvornum.se/something.py
 		# profile: desktop
 		# profile: /path/to/profile.py
 		self.profile = profile
+		self.installer = installer
 		self.converted_path = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 
@@ -132,8 +133,7 @@ class Script():
 
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
-		super(Profile, self).__init__(path)
-		self.installer = installer
+		super(Profile, self).__init__(path, installer)
 		self._cache = None
 
 	def __dump__(self, *args, **kwargs):
