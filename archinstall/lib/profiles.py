@@ -15,7 +15,7 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(filter_irrelevant_macs=True):
+def list_profiles(filter_irrelevant_macs=True, sub_path=''):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
@@ -23,7 +23,7 @@ def list_profiles(filter_irrelevant_macs=True):
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM))):
+		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+sub_path))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
@@ -43,7 +43,7 @@ def list_profiles(filter_irrelevant_macs=True):
 
 	# Grab profiles from upstream URL
 	if storage['PROFILE_DB']:
-		profiles_url = os.path.join(storage["UPSTREAM_URL"], storage['PROFILE_DB'])
+		profiles_url = os.path.join(storage["UPSTREAM_URL"]+sub_path, storage['PROFILE_DB'])
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
@@ -61,7 +61,7 @@ def list_profiles(filter_irrelevant_macs=True):
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"], profile), 'description' : profile_list[profile], 'tailored' : tailored}
+				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+sub_path, profile), 'description' : profile_list[profile], 'tailored' : tailored}
 
 	return cache
 
@@ -160,19 +160,26 @@ class Application(Profile):
 		return f'Application({self._path} <"{self.path}">)'
 
 	@property
-	def path(self, *args, **kwargs):
-		if os.path.isfile(f'{self._path}'):
-			return os.path.abspath(f'{self._path}')
+	def path(self):
+		parsed_url = urllib.parse.urlparse(self.profile)
 
-		for path in ['./applications', './profiles/applications', '/etc/archinstall/applications', '/etc/archinstall/profiles/applications', os.path.abspath(f'{os.path.dirname(__file__)}/../profiles/applications')]:
-			if os.path.isfile(f'{path}/{self._path}.py'):
-				return os.path.abspath(f'{path}/{self._path}.py')
+		# The Profile was not a direct match on a remote URL
+		if not parsed_url.scheme:
+			# Try to locate all local or known URL's
+			examples = list_profiles(subpath='/applications')
 
-		try:
-			if (cache := grab_url_data(f'{storage["UPSTREAM_URL"]}/applications/{self._path}.py')):
-				self._cache = cache
-				return f'{storage["UPSTREAM_URL"]}/applications/{self._path}.py'
-		except urllib.error.HTTPError:
-			pass
+			if f"{self.profile}" in examples:
+				return self.localize_path(examples[self.profile]['path'])
+			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
+			elif f"{self.profile}.py" in examples:
+				return self.localize_path(examples[f"{self.profile}.py"]['path'])
 
-		return None
+			# Path was not found in any known examples, check if it's an abolute path
+			if os.path.isfile(self.profile):
+				return os.path.basename(self.profile)
+
+			raise ProfileNotFound(f"File {self.profile} does not exist in {examples}")
+		elif parsed_url.scheme in ('https', 'http'):
+			return self.localize_path(self.profile)
+		else:
+			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
