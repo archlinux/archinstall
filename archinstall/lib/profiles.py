@@ -115,6 +115,7 @@ class Script():
 		if namespace:
 			self.namespace = namespace
 
+		print('Namespace:', namespace, self.path, self.namespace)
 		spec = importlib.util.spec_from_file_location(namespace, self.path)
 		imported = importlib.util.module_from_spec(spec)
 		sys.modules[self.namespace] = imported
