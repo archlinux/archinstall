@@ -171,17 +171,17 @@ class Application(Profile):
 			if not self.examples:
 				self.examples = list_profiles(subpath='/applications')
 
-			if f"{self.profile}" in examples:
-				return self.localize_path(examples[self.profile]['path'])
+			if f"{self.profile}" in self.examples:
+				return self.localize_path(self.examples[self.profile]['path'])
 			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
-			elif f"{self.profile}.py" in examples:
-				return self.localize_path(examples[f"{self.profile}.py"]['path'])
+			elif f"{self.profile}.py" in self.examples:
+				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
 
 			# Path was not found in any known examples, check if it's an abolute path
 			if os.path.isfile(self.profile):
 				return os.path.basename(self.profile)
 
-			raise ProfileNotFound(f"Application file {self.profile} does not exist in {examples}")
+			raise ProfileNotFound(f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}")
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:
