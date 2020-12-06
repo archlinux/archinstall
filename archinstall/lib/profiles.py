@@ -76,6 +76,15 @@ class Script():
 		self.spec = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 
+	def __enter__(self, *args, **kwargs):
+		self.execute()
+		return sys.modules[self.namespace]
+
+	def __exit__(self, *args, **kwargs):
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+		if len(args) >= 2 and args[1]:
+			raise args[1]
+
 	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
@@ -130,7 +139,7 @@ class Script():
 		__builtins__['installation'] = self.installer # TODO: Replace this with a import archinstall.session instead
 		self.spec.loader.exec_module(sys.modules[self.namespace])
 
-		return True
+		return sys.modules[self.namespace]
 
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
