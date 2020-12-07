@@ -1,4 +1,4 @@
-import glob, re, os, json
+import glob, re, os, json, time # Time is only used to gracefully wait for new paritions to come online
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
@@ -77,7 +77,7 @@ class BlockDevice():
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
-		#print(self, 'partitions:', o)
+
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
 
@@ -188,6 +188,9 @@ class Filesystem():
 		else:
 			raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
+	def __repr__(self):
+		return f"Filesystem(blockdevice={self.blockdevice}, mode={self.mode})"
+
 	def __exit__(self, *args, **kwargs):
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
@@ -221,17 +224,20 @@ class Filesystem():
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
-		print('Before:', self.blockdevice.partitions)
+		
+		previous_partitions = self.blockdevice.partitions
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
 
-		import time
-		time.sleep(5)
-		print('After:', print(self.blockdevice.partitions))
-
 		if partitioning:
+			start_wait = time.time()
+			while previous_partitions == self.blockdevice.partitions:
+				time.sleep(0.025) # Let the new partition come up in the kernel
+				if time.time() - start_wait > 10:
+					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
+
 			return True
 
 	def set_name(self, partition:int, name:str):
