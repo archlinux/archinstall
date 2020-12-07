@@ -226,6 +226,9 @@ class Filesystem():
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+
+		import time
+		time.sleep(5)
 		print('After:', print(self.blockdevice.partitions))
 
 		if partitioning:
