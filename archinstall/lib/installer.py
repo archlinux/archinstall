@@ -121,7 +121,7 @@ class Installer():
 		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}').trace_log
 		print(fstab)
 		with open(f"{self.mountpoint}/etc/fstab", 'ab') as fstab_fh:
-			fstab.write(fstab)
+			fstab_fh.write(fstab)
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')

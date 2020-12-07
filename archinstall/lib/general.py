@@ -171,7 +171,7 @@ class sys_command():#Thread):
 		while alive and not self.kwargs['emulate']:
 			for fileno, event in poller.poll(0.1):
 				try:
-					output = os.read(child_fd, 8192).strip()
+					output = os.read(child_fd, 8192)
 					self.trace_log += output
 				except OSError:
 					alive = False
