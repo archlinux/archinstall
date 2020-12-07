@@ -119,7 +119,6 @@ class Installer():
 		self.log(f"Updating {self.mountpoint}/etc/fstab", level=LOG_LEVELS.Info)
 		
 		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}').trace_log
-		print(fstab)
 		with open(f"{self.mountpoint}/etc/fstab", 'ab') as fstab_fh:
 			fstab_fh.write(fstab)
 
