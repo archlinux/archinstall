@@ -79,7 +79,7 @@ class Installer():
 			raise args[1]
 
 		self.genfstab()
-		
+
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
 			return True
@@ -116,9 +116,13 @@ class Installer():
 		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-pU'):
+		self.log(f"Updating {self.mountpoint}/etc/fstab")
+		
 		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint} >> {self.mountpoint}/etc/fstab'))
+
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
+		
 		return True
 
 	def set_hostname(self, hostname=None, *args, **kwargs):
