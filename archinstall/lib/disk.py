@@ -77,7 +77,7 @@ class BlockDevice():
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
-		print(self, 'partitions:', o)
+		#print(self, 'partitions:', o)
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
 
