@@ -94,7 +94,7 @@ class Installer():
 			os.makedirs(f'{self.mountpoint}/srv/http')
 			
 		partition.mount(f'{self.mountpoint}/srv/http')
-		self.genfstab(output='>') # Replace any existing entries
+		self.genfstab(output_operator='>') # Replace any existing entries
 
 	def post_install_check(self, *args, **kwargs):
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -114,9 +114,10 @@ class Installer():
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
 
-	def genfstab(self, flags='-pU', output='>>'):
-		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint} {output} {self.mountpoint}/etc/fstab'))
+	def genfstab(self, flags='-pU', output_operator='>>'):
+		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint} {output_operator} {self.mountpoint}/etc/fstab'))
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
+			print(f'/usr/bin/genfstab {flags} {self.mountpoint} {output_operator} {self.mountpoint}/etc/fstab')
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
 		return True
 
