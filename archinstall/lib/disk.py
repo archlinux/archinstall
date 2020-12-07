@@ -222,7 +222,7 @@ class Filesystem():
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 		if format:
-			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0:
+			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
 			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
 
