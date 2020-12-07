@@ -77,6 +77,7 @@ class BlockDevice():
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
+		print(self, 'paritions:', o)
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
 
@@ -221,9 +222,13 @@ class Filesystem():
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
 		if format:
-			return self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
+			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0:
 		else:
-			return self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+
+		if paritioning:
+			print(b''.join(sys_command(f'/usr/bin/ {string}')))
+			return True
 
 	def set_name(self, partition:int, name:str):
 		return self.parted(f'{self.blockdevice.device} name {partition+1} "{name}"') == 0
