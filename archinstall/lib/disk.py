@@ -77,7 +77,7 @@ class BlockDevice():
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
-		print(self, 'partitions:', o.decode('UTF-8'))
+		print(self, 'partitions:', o)
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
 
@@ -221,13 +221,14 @@ class Filesystem():
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+		print('Before:', self.blockdevice.partitions)
 		if format:
-			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
+			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
-			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+		print('After:', print(self.blockdevice.partitions))
 
-		if paritioning:
-			# Verify that partitions exist before releasing the application onwards: print(b''.join(sys_command(f'/usr/bin/partprobe {string}')))
+		if partitioning:
 			return True
 
 	def set_name(self, partition:int, name:str):
