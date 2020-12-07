@@ -227,7 +227,7 @@ class Filesystem():
 			paritioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
 
 		if paritioning:
-			print(b''.join(sys_command(f'/usr/bin/ {string}')))
+			# Verify that partitions exist before releasing the application onwards: print(b''.join(sys_command(f'/usr/bin/partprobe {string}')))
 			return True
 
 	def set_name(self, partition:int, name:str):
