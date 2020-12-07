@@ -118,9 +118,9 @@ class Installer():
 	def genfstab(self, flags='-pU'):
 		self.log(f"Updating {self.mountpoint}/etc/fstab", level=LOG_LEVELS.Info)
 		
-		print(f'/usr/bin/genfstab {flags} {self.mountpoint} >> {self.mountpoint}/etc/fstab')
-		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint} >> {self.mountpoint}/etc/fstab'))
-		print(o)
+		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}'))
+		with open(f"{self.mountpoint}/etc/fstab", 'a') as fstab:
+			fstab.write(f"\n{o.decode('UTF-8')}")
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
