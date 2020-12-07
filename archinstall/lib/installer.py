@@ -120,6 +120,7 @@ class Installer():
 		
 		with open(f"{self.mountpoint}/etc/fstab", 'ab') as fstab:
 			for line in sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}'):
+				print('Writing fstab:', line + b'\n')
 				fstab.write(line + b'\n')
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
