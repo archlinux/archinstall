@@ -116,7 +116,7 @@ class Installer():
 		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-pU'):
-		self.log(f"Updating {self.mountpoint}/etc/fstab")
+		self.log(f"Updating {self.mountpoint}/etc/fstab", level=LOG_LEVELS.Info)
 		
 		o = b''.join(sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint} >> {self.mountpoint}/etc/fstab'))
 
