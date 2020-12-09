@@ -92,10 +92,10 @@ class Installer():
 			return False
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
-		if create_mountpoint and not os.path.isdir(f'{self.mountpoint}/srv/http'):
-			os.makedirs(f'{self.mountpoint}/srv/http')
+		if create_mountpoint and not os.path.isdir(f'{self.mountpoint}{mountpoint}'):
+			os.makedirs(f'{self.mountpoint}{mountpoint}')
 			
-		partition.mount(f'{self.mountpoint}/srv/http')
+		partition.mount(f'{self.mountpoint}{mountpoint}')
 
 	def post_install_check(self, *args, **kwargs):
 		return [step for step, flag in self.helper_flags.items() if flag is False]
