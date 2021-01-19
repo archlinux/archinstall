@@ -19,3 +19,4 @@ SAFETY_LOCK
 **/**.zst
 **/**.network
 **/**.target
+**/**.qcow2
