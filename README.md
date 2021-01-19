@@ -23,7 +23,7 @@ And they're also available as Arch Linux packages over at the unofficial mirror 
 
 ## Running the [guided](examples/guided.py) installer
 
-Assuming you're on a Arch Linux live-ISO and booted into EFI mode.
+Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
     # python -m archinstall guided
 
