@@ -1,5 +1,7 @@
 import archinstall
 
+installation.install_profile('xorg')
+
 installation.add_additional_packages(
 	"awesome xorg-xrandr xterm feh slock terminus-font-otb gnu-free-fonts ttf-liberation xsel"
 )
@@ -20,11 +22,3 @@ xinitrc_data += 'exec awesome\n'
 
 with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
 	xinitrc.write(xinitrc_data)
-
-with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as awesome_rc_lua:
-	awesome = awesome_rc_lua.read()
-
-awesome = awesome.replace('xterm', 'xterm -ls -xrm \\"XTerm*selectToClipboard: true\\"')
-
-with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as awesome_rc_lua:
-	awesome_rc_lua.write(awesome)
