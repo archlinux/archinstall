@@ -1,8 +1,8 @@
 # Contributing to archinstall
 
-Any contributons through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps.<br>
-Bare in mind that the future of this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if they so choose to adopt the project)*.
-Therefor guidelines and style changes to the code might come into affect as well as guidelines surrounding bug reporting and discussions.
+Any contributions through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps.<br>
+Bear in mind that the future of this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if they so choose to adopt the project)*.
+Therefore guidelines and style changes to the code might come into affect as well as guidelines surrounding bug reporting and discussions.
 
 ## Discussions
 
@@ -23,7 +23,7 @@ The exceptions to PEP8 are:
  * [String quotes](https://www.python.org/dev/peps/pep-0008/#string-quotes) follow PEP8, the exception being when creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(Example: `f"Welcome {name}"` rather than `f'Welcome {name}'`)*.
 
 Most of these style guidelines have been put into place after the fact *(in an attempt to clean up the code)*.<br>
-There might therefor be older code which does not follow the coding convention and the code is subject to change.
+There might therefore be older code which does not follow the coding convention and the code is subject to change.
 
 ## Submitting Changes
 
