@@ -12,24 +12,10 @@ For Arch Linux based systems, there's a package for this called `archinstall <ht
 Using pacman
 ------------
 
-Currently, you need to create your own mirror or use https://archlinux.life as a mirror.
-We'll use the later for this example as it's less of a process to explain.
-
-..note:: To create your own mirror, the `archiso <https://wiki.archlinux.org/index.php/archiso#Custom_local_repository>`_ wiki has a good tutorial and explanation of how and what a custom mirror does.
-
-Setup pacman to use https://archlinux.life as a mirror by modifying `/etc/pacman.conf` to contain the following:
+Archinstall is on the `official repositories <https://wiki.archlinux.org/index.php/Official_repositories>`_.
 
 .. code-block:: console
 
-    [archlife]
-    Server = https://archlinux.life/$repo/os/$arch
-    SigLevel = Optional TrustAll
-
-You can now update your mirror-list and install `archinstall`.
-
-.. code-block:: console
-
-    sudo pacman -Syy
     sudo pacman -S archinstall
 
 Using PKGBUILD

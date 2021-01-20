@@ -13,13 +13,10 @@ Pre-built ISO's can be found over at https://archlinux.life which autostarts arc
 
 # Installation & Usage
 
-    $ sudo pip install archinstall
+    $ sudo pacman -S archinstall
 
 Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
 Or run the pre-compiled binary attached in every release as `archinstall-v[ver].tar.gz`.
-
-There's also `PKGBUILD`'s for all the above scenarios.
-And they are also available as Arch Linux packages over at the unofficial mirror [https://archlinux.life](https://archlinux.life/).
 
 ## Running the [guided](examples/guided.py) installer
 

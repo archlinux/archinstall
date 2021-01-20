@@ -9,6 +9,23 @@ But the library can be installed manually as well.
 .. warning::
     This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
 
+Using pacman
+----------
+
+Archinstall is on the `official repositories <https://wiki.archlinux.org/index.php/Official_repositories>`_.
+
+To install both the library and the archinstall script:
+
+.. code-block:: console
+
+    sudo pacman -S archinstall
+
+Or, to install just the library:
+
+.. code-block:: console
+
+    sudo pacman -S python-archinstall
+
 Using PyPi
 ----------
 
