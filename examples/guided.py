@@ -52,6 +52,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.storage['_guided']['network']:
 				installation.configure_nic(**archinstall.storage['_guided']['network'])
 				installation.enable_service('systemd-networkd')
+				installation.enable_service('systemd-resolved')
 
 			if archinstall.storage['_guided']['packages'] and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
