@@ -37,9 +37,10 @@ It is also helpful to add links to online documentation or to the implementation
 
 Also, do not squash your commits after you have submitted a pull request, as this erases context during review. We will squash commits when the pull request is merged.
 
-At present the core developers are (alphabetically):
+At present the current contributors are (alphabetically):
 
- * Anton Hvornum (@Torxed)
- * Jerker Bengtsson (@jaybent)
- * Varun Madiath (@vamega)
- * demostanis (@demostanis)
+ * Anton Hvornum ([@Torxed](https://github.com/Torxed))
+ * demostanis ([@demostanis](https://github.com/demostanis))
+ * Jerker Bengtsson ([@jaybent](https://github.com/jaybent))
+ * Varun Madiath ([@vamega](https://github.com/vamega))
+ * nullrequest ([@advaithm](https://github.com/advaithm))
