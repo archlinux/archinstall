@@ -11,7 +11,7 @@ def _prep_function(*args, **kwargs):
 	"""
 
 	supported_desktops = ['gnome', 'kde', 'awesome']
-	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environemtn: ')
+	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
 
 	# Temporarly store the selected desktop profile
 	# in a session-safe location, since this module will get re-loaded
