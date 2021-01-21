@@ -32,18 +32,4 @@ if __name__ == 'kde':
 	kde.install()
 
 	# Enable autostart of KDE for all users
-	# (there's no handy service like Gnome, so we'll hack it)
-	for root, folders, files in os.walk(f'{installation.mountpoint}/home'):
-		for home in folders:
-			with open(os.path.join(root, f"{home}/.bash_profile"), 'a') as bash_profile:
-				bash_profile.write('\n')
-				bash_profile.write('if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then\n')
-				bash_profile.write('  exec startx\n') # Possibly do 'startx' only to remain logged in if KDE crashes.
-				bash_profile.write('fi\n')
-		break
-
-	with open(f'{installation.mountpoint}/etc/skel/.bash_profile', 'a') as bash_profile:
-		bash_profile.write('\n')
-		bash_profile.write('if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then\n')
-		bash_profile.write('  exec startx\n') # Possibly do 'startx' only to remain logged in if KDE crashes.
-		bash_profile.write('fi\n')
+	installation.enable_service('sddm')
