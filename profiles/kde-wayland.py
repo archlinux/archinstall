@@ -29,6 +29,6 @@ if __name__ == 'kde':
 	# Install the application kde from the template under /applications/
 	kde = archinstall.Application(installation, 'kde-wayland')
 	kde.install()
-    print("when you login,  select Plasma (Wayland) for the wayland session")
+	print("when you login,  select Plasma (Wayland) for the wayland session")
 	# Enable autostart of KDE for all users
 	installation.enable_service('sddm')
