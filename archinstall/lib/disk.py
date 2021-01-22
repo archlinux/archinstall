@@ -134,6 +134,10 @@ class Partition():
 			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {self.path}')).exit_code != 0:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
+        elif filesystem  == 'xfs':
+            if (handle:= sys_command(f'/usr/bin/mkfs.xfs -f {self.path}')).exit_code != 0:
+                raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+            self.filesystem = 'xfs'
 		else:
 			raise DiskError(f'Fileformat {filesystem} is not yet implemented.')
 		return True
