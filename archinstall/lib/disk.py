@@ -138,6 +138,10 @@ class Partition():
 			if (handle:= sys_command(f'/usr/bin/mkfs.xfs -f {self.path}')).exit_code != 0:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'xfs'
+		elif filesystem == 'f2fs':
+			if (handle:= sys_command(f'/usr/bin/mkfs.f2fs -f {self.path}')).exit_code != 0:
+				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+			self.filesystem = 'f2fs'
 		else:
 			raise DiskError(f'Fileformat {filesystem} is not yet implemented.')
 		return True

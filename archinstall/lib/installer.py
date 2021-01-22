@@ -192,6 +192,8 @@ class Installer():
 			self.base_packages.append('btrfs-progs')
 		if self.partition.filesystem == 'xfs':
 			self.base_packages.append('xfsprogs')
+		if self.partition.filesystem == 'f2fs':
+			self.base_packages.append('f2fs-tools')
 		self.pacstrap(self.base_packages)
 		#self.genfstab()
 
