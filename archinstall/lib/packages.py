@@ -2,8 +2,8 @@ import urllib.request, urllib.parse
 import ssl, json
 from .exceptions import *
 
-BASE_URL = 'https://www.archlinux.org/packages/search/json/?name={package}'
-BASE_GROUP_URL = 'https://www.archlinux.org/groups/x86_64/{group}/'
+BASE_URL = 'https://archlinux.org/packages/search/json/?name={package}'
+BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
 
 def find_group(name):
 	ssl_context = ssl.create_default_context()
