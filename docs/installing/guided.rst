@@ -100,7 +100,7 @@ There is a list of profiles to choose from. If you are unsure of what any of the
 Additional packages
 ^^^^^^^^^^^^^^^^^^^
 
-Some additional packages can be installed if need be. This step allows you to list *(space separated)* officially supported packages from the `package database <https://www.archlinux.org/packages/>`_.
+Some additional packages can be installed if need be. This step allows you to list *(space separated)* officially supported packages from the `package database <https://archlinux.org/packages/>`_.
 
 .. warning::
     When selecting *(or skipping)* this step. The installation will begin and your selected hard drive will be wiped after a 5 second countdown.

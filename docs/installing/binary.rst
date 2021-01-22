@@ -49,4 +49,4 @@ Simply clone or download the source, and while standing in the cloned folder `./
 
     nuitka3  --standalone --show-progress archinstall
 
-This requires the `nuitka <https://www.archlinux.org/packages/community/any/nuitka/>`_ package as well as `python3` to be installed locally.
+This requires the `nuitka <https://archlinux.org/packages/community/any/nuitka/>`_ package as well as `python3` to be installed locally.
