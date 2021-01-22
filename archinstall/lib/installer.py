@@ -190,8 +190,8 @@ class Installer():
 		if self.partition.filesystem == 'btrfs':
 		#if self.partition.encrypted:
 			self.base_packages.append('btrfs-progs')
-        if self.part.filesystem == 'xfs':
-            self.base_packages.append('xfsprogs')
+		if self.part.filesystem == 'xfs':
+			self.base_packages.append('xfsprogs')
 		self.pacstrap(self.base_packages)
 		#self.genfstab()
 
