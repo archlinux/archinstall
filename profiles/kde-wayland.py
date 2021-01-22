@@ -22,7 +22,7 @@ def _prep_function(*args, **kwargs):
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
-if __name__ == 'kde':
+if __name__ == 'kde-wayland':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
