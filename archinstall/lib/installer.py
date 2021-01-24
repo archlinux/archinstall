@@ -41,7 +41,6 @@ class Installer():
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
-
 		if logdir:
 			storage['LOG_PATH'] = logdir
 		if logfile:
@@ -60,16 +59,10 @@ class Installer():
 		self.boot_partition = boot_partition
 
 	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
-		if not file:
-			if 'logfile' not in storage:
-				log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
-				if not os.path.isdir(log_root):
-					os.makedirs(log_root)
-
-				storage['logfile'] = f"{log_root}/install-session_{self.init_time}.{self.milliseconds}.log"
-
-			file = storage['logfile']
-
+		"""
+		installer.log() wraps output.log() mainly to set a default log-level for this install session.
+		Any manual override can be done per log() call.
+		"""
 		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):

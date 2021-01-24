@@ -37,6 +37,11 @@ class journald(dict):
 			# Fallback logger
 			log_adapter.debug(message)
 
+# TODO: Replace log() for session based logging.
+class SessionLogging():
+	def __init__(self):
+		pass
+
 # Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
 # And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
 def supports_color():
@@ -109,6 +114,7 @@ def log(*args, **kwargs):
 			pass # Ignore writing to journald
 
 	# Finally, print the log unless we skipped it based on level.
-	# And we print the string which may or may not contain color formatting.
+	# We use sys.stdout.write()+flush() instead of print() to try and
+	# fix issue #94
 	sys.stdout.write(string)
 	sys.stdout.flush()
