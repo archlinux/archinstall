@@ -1,15 +1,10 @@
 import getpass, time, json, sys, signal, os
 import archinstall
 
-# Setup a global log file.
-# Archinstall will honor storage['logfile'] in most of it's functions log handle.
-log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
-if not os.path.isdir(log_root):
-	os.makedirs(log_root)
-
-init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
-milliseconds = int(str(time.time()).split('.')[1])
-archinstall.storage['logfile'] = f"{log_root}/install-session_{init_time}.{milliseconds}.log"
+# Create a storage structure for all our information.
+# We'll print this right before the user gets informed about the formatting timer.
+archinstall.storage['_guided'] = {}
+archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
 
 """
 This signal-handler chain (and global variable)
@@ -77,6 +72,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
 
+
 """
   First, we'll ask the user for a bunch of user input.
   Not until we're satisfied with what we want to install
@@ -86,11 +82,6 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_error
 if len(keyboard_language := archinstall.select_language(archinstall.list_keyboard_languages()).strip()):
 	archinstall.set_keyboard_language(keyboard_language)
 	archinstall.storage['_guided']['keyboard_layout'] = keyboard_language
-
-# Create a storage structure for all our information.
-# We'll print this right before the user gets informed about the formatting timer.
-archinstall.storage['_guided'] = {}
-archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
 
 # Set which region to download packages from during the installation
 mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
