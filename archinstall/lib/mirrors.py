@@ -59,7 +59,7 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
-	log(f'A new package mirror-list has been created: {destination}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+	log(f'A new package mirror-list has been created: {destination}', level=LOG_LEVELS.Info)
 	for region, mirrors in regions.items():
 		with open(destination, 'w') as mirrorlist:
 			for mirror in mirrors:

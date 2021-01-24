@@ -119,7 +119,7 @@ class Partition():
 			return f'Partition(path={self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
 	def format(self, filesystem):
-		log(f'Formatting {self} -> {filesystem}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+		log(f'Formatting {self} -> {filesystem}', level=LOG_LEVELS.Info)
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if b'UUID' not in o:
@@ -162,7 +162,7 @@ class Partition():
 
 	def mount(self, target, fs=None, options=''):
 		if not self.mountpoint:
-			log(f'Mounting {self} to {target}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+			log(f'Mounting {self} to {target}', level=LOG_LEVELS.Info)
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
@@ -227,7 +227,7 @@ class Filesystem():
 			self.add_partition('primary', start='513MiB', end='100%', format='ext4')
 
 	def add_partition(self, type, start, end, format=None):
-		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
 		
 		previous_partitions = self.blockdevice.partitions
 		if format:

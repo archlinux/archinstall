@@ -34,12 +34,18 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
+	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
+
+
+		if logdir:
+			storage['LOG_PATH'] = logdir
+		if logfile:
+			storage['LOG_FILE'] = logfile
 
 		self.helper_flags = {
 			'bootloader' : False,
@@ -53,7 +59,7 @@ class Installer():
 		self.partition = partition
 		self.boot_partition = boot_partition
 
-	def log(self, *args, level=LOG_LEVELS.Debug, file=None, **kwargs):
+	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
 		if not file:
 			if 'logfile' not in storage:
 				log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
@@ -64,7 +70,7 @@ class Installer():
 
 			file = storage['logfile']
 
-		log(*args, level=level, file=file, **kwargs)
+		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
 		self.partition.mount(self.mountpoint)
