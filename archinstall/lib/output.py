@@ -90,14 +90,14 @@ def log(*args, **kwargs):
 
 	# If a logfile is defined in storage,
 	# we use that one to output everything
-	if (logfile := storage.get('LOG_FILE', None)):
-		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), logfile)
+	if (filename := storage.get('LOG_FILE', None)):
+		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 		if not os.path.isfile(absolute_logfile):
 			os.makedirs(os.path.dirname(absolute_logfile))
 			Path(absolute_logfile).touch() # Overkill?
 
 		with open(absolute_logfile, 'a') as log_file:
-			logfile.write(f"{orig_string}\n")
+			log_file.write(f"{orig_string}\n")
 
 	# If we assigned a level, try to log it to systemd's journald.
 	# Unless the level is higher than we've decided to output interactively.
