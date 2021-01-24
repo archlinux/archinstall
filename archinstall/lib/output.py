@@ -116,5 +116,5 @@ def log(*args, **kwargs):
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
 	# fix issue #94
-	sys.stdout.write(string)
+	sys.stdout.write(f"{string}\n")
 	sys.stdout.flush()
