@@ -3,7 +3,7 @@ import archinstall
 installation.install_profile('xorg')
 
 installation.add_additional_packages(
-	"awesome xorg-xrandr xterm feh slock terminus-font-otb gnu-free-fonts ttf-liberation xsel"
+	"awesome xorg-xrandr xterm feh slock terminus-font gnu-free-fonts ttf-liberation xsel"
 )
 
 with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'r') as xinitrc:
