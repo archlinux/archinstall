@@ -31,25 +31,24 @@ if __name__ == 'awesome':
 	# Then setup and configure the desktop environment: awesome
 	editor = "nano"
 	filebrowser = "nemo gpicview-gtk3"
-	webbrowser = "chromium"
-	virtulization = "qemu ovmf"
-	utils = "openssh sshfs git htop pkgfile scrot dhclient wget smbclient cifs-utils libu2f-host"
+	webbrowser = "chromium" # TODO: Ask the user to select one instead
+	utils = "openssh sshfs git htop pkgfile scrot dhclient wget libu2f-host"
 
 
-	installation.add_additional_packages(f"{webbrowser} {utils} {virtulization} {filebrowser} {editor}")
+	installation.add_additional_packages(f"{webbrowser} {utils} {filebrowser} {editor}")
 
 	alacritty = archinstall.Application(installation, 'alacritty')
 	alacritty.install()
 
 	# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as awesome_rc_lua:
-		awesome_lua = awesome_rc_lua.read()
+	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as fh:
+		awesome_lua = fh.read()
 
 	## Replace xterm with alacritty for a smoother experience.
-	awesome_lua = awesome_rc_lua.replace('"xterm"', '"alacritty"')
+	awesome_lua = awesome_lua.replace('"xterm"', '"alacritty"')
 
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as awesome_rc_lua:
-		awesome_rc_lua.write(awesome_lua)
+	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as fh:
+		fh.write(awesome_lua)
 
 	## TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)
 	
