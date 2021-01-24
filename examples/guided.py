@@ -85,6 +85,7 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_error
 
 if len(keyboard_language := archinstall.select_language(archinstall.list_keyboard_languages()).strip()):
 	archinstall.set_keyboard_language(keyboard_language)
+	archinstall.storage['_guided']['keyboard_layout'] = keyboard_language
 
 # Create a storage structure for all our information.
 # We'll print this right before the user gets informed about the formatting timer.
@@ -102,6 +103,7 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 	if disk_password != disk_password_verification:
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
+	archinstall.storage['_guided']['disk_encryption'] = True
 	break
 archinstall.storage['_guided']['harddrive'] = harddrive
 
@@ -118,7 +120,10 @@ while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to le
 		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
 		continue
 
+	# Storing things in _guided_hidden helps us avoid printing it
+	# when echoing user configuration: archinstall.storage['_guided']
 	archinstall.storage['_guided_hidden']['root_pw'] = root_pw
+	archinstall.storage['_guided']['root_unlocked'] = True
 	break
 
 # Ask for additional users (super-user if root pw was not set)

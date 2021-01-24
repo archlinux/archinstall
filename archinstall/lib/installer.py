@@ -75,6 +75,7 @@ class Installer():
 		# b''.join(sys_command(f'sync')) # No need to, since the underlaying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
+			self.log(args[1], level=LOG_LEVELS.Error)
 			raise args[1]
 
 		self.genfstab()
