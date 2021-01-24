@@ -75,7 +75,11 @@ class Installer():
 		# b''.join(sys_command(f'sync')) # No need to, since the underlaying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
+			#self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
 			self.log(args[1], level=LOG_LEVELS.Error)
+
+			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
+			print(f"    Please submit this issue (and file) to https://github.com/Torxed/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
