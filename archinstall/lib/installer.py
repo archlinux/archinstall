@@ -183,7 +183,7 @@ class Installer():
 		with open(f"{self.mountpoint}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
 
-	def copy_network_config(self, enable_services=False):
+	def copy_ISO_network_config(self, enable_services=False):
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
 			if (psk_files := glob.glob('/var/lib/iwd/*.psk')):
