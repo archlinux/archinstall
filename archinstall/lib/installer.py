@@ -190,7 +190,6 @@ class Installer():
 				if not os.path.isdir(f"{self.mountpoint}/var/lib/iwd"):
 					os.makedirs(f"{self.mountpoint}/var/lib/iwd")
 
-
 				if enable_services:
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
@@ -207,7 +206,7 @@ class Installer():
 					# Otherwise, we can go ahead and add the required package
 					# and enable it's service:
 					else:
-						self.pacstrap(self.base_packages)
+						self.pacstrap('iwd')
 						self.enable_service('iwd')
 						self.enable_service('systemd-networkd')
 						self.enable_service('systemd-resolved')
