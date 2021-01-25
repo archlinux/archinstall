@@ -190,19 +190,23 @@ class Installer():
 				if not os.path.isdir(f"{self.mountpoint}/var/lib/iwd"):
 					os.makedirs(f"{self.mountpoint}/var/lib/iwd")
 
-				self.base_packages.append('iwd')
 
+				if enable_services:
+					# If we haven't installed the base yet (function called pre-maturely)
+					if self.helper_flags.get('base', False) is False:
+						self.base_packages.append('iwd')
+						# This function will be called after minimal_installation() 
+						# as a hook for post-installs. This hook is only needed if
+						# base is not installed yet.
+						def post_install_enable_iwd_service(*args, **kwargs):
+							self.enable_service('iwd')
 
-				if enable_services and self.helper_flags.get('base', False) is False:
-					# This function will be called after minimal_installation() 
-					# as a hook for post-installs. This hook is only needed if
-					# base is not installed yet.
-					def post_install_enable_iwd_service(*args, **kwargs):
+						self.post_base_install.append(post_install_enable_iwd_service)
+					# Otherwise, we can go ahead and add the required package
+					# and enable it's service:
+					else:
+						self.pacstrap(self.base_packages)
 						self.enable_service('iwd')
-
-					self.post_base_install.append(post_install_enable_iwd_service)
-				elif enable_services and self.helper_flags.get('base', False) is True:
-					self.enable_service('iwd')
 
 				for psk in psk_files:
 					shutil.copy2(psk, f"{self.mountpoint}/var/lib/iwd/{os.path.basename(psk)}")
