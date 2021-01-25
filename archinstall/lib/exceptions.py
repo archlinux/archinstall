@@ -8,3 +8,5 @@ class SysCallError(BaseException):
 	pass
 class ProfileNotFound(BaseException):
 	pass
+class HardwareIncompatibilityError(BaseException):
+	pass
