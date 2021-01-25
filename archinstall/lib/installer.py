@@ -34,12 +34,17 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled'):
+	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
+
+		if logdir:
+			storage['LOG_PATH'] = logdir
+		if logfile:
+			storage['LOG_FILE'] = logfile
 
 		self.helper_flags = {
 			'bootloader' : False,
@@ -54,18 +59,12 @@ class Installer():
 		self.partition = partition
 		self.boot_partition = boot_partition
 
-	def log(self, *args, level=LOG_LEVELS.Debug, file=None, **kwargs):
-		if not file:
-			if 'logfile' not in storage:
-				log_root = os.path.join(os.path.expanduser('~/'), '.cache/archinstall')
-				if not os.path.isdir(log_root):
-					os.makedirs(log_root)
-
-				storage['logfile'] = f"{log_root}/install-session_{self.init_time}.{self.milliseconds}.log"
-
-			file = storage['logfile']
-
-		log(*args, level=level, file=file, **kwargs)
+	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
+		"""
+		installer.log() wraps output.log() mainly to set a default log-level for this install session.
+		Any manual override can be done per log() call.
+		"""
+		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
 		self.partition.mount(self.mountpoint)
@@ -76,13 +75,24 @@ class Installer():
 	def __exit__(self, *args, **kwargs):
 		# b''.join(sys_command(f'sync')) # No need to, since the underlaying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+
 		if len(args) >= 2 and args[1]:
+			#self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
+			self.log(args[1], level=LOG_LEVELS.Error)
+
+			self.sync_log_to_install_medium()
+
+			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
+			# and then reboot, and a identical log file will be found in the ISO medium anyway.
+			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
+			print(f"    Please submit this issue (and file) to https://github.com/Torxed/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
 
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
+			self.sync_log_to_install_medium()
 			return True
 		else:
 			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
@@ -90,7 +100,22 @@ class Installer():
 				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			self.log(f"Detailed error logs can be found at: {log_path}", level=LOG_LEVELS.Warning)
 			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues", level=LOG_LEVELS.Warning)
+			self.sync_log_to_install_medium()
 			return False
+
+	def sync_log_to_install_medium(self):
+		# Copy over the install log (if there is one) to the install medium if
+		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
+		if self.helper_flags.get('base-strapped', False) is True:
+			if (filename := storage.get('LOG_FILE', None)):
+				absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
+
+				if not os.path.isdir(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}"):
+					os.makedirs(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}")
+				
+				shutil.copy2(absolute_logfile, f"{self.mountpoint}/{absolute_logfile}")
+
+		return True
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.mountpoint}{mountpoint}'):
@@ -235,6 +260,7 @@ class Installer():
 		if self.partition.filesystem == 'xfs':
 			self.base_packages.append('xfsprogs')
 		self.pacstrap(self.base_packages)
+		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
 
 		with open(f"{self.mountpoint}/etc/fstab", "a") as fstab:

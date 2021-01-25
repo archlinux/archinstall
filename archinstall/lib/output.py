@@ -2,6 +2,7 @@ import abc
 import os
 import sys
 import logging
+from pathlib import Path
 from .storage import storage
 
 class LOG_LEVELS:
@@ -35,6 +36,11 @@ class journald(dict):
 		else:
 			# Fallback logger
 			log_adapter.debug(message)
+
+# TODO: Replace log() for session based logging.
+class SessionLogging():
+	def __init__(self):
+		pass
 
 # Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
 # And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
@@ -76,30 +82,28 @@ def stylize_output(text :str, *opts, **kwargs):
 def log(*args, **kwargs):
 	string = orig_string = ' '.join([str(x) for x in args])
 
+	# Attempt to colorize the output if supported
+	# Insert default colors and override with **kwargs
 	if supports_color():
 		kwargs = {'bg' : 'black', 'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
 
-	if (logfile := storage.get('logfile', None)) and 'file' not in kwargs:
-		kwargs['file'] = logfile
+	# If a logfile is defined in storage,
+	# we use that one to output everything
+	if (filename := storage.get('LOG_FILE', None)):
+		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
+		if not os.path.isfile(absolute_logfile):
+			os.makedirs(os.path.dirname(absolute_logfile))
+			Path(absolute_logfile).touch() # Overkill?
 
-	# Log to a file output unless specifically told to suppress this feature.
-	# (level has no effect on the log file, everything will be written there)
-	if 'file' in kwargs and ('suppress' not in kwargs or kwargs['suppress'] == False):
-		if type(kwargs['file']) is str:
-			with open(kwargs['file'], 'a') as log_file:
-				log_file.write(f"{orig_string}\n")
-		elif kwargs['file']:
-			kwargs['file'].write(f"{orig_string}\n")
+		with open(absolute_logfile, 'a') as log_file:
+			log_file.write(f"{orig_string}\n")
 
 	# If we assigned a level, try to log it to systemd's journald.
 	# Unless the level is higher than we've decided to output interactively.
 	# (Remember, log files still get *ALL* the output despite level restrictions)
 	if 'level' in kwargs:
-		if 'LOG_LEVEL' not in storage:
-			storage['LOG_LEVEL'] = LOG_LEVELS.Info
-
-		if kwargs['level'] > storage['LOG_LEVEL']:
+		if kwargs['level'] > storage.get('LOG_LEVEL', LOG_LEVELS.Info):
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
@@ -110,5 +114,7 @@ def log(*args, **kwargs):
 			pass # Ignore writing to journald
 
 	# Finally, print the log unless we skipped it based on level.
-	# And we print the string which may or may not contain color formatting.
-	print(string)
+	# We use sys.stdout.write()+flush() instead of print() to try and
+	# fix issue #94
+	sys.stdout.write(f"{string}\n")
+	sys.stdout.flush()

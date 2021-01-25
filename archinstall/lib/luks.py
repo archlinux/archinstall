@@ -26,7 +26,7 @@ class luks2():
 	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		# TODO: We should be able to integrate this into the main log some how.
 		#       Perhaps post-mortem?
-		log(f'Encrypting {partition}', level=LOG_LEVELS.Info, file=storage.get('logfile', None))
+		log(f'Encrypting {partition} (This might take a while)', level=LOG_LEVELS.Info)
 
 		if not key_file:
 			key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
