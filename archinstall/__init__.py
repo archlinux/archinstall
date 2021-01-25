@@ -12,3 +12,4 @@ from .lib.services import *
 from .lib.packages import *
 from .lib.output import *
 from .lib.storage import *
+from .lib.hardware import *

@@ -1,4 +1,4 @@
-import os, stat, time
+import os, stat, time, shutil
 
 from .exceptions import *
 from .disk import *
@@ -53,6 +53,7 @@ class Installer():
 		}
 
 		self.base_packages = base_packages.split(' ')
+		self.post_base_install = []
 		storage['session'] = self
 
 		self.partition = partition
@@ -186,6 +187,47 @@ class Installer():
 		with open(f"{self.mountpoint}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
 
+	def copy_ISO_network_config(self, enable_services=False):
+		# Copy (if any) iwd password and config files
+		if os.path.isdir('/var/lib/iwd/'):
+			if (psk_files := glob.glob('/var/lib/iwd/*.psk')):
+				if not os.path.isdir(f"{self.mountpoint}/var/lib/iwd"):
+					os.makedirs(f"{self.mountpoint}/var/lib/iwd")
+
+				if enable_services:
+					# If we haven't installed the base yet (function called pre-maturely)
+					if self.helper_flags.get('base', False) is False:
+						self.base_packages.append('iwd')
+						# This function will be called after minimal_installation() 
+						# as a hook for post-installs. This hook is only needed if
+						# base is not installed yet.
+						def post_install_enable_iwd_service(*args, **kwargs):
+							self.enable_service('iwd')
+							self.enable_service('systemd-networkd')
+							self.enable_service('systemd-resolved')
+
+						self.post_base_install.append(post_install_enable_iwd_service)
+					# Otherwise, we can go ahead and add the required package
+					# and enable it's service:
+					else:
+						self.pacstrap('iwd')
+						self.enable_service('iwd')
+						self.enable_service('systemd-networkd')
+						self.enable_service('systemd-resolved')
+
+				for psk in psk_files:
+					shutil.copy2(psk, f"{self.mountpoint}/var/lib/iwd/{os.path.basename(psk)}")
+
+		# Copy (if any) systemd-networkd config files
+		if (netconfigurations := glob.glob('/etc/systemd/network/*')):
+			if not os.path.isdir(f"{self.mountpoint}/etc/systemd/network/"):
+				os.makedirs(f"{self.mountpoint}/etc/systemd/network/")
+
+			for netconf_file in netconfigurations:
+				shutil.copy2(netconf_file, f"{self.mountpoint}/etc/systemd/network/{os.path.basename(netconf_file)}")
+
+		return True
+
 	def minimal_installation(self):
 		## Add nessecary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
@@ -224,6 +266,12 @@ class Installer():
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
+
+		# Run registered post-install hooks
+		for function in self.post_base_install:
+			self.log(f"Running post-installation hook: {function}", level=LOG_LEVELS.Info)
+			function(self)
+
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):

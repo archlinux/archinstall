@@ -44,10 +44,17 @@ def perform_installation(device, boot_partition, language, mirrors):
 			installation.set_keyboard_language(language)
 			installation.add_bootloader()
 
-			if archinstall.storage['_guided']['network']:
+			# If user selected to copy the current ISO network configuration
+			# Perform a copy of the config
+			if archinstall.storage['_guided']['network'] == 'Copy ISO network configuration to installation':
+				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
+
+			# Otherwise, if a interface was selected, configure that interface
+			elif archinstall.storage['_guided']['network']:
 				installation.configure_nic(**archinstall.storage['_guided']['network'])
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
+
 
 			if archinstall.storage['_guided']['packages'] and archinstall.storage['_guided']['packages'][0] != '':
 				installation.add_additional_packages(archinstall.storage['_guided']['packages'])
@@ -184,11 +191,12 @@ while 1:
 
 # Optionally configure one network interface.
 #while 1:
-interfaces = archinstall.list_interfaces() # {MAC: Ifname}
+# {MAC: Ifname}
+interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **archinstall.list_interfaces()}
 archinstall.storage['_guided']['network'] = None
 
 nic = archinstall.generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
-if nic:
+if nic and nic != 'Copy ISO network configuration to installation':
 	mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 	if mode == 'IP (static)':
 		while 1:
@@ -213,7 +221,8 @@ if nic:
 		archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
 	else:
 		archinstall.storage['_guided']['network'] = {'nic': nic}
-
+elif nic:
+	archinstall.storage['_guided']['network'] = nic
 
 print()
 print('This is your chosen configuration:')
