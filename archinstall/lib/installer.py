@@ -200,6 +200,8 @@ class Installer():
 						# base is not installed yet.
 						def post_install_enable_iwd_service(*args, **kwargs):
 							self.enable_service('iwd')
+							self.enable_service('systemd-networkd')
+							self.enable_service('systemd-resolved')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
 					# Otherwise, we can go ahead and add the required package
@@ -207,6 +209,8 @@ class Installer():
 					else:
 						self.pacstrap(self.base_packages)
 						self.enable_service('iwd')
+						self.enable_service('systemd-networkd')
+						self.enable_service('systemd-resolved')
 
 				for psk in psk_files:
 					shutil.copy2(psk, f"{self.mountpoint}/var/lib/iwd/{os.path.basename(psk)}")
