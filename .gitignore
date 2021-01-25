@@ -20,3 +20,4 @@ SAFETY_LOCK
 **/**.network
 **/**.target
 **/**.qcow2
+**/test.py
