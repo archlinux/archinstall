@@ -5,7 +5,7 @@ Discord
 
 There's a discord channel which is frequent by some `contributors <https://github.com/Torxed/archinstall/graphs/contributors>`_.
 
-To join the server, head over to `discord.com/archinstall <https://discord.gg/cqXU88y>`_'s server and join in.
+To join the server, head over to `https://discord.gg/cqXU88y <https://discord.gg/cqXU88y>`_'s server and join in.
 There's not many rules other than common sense and treat others with respect.
 
 There's the `@Party Animals` role if you want notifications of new releases which is posted in the `#Release Party` channel.
