@@ -59,8 +59,10 @@ def select_driver(options):
 			selected_driver = options[drivers[pos]]
 		elif selected_driver in options:
 			selected_driver = options[options.index(selected_driver)]
+		elif len(selected_driver) == 0:
+			raise archinstall.RequirementError("At least one graphics driver is needed to support a graphical environment. Please restart the installer and try again.")
 		else:
-			RequirementError("Selected driver does not exist.")
+			raise archinstall.RequirementError("Selected driver does not exist.")
 
 		if type(selected_driver) == dict:
 			driver_options = sorted(list(selected_driver))
@@ -72,14 +74,16 @@ def select_driver(options):
 				selected_driver_package_group = selected_driver[driver_options[pos]]
 			elif selected_driver_package_group in selected_driver:
 				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
+			elif len(selected_driver_package_group) == 0:
+				raise archinstall.RequirementError(f"At least one driver package is required for a graphical environment using {selected_driver}. Please restart the installer and try again.")
 			else:
-				RequirementError(f"Selected driver-type does not exist for {initial_option}.")
+				raise archinstall.RequirementError(f"Selected driver-type does not exist for {initial_option}.")
 
 			return selected_driver_package_group
 
 		return selected_driver
 
-	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
+	raise archinstall.RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 def _prep_function(*args, **kwargs):
 	"""
