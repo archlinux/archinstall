@@ -224,8 +224,6 @@ class Installer():
 						# base is not installed yet.
 						def post_install_enable_iwd_service(*args, **kwargs):
 							self.enable_service('iwd')
-							self.enable_service('systemd-networkd')
-							self.enable_service('systemd-resolved')
 
 						self.post_base_install.append(post_install_enable_iwd_service)
 					# Otherwise, we can go ahead and add the required package
@@ -233,8 +231,6 @@ class Installer():
 					else:
 						self.pacstrap('iwd')
 						self.enable_service('iwd')
-						self.enable_service('systemd-networkd')
-						self.enable_service('systemd-resolved')
 
 				for psk in psk_files:
 					shutil.copy2(psk, f"{self.mountpoint}/var/lib/iwd/{os.path.basename(psk)}")
@@ -246,6 +242,19 @@ class Installer():
 
 			for netconf_file in netconfigurations:
 				shutil.copy2(netconf_file, f"{self.mountpoint}/etc/systemd/network/{os.path.basename(netconf_file)}")
+
+			if enable_services:
+				# If we haven't installed the base yet (function called pre-maturely)
+				if self.helper_flags.get('base', False) is False:
+					def post_install_enable_networkd_resolved(*args, **kwargs):
+						self.enable_service('systemd-networkd')
+						self.enable_service('systemd-resolved')
+
+					self.post_base_install.append(post_install_enable_networkd_resolved)
+				# Otherwise, we can go ahead and enable the services
+				else:
+					self.enable_service('systemd-networkd')
+					self.enable_service('systemd-resolved')
 
 		return True
 
