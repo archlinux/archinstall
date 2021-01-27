@@ -2,7 +2,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname="python-archinstall"
-pkgver="2.1.0"
+pkgver="2.1.1"
 pkgdesc="Installs ${pkgname} as a python library."
 pkgrel=1
 url="https://github.com/Torxed/archinstall"
@@ -13,7 +13,7 @@ arch=('x86_64')
 depends=('python>=3.8')
 makedepends=('python-setuptools')
 optdepends=('pyttsx3: Adds text-to-speech support for log/screen output.')
-sha256sums=('4f8221158808228833e052260590e7ecf2733de108ada134cdde6d40ab45526b')
+sha256sums=('53c00f7e7ad245cd2cbbf041b5a735df2fc29454c24b1d369f678cc0610b7cea')
 
 build() {
 	cd "archinstall-${pkgver}"
