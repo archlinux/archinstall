@@ -19,6 +19,10 @@ build() {
 	cd "archinstall-${pkgver}"
 
 	python setup.py build
+
+	# Build man pages
+	cd docs
+	make man
 }
  
 package() {
@@ -28,6 +32,8 @@ package() {
 		--prefix=/usr \
 		--root="${pkgdir}" \
 		--optimize=1
+
+	install -Dm644 docs/_build/man/archinstall.1 "${pkgdir}"/usr/share/man/man1/archinstall.1
 }
 
 # vim:ft=sh
