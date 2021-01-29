@@ -29,7 +29,7 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 You could just copy [guided.py](examples/guided.py) as a starting point.
 
 But assuming you're building your own ISO and want to create an automated install process, or you want to install virtual machines on to local disk images.<br>
-This is probably what you'll need, a [minimal example](examples/main_example.py) of how to install using archinstall as a Python library.
+This is probably what you'll need, a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library.
 
 ```python
 import archinstall, getpass
