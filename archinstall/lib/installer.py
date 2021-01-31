@@ -284,7 +284,7 @@ class Installer():
 		#sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		#sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname()
-		self.set_locale('en_US.UTF-8')
+		self.set_locale('en_US')
 
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} chmod 700 /root')
