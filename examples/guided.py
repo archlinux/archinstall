@@ -80,8 +80,8 @@ def perform_installation(device, boot_partition, language, mirrors):
   Not until we're satisfied with what we want to install
   will we continue with the actual installation steps.
 """
-archinstall.arguments['keyboard-language'] = archinstall.arguments.get('keyboard-language',
-																		default=archinstall.select_language(archinstall.list_keyboard_languages()).strip())
+if not archinstall.arguments.get('keyboard-language', None):
+	archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
 
 # Before continuing, set the preferred keyboard layout/language in the current terminal.
 # This will just help the user with the next following questions.
@@ -89,12 +89,12 @@ if len(archinstall.arguments['keyboard-language']):
 	archinstall.set_keyboard_language(archinstall.arguments['keyboard-language'])
 
 # Set which region to download packages from during the installation
-archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region',
-																	default=archinstall.select_mirror_regions(archinstall.list_mirrors()))
+if not archinstall.arguments.get('mirror-region', None):
+	archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 
 # Ask which harddrive/block-device we will install to
-archinstall.arguments['harddrive'] = archinstall.arguments.get('harddrive',
-																default=archinstall.select_disk(archinstall.all_disks()))
+if not archinstall.arguments.get('harddrive', None)
+	archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
 # Perform a quick sanity check on the selected harddrive.
 # 1. Check if it has partitions
