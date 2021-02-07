@@ -133,6 +133,7 @@ class Partition():
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
+		actual_fstype = get_filesystem_type(self.path) # blkid -o value -s TYPE self.path
 		
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
