@@ -138,14 +138,26 @@ class Partition():
 		self.mountpoint = partition_info['target']
 		self.filesystem = partition_info['fstype']
 
+		# We perform a dummy format on /dev/null with the given filesystem-type
+		# in order to determain if we support it or not.
+		try:
+			self.format(self.filesystem, '/dev/null')
+		except DiskError:
+			pass # We supported it, but /dev/null is not formatable as expected
+		except UnknownFilesystemFormat as err:
+			raise err
+
 	def __repr__(self, *args, **kwargs):
 		if self.encrypted:
 			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}, mounted={self.mountpoint})'
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
-	def format(self, filesystem):
-		log(f'Formatting {self} -> {filesystem}', level=LOG_LEVELS.Info)
+	def format(self, filesystem, path=None):
+		if not path:
+			path = self.path
+
+		log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
 			if b'UUID' not in o:
@@ -169,7 +181,7 @@ class Partition():
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 		else:
-			raise DiskError(f'Fileformat {filesystem} is not yet implemented.')
+			raise UnknownFilesystemFormat(f'Fileformat '{filesystem}' is not yet implemented.')
 		return True
 
 	def find_parent_of(self, data, name, parent=None):
