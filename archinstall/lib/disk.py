@@ -113,7 +113,6 @@ class BlockDevice():
 				return True
 		return False
 
-
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
 		if not part_id:
@@ -137,15 +136,6 @@ class Partition():
 
 		self.mountpoint = partition_info['target']
 		self.filesystem = partition_info['fstype']
-
-		# We perform a dummy format on /dev/null with the given filesystem-type
-		# in order to determain if we support it or not.
-		try:
-			self.format(self.filesystem, '/dev/null')
-		except SysCallError:
-			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
-		except UnknownFilesystemFormat as err:
-			raise err
 
 	def __repr__(self, *args, **kwargs):
 		if self.encrypted:
@@ -216,6 +206,17 @@ class Partition():
 			if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
 				self.mountpoint = target
 				return True
+
+	def filesystem_supported(self):
+		# We perform a dummy format on /dev/null with the given filesystem-type
+		# in order to determain if we support it or not.
+		try:
+			self.format(self.filesystem, '/dev/null')
+		except SysCallError:
+			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
+		except UnknownFilesystemFormat as err:
+			raise err
+		return True
 
 class Filesystem():
 	# TODO:

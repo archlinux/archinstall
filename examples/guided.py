@@ -104,7 +104,8 @@ if harddrive.has_partitions():
 
 		archinstall.log('Using existing partition table:')
 		for partition in harddrive:
-			archinstall.log(f" {partition}")
+			if partition.filesystem_supported():
+				archinstall.log(f" {partition}")
 	else:
 		print('Formatting woop woop!')
 exit(1)
