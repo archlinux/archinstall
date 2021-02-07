@@ -104,6 +104,15 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 	archinstall.storage['_guided']['disk_encryption'] = True
 	break
 archinstall.storage['_guided']['harddrive'] = harddrive
+print(harddrive)
+if archinstall.has_partitions(harddrive):
+	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
+	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
+		print("We're keeping it!")
+	else:
+		print('Formatting woop woop!')
+exit(1)
+
 
 # Ask for a hostname
 hostname = input('Desired hostname for the installation: ')
