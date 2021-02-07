@@ -127,15 +127,17 @@ class Partition():
 		if mountpoint:
 			self.mount(mountpoint)
 
-		partition_info = get_partition_info(self.path)
+		mount_information = get_mount_info(self.path)
 		
-		if self.mountpoint != partition_info['target'] and mountpoint:
-			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {partition_info['target']}")
-		if partition_info['fstype'] != self.filesystem and filesystem:
-			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {partition_info['fstype']}")
+		if self.mountpoint != mount_information['target'] and mountpoint:
+			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information['target']}")
+		if mount_information['fstype'] != self.filesystem and filesystem:
+			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {mount_information['fstype']}")
 
-		self.mountpoint = partition_info['target']
-		self.filesystem = partition_info['fstype']
+		if (target := mount_information.get('target', None)):
+			self.mountpoint = target
+		if (fstype := mount_information.get('fstype', None)):
+			self.filesystem = fstype
 
 	def __repr__(self, *args, **kwargs):
 		if self.encrypted:
@@ -344,8 +346,12 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 		return collection[drive]
 
-def get_partition_info(path):
-	output = b''.join(sys_command(f'/usr/bin/findmnt --json {path}'))
+def get_mount_info(path):
+	try:
+		output = b''.join(sys_command(f'/usr/bin/findmnt --json {path}'))
+	except SysCallError:
+		return {}
+
 	output = output.decode('UTF-8')
 	output = json.loads(output)
 	if 'filesystems' in output:
