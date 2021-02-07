@@ -116,10 +116,20 @@ class Partition():
 			part_id = os.path.basename(path)
 		self.path = path
 		self.part_id = part_id
-		self.mountpoint = mountpoint
+		self.mountpoint = None
 		self.filesystem = filesystem # TODO: Autodetect if we're reusing a partition
 		self.size = size # TODO: Refresh?
 		self.encrypted = encrypted
+
+		if mountpoint:
+			self.mount(mountpoint)
+
+		if not self.mountpoint:
+			# As a last step, check if we've mounted outside of the script
+			partition_info = get_partition_info(self.path)
+			self.mountpoint = partition_info['target']
+			if partition_info['fstype'] != self.filesystem and filesystem:
+				raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {partition_info['fstype']}")
 
 	def __repr__(self, *args, **kwargs):
 		if self.encrypted:
@@ -311,3 +321,13 @@ def harddrive(size=None, model=None, fuzzy=False):
 			continue
 
 		return collection[drive]
+
+def get_partition_info(path):
+	output = b''.join(sys_command(f'/usr/bin/findmnt --json {path}'))
+	output = output.decode('UTF-8')
+	output = json.loads(output)
+	if 'filesystems' in output:
+		if len(output['filesystems']) > 1:
+			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
+
+		return output['filesystems'][0]
