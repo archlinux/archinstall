@@ -100,6 +100,9 @@ class BlockDevice():
 		all_partitions = self.partitions
 		return [all_partitions[k] for k in all_partitions]
 
+	def has_partitions(self):
+		return len(self.partitions)
+
 
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):

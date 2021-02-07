@@ -96,6 +96,16 @@ archinstall.storage['_guided']['mirrors'] = mirror_regions
 
 # Ask which harddrive/block-device we will install to
 harddrive = archinstall.select_disk(archinstall.all_disks())
+archinstall.storage['_guided']['harddrive'] = harddrive
+
+if harddrive.has_partitions(harddrive):
+	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
+	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
+		print("We're keeping it!")
+	else:
+		print('Formatting woop woop!')
+exit(1)
+
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
 	if disk_password != disk_password_verification:
@@ -103,15 +113,6 @@ while (disk_password := getpass.getpass(prompt='Enter disk encryption password (
 		continue
 	archinstall.storage['_guided']['disk_encryption'] = True
 	break
-archinstall.storage['_guided']['harddrive'] = harddrive
-print(harddrive)
-if archinstall.has_partitions(harddrive):
-	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
-	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
-		print("We're keeping it!")
-	else:
-		print('Formatting woop woop!')
-exit(1)
 
 
 # Ask for a hostname
