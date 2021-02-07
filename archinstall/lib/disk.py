@@ -181,7 +181,7 @@ class Partition():
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 		else:
-			raise UnknownFilesystemFormat(f'Fileformat '{filesystem}' is not yet implemented.')
+			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 		return True
 
 	def find_parent_of(self, data, name, parent=None):
