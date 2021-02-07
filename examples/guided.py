@@ -93,17 +93,19 @@ if not archinstall.arguments.get('mirror-region', None):
 	archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 
 # Ask which harddrive/block-device we will install to
-if not archinstall.arguments.get('harddrive', None):
+if archinstall.arguments.get('harddrive', None):
+	archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
+else:
 	archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
 # Perform a quick sanity check on the selected harddrive.
 # 1. Check if it has partitions
 # 3. Check that we support the current partitions
 # 2. If so, ask if we should keep them or wipe everything
-if harddrive.has_partitions():
-	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
+if archinstall.arguments['harddrive'].has_partitions():
+	archinstall.log(f" ! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
 	try:
-		for partition in harddrive:
+		for partition in archinstall.arguments['harddrive']:
 			if partition.filesystem_supported():
 				archinstall.log(f" {partition}")
 
@@ -111,8 +113,8 @@ if harddrive.has_partitions():
 			# If we want to keep the existing partitioning table
 			# Make sure that it's the selected drive mounted under /mnt
 			# That way, we can rely on genfstab and some manual post-installation steps.
-			if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
-				raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
+			if archinstall.arguments['harddrive'].has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
+				raise archinstall.DiskError(f"The selected drive {archinstall.arguments['harddrive']} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 
 			archinstall.log('Using existing partition table reported above.')
 	except UnknownFilesystemFormat as err:
@@ -261,7 +263,7 @@ input('Press Enter to continue.')
 	We mention the drive one last time, and count from 5 to 0.
 """
 
-print(f' ! Formatting {harddrive} in ', end='')
+print(f' ! Formatting {archinstall.arguments['harddrive']} in ', end='')
 
 for i in range(5, 0, -1):
 	print(f"{i}", end='')
