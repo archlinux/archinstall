@@ -129,10 +129,10 @@ class Partition():
 
 		mount_information = get_mount_info(self.path)
 		
-		if self.mountpoint != mount_information['target'] and mountpoint:
-			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information['target']}")
-		if mount_information['fstype'] != self.filesystem and filesystem:
-			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {mount_information['fstype']}")
+		if self.mountpoint != mount_information.get('target', None) and mountpoint:
+			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
+		if mount_information.get('fstype', None) != self.filesystem and filesystem:
+			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {mount_information.get('fstype', None)}")
 
 		if (target := mount_information.get('target', None)):
 			self.mountpoint = target
