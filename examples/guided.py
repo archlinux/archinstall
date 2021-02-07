@@ -98,7 +98,7 @@ archinstall.storage['_guided']['mirrors'] = mirror_regions
 harddrive = archinstall.select_disk(archinstall.all_disks())
 archinstall.storage['_guided']['harddrive'] = harddrive
 
-if harddrive.has_partitions(harddrive):
+if harddrive.has_partitions():
 	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
 	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
 		print("We're keeping it!")
