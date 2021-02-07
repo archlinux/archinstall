@@ -13,3 +13,18 @@ from .lib.packages import *
 from .lib.output import *
 from .lib.storage import *
 from .lib.hardware import *
+
+## Basic version of arg.parse() supporting:
+##  --key=value
+##  --boolean
+arguments = {}
+positionals = []
+for arg in sys.argv[1:]:
+	if '--' == arg[:2]:
+		if '=' in arg:
+			key, val = [x.strip() for x in arg[2:].split('=', 1)]
+		else:
+			key, val = arg[2:], True
+		arguments[key] = val
+	else:
+		positionals.append(arg)

@@ -5,7 +5,8 @@ import archinstall
 # We'll print this right before the user gets informed about the formatting timer.
 archinstall.storage['_guided'] = {}
 archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
-
+print(archinstall.arguments, archinstall.positionals)
+exit(0)
 """
 This signal-handler chain (and global variable)
 is used to trigger the "Are you sure you want to abort?" question.
@@ -99,7 +100,7 @@ if harddrive.has_partitions():
 		if partition.filesystem_supported():
 			archinstall.log(f" {partition}")
 
-	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
+	if (option := input('Do you wish to keep existing disk setup or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
 		# If we want to keep the existing partitioning table
 		# Make sure that it's the selected drive mounted under /mnt
 		# That way, we can rely on genfstab and some manual post-installation steps.
@@ -107,9 +108,6 @@ if harddrive.has_partitions():
 			raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 
 		archinstall.log('Using existing partition table reported above.')
-	else:
-		print('Formatting woop woop!')
-exit(1)
 
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
