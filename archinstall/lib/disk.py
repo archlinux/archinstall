@@ -14,7 +14,12 @@ GPT = 0b00000001
 #libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
 class BlockDevice():
-	def __init__(self, path, info={}):
+	def __init__(self, path, info=None):
+		if not info:
+			# If we don't give any information, we need to auto-fill it.
+			# Otherwise any subsequent usage will break.
+			info = all_disks().get(path, {})
+
 		self.path = path
 		self.info = info
 		self.part_cache = OrderedDict()
