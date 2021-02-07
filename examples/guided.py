@@ -117,7 +117,7 @@ if archinstall.arguments['harddrive'].has_partitions():
 				raise archinstall.DiskError(f"The selected drive {archinstall.arguments['harddrive']} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 
 			archinstall.log('Using existing partition table reported above.')
-	except UnknownFilesystemFormat as err:
+	except archinstall.UnknownFilesystemFormat as err:
 		archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
 		input(f"Do you wish to erase all data? (y/n):")
 
