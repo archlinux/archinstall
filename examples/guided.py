@@ -93,7 +93,7 @@ if not archinstall.arguments.get('mirror-region', None):
 	archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 
 # Ask which harddrive/block-device we will install to
-if not archinstall.arguments.get('harddrive', None)
+if not archinstall.arguments.get('harddrive', None):
 	archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
 # Perform a quick sanity check on the selected harddrive.
