@@ -143,11 +143,13 @@ class Partition():
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
 
-	def format(self, filesystem, path=None):
+	def format(self, filesystem, path=None, log_formating=True):
 		if not path:
 			path = self.path
 
-		log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
+		if log_formating:
+			log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
+
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {path}'))
 			if b'UUID' not in o:
@@ -211,7 +213,7 @@ class Partition():
 		# We perform a dummy format on /dev/null with the given filesystem-type
 		# in order to determain if we support it or not.
 		try:
-			self.format(self.filesystem, '/dev/null')
+			self.format(self.filesystem, '/dev/null', log_formating=False)
 		except SysCallError:
 			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:

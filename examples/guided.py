@@ -95,6 +95,10 @@ archinstall.storage['_guided']['harddrive'] = harddrive
 
 if harddrive.has_partitions():
 	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
+	for partition in harddrive:
+		if partition.filesystem_supported():
+			archinstall.log(f" {partition}")
+
 	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
 		# If we want to keep the existing partitioning table
 		# Make sure that it's the selected drive mounted under /mnt
@@ -102,10 +106,7 @@ if harddrive.has_partitions():
 		if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
 			raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 
-		archinstall.log('Using existing partition table:')
-		for partition in harddrive:
-			if partition.filesystem_supported():
-				archinstall.log(f" {partition}")
+		archinstall.log('Using existing partition table reported above.')
 	else:
 		print('Formatting woop woop!')
 exit(1)
