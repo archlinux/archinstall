@@ -142,8 +142,8 @@ class Partition():
 		# in order to determain if we support it or not.
 		try:
 			self.format(self.filesystem, '/dev/null')
-		except DiskError:
-			pass # We supported it, but /dev/null is not formatable as expected
+		except SysCallError:
+			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
 
