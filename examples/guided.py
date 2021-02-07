@@ -101,6 +101,10 @@ if harddrive.has_partitions():
 		# That way, we can rely on genfstab and some manual post-installation steps.
 		if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
 			raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
+
+		archinstall.log('Using existing partition table:')
+		for partition in harddrive:
+			archinstall.log(f" {partition}")
 	else:
 		print('Formatting woop woop!')
 exit(1)
