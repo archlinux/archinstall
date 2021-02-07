@@ -120,20 +120,23 @@ class Partition():
 			part_id = os.path.basename(path)
 		self.path = path
 		self.part_id = part_id
-		self.mountpoint = None
-		self.filesystem = filesystem # TODO: Autodetect if we're reusing a partition
+		self.mountpoint = mountpoint
+		self.filesystem = filesystem
 		self.size = size # TODO: Refresh?
 		self.encrypted = encrypted
 
 		if mountpoint:
 			self.mount(mountpoint)
 
-		if not self.mountpoint:
-			# As a last step, check if we've mounted outside of the script
-			partition_info = get_partition_info(self.path)
-			self.mountpoint = partition_info['target']
-			if partition_info['fstype'] != self.filesystem and filesystem:
-				raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {partition_info['fstype']}")
+		partition_info = get_partition_info(self.path)
+		
+		if self.mountpoint != partition_info['target'] and mountpoint:
+			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {partition_info['target']}")
+		if partition_info['fstype'] != self.filesystem and filesystem:
+			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {partition_info['fstype']}")
+
+		self.mountpoint = partition_info['target']
+		self.filesystem = partition_info['fstype']
 
 	def __repr__(self, *args, **kwargs):
 		if self.encrypted:
