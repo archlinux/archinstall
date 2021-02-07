@@ -22,6 +22,10 @@ class BlockDevice():
 	def __repr__(self, *args, **kwargs):
 		return f"BlockDevice({self.device})"
 
+	def __iter__(self):
+		for partition in self.partitions:
+			yield partition
+
 	def __getitem__(self, key, *args, **kwargs):
 		if key not in self.info:
 			raise KeyError(f'{self} does not contain information: "{key}"')
