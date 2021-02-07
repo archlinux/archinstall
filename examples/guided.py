@@ -285,7 +285,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
 	if harddrive.partition[1].size == '512M':
 		raise OSError('Trying to encrypt the boot partition for petes sake..')
-	harddrive.partition[0].format('fat32')
+	harddrive.partition[0].format('vfat')
 
 	if disk_password:
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.

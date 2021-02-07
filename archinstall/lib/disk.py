@@ -163,11 +163,11 @@ class Partition():
 			if b'UUID' not in o:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
 			self.filesystem = 'btrfs'
-		elif filesystem == 'fat32':
+		elif filesystem == 'vfat':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {self.path}'))
 			if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
-			self.filesystem = 'fat32'
+			self.filesystem = 'vfat'
 		elif filesystem == 'ext4':
 			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {self.path}')).exit_code != 0:
 				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
@@ -259,7 +259,7 @@ class Filesystem():
 		return self.raw_parted(string).exit_code
 
 	def use_entire_disk(self, prep_mode=None):
-		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
+		self.add_partition('primary', start='1MiB', end='513MiB', format='vfat')
 		self.set_name(0, 'EFI')
 		self.set(0, 'boot on')
 		self.set(0, 'esp on') # TODO: Redundant, as in GPT mode it's an alias for "boot on"? https://www.gnu.org/software/parted/manual/html_node/set.html
