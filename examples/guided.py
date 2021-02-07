@@ -96,7 +96,11 @@ archinstall.storage['_guided']['harddrive'] = harddrive
 if harddrive.has_partitions():
 	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
 	if (option := input('Do you wish to keep existing partition setup or format the entire disk? (k/f): ')).lower() in ('k', 'keep'):
-		print("We're keeping it!")
+		# If we want to keep the existing partitioning table
+		# Make sure that it's the selected drive mounted under /mnt
+		# That way, we can rely on genfstab and some manual post-installation steps.
+		if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
+			raise archinstall.DiskException(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 	else:
 		print('Formatting woop woop!')
 exit(1)

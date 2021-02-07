@@ -103,6 +103,12 @@ class BlockDevice():
 	def has_partitions(self):
 		return len(self.partitions)
 
+	def has_mount_point(self, mountpoint):
+		for partition in self.partitions:
+			if self.partitions[partition].mountpoint == mountpoint:
+				return True
+		return False
+
 
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
