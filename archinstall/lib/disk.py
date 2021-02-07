@@ -159,26 +159,26 @@ class Partition():
 
 		log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
 		if filesystem == 'btrfs':
-			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {self.path}'))
+			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {path}'))
 			if b'UUID' not in o:
-				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
+				raise DiskError(f'Could not format {path} with {filesystem} because: {o}')
 			self.filesystem = 'btrfs'
 		elif filesystem == 'vfat':
-			o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {self.path}'))
+			o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {path}'))
 			if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
-				raise DiskError(f'Could not format {self.path} with {filesystem} because: {o}')
+				raise DiskError(f'Could not format {path} with {filesystem} because: {o}')
 			self.filesystem = 'vfat'
 		elif filesystem == 'ext4':
-			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {self.path}')).exit_code != 0:
-				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
 		elif filesystem == 'xfs':
-			if (handle:= sys_command(f'/usr/bin/mkfs.xfs -f {self.path}')).exit_code != 0:
-				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+			if (handle:= sys_command(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'xfs'
 		elif filesystem == 'f2fs':
-			if (handle:= sys_command(f'/usr/bin/mkfs.f2fs -f {self.path}')).exit_code != 0:
-				raise DiskError(f'Could not format {self.path} with {filesystem} because: {b"".join(handle)}')
+			if (handle:= sys_command(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
