@@ -24,7 +24,7 @@ class BlockDevice():
 
 	def __iter__(self):
 		for partition in self.partitions:
-			yield partition
+			yield self.partitions[partition]
 
 	def __getitem__(self, key, *args, **kwargs):
 		if key not in self.info:
