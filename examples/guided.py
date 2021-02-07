@@ -263,7 +263,7 @@ input('Press Enter to continue.')
 	We mention the drive one last time, and count from 5 to 0.
 """
 
-print(f' ! Formatting {archinstall.arguments['harddrive']} in ', end='')
+print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
 
 for i in range(5, 0, -1):
 	print(f"{i}", end='')
