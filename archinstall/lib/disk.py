@@ -18,7 +18,7 @@ class BlockDevice():
 		if not info:
 			# If we don't give any information, we need to auto-fill it.
 			# Otherwise any subsequent usage will break.
-			info = all_disks().get(path, {})
+			info = all_disks()[path].info
 
 		self.path = path
 		self.info = info
