@@ -75,11 +75,6 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
 				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
 
-# Unmount and close previous runs (in case the installer is restarted)
-archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
-archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
-
-
 """
   First, we'll ask the user for a bunch of user input.
   Not until we're satisfied with what we want to install
