@@ -5,11 +5,10 @@ import archinstall
 # We'll print this right before the user gets informed about the formatting timer.
 archinstall.storage['_guided'] = {}
 archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
-print(archinstall.arguments, archinstall.positionals)
-exit(0)
+
 """
 This signal-handler chain (and global variable)
-is used to trigger the "Are you sure you want to abort?" question.
+is used to trigger the "Are you sure you want to abort?" question further down.
 """
 SIG_TRIGGER = False
 def kill_handler(sig, frame):
@@ -81,34 +80,46 @@ def perform_installation(device, boot_partition, language, mirrors):
   Not until we're satisfied with what we want to install
   will we continue with the actual installation steps.
 """
+archinstall.arguments['keyboard-language'] = archinstall.arguments.get('keyboard-language',
+																		default=archinstall.select_language(archinstall.list_keyboard_languages()).strip())
 
-if len(keyboard_language := archinstall.select_language(archinstall.list_keyboard_languages()).strip()):
-	archinstall.set_keyboard_language(keyboard_language)
-	archinstall.storage['_guided']['keyboard_layout'] = keyboard_language
+# Before continuing, set the preferred keyboard layout/language in the current terminal.
+# This will just help the user with the next following questions.
+if len(archinstall.arguments['keyboard-language']):
+	archinstall.set_keyboard_language(archinstall.arguments['keyboard-language'])
 
 # Set which region to download packages from during the installation
-mirror_regions = archinstall.select_mirror_regions(archinstall.list_mirrors())
-archinstall.storage['_guided']['mirrors'] = mirror_regions
+archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region',
+																	default=archinstall.select_mirror_regions(archinstall.list_mirrors()))
 
 # Ask which harddrive/block-device we will install to
-harddrive = archinstall.select_disk(archinstall.all_disks())
-archinstall.storage['_guided']['harddrive'] = harddrive
+archinstall.arguments['harddrive'] = archinstall.arguments.get('harddrive',
+																default=archinstall.select_disk(archinstall.all_disks()))
 
+# Perform a quick sanity check on the selected harddrive.
+# 1. Check if it has partitions
+# 3. Check that we support the current partitions
+# 2. If so, ask if we should keep them or wipe everything
 if harddrive.has_partitions():
 	archinstall.log(f" ! {harddrive} contains existing partitions", fg='red')
-	for partition in harddrive:
-		if partition.filesystem_supported():
-			archinstall.log(f" {partition}")
+	try:
+		for partition in harddrive:
+			if partition.filesystem_supported():
+				archinstall.log(f" {partition}")
 
-	if (option := input('Do you wish to keep existing disk setup or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
-		# If we want to keep the existing partitioning table
-		# Make sure that it's the selected drive mounted under /mnt
-		# That way, we can rely on genfstab and some manual post-installation steps.
-		if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
-			raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
+		if (option := input('Do you wish to keep existing disk setup or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
+			# If we want to keep the existing partitioning table
+			# Make sure that it's the selected drive mounted under /mnt
+			# That way, we can rely on genfstab and some manual post-installation steps.
+			if harddrive.has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
+				raise archinstall.DiskError(f"The selected drive {harddrive} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
 
-		archinstall.log('Using existing partition table reported above.')
+			archinstall.log('Using existing partition table reported above.')
+	except UnknownFilesystemFormat as err:
+		archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
+		input(f"Do you wish to erase all data? (y/n):")
 
+exit(0)
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
 	if disk_password != disk_password_verification:
@@ -294,7 +305,13 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 			unlocked_device.format('btrfs')
 
-			perform_installation(unlocked_device, harddrive.partition[0], keyboard_language, mirror_regions)
+			perform_installation(unlocked_device,
+									harddrive.partition[0],
+									archinstall.arguments['keyboard-language'],
+									archinstall.arguments['mirror-region'])
 	else:
 		harddrive.partition[1].format('ext4')
-		perform_installation(harddrive.partition[1], harddrive.partition[0], keyboard_language, mirror_regions)
+		perform_installation(harddrive.partition[1],
+								harddrive.partition[0],
+								archinstall.arguments['keyboard-language'],
+								archinstall.arguments['mirror-region'])
