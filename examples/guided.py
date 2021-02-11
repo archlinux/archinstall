@@ -105,18 +105,22 @@ else:
 if archinstall.arguments['harddrive'].has_partitions():
 	archinstall.log(f" ! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
 	try:
+		partition_mountpoints = {}
 		for partition in archinstall.arguments['harddrive']:
 			if partition.filesystem_supported():
 				archinstall.log(f" {partition}")
+				partition_mountpoints[partition] = None
 
-		if (option := input('Do you wish to keep existing disk setup or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
-			# If we want to keep the existing partitioning table
-			# Make sure that it's the selected drive mounted under /mnt
-			# That way, we can rely on genfstab and some manual post-installation steps.
-			if archinstall.arguments['harddrive'].has_mount_point(archinstall.storage['MOUNT_POINT']) is False:
-				raise archinstall.DiskError(f"The selected drive {archinstall.arguments['harddrive']} is not pre-mounted to {archinstall.storage['MOUNT_POINT']}. This is required when keeping a existing partitioning scheme.")
+		if (option := input('Do you wish to keep one/more existing partitions or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
+			archinstall.arguments['harddrive'].keep_partitions = True
 
+			while True:
+				partition = archinstall.generic_select(partition_mountpoints.values(), "Select a partition to assign mount-point to")
+
+			archinstall.arguments['harddrive'].allocate_partitions(selections)
 			archinstall.log('Using existing partition table reported above.')
+		else:
+			archinstall.arguments['harddrive'].keep_partitions = False
 	except archinstall.UnknownFilesystemFormat as err:
 		archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
 		input(f"Do you wish to erase all data? (y/n):")

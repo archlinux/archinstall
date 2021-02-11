@@ -12,3 +12,5 @@ class ProfileNotFound(BaseException):
 	pass
 class HardwareIncompatibilityError(BaseException):
 	pass
+class PermissionError(BaseException):
+	pass

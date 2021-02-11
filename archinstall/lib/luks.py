@@ -12,6 +12,7 @@ class luks2():
 		self.mountpoint = mountpoint
 		self.args = args
 		self.kwargs = kwargs
+		self.filesystem = 'crypto_LUKS'
 
 	def __enter__(self):
 		key_file = self.encrypt(self.partition, self.password, *self.args, **self.kwargs)
@@ -58,3 +59,7 @@ class luks2():
 	def close(self, mountpoint):
 		sys_command(f'cryptsetup close /dev/mapper/{mountpoint}')
 		return os.path.islink(f'/dev/mapper/{mountpoint}') is False
+
+	def format(self, path):
+		if (handle := sys_command(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
+			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')

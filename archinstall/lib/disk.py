@@ -125,35 +125,57 @@ class Partition():
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
+		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self.size = size # TODO: Refresh?
 		self.encrypted = encrypted
+		self.allow_formatting = False # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
 
 		if mountpoint:
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		actual_fstype = get_filesystem_type(self.path) # blkid -o value -s TYPE self.path
+		fstype = get_filesystem_type(self.path) # blkid -o value -s TYPE self.path
 		
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
-		if mount_information.get('fstype', None) != self.filesystem and filesystem:
-			raise DiskError(f"{self} was given a filesystem format, but a existing format was detected: {mount_information.get('fstype', None)}")
 
 		if (target := mount_information.get('target', None)):
 			self.mountpoint = target
-		if (fstype := mount_information.get('fstype', None)):
+		if (fstype := mount_information.get('fstype', fstype)):
 			self.filesystem = fstype
 
-	def __repr__(self, *args, **kwargs):
-		if self.encrypted:
-			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}, mounted={self.mountpoint})'
+	def __lt__(self, left_comparitor):
+		if type(left_comparitor) == Partition:
+			left_comparitor = left_comparitor.path
 		else:
-			return f'Partition(path={self.path}, fs={self.filesystem}, mounted={self.mountpoint})'
+			left_comparitor = str(left_comparitor)
+		return self.path < left_comparitor # Not quite sure the order here is correct. But /dev/nvme0n1p1 comes before /dev/nvme0n1p5 so seems correct.
 
-	def format(self, filesystem, path=None, log_formating=True):
-		if not path:
+	def __repr__(self, *args, **kwargs):
+		mount_repr = ''
+		if self.mountpoint:
+			mount_repr = f", mounted={self.mountpoint}"
+		elif self.target_mountpoint:
+			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
+
+		if self.encrypted:
+			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
+		else:
+			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
+
+	def format(self, filesystem, path=None, allow_formatting=None, log_formating=True):
+		"""
+		Format can be given an overriding path, for instance /dev/null to test
+		the formating functionality and in essence the support for the given filesystem.
+		"""
+		if path is None:
 			path = self.path
+		if allow_formatting is None:
+			allow_formatting = self.allow_formatting
+
+		if not allow_formatting:
+			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
 
 		if log_formating:
 			log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
@@ -173,13 +195,18 @@ class Partition():
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
 		elif filesystem == 'xfs':
-			if (handle:= sys_command(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
+			if (handle := sys_command(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'xfs'
 		elif filesystem == 'f2fs':
-			if (handle:= sys_command(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
+			if (handle := sys_command(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
+		elif filesystem == 'crypto_LUKS':
+			from .luks import luks2
+			encrypted_partition = luks2(self, None, None)
+			encrypted_partition.format(path)
+			self.filesystem = 'crypto_LUKS'
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 		return True
@@ -218,10 +245,14 @@ class Partition():
 				return True
 
 	def filesystem_supported(self):
-		# We perform a dummy format on /dev/null with the given filesystem-type
-		# in order to determain if we support it or not.
+		"""
+		The support for a filesystem (this partition) is tested by calling
+		partition.format() with a path set to '/dev/null' which returns two exceptions:
+		 1. SysCallError saying that /dev/null is not formattable - but the filesystem is supported
+		 2. UnknownFilesystemFormat that indicates that we don't support the given filesystem type
+		"""
 		try:
-			self.format(self.filesystem, '/dev/null', log_formating=False)
+			self.format(self.filesystem, '/dev/null', log_formating=False, allow_formatting=True)
 		except SysCallError:
 			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
@@ -365,3 +396,7 @@ def get_mount_info(path):
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
 
 		return output['filesystems'][0]
+
+def get_filesystem_type(path):
+	output = b''.join(sys_command(f"blkid -o value -s TYPE {path}"))
+	return output.strip().decode('UTF-8')
