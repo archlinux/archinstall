@@ -104,26 +104,35 @@ else:
 # 2. If so, ask if we should keep them or wipe everything
 if archinstall.arguments['harddrive'].has_partitions():
 	archinstall.log(f" ! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
-	try:
-		partition_mountpoints = {}
-		for partition in archinstall.arguments['harddrive']:
+	partition_mountpoints = {}
+	for partition in archinstall.arguments['harddrive']:
+		try:
 			if partition.filesystem_supported():
 				archinstall.log(f" {partition}")
 				partition_mountpoints[partition] = None
+		except archinstall.UnknownFilesystemFormat as err:
+			archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
+			#archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
+		#input(f"Do you wish to erase all data? (y/n):")
 
-		if (option := input('Do you wish to keep one/more existing partitions or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
-			archinstall.arguments['harddrive'].keep_partitions = True
+	if (option := input('Do you wish to keep one/more existing partitions or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
+		archinstall.arguments['harddrive'].keep_partitions = True
 
-			while True:
-				partition = archinstall.generic_select(partition_mountpoints.values(), "Select a partition to assign mount-point to")
+		archinstall.log(f" ** You will now select where (inside the installation) to mount partitions. **")
+		archinstall.log(f" ** The root would be a simple / and the boot partition /boot as it's relative paths. **")
+		while True:
+			partition = archinstall.generic_select(partition_mountpoints.keys(), "Select a partition to assign mount-point to: ")
+			if not partition:
+				break
 
-			archinstall.arguments['harddrive'].allocate_partitions(selections)
-			archinstall.log('Using existing partition table reported above.')
-		else:
-			archinstall.arguments['harddrive'].keep_partitions = False
-	except archinstall.UnknownFilesystemFormat as err:
-		archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
-		input(f"Do you wish to erase all data? (y/n):")
+			mountpoint = input(f"Select a mount-point for {partition}: ")
+			#partition.mountpoint = mountpoint
+			partition.allow_formatting = True
+			partition.target_mountpoint = mountpoint
+
+		archinstall.log('Using existing partition table reported above.')
+	else:
+		archinstall.arguments['harddrive'].keep_partitions = False
 
 exit(0)
 while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
