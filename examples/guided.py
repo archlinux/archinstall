@@ -129,6 +129,9 @@ if archinstall.arguments['harddrive'].has_partitions():
 
 			while 1:
 				new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
+				if len(new_filesystem) <= 0:
+					break
+					
 				try:
 					partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
 				except UnknownFilesystemFormat:
