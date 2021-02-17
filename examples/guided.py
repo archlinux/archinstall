@@ -131,14 +131,14 @@ if archinstall.arguments['harddrive'].has_partitions():
 				new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
 				if len(new_filesystem) <= 0:
 					break
-					
+
 				try:
 					partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
-				except UnknownFilesystemFormat:
+				except archinstall.UnknownFilesystemFormat:
 					archinstall.log(f"Selected filesystem is not supported yet, if you wish archinstall should support '{new_filesystem}' please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
 					archinstall.log(f"Until then, please enter another supported filesystem.")
 					continue
-				except SysCallError:
+				except archinstall.SysCallError:
 					pass # Supported, but mkfs could not format /dev/null which is the whole point of /dev/null in path :)
 				break
 
