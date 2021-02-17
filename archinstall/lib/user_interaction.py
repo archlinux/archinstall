@@ -2,7 +2,9 @@ import getpass
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
-from .output import log
+from .output import log, LOG_LEVELS
+from .storage import storage
+from .networking import list_interfaces
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
@@ -52,21 +54,21 @@ def ask_to_configure_network():
 	# Optionally configure one network interface.
 	#while 1:
 	# {MAC: Ifname}
-	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **archinstall.list_interfaces()}
-	archinstall.storage['_guided']['network'] = None
+	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **list_interfaces()}
+	storage['_guided']['network'] = None
 
-	nic = archinstall.generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
+	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
-		mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 		if mode == 'IP (static)':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
 				if ip:
 					break
 				else:
-					ArchInstall.log(
+					log(
 						"You need to enter a valid IP in IP-config mode.",
-						level=archinstall.LOG_LEVELS.Warning,
+						level=LOG_LEVELS.Warning,
 						bg='black',
 						fg='red'
 					)
