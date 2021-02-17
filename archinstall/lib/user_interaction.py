@@ -1,9 +1,19 @@
+import getpass
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
+from .output import log
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
+
+def get_password(prompt="Enter a password: "):
+	while (passwd := getpass.getpass(prompt)):
+		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
+		if passwd != passwd_verification:
+			log(' * Passwords did not match * ', bg='black', fg='red')
+			continue
+		return passwd
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""

@@ -152,16 +152,11 @@ if archinstall.arguments['harddrive'].has_partitions():
 	else:
 		archinstall.arguments['harddrive'].keep_partitions = False
 
+
+disk_password = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
+archinstall.arguments['harddrive'].encryption_passwoed = disk_password
+
 exit(0)
-while (disk_password := getpass.getpass(prompt='Enter disk encryption password (leave blank for no encryption): ')):
-	disk_password_verification = getpass.getpass(prompt='And one more time for verification: ')
-	if disk_password != disk_password_verification:
-		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
-		continue
-	archinstall.storage['_guided']['disk_encryption'] = True
-	break
-
-
 # Ask for a hostname
 hostname = input('Desired hostname for the installation: ')
 if len(hostname) == 0:

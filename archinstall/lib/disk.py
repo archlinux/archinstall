@@ -23,6 +23,10 @@ class BlockDevice():
 		self.path = path
 		self.info = info
 		self.part_cache = OrderedDict()
+		# TODO: Currently disk encryption is a BIT missleading.
+		#       It's actually partition-encryption, but for future-proofing this
+		#       I'm placing the encryption password on a BlockDevice level.
+		self.encryption_passwoed = None
 
 	def __repr__(self, *args, **kwargs):
 		return f"BlockDevice({self.device})"
