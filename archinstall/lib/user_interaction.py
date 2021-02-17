@@ -55,7 +55,6 @@ def ask_to_configure_network():
 	#while 1:
 	# {MAC: Ifname}
 	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **list_interfaces()}
-	storage['_guided']['network'] = None
 
 	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
