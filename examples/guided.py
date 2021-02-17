@@ -243,6 +243,9 @@ for i in range(5, 0, -1):
 			sys.stdin.read()
 		SIG_TRIGGER = False
 		signal.signal(signal.SIGINT, sig_handler)
+
+# Put back the default/original signal handler now that we're done catching
+# and interrupting SIGINT with "Do you really want to abort".
 print()
 signal.signal(signal.SIGINT, original_sigint_handler)
 
