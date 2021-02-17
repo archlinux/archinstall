@@ -180,27 +180,19 @@ archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **
 
 # Ask for archinstall-specific profiles (such as desktop environments etc)
 if not archinstall.arguments.get('profile', None):
-	while 1:
-		profile = archinstall.select_profile(archinstall.list_profiles())
-		print(profile)
-		if profile:
-			archinstall.storage['_guided']['profile'] = profile
+	archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles())
+else:
+	archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
-			if type(profile) != str:  # Got a imported profile
-				archinstall.storage['_guided']['profile'] = profile[0]  # The second return is a module, and not a handle/object.
-				if not profile[1]._prep_function():
-					# TODO: See how we can incorporate this into
-					#       the general log flow. As this is pre-installation
-					#       session setup. Which creates the installation.log file.
-					archinstall.log(
-						' * Profile\'s preparation requirements was not fulfilled.',
-						bg='black',
-						fg='red'
-					)
-					continue
-				break
-		else:
-			break
+# Check the potentially selected profiles preperations to get early checks if some additional questions are needed.
+if archinstall.arguments['profile']:
+	if not archinstall.arguments['profile']._prep_function():
+		archinstall.log(
+			' * Profile\'s preparation requirements was not fulfilled.',
+			bg='black',
+			fg='red'
+		)
+	exit(1)
 
 # Additional packages (with some light weight error handling for invalid package names)
 if not archinstall.arguments.get('packages', None):
