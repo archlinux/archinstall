@@ -185,6 +185,7 @@ else:
 	archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
 # Check the potentially selected profiles preperations to get early checks if some additional questions are needed.
+print(archinstall.arguments['profile'])
 if archinstall.arguments['profile']:
 	if not archinstall.arguments['profile']._prep_function():
 		archinstall.log(

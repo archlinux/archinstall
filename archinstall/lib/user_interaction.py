@@ -188,9 +188,9 @@ def select_profile(options):
 			if '__name__' in source_data and '_prep_function' in source_data:
 				with profile.load_instructions(namespace=f"{selected_profile}.py") as imported:
 					if hasattr(imported, '_prep_function'):
-						return profile, imported
+						return imported
 
-		return selected_profile
+		return profile
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
