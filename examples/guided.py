@@ -1,14 +1,10 @@
 import getpass, time, json, sys, signal, os
 import archinstall
 
-# Create a storage structure for all our information.
-# We'll print this right before the user gets informed about the formatting timer.
-archinstall.storage['_guided'] = {}
-archinstall.storage['_guided_hidden'] = {} # This will simply be hidden from printouts and things.
-
 """
 This signal-handler chain (and global variable)
 is used to trigger the "Are you sure you want to abort?" question further down.
+It might look a bit odd, but have a look at the line: "if SIG_TRIGGER:"
 """
 SIG_TRIGGER = False
 def kill_handler(sig, frame):
@@ -23,13 +19,14 @@ def sig_handler(sig, frame):
 original_sigint_handler = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, sig_handler)
 
+
 def perform_installation(device, boot_partition, language, mirrors):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.storage['_guided']['hostname']) as installation:
+	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
@@ -152,137 +149,83 @@ if archinstall.arguments['harddrive'].has_partitions():
 	else:
 		archinstall.arguments['harddrive'].keep_partitions = False
 
+# Get disk encryption password (or skip if blank)
+if not archinstall.arguments.get('encryption-password', None):
+	archinstall.arguments['encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
+archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['encryption-password']
 
-disk_password = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
-archinstall.arguments['harddrive'].encryption_passwoed = disk_password
-
-exit(0)
-# Ask for a hostname
-hostname = input('Desired hostname for the installation: ')
-if len(hostname) == 0:
-	hostname = 'ArchInstall'
-archinstall.storage['_guided']['hostname'] = hostname
+# Get the hostname for the machine
+if not archinstall.arguments.get('hostname', None):
+	archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
 
 # Ask for a root password (optional, but triggers requirement for super-user if skipped)
-while (root_pw := getpass.getpass(prompt='Enter root password (leave blank to leave root disabled): ')):
-	root_pw_verification = getpass.getpass(prompt='And one more time for verification: ')
-	if root_pw != root_pw_verification:
-		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
-		continue
+if not archinstall.arguments.get('!root-password', None):
+	archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommended: leave blank to leave root disabled): ')
 
-	# Storing things in _guided_hidden helps us avoid printing it
-	# when echoing user configuration: archinstall.storage['_guided']
-	archinstall.storage['_guided_hidden']['root_pw'] = root_pw
-	archinstall.storage['_guided']['root_unlocked'] = True
-	break
+#	# Storing things in _guided_hidden helps us avoid printing it
+#	# when echoing user configuration: archinstall.storage['_guided']
+#	archinstall.storage['_guided_hidden']['root_pw'] = root_pw
+#	archinstall.storage['_guided']['root_unlocked'] = True
+#	break
 
 # Ask for additional users (super-user if root pw was not set)
-users = {}
-new_user_text = 'Any additional users to install (leave blank for no users): '
-if len(root_pw.strip()) == 0:
-	new_user_text = 'Create a super-user with sudo privileges: '
+archinstall.arguments['users'] = {}
+archinstall.arguments['superusers'] = {}
+if not archinstall.arguments.get('!root-password', None):
+	archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 
-archinstall.storage['_guided']['users'] = None
-while 1:
-	new_user = input(new_user_text)
-	if len(new_user.strip()) == 0:
-		if len(root_pw.strip()) == 0:
-			archinstall.log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
-			continue
-		break
-
-	if not archinstall.storage['_guided']['users']:
-		archinstall.storage['_guided']['users'] = []
-	archinstall.storage['_guided']['users'].append(new_user)
-
-	new_user_passwd = getpass.getpass(prompt=f'Password for user {new_user}: ')
-	new_user_passwd_verify = getpass.getpass(prompt=f'Enter password again for verification: ')
-	if new_user_passwd != new_user_passwd_verify:
-		archinstall.log(' * Passwords did not match * ', bg='black', fg='red')
-		continue
-
-	users[new_user] = new_user_passwd
-	break
+users, superusers = archinstall.ask_for_additional_users('Any additional users to install (leave blank for no users): ')
+archinstall.arguments['users'] = users
+archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 # Ask for archinstall-specific profiles (such as desktop environments etc)
-while 1:
-	profile = archinstall.select_profile(archinstall.list_profiles())
-	if profile:
-		archinstall.storage['_guided']['profile'] = profile
+if not archinstall.arguments.get('profile', None):
+	while 1:
+		profile = archinstall.select_profile(archinstall.list_profiles())
+		print(profile)
+		if profile:
+			archinstall.storage['_guided']['profile'] = profile
 
-		if type(profile) != str:  # Got a imported profile
-			archinstall.storage['_guided']['profile'] = profile[0]  # The second return is a module, and not a handle/object.
-			if not profile[1]._prep_function():
-				# TODO: See how we can incorporate this into
-				#       the general log flow. As this is pre-installation
-				#       session setup. Which creates the installation.log file.
-				archinstall.log(
-					' * Profile\'s preparation requirements was not fulfilled.',
-					bg='black',
-					fg='red'
-				)
-				continue
+			if type(profile) != str:  # Got a imported profile
+				archinstall.storage['_guided']['profile'] = profile[0]  # The second return is a module, and not a handle/object.
+				if not profile[1]._prep_function():
+					# TODO: See how we can incorporate this into
+					#       the general log flow. As this is pre-installation
+					#       session setup. Which creates the installation.log file.
+					archinstall.log(
+						' * Profile\'s preparation requirements was not fulfilled.',
+						bg='black',
+						fg='red'
+					)
+					continue
+				break
+		else:
 			break
-	else:
-		break
 
 # Additional packages (with some light weight error handling for invalid package names)
-archinstall.storage['_guided']['packages'] = None
-while 1:
-	packages = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
+if not archinstall.arguments.get('packages', None):
+	archinstall.arguments['packages'] = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
 
-	if not packages:
-		break
+# Verify packages that were given
+try:
+	archinstall.validate_package_list(archinstall.arguments['packages'])
+except archinstall.RequirementError as e:
+	archinstall.log(e, fg='red')
+	exit(1)
 
-	try:
-		if archinstall.validate_package_list(packages):
-			archinstall.storage['_guided']['packages'] = packages
-			break
-	except archinstall.RequirementError as e:
-		print(e)
-
-# Optionally configure one network interface.
-#while 1:
-# {MAC: Ifname}
-interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **archinstall.list_interfaces()}
-archinstall.storage['_guided']['network'] = None
-
-nic = archinstall.generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
-if nic and nic != 'Copy ISO network configuration to installation':
-	mode = archinstall.generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
-	if mode == 'IP (static)':
-		while 1:
-			ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
-			if ip:
-				break
-			else:
-				ArchInstall.log(
-					"You need to enter a valid IP in IP-config mode.",
-					level=archinstall.LOG_LEVELS.Warning,
-					bg='black',
-					fg='red'
-				)
-
-		if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
-			gateway = None
-
-		dns = None
-		if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
-			dns = dns_input.split(' ')
-
-		archinstall.storage['_guided']['network'] = {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
-	else:
-		archinstall.storage['_guided']['network'] = {'nic': nic}
-elif nic:
-	archinstall.storage['_guided']['network'] = nic
+# Ask or Call the helper function that asks the user to optionally configure a network.
+if not archinstall.arguments.get('nic', None):
+	archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
 
 print()
 print('This is your chosen configuration:')
 archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
 archinstall.log(json.dumps(archinstall.storage['_guided'], indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
+archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
 print()
 
 input('Press Enter to continue.')
+exit(0)
 
 """
 	Issue a final warning before we continue with something un-revertable.
