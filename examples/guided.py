@@ -130,7 +130,7 @@ if archinstall.arguments['harddrive'].has_partitions():
 			while 1:
 				new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
 				try:
-					partition.format(new_filesystem, path='/dev/null')
+					partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
 				except UnknownFilesystemFormat:
 					archinstall.log(f"Selected filesystem is not supported yet, if you wish archinstall should support '{new_filesystem}' please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
 					archinstall.log(f"Until then, please enter another supported filesystem.")
