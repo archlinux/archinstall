@@ -169,7 +169,7 @@ class Profile(Script):
 			# trigger a traditional:
 			#     if __name__ == 'moduleName'
 			if '__name__' in source_data and '_prep_function' in source_data:
-				with profile.load_instructions(namespace=f"{self.namespace}.py") as imported:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
 					if hasattr(imported, '_prep_function'):
 						return True
 		return False
