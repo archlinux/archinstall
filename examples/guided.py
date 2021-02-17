@@ -185,15 +185,15 @@ else:
 	archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
 # Check the potentially selected profiles preperations to get early checks if some additional questions are needed.
-print(archinstall.arguments['profile'])
-if archinstall.arguments['profile']:
-	if not archinstall.arguments['profile']._prep_function():
-		archinstall.log(
-			' * Profile\'s preparation requirements was not fulfilled.',
-			bg='black',
-			fg='red'
-		)
-	exit(1)
+if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
+	with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+		if not imported._prep_function():
+			archinstall.log(
+				' * Profile\'s preparation requirements was not fulfilled.',
+				bg='black',
+				fg='red'
+			)
+			exit(1)
 
 # Additional packages (with some light weight error handling for invalid package names)
 if not archinstall.arguments.get('packages', None):

@@ -174,23 +174,7 @@ def select_profile(options):
 		else:
 			RequirementError("Selected profile does not exist.")
 
-		profile = Profile(None, selected_profile)
-		with open(profile.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check and if so, check if it's got a _prep_function()
-			# we can call to ask for more user input.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '_prep_function' in source_data:
-				with profile.load_instructions(namespace=f"{selected_profile}.py") as imported:
-					if hasattr(imported, '_prep_function'):
-						return imported
-
-		return profile
+		return Profile(None, selected_profile)
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
