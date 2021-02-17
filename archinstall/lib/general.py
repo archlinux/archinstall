@@ -45,7 +45,10 @@ class JSON_Encoder:
 				else:
 					val = JSON_Encoder._encode(val)
 				del(obj[key])
-				obj[JSON_Encoder._encode(key)] = val
+				if type(key) == str and key[0] == '!':
+					obj[JSON_Encoder._encode(key)] = '******'
+				else:
+					obj[JSON_Encoder._encode(key)] = val
 			return obj
 		elif hasattr(obj, 'json'):
 			return obj.json()

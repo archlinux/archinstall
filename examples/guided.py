@@ -150,9 +150,9 @@ if archinstall.arguments['harddrive'].has_partitions():
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 # Get disk encryption password (or skip if blank)
-if not archinstall.arguments.get('encryption-password', None):
-	archinstall.arguments['encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
-archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['encryption-password']
+if not archinstall.arguments.get('!encryption-password', None):
+	archinstall.arguments['!encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
+archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
 # Get the hostname for the machine
 if not archinstall.arguments.get('hostname', None):
