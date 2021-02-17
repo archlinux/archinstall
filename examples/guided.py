@@ -121,14 +121,18 @@ if archinstall.arguments['harddrive'].has_partitions():
 		archinstall.log(f" ** You will now select where (inside the installation) to mount partitions. **")
 		archinstall.log(f" ** The root would be a simple / and the boot partition /boot as it's relative paths. **")
 		while True:
-			partition = archinstall.generic_select(partition_mountpoints.keys(), "Select a partition to assign mount-point to: ")
+			partition = archinstall.generic_select(partition_mountpoints.keys(), "Select a partition to assign mount-point to (leave blank when done): ")
 			if not partition:
 				break
 
-			mountpoint = input(f"Select a mount-point for {partition}: ")
-			#partition.mountpoint = mountpoint
-			partition.allow_formatting = True
-			partition.target_mountpoint = mountpoint
+			mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
+			new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
+
+			if len(mountpoint):
+				partition.allow_formatting = True
+				partition.target_mountpoint = mountpoint
+				if len(new_filesystem):
+					partition.filesystem = new_filesystem
 
 		archinstall.log('Using existing partition table reported above.')
 	else:
