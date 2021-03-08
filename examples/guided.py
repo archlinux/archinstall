@@ -94,7 +94,6 @@ if archinstall.arguments.get('harddrive', None):
 	archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
 else:
 	archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
-print(type(archinstall.arguments['harddrive']), archinstall.arguments['harddrive'])
 
 # Perform a quick sanity check on the selected harddrive.
 # 1. Check if it has partitions
@@ -167,6 +166,8 @@ if archinstall.arguments['harddrive'].has_partitions():
 		archinstall.log('Using existing partition table reported above.')
 	elif option == 'format-all':
 		archinstall.arguments['harddrive'].keep_partitions = False
+
+print(type(archinstall.arguments['harddrive']), archinstall.arguments['harddrive'])
 
 # Get disk encryption password (or skip if blank)
 if not archinstall.arguments.get('!encryption-password', None):
