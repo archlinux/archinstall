@@ -94,7 +94,8 @@ def ask_for_disk_layout():
 		'abort' : 'Abort the installation.'
 	}
 
-	return generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
+	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
+	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
