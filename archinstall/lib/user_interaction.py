@@ -91,7 +91,7 @@ def ask_for_disk_layout():
 	options = {
 		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
 		'format-all' : 'Format entire drive and setup a basic partition scheme.',
-		'abort' : 'abort'
+		'abort' : 'Abort the installation.'
 	}
 
 	return generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
