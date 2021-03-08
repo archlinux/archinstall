@@ -184,7 +184,9 @@ class Partition():
 		return True if files > 0 else False
 
 	def safe_to_format(self):
-		if self.target_mountpoint == '/boot' and self.has_content():
+		if self.allow_formatting is False:
+			return False
+		elif self.target_mountpoint == '/boot' and self.has_content():
 			return False
 
 		return True

@@ -281,7 +281,7 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 			fs.use_entire_disk(archinstall.arguments.get('filesystem', 'ext4'))
 	else:
 		for partition in archinstall.arguments['harddrive']:
-			if partition.allow_formatting and partition.safe_to_format():
+			if partition.safe_to_format():
 				partition.format()
 			else:
 				archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False", level=archinstall.LOG_LEVELS.Debug)
