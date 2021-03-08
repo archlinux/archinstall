@@ -167,8 +167,6 @@ if archinstall.arguments['harddrive'].has_partitions():
 	elif option == 'format-all':
 		archinstall.arguments['harddrive'].keep_partitions = False
 
-print(type(archinstall.arguments['harddrive']), archinstall.arguments['harddrive'])
-
 # Get disk encryption password (or skip if blank)
 if not archinstall.arguments.get('!encryption-password', None):
 	archinstall.arguments['!encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
@@ -230,12 +228,15 @@ except archinstall.RequirementError as e:
 if not archinstall.arguments.get('nic', None):
 	archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
 
+print(type(archinstall.arguments['harddrive']), archinstall.arguments['harddrive'])
+
 print()
 print('This is your chosen configuration:')
 archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
 archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
 print()
 
+print(type(archinstall.arguments['harddrive']), archinstall.arguments['harddrive'])
 input('Press Enter to continue.')
 
 """
