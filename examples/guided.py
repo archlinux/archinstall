@@ -271,6 +271,9 @@ signal.signal(signal.SIGINT, original_sigint_handler)
 	Once that's done, we'll hand over to perform_installation()
 """
 with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+	for partition in archinstall.arguments['harddrive'].partitions:
+		print(partition)
+	exit(0)
 	# Use partitioning helper to set up the disk partitions.
 	if disk_password:
 		fs.use_entire_disk('luks2')
