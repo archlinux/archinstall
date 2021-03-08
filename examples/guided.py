@@ -100,7 +100,7 @@ else:
 # 3. Check that we support the current partitions
 # 2. If so, ask if we should keep them or wipe everything
 if archinstall.arguments['harddrive'].has_partitions():
-	archinstall.log(f" ! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
+	archinstall.log(f"! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
 
 	# We curate a list pf supported paritions
 	# and print those that we don't support.
