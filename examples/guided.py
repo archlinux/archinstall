@@ -165,6 +165,7 @@ if archinstall.arguments['harddrive'].has_partitions():
 
 		archinstall.log('Using existing partition table reported above.')
 	elif option == 'format-all':
+		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 # Get disk encryption password (or skip if blank)
@@ -272,22 +273,23 @@ signal.signal(signal.SIGINT, original_sigint_handler)
 """
 with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
 	if archinstall.arguments['harddrive'].keep_partitions is False:
-		if disk_password:
+		if archinstall.arguments.get('!encryption-password', None):
+			# Set a temporary partition format to indicate that the partitions is encrypted.
+			# Later on, we'll mount it and put an actual filesystem inside this encrypted container.
 			fs.use_entire_disk('luks2')
 		else:
-			fs.use_entire_disk('ext4')
+			fs.use_entire_disk(archinstall.arguments.get('filesystem', 'ext4'))
 	else:
 		for partition in archinstall.arguments['harddrive']:
 			if partition.allow_formatting:
 				partition.format()
-				
-	exit(0)
-	if disk_password:
+
+	if archinstall.arguments.get('!encryption-password', None):
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
 		# archinstall.luks2() encrypts the partition when entering the with context manager, and
 		# unlocks the drive so that it can be used as a normal block-device within archinstall.
-		with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
-			unlocked_device.format('btrfs')
+		with archinstall.luks2(harddrive.partition[1], 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
+			unlocked_device.format(archinstall.arguments.get('filesystem', 'btrfs'))
 
 			perform_installation(unlocked_device,
 									harddrive.partition[0],

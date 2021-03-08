@@ -6,17 +6,28 @@ from .output import log, LOG_LEVELS
 from .storage import storage
 
 class luks2():
-	def __init__(self, partition, mountpoint, password, *args, **kwargs):
+	def __init__(self, partition, mountpoint, password, key_file=None, *args, **kwargs):
 		self.password = password
 		self.partition = partition
 		self.mountpoint = mountpoint
 		self.args = args
 		self.kwargs = kwargs
+		self.key_file = key_file
 		self.filesystem = 'crypto_LUKS'
 
 	def __enter__(self):
-		key_file = self.encrypt(self.partition, self.password, *self.args, **self.kwargs)
-		return self.unlock(self.partition, self.mountpoint, key_file)
+		if self.partition.allow_formatting:
+			self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
+		else:
+			if not self.key_file:
+				self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+			
+			if type(self.password) != bytes: self.password = bytes(self.password, 'UTF-8')
+
+			with open(self.key_file, 'wb') as fh:
+				fh.write(self.password)
+
+		return self.unlock(self.partition, self.mountpoint, self.key_file)
 
 	def __exit__(self, *args, **kwargs):
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
@@ -24,13 +35,20 @@ class luks2():
 			raise args[1]
 		return True
 
-	def encrypt(self, partition, password, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
+	def encrypt(self, partition, password=None, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		# TODO: We should be able to integrate this into the main log some how.
 		#       Perhaps post-mortem?
 		log(f'Encrypting {partition} (This might take a while)', level=LOG_LEVELS.Info)
 
 		if not key_file:
-			key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+			if self.key_file:
+				key_file = self.key_file
+			else:
+				key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+
+		if not password:
+			password = self.password
+
 		if type(password) != bytes: password = bytes(password, 'UTF-8')
 
 		with open(key_file, 'wb') as fh:

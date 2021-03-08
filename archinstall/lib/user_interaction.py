@@ -97,6 +97,18 @@ def ask_for_disk_layout():
 	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
 	return next((key for key, val in options.items() if val == value), None)
 
+def ask_for_main_filesystem_format():
+	options = {
+		'btrfs' : 'btrfs',
+		'ext4' : 'ext4',
+		'xfs' : 'xfs',
+		'f2fs' : 'f2fs',
+		'vfat' : 'vfat'
+	}
+
+	value = generic_select(options.values(), "Select your main partitions filesystem by number or free-text: ")
+	return next((key for key, val in options.items() if val == value), None)
+
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
 	A generic select function that does not output anything
