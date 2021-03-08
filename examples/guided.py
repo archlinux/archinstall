@@ -271,19 +271,17 @@ signal.signal(signal.SIGINT, original_sigint_handler)
 	Once that's done, we'll hand over to perform_installation()
 """
 with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
-	for partition in archinstall.arguments['harddrive']:
-		print(partition)
-	exit(0)
-	# Use partitioning helper to set up the disk partitions.
-	if disk_password:
-		fs.use_entire_disk('luks2')
+	if archinstall.arguments['harddrive'].keep_partitions is False:
+		if disk_password:
+			fs.use_entire_disk('luks2')
+		else:
+			fs.use_entire_disk('ext4')
 	else:
-		fs.use_entire_disk('ext4')
-
-	if harddrive.partition[1].size == '512M':
-		raise OSError('Trying to encrypt the boot partition for petes sake..')
-	harddrive.partition[0].format('vfat')
-
+		for partition in archinstall.arguments['harddrive']:
+			if partition.allow_formatting:
+				partition.format()
+				
+	exit(0)
 	if disk_password:
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
 		# archinstall.luks2() encrypts the partition when entering the with context manager, and

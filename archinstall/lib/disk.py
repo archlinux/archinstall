@@ -173,11 +173,13 @@ class Partition():
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
 
-	def format(self, filesystem, path=None, allow_formatting=None, log_formating=True):
+	def format(self, filesystem=None, path=None, allow_formatting=None, log_formating=True):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formating functionality and in essence the support for the given filesystem.
 		"""
+		if filesystem is None:
+			filesystem = self.filesystem
 		if path is None:
 			path = self.path
 		if allow_formatting is None:
