@@ -114,7 +114,10 @@ if archinstall.arguments['harddrive'].has_partitions():
 			archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
 
 	# We then ask what to do with the paritions.
-	if (option := archinstall.ask_for_disk_layout()) == 'keep-existing':
+	if (option := archinstall.ask_for_disk_layout()) == 'abort':
+		archinstall.log(f"Safely aborting the installation. No changes to the disk or system has been made.")
+		exit(1)
+	elif option == 'keep-existing':
 		archinstall.arguments['harddrive'].keep_partitions = True
 
 		archinstall.log(f" ** You will now select which partitions to use by selecting mount points (inside the installation). **")

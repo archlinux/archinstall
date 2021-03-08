@@ -90,10 +90,11 @@ def ask_to_configure_network():
 def ask_for_disk_layout():
 	options = {
 		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
-		'format-all' : 'Format entire drive and setup a basic partition scheme.'
+		'format-all' : 'Format entire drive and setup a basic partition scheme.',
+		'abort' : 'abort'
 	}
 
-	return generic_select(options.values(), "Found partitions on the selected drive, (select by number) what do you want to do: ")
+	return generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
