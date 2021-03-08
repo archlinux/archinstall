@@ -1,4 +1,4 @@
-import glob, re, os, json, time # Time is only used to gracefully wait for new paritions to come online
+import glob, re, os, json, time, hashlib
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
@@ -173,6 +173,22 @@ class Partition():
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
 
+	def has_content(self):
+		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
+		if (handle := sys_command(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
+			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
+		
+		files = len(glob.glob(f"{temporary_mountpoint}/*"))
+		sys_command(f'/usr/bin/umount {temporary_mountpoint}')
+
+		return True if files > 0 else False
+
+	def safe_to_format(self):
+		if self.target_mountpoint == '/boot' and self.has_content():
+			return False
+
+		return True
+
 	def format(self, filesystem=None, path=None, allow_formatting=None, log_formating=True):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
@@ -223,7 +239,7 @@ class Partition():
 			encrypted_partition = luks2(self, None, None)
 			encrypted_partition.format(path)
 			self.filesystem = 'crypto_LUKS'
-			
+
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 		return True
