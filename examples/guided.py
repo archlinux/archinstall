@@ -101,6 +101,9 @@ else:
 # 2. If so, ask if we should keep them or wipe everything
 if archinstall.arguments['harddrive'].has_partitions():
 	archinstall.log(f" ! {archinstall.arguments['harddrive']} contains existing partitions", fg='red')
+
+	# We curate a list pf supported paritions
+	# and print those that we don't support.
 	partition_mountpoints = {}
 	for partition in archinstall.arguments['harddrive']:
 		try:
@@ -109,44 +112,56 @@ if archinstall.arguments['harddrive'].has_partitions():
 				partition_mountpoints[partition] = None
 		except archinstall.UnknownFilesystemFormat as err:
 			archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
-			#archinstall.log(f"Current filesystem is not supported: {err}", fg='red')
-		#input(f"Do you wish to erase all data? (y/n):")
 
-	if (option := input('Do you wish to keep one/more existing partitions or format entire drive? (k/f): ')).lower() in ('k', 'keep'):
+	# We then ask what to do with the paritions.
+	if (option := archinstall.ask_for_disk_layout()) == 'keep-existing':
 		archinstall.arguments['harddrive'].keep_partitions = True
 
-		archinstall.log(f" ** You will now select where (inside the installation) to mount partitions. **")
-		archinstall.log(f" ** The root would be a simple / and the boot partition /boot as it's relative paths. **")
+		archinstall.log(f" ** You will now select which partitions to use by selecting mount points (inside the installation). **")
+		archinstall.log(f" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
 		while True:
-			partition = archinstall.generic_select(partition_mountpoints.keys(), "Select a partition to assign mount-point to (leave blank when done): ")
+			# Select a partition
+			partition = archinstall.generic_select(partition_mountpoints.keys(),
+													"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 			if not partition:
 				break
 
+			# Select a mount-point
 			mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
+			if len(mountpoint):
 
-			while 1:
-				new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
-				if len(new_filesystem) <= 0:
+				# Get a valid & supported filesystem for the parition:
+				while 1:
+					new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
+					if len(new_filesystem) <= 0:
+						break
+
+					# Since the potentially new filesystem is new
+					# we have to check if we support it. We can do this by formatting /dev/null with the partitions filesystem.
+					# There's a nice wrapper for this on the partition object itself that supports a path-override during .format()
+					try:
+						partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
+					except archinstall.UnknownFilesystemFormat:
+						archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
+						archinstall.log(f"Until then, please enter another supported filesystem.")
+						continue
+					except archinstall.SysCallError:
+						pass # Expected exception since mkfs.<format> can not format /dev/null.
+							 # But that means our .format() function supported it.
 					break
 
-				try:
-					partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
-				except archinstall.UnknownFilesystemFormat:
-					archinstall.log(f"Selected filesystem is not supported yet, if you wish archinstall should support '{new_filesystem}' please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
-					archinstall.log(f"Until then, please enter another supported filesystem.")
-					continue
-				except archinstall.SysCallError:
-					pass # Supported, but mkfs could not format /dev/null which is the whole point of /dev/null in path :)
-				break
-
-			if len(mountpoint):
+				# When we've selected all three criterias,
+				# We can safely mark the partition for formatting and where to mount it.
+				# TODO: allow_formatting might be redundant since target_mountpoint should only be
+				#       set if we actually want to format it anyway.
 				partition.allow_formatting = True
 				partition.target_mountpoint = mountpoint
+				# Only overwrite the filesystem definition if we selected one:
 				if len(new_filesystem):
 					partition.filesystem = new_filesystem
 
 		archinstall.log('Using existing partition table reported above.')
-	else:
+	elif option == 'format-all':
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 # Get disk encryption password (or skip if blank)
@@ -217,7 +232,6 @@ archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=
 print()
 
 input('Press Enter to continue.')
-exit(0)
 
 """
 	Issue a final warning before we continue with something un-revertable.
@@ -249,6 +263,7 @@ for i in range(5, 0, -1):
 print()
 signal.signal(signal.SIGINT, original_sigint_handler)
 
+exit(0)
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
 	Once that's done, we'll hand over to perform_installation()
