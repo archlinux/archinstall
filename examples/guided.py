@@ -266,12 +266,13 @@ for i in range(5, 0, -1):
 print()
 signal.signal(signal.SIGINT, original_sigint_handler)
 
-exit(0)
 """
 	Setup the blockdevice, filesystem (and optionally encryption).
 	Once that's done, we'll hand over to perform_installation()
 """
-with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
+with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+	print('Debug')
+	exit(0)
 	# Use partitioning helper to set up the disk partitions.
 	if disk_password:
 		fs.use_entire_disk('luks2')

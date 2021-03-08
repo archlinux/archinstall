@@ -272,13 +272,14 @@ class Filesystem():
 		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
-		if self.mode == GPT:
-			if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt',).exit_code == 0:
-				return self
-			else:
-				raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
-		else:
-			raise DiskError(f'Unknown mode selected to format in: {self.mode}')
+		#if self.mode == GPT:
+		#	if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt',).exit_code == 0:
+		#		return self
+		#	else:
+		#		raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+		#else:
+		#	raise DiskError(f'Unknown mode selected to format in: {self.mode}')
+		print('Keep partitions:', self.blockdevice.keep_partitions)
 
 	def __repr__(self):
 		return f"Filesystem(blockdevice={self.blockdevice}, mode={self.mode})"
