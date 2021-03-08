@@ -197,6 +197,21 @@ class Partition():
 
 		return True
 
+	def encrypt(self, *args, **kwargs):
+		"""
+		A wrapper function for luks2() instances and the .encrypt() method of that instance.
+		"""
+		from .luks import luks2
+
+		if not self.encrypted:
+			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
+
+		if not self.safe_to_format():
+			return False
+
+		handle = luks2(self, None, None)
+		return handle.encrypt(self, *args, **kwargs)
+
 	def format(self, filesystem=None, path=None, allow_formatting=None, log_formating=True):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
@@ -204,6 +219,7 @@ class Partition():
 		"""
 		if filesystem is None:
 			filesystem = self.filesystem
+
 		if path is None:
 			path = self.path
 		if allow_formatting is None:
@@ -349,15 +365,23 @@ class Filesystem():
 		"""
 		return self.raw_parted(string).exit_code
 
-	def use_entire_disk(self, prep_mode=None):
+	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
 		self.add_partition('primary', start='1MiB', end='513MiB', format='vfat')
 		self.set_name(0, 'EFI')
 		self.set(0, 'boot on')
-		self.set(0, 'esp on') # TODO: Redundant, as in GPT mode it's an alias for "boot on"? https://www.gnu.org/software/parted/manual/html_node/set.html
-		if prep_mode == 'luks2':
-			self.add_partition('primary', start='513MiB', end='100%')
-		else:
-			self.add_partition('primary', start='513MiB', end='100%', format=prep_mode)
+		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
+		# https://www.gnu.org/software/parted/manual/html_node/set.html
+		self.set(0, 'esp on')
+		self.add_partition('primary', start='513MiB', end='100%')
+
+		self.blockdevice.partition[0].filesystem = 'vfat'
+		self.blockdevice.partition[1].filesystem = root_filesystem_type
+
+		self.blockdevice.partition[0].target_mountpoint = '/boot'
+		self.blockdevice.partition[1].target_mountpoint = '/'
+
+		if encrypt_root_partition:
+			self.blockdevice.partition[1].encrypted = True
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)

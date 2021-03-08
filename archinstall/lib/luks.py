@@ -16,16 +16,17 @@ class luks2():
 		self.filesystem = 'crypto_LUKS'
 
 	def __enter__(self):
-		if self.partition.allow_formatting:
-			self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
-		else:
-			if not self.key_file:
-				self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
-			
-			if type(self.password) != bytes: self.password = bytes(self.password, 'UTF-8')
+		#if self.partition.allow_formatting:
+		#	self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
+		#else:
+		if not self.key_file:
+			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+		
+		if type(self.password) != bytes:
+			self.password = bytes(self.password, 'UTF-8')
 
-			with open(self.key_file, 'wb') as fh:
-				fh.write(self.password)
+		with open(self.key_file, 'wb') as fh:
+			fh.write(self.password)
 
 		return self.unlock(self.partition, self.mountpoint, self.key_file)
 
@@ -38,6 +39,9 @@ class luks2():
 	def encrypt(self, partition, password=None, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		# TODO: We should be able to integrate this into the main log some how.
 		#       Perhaps post-mortem?
+		if not self.partition.allow_formatting:
+			raise DiskError(f'Could not encrypt volume {self.partition} due to it having a formatting lock.')
+
 		log(f'Encrypting {partition} (This might take a while)', level=LOG_LEVELS.Info)
 
 		if not key_file:
@@ -49,7 +53,8 @@ class luks2():
 		if not password:
 			password = self.password
 
-		if type(password) != bytes: password = bytes(password, 'UTF-8')
+		if type(password) != bytes:
+			password = bytes(password, 'UTF-8')
 
 		with open(key_file, 'wb') as fh:
 			fh.write(password)

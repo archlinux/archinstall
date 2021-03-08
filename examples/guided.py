@@ -272,19 +272,21 @@ signal.signal(signal.SIGINT, original_sigint_handler)
 	Once that's done, we'll hand over to perform_installation()
 """
 with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+	# Wipe the entire drive if the disk flag `keep_partitions`is False.
 	if archinstall.arguments['harddrive'].keep_partitions is False:
-		if archinstall.arguments.get('!encryption-password', None):
-			# Set a temporary partition format to indicate that the partitions is encrypted.
-			# Later on, we'll mount it and put an actual filesystem inside this encrypted container.
-			fs.use_entire_disk('luks2')
-		else:
-			fs.use_entire_disk(archinstall.arguments.get('filesystem', 'ext4'))
-	else:
-		for partition in archinstall.arguments['harddrive']:
-			if partition.safe_to_format():
-				partition.format()
+		fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'),
+							encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
+			
+	# After the disk is ready, iterate the partitions and check
+	# which ones are safe to format, and format those.
+	for partition in archinstall.arguments['harddrive']:
+		if partition.safe_to_format():
+			if partition.encrypted:
+				partition.encrypt(password=archinstall.arguments.get('!encryption-password', None))
 			else:
-				archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False", level=archinstall.LOG_LEVELS.Debug)
+				partition.format()
+		else:
+			archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
 
 	if archinstall.arguments.get('!encryption-password', None):
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
