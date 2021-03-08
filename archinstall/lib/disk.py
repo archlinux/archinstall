@@ -279,6 +279,7 @@ class Filesystem():
 		#		raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
 		#else:
 		#	raise DiskError(f'Unknown mode selected to format in: {self.mode}')
+		print(self.blockdevice)
 		print('Keep partitions:', self.blockdevice.keep_partitions)
 
 	def __repr__(self):
