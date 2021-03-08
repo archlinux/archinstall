@@ -290,16 +290,16 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
 		# archinstall.luks2() encrypts the partition when entering the with context manager, and
 		# unlocks the drive so that it can be used as a normal block-device within archinstall.
-		with archinstall.luks2(harddrive.partition[1], 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
+		with archinstall.luks2(archinstall.arguments['harddrive'].partition[1], 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
 			unlocked_device.format(archinstall.arguments.get('filesystem', 'btrfs'))
 
 			perform_installation(unlocked_device,
-									harddrive.partition[0],
+									archinstall.arguments['harddrive'].partition[0],
 									archinstall.arguments['keyboard-language'],
 									archinstall.arguments['mirror-region'])
 	else:
-		harddrive.partition[1].format('ext4')
-		perform_installation(harddrive.partition[1],
-								harddrive.partition[0],
+		archinstall.arguments['harddrive'].partition[1].format('ext4')
+		perform_installation(archinstall.arguments['harddrive'].partition[1],
+								archinstall.arguments['harddrive'].partition[0],
 								archinstall.arguments['keyboard-language'],
 								archinstall.arguments['mirror-region'])
