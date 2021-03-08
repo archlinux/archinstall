@@ -7,6 +7,7 @@ from .storage import storage
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
+MBR = 0b00000010
 
 #import ctypes
 #import ctypes.util
@@ -112,6 +113,10 @@ class BlockDevice():
 	def partition(self):
 		all_partitions = self.partitions
 		return [all_partitions[k] for k in all_partitions]
+
+	@property
+	def partition_table_type(self):
+		return GPT
 
 	def has_partitions(self):
 		return len(self.partitions)
@@ -272,15 +277,21 @@ class Filesystem():
 		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
-		#if self.mode == GPT:
-		#	if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt',).exit_code == 0:
-		#		return self
-		#	else:
-		#		raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
-		#else:
-		#	raise DiskError(f'Unknown mode selected to format in: {self.mode}')
-		print(type(self.blockdevice))
-		print('Keep partitions:', self.blockdevice.keep_partitions)
+		if self.blockdevice.keep_partitions is False:
+			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=LOG_LEVELS.Debug)
+			if self.mode == GPT:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt',).exit_code == 0:
+					return self
+				else:
+					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+			else:
+				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
+		
+		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
+		elif self.mode == self.blockdevice.partition_table_type:
+			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=LOG_LEVELS.Debug)
+		else:
+			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
 
 	def __repr__(self):
 		return f"Filesystem(blockdevice={self.blockdevice}, mode={self.mode})"
