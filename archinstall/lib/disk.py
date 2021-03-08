@@ -1,4 +1,5 @@
 import glob, re, os, json, time, hashlib
+import pathlib
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
@@ -175,11 +176,16 @@ class Partition():
 
 	def has_content(self):
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
+		temporary_path = pathlib.Path(temporary_mountpoint)
+
+		temporary_path.mkdir(parents=True, exist_ok=True)
 		if (handle := sys_command(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
 		
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		sys_command(f'/usr/bin/umount {temporary_mountpoint}')
+
+		temporary_path.rmdir()
 
 		return True if files > 0 else False
 
