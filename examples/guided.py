@@ -141,12 +141,6 @@ def ask_user_questions():
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommended: leave blank to leave root disabled): ')
 
-	#	# Storing things in _guided_hidden helps us avoid printing it
-	#	# when echoing user configuration: archinstall.storage['_guided']
-	#	archinstall.storage['_guided_hidden']['root_pw'] = root_pw
-	#	archinstall.storage['_guided']['root_unlocked'] = True
-	#	break
-
 	# Ask for additional users (super-user if root pw was not set)
 	archinstall.arguments['users'] = {}
 	archinstall.arguments['superusers'] = {}
@@ -323,13 +317,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 					password = users[user]
 					installation.user_create(user, password, sudo=Tru)
 
-				#	sudo = False
-				#	if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
-				#		sudo = True
 
-
-			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
-				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
+			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
+				installation.user_set_pw('root', root_pw)
 
 
 ask_user_questions()
