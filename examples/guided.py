@@ -60,15 +60,21 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.install_profile(profile)
 
 			if archinstall.arguments.get('users', None):
-				for user, password in archinstall.arguments.get('users').items():
+				for user in archinstall.arguments.get('users'):
+					password = users[user]
 					installation.user_create(user, password, sudo=False)
-
 			if archinstall.arguments.get('superusers', None):
-				for user, password in archinstall.arguments.get('superusers').items():
-					installation.user_create(user, password, sudo=True)
+				for user in archinstall.arguments.get('users'):
+					password = users[user]
+					installation.user_create(user, password, sudo=Tru)
 
-			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
-				installation.user_set_pw('root', root_pw)
+				#	sudo = False
+				#	if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
+				#		sudo = True
+
+
+			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
+				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
 
 def ask_user_questions():
 	"""
@@ -322,4 +328,4 @@ def perform_installation_steps():
 									mirrors=archinstall.arguments['mirror-region'])
 
 ask_user_questions()
-perform_pre_installation_steps()
+perform_installation_steps()
