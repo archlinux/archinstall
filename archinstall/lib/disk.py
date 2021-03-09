@@ -354,9 +354,9 @@ class Filesystem():
 		b''.join(sys_command(f'sync'))
 		return True
 
-	def find_root_partition(self):
+	def find_partition(self, mountpoint):
 		for partition in self.blockdevice:
-			if partition.target_mountpoint == '/' or partition.mountpoint == '/':
+			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
 				return partition
 
 	def raw_parted(self, string:str):

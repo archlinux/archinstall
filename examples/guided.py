@@ -278,7 +278,7 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 							encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
 	# Otherwise, check if encryption is desired and mark the root partition as encrypted.
 	elif archinstall.arguments.get('!encryption-password', None):
-		root_partition = fs.find_root_partition()
+		root_partition = fs.find_partition('/')
 		root_partition.encrypted = True
 			
 	# After the disk is ready, iterate the partitions and check
@@ -296,16 +296,16 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 		# First encrypt and unlock, then format the desired partition inside the encrypted part.
 		# archinstall.luks2() encrypts the partition when entering the with context manager, and
 		# unlocks the drive so that it can be used as a normal block-device within archinstall.
-		with archinstall.luks2(archinstall.arguments['harddrive'].partition[1], 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
-			unlocked_device.format(archinstall.arguments.get('filesystem', 'btrfs'))
+		with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
+			unlocked_device.format(fs.find_partition('/').filesystem)
 
-			perform_installation(unlocked_device,
-									archinstall.arguments['harddrive'].partition[0],
-									archinstall.arguments['keyboard-language'],
-									archinstall.arguments['mirror-region'])
+			perform_installation(device=unlocked_device,
+									boot_partition=fs.find_partition('/boot'),
+									language=archinstall.arguments['keyboard-language'],
+									mirrors=archinstall.arguments['mirror-region'])
 	else:
 		archinstall.arguments['harddrive'].partition[1].format('ext4')
-		perform_installation(archinstall.arguments['harddrive'].partition[1],
-								archinstall.arguments['harddrive'].partition[0],
-								archinstall.arguments['keyboard-language'],
-								archinstall.arguments['mirror-region'])
+		perform_installation(device=fs.find_partition('/'),
+								boot_partition=fs.find_partition('/boot'),
+								language=archinstall.arguments['keyboard-language'],
+								mirrors=archinstall.arguments['mirror-region'])
