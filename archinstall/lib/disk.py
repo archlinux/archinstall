@@ -487,5 +487,6 @@ def get_mount_info(path):
 		return output['filesystems'][0]
 
 def get_filesystem_type(path):
-	output = b''.join(sys_command(f"blkid -o value -s TYPE {path}"))
-	return output.strip().decode('UTF-8')
+	if (handle := sys_command(f"blkid -o value -s TYPE {path}")).exit_code != 0:
+		return None
+	return b''.join(handle).strip().decode('UTF-8')
