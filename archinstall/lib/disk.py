@@ -146,7 +146,7 @@ class Partition():
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		fstype = get_filesystem_type(self.real_device) # blkid -o value -s TYPE self.path
+		fstype = get_filesystem_type(self.real_devicecryptse) # blkid -o value -s TYPE self.path
 		
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
@@ -155,6 +155,12 @@ class Partition():
 			self.mountpoint = target
 		if (fstype := mount_information.get('fstype', fstype)):
 			self.filesystem = fstype
+
+		if self.filesystem == 'crypto_LUKS':
+			# TODO: Explore other options in terms of handling a two-layer filesystem option.
+			# Currently if we keep crypto_LUKS then the installer won't know what to format inside.
+			self.encrypted = True
+			self.filesystem = None
 
 	def __lt__(self, left_comparitor):
 		if type(left_comparitor) == Partition:
@@ -269,11 +275,11 @@ class Partition():
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 
-		elif filesystem == 'crypto_LUKS':
-			from .luks import luks2
-			encrypted_partition = luks2(self, None, None)
-			encrypted_partition.format(path)
-			self.filesystem = 'crypto_LUKS'
+		#elif filesystem == 'crypto_LUKS':
+		#	from .luks import luks2
+		#	encrypted_partition = luks2(self, None, None)
+		#	encrypted_partition.format(path)
+		#	self.filesystem = 'crypto_LUKS'
 
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
