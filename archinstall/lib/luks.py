@@ -84,7 +84,10 @@ class luks2():
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			return Partition(f'/dev/mapper/{mountpoint}', encrypted=True, filesystem=get_filesystem_type(f'/dev/mapper/{mountpoint}'))
 
-	def close(self, mountpoint):
+	def close(self, mountpoint=None):
+		if not mountpoint:
+			mountpoint = self.partition.path 
+			
 		sys_command(f'cryptsetup close /dev/mapper/{mountpoint}')
 		return os.path.islink(f'/dev/mapper/{mountpoint}') is False
 
