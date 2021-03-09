@@ -146,7 +146,7 @@ class Partition():
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		fstype = get_filesystem_type(self.path) # blkid -o value -s TYPE self.path
+		fstype = get_filesystem_type(self.real_device) # blkid -o value -s TYPE self.path
 		
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
@@ -174,6 +174,16 @@ class Partition():
 			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
+
+	@property
+	def real_device(self):
+		if not self.encrypted:
+			return self.path
+		else:
+			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
+				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
+					return f"/dev/{parent}"
+			raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 
 	def has_content(self):
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
@@ -276,16 +286,6 @@ class Partition():
 			for child in data['children']:
 				if (parent := self.find_parent_of(child, name, parent=data['name'])):
 					return parent
-
-	@property
-	def real_device(self):
-		if not self.encrypted:
-			return self.path
-		else:
-			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
-				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
-					return f"/dev/{parent}"
-			raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 
 	def mount(self, target, fs=None, options=''):
 		if not self.mountpoint:
