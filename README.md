@@ -2,8 +2,6 @@
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
 
-Pre-built ISO's can be found over at https://archlinux.life which autostarts archinstall *(in a safe guided mode)*.
-
  * archinstall [discord](https://discord.gg/cqXU88y) server
  * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
  * archinstall [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
