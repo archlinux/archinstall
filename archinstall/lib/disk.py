@@ -146,14 +146,13 @@ class Partition():
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		fstype = get_filesystem_type(self.real_device) # blkid -o value -s TYPE self.path
 		
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
 
 		if (target := mount_information.get('target', None)):
 			self.mountpoint = target
-		if (fstype := mount_information.get('fstype', fstype)):
+		if not self.filesystem and (fstype := mount_information.get('fstype', get_filesystem_type(self.real_device))):
 			self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
