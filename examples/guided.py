@@ -139,6 +139,7 @@ if archinstall.arguments['harddrive'].has_partitions():
 					if len(new_filesystem) <= 0:
 						if partition.encrypted and partition.filesystem == 'crypto_LUKS':
 							if (autodetected_filesystem := partition.detect_inner_filesystem(archinstall.arguments.get('!encryption-password', None))):
+								new_filesystem = autodetected_filesystem
 							else:
 								archinstall.log(f"Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
 								archinstall.log(f"A filesystem must be defined for the unlocked encrypted partition.")
