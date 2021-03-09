@@ -342,6 +342,8 @@ class Filesystem():
 		else:
 			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
 
+		return self
+
 	def __repr__(self):
 		return f"Filesystem(blockdevice={self.blockdevice}, mode={self.mode})"
 
