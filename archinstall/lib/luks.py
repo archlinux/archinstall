@@ -84,7 +84,9 @@ class luks2():
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
-			return Partition(self.mapdev, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
+			unlocked_partition = Partition(self.mapdev, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
+			unlocked_partition.allow_formatting = self.partition.allow_formatting
+			return unlocked_partition
 
 	def close(self, mountpoint=None):
 		if not mountpoint:

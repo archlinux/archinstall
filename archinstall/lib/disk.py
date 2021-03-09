@@ -193,7 +193,6 @@ class Partition():
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=LOG_LEVELS.Info)
 		from .luks import luks2
 		with luks2(self, 'luksloop', password, auto_unmount=True) as unlocked_device:
-			print('Found:', unlocked_device.filesystem)
 			return unlocked_device.filesystem
 
 	def has_content(self):
