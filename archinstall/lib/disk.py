@@ -157,10 +157,7 @@ class Partition():
 			self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
-			# TODO: Explore other options in terms of handling a two-layer filesystem option.
-			# Currently if we keep crypto_LUKS then the installer won't know what to format inside.
 			self.encrypted = True
-			self.filesystem = None
 
 	def __lt__(self, left_comparitor):
 		if type(left_comparitor) == Partition:
@@ -275,11 +272,11 @@ class Partition():
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 
-		#elif filesystem == 'crypto_LUKS':
+		elif filesystem == 'crypto_LUKS':
 		#	from .luks import luks2
 		#	encrypted_partition = luks2(self, None, None)
 		#	encrypted_partition.format(path)
-		#	self.filesystem = 'crypto_LUKS'
+			self.filesystem = 'crypto_LUKS'
 
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
