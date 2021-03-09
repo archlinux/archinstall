@@ -83,10 +83,7 @@ class luks2():
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
-			self.mapdev = f'/dev/mapper/{mountpoint}'
-			inner_fs = get_filesystem_type(self.mapdev)
-			print('Inner FS:', inner_fs)
-			return Partition(self.mapdev, encrypted=True, filesystem=inner_fs)
+			return Partition(self.mapdev, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
 
 	def close(self, mountpoint=None):
 		if not mountpoint:

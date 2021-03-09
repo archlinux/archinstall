@@ -130,7 +130,7 @@ class BlockDevice():
 		return False
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False):
+	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
 		self.path = path
@@ -152,8 +152,10 @@ class Partition():
 
 		if (target := mount_information.get('target', None)):
 			self.mountpoint = target
-		if not self.filesystem and (fstype := mount_information.get('fstype', get_filesystem_type(self.real_device))):
-			self.filesystem = fstype
+
+		if not self.filesystem and autodetect_filesystem:
+			if (fstype := mount_information.get('fstype', get_filesystem_type(self.real_device))):
+				self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
