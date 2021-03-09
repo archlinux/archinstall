@@ -106,7 +106,8 @@ class BlockDevice():
 				part_id = part['name'][len(os.path.basename(self.path)):]
 				if part_id not in self.part_cache:
 					## TODO: Force over-write even if in cache?
-					self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
+					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
+						self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
