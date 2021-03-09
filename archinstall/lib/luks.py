@@ -15,6 +15,7 @@ class luks2():
 		self.key_file = key_file
 		self.auto_unmount = auto_unmount
 		self.filesystem = 'crypto_LUKS'
+		self.mappoint = None
 
 	def __enter__(self):
 		#if self.partition.allow_formatting:
@@ -82,14 +83,15 @@ class luks2():
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
+			self.mappoint = f'/dev/mapper/{mountpoint}'
 			return Partition(f'/dev/mapper/{mountpoint}', encrypted=True, filesystem=get_filesystem_type(f'/dev/mapper/{mountpoint}'))
 
 	def close(self, mountpoint=None):
 		if not mountpoint:
-			mountpoint = self.partition.path 
-			
-		sys_command(f'cryptsetup close /dev/mapper/{mountpoint}')
-		return os.path.islink(f'/dev/mapper/{mountpoint}') is False
+			mountpoint = self.mappoint
+
+		sys_command(f'/usr/bin/cryptsetup close {self.mappoint}')
+		return os.path.islink(self.mappoint) is False
 
 	def format(self, path):
 		if (handle := sys_command(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
