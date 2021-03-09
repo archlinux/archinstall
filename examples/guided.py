@@ -276,6 +276,10 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 	if archinstall.arguments['harddrive'].keep_partitions is False:
 		fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'),
 							encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
+	# Otherwise, check if encryption is desired and mark the root partition as encrypted.
+	elif archinstall.arguments.get('!encryption-password', None):
+		root_partition = fs.find_root_partition()
+		root_partition.encrypted = True
 			
 	# After the disk is ready, iterate the partitions and check
 	# which ones are safe to format, and format those.

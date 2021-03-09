@@ -352,6 +352,11 @@ class Filesystem():
 		b''.join(sys_command(f'sync'))
 		return True
 
+	def find_root_partition(self):
+		for partition in self.blockdevice:
+			if partition.target_mountpoint == '/' or partition.mountpoint == '/':
+				return partition
+
 	def raw_parted(self, string:str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
 		o = b''.join(x)
