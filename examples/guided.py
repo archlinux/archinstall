@@ -88,6 +88,10 @@ if len(archinstall.arguments['keyboard-language']):
 # Set which region to download packages from during the installation
 if not archinstall.arguments.get('mirror-region', None):
 	archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+else:
+	selected_region = archinstall.arguments['mirror-region']
+	archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
+
 
 # Ask which harddrive/block-device we will install to
 if archinstall.arguments.get('harddrive', None):

@@ -78,7 +78,7 @@ class Installer():
 
 		if len(args) >= 2 and args[1]:
 			#self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
-			self.log(args[1], level=LOG_LEVELS.Error)
+			self.log(args[1], level=LOG_LEVELS.Error, fg='red')
 
 			self.sync_log_to_install_medium()
 
