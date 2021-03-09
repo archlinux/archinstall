@@ -20,62 +20,6 @@ original_sigint_handler = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, sig_handler)
 
 
-def perform_installation(device, boot_partition, language, mirrors):
-	"""
-	Performs the installation steps on a block device.
-	Only requirement is that the block devices are
-	formatted and setup prior to entering this function.
-	"""
-	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
-		## if len(mirrors):
-		# Certain services might be running that affects the system during installation.
-		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
-		while 'dead' not in (status := archinstall.service_state('reflector')):
-			time.sleep(1)
-
-		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
-		if installation.minimal_installation():
-			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
-			installation.set_keyboard_language(language)
-			installation.add_bootloader()
-
-			# If user selected to copy the current ISO network configuration
-			# Perform a copy of the config
-			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
-				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-
-			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', None):
-				installation.configure_nic(**archinstall.arguments.get('nic', {}))
-				installation.enable_service('systemd-networkd')
-				installation.enable_service('systemd-resolved')
-
-
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', None))
-
-			if archinstall.arguments.get('profile', None) and len(profile := archinstall.arguments.get('profile').strip()):
-				installation.install_profile(profile)
-
-			if archinstall.arguments.get('users', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=False)
-			if archinstall.arguments.get('superusers', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=Tru)
-
-				#	sudo = False
-				#	if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
-				#		sudo = True
-
-
-			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
-				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
-
 def ask_user_questions():
 	"""
 	  First, we'll ask the user for a bunch of user input.
@@ -245,7 +189,10 @@ def ask_user_questions():
 	if not archinstall.arguments.get('nic', None):
 		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
 
+
 def perform_installation_steps():
+	global SIG_TRIGGER
+
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
@@ -326,6 +273,64 @@ def perform_installation_steps():
 									boot_partition=fs.find_partition('/boot'),
 									language=archinstall.arguments['keyboard-language'],
 									mirrors=archinstall.arguments['mirror-region'])
+
+
+def perform_installation(device, boot_partition, language, mirrors):
+	"""
+	Performs the installation steps on a block device.
+	Only requirement is that the block devices are
+	formatted and setup prior to entering this function.
+	"""
+	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
+		## if len(mirrors):
+		# Certain services might be running that affects the system during installation.
+		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
+		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
+		installation.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
+		while 'dead' not in (status := archinstall.service_state('reflector')):
+			time.sleep(1)
+
+		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
+		if installation.minimal_installation():
+			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
+			installation.set_keyboard_language(language)
+			installation.add_bootloader()
+
+			# If user selected to copy the current ISO network configuration
+			# Perform a copy of the config
+			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
+				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
+
+			# Otherwise, if a interface was selected, configure that interface
+			elif archinstall.arguments.get('nic', None):
+				installation.configure_nic(**archinstall.arguments.get('nic', {}))
+				installation.enable_service('systemd-networkd')
+				installation.enable_service('systemd-resolved')
+
+
+			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+				installation.add_additional_packages(archinstall.arguments.get('packages', None))
+
+			if archinstall.arguments.get('profile', None) and len(profile := archinstall.arguments.get('profile').strip()):
+				installation.install_profile(profile)
+
+			if archinstall.arguments.get('users', None):
+				for user in archinstall.arguments.get('users'):
+					password = users[user]
+					installation.user_create(user, password, sudo=False)
+			if archinstall.arguments.get('superusers', None):
+				for user in archinstall.arguments.get('users'):
+					password = users[user]
+					installation.user_create(user, password, sudo=Tru)
+
+				#	sudo = False
+				#	if 'root_pw' not in archinstall.storage['_guided_hidden'] or len(archinstall.storage['_guided_hidden']['root_pw'].strip()) == 0:
+				#		sudo = True
+
+
+			if 'root_pw' in archinstall.storage['_guided_hidden'] and archinstall.storage['_guided_hidden']['root_pw']:
+				installation.user_set_pw('root', archinstall.storage['_guided_hidden']['root_pw'])
+
 
 ask_user_questions()
 perform_installation_steps()
