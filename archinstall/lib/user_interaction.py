@@ -1,9 +1,113 @@
+import getpass
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
+from .output import log, LOG_LEVELS
+from .storage import storage
+from .networking import list_interfaces
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
+
+def get_password(prompt="Enter a password: "):
+	while (passwd := getpass.getpass(prompt)):
+		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
+		if passwd != passwd_verification:
+			log(' * Passwords did not match * ', bg='black', fg='red')
+			continue
+		return passwd
+	return None
+
+def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
+	while 1:
+		new_user = input(prompt).strip(' ')
+		
+		if not new_user and forced:
+			# TODO: make this text more generic?
+			#       It's only used to create the first sudo user when root is disabled in guided.py
+			log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
+			continue
+		elif not new_user and not forced:
+			raise UserError("No superuser was created.")
+
+		password = get_password(prompt=f'Password for user {new_user}: ')
+		return {new_user: password}
+
+def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
+	users = {}
+	super_users = {}
+
+	while 1:
+		new_user = input(prompt).strip(' ')
+		if not new_user:
+			break
+		password = get_password(prompt=f'Password for user {new_user}: ')
+		
+		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
+			super_users[new_user] = password
+		else:
+			users[new_user] = password
+
+	return users, super_users
+
+def ask_to_configure_network():
+	# Optionally configure one network interface.
+	#while 1:
+	# {MAC: Ifname}
+	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **list_interfaces()}
+
+	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
+	if nic and nic != 'Copy ISO network configuration to installation':
+		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+		if mode == 'IP (static)':
+			while 1:
+				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
+				if ip:
+					break
+				else:
+					log(
+						"You need to enter a valid IP in IP-config mode.",
+						level=LOG_LEVELS.Warning,
+						bg='black',
+						fg='red'
+					)
+
+			if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
+				gateway = None
+
+			dns = None
+			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
+				dns = dns_input.split(' ')
+
+			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
+		else:
+			return {'nic': nic}
+	elif nic:
+		return nic
+
+	return None
+
+def ask_for_disk_layout():
+	options = {
+		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
+		'format-all' : 'Format entire drive and setup a basic partition scheme.',
+		'abort' : 'Abort the installation.'
+	}
+
+	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
+	return next((key for key, val in options.items() if val == value), None)
+
+def ask_for_main_filesystem_format():
+	options = {
+		'btrfs' : 'btrfs',
+		'ext4' : 'ext4',
+		'xfs' : 'xfs',
+		'f2fs' : 'f2fs',
+		'vfat' : 'vfat'
+	}
+
+	value = generic_select(options.values(), "Select your main partitions filesystem by number or free-text: ")
+	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
@@ -93,23 +197,7 @@ def select_profile(options):
 		else:
 			RequirementError("Selected profile does not exist.")
 
-		profile = Profile(None, selected_profile)
-		with open(profile.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check and if so, check if it's got a _prep_function()
-			# we can call to ask for more user input.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '_prep_function' in source_data:
-				with profile.load_instructions(namespace=f"{selected_profile}.py") as imported:
-					if hasattr(imported, '_prep_function'):
-						return profile, imported
-
-		return selected_profile
+		return Profile(None, selected_profile)
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 

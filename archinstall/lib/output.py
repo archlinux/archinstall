@@ -5,6 +5,9 @@ import logging
 from pathlib import Path
 from .storage import storage
 
+# TODO: use logging's built in levels instead.
+#       Altough logging is threaded and I wish to avoid that.
+#       It's more Pythonistic or w/e you want to call it.
 class LOG_LEVELS:
 	Critical = 0b001
 	Error = 0b010
@@ -108,10 +111,10 @@ def log(*args, **kwargs):
 			# In that case, we'll drop it.
 			return None
 
-		try:
-			journald.log(string, level=kwargs['level'])
-		except ModuleNotFoundError:
-			pass # Ignore writing to journald
+	try:
+		journald.log(string, level=kwargs.get('level', LOG_LEVELS.Info))
+	except ModuleNotFoundError:
+		pass # Ignore writing to journald
 
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
