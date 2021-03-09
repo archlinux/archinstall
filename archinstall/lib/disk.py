@@ -188,6 +188,11 @@ class Partition():
 					return f"/dev/{parent}"
 			raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 
+	def detect_inner_filesystem(self, password):
+		from .luks import luks2
+		with luks2(self, 'luksloop', password, auto_unmount=True) as unlocked_device:
+			return unlocked_device.filesystem
+
 	def has_content(self):
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
 		temporary_path = pathlib.Path(temporary_mountpoint)
