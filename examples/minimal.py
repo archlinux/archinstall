@@ -8,7 +8,7 @@ archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_error
 harddrive = archinstall.select_disk(archinstall.all_disks())
 disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 
-with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
+with archinstall.Filesystem(harddrive) as fs:
 	# Use the entire disk instead of setting up partitions on your own
 	fs.use_entire_disk('luks2')
 
