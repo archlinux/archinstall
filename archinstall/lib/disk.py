@@ -394,18 +394,20 @@ class Filesystem():
 
 	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
 		self.add_partition('primary', start='1MiB', end='513MiB', format='vfat')
-		self.set_name(0, 'EFI')
-		self.set(0, 'boot on')
+		#TODO: figure out what do for bios, we don't need a seprate partion for the bootloader
+		if hasUEFI():
+			self.set_name(0, 'EFI')
+			self.set(0, 'boot on')
 		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
 		# https://www.gnu.org/software/parted/manual/html_node/set.html
-		self.set(0, 'esp on')
-		self.add_partition('primary', start='513MiB', end='100%')
+			self.set(0, 'esp on')
+			self.add_partition('primary', start='513MiB', end='100%')
 
-		self.blockdevice.partition[0].filesystem = 'vfat'
-		self.blockdevice.partition[1].filesystem = root_filesystem_type
+			self.blockdevice.partition[0].filesystem = 'vfat'
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
 
-		self.blockdevice.partition[0].target_mountpoint = '/boot'
-		self.blockdevice.partition[1].target_mountpoint = '/'
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
 
 		if encrypt_root_partition:
 			self.blockdevice.partition[1].encrypted = True
