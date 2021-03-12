@@ -9,6 +9,7 @@ from .mirrors import *
 from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
+from .hardware import *
 
 class Installer():
 	"""
@@ -335,7 +336,7 @@ class Installer():
 							for uid in uids:
 								real_path = os.path.realpath(os.path.join(root, uid))
 								if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
-								if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode(): # intel_paste is intel only, it's redudant on AMD systens
+								if hasAMDCPU(): # intel_paste is intel only, it's redudant on AMD systens
 									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw\n')
 								else:
 									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
@@ -348,7 +349,7 @@ class Installer():
 							for uid in uids:
 								real_path = os.path.realpath(os.path.join(root, uid))
 								if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
-								if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
+								if hasAMDCPU():
 									entry.write(f'options root=PARTUUID={uid} rw\n')
 								else:
 									entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
