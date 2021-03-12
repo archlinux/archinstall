@@ -1,4 +1,4 @@
-import os, stat, time, shutil
+import os, stat, time, shutil, subprocess
 
 from .exceptions import *
 from .disk import *
@@ -53,6 +53,8 @@ class Installer():
 		}
 
 		self.base_packages = base_packages.split(' ')
+		if not hasUEFI():
+			base_packages.append('grub') # if it isn't uefi is must be bios therefore we need grub as systemd-boot is uefi only
 		self.post_base_install = []
 		storage['session'] = self
 
@@ -332,8 +334,10 @@ class Installer():
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
 							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
-
-							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+							if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode(): # intel_paste is intel only, it's redudant on AMD systens
+								entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw\n')
+							else:
+								entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 
 							self.helper_flags['bootloader'] = bootloader
 							return True
@@ -343,13 +347,22 @@ class Installer():
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
 							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
-
-							entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+							if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
+								entry.write(f'options root=PARTUUID={uid} rw\n')
+							else:
+								entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
 
 							self.helper_flags['bootloader'] = bootloader
 							return True
 						break
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+		elif bootloader == 'grub-install':
+			if hasUEFI():
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
+				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+			else:
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=--target=i386-pc {self}'))
+				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 

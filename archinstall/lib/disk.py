@@ -5,6 +5,7 @@ from .exceptions import DiskError
 from .general import *
 from .output import log, LOG_LEVELS
 from .storage import storage
+from .hardware import hasUEFI
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -331,9 +332,12 @@ class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice, mode=GPT):
+	def __init__(self, blockdevice):
 		self.blockdevice = blockdevice
-		self.mode = mode
+		if hasUEFI():
+			self.mode = GPT
+		else:
+			self.mode = MBR
 
 	def __enter__(self, *args, **kwargs):
 		if self.blockdevice.keep_partitions is False:
@@ -343,6 +347,11 @@ class Filesystem():
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+			elif self.mode == MBR:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.} mklabel msdos').exit_code == 0:
+					return self
+				else:
+					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 		
@@ -405,6 +414,9 @@ class Filesystem():
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
 		
 		previous_partitions = self.blockdevice.partitions
+		if self.mode == MBR:
+			if len(self.blockdevice.partitions())>3:
+				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
