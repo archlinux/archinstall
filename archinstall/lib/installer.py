@@ -365,7 +365,7 @@ class Installer():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
 				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
 			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f "/sys/class/block/{self.partition.path}/..")',shell=True).decode().strip()
+				root_device = subprocess.check_output(f'basename "$(readlink -f "/sys/class/block/{self.partition.path.strip("/dev/")}/..")',shell=True).decode().strip()
 				if root_device == "block":
 					root_device = f"{self.partition.path}"
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=--target=i386-pc /dev/{root_device}'))
