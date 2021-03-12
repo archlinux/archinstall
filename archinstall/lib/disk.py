@@ -348,7 +348,7 @@ class Filesystem():
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
 			elif self.mode == MBR:
-				if sys_command(f'/usr/bin/parted -s {self.blockdevice.} mklabel msdos').exit_code == 0:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
