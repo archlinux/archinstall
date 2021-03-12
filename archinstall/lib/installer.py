@@ -313,49 +313,52 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
-			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
-			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
-				loader.write('default arch\n')
-				loader.write('timeout 5\n')
+			if hasUEFI():
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
+				with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
+					loader.write('default arch\n')
+					loader.write('timeout 5\n')
 
-			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-			## And blkid is wrong in terms of LUKS.
-			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-			with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
-				entry.write('title Arch Linux\n')
-				entry.write('linux /vmlinuz-linux\n')
-				entry.write('initrd /initramfs-linux.img\n')
-				## blkid doesn't trigger on loopback devices really well,
-				## so we'll use the old manual method until we get that sorted out.
+				## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+				## And blkid is wrong in terms of LUKS.
+				#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+				with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
+					entry.write('title Arch Linux\n')
+					entry.write('linux /vmlinuz-linux\n')
+					entry.write('initrd /initramfs-linux.img\n')
+					## blkid doesn't trigger on loopback devices really well,
+					## so we'll use the old manual method until we get that sorted out.
 
 
-				if self.partition.encrypted:
-					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
-						for uid in uids:
-							real_path = os.path.realpath(os.path.join(root, uid))
-							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
-							if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode(): # intel_paste is intel only, it's redudant on AMD systens
-								entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw\n')
-							else:
-								entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+					if self.partition.encrypted:
+						for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+							for uid in uids:
+								real_path = os.path.realpath(os.path.join(root, uid))
+								if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
+								if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode(): # intel_paste is intel only, it's redudant on AMD systens
+									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw\n')
+								else:
+									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 
-							self.helper_flags['bootloader'] = bootloader
-							return True
-						break
-				else:
-					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
-						for uid in uids:
-							real_path = os.path.realpath(os.path.join(root, uid))
-							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
-							if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-								entry.write(f'options root=PARTUUID={uid} rw\n')
-							else:
-								entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+								self.helper_flags['bootloader'] = bootloader
+								return True
+							break
+					else:
+						for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
+							for uid in uids:
+								real_path = os.path.realpath(os.path.join(root, uid))
+								if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+								if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
+									entry.write(f'options root=PARTUUID={uid} rw\n')
+								else:
+									entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
 
-							self.helper_flags['bootloader'] = bootloader
-							return True
-						break
-			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+								self.helper_flags['bootloader'] = bootloader
+								return True
+							break
+				raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+			else:
+				raise RequirementError("Systemd boot is UEFI only it can not be installed or used on bios")
 		elif bootloader == 'grub-install':
 			if hasUEFI():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
