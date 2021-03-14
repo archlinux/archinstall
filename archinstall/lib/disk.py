@@ -313,9 +313,19 @@ class Partition():
 				return True
 
 	def unmount(self):
-		if sys_command(f'/usr/bin/umount {self.path}').exit_code == 0:
-			self.mountpoint = None
-			return True
+		try:
+			exit_code = sys_command(f'/usr/bin/umount {self.path}').exit_code
+		except SysCallError as err:
+			exit_code = err.exit_code
+
+			# Without to much research, it seams that low error codes are errors.
+			# And above 8k is indicators such as "/dev/x not mounted.".
+			# So anything in between 0 and 8k are errors (?).
+			if exit_code > 0 and exit_code < 8000:
+				raise err
+
+		self.mountpoint = None
+		return True
 
 	def filesystem_supported(self):
 		"""
