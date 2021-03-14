@@ -91,7 +91,11 @@ def ask_user_questions():
 						new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
 						if len(new_filesystem) <= 0:
 							if partition.encrypted and partition.filesystem == 'crypto_LUKS':
-								if (autodetected_filesystem := partition.detect_inner_filesystem(archinstall.arguments.get('!encryption-password', None))):
+								old_password = archinstall.arguments.get('!encryption-password', None)
+								if not old_password:
+									old_password = input(f'Enter the old encryption password for {partition}: ')
+									
+								if (autodetected_filesystem := partition.detect_inner_filesystem(old_password)):
 									new_filesystem = autodetected_filesystem
 								else:
 									archinstall.log(f"Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
