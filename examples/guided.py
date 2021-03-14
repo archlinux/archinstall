@@ -94,7 +94,7 @@ def ask_user_questions():
 								old_password = archinstall.arguments.get('!encryption-password', None)
 								if not old_password:
 									old_password = input(f'Enter the old encryption password for {partition}: ')
-									
+
 								if (autodetected_filesystem := partition.detect_inner_filesystem(old_password)):
 									new_filesystem = autodetected_filesystem
 								else:
@@ -134,8 +134,9 @@ def ask_user_questions():
 
 	# Get disk encryption password (or skip if blank)
 	if not archinstall.arguments.get('!encryption-password', None):
-		archinstall.arguments['!encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
-	archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
+		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+			archinstall.arguments['!encryption-password'] = passwd
+			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
