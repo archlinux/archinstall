@@ -314,18 +314,35 @@ class Installer():
 			# TODO: Ideally we would want to check if another config
 			# points towards the same disk and/or partition.
 			# And in which case we should do some clean up.
-			unique_loader_conf_name = hashlib.md5(os.urandom(12)+bytes(str(time.time()), 'UTF-8')).hexdigest()
 
-			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
+			# Install the boot loader
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install')
+
+			# Modify or create a loader.conf
+			if os.path.isfile(f'{self.mountpoint}/boot/loader/loader.conf'):
+				with open(f'{self.mountpoint}/boot/loader/loader.conf', 'r') as loader:
+					loader_data = loader.read().split('\n')
+			else:
+				loader_data = [
+					f"default {self.init_time}",
+					f"timeout 5"
+				]
+			
 			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
-				loader.write(f'default {unique_loader_conf_name}\n')
-				loader.write(f'timeout 5\n')
+				for line in loader_data:
+					if line[:8] == 'default ':
+						loader.write(f'default {self.init_time}\n')
+					else:
+						loader.write(f"{line}")
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
 			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
 
-			with open(f'{self.mountpoint}/boot/loader/entries/{unique_loader_conf_name}.conf', 'w') as entry:
+			# Setup the loader entry
+			with open(f'{self.mountpoint}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
+				entry.write(f'# Created by: archinstall\n')
+				entry.write(f'# Created on: {self.init_time}\n')
 				entry.write(f'title Arch Linux\n')
 				entry.write(f'linux /vmlinuz-linux\n')
 				entry.write(f'initrd /initramfs-linux.img\n')
