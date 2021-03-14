@@ -305,8 +305,8 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
-			if archinstall.arguments.get('profile', None) and len(profile := archinstall.arguments.get('profile').strip()):
-				installation.install_profile(profile)
+			if archinstall.arguments.get('profile', None):
+				installation.install_profile(archinstall.arguments.get('profile', None))
 
 			if archinstall.arguments.get('users', None):
 				for user in archinstall.arguments.get('users'):
