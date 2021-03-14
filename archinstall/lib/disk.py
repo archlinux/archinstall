@@ -187,7 +187,8 @@ class Partition():
 			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
 				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
 					return f"/dev/{parent}"
-			raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
+		#	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
+		return self.path
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=LOG_LEVELS.Info)
