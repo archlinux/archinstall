@@ -308,15 +308,11 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			if archinstall.arguments.get('users', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=False)
-			if archinstall.arguments.get('superusers', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=Tru)
-
+			for user, user_info in archinstall.arguments.get('users', {}).items():
+				installation.user_create(user, user_info["!password"], sudo=False)
+			
+			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
+				installation.user_create(superuser, user_info["!password"], sudo=True)
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)

@@ -31,7 +31,7 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 			raise UserError("No superuser was created.")
 
 		password = get_password(prompt=f'Password for user {new_user}: ')
-		return {new_user: password}
+		return {new_user: {"!password" : password}}
 
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
 	users = {}
@@ -44,9 +44,9 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
 		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
-			super_users[new_user] = password
+			super_users[new_user] = {"!password" : password}
 		else:
-			users[new_user] = password
+			users[new_user] = {"!password" : password}
 
 	return users, super_users
 
