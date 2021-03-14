@@ -270,7 +270,6 @@ def perform_installation_steps():
 										language=archinstall.arguments['keyboard-language'],
 										mirrors=archinstall.arguments['mirror-region'])
 		else:
-			archinstall.arguments['harddrive'].partition[1].format('ext4')
 			perform_installation(device=fs.find_partition('/'),
 									boot_partition=fs.find_partition('/boot'),
 									language=archinstall.arguments['keyboard-language'],
