@@ -64,8 +64,14 @@ class luks2():
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
-		o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}'))
-		if b'Command successful.' not in o:
+		cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+		if cmd_handle.exit_code == 256:
+			# Partition was in use, unmount it and 
+			partition.unmount()
+			sys_command(f'cryptsetup close {partition.path}')
+			cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+
+		if b'Command successful.' not in b''.join(cmd_handle):
 			raise DiskError(f'Could not encrypt volume "{partition.path}": {o}')
 	
 		return key_file

@@ -312,6 +312,11 @@ class Partition():
 				self.mountpoint = target
 				return True
 
+	def unmount(self):
+		if sys_command(f'/usr/bin/umount {self.path}').exit_code == 0:
+			self.mountpoint = None
+			return True
+
 	def filesystem_supported(self):
 		"""
 		The support for a filesystem (this partition) is tested by calling
