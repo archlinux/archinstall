@@ -70,7 +70,14 @@ class luks2():
 			if err.exit_code == 256:
 				# Partition was in use, unmount it and try again
 				partition.unmount()
-				sys_command(f'cryptsetup close {partition.path}')
+				try:
+					sys_command(f'cryptsetup close {partition.path}')
+				except SysCallError as err:
+					# 0 Means everything went smoothly,
+					# 1024 means the device was not found.
+					if err.exit_code not in (0, 1024):
+						raise err
+
 				cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
 			else:
 				raise err
