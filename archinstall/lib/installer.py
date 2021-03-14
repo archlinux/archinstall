@@ -363,7 +363,8 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		profile = Profile(self, profile)
+		if type(profile) == str:
+			profile = Profile(self, profile)
 
 		self.log(f'Installing network profile {profile}', level=LOG_LEVELS.Info)
 		return profile.install()
