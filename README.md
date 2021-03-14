@@ -88,10 +88,5 @@ This will create a *5GB* `testimage.img` and create a loop device which we can u
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete,<br>
 ~~you can use qemu/kvm to boot the test media.~~ *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium so this won't work entirely out of the box, but gives you a general idea of what we're going for here)*
 
-You can also run a pre-built ISO with pip and python
-
-    # qemu-system-x86_64 -enable-kvm -cdrom /home/user/Downloads/archinstall-2020.07.08-x86_64.iso -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
-
-and once inside, just do
-
-    # python -m archlinux guided
+There's also a [Building and Testing](https://github.com/Torxed/archinstall/wiki/Building-and-Testing) guide.<br>
+It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
