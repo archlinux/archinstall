@@ -327,6 +327,9 @@ class Partition():
 		self.mountpoint = None
 		return True
 
+	def umount(self):
+		return self.unmount()
+
 	def filesystem_supported(self):
 		"""
 		The support for a filesystem (this partition) is tested by calling
