@@ -65,19 +65,28 @@ class luks2():
 			fh.write(password)
 
 		try:
+			# Try to setup the crypt-device
 			cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
 		except SysCallError as err:
 			if err.exit_code == 256:
 				# Partition was in use, unmount it and try again
 				partition.unmount()
-				try:
-					sys_command(f'cryptsetup close {partition.path}')
-				except SysCallError as err:
-					# 0 Means everything went smoothly,
-					# 1024 means the device was not found.
-					if err.exit_code not in (0, 1024):
-						raise err
 
+				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
+				# For instance: /dev/sda
+				devinfo = json.loads(b''.join(sys_command(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
+
+				# For each child (sub-partition/sub-device)
+				if len(children := devinfo.get('children', [])):
+					for child in children:
+						# Unmount the child location
+						if child_mountpoint := child.get('mountpoint', None):
+							sys_command(f"umount {child_mountpoint}")
+
+						# And close it if possible.
+						sys_command(f"cryptsetup close {child['name']}")
+
+				# Then try again to set up the crypt-device
 				cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
 			else:
 				raise err
