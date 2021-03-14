@@ -83,7 +83,7 @@ class luks2():
 						# Unmount the child location
 						if child_mountpoint := child.get('mountpoint', None):
 							log(f'Unmounting {child_mountpoint}', level=LOG_LEVELS.Debug)
-							sys_command(f"umount {child_mountpoint}")
+							sys_command(f"umount -R {child_mountpoint}")
 
 						# And close it if possible.
 						log(f"Closing crypt device {child['name']}", level=LOG_LEVELS.Debug)
