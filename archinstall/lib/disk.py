@@ -193,8 +193,12 @@ class Partition():
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=LOG_LEVELS.Info)
 		from .luks import luks2
-		with luks2(self, 'luksloop', password, auto_unmount=True) as unlocked_device:
-			return unlocked_device.filesystem
+
+		try:
+			with luks2(self, 'luksloop', password, auto_unmount=True) as unlocked_device:
+				return unlocked_device.filesystem
+		except SysCallError:
+			return None
 
 	def has_content(self):
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
