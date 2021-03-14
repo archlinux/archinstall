@@ -311,18 +311,24 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
+			# TODO: Ideally we would want to check if another config
+			# points towards the same disk and/or partition.
+			# And in which case we should do some clean up.
+			unique_loader_conf_name = hashlib.md5(os.urandom(12)+bytes(str(time.time()), 'UTF-8')).hexdigest()
+
 			o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
 			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
-				loader.write('default arch\n')
-				loader.write('timeout 5\n')
+				loader.write(f'default {unique_loader_conf_name}\n')
+				loader.write(f'timeout 5\n')
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
 			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-			with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
-				entry.write('title Arch Linux\n')
-				entry.write('linux /vmlinuz-linux\n')
-				entry.write('initrd /initramfs-linux.img\n')
+
+			with open(f'{self.mountpoint}/boot/loader/entries/{unique_loader_conf_name}.conf', 'w') as entry:
+				entry.write(f'title Arch Linux\n')
+				entry.write(f'linux /vmlinuz-linux\n')
+				entry.write(f'initrd /initramfs-linux.img\n')
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
 
