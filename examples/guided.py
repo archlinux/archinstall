@@ -248,8 +248,11 @@ def perform_installation_steps():
 		# which ones are safe to format, and format those.
 		for partition in archinstall.arguments['harddrive']:
 			if partition.safe_to_format():
-				if partition.encrypted:
-					partition.encrypt(password=archinstall.arguments.get('!encryption-password', None))
+				# Partition might be marked as encrypted due to the filesystem type crypt_LUKS
+				# But we might have omitted the encryption password question to skip encryption.
+				# In which case partition.encrypted will be true, but passwd will be false.
+				if partition.encrypted and passwd := archinstall.arguments.get('!encryption-password', None):
+					partition.encrypt(password=passwd)
 				else:
 					partition.format()
 			else:
