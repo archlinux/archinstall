@@ -27,6 +27,21 @@ def get_password(prompt="Enter a password: "):
 		return passwd
 	return None
 
+def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
+	longest_line = len(str(len(options))) + len(separator) + get_longest_option(options) + padding
+	num_of_columns = get_terminal_width() // longest_line
+	max_options_in_cells = num_of_columns * (get_terminal_height()-margin_bottom)
+
+	if (len(options) > max_options_in_cells):
+		for index, option in enumerate(options):
+			print(f"{index}: {option}")
+	else:
+		for row in range(0, (get_terminal_height()-margin_bottom)):
+			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
+				spaces = " "*(longest_line - len(options[column]))
+				print(f"{str(column+1).zfill(2)}{separator}{options[column]}", end = spaces)
+			print()
+
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -279,8 +294,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		for index, region in enumerate(regions):
-			print(f"{index}: {region}")
+		print_large_list(regions)
 
 		print(' -- You can enter ? or help to search for more regions --')
 		print(' -- You can skip this step by leaving the option blank --')
