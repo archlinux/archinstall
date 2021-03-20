@@ -187,6 +187,8 @@ def ask_user_questions():
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
 		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
+		if not archinstall.arguments['nic']:
+			archinstall.log(f"No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
 
 
 def perform_installation_steps():
