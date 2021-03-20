@@ -1,4 +1,4 @@
-import getpass, pathlib
+import getpass, pathlib, os, shutil
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -8,6 +8,15 @@ from .networking import list_interfaces
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
+
+def get_terminal_height():
+	return shutil.get_terminal_size().lines
+
+def get_terminal_width():
+	return shutil.get_terminal_size().columns
+
+def get_longest_option(options):
+	return max([len(x) for x in options])
 
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
