@@ -28,7 +28,8 @@ def get_password(prompt="Enter a password: "):
 	return None
 
 def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
-	longest_line = len(str(len(options))) + len(separator) + get_longest_option(options) + padding
+	highest_index_number_length = len(str(len(options)))
+	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
 	max_num_of_columns = get_terminal_width() // longest_line
 	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
 
@@ -39,7 +40,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 		for row in range(0, (get_terminal_height()-margin_bottom)):
 			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
 				spaces = " "*(longest_line - len(options[column]))
-				print(f"{str(column).zfill(2)}{separator}{options[column]}", end = spaces)
+				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
 			print()
 
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
