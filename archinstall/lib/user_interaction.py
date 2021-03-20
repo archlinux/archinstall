@@ -29,8 +29,8 @@ def get_password(prompt="Enter a password: "):
 
 def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	longest_line = len(str(len(options))) + len(separator) + get_longest_option(options) + padding
-	num_of_columns = get_terminal_width() // longest_line
-	max_options_in_cells = num_of_columns * (get_terminal_height()-margin_bottom)
+	max_num_of_columns = get_terminal_width() // longest_line
+	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
 
 	if (len(options) > max_options_in_cells):
 		for index, option in enumerate(options):
@@ -294,7 +294,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		print_large_list(regions)
+		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can enter ? or help to search for more regions --')
 		print(' -- You can skip this step by leaving the option blank --')
