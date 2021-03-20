@@ -295,22 +295,12 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		print_large_list(regions, margin_bottom=4)
+		print_large_list(regions, margin_bottom=2)
 
-		print(' -- You can enter ? or help to search for more regions --')
 		print(' -- You can skip this step by leaving the option blank --')
-		print(' -- (You can use Shift + PageUp to scroll in the list --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
 		if len(selected_mirror.strip()) == 0:
 			return {}
-
-		elif selected_mirror.lower() in ('?', 'help'):
-			filter_string = input('Search for a region containing (example: "united"): ').strip().lower()
-			for region in mirrors:
-				if filter_string in region.lower():
-					selected_mirrors[region] = mirrors[region]
-
-			return selected_mirrors
 
 		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(regions)-1:
 			region = regions[int(selected_mirror)]
