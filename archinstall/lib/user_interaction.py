@@ -39,7 +39,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 		for row in range(0, (get_terminal_height()-margin_bottom)):
 			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
 				spaces = " "*(longest_line - len(options[column]))
-				print(f"{str(column+1).zfill(2)}{separator}{options[column]}", end = spaces)
+				print(f"{str(column).zfill(2)}{separator}{options[column]}", end = spaces)
 			print()
 
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
