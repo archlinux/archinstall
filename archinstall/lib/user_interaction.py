@@ -1,4 +1,4 @@
-import getpass
+import getpass, pathlib
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -49,6 +49,11 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 			users[new_user] = {"!password" : password}
 
 	return users, super_users
+
+def ask_for_a_timezone():
+	timezone = input('Enter a valid timezone (Example: Europe/Stockholm): ').strip()
+	if pathlib.Path(timezone).exists():
+		return timezone
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.

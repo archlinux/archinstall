@@ -190,6 +190,9 @@ def ask_user_questions():
 		if not archinstall.arguments['nic']:
 			archinstall.log(f"No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
 
+	if not archinstall.arguments.get('timezone', None):
+		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
+
 
 def perform_installation_steps():
 	global SIG_TRIGGER
@@ -322,6 +325,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 			
 			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
+
+			if (timezone := archinstall.arguments.get('timezone', None)):
+				installation.set_timezone(timezone)
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)

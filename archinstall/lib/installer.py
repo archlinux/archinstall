@@ -1,4 +1,4 @@
-import os, stat, time, shutil
+import os, stat, time, shutil, pathlib
 
 from .exceptions import *
 from .disk import *
@@ -171,7 +171,8 @@ class Installer():
 	def set_timezone(self, zone, *args, **kwargs):
 		if not len(zone): return True
 
-		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
+		(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
+		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 		return True
 
 	def activate_ntp(self):
