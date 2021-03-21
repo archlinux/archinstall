@@ -1,7 +1,7 @@
 import os, urllib.request, urllib.parse, ssl, json, re
 import importlib.util, sys, glob, hashlib
 from collections import OrderedDict
-from .general import multisplit, sys_command, log
+from .general import multisplit, sys_command
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
@@ -76,6 +76,8 @@ class Script():
 		self.spec = None
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
+		self.original_namespace = self.namespace
+		log(f"Script {self} has been loaded with namespace '{self.namespace}'", level=LOG_LEVELS.Debug)
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
@@ -131,14 +133,13 @@ class Script():
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
-		
+
 		return self
 
 	def execute(self):
 		if not self.namespace in sys.modules or self.spec is None:
 			self.load_instructions()
 
-		__builtins__['installation'] = self.installer # TODO: Replace this with a import archinstall.session instead
 		self.spec.loader.exec_module(sys.modules[self.namespace])
 
 		return sys.modules[self.namespace]
@@ -146,7 +147,6 @@ class Script():
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
 		super(Profile, self).__init__(path, installer)
-		self._cache = None
 
 	def __dump__(self, *args, **kwargs):
 		return {'path' : self.path}
@@ -155,6 +155,10 @@ class Profile(Script):
 		return f'Profile({os.path.basename(self.profile)})'
 
 	def install(self):
+		# Before installing, revert any temporary changes to the namespace.
+		# This ensures that the namespace during installation is the original initation namespace.
+		# (For instance awesome instead of aweosme.py or app-awesome.py)
+		self.namespace = self.original_namespace
 		return self.execute()
 
 	def has_prep_function(self):
@@ -203,3 +207,10 @@ class Application(Profile):
 			return self.localize_path(self.profile)
 		else:
 			raise ProfileNotFound(f"Application cannot handle scheme {parsed_url.scheme}")
+
+	def install(self):
+		# Before installing, revert any temporary changes to the namespace.
+		# This ensures that the namespace during installation is the original initation namespace.
+		# (For instance awesome instead of aweosme.py or app-awesome.py)
+		self.namespace = self.original_namespace
+		return self.execute()

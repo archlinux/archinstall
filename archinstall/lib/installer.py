@@ -352,6 +352,7 @@ class Installer():
 
 
 				if self.partition.encrypted:
+					log(f"Identifying root partition {self.partition} to boot based on disk UUID, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
@@ -363,6 +364,7 @@ class Installer():
 							return True
 						break
 				else:
+					log(f"Identifying root partition {self.partition} to boot based on partition UUID, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
@@ -373,6 +375,7 @@ class Installer():
 							self.helper_flags['bootloader'] = bootloader
 							return True
 						break
+
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
@@ -381,6 +384,15 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
+		# TODO: Replace this with a import archinstall.session instead in the profiles.
+		# The tricky thing with doing the import archinstall.session instead is that
+		# profiles might be run from a different chroot, and there's no way we can
+		# guarantee file-path safety when accessing the installer object that way.
+		# Doing the __builtins__ replacement, ensures that the global vriable "installation"
+		# is always kept up to date. It's considered a nasty hack - but it's a safe way
+		# of ensuring 100% accuracy of archinstall session variables.
+		__builtins__['installation'] = self
+
 		if type(profile) == str:
 			profile = Profile(self, profile)
 
