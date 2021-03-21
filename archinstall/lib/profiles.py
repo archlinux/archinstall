@@ -1,7 +1,7 @@
 import os, urllib.request, urllib.parse, ssl, json, re
 import importlib.util, sys, glob, hashlib
 from collections import OrderedDict
-from .general import multisplit, sys_command, log
+from .general import multisplit, sys_command
 from .exceptions import *
 from .networking import *
 from .output import log, LOG_LEVELS
@@ -77,7 +77,7 @@ class Script():
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
-		print(f"Script {self} loaded with namespace: {self.namespace}")
+		log(f"Script {self} has been loaded with namespace '{self.namespace}'")
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
@@ -133,8 +133,6 @@ class Script():
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
-		
-		print(f"Imported {self} into sys.modules with namespace {self.namespace}")
 
 		return self
 
@@ -175,7 +173,6 @@ class Profile(Script):
 			# trigger a traditional:
 			#     if __name__ == 'moduleName'
 			if '__name__' in source_data and '_prep_function' in source_data:
-				print(f"Checking if {self} has _prep_function by importing with namespace {self.namespace}.py")
 				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
 					if hasattr(imported, '_prep_function'):
 						return True
