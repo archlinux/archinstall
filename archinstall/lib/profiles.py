@@ -135,11 +135,14 @@ class Script():
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
 		
-		print(f"Imported {self} into sys.modules with namespace {self.namespace}.")
+		print(f"Imported {self} into sys.modules with namespace {self.namespace}")
+
+		if '.py' not in self.namespace:
+			raise KeyError(f"Debugging: {self.namespace}, {reset_namespace}, {self}")
 
 		if reset_namespace:
 			self.namespace = original_namespace
-			
+
 		return self
 
 	def execute(self):
