@@ -437,6 +437,7 @@ class Filesystem():
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
 		
 		previous_partitions = self.blockdevice.partitions
+		print(previous_partitions)
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
@@ -444,6 +445,8 @@ class Filesystem():
 
 		if partitioning:
 			start_wait = time.time()
+			time.sleep(2)
+			print(self.blockdevice.partitions)
 			while previous_partitions == self.blockdevice.partitions:
 				time.sleep(0.025) # Let the new partition come up in the kernel
 				if time.time() - start_wait > 10:
