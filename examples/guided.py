@@ -53,7 +53,7 @@ def ask_user_questions():
 	# 3. Check that we support the current partitions
 	# 2. If so, ask if we should keep them or wipe everything
 	if archinstall.arguments['harddrive'].has_partitions():
-		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='red')
+		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
 		# We curate a list pf supported paritions
 		# and print those that we don't support.
@@ -149,7 +149,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommended: leave blank to leave root disabled): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	archinstall.arguments['users'] = {}
@@ -157,7 +157,7 @@ def ask_user_questions():
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 
-	users, superusers = archinstall.ask_for_additional_users('Any additional users to install (leave blank for no users): ')
+	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
 	archinstall.arguments['users'] = users
 	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
@@ -180,7 +180,7 @@ def ask_user_questions():
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
-		archinstall.arguments['packages'] = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
+		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
 	# Verify packages that were given
 	try:

@@ -136,7 +136,7 @@ def ask_for_main_filesystem_format():
 		'vfat' : 'vfat'
 	}
 
-	value = generic_select(options.values(), "Select your main partitions filesystem by number or free-text: ")
+	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number of name): ")
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
@@ -212,10 +212,10 @@ def select_profile(options):
 		for index, profile in enumerate(profiles):
 			print(f"{index}: {profile}")
 
-		print(' -- The above list is pre-programmed profiles. --')
+		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- (Leave blank to skip this next optional step) --')
-		selected_profile = input('Any particular pre-programmed profile you want to install: ')
+		print(' -- (Leave blank and hit enter to skip this step and continue) --')
+		selected_profile = input('Enter a pre-programmed profile name if you want to install one: ')
 
 		if len(selected_profile.strip()) <= 0:
 			return None
