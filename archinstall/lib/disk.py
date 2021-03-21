@@ -397,7 +397,7 @@ class Filesystem():
 
 	def raw_parted(self, string:str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
-		o = b''.join(x)
+		log(f"'parted -s {string}' returned: {b''.join(x)}", level=LOG_LEVELS.Debug)
 		return x
 
 	def parted(self, string:str):
