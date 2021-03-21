@@ -352,7 +352,7 @@ class Installer():
 
 
 				if self.partition.encrypted:
-					log(f"Identifying root partition {self.partition} to boot based on disk UUID, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Info)
+					log(f"Identifying root partition {self.partition} to boot based on disk UUID, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
@@ -364,7 +364,7 @@ class Installer():
 							return True
 						break
 				else:
-					log(f"Identifying root partition {self.partition} to boot based on partition UUID, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Info)
+					log(f"Identifying root partition {self.partition} to boot based on partition UUID, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
