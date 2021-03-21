@@ -125,6 +125,7 @@ class Script():
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
 	def load_instructions(self, namespace=None):
+		print(f"Load instructions for {self} with namespace {namespace}")
 		if namespace:
 			self.namespace = namespace
 
