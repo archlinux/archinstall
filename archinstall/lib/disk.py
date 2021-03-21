@@ -233,6 +233,7 @@ class Partition():
 			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
 
 		if not self.safe_to_format():
+			log(f"Partition {self} was marked as protected but encrypt() was called on it!", level=LOG_LEVELS.Error, fg="red")
 			return False
 
 		handle = luks2(self, None, None)
@@ -407,6 +408,7 @@ class Filesystem():
 		return self.raw_parted(string).exit_code
 
 	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
+		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
 		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
 		self.set_name(0, 'EFI')
 		self.set(0, 'boot on')
@@ -417,11 +419,13 @@ class Filesystem():
 
 		self.blockdevice.partition[0].filesystem = 'vfat'
 		self.blockdevice.partition[1].filesystem = root_filesystem_type
+		log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
 
 		self.blockdevice.partition[0].target_mountpoint = '/boot'
 		self.blockdevice.partition[1].target_mountpoint = '/'
 
 		if encrypt_root_partition:
+			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
 			self.blockdevice.partition[1].encrypted = True
 
 	def add_partition(self, type, start, end, format=None):
