@@ -125,7 +125,9 @@ class Script():
 		else:
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
-	def load_instructions(self, namespace=None):
+	def load_instructions(self, namespace=None, reset_namespace=False):
+		original_namespace = self.namespace
+		
 		if namespace:
 			self.namespace = namespace
 
@@ -135,6 +137,9 @@ class Script():
 		
 		print(f"Imported {self} into sys.modules with namespace {self.namespace}.")
 
+		if reset_namespace:
+			self.namespace = original_namespace
+			
 		return self
 
 	def execute(self):
@@ -173,7 +178,7 @@ class Profile(Script):
 			#     if __name__ == 'moduleName'
 			if '__name__' in source_data and '_prep_function' in source_data:
 				print(f"Checking if {self} has _prep_function by importing with namespace {self.namespace}.py")
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+				with self.load_instructions(namespace=f"{self.namespace}.py", reset_namespace=True) as imported:
 					if hasattr(imported, '_prep_function'):
 						return True
 		return False

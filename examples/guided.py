@@ -170,7 +170,7 @@ def ask_user_questions():
 	# Check the potentially selected profiles preperations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
 		print(f"{archinstall.arguments['profile']} has prep-function, loading with namespace {archinstall.arguments['profile'].namespace}.py")
-		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py", reset_namespace=True) as imported:
 			if not imported._prep_function():
 				archinstall.log(
 					' * Profile\'s preparation requirements was not fulfilled.',
