@@ -76,6 +76,7 @@ class Script():
 		self.spec = None
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
+		print(f"Script loaded with namespace: {self.namespace}")
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
