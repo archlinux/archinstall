@@ -129,6 +129,9 @@ class BlockDevice():
 				return True
 		return False
 
+	def flush_cache(self):
+		self.part_cache = OrderedDict()
+
 class Partition():
 	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
@@ -366,6 +369,7 @@ class Filesystem():
 			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=LOG_LEVELS.Debug)
 			if self.mode == GPT:
 				if self.raw_parted(f'{self.blockdevice.device} mklabel gpt').exit_code == 0:
+					self.blockdevice.flush_cache()
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
