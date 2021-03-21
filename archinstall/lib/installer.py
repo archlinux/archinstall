@@ -388,7 +388,7 @@ class Installer():
 		# Doing the __builtins__ replacement, ensures that the global vriable "installation"
 		# is always kept up to date. It's considered a nasty hack - but it's a safe way
 		# of ensuring 100% accuracy of archinstall session variables.
-		__builtins__['installation'] = self.installer
+		__builtins__['installation'] = self
 
 		if type(profile) == str:
 			profile = Profile(self, profile)
