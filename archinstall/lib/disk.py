@@ -217,8 +217,10 @@ class Partition():
 
 	def safe_to_format(self):
 		if self.allow_formatting is False:
+			log(f"Partition {self} is not marked for formatting.", level=LOG_LEVELS.Debug)
 			return False
 		elif self.target_mountpoint == '/boot' and self.has_content():
+			log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
 			return False
 
 		return True
@@ -423,6 +425,9 @@ class Filesystem():
 
 		self.blockdevice.partition[0].target_mountpoint = '/boot'
 		self.blockdevice.partition[1].target_mountpoint = '/'
+
+		self.blockdevice.partition[0].allow_formatting = True
+		self.blockdevice.partition[1].allow_formatting = True
 
 		if encrypt_root_partition:
 			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
