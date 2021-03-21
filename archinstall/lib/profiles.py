@@ -129,8 +129,8 @@ class Script():
 		if namespace:
 			self.namespace = namespace
 
-		#if '.py' in self.namespace:
-		#	raise KeyError("Debugging")
+		if '.py' in self.namespace:
+			raise KeyError("Debugging")
 
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
