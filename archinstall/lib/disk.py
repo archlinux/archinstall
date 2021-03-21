@@ -365,7 +365,7 @@ class Filesystem():
 		if self.blockdevice.keep_partitions is False:
 			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=LOG_LEVELS.Debug)
 			if self.mode == GPT:
-				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt',).exit_code == 0:
+				if self.raw_parted(f'{self.blockdevice.device} mklabel gpt').exit_code == 0:
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
