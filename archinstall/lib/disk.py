@@ -407,7 +407,7 @@ class Filesystem():
 		return self.raw_parted(string).exit_code
 
 	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
-		self.add_partition('primary', start='1MiB', end='513MiB', format='vfat')
+		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
 		self.set_name(0, 'EFI')
 		self.set(0, 'boot on')
 		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
