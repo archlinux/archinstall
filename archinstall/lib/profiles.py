@@ -129,7 +129,7 @@ class Script():
 		if namespace:
 			self.namespace = namespace
 
-		if '.py' in self.namespace:
+		if '.py.py' in self.namespace:
 			raise KeyError("Debugging")
 
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
@@ -173,6 +173,7 @@ class Profile(Script):
 			# trigger a traditional:
 			#     if __name__ == 'moduleName'
 			if '__name__' in source_data and '_prep_function' in source_data:
+				print(f"Checking if {self} has _prep_function by importing with namespace {self.namespace}.py")
 				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
 					if hasattr(imported, '_prep_function'):
 						return True
