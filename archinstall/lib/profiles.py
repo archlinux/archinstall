@@ -142,7 +142,6 @@ class Script():
 		if not self.namespace in sys.modules or self.spec is None:
 			self.load_instructions()
 
-		__builtins__['installation'] = self.installer # TODO: Replace this with a import archinstall.session instead
 		self.spec.loader.exec_module(sys.modules[self.namespace])
 
 		return sys.modules[self.namespace]
