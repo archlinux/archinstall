@@ -129,15 +129,11 @@ class Script():
 		if not namespace:
 			namespace = self.namespace
 
-		if namespace in sys.modules:
-			print(f"Found {self} in sys.modules, returning cached import.")
-			return self
-
 		self.spec = importlib.util.spec_from_file_location(namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[namespace] = imported
 		
-		print(f"Imported {self} into sys.modules. Returning fresh copy.")
+		print(f"Imported {self} into sys.modules with namespace {namespace}.")
 		return self
 
 	def execute(self):
