@@ -290,13 +290,22 @@ class Installer():
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} chmod 700 /root')
 
+		# Configure mkinitcpio to handle some specific use cases.
+		# TODO: Yes, we should not overwrite the entire thing, but for now this should be fine
+		# since we just installed the base system.
 		if self.partition.filesystem == 'btrfs':
 			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
-				## TODO: Don't replace it, in case some update in the future actually adds something.
 				mkinit.write('MODULES=(btrfs)\n')
 				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
+		elif self.partition.encrypted:
+			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
+				mkinit.write('MODULES=()\n')
+				mkinit.write('BINARIES=()\n')
+				mkinit.write('FILES=()\n')
+				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
