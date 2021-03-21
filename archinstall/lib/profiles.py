@@ -126,17 +126,15 @@ class Script():
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
 	def load_instructions(self, namespace=None):
-		if not namespace:
-			namespace = self.namespace
+		if namespace:
+			self.namespace = namespace
 
-		self.spec = importlib.util.spec_from_file_location(namespace, self.path)
+		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
-		sys.modules[namespace] = imported
+		sys.modules[self.namespace] = imported
 		
-		print(f"Imported {self} into sys.modules with namespace {namespace}.")
+		print(f"Imported {self} into sys.modules with namespace {self.namespace}.")
 
-		if '.py' not in namespace:
-			raise KeyError("Debugging")
 		return self
 
 	def execute(self):
