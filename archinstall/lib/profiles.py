@@ -134,6 +134,9 @@ class Script():
 		sys.modules[namespace] = imported
 		
 		print(f"Imported {self} into sys.modules with namespace {namespace}.")
+
+		if '.py' not in namespace:
+			raise KeyError("Debugging")
 		return self
 
 	def execute(self):
