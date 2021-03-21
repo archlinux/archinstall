@@ -76,7 +76,7 @@ class Script():
 		self.spec = None
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
-		print(f"Script loaded with namespace: {self.namespace}")
+		print(f"Script {self} loaded with namespace: {self.namespace}")
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
@@ -126,17 +126,18 @@ class Script():
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
 	def load_instructions(self, namespace=None):
-		print(f"Load instructions for {self} with namespace {namespace}")
-		if namespace:
-			self.namespace = namespace
+		if not namespace:
+			namespace = self.namespace
 
-		if '.py.py' in self.namespace:
-			raise KeyError("Debugging")
+		if namespace in sys.modules:
+			print(f"Found {self} in sys.modules, returning cached import.")
+			return self
 
-		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
+		self.spec = importlib.util.spec_from_file_location(namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
-		sys.modules[self.namespace] = imported
+		sys.modules[namespace] = imported
 		
+		print(f"Imported {self} into sys.modules. Returning fresh copy.")
 		return self
 
 	def execute(self):
