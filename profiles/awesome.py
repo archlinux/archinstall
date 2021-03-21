@@ -32,7 +32,7 @@ if __name__ == 'awesome':
 	editor = "nano"
 	filebrowser = "nemo gpicview-gtk3"
 	webbrowser = "chromium" # TODO: Ask the user to select one instead
-	utils = "openssh sshfs git htop pkgfile scrot dhclient wget libu2f-host"
+	utils = "openssh sshfs htop scrot wget"
 
 
 	installation.add_additional_packages(f"{webbrowser} {utils} {filebrowser} {editor}")
