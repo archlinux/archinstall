@@ -76,6 +76,7 @@ class Script():
 		self.spec = None
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
+		self.original_namespace = self.namespace
 		print(f"Script {self} loaded with namespace: {self.namespace}")
 
 	def __enter__(self, *args, **kwargs):
@@ -149,7 +150,6 @@ class Script():
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
 		super(Profile, self).__init__(path, installer)
-		self._cache = None
 
 	def __dump__(self, *args, **kwargs):
 		return {'path' : self.path}
@@ -158,6 +158,10 @@ class Profile(Script):
 		return f'Profile({os.path.basename(self.profile)})'
 
 	def install(self):
+		# Before installing, revert any temporary changes to the namespace.
+		# This ensures that the namespace during installation is the original initation namespace.
+		# (For instance awesome instead of aweosme.py or app-awesome.py)
+		self.namespace = self.original_namespace
 		return self.execute()
 
 	def has_prep_function(self):
@@ -207,3 +211,10 @@ class Application(Profile):
 			return self.localize_path(self.profile)
 		else:
 			raise ProfileNotFound(f"Application cannot handle scheme {parsed_url.scheme}")
+
+	def install(self):
+		# Before installing, revert any temporary changes to the namespace.
+		# This ensures that the namespace during installation is the original initation namespace.
+		# (For instance awesome instead of aweosme.py or app-awesome.py)
+		self.namespace = self.original_namespace
+		return self.execute()
