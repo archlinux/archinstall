@@ -97,14 +97,15 @@ def log(*args, **kwargs):
 		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 		if not os.path.isfile(absolute_logfile):
 			try:
-				os.makedirs(os.path.dirname(absolute_logfile))
+				Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
 			except PermissionError:
 				# Fallback to creating the log file in the current folder
-				log(f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()} instead.", fg="red")
+				err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
 				absolute_logfile = Path('./').absolute()/filename
-				absolute_logfile.makedirs(exist_ok=True)
+				absolute_logfile.parents[0].mkdir(exist_ok=True)
+				absolute_logfile = str(absolute_logfile)
 				storage['LOG_PATH'] = './'
-
+				log(err_string, fg="red")
 
 			Path(absolute_logfile).touch() # Overkill?
 
