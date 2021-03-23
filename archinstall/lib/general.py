@@ -106,7 +106,11 @@ class sys_command():#Thread):
 
 		user_catalogue = os.path.expanduser('~')
 		self.cwd = f"{user_catalogue}/.cache/archinstall/workers/{kwargs['worker_id']}/"
-		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
+
+		if (workdir := kwargs.get('workdir', None)):
+			self.exec_dir = workdir
+		else:
+			self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
 			# "which" doesn't work as it's a builtin to bash.
