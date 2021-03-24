@@ -13,7 +13,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
     $ sudo pacman -S archinstall
 
 Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
-Or run the pre-compiled binary attached in every release as `archinstall-v[ver].tar.gz`.
+Or use `pip install --upgrade archinstall` to use as a library.
 
 ## Running the [guided](examples/guided.py) installer
 
