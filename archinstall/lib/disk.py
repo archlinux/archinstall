@@ -204,6 +204,9 @@ class Partition():
 			return None
 
 	def has_content(self):
+		if not get_filesystem_type(self.path):
+			return False
+		
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
 		temporary_path = pathlib.Path(temporary_mountpoint)
 
