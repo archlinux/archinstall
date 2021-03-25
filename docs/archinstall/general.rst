@@ -24,6 +24,9 @@ Locale related
 
 .. autofunction:: archinstall.set_keyboard_language
 
+.. 
+	autofunction:: archinstall.Installer.set_keyboard_layout
+
 Services
 ========
 
