@@ -2,6 +2,7 @@
 
 import archinstall
 
+__packages__ = ['nano', 'nemo', 'gpicview-gtk3', 'chromium', 'openssh', 'sshfs', 'htop', 'scrot', 'wget']
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -28,14 +29,7 @@ if __name__ == 'awesome':
 	awesome = archinstall.Application(installation, 'awesome')
 	awesome.install()
 
-	# Then setup and configure the desktop environment: awesome
-	editor = "nano"
-	filebrowser = "nemo gpicview-gtk3"
-	webbrowser = "chromium" # TODO: Ask the user to select one instead
-	utils = "openssh sshfs htop scrot wget"
-
-
-	installation.add_additional_packages(f"{webbrowser} {utils} {filebrowser} {editor}")
+	installation.add_additional_packages(__packages__)
 
 	alacritty = archinstall.Application(installation, 'alacritty')
 	alacritty.install()

@@ -178,6 +178,28 @@ class Profile(Script):
 						return True
 		return False
 
+	@property
+	def packages(self) -> list:
+		"""
+		Returns a list of packages baked into the profile definition.
+		If no package definition has been done, .packages() will return None.
+		"""
+		with open(self.path, 'r') as source:
+			source_data = source.read()
+
+			# Some crude safety checks, make sure the imported profile has
+			# a __name__ check before importing.
+			#
+			# If the requirements are met, import with .py in the namespace to not
+			# trigger a traditional:
+			#     if __name__ == 'moduleName'
+			if '__name__' in source_data and '__packages__' in source_data:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+					if hasattr(imported, '__packages__'):
+						return imported.__packages__
+		return None
+	
+
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):
 		return f'Application({os.path.basename(self.profile)})'

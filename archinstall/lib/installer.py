@@ -10,6 +10,10 @@ from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
 
+# Any package that the Installer() is responsible for (optional and the default ones)
+__packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
+__base_packages__ = __packages__[:6]
+
 class Installer():
 	"""
 	`Installer()` is the wrapper for most basic installation steps.
@@ -34,7 +38,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
+	def __init__(self, partition, boot_partition, *, base_packages=__base_packages__, profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint

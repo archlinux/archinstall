@@ -1,10 +1,10 @@
 import archinstall
 
+__packages__ = ["awesome", "xorg-xrandr", "xterm", "feh", "slock", "terminus-font", "gnu-free-fonts", "ttf-liberation", "xsel"]
+
 installation.install_profile('xorg')
 
-installation.add_additional_packages(
-	"awesome xorg-xrandr xterm feh slock terminus-font gnu-free-fonts ttf-liberation xsel"
-)
+installation.add_additional_packages(__packages__)
 
 with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'r') as xinitrc:
 	xinitrc_data = xinitrc.read()
