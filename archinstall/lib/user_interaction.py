@@ -77,8 +77,14 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 
 def ask_for_a_timezone():
 	timezone = input('Enter a valid timezone (Example: Europe/Stockholm): ').strip()
-	if pathlib.Path(timezone).exists():
+	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
 		return timezone
+	else:
+		log(
+			f"Time zone {timezone} does not exist, continuing with system default.",
+			level=LOG_LEVELS.Warning,
+			fg='red'
+		)
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.

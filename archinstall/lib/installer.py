@@ -169,11 +169,19 @@ class Installer():
 		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
-		if not len(zone): return True
+		if not zone: return True
+		if not len(zone): return True # Redundant
 
-		(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
-		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
-		return True
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/zone).exists():
+			(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
+			return True
+		else:
+			self.log(
+				f"Time zone {zone} does not exist, continuing with system default.",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
 
 	def activate_ntp(self):
 		self.log(f'Installing and activating NTP.', level=LOG_LEVELS.Info)
