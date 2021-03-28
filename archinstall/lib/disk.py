@@ -142,7 +142,7 @@ class Partition():
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self.size = size # TODO: Refresh?
-		self.encrypted = encrypted
+		self._encrypted = encrypted
 		self.allow_formatting = False # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
 
 		if mountpoint:
@@ -161,7 +161,7 @@ class Partition():
 				self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
-			self.encrypted = True
+			self._encrypted = True
 
 	def __lt__(self, left_comparitor):
 		if type(left_comparitor) == Partition:
@@ -177,14 +177,23 @@ class Partition():
 		elif self.target_mountpoint:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
-		if self.encrypted:
+		if self._encrypted:
 			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
 
 	@property
+	def encrypted(self):
+		return self._encrypted
+
+	@encrypted.setter
+	def encrypted(self, value :bool):
+		log(f'Marking {self} as encrypted', level=LOG_LEVELS.Debug)
+		self._encrypted = value
+
+	@property
 	def real_device(self):
-		if not self.encrypted:
+		if not self._encrypted:
 			return self.path
 		else:
 			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
@@ -237,7 +246,7 @@ class Partition():
 		"""
 		from .luks import luks2
 
-		if not self.encrypted:
+		if not self._encrypted:
 			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
 
 		if not self.safe_to_format():
