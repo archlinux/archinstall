@@ -270,6 +270,11 @@ class Partition():
 		if allow_formatting is None:
 			allow_formatting = self.allow_formatting
 
+		# To avoid "unable to open /dev/x: No such file or directory"
+		start_wait = time.time()
+		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
+			time.sleep(0.025)
+
 		if not allow_formatting:
 			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
 
