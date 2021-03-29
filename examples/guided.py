@@ -292,6 +292,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	print('Installing on:', device)
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
