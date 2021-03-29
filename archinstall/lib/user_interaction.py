@@ -141,7 +141,7 @@ def ask_for_main_filesystem_format():
 		'f2fs' : 'f2fs'
 	}
 
-	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number of name): ")
+	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
