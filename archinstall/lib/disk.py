@@ -1,5 +1,5 @@
 import glob, re, os, json, time, hashlib
-import pathlib
+import pathlib, traceback
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
@@ -107,7 +107,7 @@ class BlockDevice():
 				if part_id not in self.part_cache:
 					## TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
-						self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
+						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
@@ -133,9 +133,11 @@ class BlockDevice():
 		self.part_cache = OrderedDict()
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
+
+		self.block_device = block_device
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
@@ -189,7 +191,10 @@ class Partition():
 
 	@encrypted.setter
 	def encrypted(self, value :bool):
-		log(f'Marking {self} as encrypted', level=LOG_LEVELS.Debug)
+		if value:
+			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
+			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+
 		self._encrypted = value
 
 	@property
@@ -316,6 +321,12 @@ class Partition():
 
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
+
+		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':
+			self.encrypted = True
+		else:
+			self.encrypted = False
+
 		return True
 
 	def find_parent_of(self, data, name, parent=None):
@@ -431,7 +442,7 @@ class Filesystem():
 		"""
 		return self.raw_parted(string).exit_code
 
-	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
+	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
 		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
 		self.set_name(0, 'EFI')
@@ -450,10 +461,6 @@ class Filesystem():
 
 		self.blockdevice.partition[0].allow_formatting = True
 		self.blockdevice.partition[1].allow_formatting = True
-
-		if encrypt_root_partition:
-			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
-			self.blockdevice.partition[1].encrypted = True
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
