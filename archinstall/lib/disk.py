@@ -130,7 +130,20 @@ class BlockDevice():
 		return False
 
 	def flush_cache(self):
+		old_partitions = {**self.partitions}
+
 		self.part_cache = OrderedDict()
+		# Trigger a refresh of the cache
+		if len(self.partitions):
+			pass
+
+		# Carry over any flags from the previous partitions
+		for partition in old_partitions:
+			if partition in self.part_cache:
+				if self.part_cache[partition].size == old_partitions[partition].size and \
+				  self.part_cache[partition].filesystem == old_partitions[partition].filesystem:
+					print('Carrying over', self.part_cache[partition].target_mountpoint)
+					self.part_cache[partition].target_mountpoint = old_partitions[partition].target_mountpoint
 
 class Partition():
 	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
@@ -237,7 +250,9 @@ class Partition():
 		return True if files > 0 else False
 
 	def safe_to_format(self):
-		if self.block_device and self.block_device.keep_partitions is True:
+		if self.block_device and self.block_device.keep_partitions is False:
+			# If we don't intend to keep any partitions on the parent block device
+			# We're good to format.
 			return True
 
 		if self.allow_formatting is False:
@@ -325,6 +340,7 @@ class Partition():
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 
+		# self.encrypted = False if self.filesystem != 'crypto_LUKS' else True
 		if self.block_device:
 			self.block_device.flush_cache()
 
