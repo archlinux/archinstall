@@ -142,7 +142,8 @@ class Partition():
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self.size = size # TODO: Refresh?
-		self._encrypted = encrypted
+		self._encrypted = None
+		self.encrypted = encrypted
 		self.allow_formatting = False # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
 
 		if mountpoint:
@@ -161,7 +162,7 @@ class Partition():
 				self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
-			self._encrypted = True
+			self.encrypted = True
 
 	def __lt__(self, left_comparitor):
 		if type(left_comparitor) == Partition:
@@ -268,6 +269,11 @@ class Partition():
 			path = self.path
 		if allow_formatting is None:
 			allow_formatting = self.allow_formatting
+
+		# To avoid "unable to open /dev/x: No such file or directory"
+		start_wait = time.time()
+		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
+			time.sleep(0.025)
 
 		if not allow_formatting:
 			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
