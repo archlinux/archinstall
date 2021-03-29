@@ -322,7 +322,8 @@ class Partition():
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 
-		self.encrypted = False if self.filesystem != 'crypto_LUKS' else True
+		if get_filesystem_type(path) == 'crypto_LUKS':
+			self.encrypted = True
 
 		return True
 
