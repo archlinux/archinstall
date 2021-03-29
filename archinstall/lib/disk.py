@@ -189,8 +189,9 @@ class Partition():
 
 	@encrypted.setter
 	def encrypted(self, value :bool):
-		log(f'Marking {self} as encrypted', level=LOG_LEVELS.Debug)
-		log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+		if value:
+			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
+			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
 		self._encrypted = value
 
 	@property
