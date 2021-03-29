@@ -1,5 +1,5 @@
 import glob, re, os, json, time, hashlib
-import pathlib
+import pathlib, traceback
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
@@ -452,9 +452,9 @@ class Filesystem():
 		self.blockdevice.partition[1].allow_formatting = True
 
 		if encrypt_root_partition:
-			raise ValueError("moo")
-			exit(1)
 			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
+			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+			
 			self.blockdevice.partition[1].encrypted = True
 
 	def add_partition(self, type, start, end, format=None):
