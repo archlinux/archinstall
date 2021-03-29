@@ -142,8 +142,9 @@ class BlockDevice():
 			if partition in self.part_cache:
 				if self.part_cache[partition].size == old_partitions[partition].size and \
 				  self.part_cache[partition].filesystem == old_partitions[partition].filesystem:
-					print('Carrying over', self.part_cache[partition].target_mountpoint)
+					print('Carrying over', self.part_cache[partition].target_mountpoint, self.part_cache[partition].allow_formatting)
 					self.part_cache[partition].target_mountpoint = old_partitions[partition].target_mountpoint
+					self.part_cache[partition].allow_formatting = old_partitions[partition].allow_formatting
 
 class Partition():
 	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
