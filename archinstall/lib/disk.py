@@ -237,11 +237,6 @@ class Partition():
 		return True if files > 0 else False
 
 	def safe_to_format(self):
-		if self.block_device and self.block_device.keep_partitions is False:
-			# If we don't intend to keep any partitions on the parent block device
-			# We're good to format.
-			return True
-
 		if self.allow_formatting is False:
 			log(f"Partition {self} is not marked for formatting.", level=LOG_LEVELS.Debug)
 			return False
