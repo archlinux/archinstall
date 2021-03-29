@@ -452,6 +452,8 @@ class Filesystem():
 		self.blockdevice.partition[1].allow_formatting = True
 
 		if encrypt_root_partition:
+			raise ValueError("moo")
+			exit(1)
 			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
 			self.blockdevice.partition[1].encrypted = True
 
