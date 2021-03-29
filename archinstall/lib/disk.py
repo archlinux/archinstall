@@ -107,7 +107,7 @@ class BlockDevice():
 				if part_id not in self.part_cache:
 					## TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
-						self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
+						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
@@ -133,9 +133,11 @@ class BlockDevice():
 		self.part_cache = OrderedDict()
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
+
+		self.block_device = block_device
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
@@ -192,6 +194,7 @@ class Partition():
 		if value:
 			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
 			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+
 		self._encrypted = value
 
 	@property
@@ -318,6 +321,10 @@ class Partition():
 
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
+
+		if self.block_device:
+			self.block_device.flush_cache()
+
 		return True
 
 	def find_parent_of(self, data, name, parent=None):
