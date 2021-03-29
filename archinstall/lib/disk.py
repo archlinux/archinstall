@@ -130,21 +130,7 @@ class BlockDevice():
 		return False
 
 	def flush_cache(self):
-		old_partitions = {**self.partitions}
-
 		self.part_cache = OrderedDict()
-		# Trigger a refresh of the cache
-		if len(self.partitions):
-			pass
-
-		# Carry over any flags from the previous partitions
-		for partition in old_partitions:
-			if partition in self.part_cache:
-				if self.part_cache[partition].size == old_partitions[partition].size and \
-				  self.part_cache[partition].filesystem == old_partitions[partition].filesystem:
-					print('Carrying over', self.part_cache[partition].target_mountpoint, self.part_cache[partition].allow_formatting)
-					self.part_cache[partition].target_mountpoint = old_partitions[partition].target_mountpoint
-					self.part_cache[partition].allow_formatting = old_partitions[partition].allow_formatting
 
 class Partition():
 	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
@@ -341,9 +327,7 @@ class Partition():
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
 
-		# self.encrypted = False if self.filesystem != 'crypto_LUKS' else True
-		if self.block_device:
-			self.block_device.flush_cache()
+		self.encrypted = False if self.filesystem != 'crypto_LUKS' else True
 
 		return True
 
@@ -460,7 +444,7 @@ class Filesystem():
 		"""
 		return self.raw_parted(string).exit_code
 
-	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
+	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
 		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
 		self.set_name(0, 'EFI')
@@ -479,11 +463,6 @@ class Filesystem():
 
 		self.blockdevice.partition[0].allow_formatting = True
 		self.blockdevice.partition[1].allow_formatting = True
-
-		if encrypt_root_partition:
-			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
-			
-			self.blockdevice.partition[1].encrypted = True
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)

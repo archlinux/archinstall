@@ -247,10 +247,10 @@ def perform_installation_steps():
 	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
 		# Wipe the entire drive if the disk flag `keep_partitions`is False.
 		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'),
-								encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
-		# Otherwise, check if encryption is desired and mark the root partition as encrypted.
-		elif archinstall.arguments.get('!encryption-password', None):
+			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+		
+		# Check if encryption is desired and mark the root partition as encrypted.
+		if archinstall.arguments.get('!encryption-password', None):
 			root_partition = fs.find_partition('/')
 			root_partition.encrypted = True
 				
