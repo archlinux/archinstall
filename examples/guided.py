@@ -139,7 +139,7 @@ def ask_user_questions():
 
 	# Get disk encryption password (or skip if blank)
 	if not archinstall.arguments.get('!encryption-password', None):
-		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')).strip():
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
@@ -292,7 +292,6 @@ def perform_installation(device, boot_partition, language, mirrors):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	print('Installing on:', device)
 	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
