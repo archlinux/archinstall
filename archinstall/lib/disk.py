@@ -190,6 +190,7 @@ class Partition():
 	@encrypted.setter
 	def encrypted(self, value :bool):
 		log(f'Marking {self} as encrypted', level=LOG_LEVELS.Debug)
+		log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
 		self._encrypted = value
 
 	@property
@@ -453,7 +454,6 @@ class Filesystem():
 
 		if encrypt_root_partition:
 			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
-			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
 			
 			self.blockdevice.partition[1].encrypted = True
 
