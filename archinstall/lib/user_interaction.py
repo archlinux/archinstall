@@ -24,6 +24,10 @@ def get_password(prompt="Enter a password: "):
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', bg='black', fg='red')
 			continue
+
+		if len(passwd.strip()) <= 0:
+			break
+
 		return passwd
 	return None
 

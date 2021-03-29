@@ -139,7 +139,7 @@ def ask_user_questions():
 
 	# Get disk encryption password (or skip if blank)
 	if not archinstall.arguments.get('!encryption-password', None):
-		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')).strip():
+		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
