@@ -170,7 +170,10 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	if len(selected_option.strip()) <= 0:
 		return None
 	elif selected_option.isdigit():
-		selected_option = options[int(selected_option)]
+		selected_option = int(selected_option)
+		if selected_option >= len(options):
+			raise RequirementError(f'Selected option "{selected_option}" is out of range')
+		selected_option = options[selected_option]
 	elif selected_option in options:
 		pass # We gave a correct absolute value
 	else:
@@ -195,7 +198,10 @@ def select_disk(dict_o_disks):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 		drive = input('Select one of the above disks (by number or full path): ')
 		if drive.isdigit():
-			drive = dict_o_disks[drives[int(drive)]]
+			drive = int(drive)
+			if drive >= len(drives):
+				raise DiskError(f'Selected option "{drive}" is out of range')
+			drive = dict_o_disks[drives[drive]]
 		elif drive in dict_o_disks:
 			drive = dict_o_disks[drive]
 		else:
