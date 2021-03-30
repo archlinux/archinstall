@@ -198,7 +198,10 @@ def select_disk(dict_o_disks):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 		drive = input('Select one of the above disks (by number or full path): ')
 		if drive.isdigit():
-			drive = dict_o_disks[drives[int(drive)]]
+			drive = int(drive)
+			if drive >= len(drives):
+				raise DiskError(f'Selected option "{drive}" is out of range')
+			drive = dict_o_disks[drives[drive]]
 		elif drive in dict_o_disks:
 			drive = dict_o_disks[drive]
 		else:
