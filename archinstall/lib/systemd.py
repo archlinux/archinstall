@@ -29,12 +29,8 @@ class Systemd(Ini):
 	"""
 	Placeholder class to do systemd specific setups.
 	"""
-	def __init__(self, *args, **kwargs):
-		super(Systemd, self).__init__(*args, **kwargs)
 
 class Networkd(Systemd):
 	"""
 	Placeholder class to do systemd-network specific setups.
 	"""
-	def __init__(self, *args, **kwargs):
-		super(Networkd, self).__init__(*args, **kwargs)
