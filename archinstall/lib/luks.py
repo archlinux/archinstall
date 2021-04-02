@@ -1,4 +1,5 @@
 import os
+import shlex
 from .exceptions import *
 from .general import *
 from .disk import Partition
@@ -64,9 +65,23 @@ class luks2():
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
+		cryptsetup_args = shlex.join([
+			'/usr/bin/cryptsetup',
+			'--batch-mode',
+			'--verbose',
+			'--type', 'luks2',
+			'--pbkdf', 'argon2i',
+			'--hash', hash_type,
+			'--key-size', str(key_size),
+			'--iter-time', str(iter_time),
+			'--key-file', os.path.abspath(key_file),
+			'--use-urandom',
+			'luksFormat', partition.path,
+		])
+
 		try:
 			# Try to setup the crypt-device
-			cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+			cmd_handle = sys_command(cryptsetup_args)
 		except SysCallError as err:
 			if err.exit_code == 256:
 				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=LOG_LEVELS.Debug)
@@ -90,7 +105,7 @@ class luks2():
 						sys_command(f"cryptsetup close {child['name']}")
 
 				# Then try again to set up the crypt-device
-				cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+				cmd_handle = sys_command(cryptsetup_args)
 			else:
 				raise err
 
