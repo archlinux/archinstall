@@ -64,8 +64,37 @@ class luks2():
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
-		o = b''.join(sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}'))
-		if b'Command successful.' not in o:
+		try:
+			# Try to setup the crypt-device
+			cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+		except SysCallError as err:
+			if err.exit_code == 256:
+				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=LOG_LEVELS.Debug)
+				# Partition was in use, unmount it and try again
+				partition.unmount()
+
+				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
+				# For instance: /dev/sda
+				devinfo = json.loads(b''.join(sys_command(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
+
+				# For each child (sub-partition/sub-device)
+				if len(children := devinfo.get('children', [])):
+					for child in children:
+						# Unmount the child location
+						if child_mountpoint := child.get('mountpoint', None):
+							log(f'Unmounting {child_mountpoint}', level=LOG_LEVELS.Debug)
+							sys_command(f"umount -R {child_mountpoint}")
+
+						# And close it if possible.
+						log(f"Closing crypt device {child['name']}", level=LOG_LEVELS.Debug)
+						sys_command(f"cryptsetup close {child['name']}")
+
+				# Then try again to set up the crypt-device
+				cmd_handle = sys_command(f'/usr/bin/cryptsetup -q -v --type luks2 --pbkdf argon2i --hash {hash_type} --key-size {key_size} --iter-time {iter_time} --key-file {os.path.abspath(key_file)} --use-urandom luksFormat {partition.path}')
+			else:
+				raise err
+
+		if b'Command successful.' not in b''.join(cmd_handle):
 			raise DiskError(f'Could not encrypt volume "{partition.path}": {o}')
 	
 		return key_file
@@ -84,7 +113,7 @@ class luks2():
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
-			unlocked_partition = Partition(self.mapdev, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
+			unlocked_partition = Partition(self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
 			unlocked_partition.allow_formatting = self.partition.allow_formatting
 			return unlocked_partition
 

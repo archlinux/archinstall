@@ -1,4 +1,4 @@
-import os, stat, time, shutil, subprocess
+import os, stat, time, shutil, pathlib
 
 from .exceptions import *
 from .disk import *
@@ -9,7 +9,6 @@ from .mirrors import *
 from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
-from .hardware import *
 
 class Installer():
 	"""
@@ -54,8 +53,6 @@ class Installer():
 		}
 
 		self.base_packages = base_packages.split(' ')
-		if not hasUEFI():
-			base_packages.append('grub') # if it isn't uefi is must be bios therefore we need grub as systemd-boot is uefi only
 		self.post_base_install = []
 		storage['session'] = self
 
@@ -172,10 +169,19 @@ class Installer():
 		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
-		if not len(zone): return True
+		if not zone: return True
+		if not len(zone): return True # Redundant
 
-		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'))
-		return True
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/zone).exists():
+			(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
+			return True
+		else:
+			self.log(
+				f"Time zone {zone} does not exist, continuing with system default.",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
 
 	def activate_ntp(self):
 		self.log(f'Installing and activating NTP.', level=LOG_LEVELS.Info)
@@ -292,13 +298,22 @@ class Installer():
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} chmod 700 /root')
 
+		# Configure mkinitcpio to handle some specific use cases.
+		# TODO: Yes, we should not overwrite the entire thing, but for now this should be fine
+		# since we just installed the base system.
 		if self.partition.filesystem == 'btrfs':
 			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
-				## TODO: Don't replace it, in case some update in the future actually adds something.
 				mkinit.write('MODULES=(btrfs)\n')
 				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
+		elif self.partition.encrypted:
+			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
+				mkinit.write('MODULES=()\n')
+				mkinit.write('BINARIES=()\n')
+				mkinit.write('FILES=()\n')
+				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
@@ -314,62 +329,75 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
-			if hasUEFI():
-				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install'))
-				with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
-					loader.write('default arch\n')
-					loader.write('timeout 5\n')
+			# TODO: Ideally we would want to check if another config
+			# points towards the same disk and/or partition.
+			# And in which case we should do some clean up.
 
-				## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-				## And blkid is wrong in terms of LUKS.
-				#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-				with open(f'{self.mountpoint}/boot/loader/entries/arch.conf', 'w') as entry:
-					entry.write('title Arch Linux\n')
-					entry.write('linux /vmlinuz-linux\n')
-					entry.write('initrd /initramfs-linux.img\n')
-					## blkid doesn't trigger on loopback devices really well,
-					## so we'll use the old manual method until we get that sorted out.
+			# Install the boot loader
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install')
 
-
-					if self.partition.encrypted:
-						for root, folders, uids in os.walk('/dev/disk/by-uuid'):
-							for uid in uids:
-								real_path = os.path.realpath(os.path.join(root, uid))
-								if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
-								if hasAMDCPU(): # intel_paste is intel only, it's redudant on AMD systens
-									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw\n')
-								else:
-									entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
-
-								self.helper_flags['bootloader'] = bootloader
-								return True
-							break
+			# Modify or create a loader.conf
+			if os.path.isfile(f'{self.mountpoint}/boot/loader/loader.conf'):
+				with open(f'{self.mountpoint}/boot/loader/loader.conf', 'r') as loader:
+					loader_data = loader.read().split('\n')
+			else:
+				loader_data = [
+					f"default {self.init_time}",
+					f"timeout 5"
+				]
+			
+			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
+				for line in loader_data:
+					if line[:8] == 'default ':
+						loader.write(f'default {self.init_time}\n')
 					else:
-						for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
-							for uid in uids:
-								real_path = os.path.realpath(os.path.join(root, uid))
-								if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
-								if hasAMDCPU():
-									entry.write(f'options root=PARTUUID={uid} rw\n')
-								else:
-									entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+						loader.write(f"{line}")
 
-								self.helper_flags['bootloader'] = bootloader
-								return True
-							break
-				raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
-			else:
-				raise RequirementError("Systemd-boot is UEFI only it can not be installed or used on bios")
-		elif bootloader == 'grub-install':
-			if hasUEFI():
-				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
-			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f "/sys/class/block/{self.partition.path.strip("/dev/")}/..")',shell=True).decode().strip()
-				if root_device == "block":
-					root_device = f"{self.partition.path}"
-				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=--target=i386-pc /dev/{root_device}'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
+			## And blkid is wrong in terms of LUKS.
+			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+
+			# Setup the loader entry
+			with open(f'{self.mountpoint}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
+				entry.write(f'# Created by: archinstall\n')
+				entry.write(f'# Created on: {self.init_time}\n')
+				entry.write(f'title Arch Linux\n')
+				entry.write(f'linux /vmlinuz-linux\n')
+				entry.write(f'initrd /initramfs-linux.img\n')
+				## blkid doesn't trigger on loopback devices really well,
+				## so we'll use the old manual method until we get that sorted out.
+
+
+				if self.partition.encrypted:
+					log(f"Identifying root partition by DISK-UUID on {self.partition}, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
+					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
+						for uid in uids:
+							real_path = os.path.realpath(os.path.join(root, uid))
+
+							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.real_device)}: {os.path.basename(real_path) == os.path.basename(self.partition.real_device)}", level=LOG_LEVELS.Debug)
+							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
+
+							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+
+							self.helper_flags['bootloader'] = bootloader
+							return True
+						break
+				else:
+					log(f"Identifying root partition by PART-UUID on {self.partition}, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
+					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
+						for uid in uids:
+							real_path = os.path.realpath(os.path.join(root, uid))
+
+							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.path)}: {os.path.basename(real_path) == os.path.basename(self.partition.path)}", level=LOG_LEVELS.Debug)
+							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
+
+							entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
+
+							self.helper_flags['bootloader'] = bootloader
+							return True
+						break
+
+			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 
@@ -377,7 +405,17 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		profile = Profile(self, profile)
+		# TODO: Replace this with a import archinstall.session instead in the profiles.
+		# The tricky thing with doing the import archinstall.session instead is that
+		# profiles might be run from a different chroot, and there's no way we can
+		# guarantee file-path safety when accessing the installer object that way.
+		# Doing the __builtins__ replacement, ensures that the global vriable "installation"
+		# is always kept up to date. It's considered a nasty hack - but it's a safe way
+		# of ensuring 100% accuracy of archinstall session variables.
+		__builtins__['installation'] = self
+
+		if type(profile) == str:
+			profile = Profile(self, profile)
 
 		self.log(f'Installing network profile {profile}', level=LOG_LEVELS.Info)
 		return profile.install()

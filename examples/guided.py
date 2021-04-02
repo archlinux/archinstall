@@ -53,7 +53,7 @@ def ask_user_questions():
 	# 3. Check that we support the current partitions
 	# 2. If so, ask if we should keep them or wipe everything
 	if archinstall.arguments['harddrive'].has_partitions():
-		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='red')
+		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
 		# We curate a list pf supported paritions
 		# and print those that we don't support.
@@ -91,7 +91,11 @@ def ask_user_questions():
 						new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
 						if len(new_filesystem) <= 0:
 							if partition.encrypted and partition.filesystem == 'crypto_LUKS':
-								if (autodetected_filesystem := partition.detect_inner_filesystem(archinstall.arguments.get('!encryption-password', None))):
+								old_password = archinstall.arguments.get('!encryption-password', None)
+								if not old_password:
+									old_password = input(f'Enter the old encryption password for {partition}: ')
+
+								if (autodetected_filesystem := partition.detect_inner_filesystem(old_password)):
 									new_filesystem = autodetected_filesystem
 								else:
 									archinstall.log(f"Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
@@ -127,11 +131,17 @@ def ask_user_questions():
 		elif option == 'format-all':
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
+	else:
+		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
+		# and ask the user for a root filesystem.
+		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+		archinstall.arguments['harddrive'].keep_partitions = False
 
 	# Get disk encryption password (or skip if blank)
 	if not archinstall.arguments.get('!encryption-password', None):
-		archinstall.arguments['!encryption-password'] = archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')
-	archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
+		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
+			archinstall.arguments['!encryption-password'] = passwd
+			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
@@ -139,7 +149,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommended: leave blank to leave root disabled): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	archinstall.arguments['users'] = {}
@@ -147,7 +157,7 @@ def ask_user_questions():
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 
-	users, superusers = archinstall.ask_for_additional_users('Any additional users to install (leave blank for no users): ')
+	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
 	archinstall.arguments['users'] = users
 	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
@@ -170,7 +180,7 @@ def ask_user_questions():
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
-		archinstall.arguments['packages'] = [package for package in input('Additional packages aside from base (space separated): ').split(' ') if len(package)]
+		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
 	# Verify packages that were given
 	try:
@@ -182,6 +192,11 @@ def ask_user_questions():
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
 		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
+		if not archinstall.arguments['nic']:
+			archinstall.log(f"No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
+
+	if not archinstall.arguments.get('timezone', None):
+		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
 
 def perform_installation_steps():
@@ -232,10 +247,10 @@ def perform_installation_steps():
 	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
 		# Wipe the entire drive if the disk flag `keep_partitions`is False.
 		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'),
-								encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
-		# Otherwise, check if encryption is desired and mark the root partition as encrypted.
-		elif archinstall.arguments.get('!encryption-password', None):
+			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+		
+		# Check if encryption is desired and mark the root partition as encrypted.
+		if archinstall.arguments.get('!encryption-password', None):
 			root_partition = fs.find_partition('/')
 			root_partition.encrypted = True
 				
@@ -243,8 +258,11 @@ def perform_installation_steps():
 		# which ones are safe to format, and format those.
 		for partition in archinstall.arguments['harddrive']:
 			if partition.safe_to_format():
-				if partition.encrypted:
-					partition.encrypt(password=archinstall.arguments.get('!encryption-password', None))
+				# Partition might be marked as encrypted due to the filesystem type crypt_LUKS
+				# But we might have omitted the encryption password question to skip encryption.
+				# In which case partition.encrypted will be true, but passwd will be false.
+				if partition.encrypted and (passwd := archinstall.arguments.get('!encryption-password', None)):
+					partition.encrypt(password=passwd)
 				else:
 					partition.format()
 			else:
@@ -262,7 +280,6 @@ def perform_installation_steps():
 										language=archinstall.arguments['keyboard-language'],
 										mirrors=archinstall.arguments['mirror-region'])
 		else:
-			archinstall.arguments['harddrive'].partition[1].format('ext4')
 			perform_installation(device=fs.find_partition('/'),
 									boot_partition=fs.find_partition('/boot'),
 									language=archinstall.arguments['keyboard-language'],
@@ -305,18 +322,17 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
-			if archinstall.arguments.get('profile', None) and len(profile := archinstall.arguments.get('profile').strip()):
-				installation.install_profile(profile)
+			if archinstall.arguments.get('profile', None):
+				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			if archinstall.arguments.get('users', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=False)
-			if archinstall.arguments.get('superusers', None):
-				for user in archinstall.arguments.get('users'):
-					password = users[user]
-					installation.user_create(user, password, sudo=Tru)
+			for user, user_info in archinstall.arguments.get('users', {}).items():
+				installation.user_create(user, user_info["!password"], sudo=False)
+			
+			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
+				installation.user_create(superuser, user_info["!password"], sudo=True)
 
+			if (timezone := archinstall.arguments.get('timezone', None)):
+				installation.set_timezone(timezone)
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)

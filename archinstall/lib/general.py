@@ -105,8 +105,13 @@ class sys_command():#Thread):
 		self.status = 'starting'
 
 		user_catalogue = os.path.expanduser('~')
-		self.cwd = f"{user_catalogue}/.cache/archinstall/workers/{kwargs['worker_id']}/"
-		self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
+
+		if (workdir := kwargs.get('workdir', None)):
+			self.cwd = workdir
+			self.exec_dir = workdir
+		else:
+			self.cwd = f"{user_catalogue}/.cache/archinstall/workers/{kwargs['worker_id']}/"
+			self.exec_dir = f'{self.cwd}/{os.path.basename(self.cmd[0])}_workingdir'
 
 		if not self.cmd[0][0] == '/':
 			# "which" doesn't work as it's a builtin to bash.
@@ -251,7 +256,7 @@ class sys_command():#Thread):
 		if self.exit_code != 0 and not self.kwargs['suppress_errors']:
 			#self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
 			#self.log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", level=LOG_LEVELS.Error)
-			raise SysCallError(f"{self.trace_log.decode('UTF-8')}\n'{self.raw_cmd}' did not exit gracefully (trace log above), exit code: {self.exit_code}")
+			raise SysCallError(message=f"{self.trace_log.decode('UTF-8')}\n'{self.raw_cmd}' did not exit gracefully (trace log above), exit code: {self.exit_code}", exit_code=self.exit_code)
 
 		self.ended = time.time()
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:

@@ -1,4 +1,4 @@
-import getpass
+import getpass, pathlib, os, shutil
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -9,14 +9,43 @@ from .networking import list_interfaces
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
 
+def get_terminal_height():
+	return shutil.get_terminal_size().lines
+
+def get_terminal_width():
+	return shutil.get_terminal_size().columns
+
+def get_longest_option(options):
+	return max([len(x) for x in options])
+
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', bg='black', fg='red')
 			continue
+
+		if len(passwd.strip()) <= 0:
+			break
+
 		return passwd
 	return None
+
+def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
+	highest_index_number_length = len(str(len(options)))
+	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
+	max_num_of_columns = get_terminal_width() // longest_line
+	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
+
+	if (len(options) > max_options_in_cells):
+		for index, option in enumerate(options):
+			print(f"{index}: {option}")
+	else:
+		for row in range(0, (get_terminal_height()-margin_bottom)):
+			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
+				spaces = " "*(longest_line - len(options[column]))
+				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
+			print()
 
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
@@ -31,7 +60,7 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 			raise UserError("No superuser was created.")
 
 		password = get_password(prompt=f'Password for user {new_user}: ')
-		return {new_user: password}
+		return {new_user: {"!password" : password}}
 
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
 	users = {}
@@ -44,11 +73,22 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
 		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
-			super_users[new_user] = password
+			super_users[new_user] = {"!password" : password}
 		else:
-			users[new_user] = password
+			users[new_user] = {"!password" : password}
 
 	return users, super_users
+
+def ask_for_a_timezone():
+	timezone = input('Enter a valid timezone (Example: Europe/Stockholm): ').strip()
+	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
+		return timezone
+	else:
+		log(
+			f"Time zone {timezone} does not exist, continuing with system default.",
+			level=LOG_LEVELS.Warning,
+			fg='red'
+		)
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.
@@ -102,11 +142,10 @@ def ask_for_main_filesystem_format():
 		'btrfs' : 'btrfs',
 		'ext4' : 'ext4',
 		'xfs' : 'xfs',
-		'f2fs' : 'f2fs',
-		'vfat' : 'vfat'
+		'f2fs' : 'f2fs'
 	}
 
-	value = generic_select(options.values(), "Select your main partitions filesystem by number or free-text: ")
+	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
@@ -131,7 +170,10 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	if len(selected_option.strip()) <= 0:
 		return None
 	elif selected_option.isdigit():
-		selected_option = options[int(selected_option)]
+		selected_option = int(selected_option)
+		if selected_option >= len(options):
+			raise RequirementError(f'Selected option "{selected_option}" is out of range')
+		selected_option = options[selected_option]
 	elif selected_option in options:
 		pass # We gave a correct absolute value
 	else:
@@ -156,7 +198,10 @@ def select_disk(dict_o_disks):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 		drive = input('Select one of the above disks (by number or full path): ')
 		if drive.isdigit():
-			drive = dict_o_disks[drives[int(drive)]]
+			drive = int(drive)
+			if drive >= len(drives):
+				raise DiskError(f'Selected option "{drive}" is out of range')
+			drive = dict_o_disks[drives[drive]]
 		elif drive in dict_o_disks:
 			drive = dict_o_disks[drive]
 		else:
@@ -182,10 +227,10 @@ def select_profile(options):
 		for index, profile in enumerate(profiles):
 			print(f"{index}: {profile}")
 
-		print(' -- The above list is pre-programmed profiles. --')
+		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- (Leave blank to skip this next optional step) --')
-		selected_profile = input('Any particular pre-programmed profile you want to install: ')
+		print(' -- (Leave blank and hit enter to skip this step and continue) --')
+		selected_profile = input('Enter a pre-programmed profile name if you want to install one: ')
 
 		if len(selected_profile.strip()) <= 0:
 			return None
@@ -265,23 +310,12 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		for index, region in enumerate(regions):
-			print(f"{index}: {region}")
+		print_large_list(regions, margin_bottom=2)
 
-		print(' -- You can enter ? or help to search for more regions --')
 		print(' -- You can skip this step by leaving the option blank --')
-		print(' -- (You can use Shift + PageUp to scroll in the list --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
 		if len(selected_mirror.strip()) == 0:
 			return {}
-
-		elif selected_mirror.lower() in ('?', 'help'):
-			filter_string = input('Search for a region containing (example: "united"): ').strip().lower()
-			for region in mirrors:
-				if filter_string in region.lower():
-					selected_mirrors[region] = mirrors[region]
-
-			return selected_mirrors
 
 		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(regions)-1:
 			region = regions[int(selected_mirror)]
