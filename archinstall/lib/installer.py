@@ -52,7 +52,7 @@ class Installer():
 			'user' : False # Root counts as a user, if additional users are skipped.
 		}
 
-		self.base_packages = base_packages.split(' ')
+		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		self.post_base_install = []
 		storage['session'] = self
 
