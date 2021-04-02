@@ -10,7 +10,7 @@ But the library can be installed manually as well.
     This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
 
 Using pacman
-----------
+------------
 
 Archinstall is on the `official repositories <https://wiki.archlinux.org/index.php/Official_repositories>`_.
 
