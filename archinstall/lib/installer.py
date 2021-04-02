@@ -67,9 +67,11 @@ class Installer():
 		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
-		self.partition.mount(self.mountpoint)
-		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
-		self.boot_partition.mount(f'{self.mountpoint}/boot')
+		if hasUEFI():
+			# on bios we don't have a boot partition
+			self.partition.mount(self.mountpoint)
+			os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
+			self.boot_partition.mount(f'{self.mountpoint}/boot')
 		return self
 
 	def __exit__(self, *args, **kwargs):
