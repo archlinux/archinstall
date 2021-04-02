@@ -44,7 +44,7 @@ Or as a user module:
 
 Which will allow you to start using the library.
 
-.. _installing.python.manual
+.. _installing.python.manual:
 
 Manual installation
 -------------------
