@@ -9,9 +9,9 @@ The way the library is invoked in module mode is limited to executing scripts un
 It's there for important to place any script or profile you wish to invoke in the examples folder prior to building and installing.
 
 Pre-requisites
--------------
+--------------
 
-We'll assume you've followed the `installing.python.manual`_ method.
+We'll assume you've followed the :ref:`installing.python.manual` method.
 Before actually installing the library, you will need to place your custom installer-scripts under `./archinstall/examples/` as a python file.
 
 More on how you create these in the next section.

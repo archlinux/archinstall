@@ -3,9 +3,7 @@ from .general import sys_command
 from .networking import list_interfaces, enrichIfaceTypes
 
 def hasWifi():
-	if 'WIRELESS' in enrichIfaceTypes(list_interfaces().values()).values():
-		return True
-	return False
+	return 'WIRELESS' in enrichIfaceTypes(list_interfaces().values()).values()
 
 def hasAMDCPU():
 	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
@@ -24,18 +22,12 @@ def graphicsDevices():
 	return cards
 
 def hasNvidiaGraphics():
-	if [x for x in graphicsDevices() if 'nvidia' in x]:
-		return True
-	return False
+	return any('nvidia' in x for x in graphicsDevices())
 
 def hasAmdGraphics():
-	if [x for x in graphicsDevices() if 'amd' in x]:
-		return True
-	return False
+	return any('amd' in x for x in graphicsDevices())
 
 def hasIntelGraphics():
-	if [x for x in graphicsDevices() if 'intel' in x]:
-		return True
-	return False
+	return any('intel' in x for x in graphicsDevices())
 
 # TODO: Add more identifiers
