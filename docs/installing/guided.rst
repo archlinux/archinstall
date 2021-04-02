@@ -100,6 +100,8 @@ Default is :code:`Archinstall`
 The hostname in which the machine will identify itself on the local network.
 This step is optional, but a default hostname of `Archinstall` will be set if none is selected.
 
+.. _root_password:
+
 Root password
 -------------
 
@@ -115,7 +117,7 @@ Super User (sudo)
 -----------------
 
 .. warning::
-    This step only applies if you correctly skipped the previous step :ref:`root_password`_ which also makes this step mandatory.
+    This step only applies if you correctly skipped :ref:`the previous step <root_password>` which also makes this step mandatory.
 
 If the previous step was skipped, and only if it is skipped.
 This step enables you to create a :code:`sudo` enabled user with a password.
