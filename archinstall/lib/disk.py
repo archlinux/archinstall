@@ -390,12 +390,9 @@ class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice):
+	def __init__(self, blockdevice,mode):
 		self.blockdevice = blockdevice
-		if hasUEFI():
-			self.mode = GPT
-		else:
-			self.mode = MBR
+		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
 		if self.blockdevice.keep_partitions is False:

@@ -1,5 +1,6 @@
 import getpass, time, json, sys, signal, os
 import archinstall
+from archinstall.lib.hardware import hasUEFI
 
 """
 This signal-handler chain (and global variable)
@@ -244,7 +245,12 @@ def perform_installation_steps():
 		Setup the blockdevice, filesystem (and optionally encryption).
 		Once that's done, we'll hand over to perform_installation()
 	"""
-	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+	# maybe we can ask the user what they would prefer on uefi systems?
+	if hasUEFI():
+		mode = archinstall.GPT
+	else:
+		mode = archinstall.MBR
+	with archinstall.Filesystem(archinstall.arguments['harddrive'],mode) as fs:
 		# Wipe the entire drive if the disk flag `keep_partitions`is False.
 		if archinstall.arguments['harddrive'].keep_partitions is False:
 			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
