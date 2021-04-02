@@ -94,8 +94,8 @@ class luks2():
 			else:
 				raise err
 
-		if b'Command successful.' not in b''.join(cmd_handle):
-			raise DiskError(f'Could not encrypt volume "{partition.path}": {o}')
+		if b'Command successful.' not in (cmd_output := b''.join(cmd_handle)):
+			raise DiskError(f'Could not encrypt volume "{partition.path}": {cmd_output}')
 	
 		return key_file
 
