@@ -1,10 +1,11 @@
 import glob, re, os, json, time, hashlib
-import pathlib
+import pathlib, traceback
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
 from .output import log, LOG_LEVELS
 from .storage import storage
+from .hardware import hasUEFI
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -107,7 +108,7 @@ class BlockDevice():
 				if part_id not in self.part_cache:
 					## TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
-						self.part_cache[part_id] = Partition(root_path + part_id, part_id=part_id, size=part['size'])
+						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
@@ -133,15 +134,18 @@ class BlockDevice():
 		self.part_cache = OrderedDict()
 
 class Partition():
-	def __init__(self, path, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
+
+		self.block_device = block_device
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self.size = size # TODO: Refresh?
+		self._encrypted = None
 		self.encrypted = encrypted
 		self.allow_formatting = False # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
 
@@ -177,14 +181,26 @@ class Partition():
 		elif self.target_mountpoint:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
-		if self.encrypted:
+		if self._encrypted:
 			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
 
 	@property
+	def encrypted(self):
+		return self._encrypted
+
+	@encrypted.setter
+	def encrypted(self, value :bool):
+		if value:
+			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
+			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+
+		self._encrypted = value
+
+	@property
 	def real_device(self):
-		if not self.encrypted:
+		if not self._encrypted:
 			return self.path
 		else:
 			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
@@ -237,7 +253,7 @@ class Partition():
 		"""
 		from .luks import luks2
 
-		if not self.encrypted:
+		if not self._encrypted:
 			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
 
 		if not self.safe_to_format():
@@ -259,6 +275,11 @@ class Partition():
 			path = self.path
 		if allow_formatting is None:
 			allow_formatting = self.allow_formatting
+
+		# To avoid "unable to open /dev/x: No such file or directory"
+		start_wait = time.time()
+		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
+			time.sleep(0.025)
 
 		if not allow_formatting:
 			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
@@ -301,6 +322,12 @@ class Partition():
 
 		else:
 			raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
+
+		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':
+			self.encrypted = True
+		else:
+			self.encrypted = False
+
 		return True
 
 	def find_parent_of(self, data, name, parent=None):
@@ -363,7 +390,7 @@ class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice, mode=GPT):
+	def __init__(self, blockdevice,mode):
 		self.blockdevice = blockdevice
 		self.mode = mode
 
@@ -376,6 +403,11 @@ class Filesystem():
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+			elif self.mode == MBR:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
+					return self
+				else:
+					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 		
@@ -416,34 +448,41 @@ class Filesystem():
 		"""
 		return self.raw_parted(string).exit_code
 
-	def use_entire_disk(self, root_filesystem_type='ext4', encrypt_root_partition=True):
+	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
-		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
-		self.set_name(0, 'EFI')
-		self.set(0, 'boot on')
-		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
-		# https://www.gnu.org/software/parted/manual/html_node/set.html
-		self.set(0, 'esp on')
-		self.add_partition('primary', start='513MiB', end='100%')
+		if hasUEFI():
+			self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
+			self.set_name(0, 'EFI')
+			self.set(0, 'boot on')
+			# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
+			# https://www.gnu.org/software/parted/manual/html_node/set.html
+			self.set(0, 'esp on')
+			self.add_partition('primary', start='513MiB', end='100%')
 
-		self.blockdevice.partition[0].filesystem = 'vfat'
-		self.blockdevice.partition[1].filesystem = root_filesystem_type
-		log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
+			self.blockdevice.partition[0].filesystem = 'vfat'
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
 
-		self.blockdevice.partition[0].target_mountpoint = '/boot'
-		self.blockdevice.partition[1].target_mountpoint = '/'
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
 
-		self.blockdevice.partition[0].allow_formatting = True
-		self.blockdevice.partition[1].allow_formatting = True
-
-		if encrypt_root_partition:
-			log(f"Marking partition {self.blockdevice.partition[1]} as encrypted.", level=LOG_LEVELS.Debug)
-			self.blockdevice.partition[1].encrypted = True
+			self.blockdevice.partition[0].allow_formatting = True
+			self.blockdevice.partition[1].allow_formatting = True
+		else:
+			#we don't need a seprate boot partition it would be a waste of space
+			self.add_partition('primary', start='1MB', end='100%')
+			self.blockdevice.partition[0].filesystem=root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
+			self.blockdevice.partition[0].target_mountpoint = '/'
+			self.blockdevice.partition[0].allow_formatting = True
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
 		
 		previous_partitions = self.blockdevice.partitions
+		if self.mode == MBR:
+			if len(self.blockdevice.partitions)>3:
+				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:

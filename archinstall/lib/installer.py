@@ -1,4 +1,4 @@
-import os, stat, time, shutil, pathlib
+import os, stat, time, shutil, pathlib, subprocess
 
 from .exceptions import *
 from .disk import *
@@ -71,9 +71,11 @@ class Installer():
 		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
-		self.partition.mount(self.mountpoint)
-		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
-		self.boot_partition.mount(f'{self.mountpoint}/boot')
+		if hasUEFI():
+			# on bios we don't have a boot partition
+			self.partition.mount(self.mountpoint)
+			os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
+			self.boot_partition.mount(f'{self.mountpoint}/boot')
 		return self
 
 	def __exit__(self, *args, **kwargs):
@@ -173,11 +175,19 @@ class Installer():
 		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
-		if not len(zone): return True
+		if not zone: return True
+		if not len(zone): return True # Redundant
 
-		(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
-		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
-		return True
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/zone).exists():
+			(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
+			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
+			return True
+		else:
+			self.log(
+				f"Time zone {zone} does not exist, continuing with system default.",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
 
 	def activate_ntp(self):
 		self.log(f'Installing and activating NTP.', level=LOG_LEVELS.Info)
@@ -325,6 +335,8 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
+			if not hasUEFI():
+				raise HardwareIncompatibilityError
 			# TODO: Ideally we would want to check if another config
 			# points towards the same disk and/or partition.
 			# And in which case we should do some clean up.
@@ -365,10 +377,12 @@ class Installer():
 
 
 				if self.partition.encrypted:
-					log(f"Identifying root partition {self.partition} to boot based on disk UUID, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
+					log(f"Identifying root partition by DISK-UUID on {self.partition}, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
+
+							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.real_device)}: {os.path.basename(real_path) == os.path.basename(self.partition.real_device)}", level=LOG_LEVELS.Debug)
 							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
 
 							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
@@ -377,10 +391,12 @@ class Installer():
 							return True
 						break
 				else:
-					log(f"Identifying root partition {self.partition} to boot based on partition UUID, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
+					log(f"Identifying root partition by PART-UUID on {self.partition}, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
+
+							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.path)}: {os.path.basename(real_path) == os.path.basename(self.partition.path)}", level=LOG_LEVELS.Debug)
 							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
 
 							entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
@@ -390,6 +406,16 @@ class Installer():
 						break
 
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+		elif bootloader == "grub-install":
+			if hasUEFI():
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
+				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+			else:
+				root_device = subprocess.check_output(f'basename "$(readlink -f "/sys/class/block/{self.partition.path.strip("/dev/")}/..")',shell=True).decode().strip()
+				if root_device == "block":
+					root_device = f"{self.partition.path}"
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} grub-install --target=--target=i386-pc /dev/{root_device}'))
+				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 

@@ -1,5 +1,6 @@
 import getpass, time, json, sys, signal, os
 import archinstall
+from archinstall.lib.hardware import hasUEFI
 
 """
 This signal-handler chain (and global variable)
@@ -139,7 +140,7 @@ def ask_user_questions():
 
 	# Get disk encryption password (or skip if blank)
 	if not archinstall.arguments.get('!encryption-password', None):
-		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 
@@ -244,13 +245,18 @@ def perform_installation_steps():
 		Setup the blockdevice, filesystem (and optionally encryption).
 		Once that's done, we'll hand over to perform_installation()
 	"""
-	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+	# maybe we can ask the user what they would prefer on uefi systems?
+	if hasUEFI():
+		mode = archinstall.GPT
+	else:
+		mode = archinstall.MBR
+	with archinstall.Filesystem(archinstall.arguments['harddrive'],mode) as fs:
 		# Wipe the entire drive if the disk flag `keep_partitions`is False.
 		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'),
-								encrypt_root_partition=archinstall.arguments.get('!encryption-password', False))
-		# Otherwise, check if encryption is desired and mark the root partition as encrypted.
-		elif archinstall.arguments.get('!encryption-password', None):
+			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+		
+		# Check if encryption is desired and mark the root partition as encrypted.
+		if archinstall.arguments.get('!encryption-password', None):
 			root_partition = fs.find_partition('/')
 			root_partition.encrypted = True
 				

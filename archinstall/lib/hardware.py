@@ -1,9 +1,14 @@
-import os
+import os, subprocess
 from .general import sys_command
 from .networking import list_interfaces, enrichIfaceTypes
 
 def hasWifi():
 	if 'WIRELESS' in enrichIfaceTypes(list_interfaces().values()).values():
+		return True
+	return False
+
+def hasAMDCPU():
+	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
 		return True
 	return False
 
