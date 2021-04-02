@@ -86,11 +86,19 @@ class sys_command():#Thread):
 		if kwargs['emulate']:
 			self.log(f"Starting command '{cmd}' in emulation mode.", level=LOG_LEVELS.Debug)
 
-		self.raw_cmd = cmd
-		try:
-			self.cmd = shlex.split(cmd)
-		except Exception as e:
-			raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
+		if type(cmd) is list:
+			# if we get a list of arguments
+			self.raw_cmd = shlex.join(cmd)
+			self.cmd = cmd
+		else:
+			# else consider it a single shell string
+			# this should only be used if really necessary
+			self.raw_cmd = cmd
+			try:
+				self.cmd = shlex.split(cmd)
+			except Exception as e:
+				raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
+
 		self.args = args
 		self.kwargs = kwargs
 

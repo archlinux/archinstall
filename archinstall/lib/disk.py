@@ -72,7 +72,7 @@ class BlockDevice():
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(sys_command(f'losetup --json', hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(sys_command(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path: continue
 
 				return drive['back-file']
@@ -88,10 +88,10 @@ class BlockDevice():
 
 	@property
 	def partitions(self):
-		o = b''.join(sys_command(f'partprobe {self.path}'))
+		o = b''.join(sys_command(['partprobe', self.path]))
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
-		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
+		o = b''.join(sys_command(['/usr/bin/lsblk', '-J', self.path]))
 
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
@@ -202,7 +202,7 @@ class Partition():
 		if not self._encrypted:
 			return self.path
 		else:
-			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
+			for blockdevice in json.loads(b''.join(sys_command(['lsblk', '-J'])).decode('UTF-8'))['blockdevices']:
 				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
 					return f"/dev/{parent}"
 		#	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
