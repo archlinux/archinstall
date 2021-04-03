@@ -78,10 +78,15 @@ class BlockDevice():
 				return drive['back-file']
 		elif self.info['type'] == 'disk':
 			return self.path
+		elif self.info['type'][:4] == 'raid':
+			# This should catch /dev/md## raid devices
+			return self.path
 		elif self.info['type'] == 'crypt':
 			if 'pkname' not in self.info:
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
+		else:
+			raise DiskError(f"Could not locate actual block device path for {self.path}")
 
 	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	#		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
