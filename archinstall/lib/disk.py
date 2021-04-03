@@ -245,9 +245,15 @@ class Partition():
 		if self.allow_formatting is False:
 			log(f"Partition {self} is not marked for formatting.", level=LOG_LEVELS.Debug)
 			return False
-		elif self.target_mountpoint == '/boot' and self.has_content():
-			log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
-			return False
+		elif self.target_mountpoint == '/boot':
+			try:
+				if self.has_content():
+					log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
+					return False
+			except SysCallError as err:
+				log(err.message, LOG_LEVELS.Debug)
+				log(f"Partition {self} was identified as /boot but we could not mount to check for content, continuing!", level=LOG_LEVELS.Debug)
+				pass
 
 		return True
 
