@@ -392,18 +392,10 @@ class Installer():
 						break
 				else:
 					log(f"Identifying root partition by PART-UUID on {self.partition}, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
-					for root, folders, uids in os.walk('/dev/disk/by-partuuid'):
-						for uid in uids:
-							real_path = os.path.realpath(os.path.join(root, uid))
+					entry.write(f'options root=PARTUUID={self.partition.uuid} rw intel_pstate=no_hwp\n')
 
-							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.path)}: {os.path.basename(real_path) == os.path.basename(self.partition.path)}", level=LOG_LEVELS.Debug)
-							if not os.path.basename(real_path) == os.path.basename(self.partition.path): continue
-
-							entry.write(f'options root=PARTUUID={uid} rw intel_pstate=no_hwp\n')
-
-							self.helper_flags['bootloader'] = bootloader
-							return True
-						break
+					self.helper_flags['bootloader'] = bootloader
+					return True
 
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
 		elif bootloader == "grub-install":

@@ -79,10 +79,15 @@ class BlockDevice():
 				return drive['back-file']
 		elif self.info['type'] == 'disk':
 			return self.path
+		elif self.info['type'][:4] == 'raid':
+			# This should catch /dev/md## raid devices
+			return self.path
 		elif self.info['type'] == 'crypt':
 			if 'pkname' not in self.info:
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
+		else:
+			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=LOG_LEVELS.Debug)
 
 	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	#		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
@@ -187,6 +192,17 @@ class Partition():
 			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
 
 	@property
+	def uuid(self) -> str:
+		"""
+		Returns the PARTUUID as returned by lsblk.
+		This is more reliable than relying on /dev/disk/by-partuuid as
+		it doesn't seam to be able to detect md raid partitions.
+		"""
+		lsblk = b''.join(sys_command(f'lsblk -J {self.path}'))
+		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
+			return partition['partuuid']
+
+	@property
 	def encrypted(self):
 		return self._encrypted
 
@@ -241,9 +257,15 @@ class Partition():
 		if self.allow_formatting is False:
 			log(f"Partition {self} is not marked for formatting.", level=LOG_LEVELS.Debug)
 			return False
-		elif self.target_mountpoint == '/boot' and self.has_content():
-			log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
-			return False
+		elif self.target_mountpoint == '/boot':
+			try:
+				if self.has_content():
+					log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
+					return False
+			except SysCallError as err:
+				log(err.message, LOG_LEVELS.Debug)
+				log(f"Partition {self} was identified as /boot but we could not mount to check for content, continuing!", level=LOG_LEVELS.Debug)
+				pass
 
 		return True
 

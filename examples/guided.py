@@ -20,6 +20,9 @@ def sig_handler(sig, frame):
 original_sigint_handler = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, sig_handler)
 
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
 
 def ask_user_questions():
 	"""

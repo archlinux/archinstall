@@ -272,9 +272,16 @@ def select_language(options, show_only_country_codes=True):
 		print(' -- You can enter ? or help to search for more languages --')
 		selected_language = input('Select one of the above keyboard languages (by number or full name): ')
 		if selected_language.lower() in ('?', 'help'):
-			filter_string = input('Search for layout containing (example: "sv-"): ')
-			new_options = search_keyboard_layout(filter_string)
-			return select_language(new_options, show_only_country_codes=False)
+			while True:
+				filter_string = input('Search for layout containing (example: "sv-"): ')
+				new_options = list(search_keyboard_layout(filter_string))
+
+				if len(new_options) <= 0:
+					log(f"Search string '{filter_string}' yielded no results, please try another search or Ctrl+D to abort.", fg='yellow')
+					continue
+
+				return select_language(new_options, show_only_country_codes=False)
+
 		elif selected_language.isdigit() and (pos := int(selected_language)) <= len(languages)-1:
 			selected_language = languages[pos]
 		# I'm leaving "options" on purpose here.
