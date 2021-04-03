@@ -22,7 +22,7 @@ def _prep_function(*args, **kwargs):
 
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("xfce4", "/somewhere/xfce4.py")
-# or through conventional import gnome
+# or through conventional import xfce4
 if __name__ == 'xfce4':
 	# Install dependency profiles
 	installation.install_profile('xorg')
