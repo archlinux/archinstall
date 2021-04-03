@@ -85,8 +85,6 @@ class BlockDevice():
 			if 'pkname' not in self.info:
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
-		else:
-			raise DiskError(f"Could not locate actual block device path for {self.path}")
 
 	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	#		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
