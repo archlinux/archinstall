@@ -317,6 +317,9 @@ def perform_installation(device, boot_partition, language, mirrors):
 			# Perform a copy of the config
 			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
+			elif archinstall.arguments.get('nic',None) == None:
+				#skip if we don't have a network
+				pass
 			elif archinstall.arguments.get('nic',{}).get('NetworkManager',False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
@@ -325,7 +328,6 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.configure_nic(**archinstall.arguments.get('nic', {}))
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
-
 
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
