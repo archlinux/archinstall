@@ -88,7 +88,7 @@ def log(*args, **kwargs):
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if supports_color():
-		kwargs = {'bg' : 'black', 'fg': 'white', **kwargs}
+		kwargs = {'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
 
 	# If a logfile is defined in storage,
