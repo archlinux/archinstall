@@ -85,7 +85,7 @@ class Installer():
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
-			print(f"    Please submit this issue (and file) to https://github.com/Torxed/archinstall/issues")
+			print(f"    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
@@ -99,7 +99,7 @@ class Installer():
 			for step in missing_steps:
 				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			self.log(f"Detailed error logs can be found at: {log_path}", level=LOG_LEVELS.Warning)
-			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues", level=LOG_LEVELS.Warning)
+			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=LOG_LEVELS.Warning)
 			self.sync_log_to_install_medium()
 			return False
 

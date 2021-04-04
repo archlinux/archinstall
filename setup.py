@@ -14,7 +14,7 @@ setuptools.setup(
 	description="Arch Linux installer - guided, templates etc.",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
-	url="https://github.com/Torxed/archinstall",
+	url="https://github.com/archlinux/archinstall",
 	packages=setuptools.find_packages(),
 	classifiers=[
 		"Programming Language :: Python :: 3.8",
