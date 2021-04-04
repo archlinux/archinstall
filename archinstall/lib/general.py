@@ -5,7 +5,6 @@ from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
 from .output import log, LOG_LEVELS
-from .user_interaction import get_terminal_width
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -162,6 +161,8 @@ class sys_command():#Thread):
 
 	def peak(self, output):
 		if self.peak_output:
+			from .user_interaction import get_terminal_width
+			
 			# Move back to the beginning of the terminal
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % 0)
