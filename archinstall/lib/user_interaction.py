@@ -176,7 +176,7 @@ def ask_to_configure_network():
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}s
+			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
 		else:
 			return {'nic': nic,'NetworkManager':True}
 	elif nic:
