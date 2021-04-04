@@ -22,7 +22,7 @@ def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
-			log(' * Passwords did not match * ', bg='black', fg='red')
+			log(' * Passwords did not match * ', fg='red')
 			continue
 
 		if len(passwd.strip()) <= 0:
@@ -54,7 +54,7 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
+			log(' * Since root is disabled, you need to create a least one (super) user!', fg='red')
 			continue
 		elif not new_user and not forced:
 			raise UserError("No superuser was created.")
@@ -108,7 +108,6 @@ def ask_to_configure_network():
 					log(
 						"You need to enter a valid IP in IP-config mode.",
 						level=LOG_LEVELS.Warning,
-						bg='black',
 						fg='red'
 					)
 
