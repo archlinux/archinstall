@@ -283,6 +283,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
 			elif archinstall.arguments.get('NetworkManager',None) == True:
+				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
 			elif archinstall.arguments.get('nic', None):
