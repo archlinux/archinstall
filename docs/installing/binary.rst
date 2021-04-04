@@ -1,10 +1,10 @@
-.. _installing.binary
+.. _installing.binary:
 
 Binary executable
 =================
 
 Archinstall can be compiled into a standalone executable.
-For Arch Linux based systems, there's a package for this called `archinstall <https://archlinux.life/>`_.
+For Arch Linux based systems, there's a package for this called `archinstall <https://archlinux.org/packages/extra/any/archinstall/>`_.
 
 .. warning::
     This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
@@ -37,7 +37,7 @@ Which should produce a `archinstall-X.x.z-1.pkg.tar.zst` that can be installed u
 
 .. note::
 
-    For a complete guide on the build process, please consult the wiki on `PKGBUILD <https://wiki.archlinux.org/index.php/PKGBUILD>`_.
+    For a complete guide on the build process, please consult the `PKGBUILD on ArchWiki <https://wiki.archlinux.org/index.php/PKGBUILD>`_.
 
 Manual compilation
 ------------------

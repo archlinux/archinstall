@@ -6,7 +6,7 @@ from pathlib import Path
 from .storage import storage
 
 # TODO: use logging's built in levels instead.
-#       Altough logging is threaded and I wish to avoid that.
+#       Although logging is threaded and I wish to avoid that.
 #       It's more Pythonistic or w/e you want to call it.
 class LOG_LEVELS:
 	Critical = 0b001

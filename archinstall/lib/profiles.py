@@ -112,11 +112,11 @@ class Script():
 
 			if f"{self.profile}" in self.examples:
 				return self.localize_path(self.examples[self.profile]['path'])
-			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
+			# TODO: Redundant, the below block shouldn't be needed as profiles are stripped of their .py, but just in case for now:
 			elif f"{self.profile}.py" in self.examples:
 				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
 
-			# Path was not found in any known examples, check if it's an abolute path
+			# Path was not found in any known examples, check if it's an absolute path
 			if os.path.isfile(self.profile):
 				return self.profile
 
@@ -156,7 +156,7 @@ class Profile(Script):
 
 	def install(self):
 		# Before installing, revert any temporary changes to the namespace.
-		# This ensures that the namespace during installation is the original initation namespace.
+		# This ensures that the namespace during installation is the original initiation namespace.
 		# (For instance awesome instead of aweosme.py or app-awesome.py)
 		self.namespace = self.original_namespace
 		return self.execute()
@@ -194,11 +194,11 @@ class Application(Profile):
 
 			if f"{self.profile}" in self.examples:
 				return self.localize_path(self.examples[self.profile]['path'])
-			# TODO: Redundant, the below block shouldnt be needed as profiles are stripped of their .py, but just in case for now:
+			# TODO: Redundant, the below block shouldn't be needed as profiles are stripped of their .py, but just in case for now:
 			elif f"{self.profile}.py" in self.examples:
 				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
 
-			# Path was not found in any known examples, check if it's an abolute path
+			# Path was not found in any known examples, check if it's an absolute path
 			if os.path.isfile(self.profile):
 				return os.path.basename(self.profile)
 
@@ -210,7 +210,7 @@ class Application(Profile):
 
 	def install(self):
 		# Before installing, revert any temporary changes to the namespace.
-		# This ensures that the namespace during installation is the original initation namespace.
+		# This ensures that the namespace during installation is the original initiation namespace.
 		# (For instance awesome instead of aweosme.py or app-awesome.py)
 		self.namespace = self.original_namespace
 		return self.execute()

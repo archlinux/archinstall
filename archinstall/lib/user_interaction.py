@@ -151,7 +151,7 @@ def ask_for_main_filesystem_format():
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
 	A generic select function that does not output anything
-	other than the options and their indexs. As an example:
+	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
 	1: first

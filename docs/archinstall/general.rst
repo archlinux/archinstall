@@ -22,7 +22,7 @@ Locale related
 
 .. autofunction:: archinstall.search_keyboard_layout
 
-.. autofunction:: archinstall.set_keyboard_layout
+.. autofunction:: archinstall.set_keyboard_language
 
 Services
 ========
@@ -34,7 +34,7 @@ Mirrors
 
 .. autofunction:: archinstall.filter_mirrors_by_region
 
-.. autofunction:: archinstall.add_custom_mirror
+.. autofunction:: archinstall.add_custom_mirrors
 
 .. autofunction:: archinstall.insert_mirrors
 
