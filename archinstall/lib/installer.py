@@ -73,7 +73,7 @@ class Installer():
 		return self
 
 	def __exit__(self, *args, **kwargs):
-		# b''.join(sys_command(f'sync')) # No need to, since the underlaying fs() object will call sync.
+		# b''.join(sys_command(f'sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
@@ -268,7 +268,7 @@ class Installer():
 		return True
 
 	def minimal_installation(self):
-		## Add nessecary packages if encrypting the drive
+		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
@@ -401,7 +401,7 @@ class Installer():
 		# The tricky thing with doing the import archinstall.session instead is that
 		# profiles might be run from a different chroot, and there's no way we can
 		# guarantee file-path safety when accessing the installer object that way.
-		# Doing the __builtins__ replacement, ensures that the global vriable "installation"
+		# Doing the __builtins__ replacement, ensures that the global variable "installation"
 		# is always kept up to date. It's considered a nasty hack - but it's a safe way
 		# of ensuring 100% accuracy of archinstall session variables.
 		__builtins__['installation'] = self

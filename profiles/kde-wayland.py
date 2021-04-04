@@ -1,4 +1,4 @@
-# A desktop environement using "KDE".
+# A desktop environment using "KDE".
 import archinstall, os
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)

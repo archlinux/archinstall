@@ -66,7 +66,7 @@ Default is :code:`auto detect best mirror`
 
 As an example:
 
- * :code:`Sweden` *(wich a capital :code:`S`)* will only use mirrors from Sweden.
+ * :code:`Sweden` *(with a capital :code:`S`)* will only use mirrors from Sweden.
 
 Selection of drive
 ------------------
