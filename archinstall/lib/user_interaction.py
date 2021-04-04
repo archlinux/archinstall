@@ -152,11 +152,11 @@ def ask_to_configure_network():
 	# Optionally configure one network interface.
 	#while 1:
 	# {MAC: Ifname}
-	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation','NetworkManager':'Use NetworkManager to control and manage you internet conntetion', **list_interfaces()}
+	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation','NetworkManager':'Use NetworkManager to control and manage your internet connection', **list_interfaces()}
 
 	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
-		if nic == 'Use NetworkManager to control and manage you internet conntetion':
+		if nic == 'Use NetworkManager to control and manage your internet connection':
 			return {'nic': nic,'NetworkManager':True}
 		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 		if mode == 'IP (static)':
