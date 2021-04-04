@@ -57,10 +57,10 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 This installer will perform the following:
 
  * Prompt the user to select a disk and disk-password
- * Proceed to wipe the selected disk with a `GPT` partition table on a UEFI system and MBR on a bios system.
+ * Proceed to wipe the selected disk with a `GPT` partition table.
  * Sets up a default 100% used disk with encryption.
  * Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
- * Installs and configures a bootloader to partition 0 on uefi. on bios it sets the root to partition 0.
+ * Installs and configures a bootloader to partition 0.
  * Install additional packages *(nano, wget, git)*
  * Installs a network-profile called [workstation](https://github.com/Torxed/archinstall/blob/master/profiles/workstation.json) *(more on network profiles in the docs)*
 

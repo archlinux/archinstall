@@ -331,8 +331,6 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
-			if not hasUEFI():
-				raise HardwareIncompatibilityError
 			# TODO: Ideally we would want to check if another config
 			# points towards the same disk and/or partition.
 			# And in which case we should do some clean up.
