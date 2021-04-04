@@ -1,4 +1,4 @@
-.. _examples.python:
+.. _examples.binary:
 
 Binary executable
 =================

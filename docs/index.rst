@@ -43,12 +43,15 @@ Some of the features of Archinstall are:
 
    examples/python
    examples/binary
+..
    examples/scripting
 
-.. toctree::
+..
+   .. toctree::
    :maxdepth: 3
    :caption: Programming Guide
 
+..
    programming_guide/requirements
    programming_guide/basic_concept
 
