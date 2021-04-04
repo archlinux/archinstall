@@ -179,7 +179,7 @@ class sys_command():#Thread):
 			sys.stdout.flush()
 
 			# And print the new output we're peaking on:
-			sys.stdout.write(output)
+			sys.stdout.write(output.strip('\r\n '))
 			sys.stdout.flush()
 
 	def run(self):
