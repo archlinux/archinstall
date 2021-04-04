@@ -10,7 +10,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	supported_desktops = ['gnome', 'kde', 'awesome']
+	supported_desktops = ['gnome', 'kde', 'awesome', 'xfce4']
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
 
 	# Temporarly store the selected desktop profile
