@@ -152,7 +152,7 @@ def ask_to_configure_network():
 	# Optionally configure one network interface.
 	#while 1:
 	# {MAC: Ifname}
-	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation', **list_interfaces()}
+	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation','NetworkManager':'Use NetworkManager to control and manage you internet conntetion', **list_interfaces()}
 
 	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
@@ -176,9 +176,9 @@ def ask_to_configure_network():
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
+			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}s
 		else:
-			return {'nic': nic}
+			return {'nic': nic,'NetworkManager':True}
 	elif nic:
 		return nic
 
