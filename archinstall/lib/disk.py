@@ -24,6 +24,7 @@ class BlockDevice():
 
 		self.path = path
 		self.info = info
+		self.keep_partitions = True
 		self.part_cache = OrderedDict()
 		# TODO: Currently disk encryption is a BIT misleading.
 		#       It's actually partition-encryption, but for future-proofing this
