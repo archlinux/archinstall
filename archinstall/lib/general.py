@@ -159,10 +159,16 @@ class sys_command():#Thread):
 			'exit_code': self.exit_code
 		}
 
-	def peak(self, output):
+	def peak(self, output :str):
+		if type(output) == bytes:
+			try:
+				output = output.decode('UTF-8')
+			except UnicodeDecodeError:
+				return None
+
 		if self.peak_output:
 			from .user_interaction import get_terminal_width
-			
+
 			# Move back to the beginning of the terminal
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % 0)

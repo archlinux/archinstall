@@ -137,7 +137,7 @@ class Installer():
 		self.log(f'Installing packages: {packages}', level=LOG_LEVELS.Info)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}', **kwargs)).exit_code == 0:
+			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}', peak_output=True, **kwargs)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=LOG_LEVELS.Info)
