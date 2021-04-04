@@ -13,8 +13,8 @@ def _prep_function(*args, **kwargs):
 	supported_desktops = ['gnome', 'kde', 'awesome']
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
 
-	# Temporarly store the selected desktop profile
-	# in a session-safe location, since this module will get re-loaded
+	# Temporarily store the selected desktop profile
+	# in a session-safe location, since this module will get reloaded
 	# the next time it gets executed.
 	archinstall.storage['_desktop_profile'] = desktop
 
@@ -29,7 +29,7 @@ def _prep_function(*args, **kwargs):
 if __name__ == 'desktop':
 	"""
 	This "profile" is a meta-profile.
-	There are no specific desktop-steps, it simply routes
+	There are no desktop-specific steps, it simply routes
 	the installer to whichever desktop environment/window manager was chosen.
 
 	Maybe in the future, a network manager or similar things *could* be added here.
@@ -37,7 +37,7 @@ if __name__ == 'desktop':
 	it trying to be a turn-key desktop distribution.
 
 	There are plenty of desktop-turn-key-solutions based on Arch Linux,
-	this is therefor just a helper to get started
+	this is therefore just a helper to get started
 	"""
 
 	# TODO: Remove magic variable 'installation' and place it
