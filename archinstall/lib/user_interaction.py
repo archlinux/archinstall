@@ -98,6 +98,8 @@ def ask_to_configure_network():
 
 	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
+		if nic == 'Use NetworkManager to control and manage you internet conntetion':
+			return {'nic': nic,'NetworkManager':True}
 		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
 		if mode == 'IP (static)':
 			while 1:
@@ -121,7 +123,7 @@ def ask_to_configure_network():
 
 			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
 		else:
-			return {'nic': nic,'NetworkManager':True}
+			return {'nic': nic}
 	elif nic:
 		return nic
 
