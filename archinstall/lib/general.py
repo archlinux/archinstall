@@ -166,6 +166,13 @@ class sys_command():#Thread):
 			except UnicodeDecodeError:
 				return None
 
+		output = output.strip('\r\n ')
+		if len(output) <= 0:
+			return None
+
+		print([output])
+		return None
+
 		if self.peak_output:
 			from .user_interaction import get_terminal_width
 
@@ -179,7 +186,7 @@ class sys_command():#Thread):
 			sys.stdout.flush()
 
 			# And print the new output we're peaking on:
-			sys.stdout.write(output.strip('\r\n '))
+			sys.stdout.write(output)
 			sys.stdout.flush()
 
 	def run(self):
