@@ -49,7 +49,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
-		new_user = input(prompt).strip(' ')
+		new_user = input(prompt).strip(' ').lower()
 		
 		if not new_user and forced:
 			# TODO: make this text more generic?
@@ -67,7 +67,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	super_users = {}
 
 	while 1:
-		new_user = input(prompt).strip(' ')
+		new_user = input(prompt).strip(' ').lower()
 		if not new_user:
 			break
 		password = get_password(prompt=f'Password for user {new_user}: ')
