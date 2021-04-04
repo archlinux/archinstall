@@ -54,7 +54,7 @@ Or you can clone it, we'll clone it here but both methods work the same.
 
 .. code-block:: console
 
-    git clone https://github.com/Torxed/archinstall
+    git clone https://github.com/archlinux/archinstall
 
 Either you can move the folder into your project and simply do
 

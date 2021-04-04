@@ -112,7 +112,7 @@ def ask_user_questions():
 						try:
 							partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
 						except archinstall.UnknownFilesystemFormat:
-							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
+							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
 							archinstall.log(f"Until then, please enter another supported filesystem.")
 							continue
 						except archinstall.SysCallError:

@@ -21,7 +21,7 @@ Archinstall is on the `official repositories <https://wiki.archlinux.org/index.p
 Using PKGBUILD
 --------------
 
-The `source <https://github.com/Torxed/archinstall>`_ contains a binary `PKGBUILD <https://github.com/Torxed/archinstall/tree/master/PKGBUILD/archinstall>`_ which can be either copied straight off the website. Or cloned using `git clone https://github.com/Torxed/archinstall`.
+The `source <https://github.com/archlinux/archinstall>`_ contains a binary `PKGBUILD <https://github.com/Torxed/archinstall/tree/master/PKGBUILD/archinstall>`_ which can be either copied straight off the website. Or cloned using `git clone https://github.com/Torxed/archinstall`.
 
 Once you've obtained the `PKGBUILD`, building it is pretty straight forward.
 
