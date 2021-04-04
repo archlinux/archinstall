@@ -5,6 +5,7 @@ from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
 from .output import log, LOG_LEVELS
+from .user_interaction import get_terminal_width
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -76,7 +77,7 @@ class sys_command():#Thread):
 	"""
 	Stolen from archinstall_gui
 	"""
-	def __init__(self, cmd, callback=None, start_callback=None, *args, **kwargs):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, *args, **kwargs):
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
@@ -101,6 +102,7 @@ class sys_command():#Thread):
 
 		self.args = args
 		self.kwargs = kwargs
+		self.peak_output = peak_output
 
 		self.kwargs.setdefault("worker", None)
 		self.callback = callback
@@ -158,6 +160,21 @@ class sys_command():#Thread):
 			'exit_code': self.exit_code
 		}
 
+	def peak(self, output):
+		if self.peak_output:
+			# Move back to the beginning of the terminal
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+
+			# Clear the line
+			sys.stdout.write(" " * get_terminal_width())
+			sys.stdout.flush()
+
+			# And print the new output we're peaking on:
+			sys.stdout.write(output)
+			sys.stdout.flush()
+
 	def run(self):
 		self.status = 'running'
 		old_dir = os.getcwd()
@@ -189,6 +206,7 @@ class sys_command():#Thread):
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192)
+					self.peak(output)
 					self.trace_log += output
 				except OSError:
 					alive = False
