@@ -14,6 +14,8 @@ from .lib.output import *
 from .lib.storage import *
 from .lib.hardware import *
 
+__version__ = "2.1.3"
+
 ## Basic version of arg.parse() supporting:
 ##  --key=value
 ##  --boolean
