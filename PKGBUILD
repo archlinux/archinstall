@@ -14,11 +14,11 @@ makedepends=('python-setuptools')
 conflicts=('archinstall' 'archinstall-python' 'python-archinstall-git')
 
 build() {
-		cd "$startdir"
-    	python setup.py build
+        cd "$startdir"
+        python setup.py build
 }
 
 package() {
-		cd "$startdir"
-    	python setup.py install --root="${pkgdir}" --optimize=1 --skip-build
+        cd "$startdir"
+        python setup.py install --root="${pkgdir}" --optimize=1 --skip-build
 }
