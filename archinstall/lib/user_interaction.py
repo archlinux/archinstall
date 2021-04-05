@@ -18,6 +18,16 @@ def get_terminal_width():
 def get_longest_option(options):
 	return max([len(x) for x in options])
 
+def check_for_correct_username(username):
+    if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
+        return True
+    log(
+		"The username you entered is invalid. Try again",
+		level=LOG_LEVELS.Warning,
+		fg='red'
+	)
+    return False
+
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -51,12 +61,7 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 	while 1:
 		new_user = input(prompt).strip(' ')
 
-		if not re.match('[a-z_][a-z0-9_-]*[$]?', new_user) or len(new_user) > 32:
-			log(
-				"The username you entered is invalid. Try again",
-				level=LOG_LEVELS.Warning,
-				fg='red'
-			)
+		if not check_for_correct_username(new_user):
 			continue
 		if not new_user and forced:
 			# TODO: make this text more generic?
@@ -77,12 +82,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		new_user = input(prompt).strip(' ')
 		if not new_user:
 			break
-		if not re.match('[a-z_][a-z0-9_-]*[$]?', new_user) or len(new_user) > 32:
-			log(
-				"The username you entered is invalid. Try again",
-				level=LOG_LEVELS.Warning,
-				fg='red'
-			)
+		if not check_for_correct_username(new_user):
 			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
