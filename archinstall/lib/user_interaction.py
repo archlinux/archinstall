@@ -61,8 +61,6 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 	while 1:
 		new_user = input(prompt).strip(' ')
 
-		if not check_for_correct_username(new_user):
-			continue
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
@@ -70,6 +68,8 @@ def ask_for_superuser_account(prompt='Create a required super-user with sudo pri
 			continue
 		elif not new_user and not forced:
 			raise UserError("No superuser was created.")
+		elif not check_for_correct_username(new_user):
+			continue
 
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		return {new_user: {"!password" : password}}
