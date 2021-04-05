@@ -1,4 +1,4 @@
-import getpass, pathlib, os, shutil
+import getpass, pathlib, os, shutil, re
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -17,6 +17,16 @@ def get_terminal_width():
 
 def get_longest_option(options):
 	return max([len(x) for x in options])
+
+def check_for_correct_username(username):
+    if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
+        return True
+    log(
+		"The username you entered is invalid. Try again",
+		level=LOG_LEVELS.Warning,
+		fg='red'
+	)
+    return False
 
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
@@ -50,7 +60,9 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
-		
+
+		if not check_for_correct_username(new_user):
+			continue
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
@@ -70,6 +82,8 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		new_user = input(prompt).strip(' ')
 		if not new_user:
 			break
+		if not check_for_correct_username(new_user):
+			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
 		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
