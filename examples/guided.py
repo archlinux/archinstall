@@ -1,4 +1,4 @@
-import getpass, time, json, sys, signal, os
+import getpass, time, json, sys, signal, os, subprocess
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 
