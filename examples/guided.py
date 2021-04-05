@@ -344,7 +344,11 @@ def perform_installation(device, boot_partition, language, mirrors):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
-
+			if archinstall.arguments.get('profile', None) == "i3-wm" or archinstall.arguments.get('profile', None) == "i3-gaps":
+				print("the installation of i3/i3-gaps does not conatain any configuerations for the wm. in this shell you should add your configuerations")
+				installation.arch_chroot("bash")
 
 ask_user_questions()
 perform_installation_steps()
+
+	
