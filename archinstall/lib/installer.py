@@ -306,14 +306,14 @@ class Installer():
 				mkinit.write('MODULES=(btrfs)\n')
 				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 		elif self.partition.encrypted:
 			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
 				mkinit.write('MODULES=()\n')
 				mkinit.write('BINARIES=()\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
