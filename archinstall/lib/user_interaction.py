@@ -1,4 +1,4 @@
-import getpass, pathlib, os, shutil
+import getpass, pathlib, os, shutil, re
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -49,8 +49,15 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
-		new_user = input(prompt).strip(' ').lower()
-		
+		new_user = input(prompt).strip(' ')
+
+		if not re.match('[a-z_][a-z0-9_-]*[$]?', new_user) or len(new_user) > 32:
+			log(
+				"The username you entered is invalid. Try again",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
+			continue
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
@@ -67,9 +74,16 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	super_users = {}
 
 	while 1:
-		new_user = input(prompt).strip(' ').lower()
+		new_user = input(prompt).strip(' ')
 		if not new_user:
 			break
+		if not re.match('[a-z_][a-z0-9_-]*[$]?', new_user) or len(new_user) > 32:
+			log(
+				"The username you entered is invalid. Try again",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
+			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
 		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
