@@ -189,9 +189,11 @@ class Installer():
 			if self.enable_service('ntpd'):
 				return True
 
-	def enable_service(self, service):
-		self.log(f'Enabling service {service}', level=LOG_LEVELS.Info)
-		return self.arch_chroot(f'systemctl enable {service}').exit_code == 0
+	def enable_service(self, *services):
+		for service in services:
+			self.log(f'Enabling service {service}', level=LOG_LEVELS.Info)
+			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
+				raise ServiceException(f"Unable to start service {service}: {output}")
 
 	def run_command(self, cmd, *args, **kwargs):
 		return sys_command(f'/usr/bin/arch-chroot {self.mountpoint} {cmd}')
@@ -256,14 +258,12 @@ class Installer():
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
 					def post_install_enable_networkd_resolved(*args, **kwargs):
-						self.enable_service('systemd-networkd')
-						self.enable_service('systemd-resolved')
-
+						self.enable_service('systemd-networkd', 'systemd-resolved')
 					self.post_base_install.append(post_install_enable_networkd_resolved)
 				# Otherwise, we can go ahead and enable the services
 				else:
-					self.enable_service('systemd-networkd')
-					self.enable_service('systemd-resolved')
+					self.enable_service('systemd-networkd', 'systemd-resolved')
+					
 
 		return True
 
