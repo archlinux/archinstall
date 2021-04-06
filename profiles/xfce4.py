@@ -11,8 +11,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# Gnome optionally supports xorg, we'll install it since it also
-	# includes graphic driver setups (this might change in the future)
+	# XFCE requires a functional xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
