@@ -1,6 +1,6 @@
 # A desktop environment using "KDE".
 
-import archinstall, os
+import archinstall, os 
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
@@ -19,6 +19,17 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
+def _post_install(*args, **kwargs):
+	if "nvidia" in _gfx_driver_packages:
+		print("Plasma wayland is currently in a buggy state on Nvidia cards")
+	choice = input("Kde plasma has a wayland support would you like to install the required binaries [Y/n] ").lower()
+	if choice == "y":
+		packages = "plasma-meta kde-applications-meta plasma-wayland-session sddm"
+		# if the package selection can be reduced go for it
+		if "nvidia" in _gfx_driver_packages:
+			packages = packages + " egl-wayland"
+		installation.add_additional_packages(packages)
 
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
