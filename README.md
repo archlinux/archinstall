@@ -73,6 +73,12 @@ When doing so, attach any `install-session_*.log` to the issue ticket which can 
 
 # Testing
 
+## Using a Live ISO Image
+
+If you are testing a commit from the repository using the vanilla Arch Live ISO image, you can replace the version of archinstall with a new version and run that. To do this, you will first need to establish a network connection and run `pacman -Sy; pacman -S git python-pip`. Once you have pip installed, run `pip uninstall archinstall`. Then, clone the repo using `git clone https://github.com/archlinux/archinstall`, and cd into the archinstall directory. Alternatively, you can checkout a different branch or fork of the project. Build the project and install it using `python setup.py build; python setup.py install`. Then, run archinstall with `python -m archinstall`.
+
+## Without a Live ISO Image
+
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
