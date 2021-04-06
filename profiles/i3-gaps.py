@@ -1,4 +1,4 @@
-import archinstall
+import archinstall, subprocess
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -15,6 +15,14 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
+def _post_install(*args, **kwargs):
+	"""
+	Another magic function called after the system 
+	has been installed. 
+	"""
+	print("the installation of i3 does not conatain any configuerations for the wm. in this shell you take your time should add your configuerations")			
+	subprocess.check_call("arch-chroot /mnt",shell=True)
 
 if __name__ == 'i3-wm':
 	# Install dependency profiles
