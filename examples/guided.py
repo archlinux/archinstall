@@ -1,4 +1,4 @@
-import getpass, time, json, sys, signal, os, subprocess
+import getpass, time, json, sys, signal, os
 import archinstall
 
 """
