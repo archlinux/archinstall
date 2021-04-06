@@ -348,8 +348,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
 						archinstall.log(
-							' * Profile\'s preparation requirements was not fulfilled.',
-							bg='black',
+							' * Profile\'s post configuration requirements was not fulfilled.',
 							fg='red'
 						)
 						exit(1)
