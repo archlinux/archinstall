@@ -8,7 +8,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# KDE requires a functioning Xorg installation.
+	# i3 requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
