@@ -10,8 +10,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# Cinnamon optionally supports xorg, we'll install it since it also
-	# includes graphic driver setups (this might change in the future)
+	# Cinnamon requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
