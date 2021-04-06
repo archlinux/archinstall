@@ -84,7 +84,7 @@ If you want to test a commit, branch or bleeding edge release from the repositor
  4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
  5. Enter the repository with `cd archinstall`
     *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
- 6. Build the project and install it using `python setup.py build` and `python setup.py install`
+ 6. Build the project and install it using `python setup.py install`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
 
