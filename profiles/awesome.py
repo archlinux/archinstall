@@ -31,11 +31,10 @@ if __name__ == 'awesome':
 	# Then setup and configure the desktop environment: awesome
 	editor = "nano"
 	filebrowser = "nemo gpicview-gtk3"
-	webbrowser = "chromium" # TODO: Ask the user to select one instead
 	utils = "openssh sshfs htop scrot wget"
 
 
-	installation.add_additional_packages(f"{webbrowser} {utils} {filebrowser} {editor}")
+	installation.add_additional_packages(f"{utils} {filebrowser} {editor}")
 
 	alacritty = archinstall.Application(installation, 'alacritty')
 	alacritty.install()
