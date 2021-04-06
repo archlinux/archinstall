@@ -80,7 +80,7 @@ If you want to test a commit, branch or bleeding edge release from the repositor
  1. You need a working network connection
  2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
     *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
- 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
+ 3. Uninstall the previous version of archinstall with `pacman -R archinstall`
  4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
  5. Enter the repository with `cd archinstall`
     *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
