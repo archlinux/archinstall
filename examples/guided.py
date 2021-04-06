@@ -1,4 +1,4 @@
-import getpass, time, json, sys, signal, os, subprocess
+import getpass, time, json, sys, signal, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 
@@ -347,9 +347,14 @@ def perform_installation(device, boot_partition, language, mirrors):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
-			if archinstall.arguments.get('profile', None) == "i3-wm" or archinstall.arguments.get('profile', None) == "i3-gaps":
-				print("the installation of i3/i3-gaps does not conatain any configuerations for the wm. in this shell you should add your configuerations")
-				subprocess.check_call("arch-chroot /mnt")
+			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
+				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+					if not imported._post_install():
+						archinstall.log(
+							' * Profile\'s post configuration requirements was not fulfilled.',
+							fg='red'
+						)
+						exit(1)
 
 ask_user_questions()
 perform_installation_steps()

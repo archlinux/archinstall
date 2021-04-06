@@ -177,6 +177,21 @@ class Profile(Script):
 					if hasattr(imported, '_prep_function'):
 						return True
 		return False
+	def has_post_install(self):
+		with open(self.path, 'r') as source:
+			source_data = source.read()
+
+			# Some crude safety checks, make sure the imported profile has
+			# a __name__ check and if so, check if it's got a _prep_function()
+			# we can call to ask for more user input.
+			#
+			# If the requirements are met, import with .py in the namespace to not
+			# trigger a traditional:
+			#     if __name__ == 'moduleName'
+			if '__name__' in source_data and '_post_install' in source_data:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+					if hasattr(imported, '_post_install'):
+						return True
 
 	@property
 	def packages(self) -> list:
