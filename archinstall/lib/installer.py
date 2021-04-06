@@ -73,7 +73,7 @@ class Installer():
 		return self
 
 	def __exit__(self, *args, **kwargs):
-		# b''.join(sys_command(f'sync')) # No need to, since the underlaying fs() object will call sync.
+		# b''.join(sys_command(f'sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
@@ -85,7 +85,7 @@ class Installer():
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
-			print(f"    Please submit this issue (and file) to https://github.com/Torxed/archinstall/issues")
+			print(f"    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
@@ -98,8 +98,10 @@ class Installer():
 			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			for step in missing_steps:
 				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
+            
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=LOG_LEVELS.Warning)
-			self.log(f"Submit this zip file as an issue to https://github.com/Torxed/archinstall/issues", level=LOG_LEVELS.Warning)
+			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=LOG_LEVELS.Warning)
+               
 			self.sync_log_to_install_medium()
 			return False
 
@@ -268,7 +270,7 @@ class Installer():
 		return True
 
 	def minimal_installation(self):
-		## Add nessecary packages if encrypting the drive
+		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
@@ -306,14 +308,14 @@ class Installer():
 				mkinit.write('MODULES=(btrfs)\n')
 				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 		elif self.partition.encrypted:
 			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
 				mkinit.write('MODULES=()\n')
 				mkinit.write('BINARIES=()\n')
 				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect modconf block encrypt filesystems keymap keyboard fsck)\n')
+				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
 			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
@@ -401,7 +403,7 @@ class Installer():
 		# The tricky thing with doing the import archinstall.session instead is that
 		# profiles might be run from a different chroot, and there's no way we can
 		# guarantee file-path safety when accessing the installer object that way.
-		# Doing the __builtins__ replacement, ensures that the global vriable "installation"
+		# Doing the __builtins__ replacement, ensures that the global variable "installation"
 		# is always kept up to date. It's considered a nasty hack - but it's a safe way
 		# of ensuring 100% accuracy of archinstall session variables.
 		__builtins__['installation'] = self
