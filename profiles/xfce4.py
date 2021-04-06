@@ -23,6 +23,12 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("xfce4", "/somewhere/xfce4.py")
 # or through conventional import xfce4
 if __name__ == 'xfce4':
+	# Install the pipewire audio server if the user wants to use it
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if choice == "y":
+		pipewire = archinstall.Application(installation, 'pipewire')
+		pipewire.install()
+
 	# Install dependency profiles
 	installation.install_profile('xorg')
 

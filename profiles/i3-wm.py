@@ -29,6 +29,12 @@ def _post_install(*args, **kwargs):
 	return True
 
 if __name__ == 'i3-wm':
+	# Install the pipewire audio server if the user wants to use it
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if choice == "y":
+		pipewire = archinstall.Application(installation, 'pipewire')
+		pipewire.install()
+
     # Install dependency profiles
     installation.install_profile('xorg')
     # we are installing lightdm to auto start i3

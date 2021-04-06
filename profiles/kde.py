@@ -32,6 +32,12 @@ def _post_install(*args, **kwargs):
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
 if __name__ == 'kde':
+	# Install the pipewire audio server if the user wants to use it
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if choice == "y":
+		pipewire = archinstall.Application(installation, 'pipewire')
+		pipewire.install()
+	
 	# Install dependency profiles
 	installation.install_profile('xorg')
 

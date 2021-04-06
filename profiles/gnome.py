@@ -23,13 +23,19 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("gnome", "/somewhere/gnome.py")
 # or through conventional import gnome
 if __name__ == 'gnome':
+	# Install the pipewire audio server if the user wants to use it
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if choice == "y":
+		pipewire = archinstall.Application(installation, 'pipewire')
+		pipewire.install()
+
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
 	# Install the application gnome from the template under /applications/
 	gnome = archinstall.Application(installation, 'gnome')
 	gnome.install()
-
+	
 	installation.enable_service('gdm') # Gnome Display Manager
 	# We could also start it via xinitrc since we do have Xorg,
 	# but for gnome that's deprecated and wayland is preferred.
