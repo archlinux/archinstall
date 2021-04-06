@@ -27,6 +27,7 @@ def _post_install(*args, **kwargs):
 	if choice == "y":
 		installation.arch_chroot("mv /usr/share/xsessions/plasma.desktop /usr/share/xsessions/plasmax11.desktop")
 		installation.arch_chroot("mv /usr/share/wayland-sessions/plasmawayland.desktop /usr/share/wayland-sessions/plasma.desktop")
+	return True
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
