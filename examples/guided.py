@@ -181,6 +181,7 @@ def ask_user_questions():
 				exit(1)
 
 	# Additional packages (with some light weight error handling for invalid package names)
+	print("Packages not part of the desktop environment are not installed by default. If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 	if not archinstall.arguments.get('packages', None):
 		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
