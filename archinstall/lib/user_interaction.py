@@ -139,6 +139,14 @@ def ask_for_a_timezone():
 			level=LOG_LEVELS.Warning,
 			fg='red'
 		)
+		
+def ask_for_audio_selection():
+	audio = "pulseaudio" # Default for most desktop environments
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if pipewire_choice == "y":
+		audio = "pipewire"
+
+	return audio
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.
