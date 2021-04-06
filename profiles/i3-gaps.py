@@ -21,8 +21,13 @@ def _post_install(*args, **kwargs):
 	Another magic function called after the system 
 	has been installed. 
 	"""
-	print("the installation of i3 does not conatain any configuerations for the wm. in this shell you take your time should add your configuerations")			
-	subprocess.check_call("arch-chroot /mnt",shell=True)
+	installation.log("the installation of i3 does not conatain any configuerations for the wm. In this shell you should take your time to add your desiired configueration. Exit the shell once you are done to continue the installation.", fg="yellow")
+	try:
+		subprocess.check_call("arch-chroot /mnt",shell=True)
+	except subprocess.CallProcessError:
+		return False
+	
+	return True
 
 if __name__ == 'i3-wm':
 	# Install dependency profiles
