@@ -29,6 +29,12 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("awesome", "/somewhere/awesome.py")
 # or through conventional import awesome
 if __name__ == 'awesome':
+	# Install the pipewire audio server if the user wants to use it
+	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	if choice == "y":
+		pipewire = archinstall.Application(installation, 'pipewire')
+		pipewire.install()
+
 	# Install the application awesome from the template under /applications/
 	awesome = archinstall.Application(installation, 'awesome')
 	awesome.install()
