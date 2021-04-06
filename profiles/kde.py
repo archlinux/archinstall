@@ -1,6 +1,6 @@
 # A desktop environment using "KDE".
 
-import archinstall, os, shutil
+import archinstall, os
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
@@ -22,11 +22,11 @@ def _prep_function(*args, **kwargs):
 
 def _post_install(*args, **kwargs):
 	if "nvidia" in _gfx_driver_packages:
-		print("Plasma wayland is currently in an unusable state on Nvidia cards")
+		print("Plasma Wayland has known compatibility issues with the proprietary Nvidia driver")
 	choice = input("Would you like plasma-wayland to be the default session [Y/n] ").lower()
 	if choice == "y":
-		shutil.move("/usr/share/xsessions/plasma.desktop","/usr/share/xsessions/plasmax11.desktop")
-		shutil.move("/usr/share/wayland-sessions/plasmawayland.desktop","/usr/share/wayland-sessions/plasma.desktop")
+		installation.arch_chroot("mv /usr/share/xsessions/plasma.desktop /usr/share/xsessions/plasmax11.desktop")
+		installation.arch_chroot("mv /usr/share/wayland-sessions/plasmawayland.desktop /usr/share/wayland-sessions/plasma.desktop")
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
