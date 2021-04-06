@@ -98,8 +98,10 @@ class Installer():
 			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			for step in missing_steps:
 				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
-			self.log(f"Detailed error logs can be found at: {log_path}", level=LOG_LEVELS.Warning)
+            
+			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=LOG_LEVELS.Warning)
 			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=LOG_LEVELS.Warning)
+               
 			self.sync_log_to_install_medium()
 			return False
 
@@ -149,7 +151,7 @@ class Installer():
 			fstab_fh.write(fstab)
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{b"".join(fstab)}')
 		
 		return True
 
