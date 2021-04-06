@@ -25,7 +25,7 @@ def _post_install(*args, **kwargs):
 		print("Plasma wayland is currently in a buggy state on Nvidia cards")
 	choice = input("Kde plasma has a wayland support would you like to install the required binaries [Y/n] ").lower()
 	if choice == "y":
-		packages = "plasma-meta kde-applications-meta plasma-wayland-session sddm"
+		packages = "plasma-wayland-session"
 		# if the package selection can be reduced go for it
 		if "nvidia" in _gfx_driver_packages:
 			packages = packages + " egl-wayland"
