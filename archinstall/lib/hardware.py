@@ -1,4 +1,5 @@
 import os, subprocess, json
+from typing import Optional
 from .general import sys_command
 from .networking import list_interfaces, enrichIfaceTypes
 
@@ -38,7 +39,7 @@ def hasIntelGraphics()->bool:
 		return True
 	return False
 
-def cpuVendor():
+def cpuVendor()-> Optional[str]:
 	cpu_info = json.loads(subprocess.check_output("lscpu -J", shell=True).decode('utf-8'))['lscpu']
 	for info in cpu_info:
 		if info.get('field',None):
