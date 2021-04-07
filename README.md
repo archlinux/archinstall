@@ -1,4 +1,4 @@
-# <img src="https://github.com/Torxed/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+# <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
 
@@ -42,7 +42,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
     harddrive.partition[0].format('fat32')
     with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
         unlocked_device.format('btrfs')
-        
+
         with archinstall.Installer(unlocked_device, hostname='testmachine') as installation:
             if installation.minimal_installation():
                 installation.add_bootloader(harddrive.partition[0])
@@ -62,7 +62,7 @@ This installer will perform the following:
  * Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
  * Installs and configures a bootloader to partition 0 on uefi. on bios it sets the root to partition 0.
  * Install additional packages *(nano, wget, git)*
- * Installs a network-profile called [awesome](https://github.com/Torxed/archinstall/blob/master/profiles/awesome.py) *(more on network profiles in the documentation)*
+ * Installs a profile with a window manager called [awesome](https://github.com/archlinux/archinstall/blob/master/profiles/awesome.py) *(more on profile installations in the [documentation](https://python-archinstall.readthedocs.io/en/latest/archinstall/Profile.html))*.
 
 > **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
@@ -72,6 +72,23 @@ Submit an issue on Github, or submit a post in the discord help channel.<br>
 When doing so, attach any `install-session_*.log` to the issue ticket which can be found under `~/.cache/archinstall/`.
 
 # Testing
+
+## Using a Live ISO Image
+
+If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image, you can replace the version of archinstall with a new version and run that with the steps described below.
+
+ 1. You need a working network connection
+ 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
+    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
+ 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
+ 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
+ 5. Enter the repository with `cd archinstall`
+    *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
+ 6. Build the project and install it using `python setup.py install`
+
+After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
+
+## Without a Live ISO Image
 
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
@@ -87,5 +104,5 @@ This will create a *5GB* `testimage.img` and create a loop device which we can u
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete,<br>
 ~~you can use qemu/kvm to boot the test media.~~ *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium so this won't work entirely out of the box, but gives you a general idea of what we're going for here)*
 
-There's also a [Building and Testing](https://github.com/Torxed/archinstall/wiki/Building-and-Testing) guide.<br>
+There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.

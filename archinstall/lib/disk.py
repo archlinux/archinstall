@@ -25,11 +25,12 @@ class BlockDevice():
 
 		self.path = path
 		self.info = info
+		self.keep_partitions = True
 		self.part_cache = OrderedDict()
-		# TODO: Currently disk encryption is a BIT missleading.
+		# TODO: Currently disk encryption is a BIT misleading.
 		#       It's actually partition-encryption, but for future-proofing this
 		#       I'm placing the encryption password on a BlockDevice level.
-		self.encryption_passwoed = None
+		self.encryption_password = None
 
 	def __repr__(self, *args, **kwargs):
 		return f"BlockDevice({self.device})"
@@ -285,10 +286,10 @@ class Partition():
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem=None, path=None, allow_formatting=None, log_formating=True):
+	def format(self, filesystem=None, path=None, allow_formatting=None, log_formatting=True):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
-		the formating functionality and in essence the support for the given filesystem.
+		the formatting functionality and in essence the support for the given filesystem.
 		"""
 		if filesystem is None:
 			filesystem = self.filesystem
@@ -306,7 +307,7 @@ class Partition():
 		if not allow_formatting:
 			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
 
-		if log_formating:
+		if log_formatting:
 			log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
 
 		if filesystem == 'btrfs':
@@ -401,7 +402,7 @@ class Partition():
 		 2. UnknownFilesystemFormat that indicates that we don't support the given filesystem type
 		"""
 		try:
-			self.format(self.filesystem, '/dev/null', log_formating=False, allow_formatting=True)
+			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
 		except SysCallError:
 			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:

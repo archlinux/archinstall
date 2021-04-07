@@ -6,7 +6,7 @@ Therefore guidelines and style changes to the code might come into affect as wel
 
 ## Discussions
 
-Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/Torxed/archinstall/issues).<br>
+Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
 For less formal discussions there are also a [archinstall Discord server](https://discord.gg/cqXU88y).
 
 ## Coding convention

@@ -1,4 +1,4 @@
-# A desktop environement using "KDE".
+# A desktop environment using "KDE".
 
 import archinstall, os
 

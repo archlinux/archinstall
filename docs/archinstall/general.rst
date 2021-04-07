@@ -12,7 +12,7 @@ Packages
 ========
 
 .. autofunction:: archinstall.find_package
-
+Be
 .. autofunction:: archinstall.find_packages
 
 Locale related
@@ -23,9 +23,6 @@ Locale related
 .. autofunction:: archinstall.search_keyboard_layout
 
 .. autofunction:: archinstall.set_keyboard_language
-
-.. 
-	autofunction:: archinstall.Installer.set_keyboard_layout
 
 Services
 ========

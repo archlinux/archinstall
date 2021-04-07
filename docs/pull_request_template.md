@@ -1,6 +1,6 @@
 # Pull Request Template
 
-Make sure you've checked out the [contribution guideline](https://github.com/Torxed/archinstall/blob/master/CONTRIBUTING.md).<br>
+Make sure you've checked out the [contribution guideline](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md).<br>
 Most of the guidelines are not enforced, but is heavily encouraged.
 
 ## Description

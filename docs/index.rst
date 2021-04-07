@@ -46,7 +46,8 @@ Some of the features of Archinstall are:
 ..
    examples/scripting
 
-.. toctree::
+..
+   .. toctree::
    :maxdepth: 3
    :caption: Programming Guide
 

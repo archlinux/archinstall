@@ -56,7 +56,7 @@ def wirelessScan(interface):
 
 	storage['_WIFI'][interface]['scanning'] = True
 
-# TOOD: Full WiFi experience might get evolved in the future, pausing for now 2021-01-25
+# TODO: Full WiFi experience might get evolved in the future, pausing for now 2021-01-25
 def getWirelessNetworks(interface):
 	# TODO: Make this oneliner pritter to check if the interface is scanning or not.
 	if not '_WIFI' in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning', False) is False:

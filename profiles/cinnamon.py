@@ -1,5 +1,4 @@
 # A desktop environment using "Cinnamon"
-
 import archinstall
 
 def _prep_function(*args, **kwargs):

@@ -59,7 +59,7 @@ def ask_user_questions():
 	if archinstall.arguments['harddrive'].has_partitions():
 		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
-		# We curate a list pf supported paritions
+		# We curate a list pf supported partitions
 		# and print those that we don't support.
 		partition_mountpoints = {}
 		for partition in archinstall.arguments['harddrive']:
@@ -70,7 +70,7 @@ def ask_user_questions():
 			except archinstall.UnknownFilesystemFormat as err:
 				archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
 
-		# We then ask what to do with the paritions.
+		# We then ask what to do with the partitions.
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
 			archinstall.log(f"Safely aborting the installation. No changes to the disk or system has been made.")
 			exit(1)
@@ -90,7 +90,7 @@ def ask_user_questions():
 				mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
 				if len(mountpoint):
 
-					# Get a valid & supported filesystem for the parition:
+					# Get a valid & supported filesystem for the partition:
 					while 1:
 						new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
 						if len(new_filesystem) <= 0:
@@ -113,7 +113,7 @@ def ask_user_questions():
 						try:
 							partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
 						except archinstall.UnknownFilesystemFormat:
-							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/Torxed/archinstall/issues.")
+							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
 							archinstall.log(f"Until then, please enter another supported filesystem.")
 							continue
 						except archinstall.SysCallError:
@@ -121,7 +121,7 @@ def ask_user_questions():
 								 # But that means our .format() function supported it.
 						break
 
-					# When we've selected all three criterias,
+					# When we've selected all three criteria,
 					# We can safely mark the partition for formatting and where to mount it.
 					# TODO: allow_formatting might be redundant since target_mountpoint should only be
 					#       set if we actually want to format it anyway.
@@ -171,19 +171,19 @@ def ask_user_questions():
 	else:
 		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
-	# Check the potentially selected profiles preperations to get early checks if some additional questions are needed.
+	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
 		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 			if not imported._prep_function():
 				archinstall.log(
 					' * Profile\'s preparation requirements was not fulfilled.',
-					bg='black',
 					fg='red'
 				)
 				exit(1)
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
+		print("Packages not part of the desktop environment are not installed by default. If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
 	# Verify packages that were given
@@ -358,5 +358,3 @@ def perform_installation(device, boot_partition, language, mirrors):
 
 ask_user_questions()
 perform_installation_steps()
-
-	

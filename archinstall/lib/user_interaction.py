@@ -1,4 +1,4 @@
-import getpass, pathlib, os, shutil
+import getpass, pathlib, os, shutil, re
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -18,11 +18,21 @@ def get_terminal_width():
 def get_longest_option(options):
 	return max([len(x) for x in options])
 
+def check_for_correct_username(username):
+    if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
+        return True
+    log(
+		"The username you entered is invalid. Try again",
+		level=LOG_LEVELS.Warning,
+		fg='red'
+	)
+    return False
+
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
-			log(' * Passwords did not match * ', bg='black', fg='red')
+			log(' * Passwords did not match * ', fg='red')
 			continue
 
 		if len(passwd.strip()) <= 0:
@@ -50,14 +60,16 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
-		
+
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one (super) user!', bg='black', fg='red')
+			log(' * Since root is disabled, you need to create a least one (super) user!', fg='red')
 			continue
 		elif not new_user and not forced:
 			raise UserError("No superuser was created.")
+		elif not check_for_correct_username(new_user):
+			continue
 
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		return {new_user: {"!password" : password}}
@@ -70,6 +82,8 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		new_user = input(prompt).strip(' ')
 		if not new_user:
 			break
+		if not check_for_correct_username(new_user):
+			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
 		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
@@ -110,7 +124,6 @@ def ask_to_configure_network():
 					log(
 						"You need to enter a valid IP in IP-config mode.",
 						level=LOG_LEVELS.Warning,
-						bg='black',
 						fg='red'
 					)
 
@@ -153,7 +166,7 @@ def ask_for_main_filesystem_format():
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
 	"""
 	A generic select function that does not output anything
-	other than the options and their indexs. As an example:
+	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
 	1: first
