@@ -196,7 +196,6 @@ class Profile(Script):
 
 	def is_top_level_profile(self):
 		with open(self.path, 'r') as source:
-			# TODO: I imagine that there is probably a better way to write this.
 			source_data = source.read()
 			return 'top_level_profile = True' in source_data
 
