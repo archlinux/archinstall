@@ -25,4 +25,4 @@ If the PR is larger than ~20 lines, please describe it here unless described in 
 Any new feature or stability improvement should be tested if possible.
 Please follow the test instructions at the bottom of the README.
 
-*These PR guidelines will change after 2021-05-01, which is when `v2.1.4` gets released*
+*These PR guidelines will change after 2021-05-01, which is when `v2.1.4` gets onto the new ISO*
