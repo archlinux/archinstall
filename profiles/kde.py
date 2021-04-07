@@ -2,6 +2,8 @@
 
 import archinstall, os
 
+is_top_level_profile = False
+
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
 def _prep_function(*args, **kwargs):

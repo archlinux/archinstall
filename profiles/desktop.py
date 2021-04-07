@@ -2,6 +2,8 @@
 
 import archinstall, os
 
+is_top_level_profile = True
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -10,7 +12,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	supported_desktops = ['gnome', 'kde', 'awesome', 'xfce4', 'cinnamon']
+	supported_desktops = ['gnome', 'kde', 'awesome', 'xfce4', 'cinnamon', 'i3-gaps', 'i3-wm']
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
 
 	# Temporarily store the selected desktop profile
