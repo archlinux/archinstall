@@ -3,6 +3,8 @@ import archinstall, os
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
+is_top_level_profile = False
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
