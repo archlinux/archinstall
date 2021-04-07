@@ -181,6 +181,10 @@ def ask_user_questions():
 				)
 				exit(1)
 
+	# Ask about audio server selection (this right now just asks for pipewire and defaults to pulseaudio otherwise)
+	if not archinstall.arguments.get('audio', None):
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
+
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
 		print("Packages not part of the desktop environment are not installed by default. If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
@@ -329,7 +333,14 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-
+			installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
+			if archinstall.arguments.get('audio', None) == 'pipewire':
+				print('Installing pipewire ...')
+				installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-docs", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+			elif archinstall.arguments.get('audio', None) == 'pulseaudio':
+				print('Installing pulseaudio ...')
+				installation.add_additional_packages("pulseaudio")
+			
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
