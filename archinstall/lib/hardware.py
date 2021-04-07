@@ -9,6 +9,10 @@ def hasAMDCPU()->bool:
 	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
 		return True
 	return False
+def hasIntelCPU()->bool:
+	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
+		return True
+	return False
 
 def hasUEFI()->bool:
 	return os.path.isdir('/sys/firmware/efi')
