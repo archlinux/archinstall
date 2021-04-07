@@ -2,7 +2,7 @@
 
 # New features
 
-Merge new features in to `torxed-v2.2.0`.
+Merge new features in to `torxed-v2.2.0`.<br>
 This branch is designated for potential breaking changes, added complexity and new functionality.
 
 # Bug fixes
