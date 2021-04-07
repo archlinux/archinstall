@@ -1,5 +1,7 @@
 import getpass, time, json, sys, signal, os
 import archinstall
+from archinstall.lib.hardware import hasUEFI
+from archinstall.lib.profiles import Profile
 
 """
 This signal-handler chain (and global variable)
@@ -166,7 +168,7 @@ def ask_user_questions():
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles())
+		archinstall.arguments['profile'] = archinstall.select_profile(filter(lambda profile: (Profile(None, profile).is_top_level_profile()), archinstall.list_profiles()))
 	else:
 		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
