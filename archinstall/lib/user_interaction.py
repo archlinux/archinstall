@@ -142,7 +142,7 @@ def ask_for_a_timezone():
 		
 def ask_for_audio_selection():
 	audio = "pulseaudio" # Default for most desktop environments
-	pipewire_choice = input("Would you like to install the pipewire audio server? [Y/n] ").lower()
+	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
 	if pipewire_choice == "y":
 		audio = "pipewire"
 
