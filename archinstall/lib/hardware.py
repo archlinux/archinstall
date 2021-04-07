@@ -41,4 +41,12 @@ def cpuVendor()-> Optional[str]:
 		if info.get('field',None):
 			if info.get('field',None) == "Vendor ID:":
 				return info.get('data',None)
+
+def isVM() -> bool:
+	try:
+		subprocess.check_call(["systemd-detect-virt"]) # systemd-detect-virt issues a none 0 exit code if it is not on a virtual machine
+		return True
+	except:
+		return False
+
 # TODO: Add more identifiers
