@@ -11,13 +11,11 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-
-	# Do nothing here for now
+	return True # Do nothing here for now
 
 if __name__ == 'minimal':
 	"""
 	This "profile" is a meta-profile.
 	It is used for a custom minimal installation, without any desktop-specific packages.
 	"""
-
 	# Do nothing here for now
