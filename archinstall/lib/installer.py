@@ -380,9 +380,9 @@ class Installer():
 				if not isVM():
 					vendor = cpuVendor()
 					if vendor ==  "AuthenticAMD":
-						entry.write("initrd /amd-ucode.img")
+						entry.write("initrd /amd-ucode.img\n")
 					elif vendor == "GenuineIntel":
-						entry.write("initrd /amd-ucode.img")
+						entry.write("initrd /intel-ucode.img\n")
 					else:
 						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
 				entry.write(f'initrd /initramfs-linux.img\n')
