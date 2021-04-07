@@ -9,7 +9,7 @@ from .mirrors import *
 from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
-
+from .hardware import *
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
 __base_packages__ = __packages__[:6]
@@ -288,7 +288,14 @@ class Installer():
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
-
+		if not isVM():
+			vendor = cpuVendor()
+			if vendor ==  "AuthenticAMD":
+				self.base_packages.append("amd-ucode")
+			elif vendor == "GenuineIntel":
+				self.base_packages.append("intel-ucode")
+			else:
+				self.log("unknown cpu vendor not installing ucode")
 		with open(f"{self.mountpoint}/etc/fstab", "a") as fstab:
 			fstab.write(
 				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
@@ -364,13 +371,20 @@ class Installer():
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
 			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-
 			# Setup the loader entry
 			with open(f'{self.mountpoint}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
 				entry.write(f'# Created by: archinstall\n')
 				entry.write(f'# Created on: {self.init_time}\n')
 				entry.write(f'title Arch Linux\n')
 				entry.write(f'linux /vmlinuz-linux\n')
+				if not isVM():
+					vendor = cpuVendor()
+					if vendor ==  "AuthenticAMD":
+						entry.write("initrd /amd-ucode.img")
+					elif vendor == "GenuineIntel":
+						entry.write("initrd /amd-ucode.img")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
 				entry.write(f'initrd /initramfs-linux.img\n')
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
