@@ -149,7 +149,7 @@ class Installer():
 			fstab_fh.write(fstab)
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{b"".join(fstab)}')
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
 		
 		return True
 
