@@ -1,4 +1,5 @@
 import getpass, pathlib, os, shutil, re
+import sys, time, signal
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -19,14 +20,49 @@ def get_longest_option(options):
 	return max([len(x) for x in options])
 
 def check_for_correct_username(username):
-    if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
-        return True
-    log(
+	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
+		return True
+	log(
 		"The username you entered is invalid. Try again",
 		level=LOG_LEVELS.Warning,
 		fg='red'
 	)
-    return False
+	return False
+
+def do_countdown():
+	SIG_TRIGGER = False
+	def kill_handler(sig, frame):
+		print()
+		exit(0)
+
+	def sig_handler(sig, frame):
+		global SIG_TRIGGER
+		SIG_TRIGGER = True
+		signal.signal(signal.SIGINT, kill_handler)
+
+	original_sigint_handler = signal.getsignal(signal.SIGINT)
+	signal.signal(signal.SIGINT, sig_handler)
+
+	for i in range(5, 0, -1):
+		print(f"{i}", end='')
+
+		for x in range(4):
+			sys.stdout.flush()
+			time.sleep(0.25)
+			print(".", end='')
+
+		if SIG_TRIGGER:
+			abort = input('\nDo you really want to abort (y/n)? ')
+			if abort.strip() != 'n':
+				exit(0)
+
+			if SIG_TRIGGER is False:
+				sys.stdin.read()
+			SIG_TRIGGER = False
+			signal.signal(signal.SIGINT, sig_handler)
+	print()
+	signal.signal(signal.SIGINT, original_sigint_handler)
+	return True
 
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
