@@ -341,7 +341,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-			if 	archinstall.arguments['audio'] != 'none':
+			if 	archinstall.arguments.get('audio', None) != None:
 				installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
