@@ -2,7 +2,7 @@ python-archinstall Documentation
 ================================
 
 | **python-archinstall** *(or, archinstall for short)* is a helper library to install Arch Linux and manage services, packages and other things.
-| It comes packaged with different pre-configured installers, such as the :ref:`guided <installing.guided>` installer.
+| It comes packaged with different pre-configured installers, such as the `Guided installation`_ installer.
 | 
 | A demo can be viewed here: `https://www.youtube.com/watch?v=9Xt7X_Iqg6E <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_ which uses the default guided installer.
 

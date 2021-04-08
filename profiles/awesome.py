@@ -2,6 +2,11 @@
 
 import archinstall
 
+is_top_level_profile = False
+
+# New way of defining packages for a profile, which is iterable and can be used out side
+# of the profile to get a list of "what packages will be installed".
+__packages__ = ['nano', 'nemo', 'gpicview-gtk3', 'openssh', 'sshfs', 'htop', 'scrot', 'wget']
 
 def _prep_function(*args, **kwargs):
 	"""

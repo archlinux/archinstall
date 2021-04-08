@@ -2,6 +2,8 @@
 
 import archinstall, os
 
+is_top_level_profile = True
+
 AVAILABLE_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
 	# and lists are a list of packages to be installed
