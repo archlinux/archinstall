@@ -22,7 +22,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
-def _post_install(*args, **kwargs):
+""" def _post_install(*args, **kwargs):
 	if "nvidia" in _gfx_driver_packages:
 		print("Plasma Wayland has known compatibility issues with the proprietary Nvidia driver")
 	choice = input("Would you like plasma-wayland to be the default session [Y/n] ").lower()
@@ -30,6 +30,8 @@ def _post_install(*args, **kwargs):
 		installation.arch_chroot("mv /usr/share/xsessions/plasma.desktop /usr/share/xsessions/plasmax11.desktop")
 		installation.arch_chroot("mv /usr/share/wayland-sessions/plasmawayland.desktop /usr/share/wayland-sessions/plasma.desktop")
 	return True
+As Dylan pointed out this could break things in a update lets just stick to defaults for now	
+""" 
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
