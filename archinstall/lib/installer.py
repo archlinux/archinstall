@@ -34,7 +34,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr nano', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
+	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
 		self.profile = profile
 		self.hostname = hostname
 		self.mountpoint = mountpoint
