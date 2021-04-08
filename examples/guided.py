@@ -1,29 +1,7 @@
-import getpass, time, json, sys, signal, os
+import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
-
-"""
-This signal-handler chain (and global variable)
-is used to trigger the "Are you sure you want to abort?" question further down.
-It might look a bit odd, but have a look at the line: "if SIG_TRIGGER:"
-"""
-SIG_TRIGGER = False
-def kill_handler(sig, frame):
-	print()
-	exit(0)
-
-def sig_handler(sig, frame):
-	global SIG_TRIGGER
-	SIG_TRIGGER = True
-	signal.signal(signal.SIGINT, kill_handler)
-
-original_sigint_handler = signal.getsignal(signal.SIGINT)
-signal.signal(signal.SIGINT, sig_handler)
-
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
 
 def ask_user_questions():
 	"""
@@ -206,8 +184,6 @@ def ask_user_questions():
 
 
 def perform_installation_steps():
-	global SIG_TRIGGER
-
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
@@ -222,29 +198,7 @@ def perform_installation_steps():
 	"""
 
 	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
-
-	for i in range(5, 0, -1):
-		print(f"{i}", end='')
-
-		for x in range(4):
-			sys.stdout.flush()
-			time.sleep(0.25)
-			print(".", end='')
-
-		if SIG_TRIGGER:
-			abort = input('\nDo you really want to abort (y/n)? ')
-			if abort.strip() != 'n':
-				exit(0)
-
-			if SIG_TRIGGER is False:
-				sys.stdin.read()
-			SIG_TRIGGER = False
-			signal.signal(signal.SIGINT, sig_handler)
-
-	# Put back the default/original signal handler now that we're done catching
-	# and interrupting SIGINT with "Do you really want to abort".
-	print()
-	signal.signal(signal.SIGINT, original_sigint_handler)
+	archinstall.do_countdown()
 
 	"""
 		Setup the blockdevice, filesystem (and optionally encryption).

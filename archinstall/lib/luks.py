@@ -1,5 +1,7 @@
 import os
 import shlex
+import time
+import pathlib
 from .exceptions import *
 from .general import *
 from .disk import Partition
@@ -123,6 +125,11 @@ class luks2():
 		from .disk import get_filesystem_type
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
+
+		wait_timer = time.time()
+		while pathlib.Paht(partition.path).exists() is False and time.time() - wait_timer < 10:
+			time.sleep(0.025)
+
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
