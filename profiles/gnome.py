@@ -33,5 +33,7 @@ if __name__ == 'gnome':
 	gnome.install()
 
 	installation.enable_service('gdm') # Gnome Display Manager
+	installation.enable_service('NetworkManager')
+
 	# We could also start it via xinitrc since we do have Xorg,
 	# but for gnome that's deprecated and wayland is preferred.

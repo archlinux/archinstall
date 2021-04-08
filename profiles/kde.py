@@ -43,3 +43,5 @@ if __name__ == 'kde':
 
 	# Enable autostart of KDE for all users
 	installation.enable_service('sddm')
+	installation.enable_service('NetworkManager')
+
