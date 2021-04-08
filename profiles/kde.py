@@ -22,11 +22,13 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+"""
 def _post_install(*args, **kwargs):
 	if "nvidia" in _gfx_driver_packages:
 		print("Plasma Wayland has known compatibility issues with the proprietary Nvidia driver")
 	print("After booting, you can choose between Wayland and Xorg using the drop-down menu")
 	return True
+"""
 
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
