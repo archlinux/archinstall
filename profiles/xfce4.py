@@ -3,6 +3,8 @@
 
 import archinstall
 
+is_top_level_profile = False
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
