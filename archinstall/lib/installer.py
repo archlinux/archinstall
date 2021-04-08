@@ -34,28 +34,21 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware efibootmgr', logdir=None, logfile=None):
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware efibootmgr'):
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
-		if logdir:
-			storage['LOG_PATH'] = logdir
-		if logfile:
-			storage['LOG_FILE'] = logfile
-
 		self.helper_flags = {
-			'bootloader' : False,
 			'base' : False,
-			'user' : False # Root counts as a user, if additional users are skipped.
+			'bootloader' : False
 		}
 
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		self.post_base_install = []
-		storage['session'] = self
 
-		self.partition = partition
-		self.boot_partition = boot_partition
+		storage['session'] = self
+		self.partitions = get_partitions_in_use(self.target)
 
 	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
 		"""
@@ -65,9 +58,6 @@ class Installer():
 		log(*args, level=level, **kwargs)
 
 	def __enter__(self, *args, **kwargs):
-		self.partition.mount(self.mountpoint)
-		os.makedirs(f'{self.mountpoint}/boot', exist_ok=True)
-		self.boot_partition.mount(f'{self.mountpoint}/boot')
 		return self
 
 	def __exit__(self, *args, **kwargs):
@@ -272,18 +262,25 @@ class Installer():
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
-		if self.partition.filesystem == 'btrfs':
-		#if self.partition.encrypted:
-			self.base_packages.append('btrfs-progs')
-		if self.partition.filesystem == 'xfs':
-			self.base_packages.append('xfsprogs')
-		if self.partition.filesystem == 'f2fs':
-			self.base_packages.append('f2fs-tools')
+		MODULES = []
+		BINARIES = []
+		FILES = []
+		HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+
+		for partition in self.partitions:
+			if partition.filesystem == 'btrfs':
+			#if partition.encrypted:
+				self.base_packages.append('btrfs-progs')
+			if partition.filesystem == 'xfs':
+				self.base_packages.append('xfsprogs')
+			if partition.filesystem == 'f2fs':
+				self.base_packages.append('f2fs-tools')
+
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
 
-		with open(f"{self.mountpoint}/etc/fstab", "a") as fstab:
+		with open(f"{self.target}/etc/fstab", "a") as fstab:
 			fstab.write(
 				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
 			)  # Redundant \n at the start? who knows?
@@ -296,25 +293,21 @@ class Installer():
 		self.set_locale('en_US')
 
 		# TODO: Use python functions for this
-		sys_command(f'/usr/bin/arch-chroot {self.mountpoint} chmod 700 /root')
+		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		# Configure mkinitcpio to handle some specific use cases.
-		# TODO: Yes, we should not overwrite the entire thing, but for now this should be fine
-		# since we just installed the base system.
 		if self.partition.filesystem == 'btrfs':
-			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
-				mkinit.write('MODULES=(btrfs)\n')
-				mkinit.write('BINARIES=(/usr/bin/btrfs)\n')
-				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
-			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
+			MODULES.append('btrfs')
+			BINARIES.append('/usr/bin/btrfs')
 		elif self.partition.encrypted:
-			with open(f'{self.mountpoint}/etc/mkinitcpio.conf', 'w') as mkinit:
-				mkinit.write('MODULES=()\n')
-				mkinit.write('BINARIES=()\n')
-				mkinit.write('FILES=()\n')
-				mkinit.write('HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)\n')
-			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} mkinitcpio -p linux')
+			HOOKS.patch('encrypt', before='filesystems')
+
+		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
+			mkinit.write(f"MODULES=({' '.join(MODULES)})\n")
+			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
+			mkinit.write(f"FILES=({' '.join(FILES)})\n")
+			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -p linux')
 
 		self.helper_flags['base'] = True
 
