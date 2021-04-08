@@ -6,7 +6,7 @@ is_top_level_profile = False
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
-__packages__ = ['nano', 'nemo', 'gpicview-gtk3', 'openssh', 'sshfs', 'htop', 'scrot', 'wget']
+__packages__ = ['nemo', 'gpicview-gtk3', 'scrot']
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -33,13 +33,7 @@ if __name__ == 'awesome':
 	awesome = archinstall.Application(installation, 'awesome')
 	awesome.install()
 
-	# Then setup and configure the desktop environment: awesome
-	editor = "nano"
-	filebrowser = "nemo gpicview-gtk3"
-	utils = "openssh sshfs htop scrot wget"
-
-
-	installation.add_additional_packages(f"{utils} {filebrowser} {editor}")
+	installation.add_additional_packages(__packages__)
 
 	alacritty = archinstall.Application(installation, 'alacritty')
 	alacritty.install()

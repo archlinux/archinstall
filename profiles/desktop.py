@@ -4,6 +4,10 @@ import archinstall, os
 
 is_top_level_profile = True
 
+# New way of defining packages for a profile, which is iterable and can be used out side
+# of the profile to get a list of "what packages will be installed".
+__packages__ = ['nano', 'openssh', 'htop', 'wget', 'iwd', 'wireless_tools', 'wpa_supplicant', 'smartmontools']
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -14,7 +18,7 @@ def _prep_function(*args, **kwargs):
 
 	supported_desktops = ['gnome', 'kde', 'awesome']
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
-
+	
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded
 	# the next time it gets executed.
@@ -41,7 +45,11 @@ if __name__ == 'desktop':
 	There are plenty of desktop-turn-key-solutions based on Arch Linux,
 	this is therefore just a helper to get started
 	"""
+	
+	# Install common packages for all desktop environments
+	installation.add_additional_packages(__packages__)
 
 	# TODO: Remove magic variable 'installation' and place it
 	#       in archinstall.storage or archinstall.session/archinstall.installation
 	installation.install_profile(archinstall.storage['_desktop_profile'])
+
