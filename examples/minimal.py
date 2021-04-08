@@ -12,12 +12,13 @@ if archinstall.arguments.get('help', None):
 archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 archinstall.arguments['harddrive'].keep_partitions = False
 
-def install_on(root, boot):
-	# We kick off the installer by telling it where the root and boot lives
-	with archinstall.Installer(root, boot_partition=boot, hostname='minimal-arch') as installation:
+def install_on(mountpoint):
+	# We kick off the installer by telling it where the 
+	with archinstall.Installer(mountpoint) as installation:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
+			installation.set_hostname('minimal-arch')
 			installation.add_bootloader()
 
 			# Optionally enable networking:
@@ -57,8 +58,10 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 
 		with archinstall.luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
 			unlocked_root.format(root.filesystem)
-
-			install_on(unlocked_root)
+			unlocked_root.mount('/mnt')
 	else:
 		root.format(root.filesystem)
-		install_on(root, boot)
+		root.mount('/mnt')
+
+	boot.mount('/mnt/boot')
+	install_on('/mnt')

@@ -34,10 +34,8 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, partition, boot_partition, *, base_packages='base base-devel linux linux-firmware efibootmgr', profile=None, mountpoint='/mnt', hostname='ArchInstalled', logdir=None, logfile=None):
-		self.profile = profile
-		self.hostname = hostname
-		self.mountpoint = mountpoint
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware efibootmgr', logdir=None, logfile=None):
+		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
