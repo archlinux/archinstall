@@ -61,4 +61,4 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 			install_on(unlocked_root)
 	else:
 		root.format(root.filesystem)
-		install_on(root)
+		install_on(root, boot)
