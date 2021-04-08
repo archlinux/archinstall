@@ -1,3 +1,3 @@
 import archinstall
 
-installation.add_additional_packages("sway gdm")
+installation.add_additional_packages("sway sddm")

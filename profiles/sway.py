@@ -21,4 +21,4 @@ if __name__ == 'sway':
 	sway = archinstall.Application(installation, 'sway')
 	sway.install()
 
-	installation.enable_service('gdm') # Gnome Display Manager, which supports Sway
+	installation.enable_service('sddm') # SDDM, which supports Sway
