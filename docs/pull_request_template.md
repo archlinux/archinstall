@@ -1,31 +1,28 @@
-# Pull Request Template
+🚨 PR Guidelines:
 
-Make sure you've checked out the [contribution guideline](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md).<br>
-Most of the guidelines are not enforced, but is heavily encouraged.
+# New features *(v2.2.0)*
 
-## Description
+Merge new features in to `torxed-v2.2.0`.<br>
+This branch is designated for potential breaking changes, added complexity and new functionality.
 
-Please include a summary of the change and which issue is fixed.<br>
-It is also helpful to add links to online documentation or to the implementation of the code you are changing.
+# Bug fixes *(v2.1.4)*
 
-## Bugs and Issues
+Merge against `master` for bug fixes and anything that improves stability and quality of life.<br>
+This excludes:
+ * New functionality
+ * Added complexity
+ * Breaking changes
 
-If this pull-request fixes an issue or a bug, please mention the issues with the approriate issue referece *(Example: &#35;8)*.
+Any changes to `master` automatically gets pulled in to `torxed-v2.2.0` to avoid merge hell.
 
-## How Has This Been Tested?
+# Describe your PR
 
-If possible, mention any tests you have made with the current code base included in the pull-requests.<br>
-Any core-developer will also run tests, but this helps speed things up. Below is a template that can be used:
+If the changes has been discussed in an Issue, please tag it so we can backtrace from the Issue later on.<br>
+If the PR is larger than ~20 lines, please describe it here unless described in an issue.
 
-As an example:
+# Testing
 
-**Test Configuration**:
-* Hardware: VirtualBox 6.1
-* Specific steps: Ran installer with additional packages `nano` and `wget`
+Any new feature or stability improvement should be tested if possible.
+Please follow the test instructions at the bottom of the README.
 
-## Checklist:
-
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code to the best of my abilities
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation where possible/if applicable
+*These PR guidelines will change after 2021-05-01, which is when `v2.1.4` gets onto the new ISO*
