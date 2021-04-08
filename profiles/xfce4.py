@@ -1,6 +1,8 @@
 
 # A desktop environment using "Xfce4"
 
+is_top_level_profile = False
+
 import archinstall
 
 def _prep_function(*args, **kwargs):
