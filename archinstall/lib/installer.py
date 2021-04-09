@@ -256,6 +256,9 @@ class Installer():
 
 		return True
 
+	def detect_encryption(self, partition):
+		return partition.encrypted or (partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS')
+
 	def minimal_installation(self):
 		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
@@ -282,7 +285,7 @@ class Installer():
 				if '/usr/bin/btrfs-progs' not in BINARIES:
 					BINARIES.append('/usr/bin/btrfs')
 
-			if (partition.encrypted or (partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS')):
+			if self.detect_encryption(partition):
 				if 'encrypt' not in HOOKS:
 					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
 
@@ -372,7 +375,7 @@ class Installer():
 				## so we'll use the old manual method until we get that sorted out.
 
 
-				if root_partition.encrypted:
+				if self.detect_encryption(root_partition):
 					log(f"Identifying root partition by DISK-UUID on {root_partition}, looking for '{os.path.basename(root_partition.real_device)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 						for uid in uids:
