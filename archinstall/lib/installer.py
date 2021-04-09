@@ -144,8 +144,7 @@ class Installer():
 		
 		return True
 
-	def set_hostname(self, hostname=None, *args, **kwargs):
-		if not hostname: hostname = self.hostname
+	def set_hostname(self, hostname :str, *args, **kwargs):
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(self.hostname + '\n')
 
@@ -290,7 +289,7 @@ class Installer():
 		#os.remove(f'{self.target}/etc/localtime')
 		#sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		#sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
-		self.set_hostname()
+		self.set_hostname('archinstall')
 		self.set_locale('en_US')
 
 		# TODO: Use python functions for this
