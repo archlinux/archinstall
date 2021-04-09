@@ -322,7 +322,15 @@ class Installer():
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
-		self.log(f'Adding bootloader {bootloader} to {self.boot_partition}', level=LOG_LEVELS.Info)
+		# This logic is only for debug/log purposes:
+		# (it could be completely ommitted if we just print /mnt instead)
+		boot_partition = None
+		for partition in self.partitions:
+			if partition.mountpoint == self.target+'/boot'
+				boot_partition = partition
+				break
+
+		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
 			# TODO: Ideally we would want to check if another config
