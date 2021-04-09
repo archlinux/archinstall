@@ -283,8 +283,9 @@ class Installer():
 				if '/usr/bin/btrfs-progs' not in BINARIES:
 					BINARIES.append('/usr/bin/btrfs')
 
-			elif partition.encrypted and 'encrypt' not in HOOKS:
-				HOOKS.insert(HOOKS.find('filesystems'), 'encrypt')
+			elif (partition.encrypted or Partition(partition.parent, None).filesystem == 'crypto_LUKS'):
+				if 'encrypt' not in HOOKS:
+					HOOKS.insert(HOOKS.find('filesystems'), 'encrypt')
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True

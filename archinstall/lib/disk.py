@@ -215,6 +215,10 @@ class Partition():
 		self._encrypted = value
 
 	@property
+	def parent(self):
+		return self.real_device
+
+	@property
 	def real_device(self):
 		if not self._encrypted:
 			return self.path
