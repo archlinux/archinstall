@@ -220,12 +220,9 @@ class Partition():
 
 	@property
 	def real_device(self):
-		if not self._encrypted:
-			return self.path
-		else:
-			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
-				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
-					return f"/dev/{parent}"
+		for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
+			if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
+				return f"/dev/{parent}"
 		#	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
 
