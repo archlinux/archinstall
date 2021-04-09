@@ -20,5 +20,3 @@ if __name__ == 'sway':
 	# Install the application sway from the template under /applications/
 	sway = archinstall.Application(installation, 'sway')
 	sway.install()
-
-	installation.enable_service('sddm') # SDDM, which supports Sway
