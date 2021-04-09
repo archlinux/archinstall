@@ -247,6 +247,7 @@ def perform_installation_steps():
 
 			fs.find_partition('/boot').mount('/mnt/boot')
 	
+	exit(1)
 	perform_installation('/mnt')
 
 
