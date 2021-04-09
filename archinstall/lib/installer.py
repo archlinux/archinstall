@@ -283,7 +283,7 @@ class Installer():
 				if '/usr/bin/btrfs-progs' not in BINARIES:
 					BINARIES.append('/usr/bin/btrfs')
 
-			elif (partition.encrypted or Partition(partition.parent, None).filesystem == 'crypto_LUKS'):
+			if (partition.encrypted or Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS'):
 				if 'encrypt' not in HOOKS:
 					HOOKS.insert(HOOKS.find('filesystems'), 'encrypt')
 
