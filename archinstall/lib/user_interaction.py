@@ -184,7 +184,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		return None
 	elif selected_option.isdigit():
 		selected_option = int(selected_option)
-		if selected_option >= len(options):
+		if selected_option > len(options):
 			raise RequirementError(f'Selected option "{selected_option}" is out of range')
 		selected_option = options[selected_option]
 	elif selected_option in options:
