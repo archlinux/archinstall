@@ -295,7 +295,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
-					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-docs", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")
