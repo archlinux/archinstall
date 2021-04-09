@@ -1,9 +1,5 @@
 import archinstall
 
-# Unmount and close previous runs
-archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
-archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
-
 # Select a harddrive and a disk password
 archinstall.log(f"Minimal only supports:")
 archinstall.log(f" * Being installed to a single disk")
