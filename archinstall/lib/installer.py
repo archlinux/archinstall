@@ -326,7 +326,7 @@ class Installer():
 		# (it could be completely ommitted if we just print /mnt instead)
 		boot_partition = None
 		for partition in self.partitions:
-			if partition.mountpoint == self.target+'/boot'
+			if partition.mountpoint == self.target+'/boot':
 				boot_partition = partition
 				break
 
