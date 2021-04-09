@@ -17,6 +17,7 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
 def _post_install(*args, **kwargs):
 	"""
 	Another magic function called after the system 
@@ -31,12 +32,6 @@ def _post_install(*args, **kwargs):
 	return True
 
 if __name__ == 'i3-wm':
-    # Install dependency profiles
-    installation.install_profile('xorg')
-    # we are installing lightdm to auto start i3
-    installation.add_additional_packages("lightdm-gtk-greeter lightdm")
     # install the i3 group now
     i3 = archinstall.Application(installation, 'i3-wm')
     i3.install()
-    # Auto start lightdm for all users
-    installation.enable_service('lightdm')

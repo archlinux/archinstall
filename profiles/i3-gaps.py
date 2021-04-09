@@ -31,13 +31,7 @@ def _post_install(*args, **kwargs):
 	
 	return True
 
-if __name__ == 'i3-wm':
-	# Install dependency profiles
-    installation.install_profile('xorg')
-    # gaps is installed by deafult so we are overriding it here
-    installation.add_additional_packages("lightdm-gtk-greeter lightdm")
+if __name__ == 'i3-gaps':
     # install the i3 group now
     i3 = archinstall.Application(installation, 'i3-gaps')
     i3.install()
-    # Auto start lightdm for all users
-    installation.enable_service('lightdm')

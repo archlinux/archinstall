@@ -49,6 +49,15 @@ if __name__ == 'i3':
 	# Install common packages for all i3 configurations
 	installation.add_additional_packages(__packages__)
 
+	# Install dependency profiles
+	installation.install_profile('xorg')
+
+	# gaps is installed by deafult so we are overriding it here
+	installation.add_additional_packages("lightdm-gtk-greeter lightdm")
+
+	# Auto start lightdm for all users
+	installation.enable_service('lightdm')
+
 	# TODO: Remove magic variable 'installation' and place it
 	#       in archinstall.storage or archinstall.session/archinstall.installation
 	installation.install_profile(archinstall.storage['_desktop_profile'])
