@@ -322,13 +322,13 @@ class Installer():
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
-		# This logic is only for debug/log purposes:
-		# (it could be completely ommitted if we just print /mnt instead)
 		boot_partition = None
+		root_partition = None
 		for partition in self.partitions:
 			if partition.mountpoint == self.target+'/boot':
 				boot_partition = partition
-				break
+			elif partition.mountpoint == self.target:
+				root_partition = partition
 
 		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=LOG_LEVELS.Info)
 
@@ -372,14 +372,14 @@ class Installer():
 				## so we'll use the old manual method until we get that sorted out.
 
 
-				if self.partition.encrypted:
-					log(f"Identifying root partition by DISK-UUID on {self.partition}, looking for '{os.path.basename(self.partition.real_device)}'.", level=LOG_LEVELS.Debug)
+				if root_partition.encrypted:
+					log(f"Identifying root partition by DISK-UUID on {root_partition}, looking for '{os.path.basename(root_partition.real_device)}'.", level=LOG_LEVELS.Debug)
 					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
 						for uid in uids:
 							real_path = os.path.realpath(os.path.join(root, uid))
 
-							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(self.partition.real_device)}: {os.path.basename(real_path) == os.path.basename(self.partition.real_device)}", level=LOG_LEVELS.Debug)
-							if not os.path.basename(real_path) == os.path.basename(self.partition.real_device): continue
+							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(root_partition.real_device)}: {os.path.basename(real_path) == os.path.basename(root_partition.real_device)}", level=LOG_LEVELS.Debug)
+							if not os.path.basename(real_path) == os.path.basename(root_partition.real_device): continue
 
 							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 
@@ -387,13 +387,13 @@ class Installer():
 							return True
 						break
 				else:
-					log(f"Identifying root partition by PART-UUID on {self.partition}, looking for '{os.path.basename(self.partition.path)}'.", level=LOG_LEVELS.Debug)
-					entry.write(f'options root=PARTUUID={self.partition.uuid} rw intel_pstate=no_hwp\n')
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{os.path.basename(root_partition.path)}'.", level=LOG_LEVELS.Debug)
+					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
 
 					self.helper_flags['bootloader'] = bootloader
 					return True
 
-			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
+			raise RequirementError(f"Could not identify the UUID of {root_partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 
