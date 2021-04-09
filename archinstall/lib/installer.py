@@ -122,7 +122,7 @@ class Installer():
 		self.log(f'Installing packages: {packages}', level=LOG_LEVELS.Info)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.mountpoint} {" ".join(packages)}', **kwargs)).exit_code == 0:
+			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=LOG_LEVELS.Info)
@@ -130,42 +130,42 @@ class Installer():
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=LOG_LEVELS.Info)
 
 	def set_mirrors(self, mirrors):
-		return use_mirrors(mirrors, destination=f'{self.mountpoint}/etc/pacman.d/mirrorlist')
+		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-pU'):
-		self.log(f"Updating {self.mountpoint}/etc/fstab", level=LOG_LEVELS.Info)
+		self.log(f"Updating {self.target}/etc/fstab", level=LOG_LEVELS.Info)
 		
-		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}').trace_log
-		with open(f"{self.mountpoint}/etc/fstab", 'ab') as fstab_fh:
+		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.target}').trace_log
+		with open(f"{self.target}/etc/fstab", 'ab') as fstab_fh:
 			fstab_fh.write(fstab)
 
-		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
+		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
 		
 		return True
 
 	def set_hostname(self, hostname=None, *args, **kwargs):
 		if not hostname: hostname = self.hostname
-		with open(f'{self.mountpoint}/etc/hostname', 'w') as fh:
+		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(self.hostname + '\n')
 
 	def set_locale(self, locale, encoding='UTF-8', *args, **kwargs):
 		if not len(locale): return True
 
-		with open(f'{self.mountpoint}/etc/locale.gen', 'a') as fh:
+		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
 			fh.write(f'{locale}.{encoding} {encoding}\n')
-		with open(f'{self.mountpoint}/etc/locale.conf', 'w') as fh:
+		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
 			fh.write(f'LANG={locale}.{encoding}\n')
 
-		return True if sys_command(f'/usr/bin/arch-chroot {self.mountpoint} locale-gen').exit_code == 0 else False
+		return True if sys_command(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
 		if not zone: return True
 		if not len(zone): return True # Redundant
 
 		if (pathlib.Path("/usr")/"share"/"zoneinfo"/zone).exists():
-			(pathlib.Path(self.mountpoint)/"etc"/"localtime").unlink(missing_ok=True)
-			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
+			(pathlib.Path(self.target)/"etc"/"localtime").unlink(missing_ok=True)
+			sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 		else:
 			self.log(
@@ -185,7 +185,7 @@ class Installer():
 		return self.arch_chroot(f'systemctl enable {service}').exit_code == 0
 
 	def run_command(self, cmd, *args, **kwargs):
-		return sys_command(f'/usr/bin/arch-chroot {self.mountpoint} {cmd}')
+		return sys_command(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
 	def arch_chroot(self, cmd, *args, **kwargs):
 		return self.run_command(cmd)
@@ -205,15 +205,15 @@ class Installer():
 
 			conf = Networkd(Match={"Name": nic}, Network=network)
 		
-		with open(f"{self.mountpoint}/etc/systemd/network/10-{nic}.network", "a") as netconf:
+		with open(f"{self.target}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
 
 	def copy_ISO_network_config(self, enable_services=False):
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
 			if (psk_files := glob.glob('/var/lib/iwd/*.psk')):
-				if not os.path.isdir(f"{self.mountpoint}/var/lib/iwd"):
-					os.makedirs(f"{self.mountpoint}/var/lib/iwd")
+				if not os.path.isdir(f"{self.target}/var/lib/iwd"):
+					os.makedirs(f"{self.target}/var/lib/iwd")
 
 				if enable_services:
 					# If we haven't installed the base yet (function called pre-maturely)
@@ -233,15 +233,15 @@ class Installer():
 						self.enable_service('iwd')
 
 				for psk in psk_files:
-					shutil.copy2(psk, f"{self.mountpoint}/var/lib/iwd/{os.path.basename(psk)}")
+					shutil.copy2(psk, f"{self.target}/var/lib/iwd/{os.path.basename(psk)}")
 
 		# Copy (if any) systemd-networkd config files
 		if (netconfigurations := glob.glob('/etc/systemd/network/*')):
-			if not os.path.isdir(f"{self.mountpoint}/etc/systemd/network/"):
-				os.makedirs(f"{self.mountpoint}/etc/systemd/network/")
+			if not os.path.isdir(f"{self.target}/etc/systemd/network/"):
+				os.makedirs(f"{self.target}/etc/systemd/network/")
 
 			for netconf_file in netconfigurations:
-				shutil.copy2(netconf_file, f"{self.mountpoint}/etc/systemd/network/{os.path.basename(netconf_file)}")
+				shutil.copy2(netconf_file, f"{self.target}/etc/systemd/network/{os.path.basename(netconf_file)}")
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
@@ -287,8 +287,8 @@ class Installer():
 			)  # Redundant \n at the start? who knows?
 
 		## TODO: Support locale and timezone
-		#os.remove(f'{self.mountpoint}/etc/localtime')
-		#sys_command(f'/usr/bin/arch-chroot {self.mountpoint} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
+		#os.remove(f'{self.target}/etc/localtime')
+		#sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		#sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname()
 		self.set_locale('en_US')
@@ -328,11 +328,11 @@ class Installer():
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(f'/usr/bin/arch-chroot {self.mountpoint} bootctl --no-variables --path=/boot install')
+			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
 			# Modify or create a loader.conf
-			if os.path.isfile(f'{self.mountpoint}/boot/loader/loader.conf'):
-				with open(f'{self.mountpoint}/boot/loader/loader.conf', 'r') as loader:
+			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
+				with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
 					loader_data = loader.read().split('\n')
 			else:
 				loader_data = [
@@ -340,7 +340,7 @@ class Installer():
 					f"timeout 5"
 				]
 			
-			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
+			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':
 						loader.write(f'default {self.init_time}\n')
@@ -352,7 +352,7 @@ class Installer():
 			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
 
 			# Setup the loader entry
-			with open(f'{self.mountpoint}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
+			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
 				entry.write(f'# Created by: archinstall\n')
 				entry.write(f'# Created on: {self.init_time}\n')
 				entry.write(f'title Arch Linux\n')
@@ -383,7 +383,7 @@ class Installer():
 					self.helper_flags['bootloader'] = bootloader
 					return True
 
-			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.mountpoint}/boot/loader/entries/arch.conf will be broken until fixed.")
+			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 
@@ -408,19 +408,19 @@ class Installer():
 
 	def enable_sudo(self, entity :str, group=False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=LOG_LEVELS.Info)
-		with open(f'{self.mountpoint}/etc/sudoers', 'a') as sudoers:
+		with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
 	def user_create(self, user :str, password=None, groups=[], sudo=False):
 		self.log(f'Creating user {user}', level=LOG_LEVELS.Info)
-		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} useradd -m -G wheel {user}'))
+		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
 
 		if groups:
 			for group in groups:
-				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.mountpoint} gpasswd -a {user} {group}'))
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}'))
 
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
@@ -432,12 +432,12 @@ class Installer():
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.mountpoint} sh -c \"echo '{user}:{password}' | chpasswd\""))
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
 	def set_keyboard_language(self, language):
 		if len(language.strip()):
-			with open(f'{self.mountpoint}/etc/vconsole.conf', 'w') as vconsole:
+			with open(f'{self.target}/etc/vconsole.conf', 'w') as vconsole:
 				vconsole.write(f'KEYMAP={language}\n')
 				vconsole.write(f'FONT=lat9w-16\n')
 		return True
