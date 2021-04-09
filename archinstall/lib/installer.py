@@ -146,7 +146,7 @@ class Installer():
 
 	def set_hostname(self, hostname :str, *args, **kwargs):
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
-			fh.write(self.hostname + '\n')
+			fh.write(hostname + '\n')
 
 	def set_locale(self, locale, encoding='UTF-8', *args, **kwargs):
 		if not len(locale): return True
