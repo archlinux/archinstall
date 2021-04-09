@@ -277,7 +277,7 @@ class Installer():
 				self.base_packages.append('f2fs-tools')
 
 			# Configure mkinitcpio to handle some specific use cases.
-			if partition.filesystem == 'btrfs'
+			if partition.filesystem == 'btrfs':
 				if 'btrfs' not in MODULES:
 					MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in BINARIES:
