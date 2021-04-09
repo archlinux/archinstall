@@ -367,7 +367,7 @@ class Partition():
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
-			pathlib.Path(self.path).mkdir(parents=True, exist_ok=True)
+			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
 			try:
 				sys_command(f'/usr/bin/mount {self.path} {target}')
