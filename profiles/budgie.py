@@ -31,4 +31,4 @@ if __name__ == 'budgie':
 	budgie = archinstall.Application(installation, 'budgie')
 	budgie.install()
 
-	installation.enable_service('lightdm') # Light Display Manager
+	installation.enable_service('gdm') # GNOME Display Manager
