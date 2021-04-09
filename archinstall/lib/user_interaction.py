@@ -179,6 +179,7 @@ def ask_to_configure_network():
 def ask_for_disk_layout():
 	options = {
 		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
+		'use-mnt' : 'Use whatever is mounted under /mnt and don\'t format anything',
 		'format-all' : 'Format entire drive and setup a basic partition scheme.',
 		'abort' : 'Abort the installation.'
 	}
