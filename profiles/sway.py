@@ -19,7 +19,19 @@ def _prep_function(*args, **kwargs):
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 def _post_install(*args, **kwargs):
-	installation.log("we use the default configartion shipped by arch linux, if you wish to change it you should chroot into the installation and do it there\nto start sway run the command sway")
+	choice = input("Would you like to autostart sway on login [Y/n]: ")
+	if choice.lower == "y":
+		with open(f"{installation.mountpoint}/etc/profile", "a") as f:
+			x = """
+			if [ -z $DISPLAY ] && [ "$(tty)" == "/dev/tty1" ]; then
+  				exec sway
+			fi
+			"""
+			f.write(x)
+			f.close()
+	else:
+		installation.log("to start sway run the command sway")
+	installation.log("we use the default configartion shipped by arch linux, if you wish to change it you should chroot into the installation and modify it")
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
