@@ -166,9 +166,6 @@ class Partition():
 			self.mountpoint = target
 
 		if not self.filesystem and autodetect_filesystem:
-			print(f'Auto-detecting filesystem for: {path}')
-			print('Mount information:', mount_information.get('fstype', None))
-			print('Real device:', get_filesystem_type(path))
 			if (fstype := mount_information.get('fstype', get_filesystem_type(path))):
 				self.filesystem = fstype
 
