@@ -116,7 +116,7 @@ def ask_user_questions():
 		elif option == 'format-all':
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
-	else:
+	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
 		# and ask the user for a root filesystem.
 		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
