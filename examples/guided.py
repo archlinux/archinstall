@@ -30,6 +30,8 @@ def ask_user_questions():
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
 	else:
 		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
+		if archinstall.arguments['harddrive'] is None:
+			archinstall.arguments['target-mount'] = '/mnt'
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
@@ -53,9 +55,6 @@ def ask_user_questions():
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
 			archinstall.log(f"Safely aborting the installation. No changes to the disk or system has been made.")
 			exit(1)
-		elif option == 'use-mnt':
-			archinstall.arguments['harddrive'] = None
-			archinstall.arguments['target-mount'] = '/mnt'
 		elif option == 'keep-existing':
 			archinstall.arguments['harddrive'].keep_partitions = True
 

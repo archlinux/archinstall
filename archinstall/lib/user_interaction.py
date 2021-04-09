@@ -179,7 +179,6 @@ def ask_to_configure_network():
 def ask_for_disk_layout():
 	options = {
 		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
-		'use-mnt' : 'Use whatever is mounted under /mnt and don\'t format anything',
 		'format-all' : 'Format entire drive and setup a basic partition scheme.',
 		'abort' : 'Abort the installation.'
 	}
@@ -246,8 +245,10 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = input('Select one of the above disks (by number or full path): ')
-		if drive.isdigit():
+		drive = input('Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ')
+		if drive.strip() == '/mnt':
+			return None
+		elif drive.isdigit():
 			drive = int(drive)
 			if drive >= len(drives):
 				raise DiskError(f'Selected option "{drive}" is out of range')
