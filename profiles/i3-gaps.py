@@ -18,19 +18,6 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
-def _post_install(*args, **kwargs):
-	"""
-	Another magic function called after the system 
-	has been installed. 
-	"""
-	installation.log("the installation of i3 does not conatain any configuerations for the wm. In this shell you should take your time to add your desiired configueration. Exit the shell once you are done to continue the installation.", fg="yellow")
-	try:
-		subprocess.check_call("arch-chroot /mnt",shell=True)
-	except subprocess.CallProcessError:
-		return False
-	
-	return True
-
 if __name__ == 'i3-gaps':
     # install the i3 group now
     i3 = archinstall.Application(installation, 'i3-gaps')
