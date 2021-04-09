@@ -1,4 +1,4 @@
-import archinstall, getpass
+import archinstall
 
 # Select a harddrive and a disk password
 archinstall.log(f"Minimal only supports:")
