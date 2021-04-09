@@ -31,7 +31,7 @@ def _prep_function(*args, **kwargs):
 	print('You need to select which graphics card you\'re using.')
 	print('This in order to setup the required graphics drivers.')
 
-	__builtins__['_gfx_driver_packages'] = archinstall.lib.drivers.select_driver(AVAILABLE_DRIVERS)
+	__builtins__['_gfx_driver_packages'] = archinstall.lib.gfx_drivers.select_driver(AVAILABLE_DRIVERS)
 
 	# TODO: Add language section and/or merge it with the locale selected
 	#       earlier in for instance guided.py installer.

@@ -16,7 +16,7 @@ def _prep_function(*args, **kwargs):
 		if hasattr(imported, '_prep_function'):
 			return imported._prep_function()
 		else:
-			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+			print('Deprecated (??): wayland profile has no _prep_function() anymore')
 
 def _post_install(*args, **kwargs):
 	choice = input("Would you like to autostart sway on login [Y/n]: ")
@@ -37,8 +37,8 @@ def _post_install(*args, **kwargs):
 # or through conventional import kde
 if __name__ == 'sway':
 	# Install dependency profiles
-    if "nvidia" in _gfx_driver_packages:
-        raise archinstall.lib.exceptions.HardwareIncompatibilityError("sway does not support nvidia cards")
+    if _gfx_driver_packages == 'nvidia':
+        raise archinstall.lib.exceptions.HardwareIncompatibilityError("sway does not the prorpitery nvidia driver try using nouveau")
     else:
         installation.install_profile('wayland')
 
