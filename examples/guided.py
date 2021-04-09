@@ -160,6 +160,17 @@ def ask_user_questions():
 				)
 				exit(1)
 
+	# Ask about audio server selection if one is not already set
+	if not archinstall.arguments.get('audio', None):
+		
+		# only ask for audio server selection on a desktop profile 
+		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
+			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
+		else:
+			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
+			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
+			archinstall.arguments['audio'] = 'none'
+
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
 		print("Packages not part of the desktop environment are not installed by default.")
@@ -271,14 +282,24 @@ def perform_installation(device, boot_partition, language, mirrors):
 			# Perform a copy of the config
 			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-
+			elif archinstall.arguments.get('nic',{}).get('NetworkManager',False):
+				installation.add_additional_packages("networkmanager")
+				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
 			elif archinstall.arguments.get('nic', None):
 				installation.configure_nic(**archinstall.arguments.get('nic', {}))
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-
+			if 	archinstall.arguments.get('audio', None) != None:
+				installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
+				if archinstall.arguments.get('audio', None) == 'pipewire':
+					print('Installing pipewire ...')
+					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
+					print('Installing pulseaudio ...')
+					installation.add_additional_packages("pulseaudio")
+			
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
