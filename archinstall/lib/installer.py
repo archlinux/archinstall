@@ -276,6 +276,16 @@ class Installer():
 			if partition.filesystem == 'f2fs':
 				self.base_packages.append('f2fs-tools')
 
+			# Configure mkinitcpio to handle some specific use cases.
+			if partition.filesystem == 'btrfs'
+				if 'btrfs' not in MODULES:
+					MODULES.append('btrfs')
+				if '/usr/bin/btrfs-progs' not in BINARIES:
+					BINARIES.append('/usr/bin/btrfs')
+
+			elif partition.encrypted and 'encrypt' not in HOOKS:
+				HOOKS.insert(HOOKS.find('filesystems'), 'encrypt')
+
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
@@ -294,13 +304,6 @@ class Installer():
 
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
-
-		# Configure mkinitcpio to handle some specific use cases.
-		if self.partition.filesystem == 'btrfs':
-			MODULES.append('btrfs')
-			BINARIES.append('/usr/bin/btrfs')
-		elif self.partition.encrypted:
-			HOOKS.patch('encrypt', before='filesystems')
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(MODULES)})\n")
