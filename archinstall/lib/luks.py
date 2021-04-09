@@ -127,7 +127,7 @@ class luks2():
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
 		wait_timer = time.time()
-		while pathlib.Paht(partition.path).exists() is False and time.time() - wait_timer < 10:
+		while pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
 		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
