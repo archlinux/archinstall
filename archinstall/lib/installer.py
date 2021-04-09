@@ -285,7 +285,7 @@ class Installer():
 
 			if (partition.encrypted or (partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS')):
 				if 'encrypt' not in HOOKS:
-					HOOKS.insert(HOOKS.find('filesystems'), 'encrypt')
+					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
