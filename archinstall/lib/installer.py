@@ -101,18 +101,18 @@ class Installer():
 			if (filename := storage.get('LOG_FILE', None)):
 				absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 
-				if not os.path.isdir(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}"):
-					os.makedirs(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}")
+				if not os.path.isdir(f"{self.target}/{os.path.dirname(absolute_logfile)}"):
+					os.makedirs(f"{self.target}/{os.path.dirname(absolute_logfile)}")
 				
-				shutil.copy2(absolute_logfile, f"{self.mountpoint}/{absolute_logfile}")
+				shutil.copy2(absolute_logfile, f"{self.target}/{absolute_logfile}")
 
 		return True
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
-		if create_mountpoint and not os.path.isdir(f'{self.mountpoint}{mountpoint}'):
-			os.makedirs(f'{self.mountpoint}{mountpoint}')
+		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
+			os.makedirs(f'{self.target}{mountpoint}')
 			
-		partition.mount(f'{self.mountpoint}{mountpoint}')
+		partition.mount(f'{self.target}{mountpoint}')
 
 	def post_install_check(self, *args, **kwargs):
 		return [step for step, flag in self.helper_flags.items() if flag is False]
