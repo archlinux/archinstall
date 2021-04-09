@@ -576,7 +576,7 @@ def get_mount_info(path):
 
 def get_partitions_in_use(mountpoint):
 	try:
-		output = b''.join(sys_command(f'/usr/bin/findmnt --json -R {path}'))
+		output = b''.join(sys_command(f'/usr/bin/findmnt --json -R {mountpoint}'))
 	except SysCallError:
 		return {}
 
