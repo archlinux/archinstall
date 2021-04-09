@@ -19,7 +19,7 @@ def _prep_function(*args, **kwargs):
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 def _post_install(*args, **kwargs):
-	installation.log("we use the default configartion shipped by arch linux, if you wish to change it you should chroot into the installation and do it there")
+	installation.log("we use the default configartion shipped by arch linux, if you wish to change it you should chroot into the installation and do it there\nto start sway run the command sway")
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
