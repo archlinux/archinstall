@@ -54,6 +54,7 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 	# We encrypt the root partition if we got a password to do so with,
 	# Otherwise we just skip straight to formatting and installation
 	if archinstall.arguments.get('!encryption-password', None):
+		root.encrypted = True
 		root.encrypt()
 
 		with archinstall.luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
