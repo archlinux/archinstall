@@ -366,14 +366,16 @@ class Partition():
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
-			## libc has some issues with loop devices, defaulting back to sys calls
-		#	ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
-		#	if ret < 0:
-		#		errno = ctypes.get_errno()
-		#		raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
-			if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
-				self.mountpoint = target
-				return True
+
+			pathlib.Path(self.path).mkdir(parents=True, exist_ok=True)
+
+			try:
+				sys_command(f'/usr/bin/mount {self.path} {target}')
+			except SysCallError as err:
+				raise err
+			
+			self.mountpoint = target
+			return True
 
 	def unmount(self):
 		try:
