@@ -1,4 +1,4 @@
-import archinstall, os, subprocess
+import archinstall, os
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
@@ -19,11 +19,7 @@ def _prep_function(*args, **kwargs):
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 def _post_install(*args, **kwargs):
-	installation.log("We do not ship a default configueration for sway. before you restart you should add one\nsway also does not support a displaymanger offcialy. to start it login and run the command sway")
-    try:
-		subprocess.check_call("arch-chroot /mnt",shell=True)
-	except subprocess.CallProcessError:
-		return False
+	installation.log("we use the default configartion shipped by arch linux, if you wish to change it you should chroot into the installation and do it there")
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("kde", "/somewhere/kde.py")
 # or through conventional import kde
