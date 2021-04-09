@@ -177,12 +177,14 @@ def ask_user_questions():
 		print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
-	# Verify packages that were given
-	try:
-		archinstall.validate_package_list(archinstall.arguments['packages'])
-	except archinstall.RequirementError as e:
-		archinstall.log(e, fg='red')
-		exit(1)
+	if len(archinstall.arguments['packages']):
+		# Verify packages that were given
+		try:
+			archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
+			archinstall.validate_package_list(archinstall.arguments['packages'])
+		except archinstall.RequirementError as e:
+			archinstall.log(e, fg='red')
+			exit(1)
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
