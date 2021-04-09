@@ -68,7 +68,7 @@ This installer will perform the following:
 
 ## Unattended installation based on MAC address
 
-It is possible to automatically run a custom profile when launching archinstall in unattended mode based on the MAC address of the system. There is an example in the docs which would go into a file called `profiles/52-54-00-12-34-56.py`, and would be run on a sytem where the MAC address matched this profile name.
+Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address. For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py). If it's found, the unattended installation will commence and source that profile as it's installation proceedure.
 
 # Help
 
