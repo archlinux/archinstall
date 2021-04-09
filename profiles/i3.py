@@ -60,4 +60,4 @@ if __name__ == 'i3':
 
 	# install the i3 group now
 	i3 = archinstall.Application(installation, archinstall.storage['_i3_configuration'])
-    i3.install()
+	i3.install()
