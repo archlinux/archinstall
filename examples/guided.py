@@ -37,7 +37,7 @@ def ask_user_questions():
 	# 1. Check if it has partitions
 	# 3. Check that we support the current partitions
 	# 2. If so, ask if we should keep them or wipe everything
-	if archinstall.arguments['harddrive'].has_partitions():
+	if archinstall.arguments['harddrive'] and archinstall.arguments['harddrive'].has_partitions():
 		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
 		# We curate a list pf supported partitions
