@@ -1,8 +1,4 @@
-# A system with "xorg" installed
-
 import archinstall, os
-
-is_top_level_profile = True
 
 AVAILABLE_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
@@ -40,21 +36,8 @@ def _prep_function(*args, **kwargs):
 
 	return True
 
-# Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("xorg", "/somewhere/xorg.py")
-# or through conventional import xorg
-if __name__ == 'xorg':
-	try:
-		installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
-	except:
-		installation.add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
-
-	# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
-	# 	X11.write('setxkbmap se\n')
-
-	# with open(f'{installation.mountpoint}/etc/vconsole.conf', 'a') as vconsole:
-	# 	vconsole.write('KEYMAP={keyboard_layout}\n'.format(**arguments))
-	# 	vconsole.write('FONT=lat9w-16\n')
-
-	# awesome = archinstall.Application(installation, 'awesome')
-	# awesome.install()
+if __name__ == "__wayland__":
+    try:
+		installation.add_additional_packages(f"wayland {' '.join(_gfx_driver_packages)}")
+    except:
+		installation.add_additional_packages(f"wayland") # Prep didn't run, so there's no driver to install
