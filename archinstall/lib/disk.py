@@ -574,6 +574,24 @@ def get_mount_info(path):
 
 		return output['filesystems'][0]
 
+def get_partitions_in_use(mountpoint):
+	try:
+		output = b''.join(sys_command(f'/usr/bin/findmnt --json -R {path}'))
+	except SysCallError:
+		return {}
+
+	mounts = []
+
+	output = output.decode('UTF-8')
+	output = json.loads(output)
+	for target in output.get('filesystems', []):
+		mounts.append(Partition(target['source'], filesystem=target.get('fstype', None), mountpoint=target['target']))
+
+		for child in target.get('children', []):
+			mounts.append(Partition(child['source'], filesystem=child.get('fstype', None), mountpoint=child['target']))
+
+	return mounts
+
 def get_filesystem_type(path):
 	try:
 		handle = sys_command(f"blkid -o value -s TYPE {path}")

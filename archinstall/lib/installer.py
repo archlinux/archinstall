@@ -49,6 +49,7 @@ class Installer():
 
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
+		print(self.partitions)
 
 	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
 		"""
