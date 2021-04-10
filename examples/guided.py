@@ -176,7 +176,6 @@ def ask_user_questions():
 			if not imported._prep_function():
 				archinstall.log(
 					' * Profile\'s preparation requirements was not fulfilled.',
-					bg='black',
 					fg='red'
 				)
 				exit(1)
