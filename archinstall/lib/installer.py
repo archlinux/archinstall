@@ -381,6 +381,8 @@ class Installer():
 
 
 				if (real_device := self.detect_encryption(root_partition)):
+					# TODO: We need to detect if the encrypted device is a whole disk encryption,
+					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=LOG_LEVELS.Debug)
 					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 				else:
