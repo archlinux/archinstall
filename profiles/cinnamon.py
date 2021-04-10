@@ -31,4 +31,4 @@ if __name__ == 'cinnamon':
 	cinnamon = archinstall.Application(installation, 'cinnamon')
 	cinnamon.install()
 
-	installation.enable_service('lightdm') # Light Display Manager
+	installation.enable_service('sddm') # SDDM Display Manager

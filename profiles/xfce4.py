@@ -32,4 +32,4 @@ if __name__ == 'xfce4':
 	xfce = archinstall.Application(installation, 'xfce4')
 	xfce.install()
 
-	installation.enable_service('lightdm') # Light Display Manager
+	installation.enable_service('sddm') # SDDM Display Manager

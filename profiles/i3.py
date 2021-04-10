@@ -53,10 +53,10 @@ if __name__ == 'i3':
 	installation.install_profile('xorg')
 
 	# gaps is installed by deafult so we are overriding it here
-	installation.add_additional_packages("lightdm-gtk-greeter lightdm")
+	installation.add_additional_packages("sddm")
 
-	# Auto start lightdm for all users
-	installation.enable_service('lightdm')
+	# Auto start sddm for all users
+	installation.enable_service('sddm')
 
 	# install the i3 group now
 	i3 = archinstall.Application(installation, archinstall.storage['_i3_configuration'])
