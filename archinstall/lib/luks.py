@@ -116,7 +116,7 @@ class luks2():
 
 	def unlock(self, partition, mountpoint, key_file):
 		"""
-		Mounts a lukts2 compatible partition to a certain mountpoint.
+		Mounts a luks2 compatible partition to a certain mountpoint.
 		Keyfile must be specified as there's no way to interact with the pw-prompt atm.
 
 		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
