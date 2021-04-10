@@ -257,7 +257,12 @@ class Installer():
 		return True
 
 	def detect_encryption(self, partition):
-		return partition.encrypted or (partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS')
+		if partition.encrypted:
+			return partition
+		elif partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS':
+			return Partition(partition.parent, None, autodetect_filesystem=True)
+		
+		return False
 
 	def minimal_installation(self):
 		## Add necessary packages if encrypting the drive
@@ -375,26 +380,15 @@ class Installer():
 				## so we'll use the old manual method until we get that sorted out.
 
 
-				if self.detect_encryption(root_partition):
-					log(f"Identifying root partition by DISK-UUID on {root_partition}, looking for '{os.path.basename(root_partition.real_device)}'.", level=LOG_LEVELS.Debug)
-					for root, folders, uids in os.walk('/dev/disk/by-uuid'):
-						for uid in uids:
-							real_path = os.path.realpath(os.path.join(root, uid))
-
-							log(f"Checking root partition match {os.path.basename(real_path)} against {os.path.basename(root_partition.real_device)}: {os.path.basename(real_path) == os.path.basename(root_partition.real_device)}", level=LOG_LEVELS.Debug)
-							if not os.path.basename(real_path) == os.path.basename(root_partition.real_device): continue
-
-							entry.write(f'options cryptdevice=UUID={uid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
-
-							self.helper_flags['bootloader'] = bootloader
-							return True
-						break
+				if (real_device := self.detect_encryption(root_partition)):
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=LOG_LEVELS.Debug)
+					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{os.path.basename(root_partition.path)}'.", level=LOG_LEVELS.Debug)
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=LOG_LEVELS.Debug)
 					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
 
-					self.helper_flags['bootloader'] = bootloader
-					return True
+				self.helper_flags['bootloader'] = bootloader
+				return True
 
 			raise RequirementError(f"Could not identify the UUID of {root_partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		else:

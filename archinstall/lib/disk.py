@@ -126,6 +126,18 @@ class BlockDevice():
 	def partition_table_type(self):
 		return GPT
 
+	@property
+	def uuid(self):
+		log(f'BlockDevice().uuid is untested!', level=LOG_LEVELS.Warning, fg='yellow')
+		"""
+		Returns the disk UUID as returned by lsblk.
+		This is more reliable than relying on /dev/disk/by-partuuid as
+		it doesn't seam to be able to detect md raid partitions.
+		"""
+		lsblk = b''.join(sys_command(f'lsblk -J -o+UUID {self.path}'))
+		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
+			return partition.get('uuid', None)
+
 	def has_partitions(self):
 		return len(self.partitions)
 
