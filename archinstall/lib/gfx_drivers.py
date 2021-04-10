@@ -1,5 +1,24 @@
 import archinstall
-def select_driver(options):
+
+AVAILABLE_DRIVERS = {
+	# Sub-dicts are layer-2 options to be selected
+	# and lists are a list of packages to be installed
+	'AMD / ATI' : {
+		'amd' : ['xf86-video-amdgpu'],
+		'ati' : ['xf86-video-ati']
+	},
+	'intel' : ['xf86-video-intel'],
+	'nvidia' : {
+		'open source' : ['xf86-video-nouveau'],
+		'proprietary' : ['nvidia']
+	},
+	'mesa' : ['mesa'],
+	'fbdev' : ['xf86-video-fbdev'],
+	'vesa' : ['xf86-video-vesa'],
+	'vmware' : ['xf86-video-vmware']
+}
+
+def select_driver(options=AVAILABLE_DRIVERS):
 	"""
 	Some what convoluted function, which's job is simple.
 	Select a graphics driver from a pre-defined set of popular options.

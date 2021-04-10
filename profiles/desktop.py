@@ -12,6 +12,8 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
+	__builtins__['_gfx_driver_packages'] = archinstall.lib.gfx_drivers.select_driver()
+
 	supported_desktops = ['gnome', 'kde', 'awesome', 'xfce4', 'cinnamon', 'i3-gaps', 'i3-wm']
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ')
 
