@@ -6,7 +6,7 @@ is_top_level_profile = False
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
-__packages__ = ['i3lock', 'i3status', 'i3blocks']
+__packages__ = ['i3lock', 'i3status', 'i3blocks', 'xterm']
 
 def _prep_function(*args, **kwargs):
 	"""
