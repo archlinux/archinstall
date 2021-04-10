@@ -21,6 +21,18 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
     # python -m archinstall guided
 
+# Mission Statement
+
+Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
+
+The guided installer will provide user friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone. The guided installer itself is also optional to use if so desired and not forced upon anyone.
+
+---
+
+Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system. This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
+
+Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compability after notifying about such changes.
+
 # Scripting your own installation
 
 You could just copy [guided.py](examples/guided.py) as a starting point.
@@ -35,23 +47,44 @@ import archinstall, getpass
 harddrive = archinstall.select_disk(archinstall.all_disks())
 disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 
-with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
-    # use_entire_disk() is a helper to not have to format manually
-    fs.use_entire_disk('luks2')
+# We disable safety precautions in the library that protects the partitions
+harddrive.keep_partitions = False
 
-    harddrive.partition[0].format('fat32')
-    with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
-        unlocked_device.format('btrfs')
+# First, we configure the basic filesystem layout
+with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+    # We create a filesystem layout that will use the entire drive
+    # (this is a helper function, you can partition manually as well)
+    fs.use_entire_disk(root_filesystem_type='btrfs')
 
-        with archinstall.Installer(unlocked_device, hostname='testmachine') as installation:
-            if installation.minimal_installation():
-                installation.add_bootloader(harddrive.partition[0])
+    boot = fs.find_partition('/boot')
+    root = fs.find_partition('/')
 
-                installation.add_additional_packages(['nano', 'wget', 'git'])
-                installation.install_profile('awesome')
+    boot.format('vfat')
 
-                installation.user_create('anton', 'test')
-                installation.user_set_pw('root', 'toor')
+    # Set the flat for encrypted to allow for encryption and then encrypt
+    root.encrypted = True
+    root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
+
+with archinstall.luks2(root, 'luksloop', disk_password) as unlocked_root:
+    unlocked_root.format(root.filesystem)
+    unlocked_root.mount('/mnt')
+
+    boot.mount('/mnt/boot')
+
+with archinstall.Installer('/mnt') as installation:
+    if installation.minimal_installation():
+        installation.set_hostname('minimal-arch')
+        installation.add_bootloader()
+
+        installation.add_additional_packages(['nano', 'wget', 'git'])
+
+        # Optionally, install a profile of choice.
+        # In this case, we install a minimal profile that is empty
+        installation.install_profile('minimal')
+
+        installation.user_create('devel', 'devel')
+        installation.user_set_pw('root', 'airoot')
+        
 ```
 
 This installer will perform the following:

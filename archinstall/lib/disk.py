@@ -126,6 +126,18 @@ class BlockDevice():
 	def partition_table_type(self):
 		return GPT
 
+	@property
+	def uuid(self):
+		log(f'BlockDevice().uuid is untested!', level=LOG_LEVELS.Warning, fg='yellow')
+		"""
+		Returns the disk UUID as returned by lsblk.
+		This is more reliable than relying on /dev/disk/by-partuuid as
+		it doesn't seam to be able to detect md raid partitions.
+		"""
+		lsblk = b''.join(sys_command(f'lsblk -J -o+UUID {self.path}'))
+		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
+			return partition.get('uuid', None)
+
 	def has_partitions(self):
 		return len(self.partitions)
 
@@ -166,7 +178,7 @@ class Partition():
 			self.mountpoint = target
 
 		if not self.filesystem and autodetect_filesystem:
-			if (fstype := mount_information.get('fstype', get_filesystem_type(self.real_device))):
+			if (fstype := mount_information.get('fstype', get_filesystem_type(path))):
 				self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
@@ -215,13 +227,14 @@ class Partition():
 		self._encrypted = value
 
 	@property
+	def parent(self):
+		return self.real_device
+
+	@property
 	def real_device(self):
-		if not self._encrypted:
-			return self.path
-		else:
-			for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
-				if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
-					return f"/dev/{parent}"
+		for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
+			if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
+				return f"/dev/{parent}"
 		#	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
 
@@ -366,14 +379,16 @@ class Partition():
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
-			## libc has some issues with loop devices, defaulting back to sys calls
-		#	ret = libc.mount(self.path.encode(), target.encode(), fs.encode(), 0, options.encode())
-		#	if ret < 0:
-		#		errno = ctypes.get_errno()
-		#		raise OSError(errno, f"Error mounting {self.path} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
-			if sys_command(f'/usr/bin/mount {self.path} {target}').exit_code == 0:
-				self.mountpoint = target
-				return True
+
+			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
+
+			try:
+				sys_command(f'/usr/bin/mount {self.path} {target}')
+			except SysCallError as err:
+				raise err
+			
+			self.mountpoint = target
+			return True
 
 	def unmount(self):
 		try:
@@ -571,6 +586,24 @@ def get_mount_info(path):
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
 
 		return output['filesystems'][0]
+
+def get_partitions_in_use(mountpoint):
+	try:
+		output = b''.join(sys_command(f'/usr/bin/findmnt --json -R {mountpoint}'))
+	except SysCallError:
+		return {}
+
+	mounts = []
+
+	output = output.decode('UTF-8')
+	output = json.loads(output)
+	for target in output.get('filesystems', []):
+		mounts.append(Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target']))
+
+		for child in target.get('children', []):
+			mounts.append(Partition(child['source'], None, filesystem=child.get('fstype', None), mountpoint=child['target']))
+
+	return mounts
 
 def get_filesystem_type(path):
 	try:
