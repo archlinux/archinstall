@@ -199,9 +199,9 @@ class Partition():
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
 		if self._encrypted:
-			return f'Partition(path={self.path}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
-			return f'Partition(path={self.path}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, fs={self.filesystem}{mount_repr})'
 
 	@property
 	def uuid(self) -> str:
