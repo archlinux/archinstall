@@ -450,5 +450,5 @@ class Installer():
 				vconsole.write(f'KEYMAP={language}\n')
 				vconsole.write(f'FONT=lat9w-16\n')
 		else:
-			self.log(f'Keyboard language was not changed from default (no language specified).', level=LOG_LEVELS.Info)
+			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=LOG_LEVELS.Info)
 		return True
