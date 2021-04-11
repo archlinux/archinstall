@@ -10,6 +10,8 @@ from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
 from .hardware import *
+from .gfx_drivers import *
+
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
 __base_packages__ = __packages__[:6]
