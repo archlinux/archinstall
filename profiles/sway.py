@@ -10,7 +10,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	__builtins__['_gfx_driver_packages'] = archinstall.lib.gfx_drivers.select_driver()
+	__builtins__['_gfx_driver_packages'] = archinstall.select_driver()
 
 	return True
 
