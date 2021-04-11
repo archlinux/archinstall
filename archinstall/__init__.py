@@ -16,6 +16,9 @@ from .lib.hardware import *
 
 __version__ = "2.1.3"
 
+if hasUEFI() is False:
+	log("Archinstall currently only support UEFI booted machines. MBR & Grub is coming in version 2.2.0!")
+
 ## Basic version of arg.parse() supporting:
 ##  --key=value
 ##  --boolean
