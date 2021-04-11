@@ -1,4 +1,5 @@
 import getpass, pathlib, os, shutil, re
+import sys, time, signal
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -21,14 +22,49 @@ def get_longest_option(options):
 	return max([len(x) for x in options])
 
 def check_for_correct_username(username):
-    if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
-        return True
-    log(
+	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
+		return True
+	log(
 		"The username you entered is invalid. Try again",
 		level=LOG_LEVELS.Warning,
 		fg='red'
 	)
-    return False
+	return False
+
+def do_countdown():
+	SIG_TRIGGER = False
+	def kill_handler(sig, frame):
+		print()
+		exit(0)
+
+	def sig_handler(sig, frame):
+		global SIG_TRIGGER
+		SIG_TRIGGER = True
+		signal.signal(signal.SIGINT, kill_handler)
+
+	original_sigint_handler = signal.getsignal(signal.SIGINT)
+	signal.signal(signal.SIGINT, sig_handler)
+
+	for i in range(5, 0, -1):
+		print(f"{i}", end='')
+
+		for x in range(4):
+			sys.stdout.flush()
+			time.sleep(0.25)
+			print(".", end='')
+
+		if SIG_TRIGGER:
+			abort = input('\nDo you really want to abort (y/n)? ')
+			if abort.strip() != 'n':
+				exit(0)
+
+			if SIG_TRIGGER is False:
+				sys.stdin.read()
+			SIG_TRIGGER = False
+			signal.signal(signal.SIGINT, sig_handler)
+	print()
+	signal.signal(signal.SIGINT, original_sigint_handler)
+	return True
 
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
@@ -196,7 +232,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		return None
 	elif selected_option.isdigit():
 		selected_option = int(selected_option)
-		if selected_option >= len(options):
+		if selected_option > len(options):
 			raise RequirementError(f'Selected option "{selected_option}" is out of range')
 		selected_option = options[selected_option]
 	elif selected_option in options:
@@ -221,8 +257,10 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = input('Select one of the above disks (by number or full path): ')
-		if drive.isdigit():
+		drive = input('Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ')
+		if drive.strip() == '/mnt':
+			return None
+		elif drive.isdigit():
 			drive = int(drive)
 			if drive >= len(drives):
 				raise DiskError(f'Selected option "{drive}" is out of range')

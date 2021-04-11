@@ -1,4 +1,4 @@
-import getpass, time, json, sys, signal, os
+import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
@@ -52,12 +52,14 @@ def ask_user_questions():
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
 	else:
 		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
+		if archinstall.arguments['harddrive'] is None:
+			archinstall.arguments['target-mount'] = '/mnt'
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
 	# 3. Check that we support the current partitions
 	# 2. If so, ask if we should keep them or wipe everything
-	if archinstall.arguments['harddrive'].has_partitions():
+	if archinstall.arguments['harddrive'] and archinstall.arguments['harddrive'].has_partitions():
 		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
 		# We curate a list pf supported partitions
@@ -136,14 +138,14 @@ def ask_user_questions():
 		elif option == 'format-all':
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
-	else:
+	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
 		# and ask the user for a root filesystem.
 		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 	# Get disk encryption password (or skip if blank)
-	if not archinstall.arguments.get('!encryption-password', None):
+	if archinstall.arguments['harddrive'] and archinstall.arguments.get('!encryption-password', None) is None:
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
@@ -199,12 +201,14 @@ def ask_user_questions():
 		print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
-	# Verify packages that were given
-	try:
-		archinstall.validate_package_list(archinstall.arguments['packages'])
-	except archinstall.RequirementError as e:
-		archinstall.log(e, fg='red')
-		exit(1)
+	if len(archinstall.arguments['packages']):
+		# Verify packages that were given
+		try:
+			archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
+			archinstall.validate_package_list(archinstall.arguments['packages'])
+		except archinstall.RequirementError as e:
+			archinstall.log(e, fg='red')
+			exit(1)
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
@@ -217,8 +221,6 @@ def ask_user_questions():
 
 
 def perform_installation_steps():
-	global SIG_TRIGGER
-
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
@@ -232,89 +234,67 @@ def perform_installation_steps():
 		We mention the drive one last time, and count from 5 to 0.
 	"""
 
-	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
+	if archinstall.arguments.get('harddrive', None):
+		print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
+		archinstall.do_countdown()
 
-	for i in range(5, 0, -1):
-		print(f"{i}", end='')
-
-		for x in range(4):
-			sys.stdout.flush()
-			time.sleep(0.25)
-			print(".", end='')
-
-		if SIG_TRIGGER:
-			abort = input('\nDo you really want to abort (y/n)? ')
-			if abort.strip() != 'n':
-				exit(0)
-
-			if SIG_TRIGGER is False:
-				sys.stdin.read()
-			SIG_TRIGGER = False
-			signal.signal(signal.SIGINT, sig_handler)
-
-	# Put back the default/original signal handler now that we're done catching
-	# and interrupting SIGINT with "Do you really want to abort".
-	print()
-	signal.signal(signal.SIGINT, original_sigint_handler)
-
-	"""
-		Setup the blockdevice, filesystem (and optionally encryption).
-		Once that's done, we'll hand over to perform_installation()
-	"""
-	# maybe we can ask the user what they would prefer on uefi systems?
-	if hasUEFI():
+		"""
+			Setup the blockdevice, filesystem (and optionally encryption).
+			Once that's done, we'll hand over to perform_installation()
+		"""
 		mode = archinstall.GPT
-	else:
-		mode = archinstall.MBR
-	with archinstall.Filesystem(archinstall.arguments['harddrive'],mode) as fs:
-		# Wipe the entire drive if the disk flag `keep_partitions`is False.
-		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
-		
-		# Check if encryption is desired and mark the root partition as encrypted.
-		if archinstall.arguments.get('!encryption-password', None):
-			root_partition = fs.find_partition('/')
-			root_partition.encrypted = True
-				
-		# After the disk is ready, iterate the partitions and check
-		# which ones are safe to format, and format those.
-		for partition in archinstall.arguments['harddrive']:
-			if partition.safe_to_format():
-				# Partition might be marked as encrypted due to the filesystem type crypt_LUKS
-				# But we might have omitted the encryption password question to skip encryption.
-				# In which case partition.encrypted will be true, but passwd will be false.
-				if partition.encrypted and (passwd := archinstall.arguments.get('!encryption-password', None)):
-					partition.encrypt(password=passwd)
+		if hasUEFI() is False:
+			mode = archinstall.MBR
+
+		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
+			# Wipe the entire drive if the disk flag `keep_partitions`is False.
+			if archinstall.arguments['harddrive'].keep_partitions is False:
+				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+			
+			# Check if encryption is desired and mark the root partition as encrypted.
+			if archinstall.arguments.get('!encryption-password', None):
+				root_partition = fs.find_partition('/')
+				root_partition.encrypted = True
+					
+			# After the disk is ready, iterate the partitions and check
+			# which ones are safe to format, and format those.
+			for partition in archinstall.arguments['harddrive']:
+				if partition.safe_to_format():
+					# Partition might be marked as encrypted due to the filesystem type crypt_LUKS
+					# But we might have omitted the encryption password question to skip encryption.
+					# In which case partition.encrypted will be true, but passwd will be false.
+					if partition.encrypted and (passwd := archinstall.arguments.get('!encryption-password', None)):
+						partition.encrypt(password=passwd)
+					else:
+						partition.format()
 				else:
-					partition.format()
+					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
+
+			fs.find_partition('/boot').format('vfat')
+
+			if archinstall.arguments.get('!encryption-password', None):
+				# First encrypt and unlock, then format the desired partition inside the encrypted part.
+				# archinstall.luks2() encrypts the partition when entering the with context manager, and
+				# unlocks the drive so that it can be used as a normal block-device within archinstall.
+				with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
+					unlocked_device.format(fs.find_partition('/').filesystem)
+					unlocked_device.mount('/mnt')
 			else:
-				archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
+				fs.find_partition('/').format(fs.find_partition('/').filesystem)
+				fs.find_partition('/').mount('/mnt')
 
-		if archinstall.arguments.get('!encryption-password', None):
-			# First encrypt and unlock, then format the desired partition inside the encrypted part.
-			# archinstall.luks2() encrypts the partition when entering the with context manager, and
-			# unlocks the drive so that it can be used as a normal block-device within archinstall.
-			with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
-				unlocked_device.format(fs.find_partition('/').filesystem)
-
-				perform_installation(device=unlocked_device,
-										boot_partition=fs.find_partition('/boot'),
-										language=archinstall.arguments['keyboard-language'],
-										mirrors=archinstall.arguments['mirror-region'])
-		else:
-			perform_installation(device=fs.find_partition('/'),
-									boot_partition=fs.find_partition('/boot'),
-									language=archinstall.arguments['keyboard-language'],
-									mirrors=archinstall.arguments['mirror-region'])
+			fs.find_partition('/boot').mount('/mnt/boot')
+	
+	perform_installation('/mnt')
 
 
-def perform_installation(device, boot_partition, language, mirrors):
+def perform_installation(mountpoint):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(device, boot_partition=boot_partition, hostname=archinstall.arguments.get('hostname', 'Archinstall')) as installation:
+	with archinstall.Installer(mountpoint) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
@@ -323,10 +303,11 @@ def perform_installation(device, boot_partition, language, mirrors):
 		while 'dead' not in (status := archinstall.service_state('reflector')):
 			time.sleep(1)
 
-		archinstall.use_mirrors(mirrors) # Set the mirrors for the live medium
+		archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
 		if installation.minimal_installation():
-			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
-			installation.set_keyboard_language(language)
+			installation.set_hostname(archinstall.arguments['hostname'])
+			installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
 			# If user selected to copy the current ISO network configuration
@@ -346,7 +327,8 @@ def perform_installation(device, boot_partition, language, mirrors):
 				installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
-					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-docs", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+
+					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")

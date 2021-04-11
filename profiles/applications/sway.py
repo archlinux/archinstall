@@ -1,3 +1,3 @@
 import archinstall
-packages = "sway swaylock swayidle dmenu alacritty"
-installation.add_additional_packages(packages)
+__packages__ = "sway swaylock swayidle waybar dmenu light grim slurp pavucontrol alacritty"
+installation.add_additional_packages(__packages__)
