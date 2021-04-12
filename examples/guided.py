@@ -327,3 +327,11 @@ def perform_installation(mountpoint):
 
 ask_user_questions()
 perform_installation_steps()
+
+installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
+if choice.lower() in ("y", ""):
+	try:
+		installation.drop_to_shell()
+	except:
+		pass
