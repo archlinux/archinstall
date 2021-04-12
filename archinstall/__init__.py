@@ -1,3 +1,4 @@
+"""Arch Linux installer - guided, templates etc."""
 from .lib.general import *
 from .lib.disk import *
 from .lib.user_interaction import *
