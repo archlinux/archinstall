@@ -12,7 +12,7 @@ AVAILABLE_GFX_DRIVERS = {
 	},
 	'intel' : ['xf86-video-intel'],
 	'nvidia' : {
-		'open source' : ['xf86-video-nouveau'],
+		'open-source' : ['xf86-video-nouveau'],
 		'proprietary' : ['nvidia']
 	},
 	'mesa' : ['mesa'],
