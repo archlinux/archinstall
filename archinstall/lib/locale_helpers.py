@@ -1,3 +1,4 @@
+import subprocess
 import os
 
 from .exceptions import *
@@ -26,4 +27,4 @@ def search_keyboard_layout(filter, layout='qwerty'):
 			yield language
 
 def set_keyboard_language(locale):
-	return os.system(f'loadkeys {locale}') == 0
+	return subprocess.call(['loadkeys',locale]) == 0
