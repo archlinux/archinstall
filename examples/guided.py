@@ -292,13 +292,13 @@ def perform_installation(mountpoint):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
+			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic',{}).get('NetworkManager',False):
+			elif archinstall.arguments.get('nic', {}).get('NetworkManager',False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', None):
+			elif archinstall.arguments.get('nic', {}):
 				installation.configure_nic(**archinstall.arguments.get('nic', {}))
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
