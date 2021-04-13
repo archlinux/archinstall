@@ -262,6 +262,11 @@ class sys_command():#Thread):
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
 			fh.write(self.trace_log)
 
+		try:
+			os.close(child_fd)
+		except:
+			pass
+
 
 def prerequisite_check():
 	if not os.path.isdir("/sys/firmware/efi"):
