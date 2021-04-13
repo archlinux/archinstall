@@ -281,10 +281,12 @@ def perform_installation(mountpoint):
 		while 'dead' not in (status := archinstall.service_state('reflector')):
 			time.sleep(1)
 
-		archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+		if archinstall.arguments.get('mirror-region', None):
+			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-			installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments.get('mirror-region', None):
+				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
