@@ -443,6 +443,12 @@ class Installer():
 
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
+						  
+	def user_set_shell(self, user, shell):
+		self.log(f'Setting shell for {user} to {shell}', level=LOG_LEVELS.Info)
+
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
+		pass
 
 	def set_keyboard_language(self, language):
 		if len(language.strip()):
