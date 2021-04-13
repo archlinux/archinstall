@@ -335,14 +335,14 @@ def perform_installation(mountpoint):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
+		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
+		if choice.lower() in ("y", ""):
+			try:
+				installation.drop_to_shell()
+			except:
+				pass
 
 ask_user_questions()
 perform_installation_steps()
 
-installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
-choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-if choice.lower() in ("y", ""):
-	try:
-		installation.drop_to_shell()
-	except:
-		pass
