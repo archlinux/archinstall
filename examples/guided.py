@@ -278,7 +278,7 @@ def perform_installation(mountpoint):
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		installation.log(f'Waiting for automatic mirror selection (feflector) to complete.', level=archinstall.LOG_LEVELS.Info)
-		while 'dead' not in (status := archinstall.service_state('reflector')):
+		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
 		# Set mirrors used by pacstrap (outside of installation)
@@ -287,11 +287,11 @@ def perform_installation(mountpoint):
 
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-			
+
 			# Configure the selected mirrors in the installation
 			if archinstall.arguments.get('mirror-region', None):
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
-			
+
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
