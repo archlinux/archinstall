@@ -130,7 +130,9 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, super_users
 
 def ask_for_a_timezone():
-	timezone = input('Enter a valid timezone (Example: Europe/Stockholm): ').strip()
+	timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
+	if timezone == '':
+		timezone = 'UTC'
 	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
 		return timezone
 	else:
@@ -184,7 +186,7 @@ def ask_to_configure_network():
 	elif nic:
 		return nic
 
-	return None
+	return {}
 
 def ask_for_disk_layout():
 	options = {
@@ -400,4 +402,4 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 
 		return selected_mirrors
 
-	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
+	return None
