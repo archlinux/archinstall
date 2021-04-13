@@ -175,7 +175,7 @@ def ask_user_questions():
 		else:
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
-			archinstall.arguments['audio'] = 'none'
+			archinstall.arguments['audio'] = None
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
