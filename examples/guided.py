@@ -14,7 +14,12 @@ def ask_user_questions():
 	  will we continue with the actual installation steps.
 	"""
 	if not archinstall.arguments.get('keyboard-language', None):
-		archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+		while True:
+			try:
+				archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+				break
+			except archinstall.RequirementError as err:
+				archinstall.log(err, fg="red")
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
