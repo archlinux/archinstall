@@ -1,4 +1,3 @@
-from archinstall.lib.exceptions import RequirementError
 import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
@@ -28,7 +27,7 @@ def ask_user_questions():
 		while valid_mirror == False:
 			try:
 				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
-			except RequirementError as e:
+			except archinstall.RequirementError as e:
 				archinstall.log(e,  fg="yellow")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
