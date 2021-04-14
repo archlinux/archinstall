@@ -399,6 +399,6 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		elif selected_mirror in mirrors:
 			selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		else:
-			print("Selected region does not exist.")
+			raise RequirementError("Selected region does not exist.")
 
 		return selected_mirrors
