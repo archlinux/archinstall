@@ -23,12 +23,12 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		valid_mirror = False
-		while valid_mirror == False:
+		while True:
 			try:
 				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+				break
 			except archinstall.RequirementError as e:
-				archinstall.log(e,  fg="yellow")
+				archinstall.log(e,  fg="red")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
