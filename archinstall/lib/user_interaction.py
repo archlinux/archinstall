@@ -357,7 +357,7 @@ def select_language(options, show_only_country_codes=True):
 			selected_language = options[options.index(selected_language)]
 			return selected_language
 		else:
-			print("Invalid Language please select a valid option.")
+			raise RequirementError("Selected language does not exist.")
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
