@@ -186,7 +186,7 @@ def ask_to_configure_network():
 	elif nic:
 		return nic
 
-	return None
+	return {}
 
 def ask_for_disk_layout():
 	options = {
