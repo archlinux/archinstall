@@ -4,7 +4,7 @@ from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
 
 if hasUEFI() is False:
-	log("ArchInstall currently only supports machines booted with UEFI. MBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
+	archinstall.log("ArchInstall currently only supports machines booted with UEFI.\nMBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
 	exit(1)
 
 def ask_user_questions():
