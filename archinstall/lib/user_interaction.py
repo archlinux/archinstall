@@ -386,7 +386,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		print_large_list(regions, margin_bottom=2)
+		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
