@@ -6,7 +6,7 @@ installation.add_additional_packages(
 	"awesome xorg-xrandr xterm feh slock terminus-font gnu-free-fonts ttf-liberation xsel"
 )
 
-with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'r') as xinitrc:
+with open(f'{installation.target}/etc/X11/xinit/xinitrc', 'r') as xinitrc:
 	xinitrc_data = xinitrc.read()
 
 for line in xinitrc_data.split('\n'):
@@ -20,5 +20,5 @@ for line in xinitrc_data.split('\n'):
 xinitrc_data += '\n'
 xinitrc_data += 'exec awesome\n'
 
-with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
+with open(f'{installation.target}/etc/X11/xinit/xinitrc', 'w') as xinitrc:
 	xinitrc.write(xinitrc_data)
