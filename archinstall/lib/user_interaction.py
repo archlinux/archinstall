@@ -323,6 +323,8 @@ def select_language(options, show_only_country_codes=True):
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
+	DEFAULT_KEYBOARD_LANGUAGE = 'us'
+	
 	if show_only_country_codes:
 		languages = sorted([language for language in list(options) if len(language) == 2])
 	else:
@@ -332,9 +334,12 @@ def select_language(options, show_only_country_codes=True):
 		for index, language in enumerate(languages):
 			print(f"{index}: {language}")
 
-		print(' -- You can enter ? or help to search for more languages --')
+		print(' -- You can enter ? or help to search for more languages, or skip to use US layout --')
 		selected_language = input('Select one of the above keyboard languages (by number or full name): ')
-		if selected_language.lower() in ('?', 'help'):
+		
+		if len(selected_language.strip()) == 0:
+			return DEFAULT_KEYBOARD_LANGUAGE
+		elif selected_language.lower() in ('?', 'help'):
 			while True:
 				filter_string = input('Search for layout containing (example: "sv-"): ')
 				new_options = list(search_keyboard_layout(filter_string))
