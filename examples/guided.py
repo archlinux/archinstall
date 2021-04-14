@@ -23,7 +23,8 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+		while archinstall.arguments.get("mirror-region",{}) == {}:
+			archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
@@ -184,13 +185,16 @@ def ask_user_questions():
 		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
 	if len(archinstall.arguments['packages']):
-		# Verify packages that were given
-		try:
-			archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
-			archinstall.validate_package_list(archinstall.arguments['packages'])
-		except archinstall.RequirementError as e:
-			archinstall.log(e, fg='red')
-			exit(1)
+		invalid_packages = True
+		while invalid_packages == True:
+			# Verify packages that were given
+			try:
+				archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
+				archinstall.validate_package_list(archinstall.arguments['packages'])
+				invalid_packages = False
+			except archinstall.RequirementError as e:
+				archinstall.log(e, fg='red')
+				invalid_packages = True
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
@@ -284,7 +288,8 @@ def perform_installation(mountpoint):
 		archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-			installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments['mirror-region'] != None:
+				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
