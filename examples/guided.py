@@ -1,3 +1,4 @@
+from archinstall.lib.exceptions import RequirementError
 import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
@@ -23,8 +24,12 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		while archinstall.arguments.get("mirror-region",{}) == {}:
-			archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+		valid_mirror = False
+		while valid_mirror == False:
+			try:
+				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+			except RequirementError as e:
+				archinstall.log(e,  fg="yellow")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
