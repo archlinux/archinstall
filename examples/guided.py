@@ -314,7 +314,7 @@ def perform_installation(mountpoint):
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-			if 	archinstall.arguments.get('audio', None) != None:
+			if archinstall.arguments.get('audio', None) != None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
