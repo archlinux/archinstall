@@ -386,7 +386,9 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		print(' -- You can skip this step by leaving the option blank --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
 		if len(selected_mirror.strip()) == 0:
-			return {"mirror": None}
+			# Returning back empty options which can be both used to
+			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
+			return {}
 
 		elif selected_mirror.isdigit() and int(selected_mirror) <= len(regions)-1:
 			# I'm leaving "mirrors" on purpose here.
