@@ -61,7 +61,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
 
     boot.format('vfat')
 
-    # Set the flat for encrypted to allow for encryption and then encrypt
+    # Set the flag for encrypted to allow for encryption and then encrypt
     root.encrypted = True
     root.encrypt(password=disk_password)
 
