@@ -4,7 +4,7 @@ from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
 
 if hasUEFI() is False:
-	log("ArchInstall currently only supports machines booted with UEFI. MBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
+	archinstall.log("ArchInstall currently only supports machines booted with UEFI.\nMBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
 	exit(1)
 
 def ask_user_questions():
@@ -281,27 +281,38 @@ def perform_installation(mountpoint):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
-		while 'dead' not in (status := archinstall.service_state('reflector')):
+		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
+		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
-		archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+		# Set mirrors used by pacstrap (outside of installation)
+		if archinstall.arguments.get('mirror-region', None):
+			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
+<<<<<<< HEAD
 			if archinstall.arguments['mirror-region'] != None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+=======
+
+			# Configure the selected mirrors in the installation
+			if archinstall.arguments.get('mirror-region', None):
+				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+
+>>>>>>> af2671c1ec1ac2ecbdbd35c90c3e5016dcf516ed
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
+			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic',{}).get('NetworkManager',False):
+			elif archinstall.arguments.get('nic', {}).get('NetworkManager',False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', None):
+			elif archinstall.arguments.get('nic', {}):
 				installation.configure_nic(**archinstall.arguments.get('nic', {}))
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
@@ -335,6 +346,14 @@ def perform_installation(mountpoint):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
+		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
+		if choice.lower() in ("y", ""):
+			try:
+				installation.drop_to_shell()
+			except:
+				pass
 
 ask_user_questions()
 perform_installation_steps()
+

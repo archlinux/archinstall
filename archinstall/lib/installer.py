@@ -1,4 +1,4 @@
-import os, stat, time, shutil, pathlib
+import os, stat, time, shutil, pathlib, subprocess
 
 from .exceptions import *
 from .disk import *
@@ -81,6 +81,7 @@ class Installer():
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
 			self.sync_log_to_install_medium()
+
 			return True
 		else:
 			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
@@ -189,6 +190,9 @@ class Installer():
 
 	def arch_chroot(self, cmd, *args, **kwargs):
 		return self.run_command(cmd)
+
+	def drop_to_shell(self):
+		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
 	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
 		if dhcp:
@@ -442,6 +446,12 @@ class Installer():
 			self.helper_flags['user'] = True
 
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
+		pass
+						  
+	def user_set_shell(self, user, shell):
+		self.log(f'Setting shell for {user} to {shell}', level=LOG_LEVELS.Info)
+
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
 
 	def set_keyboard_language(self, language):
