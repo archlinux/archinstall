@@ -291,16 +291,8 @@ def perform_installation(mountpoint):
 
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-<<<<<<< HEAD
 			if archinstall.arguments['mirror-region'] != None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
-=======
-
-			# Configure the selected mirrors in the installation
-			if archinstall.arguments.get('mirror-region', None):
-				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
-
->>>>>>> af2671c1ec1ac2ecbdbd35c90c3e5016dcf516ed
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
