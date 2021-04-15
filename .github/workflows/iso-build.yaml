@@ -16,6 +16,7 @@ on:
     - '**.cfg'
     - 'LICENSE'
     - 'PKGBUILD'
+    - 'README'
 
 jobs:
   build:
