@@ -10,7 +10,6 @@ on:
     - '**.editorconfig'
     - '**.gitignore'
     - '**.md'
-    - '**.toml'
     - 'LICENSE'
     - 'PKGBUILD'
 
