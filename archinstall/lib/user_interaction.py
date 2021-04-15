@@ -352,7 +352,7 @@ def select_language(options, show_only_country_codes=True):
 
 		elif selected_language.isdigit() and (pos := int(selected_language)) <= len(languages)-1:
 			selected_language = languages[pos]
-			return select_language
+			return selected_language
 		# I'm leaving "options" on purpose here.
 		# Since languages possibly contains a filtered version of
 		# all possible language layouts, and we might want to write
