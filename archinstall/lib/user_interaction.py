@@ -267,7 +267,7 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ', False)
+		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ', False, False)
 		if drive.strip() == '/mnt':
 			return None
 		elif drive.isdigit():
