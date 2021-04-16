@@ -297,10 +297,10 @@ def select_profile(options):
 	profiles = sorted(list(options))
 
 	if len(profiles) >= 1:
-		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ')
-		print(' -- The above list is a set of pre-programmed profiles. --')
+		print(' -- The below list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- (Leave blank and hit enter to skip this step and continue) --')
+		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one (leave blank to skip): ')
+
 
 		if len(selected_profile.strip()) <= 0:
 			return None
