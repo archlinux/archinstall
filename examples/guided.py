@@ -178,7 +178,7 @@ def ask_user_questions():
 			archinstall.arguments['audio'] = None
    
    	# Ask what kernel user wants:
-	kernel = input("\n1. linux\n2. linux-lts\n3. linux-zen\nchoose a kernel of the following: ")
+	kernel = input("1. linux\n2. linux-lts\n3. linux-zen\nchoose a kernel of the following: ")
 	try:
 		archinstall.arguments['kernel'] = ['linux', 'linux-lts', 'linux-zen'][int(kernel) - 1]
 	except:
