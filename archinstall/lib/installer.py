@@ -323,7 +323,7 @@ class Installer():
 			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(FILES)})\n")
 			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -p linux')
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
 
 		self.helper_flags['base'] = True
 
