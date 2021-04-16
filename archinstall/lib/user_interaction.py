@@ -367,7 +367,7 @@ def select_language(options, show_only_country_codes=True):
 		# all possible language layouts, and we might want to write
 		# for instance sv-latin1 (if we know that exists) without having to
 		# go through the search step.
-		elif selected_language in options:
+		elif selected_language in languages:
 			return selected_language
 		else:
 			raise RequirementError("Selected language does not exist.")
