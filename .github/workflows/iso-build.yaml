@@ -9,11 +9,7 @@ on:
     - 'docs/**'
     - '**.editorconfig'
     - '**.gitignore'
-    - '**.yml'
-    - '**.yaml'
     - '**.md'
-    - '**.toml'
-    - '**.cfg'
     - 'LICENSE'
     - 'PKGBUILD'
 
