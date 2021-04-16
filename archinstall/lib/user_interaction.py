@@ -209,7 +209,7 @@ def ask_for_main_filesystem_format():
 	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ", False)
 	return next((key for key, val in options.items() if val == value), None)
 
-def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, sort=True):
+def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True, sort=True):
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
@@ -224,8 +224,9 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	if sort: options = sorted(list(options))
 	if len(options) <= 0: raise RequirementError('generic_select() requires at least one option to operate.')
 
-	for index, option in enumerate(options):
-		print(f"{index}: {option}")
+	if options_output:
+		for index, option in enumerate(options):
+			print(f"{index}: {option}")
 
 	while True:
 		try:
@@ -266,7 +267,7 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = generic_select([], 'Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ', False)
+		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ', False)
 		if drive.strip() == '/mnt':
 			return None
 		elif drive.isdigit():
