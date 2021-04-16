@@ -359,4 +359,3 @@ def perform_installation(mountpoint):
 
 ask_user_questions()
 perform_installation_steps()
-

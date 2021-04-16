@@ -160,7 +160,7 @@ def ask_to_configure_network():
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager to control and manage your internet connection':
 			return {'nic': nic,'NetworkManager':True}
-		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
+		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ", False)
 		if mode == 'IP (static)':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
@@ -195,7 +195,7 @@ def ask_for_disk_layout():
 		'abort' : 'Abort the installation.'
 	}
 
-	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
+	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ", False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def ask_for_main_filesystem_format():
@@ -206,7 +206,7 @@ def ask_for_main_filesystem_format():
 		'f2fs' : 'f2fs'
 	}
 
-	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
+	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ", False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, sort=True):
