@@ -1,5 +1,6 @@
 # A system with "xorg" installed
 
+from archinstall.lib.user_interaction import generic_select
 import archinstall, os
 
 is_top_level_profile = True
@@ -36,9 +37,6 @@ def select_driver(options):
 		for index, driver in enumerate(drivers):
 			print(f"{index}: {driver}")
 
-		print(' -- The above list are supported graphic card drivers. --')
-		print(' -- You need to select (and read about) which one you need. --')
-
 		lspci = archinstall.sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
@@ -48,6 +46,10 @@ def select_driver(options):
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
 		selected_driver = input('Select your graphics card driver: ')
+		selected_driver = generic_select(drivers, 'Select your graphics card driver: ', False)
+
+		print(' -- The above list are supported graphic card drivers. --')
+		print(' -- You need to select (and read about) which one you need. --')
 		initial_option = selected_driver
 
 		# Disabled search for now, only a few profiles exist anyway
