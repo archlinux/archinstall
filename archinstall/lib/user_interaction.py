@@ -302,8 +302,8 @@ def select_profile(options):
 		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one (leave blank to skip): ')
 
 
-		if len(selected_profile.strip()) <= 0:
-			return None
+		if selected_profile is None:
+			return selected_profile
 			
 		if selected_profile.isdigit() and (pos := int(selected_profile)) <= len(profiles)-1:
 			selected_profile = profiles[pos]
