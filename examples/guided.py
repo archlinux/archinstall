@@ -176,6 +176,15 @@ def ask_user_questions():
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
 			archinstall.arguments['audio'] = None
+   
+   	# Ask what kernel user wants:
+	kernel = input("choose a kernel:\n1. linux\n2. linux-lts\n3. linux-zen")
+	try:
+		archinstall.arguments['kernel'] = ['linux', 'linux-lts', 'linux-zen'][int(kernel) - 1]
+	except:
+		archinstall.log('invalid kernel selected. defaulting to \'linux\'.')
+		archinstall.arguments['kernel'] = 'linux'
+
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	if not archinstall.arguments.get('packages', None):
@@ -272,7 +281,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(mountpoint) as installation:
+	with archinstall.Installer(mountpoint, kernel=archinstall.arguments['kernel']) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
