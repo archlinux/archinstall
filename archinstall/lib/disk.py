@@ -222,7 +222,7 @@ class Partition():
 	def encrypted(self, value :bool):
 		if value:
 			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
-			log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
+			#log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
 
 		self._encrypted = value
 
@@ -610,4 +610,12 @@ def get_filesystem_type(path):
 		handle = sys_command(f"blkid -o value -s TYPE {path}")
 		return b''.join(handle).strip().decode('UTF-8')
 	except SysCallError:
+		return None
+
+def disk_layouts():
+	try:
+		handle = sys_command(f"lsblk -f -o+TYPE,SIZE -J")
+		return json.loads(b''.join(handle).decode('UTF-8'))
+	except SysCallError as err:
+		log(f"Could not return disk layouts: {err}")
 		return None

@@ -7,6 +7,9 @@ if hasUEFI() is False:
 	archinstall.log("ArchInstall currently only supports machines booted with UEFI.\nMBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
 	exit(1)
 
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
+
 def ask_user_questions():
 	"""
 	  First, we'll ask the user for a bunch of user input.
@@ -357,6 +360,8 @@ def perform_installation(mountpoint):
 			except:
 				pass
 
+	# For support reasons, we'll log the disk layout post installation (crash or no crash)
+	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
+
 ask_user_questions()
 perform_installation_steps()
-
