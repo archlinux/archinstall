@@ -209,7 +209,7 @@ def ask_for_main_filesystem_format():
 	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
 	return next((key for key, val in options.items() if val == value), None)
 
-def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
+def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, sort=True):
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
@@ -227,18 +227,27 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	for index, option in enumerate(options):
 		print(f"{index}: {option}")
 
-	selected_option = input(input_text)
-	if len(selected_option.strip()) <= 0:
-		return None
-	elif selected_option.isdigit():
-		selected_option = int(selected_option)
-		if selected_option > len(options):
-			raise RequirementError(f'Selected option "{selected_option}" is out of range')
-		selected_option = options[selected_option]
-	elif selected_option in options:
-		pass # We gave a correct absolute value
-	else:
-		raise RequirementError(f'Selected option "{selected_option}" does not exist in available options: {options}')
+	while True:
+		try:
+			selected_option = input(input_text)
+			if len(selected_option.strip()) == 0:
+				if allow_empty_input:
+					return None
+				raise RequirementError('Please select an option to continue')
+			elif selected_option.isnumeric():
+				selected_option = int(selected_option)
+				if selected_option >= len(options):
+					raise RequirementError(f'Selected option "{selected_option}" is out of range')
+				selected_option = options[selected_option]
+			elif selected_option in options:
+				break # We gave a correct absolute value
+			else:
+				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options: {options}')
+		except RequirementError:
+			log(f" * You entered the option incorrectly, please try again * ", fg='red')
+			continue
+		else:
+			break
 	
 	return selected_option
 
