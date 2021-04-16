@@ -266,7 +266,7 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = input('Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ')
+		drive = generic_select('Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ', False)
 		if drive.strip() == '/mnt':
 			return None
 		elif drive.isdigit():
@@ -302,7 +302,7 @@ def select_profile(options):
 		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
 		print(' -- (Leave blank and hit enter to skip this step and continue) --')
-		selected_profile = input('Enter a pre-programmed profile name if you want to install one: ')
+		selected_profile = generic_select('Enter a pre-programmed profile name if you want to install one: ', False)
 
 		if len(selected_profile.strip()) <= 0:
 			return None
