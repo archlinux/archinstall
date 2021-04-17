@@ -411,7 +411,6 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 			raise RequirementError("Selected region does not exist.")
 
 		return selected_mirrors
-<<<<<<< HEAD
 
 	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
 
