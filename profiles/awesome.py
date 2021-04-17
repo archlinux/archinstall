@@ -39,13 +39,13 @@ if __name__ == 'awesome':
 	alacritty.install()
 
 	# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as fh:
+	with open(f'{installation.target}/etc/xdg/awesome/rc.lua', 'r') as fh:
 		awesome_lua = fh.read()
 
 	## Replace xterm with alacritty for a smoother experience.
 	awesome_lua = awesome_lua.replace('"xterm"', '"alacritty"')
 
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as fh:
+	with open(f'{installation.target}/etc/xdg/awesome/rc.lua', 'w') as fh:
 		fh.write(awesome_lua)
 
 	## TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)
