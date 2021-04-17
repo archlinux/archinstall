@@ -209,7 +209,7 @@ def ask_for_main_filesystem_format():
 	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
 	return next((key for key, val in options.items() if val == value), None)
 
-def generic_select(options, input_text="Select one of the above by index or absolute value: ", sort=True):
+def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True):
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
@@ -220,26 +220,51 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	3: third option
 	"""
 
-	if type(options) == dict: options = list(options)
-	if sort: options = sorted(list(options))
-	if len(options) <= 0: raise RequirementError('generic_select() requires at least one option to operate.')
-
-	for index, option in enumerate(options):
-		print(f"{index}: {option}")
-
-	selected_option = input(input_text)
-	if len(selected_option.strip()) <= 0:
-		return None
-	elif selected_option.isdigit():
-		selected_option = int(selected_option)
-		if selected_option > len(options):
-			raise RequirementError(f'Selected option "{selected_option}" is out of range')
-		selected_option = options[selected_option]
-	elif selected_option in options:
-		pass # We gave a correct absolute value
-	else:
-		raise RequirementError(f'Selected option "{selected_option}" does not exist in available options: {options}')
+	# Checking if options are different from `list` or `dict`
+	if type(options) not in [list, dict]:
+		log(" * It looks like there are something wrong with provided options. Maybe it's time to open an issue on GitHub! * ", fg='red')
+		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError("generic_select() reqiures list or dictionary as options.")
+	if type(options) == dict: options = sorted(list(options.values()))  # To allow only `list` and `dict`, converting values of options and sorting them here. Therefore, now we can only provide the dictionary itself
+	# if sort: options = sorted(list(options))  # Moved sorting for dictionaries, as some lists are already sorted, when passed here
+	if len(options) == 0:
+		log(" * It looks like there are no options to choose from. Maybe it's time to open an issue on GitHub! * ", fg='red')
+		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_select() requires at least one option to operate.')
 	
+
+	# Disable the output of options items, if another function displays something different from this
+	if options_output:
+		for index, option in enumerate(options):
+			print(f"{index}: {option}")
+
+	# The new changes introduce a single while loop for all inputs processed by this function
+	# Now the try...except...else block handles validation for invalid input from the user
+	while True:
+		try:
+			selected_option = input(input_text)
+			if len(selected_option.strip()) == 0:
+				# `allow_empty_input` parameter handles return of None on empty input, if necessary
+				# Otherwise raise `RequirementError`
+				if allow_empty_input:
+					return None
+				raise RequirementError('Please select an option to continue')
+			# Replaced `isdigit` with` isnumeric` to discard all negative numbers
+			elif selected_option.isnumeric():
+				selected_option = int(selected_option)
+				if selected_option >= len(options):
+					raise RequirementError(f'Selected option "{selected_option}" is out of range')
+				selected_option = options[selected_option]
+			elif selected_option in options:
+				break # We gave a correct absolute value
+			else:
+				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
+		except RequirementError as err:
+			log(f" * {err} * ", fg='red')
+			continue
+		else:
+			break
+
 	return selected_option
 
 def select_disk(dict_o_disks):
