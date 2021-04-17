@@ -22,7 +22,7 @@ class Installer():
 	:param partition: Requires a partition as the first argument, this is
 	    so that the installer can mount to `mountpoint` and strap packages there.
 	:type partition: class:`archinstall.Partition`
-	
+
 	:param boot_partition: There's two reasons for needing a boot partition argument,
 	    The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
 	    during the `pacstrap` or `linux` and the base packages for a minimal installation.
@@ -33,7 +33,7 @@ class Installer():
 	:param profile: A profile to install, this is optional and can be called later manually.
 	    This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
 	:type profile: str, optional
-	
+
 	:param hostname: The given /etc/hostname for the machine.
 	:type hostname: str, optional
 
@@ -118,7 +118,7 @@ class Installer():
 
 				if not os.path.isdir(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}"):
 					os.makedirs(f"{self.mountpoint}/{os.path.dirname(absolute_logfile)}")
-				
+
 				shutil.copy2(absolute_logfile, f"{self.mountpoint}/{absolute_logfile}")
 
 		return True
@@ -126,7 +126,7 @@ class Installer():
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.mountpoint}{mountpoint}'):
 			os.makedirs(f'{self.mountpoint}{mountpoint}')
-			
+
 		partition.mount(f'{self.mountpoint}{mountpoint}')
 
 	def post_install_check(self, *args, **kwargs):
@@ -149,14 +149,14 @@ class Installer():
 
 	def genfstab(self, flags='-pU'):
 		self.log(f"Updating {self.mountpoint}/etc/fstab", level=LOG_LEVELS.Info)
-		
+
 		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.mountpoint}').trace_log
 		with open(f"{self.mountpoint}/etc/fstab", 'ab') as fstab_fh:
 			fstab_fh.write(fstab)
 
 		if not os.path.isfile(f'{self.mountpoint}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{o}')
-		
+
 		return True
 
 	def set_hostname(self, hostname=None, *args, **kwargs):
@@ -219,7 +219,7 @@ class Installer():
 				network["DNS"] = dns
 
 			conf = Networkd(Match={"Name": nic}, Network=network)
-		
+
 		with open(f"{self.mountpoint}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
 
@@ -234,7 +234,7 @@ class Installer():
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
 						self.base_packages.append('iwd')
-						# This function will be called after minimal_installation() 
+						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
 						def post_install_enable_iwd_service(*args, **kwargs):
@@ -285,6 +285,8 @@ class Installer():
 			self.base_packages.append('xfsprogs')
 		if self.partition.filesystem == 'f2fs':
 			self.base_packages.append('f2fs-tools')
+		if not(hasUEFI()):
+			self.base_packages.append('grub-install')
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
@@ -353,7 +355,7 @@ class Installer():
 					f"default {self.init_time}",
 					f"timeout 5"
 				]
-			
+
 			with open(f'{self.mountpoint}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':

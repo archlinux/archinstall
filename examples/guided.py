@@ -314,10 +314,10 @@ def perform_installation(device, boot_partition, language, mirrors):
 		if installation.minimal_installation():
 			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(language)
-            if hasUEFI():
-                installation.add_bootloader()
-            else:
-                installation.add_bootloader(bootloder='grub-install')
+			if hasUEFI():
+				installation.add_bootloader()
+			else:
+				installation.add_bootloader(bootloder='grub-install')
 
 
 			# If user selected to copy the current ISO network configuration
