@@ -3,6 +3,7 @@ import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
 
+<<<<<<< HEAD
 """
 This signal-handler chain (and global variable)
 is used to trigger the "Are you sure you want to abort?" question further down.
@@ -32,7 +33,12 @@ def ask_user_questions():
 	  will we continue with the actual installation steps.
 	"""
 	if not archinstall.arguments.get('keyboard-language', None):
-		archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+		while True:
+			try:
+				archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+				break
+			except archinstall.RequirementError as err:
+				archinstall.log(err, fg="red")
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
@@ -41,7 +47,12 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+		while True:
+			try:
+				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+				break
+			except archinstall.RequirementError as e:
+				archinstall.log(e,  fg="red")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
@@ -193,22 +204,27 @@ def ask_user_questions():
 		else:
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
-			archinstall.arguments['audio'] = 'none'
+			archinstall.arguments['audio'] = None
 
 	# Additional packages (with some light weight error handling for invalid package names)
-	if not archinstall.arguments.get('packages', None):
-		print("Packages not part of the desktop environment are not installed by default.")
-		print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
+	while True:
+		if not archinstall.arguments.get('packages', None):
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
-	if len(archinstall.arguments['packages']):
-		# Verify packages that were given
-		try:
-			archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
-			archinstall.validate_package_list(archinstall.arguments['packages'])
-		except archinstall.RequirementError as e:
-			archinstall.log(e, fg='red')
-			exit(1)
+		if len(archinstall.arguments['packages']):
+			# Verify packages that were given
+			try:
+				archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
+				archinstall.validate_package_list(archinstall.arguments['packages'])
+				break
+			except archinstall.RequirementError as e:
+				archinstall.log(e, fg='red')
+				archinstall.arguments['packages'] = None # Clear the packages to trigger a new input question
+		else:
+			# no additional packages were selected, which we'll allow
+			break
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
@@ -299,32 +315,36 @@ def perform_installation(mountpoint):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log(f'Waiting for automatic mirror selection has completed before using custom mirrors.')
-		while 'dead' not in (status := archinstall.service_state('reflector')):
+		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
+		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
-		archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+		# Set mirrors used by pacstrap (outside of installation)
+		if archinstall.arguments.get('mirror-region', None):
+			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-			installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
+				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', None) == 'Copy ISO network configuration to installation':
+			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
 				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic',{}).get('NetworkManager',False):
+			elif archinstall.arguments.get('nic', {}).get('NetworkManager',False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', None):
+			elif archinstall.arguments.get('nic', {}):
 				installation.configure_nic(**archinstall.arguments.get('nic', {}))
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-			if 	archinstall.arguments.get('audio', None) != None:
-				installation.log(f"The {archinstall.arguments.get('audio', None)} audio server will be used.", level=archinstall.LOG_LEVELS.Info)
+			if archinstall.arguments.get('audio', None) != None:
+				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
 
@@ -332,6 +352,8 @@ def perform_installation(mountpoint):
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")
+			else:
+				installation.log("No audio server will be installed.", level=archinstall.LOG_LEVELS.Info)
 			
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
@@ -350,6 +372,7 @@ def perform_installation(mountpoint):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
+
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
@@ -359,5 +382,14 @@ def perform_installation(mountpoint):
 						)
 						exit(1)
 
+		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
+		if choice.lower() in ("y", ""):
+			try:
+				installation.drop_to_shell()
+			except:
+				pass
+
 ask_user_questions()
 perform_installation_steps()
+

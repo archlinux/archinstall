@@ -1,4 +1,9 @@
-# <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+<!-- <div align="center"> -->
+<img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+
+# Arch Installer
+<!-- </div> -->
+
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
 
@@ -51,7 +56,7 @@ disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 harddrive.keep_partitions = False
 
 # First, we configure the basic filesystem layout
-with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
     # We create a filesystem layout that will use the entire drive
     # (this is a helper function, you can partition manually as well)
     fs.use_entire_disk(root_filesystem_type='btrfs')
@@ -61,9 +66,9 @@ with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT)
 
     boot.format('vfat')
 
-    # Set the flat for encrypted to allow for encryption and then encrypt
+    # Set the flag for encrypted to allow for encryption and then encrypt
     root.encrypted = True
-    root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
+    root.encrypt(password=disk_password)
 
 with archinstall.luks2(root, 'luksloop', disk_password) as unlocked_root:
     unlocked_root.format(root.filesystem)
