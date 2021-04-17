@@ -286,7 +286,7 @@ class Installer():
 		if self.partition.filesystem == 'f2fs':
 			self.base_packages.append('f2fs-tools')
 		if not(hasUEFI()):
-			self.base_packages.append('grub-install')
+			self.base_packages.append('grub')
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
