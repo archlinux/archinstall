@@ -2,7 +2,16 @@
 
 name: Build Arch ISO with ArchInstall Commit
 
-on: pull_request
+on:
+  pull_request:
+    paths-ignore:
+    - '.github/**'
+    - 'docs/**'
+    - '**.editorconfig'
+    - '**.gitignore'
+    - '**.md'
+    - 'LICENSE'
+    - 'PKGBUILD'
 
 jobs:
   build:

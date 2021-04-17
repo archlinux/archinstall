@@ -76,7 +76,7 @@ class sys_command():#Thread):
 	"""
 	Stolen from archinstall_gui
 	"""
-	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, *args, **kwargs):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
@@ -102,6 +102,7 @@ class sys_command():#Thread):
 		self.args = args
 		self.kwargs = kwargs
 		self.peak_output = peak_output
+		self.environment_vars = environment_vars
 
 		self.kwargs.setdefault("worker", None)
 		self.callback = callback
@@ -200,7 +201,7 @@ class sys_command():#Thread):
 			# Replace child process with our main process
 			if not self.kwargs['emulate']:
 				try:
-					os.execv(self.cmd[0], self.cmd)
+					os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
 				except FileNotFoundError:
 					self.status = 'done'
 					self.log(f"{self.cmd[0]} does not exist.", level=LOG_LEVELS.Debug)
@@ -303,6 +304,11 @@ class sys_command():#Thread):
 		self.ended = time.time()
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
 			fh.write(self.trace_log)
+
+		try:
+			os.close(child_fd)
+		except:
+			pass
 
 
 def prerequisite_check():

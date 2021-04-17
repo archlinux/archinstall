@@ -132,7 +132,9 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, super_users
 
 def ask_for_a_timezone():
-	timezone = input('Enter a valid timezone (Example: Europe/Stockholm): ').strip()
+	timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
+	if timezone == '':
+		timezone = 'UTC'
 	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
 		return timezone
 	else:
@@ -186,7 +188,7 @@ def ask_to_configure_network():
 	elif nic:
 		return nic
 
-	return None
+	return {}
 
 def ask_for_disk_layout():
 	options = {
@@ -323,6 +325,8 @@ def select_language(options, show_only_country_codes=True):
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
+	DEFAULT_KEYBOARD_LANGUAGE = 'us'
+	
 	if show_only_country_codes:
 		languages = sorted([language for language in list(options) if len(language) == 2])
 	else:
@@ -332,9 +336,12 @@ def select_language(options, show_only_country_codes=True):
 		for index, language in enumerate(languages):
 			print(f"{index}: {language}")
 
-		print(' -- You can enter ? or help to search for more languages --')
+		print(' -- You can enter ? or help to search for more languages, or skip to use US layout --')
 		selected_language = input('Select one of the above keyboard languages (by number or full name): ')
-		if selected_language.lower() in ('?', 'help'):
+		
+		if len(selected_language.strip()) == 0:
+			return DEFAULT_KEYBOARD_LANGUAGE
+		elif selected_language.lower() in ('?', 'help'):
 			while True:
 				filter_string = input('Search for layout containing (example: "sv-"): ')
 				new_options = list(search_keyboard_layout(filter_string))
@@ -347,6 +354,7 @@ def select_language(options, show_only_country_codes=True):
 
 		elif selected_language.isdigit() and (pos := int(selected_language)) <= len(languages)-1:
 			selected_language = languages[pos]
+			return selected_language
 		# I'm leaving "options" on purpose here.
 		# Since languages possibly contains a filtered version of
 		# all possible language layouts, and we might want to write
@@ -354,9 +362,9 @@ def select_language(options, show_only_country_codes=True):
 		# go through the search step.
 		elif selected_language in options:
 			selected_language = options[options.index(selected_language)]
+			return selected_language
 		else:
-			RequirementError("Selected language does not exist.")
-		return selected_language
+			raise RequirementError("Selected language does not exist.")
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
@@ -380,25 +388,27 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 	selected_mirrors = {}
 
 	if len(regions) >= 1:
-		print_large_list(regions, margin_bottom=2)
+		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
 		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
 		if len(selected_mirror.strip()) == 0:
+			# Returning back empty options which can be both used to
+			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
 			return {}
 
-		elif selected_mirror.isdigit() and (pos := int(selected_mirror)) <= len(regions)-1:
+		elif selected_mirror.isdigit() and int(selected_mirror) <= len(regions)-1:
+			# I'm leaving "mirrors" on purpose here.
+			# Since region possibly contains a known region of
+			# all possible regions, and we might want to write
+			# for instance Sweden (if we know that exists) without having to
+			# go through the search step.
 			region = regions[int(selected_mirror)]
 			selected_mirrors[region] = mirrors[region]
-		# I'm leaving "mirrors" on purpose here.
-		# Since region possibly contains a known region of
-		# all possible regions, and we might want to write
-		# for instance Sweden (if we know that exists) without having to
-		# go through the search step.
 		elif selected_mirror in mirrors:
 			selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		else:
-			RequirementError("Selected region does not exist.")
+			raise RequirementError("Selected region does not exist.")
 
 		return selected_mirrors
 

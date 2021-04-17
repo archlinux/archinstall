@@ -177,7 +177,7 @@ class Profile(Script):
 					if hasattr(imported, '_prep_function'):
 						return True
 		return False
-	"""
+
 	def has_post_install(self):
 		with open(self.path, 'r') as source:
 			source_data = source.read()
@@ -193,7 +193,6 @@ class Profile(Script):
 				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
 					if hasattr(imported, '_post_install'):
 						return True
-	"""
 
 	def is_top_level_profile(self):
 		with open(self.path, 'r') as source:
