@@ -257,12 +257,12 @@ def perform_installation_steps():
 		# Wipe the entire drive if the disk flag `keep_partitions`is False.
 		if archinstall.arguments['harddrive'].keep_partitions is False:
 			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
-		
+
 		# Check if encryption is desired and mark the root partition as encrypted.
 		if archinstall.arguments.get('!encryption-password', None):
 			root_partition = fs.find_partition('/')
 			root_partition.encrypted = True
-				
+
 		# After the disk is ready, iterate the partitions and check
 		# which ones are safe to format, and format those.
 		for partition in archinstall.arguments['harddrive']:
@@ -314,7 +314,11 @@ def perform_installation(device, boot_partition, language, mirrors):
 		if installation.minimal_installation():
 			installation.set_mirrors(mirrors) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(language)
-			installation.add_bootloader()
+            if hasUEFI():
+                installation.add_bootloader()
+            else:
+                installation.add_bootloader(bootloder='grub-install')
+
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -338,7 +342,7 @@ def perform_installation(device, boot_partition, language, mirrors):
 
 			for user, user_info in archinstall.arguments.get('users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
-			
+
 			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
 
@@ -359,4 +363,4 @@ def perform_installation(device, boot_partition, language, mirrors):
 ask_user_questions()
 perform_installation_steps()
 
-	
+
