@@ -33,10 +33,7 @@ def select_driver(options):
 	drivers = sorted(list(options))
 
 	if len(drivers) >= 1:
-		for index, driver in enumerate(drivers):
-			print(f"{index}: {driver}")
-
-		print(' -- The above list are supported graphic card drivers. --')
+		print(' -- The below list are supported graphic card drivers. --')
 		print(' -- You need to select (and read about) which one you need. --')
 
 		lspci = archinstall.sys_command(f'/usr/bin/lspci')
@@ -47,7 +44,7 @@ def select_driver(options):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		selected_driver = input('Select your graphics card driver: ')
+		selected_driver = archinstall.generic_select(drivers, 'Select your graphics card driver: ', False)
 		initial_option = selected_driver
 
 		# Disabled search for now, only a few profiles exist anyway
@@ -57,29 +54,14 @@ def select_driver(options):
 		#	filter_string = input('Search for layout containing (example: "sv-"): ')
 		#	new_options = search_keyboard_layout(filter_string)
 		#	return select_language(new_options)
-		if selected_driver.isdigit() and (pos := int(selected_driver)) <= len(drivers)-1:
-			selected_driver = options[drivers[pos]]
-		elif selected_driver in options:
-			selected_driver = options[options.index(selected_driver)]
-		elif len(selected_driver) == 0:
-			raise archinstall.RequirementError("At least one graphics driver is needed to support a graphical environment. Please restart the installer and try again.")
-		else:
-			raise archinstall.RequirementError("Selected driver does not exist.")
+
+		selected_driver = options[selected_driver]
 
 		if type(selected_driver) == dict:
 			driver_options = sorted(list(selected_driver))
-			for index, driver_package_group in enumerate(driver_options):
-				print(f"{index}: {driver_package_group}")
 
-			selected_driver_package_group = input(f'Which driver-type do you want for {initial_option}: ')
-			if selected_driver_package_group.isdigit() and (pos := int(selected_driver_package_group)) <= len(driver_options)-1:
-				selected_driver_package_group = selected_driver[driver_options[pos]]
-			elif selected_driver_package_group in selected_driver:
-				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
-			elif len(selected_driver_package_group) == 0:
-				raise archinstall.RequirementError(f"At least one driver package is required for a graphical environment using {selected_driver}. Please restart the installer and try again.")
-			else:
-				raise archinstall.RequirementError(f"Selected driver-type does not exist for {initial_option}.")
+			selected_driver_package_group = archinstall.generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ', False)
+			selected_driver_package_group = selected_driver[selected_driver_package_group]
 
 			return selected_driver_package_group
 

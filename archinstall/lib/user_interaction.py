@@ -154,9 +154,13 @@ def ask_to_configure_network():
 	# Optionally configure one network interface.
 	#while 1:
 	# {MAC: Ifname}
-	interfaces = {'ISO-CONFIG' : 'Copy ISO network configuration to installation','NetworkManager':'Use NetworkManager to control and manage your internet connection', **list_interfaces()}
+	interfaces = {
+		'ISO-CONFIG' : 'Copy ISO network configuration to installation',
+		'NetworkManager':'Use NetworkManager to control and manage your internet connection',
+		**list_interfaces()
+	}
 
-	nic = generic_select(interfaces.values(), "Select one network interface to configure (leave blank to skip): ")
+	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager to control and manage your internet connection':
 			return {'nic': nic,'NetworkManager':True}
@@ -190,12 +194,12 @@ def ask_to_configure_network():
 
 def ask_for_disk_layout():
 	options = {
-		'keep-existing' : 'Keep existing partition layout and select which ones to use where.',
-		'format-all' : 'Format entire drive and setup a basic partition scheme.',
-		'abort' : 'Abort the installation.'
+		'keep-existing' : 'Keep existing partition layout and select which ones to use where',
+		'format-all' : 'Format entire drive and setup a basic partition scheme',
+		'abort' : 'Abort the installation'
 	}
 
-	value = generic_select(options.values(), "Found partitions on the selected drive, (select by number) what you want to do: ")
+	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ", False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def ask_for_main_filesystem_format():
@@ -206,7 +210,7 @@ def ask_for_main_filesystem_format():
 		'f2fs' : 'f2fs'
 	}
 
-	value = generic_select(options.values(), "Select which filesystem your main partition should use (by number or name): ")
+	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True):
@@ -215,9 +219,12 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
-	1: first
-	2: second
-	3: third option
+	0: first
+	1: second
+	2: third option
+
+	When the user has entered the option correctly,
+	this function returns an item from list, a string, or None
 	"""
 
 	# Checking if options are different from `list` or `dict`
@@ -226,14 +233,14 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() reqiures list or dictionary as options.")
 	if type(options) == dict: options = sorted(list(options.values()))  # To allow only `list` and `dict`, converting values of options and sorting them here. Therefore, now we can only provide the dictionary itself
-	# if sort: options = sorted(list(options))  # Moved sorting for dictionaries, as some lists are already sorted, when passed here
 	if len(options) == 0:
 		log(" * It looks like there are no options to choose from. Maybe it's time to open an issue on GitHub! * ", fg='red')
 		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires at least one option to operate.')
 	
 
-	# Disable the output of options items, if another function displays something different from this
+	# Added ability to disable the output of options items,
+	# if another function displays something different from this
 	if options_output:
 		for index, option in enumerate(options):
 			print(f"{index}: {option}")
@@ -282,18 +289,10 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = input('Select one of the above disks (by number or full path) or write /mnt to skip partitioning: ')
-		if drive.strip() == '/mnt':
-			return None
-		elif drive.isdigit():
-			drive = int(drive)
-			if drive >= len(drives):
-				raise DiskError(f'Selected option "{drive}" is out of range')
-			drive = dict_o_disks[drives[drive]]
-		elif drive in dict_o_disks:
-			drive = dict_o_disks[drive]
-		else:
-			raise DiskError(f'Selected drive does not exist: "{drive}"')
+		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or leave blank to skip partitioning: ', True, False)
+		if not drive:
+			return drive
+		drive = dict_o_disks[drive]
 		return drive
 
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
@@ -312,24 +311,10 @@ def select_profile(options):
 	profiles = sorted(list(options))
 
 	if len(profiles) >= 1:
-		for index, profile in enumerate(profiles):
-			print(f"{index}: {profile}")
-
-		print(' -- The above list is a set of pre-programmed profiles. --')
+		print(' -- The below list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- (Leave blank and hit enter to skip this step and continue) --')
-		selected_profile = input('Enter a pre-programmed profile name if you want to install one: ')
 
-		if len(selected_profile.strip()) <= 0:
-			return None
-			
-		if selected_profile.isdigit() and (pos := int(selected_profile)) <= len(profiles)-1:
-			selected_profile = profiles[pos]
-		elif selected_profile in options:
-			selected_profile = options[options.index(selected_profile)]
-		else:
-			RequirementError("Selected profile does not exist.")
-
+		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one or leave blank to skip this step: ')
 		return Profile(None, selected_profile)
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
@@ -359,12 +344,17 @@ def select_language(options, show_only_country_codes=True):
 		for index, language in enumerate(languages):
 			print(f"{index}: {language}")
 
-		print(' -- You can enter ? or help to search for more languages, or skip to use US layout --')
-		selected_language = input('Select one of the above keyboard languages (by number or full name): ')
+		# Current workaround for passing `generic_select`,
+		# if these values are provided as input
+		languages.extend(['?', 'help'])
+		languages_length = len(languages)
+
+		print(f' -- You can enter ? ({languages_length - 2}) or help ({languages_length - 1}) to search for more languages, or skip to use US layout --')
+		selected_language = generic_select(languages, 'Select one of the above keyboard languages (by number or full name): ', True, False)
 		
-		if len(selected_language.strip()) == 0:
+		if not selected_language:
 			return DEFAULT_KEYBOARD_LANGUAGE
-		elif selected_language.lower() in ('?', 'help'):
+		elif selected_language in ('?', 'help'):
 			while True:
 				filter_string = input('Search for layout containing (example: "sv-"): ')
 				new_options = list(search_keyboard_layout(filter_string))
@@ -375,18 +365,13 @@ def select_language(options, show_only_country_codes=True):
 
 				return select_language(new_options, show_only_country_codes=False)
 
-		elif selected_language.isdigit() and (pos := int(selected_language)) <= len(languages)-1:
-			selected_language = languages[pos]
-			return selected_language
 		# I'm leaving "options" on purpose here.
 		# Since languages possibly contains a filtered version of
 		# all possible language layouts, and we might want to write
 		# for instance sv-latin1 (if we know that exists) without having to
 		# go through the search step.
-		elif selected_language in languages:
-			return selected_language
-		else:
-			raise RequirementError("Selected language does not exist.")
+
+		return selected_language
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
@@ -413,23 +398,17 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
-		selected_mirror = input('Select one of the above regions to download packages from (by number or full name): ')
-		if len(selected_mirror.strip()) == 0:
+		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ', True, False)
+		if not selected_mirror:
 			# Returning back empty options which can be both used to
 			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
 			return {}
 
-		elif selected_mirror.isdigit() and int(selected_mirror) <= len(regions)-1:
-			# I'm leaving "mirrors" on purpose here.
-			# Since region possibly contains a known region of
-			# all possible regions, and we might want to write
-			# for instance Sweden (if we know that exists) without having to
-			# go through the search step.
-			region = regions[int(selected_mirror)]
-			selected_mirrors[region] = mirrors[region]
-		elif selected_mirror in mirrors:
-			selected_mirrors[selected_mirror] = mirrors[selected_mirror]
-		else:
-			raise RequirementError("Selected region does not exist.")
+		# I'm leaving "mirrors" on purpose here.
+		# Since region possibly contains a known region of
+		# all possible regions, and we might want to write
+		# for instance Sweden (if we know that exists) without having to
+		# go through the search step.
 
+		selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		return selected_mirrors
