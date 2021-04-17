@@ -106,7 +106,7 @@ def ask_user_questions():
 						# we have to check if we support it. We can do this by formatting /dev/null with the partitions filesystem.
 						# There's a nice wrapper for this on the partition object itself that supports a path-override during .format()
 						try:
-							partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
+							partition.format(new_filesystem, path='/dev/null', log_formatting=False, allow_formatting=True)
 						except archinstall.UnknownFilesystemFormat:
 							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
 							archinstall.log(f"Until then, please enter another supported filesystem.")
