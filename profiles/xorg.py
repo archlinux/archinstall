@@ -1,6 +1,7 @@
 # A system with "xorg" installed
 
-import archinstall, os
+import os
+from archinstall import generic_select, sys_command, RequirementError
 
 is_top_level_profile = True
 
@@ -33,10 +34,13 @@ def select_driver(options):
 	drivers = sorted(list(options))
 
 	if len(drivers) >= 1:
-		print(' -- The below list are supported graphic card drivers. --')
+		for index, driver in enumerate(drivers):
+			print(f"{index}: {driver}")
+
+		print(' -- The above list are supported graphic card drivers. --')
 		print(' -- You need to select (and read about) which one you need. --')
 
-		lspci = archinstall.sys_command(f'/usr/bin/lspci')
+		lspci = sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():
@@ -44,7 +48,8 @@ def select_driver(options):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		selected_driver = archinstall.generic_select(drivers, 'Select your graphics card driver: ', False)
+		selected_driver = generic_select(drivers, 'Select your graphics card driver: ',
+                                        allow_empty_input=False, options_output=False)
 		initial_option = selected_driver
 
 		# Disabled search for now, only a few profiles exist anyway
@@ -60,14 +65,15 @@ def select_driver(options):
 		if type(selected_driver) == dict:
 			driver_options = sorted(list(selected_driver))
 
-			selected_driver_package_group = archinstall.generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ', False)
-			selected_driver_package_group = selected_driver[selected_driver_package_group]
+			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ',
+                                                 allow_empty_input=False)
+			driver_package_group = selected_driver[driver_package_group]
 
-			return selected_driver_package_group
+			return driver_package_group
 
 		return selected_driver
 
-	raise archinstall.RequirementError("Selecting drivers require a least one profile to be given as an option.")
+	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 def _prep_function(*args, **kwargs):
 	"""

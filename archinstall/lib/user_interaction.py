@@ -1,5 +1,5 @@
 import getpass, pathlib, os, shutil, re
-import sys, time, signal
+import sys, time, signal, ipaddress
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import search_keyboard_layout
@@ -164,13 +164,25 @@ def ask_to_configure_network():
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager to control and manage your internet connection':
 			return {'nic': nic,'NetworkManager':True}
-		mode = generic_select(['DHCP (auto detect)', 'IP (static)'], f"Select which mode to configure for {nic}: ")
-		if mode == 'IP (static)':
+
+		# Current workaround:
+		# For selecting modes without entering text within brackets,
+		# printing out this part separate from options, passed in
+		# `generic_select`
+		modes = ['DHCP (auto detect)', 'IP (static)']
+		for index, mode in enumerate(modes):
+			print(f"{index}: {mode}")
+
+		mode = generic_select(['DHCP', 'IP'], f"Select which mode to configure for {nic} or leave blank for DHCP: ",
+							 options_output=False)
+		if mode == 'IP':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
-				if ip:
+				# Implemented new check for correct IP/subnet input
+				try:
+					ipaddress.ip_interface(ip)
 					break
-				else:
+				except ValueError:
 					log(
 						"You need to enter a valid IP in IP-config mode.",
 						level=LOG_LEVELS.Warning,
@@ -179,6 +191,25 @@ def ask_to_configure_network():
 
 			if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
 				gateway = None
+
+			# Assuming that gateway (router) IP address doesn't contain subnet,
+			# we can implement this check for it
+			# Implemented new check for correct IP input
+
+			#gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
+			#while 1:
+			#	try:
+			#		if len(gateway) == 0:
+			#			gateway = None
+			# 		else:
+			# 			ipaddress.ip_address(gateway)
+			# 		break
+			# 	except ValueError:
+			# 		log(
+			# 			"You need to enter a valid gateway (router) IP address.",
+			# 			level=LOG_LEVELS.Warning,
+			# 			fg='red'
+			# 		)
 
 			dns = None
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
@@ -199,7 +230,8 @@ def ask_for_disk_layout():
 		'abort' : 'Abort the installation'
 	}
 
-	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ", False)
+	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ",
+						  allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def ask_for_main_filesystem_format():
@@ -210,7 +242,8 @@ def ask_for_main_filesystem_format():
 		'f2fs' : 'f2fs'
 	}
 
-	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", False)
+	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ",
+						  allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True):
@@ -231,7 +264,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	if type(options) not in [list, dict]:
 		log(" * It looks like there are something wrong with provided options. Maybe it's time to open an issue on GitHub! * ", fg='red')
 		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError("generic_select() reqiures list or dictionary as options.")
+		raise RequirementError("generic_select() requires list or dictionary as options.")
 	if type(options) == dict: options = sorted(list(options.values()))  # To allow only `list` and `dict`, converting values of options and sorting them here. Therefore, now we can only provide the dictionary itself
 	if len(options) == 0:
 		log(" * It looks like there are no options to choose from. Maybe it's time to open an issue on GitHub! * ", fg='red')
@@ -289,7 +322,8 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or leave blank to skip partitioning: ', True, False)
+		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or leave blank to skip partitioning: ',
+							  options_output=False)
 		if not drive:
 			return drive
 		drive = dict_o_disks[drive]
@@ -311,10 +345,15 @@ def select_profile(options):
 	profiles = sorted(list(options))
 
 	if len(profiles) >= 1:
-		print(' -- The below list is a set of pre-programmed profiles. --')
-		print(' -- They might make it easier to install things like desktop environments. --')
+		for index, profile in enumerate(profiles):
+			print(f"{index}: {profile}")
 
-		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one or leave blank to skip this step: ')
+		print(' -- The above list is a set of pre-programmed profiles. --')
+		print(' -- They might make it easier to install things like desktop environments. --')
+		print(' -- (Leave blank and hit enter to skip this step and continue) --')
+
+		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ',
+										 options_output=False)
 		return Profile(None, selected_profile)
 
 	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
@@ -350,7 +389,8 @@ def select_language(options, show_only_country_codes=True):
 		languages_length = len(languages)
 
 		print(f' -- You can enter ? ({languages_length - 2}) or help ({languages_length - 1}) to search for more languages, or skip to use US layout --')
-		selected_language = generic_select(languages, 'Select one of the above keyboard languages (by number or full name): ', True, False)
+		selected_language = generic_select(languages, 'Select one of the above keyboard languages (by number or full name): ',
+										  options_output=False)
 		
 		if not selected_language:
 			return DEFAULT_KEYBOARD_LANGUAGE
@@ -398,7 +438,8 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
-		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ', True, False)
+		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ',
+										options_output=False)
 		if not selected_mirror:
 			# Returning back empty options which can be both used to
 			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
