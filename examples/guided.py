@@ -192,7 +192,7 @@ def ask_user_questions():
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
 		if not archinstall.arguments.get('packages', None):
-			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr(in uefi systems) and optional profile packages are installed.")
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr(on uefi systems)/grub(on bios systems) and optional profile packages are installed.")
 			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
