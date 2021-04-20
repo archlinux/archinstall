@@ -435,7 +435,7 @@ class Installer():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 		else:
-			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
+			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)
