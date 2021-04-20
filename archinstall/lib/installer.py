@@ -427,13 +427,13 @@ class Installer():
 		elif bootloader == "grub-install":
 			if hasUEFI():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 			else:
 				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"', shell=True).decode().strip()
 				if root_device == "block":
 					root_device = f"{root_partition.path}"
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
 
