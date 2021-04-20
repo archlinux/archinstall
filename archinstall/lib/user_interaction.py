@@ -195,15 +195,15 @@ def ask_to_configure_network():
 				try:
 					if len(gateway) == 0:
 						gateway = None
-			 		else:
-			 			ipaddress.ip_address(gateway)
-			 		break
-			 	except ValueError:
-			 		log(
-			 			"You need to enter a valid gateway (router) IP address.",
-			 			level=LOG_LEVELS.Warning,
-			 			fg='red'
-			 		)
+					else:
+						ipaddress.ip_address(gateway)
+					break
+				except ValueError:
+					log(
+						"You need to enter a valid gateway (router) IP address.",
+						level=LOG_LEVELS.Warning,
+						fg='red'
+					)
 
 			dns = None
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
