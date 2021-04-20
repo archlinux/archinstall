@@ -65,7 +65,6 @@ def ask_user_questions():
 			except archinstall.UnknownFilesystemFormat as err:
 				archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
 		
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
 		# We then ask what to do with the partitions.
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
@@ -143,7 +142,7 @@ def ask_user_questions():
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
-
+	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
