@@ -307,12 +307,14 @@ def perform_installation(mountpoint):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
 		if hasUEFI()==False:
 			installation.base_packages.replace("efibootmgr","")# if we aren't on a uefi system why install efibootmgr
+		if archinstall.arguments["bootloader"] == "grub-install":
+			installation.base_packages = installation.base_packages + " grub"
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
-			installation.add_bootloader()
+			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
