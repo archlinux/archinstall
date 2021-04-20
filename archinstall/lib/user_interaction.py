@@ -256,17 +256,17 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	# Checking if options are different from `list` or `dict`
 	if type(options) not in [list, dict]:
-		log(" * It looks like there are something wrong with provided options. Maybe it's time to open an issue on GitHub! * ", fg='red')
-		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
 	# To allow only `list` and `dict`, converting values of options here.
 	# Therefore, now we can only provide the dictionary itself
 	if type(options) == dict: options = list(options.values())
 	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
 	if len(options) == 0:
-		log(" * It looks like there are no options to choose from. Maybe it's time to open an issue on GitHub! * ", fg='red')
-		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError('generic_select() requires at least one option to operate.')
+		log(f" * Generic select didn't find any options to choose from * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_select() requires at least one option to proceed.')
 	
 
 	# Added ability to disable the output of options items,
