@@ -23,7 +23,7 @@ class Installer():
 	:param partition: Requires a partition as the first argument, this is
 	    so that the installer can mount to `mountpoint` and strap packages there.
 	:type partition: class:`archinstall.Partition`
-	
+
 	:param boot_partition: There's two reasons for needing a boot partition argument,
 	    The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
 	    during the `pacstrap` or `linux` and the base packages for a minimal installation.
@@ -34,7 +34,7 @@ class Installer():
 	:param profile: A profile to install, this is optional and can be called later manually.
 	    This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
 	:type profile: str, optional
-	
+
 	:param hostname: The given /etc/hostname for the machine.
 	:type hostname: str, optional
 
@@ -146,7 +146,7 @@ class Installer():
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
-		
+
 		return True
 
 	def set_hostname(self, hostname :str, *args, **kwargs):
@@ -228,7 +228,7 @@ class Installer():
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
 						self.base_packages.append('iwd')
-						# This function will be called after minimal_installation() 
+						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
 						def post_install_enable_iwd_service(*args, **kwargs):
@@ -278,6 +278,7 @@ class Installer():
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
+
 		MODULES = []
 		BINARIES = []
 		FILES = []
@@ -303,6 +304,9 @@ class Installer():
 				if 'encrypt' not in HOOKS:
 					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
 
+		if not(hasUEFI()): # TODO: Allow for grub even on EFI
+			self.base_packages.append('grub')
+										
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()

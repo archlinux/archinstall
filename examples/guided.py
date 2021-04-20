@@ -344,7 +344,7 @@ def perform_installation(mountpoint):
 
 			for user, user_info in archinstall.arguments.get('users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
-			
+
 			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
 
@@ -373,4 +373,3 @@ def perform_installation(mountpoint):
 
 ask_user_questions()
 perform_installation_steps()
-
