@@ -189,9 +189,9 @@ def ask_to_configure_network():
 						fg='red'
 					)
 
-			gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
 			# Implemented new check for correct gateway IP address
 			while 1:
+				gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
