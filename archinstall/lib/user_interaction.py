@@ -231,7 +231,7 @@ def ask_for_disk_layout():
 	}
 
 	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ",
-						  allow_empty_input=False)
+						  allow_empty_input=False, sort=True)
 	return next((key for key, val in options.items() if val == value), None)
 
 def ask_for_main_filesystem_format():
@@ -246,7 +246,7 @@ def ask_for_main_filesystem_format():
 						  allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
 
-def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True):
+def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True, sort=False):
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
@@ -265,7 +265,10 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		log(" * It looks like there are something wrong with provided options. Maybe it's time to open an issue on GitHub! * ", fg='red')
 		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
-	if type(options) == dict: options = sorted(list(options.values()))  # To allow only `list` and `dict`, converting values of options and sorting them here. Therefore, now we can only provide the dictionary itself
+	# To allow only `list` and `dict`, converting values of options here.
+	# Therefore, now we can only provide the dictionary itself
+	if type(options) == dict: options = list(options.values())
+	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
 	if len(options) == 0:
 		log(" * It looks like there are no options to choose from. Maybe it's time to open an issue on GitHub! * ", fg='red')
 		log(" * Here are the link: https://github.com/archlinux/archinstall/issues * ", fg='yellow')
