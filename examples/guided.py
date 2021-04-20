@@ -64,6 +64,8 @@ def ask_user_questions():
 					partition_mountpoints[partition] = None
 			except archinstall.UnknownFilesystemFormat as err:
 				archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
+		
+		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
 		# We then ask what to do with the partitions.
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
@@ -190,7 +192,7 @@ def ask_user_questions():
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
 		if not archinstall.arguments.get('packages', None):
-			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr(in uefi systems) and optional profile packages are installed.")
 			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
@@ -303,7 +305,8 @@ def perform_installation(mountpoint):
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
-
+		if hasUEFI()==False:
+			installation.base_packages.replace("efibootmgr","")# if we aren't on a uefi system why install efibootmgr
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:

@@ -7,7 +7,7 @@ from .output import log, LOG_LEVELS
 from .storage import storage
 from .networking import list_interfaces
 from .general import sys_command
-from .hardware import AVAILABLE_GFX_DRIVERS
+from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
@@ -143,7 +143,17 @@ def ask_for_a_timezone():
 			level=LOG_LEVELS.Warning,
 			fg='red'
 		)
-		
+
+def ask_for_bootloader() -> str:
+	bootloader = "systemd-bootctl"
+	if hasUEFI==False:
+		bootloader="grub-install"
+	else:
+		bootloader_choice = input("Would you like to use Grub as a bootloader over systemd-boot [y/N] ").lower()
+		if bootloader_choice == "y":
+			bootloader="grub-install"
+	return bootloader
+
 def ask_for_audio_selection():
 	audio = "pulseaudio" # Default for most desktop environments
 	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
