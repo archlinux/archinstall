@@ -189,27 +189,21 @@ def ask_to_configure_network():
 						fg='red'
 					)
 
-			if not len(gateway := input('Enter your gateway (router) IP address or leave blank for none: ').strip()):
-				gateway = None
-
-			# Assuming that gateway (router) IP address doesn't contain subnet,
-			# we can implement this check for it
-			# Implemented new check for correct IP input
-
-			#gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
-			#while 1:
-			#	try:
-			#		if len(gateway) == 0:
-			#			gateway = None
-			# 		else:
-			# 			ipaddress.ip_address(gateway)
-			# 		break
-			# 	except ValueError:
-			# 		log(
-			# 			"You need to enter a valid gateway (router) IP address.",
-			# 			level=LOG_LEVELS.Warning,
-			# 			fg='red'
-			# 		)
+			gateway = input('Enter your gateway (router) IP address or leave blank for none: ').strip()
+			# Implemented new check for correct gateway IP address
+			while 1:
+				try:
+					if len(gateway) == 0:
+						gateway = None
+			 		else:
+			 			ipaddress.ip_address(gateway)
+			 		break
+			 	except ValueError:
+			 		log(
+			 			"You need to enter a valid gateway (router) IP address.",
+			 			level=LOG_LEVELS.Warning,
+			 			fg='red'
+			 		)
 
 			dns = None
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
