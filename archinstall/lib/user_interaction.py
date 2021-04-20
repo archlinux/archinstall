@@ -149,7 +149,7 @@ def ask_for_bootloader() -> str:
 	if hasUEFI()==False:
 		bootloader="grub-install"
 	else:
-		bootloader_choice = input("Would you like to use Grub as a bootloader over systemd-boot [y/N] ").lower()
+		bootloader_choice = input("Would you like to use GRUB as a bootloader instead off systemd-boot [y/N] ").lower()
 		if bootloader_choice == "y":
 			bootloader="grub-install"
 	return bootloader
