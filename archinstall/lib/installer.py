@@ -48,7 +48,8 @@ class Installer():
 			'base' : False,
 			'bootloader' : False
 		}
-
+		if hasUEFI() == False:
+			base_packages.replace(" efibootmgr","")
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		self.post_base_install = []
 

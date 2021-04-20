@@ -300,18 +300,15 @@ def perform_installation(mountpoint):
 		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
-
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
-		if hasUEFI()==False:
-			installation.base_packages.pop(installation.base_packages.index("efibootmgr"))# if we aren't on a uefi system why install efibootmgr
-		if archinstall.arguments["bootloader"] == "grub-install":
-			installation.base_packages = installation.base_packages.append("grub")
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments["bootloader"]=="grub-install":
+				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
