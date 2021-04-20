@@ -1,4 +1,4 @@
-.. _examples.python:
+.. _examples.binary:
 
 Binary executable
 =================
@@ -11,7 +11,7 @@ It's compiled using `nuitka <https://nuitka.net/>`_ with the flag `--standalone`
 Executing the binary
 --------------------
 
-As an example we'll use the `guided <https://github.com/Torxed/archinstall/blob/master/examples/guided.py>`_ installer.
+As an example we'll use the `guided <https://github.com/archlinux/archinstall/blob/master/examples/guided.py>`_ installer.
 To run the `guided` installed, all you have to do *(after installing or compiling the binary)*, is run:
 
 

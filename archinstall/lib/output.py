@@ -6,7 +6,7 @@ from pathlib import Path
 from .storage import storage
 
 # TODO: use logging's built in levels instead.
-#       Altough logging is threaded and I wish to avoid that.
+#       Although logging is threaded and I wish to avoid that.
 #       It's more Pythonistic or w/e you want to call it.
 class LOG_LEVELS:
 	Critical = 0b001
@@ -88,7 +88,7 @@ def log(*args, **kwargs):
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if supports_color():
-		kwargs = {'bg' : 'black', 'fg': 'white', **kwargs}
+		kwargs = {'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
 
 	# If a logfile is defined in storage,

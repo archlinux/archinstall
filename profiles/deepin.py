@@ -1,8 +1,9 @@
-# A desktop environment using "Cinnamon"
+# A desktop environment using "Deepin".
 
-import archinstall
+import archinstall, os
 
 is_top_level_profile = False
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -12,7 +13,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# Cinnamon requires a functioning Xorg installation.
+	# Deepin requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
@@ -20,15 +21,17 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("cinnamon", "/somewhere/cinnamon.py")
-# or through conventional import cinnamon
-if __name__ == 'cinnamon':
+# through importlib.util.spec_from_file_location("deepin", "/somewhere/deepin.py")
+# or through conventional import deepin
+if __name__ == 'deepin':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application cinnamon from the template under /applications/
-	cinnamon = archinstall.Application(installation, 'cinnamon')
-	cinnamon.install()
+	# Install the application deepin from the template under /applications/
+	deepin = archinstall.Application(installation, 'deepin')
+	deepin.install()
 
-	installation.enable_service('lightdm') # Light Display Manager
+	# Enable autostart of Deepin for all users
+	installation.enable_service('lightdm')

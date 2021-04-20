@@ -1,4 +1,5 @@
-# A desktop environment using "Cinnamon"
+
+# A desktop environment using "LXQt"
 
 import archinstall
 
@@ -12,7 +13,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# Cinnamon requires a functioning Xorg installation.
+	# LXQt requires a functional xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
@@ -21,14 +22,14 @@ def _prep_function(*args, **kwargs):
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("cinnamon", "/somewhere/cinnamon.py")
-# or through conventional import cinnamon
-if __name__ == 'cinnamon':
+# through importlib.util.spec_from_file_location("lxqt", "/somewhere/lxqt.py")
+# or through conventional import lxqt
+if __name__ == 'lxqt':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application cinnamon from the template under /applications/
-	cinnamon = archinstall.Application(installation, 'cinnamon')
-	cinnamon.install()
+	# Install the application xfce4 from the template under /applications/
+	xfce = archinstall.Application(installation, 'lxqt')
+	xfce.install()
 
-	installation.enable_service('lightdm') # Light Display Manager
+	installation.enable_service('sddm') # SDDM Display Manager

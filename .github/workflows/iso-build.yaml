@@ -1,0 +1,37 @@
+# This workflow will build an Arch Linux ISO file with the commit on it
+
+name: Build Arch ISO with ArchInstall Commit
+
+on:
+  pull_request:
+    paths-ignore:
+    - '.github/**'
+    - 'docs/**'
+    - '**.editorconfig'
+    - '**.gitignore'
+    - '**.md'
+    - 'LICENSE'
+    - 'PKGBUILD'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+    - uses: actions/checkout@v2
+    - run: pwd
+    - run: find .
+    - run: cat /etc/os-release
+    - run: mkdir -p /tmp/archlive/airootfs/root/archinstall-git; cp -r . /tmp/archlive/airootfs/root/archinstall-git
+    - run: echo "pip uninstall archinstall -y; cd archinstall-git; python setup.py install; echo 'Type python -m archinstall to launch archinstall'" > /tmp/archlive/airootfs/root/.zprofile
+    - run: pacman -Sy; pacman --noconfirm -S git archiso
+    - run: cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
+    - run: echo -e "git\npython\npython-pip\npython-setuptools" >> /tmp/archlive/packages.x86_64 
+    - run: find /tmp/archlive
+    - run: cd /tmp/archlive;  mkarchiso -v -w work/ -o out/ ./
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Arch Live ISO
+        path: /tmp/archlive/out/*.iso

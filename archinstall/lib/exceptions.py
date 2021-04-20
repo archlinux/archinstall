@@ -19,3 +19,5 @@ class PermissionError(BaseException):
 	pass
 class UserError(BaseException):
 	pass
+class ServiceException(BaseException):
+	pass

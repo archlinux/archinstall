@@ -2,7 +2,11 @@
 
 import archinstall
 
-__packages__ = ['nano', 'nemo', 'gpicview-gtk3', 'chromium', 'openssh', 'sshfs', 'htop', 'scrot', 'wget']
+is_top_level_profile = False
+
+# New way of defining packages for a profile, which is iterable and can be used out side
+# of the profile to get a list of "what packages will be installed".
+__packages__ = ['nemo', 'gpicview-gtk3', 'scrot']
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -35,13 +39,13 @@ if __name__ == 'awesome':
 	alacritty.install()
 
 	# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'r') as fh:
+	with open(f'{installation.target}/etc/xdg/awesome/rc.lua', 'r') as fh:
 		awesome_lua = fh.read()
 
 	## Replace xterm with alacritty for a smoother experience.
 	awesome_lua = awesome_lua.replace('"xterm"', '"alacritty"')
 
-	with open(f'{installation.mountpoint}/etc/xdg/awesome/rc.lua', 'w') as fh:
+	with open(f'{installation.target}/etc/xdg/awesome/rc.lua', 'w') as fh:
 		fh.write(awesome_lua)
 
 	## TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)

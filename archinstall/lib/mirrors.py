@@ -74,9 +74,14 @@ def re_rank_mirrors(top=10, *positionals, **kwargs):
 
 def list_mirrors():
 	url = f"https://archlinux.org/mirrorlist/?protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
-
-	response = urllib.request.urlopen(url)
 	regions = {}
+
+	try:
+		response = urllib.request.urlopen(url)
+	except urllib.error.URLError as err:
+		log(f'Could not fetch an active mirror-list: {err}', level=LOG_LEVELS.Warning, fg="yellow")
+		return regions
+
 
 	region = 'Unknown region'
 	for line in response.readlines():

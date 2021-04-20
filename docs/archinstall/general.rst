@@ -12,7 +12,7 @@ Packages
 ========
 
 .. autofunction:: archinstall.find_package
-
+Be
 .. autofunction:: archinstall.find_packages
 
 Locale related
@@ -91,3 +91,13 @@ Exceptions
 .. autofunction:: archinstall.ProfileError
 
 .. autofunction:: archinstall.SysCallError
+
+.. autofunction:: archinstall.ProfileNotFound
+
+.. autofunction:: archinstall.HardwareIncompatibilityError
+
+.. autofunction:: archinstall.PermissionError
+
+.. autofunction:: archinstall.UserError
+
+.. autofunction:: archinstall.ServiceException
