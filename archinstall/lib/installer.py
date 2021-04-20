@@ -39,7 +39,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware efibootmgr'):
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware'):
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -50,8 +50,10 @@ class Installer():
 		}
 		
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
-		if hasUEFI() == False:
-			self.base_packages.pop(self.base_packages.index("efibootmgr"))
+		if hasUEFI():
+			self.base_packages.append("efibootmgr")
+		else:
+			self.base_packages.append("grub")
 		self.post_base_install = []
 
 		storage['session'] = self
