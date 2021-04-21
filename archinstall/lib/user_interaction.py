@@ -93,7 +93,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
 			print()
 
-def ask_for_superuser_account(prompt='Create a required super-user with sudo privileges: ', forced=False):
+def ask_for_superuser_account(prompt='Username for required super-user with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
 
