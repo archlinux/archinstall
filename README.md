@@ -104,6 +104,10 @@ This installer will perform the following:
 
 > **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
+## Unattended installation based on MAC address
+
+Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address. For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py). If it's found, the unattended installation will commence and source that profile as it's installation proceedure.
+
 # Help
 
 Submit an issue on Github, or submit a post in the discord help channel.<br>
