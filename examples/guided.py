@@ -3,9 +3,9 @@ import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
 
-if hasUEFI() is False:
-	log("ArchInstall currently only supports machines booted with UEFI. MBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
-	exit(1)
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
 
 def ask_user_questions():
 	"""
@@ -14,7 +14,12 @@ def ask_user_questions():
 	  will we continue with the actual installation steps.
 	"""
 	if not archinstall.arguments.get('keyboard-language', None):
-		archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+		while True:
+			try:
+				archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+				break
+			except archinstall.RequirementError as err:
+				archinstall.log(err, fg="red")
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
@@ -23,7 +28,12 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+		while True:
+			try:
+				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
+				break
+			except archinstall.RequirementError as e:
+				archinstall.log(e,  fg="red")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
@@ -187,19 +197,24 @@ def ask_user_questions():
 
 
 	# Additional packages (with some light weight error handling for invalid package names)
-	if not archinstall.arguments.get('packages', None):
-		print("Packages not part of the desktop environment are not installed by default.")
-		print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-		archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
+	while True:
+		if not archinstall.arguments.get('packages', None):
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
-	if len(archinstall.arguments['packages']):
-		# Verify packages that were given
-		try:
-			archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
-			archinstall.validate_package_list(archinstall.arguments['packages'])
-		except archinstall.RequirementError as e:
-			archinstall.log(e, fg='red')
-			exit(1)
+		if len(archinstall.arguments['packages']):
+			# Verify packages that were given
+			try:
+				archinstall.log(f"Verifying that additional packages exist (this might take a few seconds)")
+				archinstall.validate_package_list(archinstall.arguments['packages'])
+				break
+			except archinstall.RequirementError as e:
+				archinstall.log(e, fg='red')
+				archinstall.arguments['packages'] = None # Clear the packages to trigger a new input question
+		else:
+			# no additional packages were selected, which we'll allow
+			break
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
@@ -233,7 +248,11 @@ def perform_installation_steps():
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
 		"""
-		with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+		mode = archinstall.GPT
+		if hasUEFI() is False:
+			mode = archinstall.MBR
+
+		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
 			# Wipe the entire drive if the disk flag `keep_partitions`is False.
 			if archinstall.arguments['harddrive'].keep_partitions is False:
 				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
@@ -296,11 +315,8 @@ def perform_installation(mountpoint):
 
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-
-			# Configure the selected mirrors in the installation
-			if archinstall.arguments.get('mirror-region', None):
+			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
-
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader()
 
@@ -317,10 +333,11 @@ def perform_installation(mountpoint):
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
-			if 	archinstall.arguments.get('audio', None) != None:
+			if archinstall.arguments.get('audio', None) != None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
+
 					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
@@ -336,7 +353,7 @@ def perform_installation(mountpoint):
 
 			for user, user_info in archinstall.arguments.get('users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
-			
+
 			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
 
@@ -345,6 +362,15 @@ def perform_installation(mountpoint):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
+
+			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
+				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+					if not imported._post_install():
+						archinstall.log(
+							' * Profile\'s post configuration requirements was not fulfilled.',
+							fg='red'
+						)
+						exit(1)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
@@ -356,4 +382,3 @@ def perform_installation(mountpoint):
 
 ask_user_questions()
 perform_installation_steps()
-

@@ -5,6 +5,7 @@ from .exceptions import DiskError
 from .general import *
 from .output import log, LOG_LEVELS
 from .storage import storage
+from .hardware import hasUEFI
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -73,7 +74,7 @@ class BlockDevice():
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(sys_command(f'losetup --json', hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(sys_command(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path: continue
 
 				return drive['back-file']
@@ -94,10 +95,10 @@ class BlockDevice():
 
 	@property
 	def partitions(self):
-		o = b''.join(sys_command(f'partprobe {self.path}'))
+		o = b''.join(sys_command(['partprobe', self.path]))
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
-		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
+		o = b''.join(sys_command(['/usr/bin/lsblk', '-J', self.path]))
 
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
@@ -427,7 +428,7 @@ class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice, mode=GPT):
+	def __init__(self, blockdevice,mode):
 		self.blockdevice = blockdevice
 		self.mode = mode
 
@@ -440,6 +441,11 @@ class Filesystem():
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+			elif self.mode == MBR:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
+					return self
+				else:
+					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 		
@@ -482,28 +488,39 @@ class Filesystem():
 
 	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
-		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
-		self.set_name(0, 'EFI')
-		self.set(0, 'boot on')
-		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
-		# https://www.gnu.org/software/parted/manual/html_node/set.html
-		self.set(0, 'esp on')
-		self.add_partition('primary', start='513MiB', end='100%')
+		if hasUEFI():
+			self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
+			self.set_name(0, 'EFI')
+			self.set(0, 'boot on')
+			# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
+			# https://www.gnu.org/software/parted/manual/html_node/set.html
+			self.set(0, 'esp on')
+			self.add_partition('primary', start='513MiB', end='100%')
 
-		self.blockdevice.partition[0].filesystem = 'vfat'
-		self.blockdevice.partition[1].filesystem = root_filesystem_type
-		log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
+			self.blockdevice.partition[0].filesystem = 'vfat'
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
 
-		self.blockdevice.partition[0].target_mountpoint = '/boot'
-		self.blockdevice.partition[1].target_mountpoint = '/'
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
 
-		self.blockdevice.partition[0].allow_formatting = True
-		self.blockdevice.partition[1].allow_formatting = True
+			self.blockdevice.partition[0].allow_formatting = True
+			self.blockdevice.partition[1].allow_formatting = True
+		else:
+			#we don't need a seprate boot partition it would be a waste of space
+			self.add_partition('primary', start='1MB', end='100%')
+			self.blockdevice.partition[0].filesystem=root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
+			self.blockdevice.partition[0].target_mountpoint = '/'
+			self.blockdevice.partition[0].allow_formatting = True
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
 		
 		previous_partitions = self.blockdevice.partitions
+		if self.mode == MBR:
+			if len(self.blockdevice.partitions)>3:
+				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
