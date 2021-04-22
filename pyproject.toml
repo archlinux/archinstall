@@ -23,7 +23,7 @@ Documentation = "https://archinstall.readthedocs.io/"
 archinstall = "archinstall:run_as_a_module"
 
 [tool.flit.sdist]
-include = ["docs/"]
+include = ["docs/","profiles"]
 exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
 
 [tool.flit.metadata.requires-extra]
