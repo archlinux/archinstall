@@ -128,7 +128,7 @@ class BlockDevice():
 
 	@property
 	def uuid(self):
-		log(f'BlockDevice().uuid is untested!', level=LOG_LEVELS.Warning, fg='yellow')
+		log('BlockDevice().uuid is untested!', level=LOG_LEVELS.Warning, fg='yellow')
 		"""
 		Returns the disk UUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -292,7 +292,7 @@ class Partition():
 			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
 
 		if not self.safe_to_format():
-			log(f"Partition {self} was marked as protected but encrypt() was called on it!", level=LOG_LEVELS.Error, fg="red")
+			log(f" * Partition {self} was marked as protected but encrypt() was called on it! * ", level=LOG_LEVELS.Error, fg='red')
 			return False
 
 		handle = luks2(self, None, None)

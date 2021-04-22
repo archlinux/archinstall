@@ -22,11 +22,7 @@ def get_longest_option(options):
 def check_for_correct_username(username):
 	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 		return True
-	log(
-		"The username you entered is invalid. Try again",
-		level=LOG_LEVELS.Warning,
-		fg='red'
-	)
+	log(' * The username you entered is invalid. Try again * ', fg='red')
 	return False
 
 def do_countdown():
@@ -138,8 +134,7 @@ def ask_for_a_timezone():
 			return timezone
 		else:
 			log(
-				f"Specified timezone {timezone} does not exist.",
-				level=LOG_LEVELS.Warning,
+				f"* Specified timezone {timezone} does not exist * ",
 				fg='red'
 			)
 		
@@ -185,8 +180,7 @@ def ask_to_configure_network():
 					break
 				except ValueError:
 					log(
-						"You need to enter a valid IP in IP-config mode.",
-						level=LOG_LEVELS.Warning,
+						'You need to enter a valid IP in IP-config mode',
 						fg='red'
 					)
 
@@ -201,8 +195,7 @@ def ask_to_configure_network():
 					break
 				except ValueError:
 					log(
-						"You need to enter a valid gateway (router) IP address.",
-						level=LOG_LEVELS.Warning,
+						'You need to enter a valid gateway (router) IP address',
 						fg='red'
 					)
 
@@ -258,15 +251,15 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	# Checking if options are different from `list` or `dict`
 	if type(options) not in [list, dict]:
 		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		log('If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues', fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
 	# To allow only `list` and `dict`, converting values of options here.
 	# Therefore, now we can only provide the dictionary itself
 	if type(options) == dict: options = list(options.values())
 	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
 	if len(options) == 0:
-		log(f" * Generic select didn't find any options to choose from * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		log(' * Generic select didn\'t find any options to choose from * ', fg='red')
+		log('If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues', fg='yellow')
 		raise RequirementError('generic_select() requires at least one option to proceed.')
 	
 
@@ -398,7 +391,7 @@ def select_language(options, show_only_country_codes=True):
 					new_options = list(search_keyboard_layout(filter_string))
 
 					if len(new_options) <= 0:
-						log(f"Search string '{filter_string}' yielded no results, please try another search.", fg='yellow')
+						log(f"Search string '{filter_string}' yielded no results, please try another search", fg='yellow')
 						continue
 
 					return select_language(new_options, show_only_country_codes=False)
@@ -411,7 +404,7 @@ def select_language(options, show_only_country_codes=True):
 			elif verify_keyboard_layout(selected_language):
 				return selected_language
 			else:
-				log(" * Given language wasn't found * ", fg='red')
+				log(' * Given language was not found * ', fg='red')
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
