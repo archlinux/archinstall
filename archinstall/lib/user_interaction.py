@@ -130,8 +130,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, super_users
 
 def ask_for_a_timezone():
-	exists = False
-	while not exists:
+	while True:
 		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
 		if timezone == '':
 			timezone = 'UTC'
