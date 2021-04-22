@@ -277,7 +277,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 			print(f"{index}: {option}")
 
 	# The new changes introduce a single while loop for all inputs processed by this function
-	# Now the try...except...else block handles validation for invalid input from the user
+	# Now the try...except block handles validation for invalid input from the user
 	while True:
 		try:
 			selected_option = input(input_text)
@@ -293,6 +293,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				if selected_option >= len(options):
 					raise RequirementError(f'Selected option "{selected_option}" is out of range')
 				selected_option = options[selected_option]
+				break
 			elif selected_option in options:
 				break # We gave a correct absolute value
 			else:
@@ -300,8 +301,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		except RequirementError as err:
 			log(f" * {err} * ", fg='red')
 			continue
-		else:
-			break
 
 	return selected_option
 
