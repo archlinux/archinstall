@@ -130,17 +130,19 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, super_users
 
 def ask_for_a_timezone():
-	timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
-	if timezone == '':
-		timezone = 'UTC'
-	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
-		return timezone
-	else:
-		log(
-			f"Time zone {timezone} does not exist, continuing with system default.",
-			level=LOG_LEVELS.Warning,
-			fg='red'
-		)
+	exists = False
+	while not exists:
+		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
+		if timezone == '':
+			timezone = 'UTC'
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
+			return timezone
+		else:
+			log(
+				f"Specified timezone {timezone} does not exist.",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
 		
 def ask_for_audio_selection():
 	audio = "pulseaudio" # Default for most desktop environments
