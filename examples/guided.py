@@ -74,6 +74,7 @@ def ask_user_questions():
 
 			archinstall.log(f" ** You will now select which partitions to use by selecting mount points (inside the installation). **")
 			archinstall.log(f" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
+			mountpoints_set = []
 			while True:
 				# Select a partition
 				# If we provide keys as options, it's better to convert them to list and sort before passing
@@ -81,7 +82,10 @@ def ask_user_questions():
 				partition = archinstall.generic_select(mountpoints_list,
 														"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
-					break
+					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
+						break
+
+					continue
 
 				# Select a mount-point
 				mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
@@ -122,6 +126,7 @@ def ask_user_questions():
 					# We can safely mark the partition for formatting and where to mount it.
 					# TODO: allow_formatting might be redundant since target_mountpoint should only be
 					#       set if we actually want to format it anyway.
+					mountpoints_set.append(mountpoint)
 					partition.allow_formatting = True
 					partition.target_mountpoint = mountpoint
 					# Only overwrite the filesystem definition if we selected one:
