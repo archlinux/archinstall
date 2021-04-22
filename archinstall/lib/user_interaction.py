@@ -7,11 +7,7 @@ from .output import log, LOG_LEVELS
 from .storage import storage
 from .networking import list_interfaces
 from .general import sys_command
-<<<<<<< HEAD
-from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
-=======
 from .hardware import AVAILABLE_GFX_DRIVERS
->>>>>>> 1292c07... Fixed PR #273. Moved the graphic drivers into hardware since they are hardware specific, in the long run maybe we move them into 'drivers' or something. And moved the user interaction from gfx_drivers into user_interactions. And removed the import from installer.py to __init__.py since we don't want to import 'global functions' in extension imports.
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
@@ -469,9 +465,6 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-<<<<<<< HEAD
-	if len(options) >= 1:
-=======
 	drivers = sorted(list(options))
 
 	if len(drivers) >= 1:
@@ -481,7 +474,6 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		print(' -- The above list are supported graphic card drivers. --')
 		print(' -- You need to select (and read about) which one you need. --')
 
->>>>>>> 1292c07... Fixed PR #273. Moved the graphic drivers into hardware since they are hardware specific, in the long run maybe we move them into 'drivers' or something. And moved the user interaction from gfx_drivers into user_interactions. And removed the import from installer.py to __init__.py since we don't want to import 'global functions' in extension imports.
 		lspci = sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
@@ -490,18 +482,6 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-<<<<<<< HEAD
-		selected_driver = generic_select(options, input_text="Select your graphics card driver: ", sort=True)
-		initial_option = selected_driver
-
-		if type(options[initial_option]) == dict:
-			driver_options = sorted(options[initial_option].keys())
-
-			selected_driver_package_group = generic_select(driver_options, input_text=f"Which driver-type do you want for {initial_option}: ")
-			if selected_driver_package_group in options[initial_option].keys():
-				print(options[initial_option][selected_driver_package_group])
-				selected_driver = options[initial_option][selected_driver_package_group]
-=======
 		selected_driver = input('Select your graphics card driver: ')
 		initial_option = selected_driver
 
@@ -533,7 +513,6 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
 			elif len(selected_driver_package_group) == 0:
 				raise RequirementError(f"At least one driver package is required for a graphical environment using {selected_driver}. Please restart the installer and try again.")
->>>>>>> 1292c07... Fixed PR #273. Moved the graphic drivers into hardware since they are hardware specific, in the long run maybe we move them into 'drivers' or something. And moved the user interaction from gfx_drivers into user_interactions. And removed the import from installer.py to __init__.py since we don't want to import 'global functions' in extension imports.
 			else:
 				raise RequirementError(f"Selected driver-type does not exist for {initial_option}.")
 
@@ -541,8 +520,4 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 
 		return selected_driver
 
-<<<<<<< HEAD
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
-=======
-	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
->>>>>>> 1292c07... Fixed PR #273. Moved the graphic drivers into hardware since they are hardware specific, in the long run maybe we move them into 'drivers' or something. And moved the user interaction from gfx_drivers into user_interactions. And removed the import from installer.py to __init__.py since we don't want to import 'global functions' in extension imports.
