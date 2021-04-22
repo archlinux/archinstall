@@ -2,7 +2,7 @@ import getpass, pathlib, os, shutil, re
 import sys, time, signal, ipaddress
 from .exceptions import *
 from .profiles import Profile
-from .locale_helpers import search_keyboard_layout
+from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .output import log, LOG_LEVELS
 from .storage import storage
 from .networking import list_interfaces
@@ -372,10 +372,13 @@ def select_language(options, show_only_country_codes=True):
 	"""
 	Asks the user to select a language from the `options` dictionary parameter.
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
-	:param options: A `dict` where keys are the language name, value should be a dict containing language information.
-	:type options: dict
+
+	:param options: A `generator` or `list` where keys are the language name, value should be a dict containing language information.
+	:type options: generator or list
+
 	:param show_only_country_codes: Filters out languages that are not len(lang) == 2. This to limit the number of results from stuff like dvorak and x-latin1 alternatives.
 	:type show_only_country_codes: bool
+
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
@@ -399,11 +402,17 @@ def select_language(options, show_only_country_codes=True):
 				return DEFAULT_KEYBOARD_LANGUAGE
 			elif selected_language.lower() in ('?', 'help'):
 				while True:
-					filter_string = input('Search for layout containing (example: "sv-"): ')
+					filter_string = input("Search for layout containing (example: \"sv-\") or enter 'exit' to exit from search: ")
+
+					if filter_string.lower() == 'exit':
+						return select_language(list_keyboard_languages())
+
 					new_options = list(search_keyboard_layout(filter_string))
+
 					if len(new_options) <= 0:
-						log(f"Search string '{filter_string}' yielded no results, please try another search or Ctrl+D to abort.", fg='yellow')
+						log(f"Search string '{filter_string}' yielded no results, please try another search.", fg='yellow')
 						continue
+
 					return select_language(new_options, show_only_country_codes=False)
 			elif selected_language.isnumeric():
 				selected_language = int(selected_language)
@@ -411,10 +420,12 @@ def select_language(options, show_only_country_codes=True):
 					log(' * Selected option is out of range * ', fg='red')
 					continue
 				return languages[selected_language]
-			elif search_keyboard_layout(selected_language):
+			elif verify_keyboard_layout(selected_language):
 				return selected_language
 			else:
 				log(" * Given language wasn't found * ", fg='red')
+
+	raise RequirementError("Selecting languages require a least one language to be given as an option.")
 
 def select_mirror_regions(mirrors, show_top_mirrors=True):
 	"""
