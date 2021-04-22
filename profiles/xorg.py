@@ -2,7 +2,7 @@
 
 import os
 from archinstall import generic_select, sys_command, RequirementError
-
+import archinstall
 is_top_level_profile = True
 
 def _prep_function(*args, **kwargs):
