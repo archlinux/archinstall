@@ -7,7 +7,7 @@ from .output import log, LOG_LEVELS
 from .storage import storage
 from .networking import list_interfaces
 from .general import sys_command
-from .hardware import AVAILABLE_GFX_DRIVERS
+from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
