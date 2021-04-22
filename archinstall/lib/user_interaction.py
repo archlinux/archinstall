@@ -351,9 +351,10 @@ def select_profile(options):
 
 		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ',
 										 options_output=False)
-		return Profile(None, selected_profile)
-
-	raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
+		if selected_profile:
+			return Profile(None, selected_profile)
+	else:
+		raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
 def select_language(options, show_only_country_codes=True):
 	"""
