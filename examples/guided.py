@@ -77,7 +77,9 @@ def ask_user_questions():
 			archinstall.log(f" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
 			while True:
 				# Select a partition
-				partition = archinstall.generic_select(partition_mountpoints.keys(),
+				# If we provide keys as options, it's better to convert them to list and sort before passing
+				mountpoints_list = sorted(list(partition_mountpoints.keys()))
+				partition = archinstall.generic_select(mountpoints_list,
 														"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
 					break
@@ -107,7 +109,7 @@ def ask_user_questions():
 						# we have to check if we support it. We can do this by formatting /dev/null with the partitions filesystem.
 						# There's a nice wrapper for this on the partition object itself that supports a path-override during .format()
 						try:
-							partition.format(new_filesystem, path='/dev/null', log_formating=False, allow_formatting=True)
+							partition.format(new_filesystem, path='/dev/null', log_formatting=False, allow_formatting=True)
 						except archinstall.UnknownFilesystemFormat:
 							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
 							archinstall.log(f"Until then, please enter another supported filesystem.")
@@ -163,7 +165,7 @@ def ask_user_questions():
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(filter(lambda profile: (Profile(None, profile).is_top_level_profile()), archinstall.list_profiles()))
+		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
 	else:
 		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
