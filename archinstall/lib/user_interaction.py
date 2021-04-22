@@ -134,7 +134,7 @@ def ask_for_a_timezone():
 		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
 		if timezone == '':
 			timezone = 'UTC'
-		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone.strip('*.')).exists():
 			return timezone
 		else:
 			log(
