@@ -360,13 +360,10 @@ def select_language(options, show_only_country_codes=True):
 	"""
 	Asks the user to select a language from the `options` dictionary parameter.
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
-
 	:param options: A `dict` where keys are the language name, value should be a dict containing language information.
 	:type options: dict
-
 	:param show_only_country_codes: Filters out languages that are not len(lang) == 2. This to limit the number of results from stuff like dvorak and x-latin1 alternatives.
 	:type show_only_country_codes: bool
-
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
@@ -381,37 +378,31 @@ def select_language(options, show_only_country_codes=True):
 		for index, language in enumerate(languages):
 			print(f"{index}: {language}")
 
-		# Current workaround for passing `generic_select`,
-		# if these values are provided as input
-		languages.extend(['?', 'help'])
-		languages_length = len(languages)
+		print(" -- You can choose a layout that isn't in this list, but whose name you know --")
+		print(" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use US layout --")
 
-		print(f' -- You can enter ? ({languages_length - 2}) or help ({languages_length - 1}) to search for more languages, or skip to use US layout --')
-		selected_language = generic_select(languages, 'Select one of the above keyboard languages (by number or full name): ',
-										  options_output=False)
-		
-		if not selected_language:
-			return DEFAULT_KEYBOARD_LANGUAGE
-		elif selected_language in ('?', 'help'):
-			while True:
-				filter_string = input('Search for layout containing (example: "sv-"): ')
-				new_options = list(search_keyboard_layout(filter_string))
-
-				if len(new_options) <= 0:
-					log(f"Search string '{filter_string}' yielded no results, please try another search or Ctrl+D to abort.", fg='yellow')
+		while True:
+			selected_language = input('Select one of the above keyboard languages (by name or full name): ')
+			if not selected_language:
+				return DEFAULT_KEYBOARD_LANGUAGE
+			elif selected_language.lower() in ('?', 'help'):
+				while True:
+					filter_string = input('Search for layout containing (example: "sv-"): ')
+					new_options = list(search_keyboard_layout(filter_string))
+					if len(new_options) <= 0:
+						log(f"Search string '{filter_string}' yielded no results, please try another search or Ctrl+D to abort.", fg='yellow')
+						continue
+					return select_language(new_options, show_only_country_codes=False)
+			elif selected_language.isnumeric():
+				selected_language = int(selected_language)
+				if selected_language >= len(languages):
+					log(' * Selected option is out of range * ', fg='red')
 					continue
-
-				return select_language(new_options, show_only_country_codes=False)
-
-		# I'm leaving "options" on purpose here.
-		# Since languages possibly contains a filtered version of
-		# all possible language layouts, and we might want to write
-		# for instance sv-latin1 (if we know that exists) without having to
-		# go through the search step.
-
-		return selected_language
-
-	raise RequirementError("Selecting languages require a least one language to be given as an option.")
+				return languages[selected_language]
+			elif search_keyboard_layout(selected_language):
+				return selected_language
+			else:
+				log(" * Given language wasn't found * ", fg='red')
 
 def select_mirror_regions(mirrors, show_top_mirrors=True):
 	"""
