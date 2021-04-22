@@ -81,8 +81,11 @@ def ask_user_questions():
 				mountpoints_list = sorted(list(partition_mountpoints.keys()))
 				partition = archinstall.generic_select(mountpoints_list,
 														"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
-				if not partition and set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
-					break
+				if not partition:
+					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
+						break
+
+					continue
 
 				# Select a mount-point
 				mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
