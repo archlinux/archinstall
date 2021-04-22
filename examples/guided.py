@@ -76,7 +76,9 @@ def ask_user_questions():
 			archinstall.log(f" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
 			while True:
 				# Select a partition
-				partition = archinstall.generic_select(partition_mountpoints.keys(),
+				# If we provide keys as options, it's better to convert them to list and sort before passing
+				mountpoints_list = sorted(list(partition_mountpoints.keys()))
+				partition = archinstall.generic_select(mountpoints_list,
 														"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
 					break
@@ -162,7 +164,7 @@ def ask_user_questions():
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(filter(lambda profile: (Profile(None, profile).is_top_level_profile()), archinstall.list_profiles()))
+		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
 	else:
 		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 

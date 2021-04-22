@@ -15,7 +15,7 @@ def grab_url_data(path):
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(filter_irrelevant_macs=True, subpath=''):
+def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
@@ -62,6 +62,11 @@ def list_profiles(filter_irrelevant_macs=True, subpath=''):
 					tailored = True
 
 				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+subpath, profile), 'description' : profile_list[profile], 'tailored' : tailored}
+
+	if filter_top_level_profiles:
+		for profile in list(cache.keys()):
+			if Profile(None, profile).is_top_level_profile() is False:
+				del(cache[profile])
 
 	return cache
 
