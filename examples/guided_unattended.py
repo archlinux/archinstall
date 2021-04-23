@@ -40,7 +40,7 @@ def perform_installation_steps():
 		"""
         if archinstall.arguments.get('harddrive', None):
             archinstall.arguments['harddrive'] = archinstall.BlockDevice(
-                archinstall.arguments['harddrive'])
+                path=archinstall.arguments['harddrive']['path'])
         else:
             archinstall.arguments['harddrive'] = archinstall.select_disk(
                 archinstall.all_disks())
