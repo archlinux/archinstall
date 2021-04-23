@@ -27,8 +27,8 @@ def initialize_arguments():
     parser.add_argument('--file', nargs='?',
                         help='json config file', type=FileType('r', encoding='UTF-8'))
     args, left = parser.parse_known_args()
-    sys.argv = sys.argv[:1] + ['guided_unattended'] + left
     if args.file is not None:
+        sys.argv = sys.argv[:1] + ['guided_unattended'] + left
         try:
             return json.load(args.file)
         except Exception as e:
