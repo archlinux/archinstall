@@ -472,7 +472,7 @@ class Filesystem():
         self.mode = mode
 
     def __enter__(self, *args, **kwargs):
-        if self.blockdevice.keep_partitions is False:
+        if self.blockdevice["keep_partitions"] is False:
             log(f'Wiping {self.blockdevice} by using partition format {self.mode}',
                 level=LOG_LEVELS.Debug)
             if self.mode == GPT:
