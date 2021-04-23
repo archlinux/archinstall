@@ -1,4 +1,3 @@
-from _typeshed import NoneType
 from .lib.general import *
 from .lib.disk import *
 from .lib.user_interaction import *
@@ -28,7 +27,7 @@ def initialize_arguments():
     parser.add_argument('--file', nargs='?',
                         help='json config file', type=FileType('r'))
     args = parser.parse_args()
-    if args.file is not NoneType:
+    if args.file is not None:
         with open(args.file) as file:
             try:
                 return json.load(file)
