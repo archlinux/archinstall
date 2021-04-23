@@ -337,7 +337,7 @@ class Installer():
         self.helper_flags['base-strapped'] = True
         # self.genfstab()
 
-        with open(f"{self.target}/etc/fstab", "w+") as fstab:
+        with open(f"{self.target}/etc/fstab", "a") as fstab:
             fstab.write(
                 "\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
             )  # Redundant \n at the start? who knows?
