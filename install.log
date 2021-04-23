@@ -1,4 +1,0 @@
-Not enough permission to place log file at /var/log/archinstall/install.log, creating it in /home/yash/archinstall/install.log instead.
-Script <archinstall.lib.profiles.Script object at 0x7fb182622520> has been loaded with namespace 'guided'
-Not enough permission to place log file at /var/log/archinstall/install.log, creating it in /home/yash/archinstall/install.log instead.
-Script <archinstall.lib.profiles.Script object at 0x7fc42ffdf520> has been loaded with namespace 'guided'
