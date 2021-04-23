@@ -1,3 +1,4 @@
+from _typeshed import NoneType
 from .lib.general import *
 from .lib.disk import *
 from .lib.user_interaction import *
@@ -21,17 +22,23 @@ __version__ = "2.1.4"
 # --key=value
 # --boolean
 
-arguments = {}
-positionals = []
 
-parser = ArgumentParser()
-parser.add_argument('--file', help='json config file', type=FileType('r'))
-args = parser.parse_args()
-with open(args.file) as file:
-    try:
-        arguments = json.load(file)
-    except Exception as e:
-        print(e)
+def initialize_arguments():
+    parser = ArgumentParser()
+    parser.add_argument('--file', nargs='?',
+                        help='json config file', type=FileType('r'))
+    args = parser.parse_args()
+    if args.file is not NoneType:
+        with open(args.file) as file:
+            try:
+                return json.load(file)
+            except Exception as e:
+                print(e)
+    return {}
+
+
+arguments = initialize_arguments()
+positionals = []
 
 for arg in sys.argv[1:]:
     if '--' == arg[:2]:
