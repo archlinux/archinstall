@@ -28,7 +28,10 @@ parser = ArgumentParser()
 parser.add_argument('--file', help='json config file', type=FileType('r'))
 args = parser.parse_args()
 with open(args.file) as file:
-    arguments = json.load(file)
+    try:
+        arguments = json.load(file)
+    except Exception as e:
+        print(e)
 
 for arg in sys.argv[1:]:
     if '--' == arg[:2]:
