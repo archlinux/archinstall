@@ -39,10 +39,12 @@ def perform_installation_steps():
 			Once that's done, we'll hand over to perform_installation()
 		"""
         if archinstall.arguments.get('harddrive', None):
-            keep_partitions = archinstall.arguments['harddrive']['keep_partiions']
+            print(archinstall.arguments['harddrive'])
+            keep_partitions = archinstall.arguments['harddrive'].get('keep_partitions', False)
             archinstall.arguments['harddrive'] = archinstall.BlockDevice(
                 path=archinstall.arguments['harddrive']['path'])
             archinstall.arguments['harddrive'].keep_partitions = keep_partitions
+            print(archinstall.arguments['harddrive'])
         else:
             archinstall.arguments['harddrive'] = archinstall.select_disk(
                 archinstall.all_disks())
@@ -50,7 +52,6 @@ def perform_installation_steps():
             archinstall.arguments['target-mount'] = '/mnt'
         with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
             # Wipe the entire drive if the disk flag `keep_partitions`is False.
-            fs.blockdevice.keep_partitions = archinstall.arguments['harddrive']["keep_partitions"]
             if archinstall.arguments['harddrive'].keep_partitions is False:
                 fs.use_entire_disk(
                     root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
