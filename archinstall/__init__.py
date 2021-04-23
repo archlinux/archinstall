@@ -26,7 +26,8 @@ def initialize_arguments():
     parser = ArgumentParser()
     parser.add_argument('--file', nargs='?',
                         help='json config file', type=FileType('r', encoding='UTF-8'))
-    args = parser.parse_args()
+    args, left = parser.parse_known_args()
+    sys.argv = sys.argv[:1]+left
     if args.file is not None:
         try:
             return json.load(args.file)
