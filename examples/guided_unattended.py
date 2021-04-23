@@ -39,8 +39,10 @@ def perform_installation_steps():
 			Once that's done, we'll hand over to perform_installation()
 		"""
         if archinstall.arguments.get('harddrive', None):
+            keep_partitions = archinstall.arguments['harddrive']['keep_partiions']
             archinstall.arguments['harddrive'] = archinstall.BlockDevice(
                 path=archinstall.arguments['harddrive']['path'])
+            archinstall.arguments['harddrive'].keep_partitions = keep_partitions
         else:
             archinstall.arguments['harddrive'] = archinstall.select_disk(
                 archinstall.all_disks())
