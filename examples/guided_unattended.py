@@ -40,6 +40,8 @@ def perform_installation_steps():
 		"""
         with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
             # Wipe the entire drive if the disk flag `keep_partitions`is False.
+            if archinstall.arguments['harddrive'].get("keep_partitions", True) == True:
+                archinstall.arguments['harddrive'].keep_partitions = True
             if archinstall.arguments['harddrive'].keep_partitions is False:
                 fs.use_entire_disk(
                     root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
