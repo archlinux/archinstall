@@ -13,7 +13,7 @@ from .lib.packages import *
 from .lib.output import *
 from .lib.storage import *
 from .lib.hardware import *
-from argparse import ArgumentParser, FileType
+from argparse import ArgumentParser
 
 __version__ = "2.1.4"
 
@@ -25,7 +25,7 @@ __version__ = "2.1.4"
 def initialize_arguments():
     parser = ArgumentParser()
     parser.add_argument('--file', nargs='?',
-                        help='json config file', type=FileType('r'))
+                        help='json config file')
     args = parser.parse_args()
     if args.file is not None:
         with open(args.file) as file:
