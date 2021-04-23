@@ -42,6 +42,8 @@ def perform_installation_steps():
             # Wipe the entire drive if the disk flag `keep_partitions`is False.
             if archinstall.arguments['harddrive']["keep_partitions"]:
                 archinstall.arguments['harddrive'].keep_partitions = True
+            else:
+                archinstall.arguments['harddrive'].keep_partitions = False
             if archinstall.arguments['harddrive'].keep_partitions is False:
                 fs.use_entire_disk(
                     root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
