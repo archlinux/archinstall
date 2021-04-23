@@ -476,12 +476,12 @@ class Filesystem():
             log(f'Wiping {self.blockdevice} by using partition format {self.mode}',
                 level=LOG_LEVELS.Debug)
             if self.mode == GPT:
-                if self.raw_parted(f'{self.blockdevice.path} mklabel gpt').exit_code == 0:
+                if self.raw_parted(f'{self.blockdevice["device"]} mklabel gpt').exit_code == 0:
                     self.blockdevice.flush_cache()
                     return self
                 else:
                     raise DiskError(f'Problem setting the partition format to GPT:',
-                                    f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+                                    f'/usr/bin/parted -s {self.blockdevice["device"]} mklabel gpt')
             else:
                 raise DiskError(
                     f'Unknown mode selected to format in: {self.mode}')
