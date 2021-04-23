@@ -19,6 +19,7 @@ def perform_installation_steps():
                     level=archinstall.LOG_LEVELS.Debug)
     archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True,
                                cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
+    print(archinstall.arguments)
     print()
 
     input('Press Enter to continue.')
