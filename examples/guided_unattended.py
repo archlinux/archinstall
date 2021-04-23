@@ -38,6 +38,14 @@ def perform_installation_steps():
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
 		"""
+        if archinstall.arguments.get('harddrive', None):
+            archinstall.arguments['harddrive'] = archinstall.BlockDevice(
+                archinstall.arguments['harddrive'])
+        else:
+            archinstall.arguments['harddrive'] = archinstall.select_disk(
+                archinstall.all_disks())
+        if archinstall.arguments['harddrive'] is None:
+            archinstall.arguments['target-mount'] = '/mnt'
         with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
             # Wipe the entire drive if the disk flag `keep_partitions`is False.
             fs.blockdevice.keep_partitions = archinstall.arguments['harddrive']["keep_partitions"]
