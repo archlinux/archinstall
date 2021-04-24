@@ -1,2 +1,2 @@
-FROM archlinux:base-devel-20210131.0.14634
-RUN pacman -Syy archinstall parted glibc dosfstools btrfs-progs arch-install-scripts --noconfirm
+FROM l4zy/archlinux:latest
+RUN pacman -Syy archinstall parted dosfstools btrfs-progs arch-install-scripts --noconfirm
