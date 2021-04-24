@@ -40,7 +40,7 @@ docker run -d --name <container_name> --privileged <image:tagname>
 docker exec -u root -it <container_name> /bin/bash
 ```
 
-This will launch bash inside the container, run archinstall command
+This will launch bash inside the container, invoke archinstall from the prompt
 
 ## Running the [guided](examples/guided.py) installer
 
