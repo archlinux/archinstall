@@ -1,2 +1,2 @@
 FROM archlinux:latest
-RUN pacman -Syy archinstall --noconfirm
+RUN pacman -Syy archinstall parted --noconfirm
