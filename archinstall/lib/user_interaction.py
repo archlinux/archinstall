@@ -131,7 +131,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 
 def ask_for_a_timezone():
 	while True:
-		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
+		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip().strip('*.')
 		if timezone == '':
 			timezone = 'UTC'
 		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
