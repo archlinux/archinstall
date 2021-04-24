@@ -70,7 +70,7 @@ class luks2():
 			'--batch-mode',
 			'--verbose',
 			'--type', 'luks2',
-			'--pbkdf', 'argon2id',
+			'--pbkdf', 'argon2i',
 			'--hash', hash_type,
 			'--key-size', str(key_size),
 			'--iter-time', str(iter_time),

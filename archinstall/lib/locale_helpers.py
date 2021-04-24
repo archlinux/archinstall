@@ -16,12 +16,6 @@ def list_keyboard_languages():
 			if os.path.splitext(file)[1] == '.gz':
 				yield file.strip('.gz').strip('.map')
 
-def verify_keyboard_layout(layout):
-	for language in list_keyboard_languages():
-		if layout.lower() == language.lower():
-			return True
-	return False
-
 def search_keyboard_layout(filter):
 	for language in list_keyboard_languages():
 		if filter.lower() in language.lower():
