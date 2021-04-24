@@ -132,17 +132,18 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, super_users
 
 def ask_for_a_timezone():
-	timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
-	if timezone == '':
-		timezone = 'UTC'
-	if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
-		return timezone
-	else:
-		log(
-			f"Time zone {timezone} does not exist, continuing with system default.",
-			level=LOG_LEVELS.Warning,
-			fg='red'
-		)
+	while True:
+		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip().strip('*.')
+		if timezone == '':
+			timezone = 'UTC'
+		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
+			return timezone
+		else:
+			log(
+				f"Specified timezone {timezone} does not exist.",
+				level=LOG_LEVELS.Warning,
+				fg='red'
+			)
 
 def ask_for_bootloader() -> str:
 	bootloader = "systemd-bootctl"
@@ -331,10 +332,13 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or leave blank to skip partitioning: ',
+		
+		log(f"You can skip selecting a drive and partition it and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
+		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ',
 							  options_output=False)
 		if not drive:
 			return drive
+		
 		drive = dict_o_disks[drive]
 		return drive
 
