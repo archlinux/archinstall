@@ -76,7 +76,7 @@ class sys_command():#Thread):
 	"""
 	Stolen from archinstall_gui
 	"""
-	def __init__(self, cmd, callback=None, start_callback=None, environment_vars={}, *args, **kwargs):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
@@ -86,13 +86,22 @@ class sys_command():#Thread):
 		if kwargs['emulate']:
 			self.log(f"Starting command '{cmd}' in emulation mode.", level=LOG_LEVELS.Debug)
 
-		self.raw_cmd = cmd
-		try:
-			self.cmd = shlex.split(cmd)
-		except Exception as e:
-			raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
+		if type(cmd) is list:
+			# if we get a list of arguments
+			self.raw_cmd = shlex.join(cmd)
+			self.cmd = cmd
+		else:
+			# else consider it a single shell string
+			# this should only be used if really necessary
+			self.raw_cmd = cmd
+			try:
+				self.cmd = shlex.split(cmd)
+			except Exception as e:
+				raise ValueError(f'Incorrect string to split: {cmd}\n{e}')
+
 		self.args = args
 		self.kwargs = kwargs
+		self.peak_output = peak_output
 		self.environment_vars = environment_vars
 
 		self.kwargs.setdefault("worker", None)
@@ -151,6 +160,38 @@ class sys_command():#Thread):
 			'exit_code': self.exit_code
 		}
 
+	def peak(self, output :str):
+		if type(output) == bytes:
+			try:
+				output = output.decode('UTF-8')
+			except UnicodeDecodeError:
+				return None
+
+		output = output.strip('\r\n ')
+		if len(output) <= 0:
+			return None
+
+		if self.peak_output:
+			from .user_interaction import get_terminal_width
+
+			# Move back to the beginning of the terminal
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+
+			# Clear the line
+			sys.stdout.write(" " * get_terminal_width())
+			sys.stdout.flush()
+
+			# Move back to the beginning again
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+
+			# And print the new output we're peaking on:
+			sys.stdout.write(output)
+			sys.stdout.flush()
+
 	def run(self):
 		self.status = 'running'
 		old_dir = os.getcwd()
@@ -182,6 +223,7 @@ class sys_command():#Thread):
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192)
+					self.peak(output)
 					self.trace_log += output
 				except OSError:
 					alive = False

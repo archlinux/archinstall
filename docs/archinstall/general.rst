@@ -12,7 +12,7 @@ Packages
 ========
 
 .. autofunction:: archinstall.find_package
-
+Be
 .. autofunction:: archinstall.find_packages
 
 Locale related

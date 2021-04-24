@@ -3,9 +3,9 @@ import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
 
-if hasUEFI() is False:
-	archinstall.log("ArchInstall currently only supports machines booted with UEFI.\nMBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
-	exit(1)
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
 
 def ask_user_questions():
 	"""
@@ -64,6 +64,7 @@ def ask_user_questions():
 					partition_mountpoints[partition] = None
 			except archinstall.UnknownFilesystemFormat as err:
 				archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
+		
 
 		# We then ask what to do with the partitions.
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
@@ -148,7 +149,7 @@ def ask_user_questions():
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
-
+	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
@@ -197,7 +198,7 @@ def ask_user_questions():
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
 		if not archinstall.arguments.get('packages', None):
-			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr (on UEFI systems)/GRUB (on BIOS systems) and optional profile packages are installed.")
 			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
@@ -246,7 +247,11 @@ def perform_installation_steps():
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
 		"""
-		with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
+		mode = archinstall.GPT
+		if hasUEFI() is False:
+			mode = archinstall.MBR
+
+		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
 			# Wipe the entire drive if the disk flag `keep_partitions`is False.
 			if archinstall.arguments['harddrive'].keep_partitions is False:
 				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
@@ -269,8 +274,8 @@ def perform_installation_steps():
 						partition.format()
 				else:
 					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
-
-			fs.find_partition('/boot').format('vfat')
+			if hasUEFI():
+				fs.find_partition('/boot').format('vfat')# we don't have a boot partition in bios mode
 
 			if archinstall.arguments.get('!encryption-password', None):
 				# First encrypt and unlock, then format the desired partition inside the encrypted part.
@@ -282,8 +287,8 @@ def perform_installation_steps():
 			else:
 				fs.find_partition('/').format(fs.find_partition('/').filesystem)
 				fs.find_partition('/').mount('/mnt')
-
-			fs.find_partition('/boot').mount('/mnt/boot')
+			if hasUEFI():
+				fs.find_partition('/boot').mount('/mnt/boot')
 	
 	perform_installation('/mnt')
 
@@ -302,17 +307,17 @@ def perform_installation(mountpoint):
 		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
-
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
-
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments["bootloader"]=="grub-install" and hasUEFI()==True:
+				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
-			installation.add_bootloader()
+			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -331,6 +336,7 @@ def perform_installation(mountpoint):
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=archinstall.LOG_LEVELS.Info)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
+
 					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
@@ -346,7 +352,7 @@ def perform_installation(mountpoint):
 
 			for user, user_info in archinstall.arguments.get('users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
-			
+
 			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
 
@@ -355,6 +361,15 @@ def perform_installation(mountpoint):
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
+
+			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
+				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+					if not imported._post_install():
+						archinstall.log(
+							' * Profile\'s post configuration requirements was not fulfilled.',
+							fg='red'
+						)
+						exit(1)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
@@ -366,4 +381,3 @@ def perform_installation(mountpoint):
 
 ask_user_questions()
 perform_installation_steps()
-
