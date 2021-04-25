@@ -1,3 +1,30 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "archinstall"
+author = "Anton Hvornum"
+author-email = "anton@hvornum.se"
+home-page = "https://archlinux.org"
+classifiers = [ "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+"Programming Language :: Python :: 3.8",
+"Programming Language :: Python :: 3.9",
+"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+"Operating System :: POSIX :: Linux",
+]
+description-file = "README.md"
+requires-python=">=3.8"
+[tool.flit.metadata.urls]
+Source = "https://github.com/archlinux/archinstall"
+Documentation = "https://archinstall.readthedocs.io/"
+
+[tool.flit.scripts]
+archinstall = "archinstall:run_as_a_module"
+
+[tool.flit.sdist]
+include = ["docs/"]
+exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
+
+[tool.flit.metadata.requires-extra]
+doc = ["sphinx"]
