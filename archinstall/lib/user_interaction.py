@@ -321,7 +321,7 @@ def select_disk(dict_o_disks):
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 		
-		log(f"You can skip selecting a drive and partition it and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
+		log(f"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
 		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ',
 							  options_output=False)
 		if not drive:
