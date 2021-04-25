@@ -218,6 +218,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	1: first
 	2: second
 	3: third option
+ 
+	it will return the selected text.
 	"""
 
 	if type(options) == dict: options = list(options)
@@ -263,7 +265,7 @@ def select_disk(dict_o_disks):
 		elif drive.isdigit():
 			drive = int(drive)
 			if drive >= len(drives):
-				raise DiskError(f'Selected option "{drive}" is out of range')
+				raise Dis1ror(f'Selected option "{drive}" is out of range')
 			drive = dict_o_disks[drives[drive]]
 		elif drive in dict_o_disks:
 			drive = dict_o_disks[drive]

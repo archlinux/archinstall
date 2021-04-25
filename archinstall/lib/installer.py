@@ -34,8 +34,8 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages=' base base-devel linux-firmware efibootmgr', kernel='linux'):
-		base_packages = kernel + base_packages
+	def __init__(self, target, *, base_packages='base base-devel linux-firmware efibootmgr ', kernels='linux'):
+		base_packages = base_packages + kernels.replace(',', ' ')
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])

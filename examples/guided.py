@@ -2,6 +2,7 @@ import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
+from archinstall.lib.user_interaction import generic_select
 
 if hasUEFI() is False:
 	log("ArchInstall currently only supports machines booted with UEFI. MBR & GRUB support is coming in version 2.2.0!", fg="red", level=archinstall.LOG_LEVELS.Error)
@@ -168,7 +169,6 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
-		
 		# only ask for audio server selection on a desktop profile 
 		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
 			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
@@ -178,12 +178,15 @@ def ask_user_questions():
 			archinstall.arguments['audio'] = None
    
    	# Ask what kernel user wants:
-	kernel = input("1. linux\n2. linux-lts\n3. linux-zen\nchoose a kernel of the following: ")
-	try:
-		archinstall.arguments['kernel'] = ['linux', 'linux-lts', 'linux-zen'][int(kernel) - 1]
-	except:
-		archinstall.log('invalid kernel selected. defaulting to \'linux\'.')
-		archinstall.arguments['kernel'] = 'linux'
+	while True:
+		kernel = generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")
+		if (archinstall.arguments['kernels'] == None or archinstall.arguments['kernels'] == ""):
+			archinstall.arguments['kernels'] = kernel
+		else:
+			if (kernel == "continue"):
+				break
+			archinstall.arguments['kernels'] += "," + kernel
+
 
 
 	# Additional packages (with some light weight error handling for invalid package names)
@@ -281,7 +284,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(mountpoint, kernel=archinstall.arguments['kernel']) as installation:
+	with archinstall.Installer(mountpoint, kernels=archinstall.arguments['kernels']) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
