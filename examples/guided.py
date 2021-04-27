@@ -189,16 +189,13 @@ def ask_user_questions():
 			archinstall.arguments['audio'] = None
 
 	# Ask what kernel user wants:
-	while True:
-		kernel = generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")
-		if (archinstall.arguments.get("kernels", None) == None):
+	if not archinstall.arguments.get("kernels", None):
+		archinstall.log(f"Here you can choose which kernel to use, leave blank for default which is 'linux'.")
+
+		if (kernel := generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")):
 			archinstall.arguments['kernels'] = kernel
 		else:
-			if (kernel == "continue"):
-				break
-			archinstall.arguments['kernels'] += "," + kernel
-
-
+			archinstall.arguments['kernels'] = 'linux'
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
