@@ -26,6 +26,11 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
     # python -m archinstall guided
 
+# Help?
+
+Submit an issue here on Github, or submit a post in the discord help channel.<br>
+When doing so, attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
+
 # Mission Statement
 
 Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
@@ -107,11 +112,6 @@ This installer will perform the following:
 ## Unattended installation based on MAC address
 
 Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address. For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py). If it's found, the unattended installation will commence and source that profile as it's installation proceedure.
-
-# Help
-
-Submit an issue on Github, or submit a post in the discord help channel.<br>
-When doing so, attach any `install-session_*.log` to the issue ticket which can be found under `~/.cache/archinstall/`.
 
 # Testing
 
