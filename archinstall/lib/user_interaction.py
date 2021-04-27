@@ -267,7 +267,7 @@ def select_disk(dict_o_disks):
 		elif drive.isdigit():
 			drive = int(drive)
 			if drive >= len(drives):
-				raise Dis1ror(f'Selected option "{drive}" is out of range')
+				raise DiskError(f'Selected option "{drive}" is out of range')
 			drive = dict_o_disks[drives[drive]]
 		elif drive in dict_o_disks:
 			drive = dict_o_disks[drive]
