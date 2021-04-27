@@ -124,17 +124,38 @@ def log(*args, **kwargs):
 		with open(absolute_logfile, 'a') as log_file:
 			log_file.write(f"{orig_string}\n")
 
+
 	# If we assigned a level, try to log it to systemd's journald.
 	# Unless the level is higher than we've decided to output interactively.
 	# (Remember, log files still get *ALL* the output despite level restrictions)
 	if 'level' in kwargs:
-		if kwargs['level'] > storage.get('LOG_LEVEL', LOG_LEVELS.Info):
+		# For backwards compability, convert old style log-levels
+		# to logging levels (and warn about deprecated usage)
+		# There's some code re-usage here but that should be fine.
+		# TODO: Remove these in a few versions:
+		if kwargs['level'] == LOG_LEVELS.Critical:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			kwargs['level'] = logging.CRITICAL
+		elif kwargs['level'] == LOG_LEVELS.Error:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			kwargs['level'] = logging.ERROR
+		elif kwargs['level'] == LOG_LEVELS.Warning:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			kwargs['level'] = logging.WARNING
+		elif kwargs['level'] == LOG_LEVELS.Info:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			kwargs['level'] = logging.INFO
+		elif kwargs['level'] == LOG_LEVELS.Debug:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			kwargs['level'] = logging.DEBUG
+
+		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO):
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
 
 	try:
-		journald.log(string, level=kwargs.get('level', LOG_LEVELS.Info))
+		journald.log(string, level=kwargs.get('level', logging.INFO))
 	except ModuleNotFoundError:
 		pass # Ignore writing to journald
 
