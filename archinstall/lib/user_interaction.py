@@ -259,12 +259,20 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
+<<<<<<< HEAD
 	0: first
 	1: second
 	2: third option
 
 	When the user has entered the option correctly,
 	this function returns an item from list, a string, or None
+=======
+	1: first
+	2: second
+	3: third option
+ 
+	it will return the selected text.
+>>>>>>> 831f5e4eaf66f6f1a2aed04932af064ce9314dd4
 	"""
 
 	# Checking if options are different from `list` or `dict`
