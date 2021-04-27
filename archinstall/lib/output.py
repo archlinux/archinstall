@@ -28,19 +28,19 @@ class journald(dict):
 		# There's some code re-usage here but that should be fine.
 		# TODO: Remove these in a few versions:
 		if level == LOG_LEVELS.Critical:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			level = logging.CRITICAL
 		elif level == LOG_LEVELS.Error:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			level = logging.ERROR
 		elif level == LOG_LEVELS.Warning:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			level = logging.WARNING
 		elif level == LOG_LEVELS.Info:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			level = logging.INFO
 		elif level == LOG_LEVELS.Debug:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			level = logging.DEBUG
 
 		log_adapter = logging.getLogger('archinstall')
@@ -134,19 +134,19 @@ def log(*args, **kwargs):
 		# There's some code re-usage here but that should be fine.
 		# TODO: Remove these in a few versions:
 		if kwargs['level'] == LOG_LEVELS.Critical:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.CRITICAL
 		elif kwargs['level'] == LOG_LEVELS.Error:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.ERROR
 		elif kwargs['level'] == LOG_LEVELS.Warning:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.WARNING
 		elif kwargs['level'] == LOG_LEVELS.Info:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.INFO
 		elif kwargs['level'] == LOG_LEVELS.Debug:
-			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.DEBUG
 
 		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO) and not 'force' in kwargs:
