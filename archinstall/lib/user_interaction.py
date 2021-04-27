@@ -1,5 +1,6 @@
 import getpass, pathlib, os, shutil, re
 import sys, time, signal, ipaddress, logging
+import termios, tty, select # Used for char by char polling of sys.stdin
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
@@ -94,6 +95,150 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 				spaces = " "*(longest_line - len(options[column]))
 				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
 			print()
+
+	return column, row
+
+
+def generic_multi_select(options, text="Select one or more of the options above: ", sort=True, default=None, allow_empty=False):
+	if sort:
+		options = sorted(options)
+
+	section = MiniCurses(get_terminal_width(), get_terminal_height()-1)
+
+	selected_options = []
+
+	while True:
+		printed_options = []
+		for option in options:
+			if option in selected_options:
+				printed_options.append(f'>> {option}')
+			else:
+				printed_options.append(f'{option}')
+
+		section.clear(0, get_terminal_height()-section._cursor_y-1)
+		x, y = print_large_list(printed_options, margin_bottom=2)
+		section._cursor_y = y
+		section._cursor_x = 0
+		section.write_line(text)
+		selected_option = section.get_keyboard_input(end=None)
+
+		if selected_option is None:
+			break
+		elif selected_option.isdigit():
+			if (selected_option := int(selected_option)) > len(options):
+				print('Out of range!')
+				continue
+			selected_option = options[selected_option]
+			if selected_option in selected_options:
+				selected_options.remove(selected_option)
+			else:
+				selected_options.append(selected_option)
+
+	return selected_options
+
+
+class MiniCurses():
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
+
+		self._cursor_y = 0
+		self._cursor_x = 0
+
+	def write_line(self, text, clear_line=True):
+		if clear_line:
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+			sys.stdout.write(" " * (get_terminal_width()-1))
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+		sys.stdout.write(text)
+		sys.stdout.flush()
+		self._cursor_x += len(text)
+
+	def clear(self, x, y):
+		if x < 0: x = 0
+		if y < 0: y = 0
+
+		#import time
+		#sys.stdout.write(f"Clearing from: {x, y}")
+		#sys.stdout.flush()
+		#time.sleep(2)
+
+		sys.stdout.flush()
+		sys.stdout.write('\033[%d;%df' % (y, x))
+		sys.stdout.flush()
+
+	def deal_with_control_characters(self, char):
+		mapper = {
+			'\x7f' : 'BACKSPACE',
+			'\r' : 'CR',
+			'\n' : 'NL'
+		}
+
+		if (mapped_char := mapper.get(char, None)) == 'BACKSPACE':
+			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.flush()
+
+			# Write a blank space
+			sys.stdout.flush()
+			sys.stdout.write(" ")
+			sys.stdout.flush()
+
+			# And move back again
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.flush()
+
+			return True
+		elif mapped_char in ('CR', 'NL'):
+			return True
+
+		return None
+
+	def get_keyboard_input(self, strip_rowbreaks=True, end='\n'):
+		assert end in ['\r', '\n', None]
+
+		poller = select.epoll()
+		response = ''
+
+		sys_fileno = sys.stdin.fileno()
+		old_settings = termios.tcgetattr(sys_fileno)
+		tty.setraw(sys_fileno)
+
+		poller.register(sys.stdin.fileno(), select.EPOLLIN)
+
+		EOF = False
+		while EOF is False:
+			for fileno, event in poller.poll(0.025):
+				char = sys.stdin.read(1)
+
+				#sys.stdout.write(f"{[char]}")
+				#sys.stdout.flush()
+
+				if (newline := (char in ('\n', '\r'))):
+					EOF = True
+
+				if not newline or strip_rowbreaks is False:
+					response += char
+
+				if self.deal_with_control_characters(char) is not True:
+					self.write_line(response[-1], clear_line=False)
+
+		termios.tcsetattr(sys_fileno, termios.TCSADRAIN, old_settings)
+
+		if end:
+			sys.stdout.write(end)
+			sys.stdout.flush()
+			self._cursor_x = 0
+			self._cursor_y += 1
+
+		if response:
+			return response
 
 def ask_for_superuser_account(prompt='Username for required super-user with sudo privileges: ', forced=False):
 	while 1:
