@@ -1,9 +1,9 @@
 import getpass, pathlib, os, shutil, re
-import sys, time, signal, ipaddress
+import sys, time, signal, ipaddress, logging
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
-from .output import log, LOG_LEVELS
+from .output import log
 from .storage import storage
 from .networking import list_interfaces
 from .general import sys_command
@@ -26,7 +26,7 @@ def check_for_correct_username(username):
 		return True
 	log(
 		"The username you entered is invalid. Try again",
-		level=LOG_LEVELS.Warning,
+		level=logging.WARNING,
 		fg='red'
 	)
 	return False
@@ -141,7 +141,7 @@ def ask_for_a_timezone():
 		else:
 			log(
 				f"Specified timezone {timezone} does not exist.",
-				level=LOG_LEVELS.Warning,
+				level=logging.WARNING,
 				fg='red'
 			)
 
@@ -198,7 +198,7 @@ def ask_to_configure_network():
 				except ValueError:
 					log(
 						"You need to enter a valid IP in IP-config mode.",
-						level=LOG_LEVELS.Warning,
+						level=logging.WARNING,
 						fg='red'
 					)
 
@@ -214,7 +214,7 @@ def ask_to_configure_network():
 				except ValueError:
 					log(
 						"You need to enter a valid gateway (router) IP address.",
-						level=LOG_LEVELS.Warning,
+						level=logging.WARNING,
 						fg='red'
 					)
 

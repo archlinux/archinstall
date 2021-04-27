@@ -1,10 +1,10 @@
 import os, urllib.request, urllib.parse, ssl, json, re
-import importlib.util, sys, glob, hashlib
+import importlib.util, sys, glob, hashlib, logging
 from collections import OrderedDict
 from .general import multisplit, sys_command
 from .exceptions import *
 from .networking import *
-from .output import log, LOG_LEVELS
+from .output import log
 from .storage import storage
 
 def grab_url_data(path):
@@ -82,7 +82,7 @@ class Script():
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
-		log(f"Script {self} has been loaded with namespace '{self.namespace}'", level=LOG_LEVELS.Debug)
+		log(f"Script {self} has been loaded with namespace '{self.namespace}'", level=logging.DEBUG)
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
