@@ -17,8 +17,32 @@ class LOG_LEVELS:
 
 class journald(dict):
 	@abc.abstractmethod
-	def log(message, level=LOG_LEVELS.Debug):
-		import systemd.journal
+	def log(message, level=logging.DEBUG):
+		try:
+			import systemd.journal
+		except ModuleNotFoundError:
+			return False
+
+		# For backwards compability, convert old style log-levels
+		# to logging levels (and warn about deprecated usage)
+		# There's some code re-usage here but that should be fine.
+		# TODO: Remove these in a few versions:
+		if level == LOG_LEVELS.Critical:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			level = logging.CRITICAL
+		elif level == LOG_LEVELS.Error:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			level = logging.ERROR
+		elif level == LOG_LEVELS.Warning:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			level = logging.WARNING
+		elif level == LOG_LEVELS.Info:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			level = logging.INFO
+		elif level == LOG_LEVELS.Debug:
+			log("Deprecated level detected in log message, please use new logging.<level> instead:", fg="red", level=logging.ERROR)
+			level = logging.DEBUG
+
 		log_adapter = logging.getLogger('archinstall')
 		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
 		log_ch = systemd.journal.JournalHandler()
@@ -26,19 +50,7 @@ class journald(dict):
 		log_adapter.addHandler(log_ch)
 		log_adapter.setLevel(logging.DEBUG)
 		
-		if level == LOG_LEVELS.Critical:
-			log_adapter.critical(message)
-		elif level == LOG_LEVELS.Error:
-			log_adapter.error(message)
-		elif level == LOG_LEVELS.Warning:
-			log_adapter.warning(message)
-		elif level == LOG_LEVELS.Info:
-			log_adapter.info(message)
-		elif level == LOG_LEVELS.Debug:
-			log_adapter.debug(message)
-		else:
-			# Fallback logger
-			log_adapter.debug(message)
+		log_adapter.log(level, message)
 
 # TODO: Replace log() for session based logging.
 class SessionLogging():
