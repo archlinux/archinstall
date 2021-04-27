@@ -79,14 +79,14 @@ class Installer():
 		self.genfstab()
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=LOG_LEVELS.Info)
+			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
 			self.sync_log_to_install_medium()
 
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=LOG_LEVELS.Warning)
+			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
 			for step in missing_steps:
-				self.log(f' - {step}', fg='red', level=LOG_LEVELS.Warning)
+				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
             
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=LOG_LEVELS.Warning)
 			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=LOG_LEVELS.Warning)
@@ -168,7 +168,7 @@ class Installer():
 			return True
 		else:
 			self.log(
-				f" * Timezone \"{zone}\" does not exist, continuing with system default * ",
+				f"Time zone {zone} does not exist, continuing with system default.",
 				level=LOG_LEVELS.Warning,
 				fg='red'
 			)
@@ -460,5 +460,5 @@ class Installer():
 				vconsole.write(f'KEYMAP={language}\n')
 				vconsole.write(f'FONT=lat9w-16\n')
 		else:
-			self.log('Keyboard language was not changed from default (no language specified).', fg='yellow', level=LOG_LEVELS.Info)
+			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=LOG_LEVELS.Info)
 		return True

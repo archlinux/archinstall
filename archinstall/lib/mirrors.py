@@ -79,7 +79,7 @@ def list_mirrors():
 	try:
 		response = urllib.request.urlopen(url)
 	except urllib.error.URLError as err:
-		log(f"Could not fetch an active mirror-list: {err}", level=LOG_LEVELS.Warning, fg='yellow')
+		log(f'Could not fetch an active mirror-list: {err}', level=LOG_LEVELS.Warning, fg="yellow")
 		return regions
 
 
