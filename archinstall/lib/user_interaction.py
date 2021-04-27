@@ -480,15 +480,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-	drivers = sorted(list(options))
-
-	if len(drivers) >= 1:
-		for index, driver in enumerate(drivers):
-			print(f"{index}: {driver}")
-
-		print(' -- The above list are supported graphic card drivers. --')
-		print(' -- You need to select (and read about) which one you need. --')
-
+	if len(options) >= 1:
 		lspci = sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
@@ -497,37 +489,16 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		selected_driver = input('Select your graphics card driver: ')
+		selected_driver = generic_select(options, input_text="Select your graphics card driver: ", sort=True)
 		initial_option = selected_driver
 
-		# Disabled search for now, only a few profiles exist anyway
-		#
-		#print(' -- You can enter ? or help to search for more drivers --')
-		#if selected_driver.lower() in ('?', 'help'):
-		#	filter_string = input('Search for layout containing (example: "sv-"): ')
-		#	new_options = search_keyboard_layout(filter_string)
-		#	return select_language(new_options)
-		if selected_driver.isdigit() and (pos := int(selected_driver)) <= len(drivers)-1:
-			selected_driver = options[drivers[pos]]
-		elif selected_driver in options:
-			selected_driver = options[options.index(selected_driver)]
-		elif len(selected_driver) == 0:
-			raise RequirementError("At least one graphics driver is needed to support a graphical environment. Please restart the installer and try again.")
-		else:
-			raise RequirementError("Selected driver does not exist.")
+		if type(options[initial_option]) == dict:
+			driver_options = sorted(options[initial_option].keys())
 
-		if type(selected_driver) == dict:
-			driver_options = sorted(list(selected_driver))
-			for index, driver_package_group in enumerate(driver_options):
-				print(f"{index}: {driver_package_group}")
-
-			selected_driver_package_group = input(f'Which driver-type do you want for {initial_option}: ')
-			if selected_driver_package_group.isdigit() and (pos := int(selected_driver_package_group)) <= len(driver_options)-1:
-				selected_driver_package_group = selected_driver[driver_options[pos]]
-			elif selected_driver_package_group in selected_driver:
-				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
-			elif len(selected_driver_package_group) == 0:
-				raise RequirementError(f"At least one driver package is required for a graphical environment using {selected_driver}. Please restart the installer and try again.")
+			selected_driver_package_group = generic_select(driver_options, input_text=f"Which driver-type do you want for {initial_option}: ")
+			if selected_driver_package_group in options[initial_option].keys():
+				print(options[initial_option][selected_driver_package_group])
+				selected_driver = options[initial_option][selected_driver_package_group]
 			else:
 				raise RequirementError(f"Selected driver-type does not exist for {initial_option}.")
 
