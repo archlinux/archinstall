@@ -1,4 +1,5 @@
-import os, stat, time, shutil, pathlib, subprocess
+import os, stat, time, shutil, pathlib
+import subprocess, logging
 
 from .exceptions import *
 from .disk import *
@@ -7,7 +8,7 @@ from .user_interaction import *
 from .profiles import Profile
 from .mirrors import *
 from .systemd import Networkd
-from .output import log, LOG_LEVELS
+from .output import log
 from .storage import storage
 from .hardware import *
 
@@ -60,7 +61,7 @@ class Installer():
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
 
-	def log(self, *args, level=LOG_LEVELS.Debug, **kwargs):
+	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
 		Any manual override can be done per log() call.
@@ -75,8 +76,8 @@ class Installer():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
-			#self.log(self.trace_log.decode('UTF-8'), level=LOG_LEVELS.Debug)
-			self.log(args[1], level=LOG_LEVELS.Error, fg='red')
+			#self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
+			self.log(args[1], level=logging.ERROR, fg='red')
 
 			self.sync_log_to_install_medium()
 
@@ -89,17 +90,17 @@ class Installer():
 		self.genfstab()
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=LOG_LEVELS.Info)
+			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=logging.INFO)
 			self.sync_log_to_install_medium()
 
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=LOG_LEVELS.Warning)
+			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=logging.WARNING)
 			for step in missing_steps:
-				self.log(f' - {step}', bg='black', fg='red', level=LOG_LEVELS.Warning)
+				self.log(f' - {step}', bg='black', fg='red', level=logging.WARNING)
             
-			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=LOG_LEVELS.Warning)
-			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=LOG_LEVELS.Warning)
+			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
+			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
                
 			self.sync_log_to_install_medium()
 			return False
@@ -129,21 +130,21 @@ class Installer():
 
 	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
-		self.log(f'Installing packages: {packages}', level=LOG_LEVELS.Info)
+		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
 			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=LOG_LEVELS.Info)
+				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
 		else:
-			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=LOG_LEVELS.Info)
+			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-pU'):
-		self.log(f"Updating {self.target}/etc/fstab", level=LOG_LEVELS.Info)
+		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 		
 		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.target}').trace_log
 		with open(f"{self.target}/etc/fstab", 'ab') as fstab_fh:
@@ -179,19 +180,19 @@ class Installer():
 		else:
 			self.log(
 				f"Time zone {zone} does not exist, continuing with system default.",
-				level=LOG_LEVELS.Warning,
+				level=logging.WARNING,
 				fg='red'
 			)
 
 	def activate_ntp(self):
-		self.log(f'Installing and activating NTP.', level=LOG_LEVELS.Info)
+		self.log(f'Installing and activating NTP.', level=logging.INFO)
 		if self.pacstrap('ntp'):
 			if self.enable_service('ntpd'):
 				return True
 
 	def enable_service(self, *services):
 		for service in services:
-			self.log(f'Enabling service {service}', level=LOG_LEVELS.Info)
+			self.log(f'Enabling service {service}', level=logging.INFO)
 			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
 				raise ServiceException(f"Unable to start service {service}: {output}")
 
@@ -349,7 +350,7 @@ class Installer():
 
 		# Run registered post-install hooks
 		for function in self.post_base_install:
-			self.log(f"Running post-installation hook: {function}", level=LOG_LEVELS.Info)
+			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
 			function(self)
 
 		return True
@@ -363,7 +364,7 @@ class Installer():
 			elif partition.mountpoint == self.target:
 				root_partition = partition
 
-		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=LOG_LEVELS.Info)
+		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			if not hasUEFI():
@@ -417,10 +418,10 @@ class Installer():
 				if (real_device := self.detect_encryption(root_partition)):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=LOG_LEVELS.Debug)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
 					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=LOG_LEVELS.Debug)
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
 					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
 
 				self.helper_flags['bootloader'] = bootloader
@@ -458,17 +459,17 @@ class Installer():
 		if type(profile) == str:
 			profile = Profile(self, profile)
 
-		self.log(f'Installing network profile {profile}', level=LOG_LEVELS.Info)
+		self.log(f'Installing network profile {profile}', level=logging.INFO)
 		return profile.install()
 
 	def enable_sudo(self, entity :str, group=False):
-		self.log(f'Enabling sudo permissions for {entity}.', level=LOG_LEVELS.Info)
+		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 		with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
 	def user_create(self, user :str, password=None, groups=[], sudo=False):
-		self.log(f'Creating user {user}', level=LOG_LEVELS.Info)
+		self.log(f'Creating user {user}', level=logging.INFO)
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
@@ -481,7 +482,7 @@ class Installer():
 			self.helper_flags['user'] = True
 
 	def user_set_pw(self, user, password):
-		self.log(f'Setting password for {user}', level=LOG_LEVELS.Info)
+		self.log(f'Setting password for {user}', level=logging.INFO)
 
 		if user == 'root':
 			# This means the root account isn't locked/disabled with * in /etc/passwd
@@ -491,7 +492,7 @@ class Installer():
 		pass
 						  
 	def user_set_shell(self, user, shell):
-		self.log(f'Setting shell for {user} to {shell}', level=LOG_LEVELS.Info)
+		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
@@ -502,5 +503,5 @@ class Installer():
 				vconsole.write(f'KEYMAP={language}\n')
 				vconsole.write(f'FONT=lat9w-16\n')
 		else:
-			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=LOG_LEVELS.Info)
+			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 		return True
