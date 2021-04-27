@@ -6,6 +6,8 @@ from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, sea
 from .output import log, LOG_LEVELS
 from .storage import storage
 from .networking import list_interfaces
+from .general import sys_command
+from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
 
 ## TODO: Some inconsistencies between the selection processes.
 ##       Some return the keys from the options, some the values?
@@ -131,7 +133,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 
 def ask_for_a_timezone():
 	while True:
-		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip()
+		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip().strip('*.')
 		if timezone == '':
 			timezone = 'UTC'
 		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
@@ -142,7 +144,17 @@ def ask_for_a_timezone():
 				level=LOG_LEVELS.Warning,
 				fg='red'
 			)
-		
+
+def ask_for_bootloader() -> str:
+	bootloader = "systemd-bootctl"
+	if hasUEFI()==False:
+		bootloader="grub-install"
+	else:
+		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
+		if bootloader_choice == "y":
+			bootloader="grub-install"
+	return bootloader
+
 def ask_for_audio_selection():
 	audio = "pulseaudio" # Default for most desktop environments
 	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
@@ -319,10 +331,13 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		drive = generic_select(drives, 'Select one of the above disks (by number or full path) or leave blank to skip partitioning: ',
+		
+		log(f"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
+		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ',
 							  options_output=False)
 		if not drive:
 			return drive
+		
 		drive = dict_o_disks[drive]
 		return drive
 
@@ -453,3 +468,70 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 
 		selected_mirrors[selected_mirror] = mirrors[selected_mirror]
 		return selected_mirrors
+
+	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
+
+def select_driver(options=AVAILABLE_GFX_DRIVERS):
+	"""
+	Some what convoluted function, which's job is simple.
+	Select a graphics driver from a pre-defined set of popular options.
+
+	(The template xorg is for beginner users, not advanced, and should
+	there for appeal to the general public first and edge cases later)
+	"""
+	drivers = sorted(list(options))
+
+	if len(drivers) >= 1:
+		for index, driver in enumerate(drivers):
+			print(f"{index}: {driver}")
+
+		print(' -- The above list are supported graphic card drivers. --')
+		print(' -- You need to select (and read about) which one you need. --')
+
+		lspci = sys_command(f'/usr/bin/lspci')
+		for line in lspci.trace_log.split(b'\r\n'):
+			if b' vga ' in line.lower():
+				if b'nvidia' in line.lower():
+					print(' ** nvidia card detected, suggested driver: nvidia **')
+				elif b'amd' in line.lower():
+					print(' ** AMD card detected, suggested driver: AMD / ATI **')
+
+		selected_driver = input('Select your graphics card driver: ')
+		initial_option = selected_driver
+
+		# Disabled search for now, only a few profiles exist anyway
+		#
+		#print(' -- You can enter ? or help to search for more drivers --')
+		#if selected_driver.lower() in ('?', 'help'):
+		#	filter_string = input('Search for layout containing (example: "sv-"): ')
+		#	new_options = search_keyboard_layout(filter_string)
+		#	return select_language(new_options)
+		if selected_driver.isdigit() and (pos := int(selected_driver)) <= len(drivers)-1:
+			selected_driver = options[drivers[pos]]
+		elif selected_driver in options:
+			selected_driver = options[options.index(selected_driver)]
+		elif len(selected_driver) == 0:
+			raise RequirementError("At least one graphics driver is needed to support a graphical environment. Please restart the installer and try again.")
+		else:
+			raise RequirementError("Selected driver does not exist.")
+
+		if type(selected_driver) == dict:
+			driver_options = sorted(list(selected_driver))
+			for index, driver_package_group in enumerate(driver_options):
+				print(f"{index}: {driver_package_group}")
+
+			selected_driver_package_group = input(f'Which driver-type do you want for {initial_option}: ')
+			if selected_driver_package_group.isdigit() and (pos := int(selected_driver_package_group)) <= len(driver_options)-1:
+				selected_driver_package_group = selected_driver[driver_options[pos]]
+			elif selected_driver_package_group in selected_driver:
+				selected_driver_package_group = selected_driver[selected_driver.index(selected_driver_package_group)]
+			elif len(selected_driver_package_group) == 0:
+				raise RequirementError(f"At least one driver package is required for a graphical environment using {selected_driver}. Please restart the installer and try again.")
+			else:
+				raise RequirementError(f"Selected driver-type does not exist for {initial_option}.")
+
+			return selected_driver_package_group
+
+		return selected_driver
+
+	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")

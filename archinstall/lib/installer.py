@@ -9,6 +9,11 @@ from .mirrors import *
 from .systemd import Networkd
 from .output import log, LOG_LEVELS
 from .storage import storage
+from .hardware import *
+
+# Any package that the Installer() is responsible for (optional and the default ones)
+__packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
+__base_packages__ = __packages__[:6]
 
 class Installer():
 	"""
@@ -18,7 +23,7 @@ class Installer():
 	:param partition: Requires a partition as the first argument, this is
 	    so that the installer can mount to `mountpoint` and strap packages there.
 	:type partition: class:`archinstall.Partition`
-	
+
 	:param boot_partition: There's two reasons for needing a boot partition argument,
 	    The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
 	    during the `pacstrap` or `linux` and the base packages for a minimal installation.
@@ -29,12 +34,13 @@ class Installer():
 	:param profile: A profile to install, this is optional and can be called later manually.
 	    This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
 	:type profile: str, optional
-	
+
 	:param hostname: The given /etc/hostname for the machine.
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware efibootmgr'):
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware', kernels='linux'):
+		base_packages = base_packages + kernels.replace(',', ' ')
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -43,8 +49,12 @@ class Installer():
 			'base' : False,
 			'bootloader' : False
 		}
-
+		
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
+		if hasUEFI():
+			self.base_packages.append("efibootmgr")
+		else:
+			self.base_packages.append("grub")
 		self.post_base_install = []
 
 		storage['session'] = self
@@ -141,7 +151,7 @@ class Installer():
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
-		
+
 		return True
 
 	def set_hostname(self, hostname :str, *args, **kwargs):
@@ -223,7 +233,7 @@ class Installer():
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
 						self.base_packages.append('iwd')
-						# This function will be called after minimal_installation() 
+						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
 						def post_install_enable_iwd_service(*args, **kwargs):
@@ -273,6 +283,7 @@ class Installer():
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
+
 		MODULES = []
 		BINARIES = []
 		FILES = []
@@ -298,10 +309,20 @@ class Installer():
 				if 'encrypt' not in HOOKS:
 					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
 
+		if not(hasUEFI()): # TODO: Allow for grub even on EFI
+			self.base_packages.append('grub')
+										
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 		#self.genfstab()
-
+		if not isVM():
+			vendor = cpuVendor()
+			if vendor ==  "AuthenticAMD":
+				self.base_packages.append("amd-ucode")
+			elif vendor == "GenuineIntel":
+				self.base_packages.append("intel-ucode")
+			else:
+				self.log("Unknown cpu vendor not installing ucode")
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
 			fstab.write(
 				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
@@ -322,7 +343,7 @@ class Installer():
 			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(FILES)})\n")
 			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -p linux')
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
 
 		self.helper_flags['base'] = True
 
@@ -345,6 +366,8 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=LOG_LEVELS.Info)
 
 		if bootloader == 'systemd-bootctl':
+			if not hasUEFI():
+				raise HardwareIncompatibilityError
 			# TODO: Ideally we would want to check if another config
 			# points towards the same disk and/or partition.
 			# And in which case we should do some clean up.
@@ -372,13 +395,20 @@ class Installer():
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
 			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-
 			# Setup the loader entry
 			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
 				entry.write(f'# Created by: archinstall\n')
 				entry.write(f'# Created on: {self.init_time}\n')
 				entry.write(f'title Arch Linux\n')
 				entry.write(f'linux /vmlinuz-linux\n')
+				if not isVM():
+					vendor = cpuVendor()
+					if vendor ==  "AuthenticAMD":
+						entry.write("initrd /amd-ucode.img\n")
+					elif vendor == "GenuineIntel":
+						entry.write("initrd /intel-ucode.img\n")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
 				entry.write(f'initrd /initramfs-linux.img\n')
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
@@ -396,9 +426,21 @@ class Installer():
 				self.helper_flags['bootloader'] = bootloader
 				return True
 
-			raise RequirementError(f"Could not identify the UUID of {root_partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
+			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
+		elif bootloader == "grub-install":
+			if hasUEFI():
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				return True
+			else:
+				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"', shell=True).decode().strip()
+				if root_device == "block":
+					root_device = f"{root_partition.path}"
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				return True
 		else:
-			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
+			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)
