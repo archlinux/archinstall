@@ -1,4 +1,4 @@
-import getpass, time, json, os
+import getpass, time, json, os, logging
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
@@ -237,8 +237,8 @@ def ask_user_questions():
 def perform_installation_steps():
 	print()
 	print('This is your chosen configuration:')
-	archinstall.log("-- Guided template chosen (with below config) --", level=archinstall.LOG_LEVELS.Debug)
-	archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=archinstall.LOG_LEVELS.Info)
+	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
+	archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=logging.INFO)
 	print()
 
 	input('Press Enter to continue.')
@@ -282,7 +282,7 @@ def perform_installation_steps():
 					else:
 						partition.format()
 				else:
-					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
+					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=logging.DEBUG)
 			if hasUEFI():
 				fs.find_partition('/boot').format('vfat')# we don't have a boot partition in bios mode
 
@@ -313,7 +313,7 @@ def perform_installation(mountpoint):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
+		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 		# Set mirrors used by pacstrap (outside of installation)
@@ -342,7 +342,7 @@ def perform_installation(mountpoint):
 				installation.enable_service('systemd-resolved')
 
 			if archinstall.arguments.get('audio', None) != None:
-				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=archinstall.LOG_LEVELS.Info)
+				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
 					print('Installing pipewire ...')
 
@@ -351,7 +351,7 @@ def perform_installation(mountpoint):
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")
 			else:
-				installation.log("No audio server will be installed.", level=archinstall.LOG_LEVELS.Info)
+				installation.log("No audio server will be installed.", level=logging.INFO)
 			
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))

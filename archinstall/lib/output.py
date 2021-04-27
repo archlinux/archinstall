@@ -17,8 +17,32 @@ class LOG_LEVELS:
 
 class journald(dict):
 	@abc.abstractmethod
-	def log(message, level=LOG_LEVELS.Debug):
-		import systemd.journal
+	def log(message, level=logging.DEBUG):
+		try:
+			import systemd.journal
+		except ModuleNotFoundError:
+			return False
+
+		# For backwards compability, convert old style log-levels
+		# to logging levels (and warn about deprecated usage)
+		# There's some code re-usage here but that should be fine.
+		# TODO: Remove these in a few versions:
+		if level == LOG_LEVELS.Critical:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			level = logging.CRITICAL
+		elif level == LOG_LEVELS.Error:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			level = logging.ERROR
+		elif level == LOG_LEVELS.Warning:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			level = logging.WARNING
+		elif level == LOG_LEVELS.Info:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			level = logging.INFO
+		elif level == LOG_LEVELS.Debug:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			level = logging.DEBUG
+
 		log_adapter = logging.getLogger('archinstall')
 		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
 		log_ch = systemd.journal.JournalHandler()
@@ -26,19 +50,7 @@ class journald(dict):
 		log_adapter.addHandler(log_ch)
 		log_adapter.setLevel(logging.DEBUG)
 		
-		if level == LOG_LEVELS.Critical:
-			log_adapter.critical(message)
-		elif level == LOG_LEVELS.Error:
-			log_adapter.error(message)
-		elif level == LOG_LEVELS.Warning:
-			log_adapter.warning(message)
-		elif level == LOG_LEVELS.Info:
-			log_adapter.info(message)
-		elif level == LOG_LEVELS.Debug:
-			log_adapter.debug(message)
-		else:
-			# Fallback logger
-			log_adapter.debug(message)
+		log_adapter.log(level, message)
 
 # TODO: Replace log() for session based logging.
 class SessionLogging():
@@ -112,17 +124,38 @@ def log(*args, **kwargs):
 		with open(absolute_logfile, 'a') as log_file:
 			log_file.write(f"{orig_string}\n")
 
+
 	# If we assigned a level, try to log it to systemd's journald.
 	# Unless the level is higher than we've decided to output interactively.
 	# (Remember, log files still get *ALL* the output despite level restrictions)
 	if 'level' in kwargs:
-		if kwargs['level'] > storage.get('LOG_LEVEL', LOG_LEVELS.Info):
+		# For backwards compability, convert old style log-levels
+		# to logging levels (and warn about deprecated usage)
+		# There's some code re-usage here but that should be fine.
+		# TODO: Remove these in a few versions:
+		if kwargs['level'] == LOG_LEVELS.Critical:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			kwargs['level'] = logging.CRITICAL
+		elif kwargs['level'] == LOG_LEVELS.Error:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			kwargs['level'] = logging.ERROR
+		elif kwargs['level'] == LOG_LEVELS.Warning:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			kwargs['level'] = logging.WARNING
+		elif kwargs['level'] == LOG_LEVELS.Info:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			kwargs['level'] = logging.INFO
+		elif kwargs['level'] == LOG_LEVELS.Debug:
+			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
+			kwargs['level'] = logging.DEBUG
+
+		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO) and not 'force' in kwargs:
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
 
 	try:
-		journald.log(string, level=kwargs.get('level', LOG_LEVELS.Info))
+		journald.log(string, level=kwargs.get('level', logging.INFO))
 	except ModuleNotFoundError:
 		pass # Ignore writing to journald
 

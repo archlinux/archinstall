@@ -2,10 +2,11 @@ import os
 import shlex
 import time
 import pathlib
+import logging
 from .exceptions import *
 from .general import *
 from .disk import Partition
-from .output import log, LOG_LEVELS
+from .output import log
 from .storage import storage
 
 class luks2():
@@ -48,7 +49,7 @@ class luks2():
 		if not self.partition.allow_formatting:
 			raise DiskError(f'Could not encrypt volume {self.partition} due to it having a formatting lock.')
 
-		log(f'Encrypting {partition} (This might take a while)', level=LOG_LEVELS.Info)
+		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
 		if not key_file:
 			if self.key_file:
@@ -84,7 +85,7 @@ class luks2():
 			cmd_handle = sys_command(cryptsetup_args)
 		except SysCallError as err:
 			if err.exit_code == 256:
-				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=LOG_LEVELS.Debug)
+				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
 				# Partition was in use, unmount it and try again
 				partition.unmount()
 
@@ -97,11 +98,11 @@ class luks2():
 					for child in children:
 						# Unmount the child location
 						if child_mountpoint := child.get('mountpoint', None):
-							log(f'Unmounting {child_mountpoint}', level=LOG_LEVELS.Debug)
+							log(f'Unmounting {child_mountpoint}', level=logging.DEBUG)
 							sys_command(f"umount -R {child_mountpoint}")
 
 						# And close it if possible.
-						log(f"Closing crypt device {child['name']}", level=LOG_LEVELS.Debug)
+						log(f"Closing crypt device {child['name']}", level=logging.DEBUG)
 						sys_command(f"cryptsetup close {child['name']}")
 
 				# Then try again to set up the crypt-device

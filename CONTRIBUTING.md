@@ -1,8 +1,14 @@
 # Contributing to archinstall
 
-Any contributions through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps.<br>
-Bear in mind that the future of this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if they so choose to adopt the project)*.
+Any contributions through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps. Bear in mind that in the future this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if GitLab becomes open to the general public)*.
+
 Therefore guidelines and style changes to the code might come into affect as well as guidelines surrounding bug reporting and discussions.
+
+## Branches
+
+`master` is currently the default branch, and that's where all future feature work is being done, this means that `master` is a living entity and will most likely never be in a fully stable state. For stable releases, please see the tagged commits.
+
+Patch releases will be done against their own branches, branched from stable tagged releases and will be named according to the version it will become on release *(Patches to `v2.1.4` will be done on branch `v2.1.5` for instance)*.
 
 ## Discussions
 
