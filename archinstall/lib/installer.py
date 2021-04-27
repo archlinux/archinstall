@@ -90,14 +90,14 @@ class Installer():
 		self.genfstab()
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', bg='black', fg='green', level=logging.INFO)
+			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
 			self.sync_log_to_install_medium()
 
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', bg='black', fg='red', level=logging.WARNING)
+			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
 			for step in missing_steps:
-				self.log(f' - {step}', bg='black', fg='red', level=logging.WARNING)
+				self.log(f' - {step}', fg='red', level=logging.WARNING)
             
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
 			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
