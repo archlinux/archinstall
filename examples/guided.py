@@ -186,8 +186,8 @@ def ask_user_questions():
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
 			archinstall.arguments['audio'] = None
-   
-   	# Ask what kernel user wants:
+
+	# Ask what kernel user wants:
 	while True:
 		kernel = generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")
 		if (archinstall.arguments.get("kernels", None) == None):
