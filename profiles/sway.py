@@ -11,6 +11,9 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
+
+	__builtins__['_gfx_driver_packages'] = archinstall.select_driver()
+
 	return True
 
 # Ensures that this code only gets executed if executed

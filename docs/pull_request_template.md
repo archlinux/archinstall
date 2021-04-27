@@ -2,18 +2,8 @@
 
 # New features *(v2.2.0)*
 
-Merge new features in to `torxed-v2.2.0`.<br>
-This branch is designated for potential breaking changes, added complexity and new functionality.
-
-# Bug fixes *(v2.1.4)*
-
-Merge against `master` for bug fixes and anything that improves stability and quality of life.<br>
-This excludes:
- * New functionality
- * Added complexity
- * Breaking changes
-
-Any changes to `master` automatically gets pulled in to `torxed-v2.2.0` to avoid merge hell.
+All future work towards *`v2.2.0`* is done against `master` now.<br>
+Any patch work to existing verions will have to create a new branch against the tagged versions.
 
 # Describe your PR
 
@@ -23,6 +13,4 @@ If the PR is larger than ~20 lines, please describe it here unless described in 
 # Testing
 
 Any new feature or stability improvement should be tested if possible.
-Please follow the test instructions at the bottom of the README.
-
-*These PR guidelines will change after 2021-05-01, which is when `v2.1.4` gets onto the new ISO*
+Please follow the test instructions at the bottom of the README or use the ISO built on each PR.
