@@ -480,7 +480,10 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-	if len(options) >= 1:
+	
+	drivers = sorted(list(options))
+	
+	if drivers:
 		lspci = sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
@@ -489,20 +492,17 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		selected_driver = generic_select(options, input_text="Select your graphics card driver: ", sort=True)
-		initial_option = selected_driver
+		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
+		selected_driver = options[initial_option]
 
-		if type(options[initial_option]) == dict:
-			driver_options = sorted(options[initial_option].keys())
+		if type(selected_driver) == dict:
+			driver_options = sorted(list(selected_driver))
 
-			selected_driver_package_group = generic_select(driver_options, input_text=f"Which driver-type do you want for {initial_option}: ")
-			if selected_driver_package_group in options[initial_option].keys():
-				print(options[initial_option][selected_driver_package_group])
-				selected_driver = options[initial_option][selected_driver_package_group]
-			else:
-				raise RequirementError(f"Selected driver-type does not exist for {initial_option}.")
+			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ',
+                                                 allow_empty_input=False)
+			driver_package_group = selected_driver[driver_package_group]
 
-			return selected_driver_package_group
+			return driver_package_group
 
 		return selected_driver
 
