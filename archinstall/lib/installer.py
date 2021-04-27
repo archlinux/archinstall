@@ -39,7 +39,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux-firmware efibootmgr ', kernels='linux'):
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware', kernels='linux'):
 		base_packages = base_packages + kernels.replace(',', ' ')
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -49,8 +49,12 @@ class Installer():
 			'base' : False,
 			'bootloader' : False
 		}
-
+		
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
+		if hasUEFI():
+			self.base_packages.append("efibootmgr")
+		else:
+			self.base_packages.append("grub")
 		self.post_base_install = []
 
 		storage['session'] = self
@@ -426,15 +430,17 @@ class Installer():
 		elif bootloader == "grub-install":
 			if hasUEFI():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				return True
 			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f "/sys/class/block/{root_partition.path.strip("/dev/")}/..")', shell=True).decode().strip()
+				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"', shell=True).decode().strip()
 				if root_device == "block":
 					root_device = f"{root_partition.path}"
-				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=--target=i386-pc /dev/{root_device}'))
-				sys_command('/usr/bin/arch-chroot  grub-mkconfig -o /boot/grub/grub.cfg')
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
+				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				return True
 		else:
-			raise RequirementError(f"Unknown (or not yet implemented) bootloader added to add_bootloader(): {bootloader}")
+			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)

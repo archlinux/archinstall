@@ -65,6 +65,7 @@ def ask_user_questions():
 					partition_mountpoints[partition] = None
 			except archinstall.UnknownFilesystemFormat as err:
 				archinstall.log(f" {partition} (Filesystem not supported)", fg='red')
+		
 
 		# We then ask what to do with the partitions.
 		if (option := archinstall.ask_for_disk_layout()) == 'abort':
@@ -142,7 +143,7 @@ def ask_user_questions():
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
-
+	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
@@ -202,7 +203,7 @@ def ask_user_questions():
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
 		if not archinstall.arguments.get('packages', None):
-			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+			print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr (on UEFI systems)/GRUB (on BIOS systems) and optional profile packages are installed.")
 			print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
 			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
 
@@ -278,8 +279,8 @@ def perform_installation_steps():
 						partition.format()
 				else:
 					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=archinstall.LOG_LEVELS.Debug)
-
-			fs.find_partition('/boot').format('vfat')
+			if hasUEFI():
+				fs.find_partition('/boot').format('vfat')# we don't have a boot partition in bios mode
 
 			if archinstall.arguments.get('!encryption-password', None):
 				# First encrypt and unlock, then format the desired partition inside the encrypted part.
@@ -291,8 +292,8 @@ def perform_installation_steps():
 			else:
 				fs.find_partition('/').format(fs.find_partition('/').filesystem)
 				fs.find_partition('/').mount('/mnt')
-
-			fs.find_partition('/boot').mount('/mnt/boot')
+			if hasUEFI():
+				fs.find_partition('/boot').mount('/mnt/boot')
 	
 	perform_installation('/mnt')
 
@@ -311,17 +312,17 @@ def perform_installation(mountpoint):
 		installation.log(f'Waiting for automatic mirror selection (reflector) to complete.', level=archinstall.LOG_LEVELS.Info)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
-
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
-
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors",{})!= None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
+			if archinstall.arguments["bootloader"]=="grub-install" and hasUEFI()==True:
+				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
-			installation.add_bootloader()
+			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
