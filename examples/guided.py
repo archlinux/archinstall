@@ -2,6 +2,7 @@ import getpass, time, json, os
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
+from archinstall.lib.user_interaction import generic_select
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -179,7 +180,6 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
-		
 		# only ask for audio server selection on a desktop profile 
 		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
 			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
@@ -187,6 +187,15 @@ def ask_user_questions():
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
 			archinstall.arguments['audio'] = None
+
+	# Ask what kernel user wants:
+	if not archinstall.arguments.get("kernels", None):
+		archinstall.log(f"Here you can choose which kernel to use, leave blank for default which is 'linux'.")
+
+		if (kernel := generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")):
+			archinstall.arguments['kernels'] = kernel
+		else:
+			archinstall.arguments['kernels'] = 'linux'
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	while True:
@@ -292,7 +301,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(mountpoint) as installation:
+	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		## if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist

@@ -39,7 +39,8 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware'):
+	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware', kernels='linux'):
+		base_packages = base_packages + kernels.replace(',', ' ')
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -342,7 +343,7 @@ class Installer():
 			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(FILES)})\n")
 			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -p linux')
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
 
 		self.helper_flags['base'] = True
 

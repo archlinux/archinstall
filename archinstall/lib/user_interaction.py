@@ -230,6 +230,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	1: first
 	2: second
 	3: third option
+ 
+	it will return the selected text.
 	"""
 
 	if type(options) == dict: options = list(options)
