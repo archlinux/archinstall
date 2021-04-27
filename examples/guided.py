@@ -190,7 +190,7 @@ def ask_user_questions():
    	# Ask what kernel user wants:
 	while True:
 		kernel = generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")
-		if (archinstall.arguments['kernels'] == None or archinstall.arguments['kernels'] == ""):
+		if (archinstall.arguments.get("kernels", None) == None):
 			archinstall.arguments['kernels'] = kernel
 		else:
 			if (kernel == "continue"):
