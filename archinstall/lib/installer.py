@@ -10,6 +10,7 @@ from .systemd import Networkd
 from .output import log
 from .storage import storage
 from .hardware import *
+from .pulgins import load_plugin
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
@@ -39,7 +40,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux-firmware', kernels='linux'):
+	def __init__(self, target, *, base_packages='base base-devel linux-firmware', kernels='linux', plugins=[]):
 		kernels = kernels.split(",")
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -61,6 +62,16 @@ class Installer():
 
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
+		self.plugins = []
+		if len(plugins)>0:
+			for plugin in plugins:
+				plugin = load_plugin(plugins)
+				if plugin is not None:
+					try:
+						plugin["plugin"].on_load()
+					except:
+						self.log(f"{plugin['name']} does not have a on_load function or it failed to execute proplery")
+					self.plugins.append(plugin)
 
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
@@ -140,6 +151,11 @@ class Installer():
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
 		else:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
+		for plugin in self.plugins:
+			try:
+				plugin["plugin"].post_pacstrap()
+			except:
+				self.log(f"{plugin['name']} does not have a post_pacstrap function or it did not execute properly")
 
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
@@ -353,7 +369,11 @@ class Installer():
 		for function in self.post_base_install:
 			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
 			function(self)
-
+		for plugin in self.plugins:
+			try:
+				plugin["plugin"].post_install()
+			except:
+				self.log(f"{plugin['name']} does not have a post_install function or it did not execute properly")
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
