@@ -103,7 +103,7 @@ def log(*args, **kwargs):
 		kwargs = {'fg': 'white', **kwargs}
 		string = stylize_output(string, **kwargs)
 
-		# If a logfile is defined in storage,
+	# If a logfile is defined in storage,
 	# we use that one to output everything
 	if (filename := storage.get('LOG_FILE', None)):
 		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
