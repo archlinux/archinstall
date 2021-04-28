@@ -105,7 +105,7 @@ def generic_multi_select(options, text="Select one or more of the options above:
 
 	section = MiniCurses(get_terminal_width(), get_terminal_height()-1)
 
-	selected_options = []
+	selected_options = []a
 	if default and default in options:
 		selected_options.append(default)
 
@@ -670,9 +670,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		selected_kernels = generic_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ")
-		if not selected_kernels:
-			return DEFAULT_KERNEL
-		return selected_kernels
+		return generic_multi_selecti(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
