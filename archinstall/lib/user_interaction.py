@@ -118,10 +118,10 @@ def generic_multi_select(options, text="Select one or more of the options above 
 
 	selected_options = []
 
-	while True:
-		if not selected_options and default in options:
-			selected_options.append(default)
+	if not selected_options and default in options:
+		selected_options.append(default)
 
+	while True:
 		printed_options = []
 		for option in options:
 			if option in selected_options:
@@ -148,7 +148,6 @@ def generic_multi_select(options, text="Select one or more of the options above 
 				# Since it still breaks the loop
 				if not selected_options and default:
 					selected_options = [default]
-					log(f'Default option selected: "{default}"', fg='yellow')
 					break
 				elif selected_options or allow_empty:
 					break
@@ -687,7 +686,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
+		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ", allow_empty_input=False)
 		selected_driver = options[initial_option]
 
 		if type(selected_driver) == dict:
@@ -719,6 +718,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		return generic_multi_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
+		return generic_multi_select(kernels, f"Choose which kernels to use (Default value for empty selection: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
