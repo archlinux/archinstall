@@ -366,8 +366,10 @@ class Installer():
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-
-		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
+		if hasUEFI():
+			self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
+		else:
+			self.log(f'Adding bootloader {bootloader} to {root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			if not hasUEFI():
