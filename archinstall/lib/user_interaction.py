@@ -523,7 +523,7 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		selected_kernels = generic_select(kernels, "Choose a kernel: ")
+		selected_kernels = generic_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ")
 		if not selected_kernels:
 			return DEFAULT_KERNEL
 		return selected_kernels
