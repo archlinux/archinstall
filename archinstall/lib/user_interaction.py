@@ -99,7 +99,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	return column, row
 
 
-def generic_multi_select(options, text="Select one or more of the options above: ", sort=True, default=None, allow_empty=False):
+def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
 	if sort:
 		options = sorted(options)
 
@@ -125,10 +125,18 @@ def generic_multi_select(options, text="Select one or more of the options above:
 		selected_option = section.get_keyboard_input(end=None)
 
 		if selected_option is None:
-			break
+			if len(selected_options) <= 0 and default:
+				selected_options = [default]
+
+			if allow_empty is True:
+				break
+			else:
+				log('* Need to select at least one option!', fg='red')
+				continue
+
 		elif selected_option.isdigit():
-			if (selected_option := int(selected_option)) > len(options):
-				print('Out of range!')
+			if (selected_option := int(selected_option)) >= len(options):
+				log('* Option is out of range, please select another one!', fg='red')
 				continue
 			selected_option = options[selected_option]
 			if selected_option in selected_options:
@@ -169,6 +177,10 @@ class MiniCurses():
 		#sys.stdout.flush()
 		#time.sleep(2)
 
+		sys.stdout.flush()
+		sys.stdout.write('\033[%d;%df' % (y, x))
+		for line in range(get_terminal_height()-y-1):
+			sys.stdout.write(" " * (get_terminal_width()-1))
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
 		sys.stdout.flush()
