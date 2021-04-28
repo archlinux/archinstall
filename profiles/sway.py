@@ -24,6 +24,5 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("sway", "/somewhere/sway.py")
 # or through conventional import sway
 if __name__ == 'sway':
-	# Install the application sway from the template under /applications/
-	sway = archinstall.Application(installation, 'sway')
-	sway.install()
+	# Install the Sway packages
+	installation.add_additional_packages(__packages__)

@@ -28,9 +28,8 @@ if __name__ == 'gnome':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application gnome from the template under /applications/
-	gnome = archinstall.Application(installation, 'gnome')
-	gnome.install()
+	# Install the GNOME packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('gdm') # Gnome Display Manager
 	# We could also start it via xinitrc since we do have Xorg,

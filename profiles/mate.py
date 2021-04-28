@@ -27,8 +27,7 @@ if __name__ == 'mate':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application mate from the template under /applications/
-	mate = archinstall.Application(installation, 'mate')
-	mate.install()
+	# Install the MATE packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('lightdm') # Light Display Manager

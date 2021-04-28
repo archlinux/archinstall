@@ -27,8 +27,7 @@ if __name__ == 'cinnamon':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application cinnamon from the template under /applications/
-	cinnamon = archinstall.Application(installation, 'cinnamon')
-	cinnamon.install()
+	# Install the Cinnamon packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('lightdm') # Light Display Manager

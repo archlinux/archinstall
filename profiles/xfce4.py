@@ -28,8 +28,7 @@ if __name__ == 'xfce4':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application xfce4 from the template under /applications/
-	xfce = archinstall.Application(installation, 'xfce4')
-	xfce.install()
+	# Install the XFCE4 packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('lightdm') # Light Display Manager
