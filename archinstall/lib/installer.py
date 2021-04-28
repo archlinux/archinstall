@@ -12,7 +12,7 @@ from .storage import storage
 from .hardware import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = ["base", "base-devel", "linux-firmware"]
+__packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 class Installer():
 	"""
@@ -38,7 +38,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages=__packages__, kernels=['linux']):
+	def __init__(self, target, *, base_packages=__packages__[:3], kernels=['linux']):
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
