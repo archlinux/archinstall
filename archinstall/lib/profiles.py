@@ -82,7 +82,6 @@ class Script():
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
-		log(f"Script {self} has been loaded with namespace '{self.namespace}'", level=logging.DEBUG)
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
