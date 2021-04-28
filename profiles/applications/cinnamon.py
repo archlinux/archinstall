@@ -1,3 +1,5 @@
 import archinstall
 
-installation.add_additional_packages("cinnamon system-config-printer gnome-keyring gnome-terminal blueberry metacity lightdm lightdm-gtk-greeter")
+__packages__ = ["cinnamon", "system-config-printer", "gnome-keyring", "gnome-terminal", "blueberry", "metacity", "lightdm", "lightdm-gtk-greeter"]
+
+installation.add_additional_packages(__packages_)
