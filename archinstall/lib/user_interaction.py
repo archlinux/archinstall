@@ -106,10 +106,11 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	section = MiniCurses(get_terminal_width(), get_terminal_height()-1)
 
 	selected_options = []
-	if default and default in options:
-		selected_options.append(default)
 
 	while True:
+		if len(selected_options) <= 0 and default and default in options:
+			selected_options.append(default)
+			
 		printed_options = []
 		for option in options:
 			if option in selected_options:
@@ -128,7 +129,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 			if len(selected_options) <= 0 and default:
 				selected_options = [default]
 
-			if allow_empty is True:
+			if len(selected_options) or allow_empty is True:
 				break
 			else:
 				log('* Need to select at least one option!', fg='red')
