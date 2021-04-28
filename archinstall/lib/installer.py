@@ -40,8 +40,8 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware', kernels='linux'):
-		base_packages = base_packages + kernels.replace(',', ' ')
+	def __init__(self, target, *, base_packages='base base-devel linux-firmware', kernels='linux'):
+		kernels = kernels.split(",")
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -52,6 +52,8 @@ class Installer():
 		}
 		
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
+		for kernel in kernels:
+			self.base_packages.append(kernel)
 		if hasUEFI():
 			self.base_packages.append("efibootmgr")
 		else:
