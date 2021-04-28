@@ -11,7 +11,8 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-
+	if "nvidia" in _gfx_driver_packages:
+		raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers")
 	__builtins__['_gfx_driver_packages'] = archinstall.select_driver()
 
 	return True
