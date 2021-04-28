@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["sway", "swaylock", "swayidle", "waybar", "dmenu", "light", "grim", "slurp", "pavucontrol", "alacritty"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer

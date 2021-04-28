@@ -4,6 +4,7 @@ import archinstall, os
 
 is_top_level_profile = False
 
+__packages__ = ["deepin", "deepin-terminal", "deepin-editor"]
 
 def _prep_function(*args, **kwargs):
 	"""

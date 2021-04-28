@@ -4,6 +4,9 @@ import archinstall
 
 is_top_level_profile = False
 
+# Note: GDM should be part of the gnome group, but adding it here for clarity
+__packages__ = ["gnome". "gnome-tweaks", "gdm"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer

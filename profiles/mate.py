@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
