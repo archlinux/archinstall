@@ -360,7 +360,7 @@ class Installer():
 			elif partition.mountpoint == self.target:
 				root_partition = partition
 
-		self.log(f'Adding bootloader {bootloader} to {root_partition}', level=logging.INFO)
+		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			self.pacstrap('efibootmgr')
