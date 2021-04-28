@@ -106,6 +106,8 @@ def generic_multi_select(options, text="Select one or more of the options above:
 	section = MiniCurses(get_terminal_width(), get_terminal_height()-1)
 
 	selected_options = []
+	if default and default in options:
+		selected_options.append(default)
 
 	while True:
 		printed_options = []
