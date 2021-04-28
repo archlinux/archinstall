@@ -153,10 +153,10 @@ def generic_multi_select(options, text="Select one or more of the options above 
 				elif selected_options or allow_empty:
 					break
 				else:
-					raise RequirementError('Please select at least one option to continue!')
+					raise RequirementError('Please select at least one option to continue')
 			elif selected_option.isnumeric():
 				if (selected_option := int(selected_option)) >= len(options):
-					raise RequirementError(f'Selected option "{selected_option}" is out of range!')
+					raise RequirementError(f'Selected option "{selected_option}" is out of range')
 				selected_option = options[selected_option]
 				if selected_option in selected_options:
 					selected_options.remove(selected_option)
@@ -461,20 +461,24 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	this function returns an item from list, a string, or None
 	"""
 
-	# Checking if options are different from `list` or `dict`
+	# Checking if the options are different from `list` or `dict` or if they are empty
 	if type(options) not in [list, dict]:
 		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
-	# To allow only `list` and `dict`, converting values of options here.
-	# Therefore, now we can only provide the dictionary itself
-	if type(options) == dict: options = list(options.values())
-	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
-	if len(options) == 0:
+	if not options:
 		log(f" * Generic select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires at least one option to proceed.')
-	
+	# After passing the checks, function continues to work
+	if type(options) == dict:
+		# To allow only `list` and `dict`, converting values of options here.
+		# Therefore, now we can only provide the dictionary itself
+		options = list(options.values())
+	if sort:
+		# As we pass only list and dict (converted to list), we can skip converting to list
+		options = sorted(options)
+
 
 	# Added ability to disable the output of options items,
 	# if another function displays something different from this
@@ -486,8 +490,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	# Now the try...except block handles validation for invalid input from the user
 	while True:
 		try:
-			selected_option = input(input_text)
-			if len(selected_option.strip()) == 0:
+			selected_option = input(input_text).strip()
+			if not selected_option:
 				# `allow_empty_input` parameter handles return of None on empty input, if necessary
 				# Otherwise raise `RequirementError`
 				if allow_empty_input:
@@ -495,8 +499,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				raise RequirementError('Please select an option to continue')
 			# Replaced `isdigit` with` isnumeric` to discard all negative numbers
 			elif selected_option.isnumeric():
-				selected_option = int(selected_option)
-				if selected_option >= len(options):
+				if (selected_option := int(selected_option)) >= len(options):
 					raise RequirementError(f'Selected option "{selected_option}" is out of range')
 				selected_option = options[selected_option]
 				break
@@ -506,7 +509,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
 		except RequirementError as err:
 			log(f" * {err} * ", fg='red')
-			continue
 
 	return selected_option
 
