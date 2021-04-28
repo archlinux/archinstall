@@ -2,6 +2,8 @@
 
 import archinstall, os
 
+__packages__ = ["deepin", "deepin-terminal", "deepin-editor"]
+
 is_top_level_profile = False
 
 
