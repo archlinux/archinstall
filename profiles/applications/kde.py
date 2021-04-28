@@ -1,6 +1,6 @@
 import archinstall
 
-packages = "plasma-meta konsole kate dolphin sddm plasma-wayland-session"
+packages = "" # Other packages for KDE are installed in the main profile now.
 
 if "nvidia" in _gfx_driver_packages:
 	packages = packages + " egl-wayland"

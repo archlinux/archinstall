@@ -39,7 +39,10 @@ if __name__ == 'kde':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application kde from the template under /applications/
+	# Install the KDE packages
+	installation.add_additional_packages(__packages__)
+
+	# Run KDE application configuration
 	kde = archinstall.Application(installation, 'kde')
 	kde.install()
 
