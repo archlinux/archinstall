@@ -1,6 +1,6 @@
 import os, stat, time, shutil, pathlib
 import subprocess, logging
-
+import pdb
 from .exceptions import *
 from .disk import *
 from .general import *
@@ -356,6 +356,7 @@ class Installer():
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
+		pdb.set_trace()
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
