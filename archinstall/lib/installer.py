@@ -442,6 +442,7 @@ class Installer():
 					root_device = f"{root_partition.path}"
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				self.helper_flags['bootloader'] = bootloader
 				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
