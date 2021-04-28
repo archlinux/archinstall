@@ -99,7 +99,18 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	return column, row
 
 
-def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
+def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=False, default=None, allow_empty=False):
+	# For now, we check for list, but in future it's better to have support for dictionary
+	# (At the moment there are no cases of using dictionaries with this function)
+	if type(options) not in [list]:
+		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError("generic_multi_select() requires list as options.")
+	if not options:
+		log(f" * Generic multi-select didn't find any options to choose from * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_multi_select() requires at least one option to proceed.')
+	# After passing the checks, function continues to work
 	if sort:
 		options = sorted(options)
 
@@ -108,7 +119,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	selected_options = []
 
 	while True:
-		if len(selected_options) <= 0 and default and default in options:
+		if not selected_options and default in options:
 			selected_options.append(default)
 
 		printed_options = []
@@ -119,32 +130,47 @@ def generic_multi_select(options, text="Select one or more of the options above 
 				printed_options.append(f'{option}')
 
 		section.clear(0, get_terminal_height()-section._cursor_y-1)
-		x, y = print_large_list(printed_options, margin_bottom=2)
+		print_large_list(printed_options, margin_bottom=2)
 		section._cursor_y = len(printed_options)
 		section._cursor_x = 0
 		section.write_line(text)
 		section.input_pos = section._cursor_x
 		selected_option = section.get_keyboard_input(end=None)
-
-		if selected_option is None:
-			if len(selected_options) <= 0 and default:
-				selected_options = [default]
-
-			if len(selected_options) or allow_empty is True:
-				break
+        # This string check is necessary to correct work with it
+		# Without this, Python can raise AttributeError because of stripping `None` 
+		# It also allows you to remove empty spaces if the user accidentally entered them.
+		if isinstance(selected_option, str):
+			selected_option = selected_option.strip()
+		try:
+			if not selected_option:
+				# Added break when adding default option to empty list
+				# So that the check doesn't go to the next elif
+				# Since it still breaks the loop
+				if not selected_options and default:
+					selected_options = [default]
+					log(f'Default option selected: "{default}"', fg='yellow')
+					break
+				elif selected_options or allow_empty:
+					break
+				else:
+					raise RequirementError('Please select at least one option to continue!')
+			elif selected_option.isnumeric():
+				if (selected_option := int(selected_option)) >= len(options):
+					raise RequirementError(f'Selected option "{selected_option}" is out of range!')
+				selected_option = options[selected_option]
+				if selected_option in selected_options:
+					selected_options.remove(selected_option)
+				else:
+					selected_options.append(selected_option)
+			elif selected_option in options:
+				if selected_option in selected_options:
+					selected_options.remove(selected_option)
+				else:
+					selected_options.append(selected_option)
 			else:
-				log('* Need to select at least one option!', fg='red')
-				continue
-
-		elif selected_option.isdigit():
-			if (selected_option := int(selected_option)) >= len(options):
-				log('* Option is out of range, please select another one!', fg='red')
-				continue
-			selected_option = options[selected_option]
-			if selected_option in selected_options:
-				selected_options.remove(selected_option)
-			else:
-				selected_options.append(selected_option)
+				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
+		except RequirementError as e:
+			log(f" * {e} * ", fg='red')
 
 	return selected_options
 
