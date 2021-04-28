@@ -4,7 +4,7 @@ import archinstall, os
 
 is_top_level_profile = False
 
-__packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-wayland-session"]
+__packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-wayland-session", "egl-wayland"]
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
@@ -41,10 +41,6 @@ if __name__ == 'kde':
 
 	# Install the KDE packages
 	installation.add_additional_packages(__packages__)
-
-	# Run KDE application configuration
-	kde = archinstall.Application(installation, 'kde')
-	kde.install()
 
 	# Enable autostart of KDE for all users
 	installation.enable_service('sddm')
