@@ -110,6 +110,8 @@ def log(*args, **kwargs):
 		if not os.path.isfile(absolute_logfile):
 			try:
 				Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
+				with open(absolute_logfile, 'a') as log_file:
+					log_file.write("")
 			except PermissionError:
 				# Fallback to creating the log file in the current folder
 				err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
