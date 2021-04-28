@@ -670,6 +670,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		return generic_multi_selecti(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
+		return generic_multi_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
