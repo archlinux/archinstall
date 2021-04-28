@@ -653,3 +653,26 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		return selected_driver
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
+
+def select_kernel(options):
+	"""
+	Asks the user to select a kernel for system.
+
+	:param options: A `list` with kernel options
+	:type options: list
+
+	:return: The string as a selected kernel
+	:rtype: string
+	"""
+	
+	DEFAULT_KERNEL = "linux"
+	
+	kernels = sorted(list(options))
+	
+	if kernels:
+		selected_kernels = generic_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ")
+		if not selected_kernels:
+			return DEFAULT_KERNEL
+		return selected_kernels
+		
+	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")

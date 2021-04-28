@@ -2,7 +2,6 @@ import getpass, time, json, os, logging
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
-from archinstall.lib.user_interaction import generic_select
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -195,14 +194,10 @@ def ask_user_questions():
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
 			archinstall.arguments['audio'] = None
 
-	# Ask what kernel user wants:
+	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
-		archinstall.log(f"Here you can choose which kernel to use, leave blank for default which is 'linux'.")
-
-		if (kernel := generic_select(["linux", "linux-lts", "linux-zen", "continue"], "choose a kernel:")):
-			archinstall.arguments['kernels'] = kernel
-		else:
-			archinstall.arguments['kernels'] = 'linux'
+		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
+		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")

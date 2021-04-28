@@ -1,6 +1,5 @@
 import os, stat, time, shutil, pathlib
 import subprocess, logging
-
 from .exceptions import *
 from .disk import *
 from .general import *
@@ -40,8 +39,8 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux linux-firmware', kernels='linux'):
-		base_packages = base_packages + kernels.replace(',', ' ')
+	def __init__(self, target, *, base_packages='base base-devel linux-firmware', kernels='linux'):
+		kernels = kernels.split(",")
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -52,6 +51,8 @@ class Installer():
 		}
 		
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
+		for kernel in kernels:
+			self.base_packages.append(kernel)
 		if hasUEFI():
 			self.base_packages.append("efibootmgr")
 		else:
@@ -363,8 +364,10 @@ class Installer():
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-
-		self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
+		if hasUEFI():
+			self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
+		else:
+			self.log(f'Adding bootloader {bootloader} to {root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			if not hasUEFI():
@@ -439,6 +442,7 @@ class Installer():
 					root_device = f"{root_partition.path}"
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				self.helper_flags['bootloader'] = bootloader
 				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")

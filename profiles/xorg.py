@@ -25,7 +25,14 @@ def _prep_function(*args, **kwargs):
 # or through conventional import xorg
 if __name__ == 'xorg':
 	try:
-		installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+		if "nvidia" in _gfx_driver_packages:
+			if "linux-zen" in installation.base_packages or "linux-lts" in installation.base_packages:
+				installation.add_additional_packages("dkms")#I've had kernel regen fail if it wasn't installed before nvidia-dkms
+				installation.add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
+			else:
+				installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+		else:
+			installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
 		installation.add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
 
