@@ -1,4 +1,4 @@
-import getpass, pathlib, os, shutil, re
+import getpass, pathlib, os, shutil, re, time
 import sys, time, signal, ipaddress, logging
 import termios, tty, select # Used for char by char polling of sys.stdin
 from .exceptions import *
@@ -103,14 +103,14 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	if sort:
 		options = sorted(options)
 
-	section = MiniCurses(get_terminal_width(), get_terminal_height()-1)
+	section = MiniCurses(get_terminal_width(), len(options))
 
 	selected_options = []
 
 	while True:
 		if len(selected_options) <= 0 and default and default in options:
 			selected_options.append(default)
-			
+
 		printed_options = []
 		for option in options:
 			if option in selected_options:
@@ -120,9 +120,10 @@ def generic_multi_select(options, text="Select one or more of the options above 
 
 		section.clear(0, get_terminal_height()-section._cursor_y-1)
 		x, y = print_large_list(printed_options, margin_bottom=2)
-		section._cursor_y = y
+		section._cursor_y = len(printed_options)
 		section._cursor_x = 0
 		section.write_line(text)
+		section.input_pos = section._cursor_x
 		selected_option = section.get_keyboard_input(end=None)
 
 		if selected_option is None:
@@ -156,6 +157,8 @@ class MiniCurses():
 		self._cursor_y = 0
 		self._cursor_x = 0
 
+		self.input_pos = 0
+
 	def write_line(self, text, clear_line=True):
 		if clear_line:
 			sys.stdout.flush()
@@ -180,7 +183,7 @@ class MiniCurses():
 
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
-		for line in range(get_terminal_height()-y-1):
+		for line in range(get_terminal_height()-y-1, y):
 			sys.stdout.write(" " * (get_terminal_width()-1))
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
@@ -194,6 +197,9 @@ class MiniCurses():
 		}
 
 		if (mapped_char := mapper.get(char, None)) == 'BACKSPACE':
+			if self._cursor_x <= self.input_pos:
+				# Don't backspace futher back than the cursor start position during input
+				return True
 			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % (self._cursor_x))
@@ -208,6 +214,8 @@ class MiniCurses():
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % (self._cursor_x))
 			sys.stdout.flush()
+
+			self._cursor_x -= 1
 
 			return True
 		elif mapped_char in ('CR', 'NL'):
