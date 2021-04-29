@@ -204,7 +204,8 @@ class Profile(Script):
 
 			if '__name__' in source_data and 'top_level_profile' in source_data:
 				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					return imported.top_level_profile
+					if hasattr(imported, 'top_level_profile'):
+						return imported.top_level_profile
 
 		# Default to True if nothing is specified,
 		# since developers like less code - omitting it should assume they want to present it.
