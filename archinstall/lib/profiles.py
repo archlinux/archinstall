@@ -134,6 +134,8 @@ class Script():
 		if namespace:
 			self.namespace = namespace
 
+		if self.namespace == 'awesome':
+			raise ValueError("mooo")
 		print(f'Loading {self} with namespace: {self.namespace}')
 
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
