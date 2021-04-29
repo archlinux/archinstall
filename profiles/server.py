@@ -14,7 +14,7 @@ def _prep_function(*args, **kwargs):
 	selected_servers = archinstall.generic_multi_select(available_servers, f"Choose which servers to install and enable (leave blank for a minimal installation): ")
 	archinstall.storage['_selected_servers'] = selected_servers
 	
-	return True # Do nothing and just return True
+	return True
 
 if __name__ == 'server':
 	"""
