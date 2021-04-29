@@ -4,7 +4,7 @@ import archinstall, os, logging
 
 is_top_level_profile = True
 
-available_servers = ["docker", "httpd", "lighttpd", "mariadb", "nginx", "postgresql", "sshd", "tomcat"]
+available_servers = ["cockpit", "docker", "httpd", "lighttpd", "mariadb", "nginx", "postgresql", "sshd", "tomcat"]
 
 def _prep_function(*args, **kwargs):
 	"""
