@@ -4,6 +4,9 @@ import urllib.request
 
 __packages__ = ['nano', 'wget', 'git']
 
+awesome = archinstall.Application(installation, 'postgresql')
+awesome.install()
+"""
 # Unmount and close previous runs (Mainly only used for re-runs, but won't hurt.)
 archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
@@ -52,3 +55,4 @@ with archinstall.Filesystem(harddrive) as fs:
 					urllib.request.urlopen(req, timeout=5)
 				except:
 					pass
+"""

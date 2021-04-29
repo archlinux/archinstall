@@ -202,8 +202,13 @@ class Profile(Script):
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
-			# TODO: I imagine that there is probably a better way to write this.
-			return 'top_level_profile = True' in source_data
+			if '__name__' in source_data and 'top_level_profile' in source_data:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+					return imported.top_level_profile
+
+		# Default to True if nothing is specified,
+		# since developers like less code - omitting it should assume they want to present it.
+		return True
 
 	@property
 	def packages(self) -> list:
