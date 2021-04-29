@@ -377,7 +377,7 @@ class Installer():
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
 
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
