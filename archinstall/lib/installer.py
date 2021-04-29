@@ -51,6 +51,10 @@ class Installer():
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+		if hasUEFI():
+			self.base_packages.append("efibootmgr")
+		else:
+			self.base_packages.append("grub")
 
 		self.post_base_install = []
 
@@ -366,7 +370,6 @@ class Installer():
 		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
-			self.pacstrap('efibootmgr')
 
 			if not hasUEFI():
 				raise HardwareIncompatibilityError
@@ -430,7 +433,6 @@ class Installer():
 
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')
 
 			if hasUEFI():
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
