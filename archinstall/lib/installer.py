@@ -373,7 +373,7 @@ class Installer():
 		for plugin in self.plugins:
 			if hasattr(plugin["plugin"], "post_install"):
 				try:
-					plugin["plugin"].post_install()
+					plugin["plugin"].post_install(self)
 				except:
 					self.log(f"{plugin['name']}'s post_install did not execute properly")
 		return True
