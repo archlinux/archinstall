@@ -100,17 +100,18 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 
 
 def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=False, default=None, allow_empty=False):
-	# For now, we check for list, but in future it's better to have support for dictionary
-	# (At the moment there are no cases of using dictionaries with this function)
-	if type(options) not in [list]:
+	# Checking if the options are different from `list` or `dict` or if they are empty
+	if type(options) not in [list, dict]:
 		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError("generic_multi_select() requires list as options.")
+		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
 	if not options:
 		log(f" * Generic multi-select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_multi_select() requires at least one option to proceed.')
 	# After passing the checks, function continues to work
+	if type(options) == dict:
+		options = list(options.values())
 	if sort:
 		options = sorted(options)
 
@@ -118,10 +119,10 @@ def generic_multi_select(options, text="Select one or more of the options above 
 
 	selected_options = []
 
-	if not selected_options and default in options:
-		selected_options.append(default)
-
 	while True:
+		if not selected_options and default in options:
+			selected_options.append(default)
+
 		printed_options = []
 		for option in options:
 			if option in selected_options:
@@ -136,19 +137,15 @@ def generic_multi_select(options, text="Select one or more of the options above 
 		section.write_line(text)
 		section.input_pos = section._cursor_x
 		selected_option = section.get_keyboard_input(end=None)
-        # This string check is necessary to correct work with it
+		# This string check is necessary to correct work with it
 		# Without this, Python can raise AttributeError because of stripping `None` 
 		# It also allows you to remove empty spaces if the user accidentally entered them.
 		if isinstance(selected_option, str):
 			selected_option = selected_option.strip()
 		try:
 			if not selected_option:
-				# Added break when adding default option to empty list
-				# So that the check doesn't go to the next elif
-				# Since it still breaks the loop
 				if not selected_options and default:
 					selected_options = [default]
-					break
 				elif selected_options or allow_empty:
 					break
 				else:
@@ -718,6 +715,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		return generic_multi_select(kernels, f"Choose which kernels to use (Default value for empty selection: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
+		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
