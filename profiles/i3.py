@@ -60,4 +60,4 @@ if __name__ == 'i3':
 	installation.enable_service('lightdm')
 
 	# install the i3 group now
-	installation.add_additional_packages(installation, archinstall.storage['_i3_configuration'])
+	installation.add_additional_packages(archinstall.storage['_i3_configuration'])
