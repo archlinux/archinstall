@@ -196,6 +196,9 @@ class Installer():
 		return sys_command(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
 	def arch_chroot(self, cmd, *args, **kwargs):
+		if 'runas' in kwargs:
+			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+			
 		return self.run_command(cmd)
 
 	def drop_to_shell(self):
