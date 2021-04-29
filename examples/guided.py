@@ -136,12 +136,14 @@ def ask_user_questions():
 
 			archinstall.log('Using existing partition table reported above.')
 		elif option == 'format-all':
-			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+			if not archinstall.arguments.get('filesystem', None):
+				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
 	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
 		# and ask the user for a root filesystem.
-		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+		if not archinstall.arguments.get('filesystem', None):
+			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 	# Get disk encryption password (or skip if blank)
