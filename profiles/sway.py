@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["sway", "swaylock", "swayidle", "waybar", "dmenu", "light", "grim", "slurp", "pavucontrol", "alacritty"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -24,6 +26,5 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("sway", "/somewhere/sway.py")
 # or through conventional import sway
 if __name__ == 'sway':
-	# Install the application sway from the template under /applications/
-	sway = archinstall.Application(installation, 'sway')
-	sway.install()
+	# Install the Sway packages
+	installation.add_additional_packages(__packages__)
