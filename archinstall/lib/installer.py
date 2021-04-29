@@ -66,12 +66,12 @@ class Installer():
 		if len(plugins)>0:
 			for plugin in plugins:
 				plugin = load_plugin(plugins)
-				if plugin is not None:
+				if plugin is not None and hasattr(plugin["plugin"],"on_load"):
 					try:
 						plugin["plugin"].on_load()
 					except:
-						self.log(f"{plugin['name']} does not have a on_load function or it failed to execute proplery")
-					self.plugins.append(plugin)
+						self.log(f"{plugin['name']}'s on_load function failed to execute proplery")
+				self.plugins.append(plugin)
 
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
@@ -152,10 +152,11 @@ class Installer():
 		else:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 		for plugin in self.plugins:
-			try:
-				plugin["plugin"].post_pacstrap()
-			except:
-				self.log(f"{plugin['name']} does not have a post_pacstrap function or it did not execute properly")
+			if hasattr(plugin["plugin"],"post_pacstrap"):
+				try:
+					plugin["plugin"].post_pacstrap()
+				except:
+					self.log(f"{plugin['name']}'s' post_pacstrap function not execute properly")
 
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
@@ -370,10 +371,11 @@ class Installer():
 			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
 			function(self)
 		for plugin in self.plugins:
-			try:
-				plugin["plugin"].post_install()
-			except:
-				self.log(f"{plugin['name']} does not have a post_install function or it did not execute properly")
+			if hasattr(plugin["plugin"], "post_install"):
+				try:
+					plugin["plugin"].post_install()
+				except:
+					self.log(f"{plugin['name']}'s post_install did not execute properly")
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
