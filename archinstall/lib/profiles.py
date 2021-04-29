@@ -138,6 +138,9 @@ class Script():
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
 
+		if self.original_namespace:
+			self.namespace = self.original_namespace
+
 		return self
 
 	def execute(self):
