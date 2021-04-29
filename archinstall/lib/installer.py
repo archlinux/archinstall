@@ -10,6 +10,7 @@ from .systemd import Networkd
 from .output import log
 from .storage import storage
 from .hardware import *
+from .plugins import plugins
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -126,6 +127,12 @@ class Installer():
 
 	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple): packages = packages[0]
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_pacstrap'):
+				if (result := plugin.on_pacstrap(packages)):
+					packages = result
+
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
