@@ -92,6 +92,9 @@ class Script():
 		if len(args) >= 2 and args[1]:
 			raise args[1]
 
+		if self.original_namespace:
+			self.namespace = self.original_namespace
+
 	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
@@ -141,9 +144,6 @@ class Script():
 		self.spec = importlib.util.spec_from_file_location(self.namespace, self.path)
 		imported = importlib.util.module_from_spec(self.spec)
 		sys.modules[self.namespace] = imported
-
-		if self.original_namespace:
-			self.namespace = self.original_namespace
 
 		return self
 
