@@ -68,7 +68,7 @@ class Installer():
 				plugin = load_plugin(plugins)
 				if plugin is not None and hasattr(plugin["plugin"],"on_load"):
 					try:
-						plugin["plugin"].on_load()
+						plugin["plugin"].on_load(self)
 					except:
 						self.log(f"{plugin['name']}'s on_load function failed to execute proplery")
 				self.plugins.append(plugin)
@@ -154,7 +154,7 @@ class Installer():
 		for plugin in self.plugins:
 			if hasattr(plugin["plugin"],"post_pacstrap"):
 				try:
-					plugin["plugin"].post_pacstrap()
+					plugin["plugin"].post_pacstrap(self)
 				except:
 					self.log(f"{plugin['name']}'s' post_pacstrap function not execute properly")
 
