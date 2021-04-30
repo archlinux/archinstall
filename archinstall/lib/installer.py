@@ -57,6 +57,11 @@ class Installer():
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
 
+		self.MODULES = []
+		self.BINARIES = []
+		self.FILES = []
+		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -284,10 +289,7 @@ class Installer():
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
 
-		MODULES = []
-		BINARIES = []
-		FILES = []
-		HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		
 
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
@@ -300,14 +302,14 @@ class Installer():
 
 			# Configure mkinitcpio to handle some specific use cases.
 			if partition.filesystem == 'btrfs':
-				if 'btrfs' not in MODULES:
-					MODULES.append('btrfs')
-				if '/usr/bin/btrfs-progs' not in BINARIES:
-					BINARIES.append('/usr/bin/btrfs')
+				if 'btrfs' not in self.MODULES:
+					self.MODULES.append('btrfs')
+				if '/usr/bin/btrfs-progs' not in self.BINARIES:
+					self.BINARIES.append('/usr/bin/btrfs')
 
 			if self.detect_encryption(partition):
-				if 'encrypt' not in HOOKS:
-					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
+				if 'encrypt' not in self.HOOKS:
+					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
 		if not(hasUEFI()): # TODO: Allow for grub even on EFI
 			self.base_packages.append('grub')
@@ -339,10 +341,10 @@ class Installer():
 		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(MODULES)})\n")
-			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
-			mkinit.write(f"FILES=({' '.join(FILES)})\n")
-			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
+			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
+			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
+			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
 		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
 
 		self.helper_flags['base'] = True
