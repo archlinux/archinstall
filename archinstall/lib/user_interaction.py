@@ -99,7 +99,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	return column, row
 
 
-def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=False, default=None, allow_empty=False):
+def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
 	# Checking if the options are different from `list` or `dict` or if they are empty
 	if type(options) not in [list, dict]:
 		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
@@ -138,8 +138,8 @@ def generic_multi_select(options, text="Select one or more of the options above 
 		section.input_pos = section._cursor_x
 		selected_option = section.get_keyboard_input(end=None)
 		# This string check is necessary to correct work with it
-		# Without this, Python can raise AttributeError because of stripping `None` 
-		# It also allows you to remove empty spaces if the user accidentally entered them.
+		# Without this, Python will raise AttributeError because of stripping `None` 
+		# It also allows to remove empty spaces if the user accidentally entered them.
 		if isinstance(selected_option, str):
 			selected_option = selected_option.strip()
 		try:
@@ -715,6 +715,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL)
+		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL, sort=False)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
