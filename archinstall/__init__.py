@@ -14,7 +14,6 @@ from .lib.packages import *
 from .lib.output import *
 from .lib.storage import *
 from .lib.hardware import *
-from .lin.plugins import plugins
 
 __version__ = "2.2.0"
 
@@ -32,6 +31,9 @@ for arg in sys.argv[1:]:
 		arguments[key] = val
 	else:
 		positionals.append(arg)
+
+storage['arguments'] = arguments
+from .lib.plugins import plugins
 
 # TODO: Learn the dark arts of argparse...
 #	   (I summon thee dark spawn of cPython)
