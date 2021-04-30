@@ -283,6 +283,14 @@ class Installer():
 		
 		return False
 
+	def mkinitcpio(self, *flags):
+		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
+			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
+			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
+			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+
 	def minimal_installation(self):
 		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
@@ -340,12 +348,7 @@ class Installer():
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
-			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
-			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
-			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
+		self.mkinitcpio('-P')
 
 		self.helper_flags['base'] = True
 
