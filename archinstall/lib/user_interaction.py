@@ -292,7 +292,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
-		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
+		if input("Should this user be a superuser (sudoer) [y/N]: ").strip(' ').lower() in ('y', 'yes'):
 			super_users[new_user] = {"!password" : password}
 		else:
 			users[new_user] = {"!password" : password}
