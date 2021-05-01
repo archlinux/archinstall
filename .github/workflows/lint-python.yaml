@@ -9,13 +9,16 @@ jobs:
       - uses: actions/checkout@v2
       - run: pacman --noconfirm -Syu python python-pip
       - run: python -m pip install --upgrade pip
-      - run: pip install flake8 pytest
+      - run: pip install flake8 pytest black-but-with-tabs-instead-of-spaces
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors
           flake8 . --count --select=E9,F63,F7 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: PEP8 formatting checks using black
+        run: |
+          python -m black --check --skip-string-normalization .
 #      - name: Test with pytest
 #        run: |
 #          pytest
