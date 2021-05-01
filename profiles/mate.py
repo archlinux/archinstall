@@ -6,6 +6,7 @@ is_top_level_profile = False
 
 __packages__ = ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"]
 
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -22,6 +23,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("mate", "/somewhere/mate.py")
 # or through conventional import mate
@@ -32,4 +34,4 @@ if __name__ == 'mate':
 	# Install the MATE packages
 	installation.add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	installation.enable_service('lightdm')  # Light Display Manager

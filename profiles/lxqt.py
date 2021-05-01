@@ -1,11 +1,20 @@
-
 # A desktop environment using "LXQt"
 
 import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["lxqt", "breeze-icons", "oxygen-icons", "xdg-utils", "ttf-freefont", "leafpad", "slock", "sddm"]
+__packages__ = [
+	"lxqt",
+	"breeze-icons",
+	"oxygen-icons",
+	"xdg-utils",
+	"ttf-freefont",
+	"leafpad",
+	"slock",
+	"sddm",
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -23,6 +32,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("lxqt", "/somewhere/lxqt.py")
 # or through conventional import lxqt
@@ -33,4 +43,4 @@ if __name__ == 'lxqt':
 	# Install the LXQt packages
 	installation.add_additional_packages(__packages__)
 
-	installation.enable_service('sddm') # SDDM Display Manager
+	installation.enable_service('sddm')  # SDDM Display Manager

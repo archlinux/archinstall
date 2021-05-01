@@ -34,7 +34,8 @@ for arg in sys.argv[1:]:
 
 
 # TODO: Learn the dark arts of argparse...
-#	   (I summon thee dark spawn of cPython)
+# 	   (I summon thee dark spawn of cPython)
+
 
 def run_as_a_module():
 	"""
@@ -44,7 +45,9 @@ def run_as_a_module():
 	"""
 
 	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
-	storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
+	storage['PROFILE_PATH'].append(
+		os.path.abspath(f'{os.path.dirname(__file__)}/examples')
+	)
 
 	if len(sys.argv) == 1:
 		sys.argv.append('guided')

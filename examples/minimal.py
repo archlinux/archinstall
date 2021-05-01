@@ -11,8 +11,9 @@ if archinstall.arguments.get('help', None):
 
 archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
+
 def install_on(mountpoint):
-	# We kick off the installer by telling it where the 
+	# We kick off the installer by telling it where the
 	with archinstall.Installer(mountpoint) as installation:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
@@ -36,9 +37,10 @@ def install_on(mountpoint):
 	archinstall.log(f" * root (password: airoot)")
 	archinstall.log(f" * devel (password: devel)")
 
+
 if archinstall.arguments['harddrive']:
 	archinstall.arguments['harddrive'].keep_partitions = False
-	
+
 	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
 	archinstall.do_countdown()
 
@@ -46,7 +48,9 @@ if archinstall.arguments['harddrive']:
 	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
 		# We use the entire disk instead of setting up partitions on your own
 		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+			fs.use_entire_disk(
+				root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs')
+			)
 
 		boot = fs.find_partition('/boot')
 		root = fs.find_partition('/')
@@ -59,7 +63,9 @@ if archinstall.arguments['harddrive']:
 			root.encrypted = True
 			root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
 
-			with archinstall.luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
+			with archinstall.luks2(
+				root, 'luksloop', archinstall.arguments.get('!encryption-password', None)
+			) as unlocked_root:
 				unlocked_root.format(root.filesystem)
 				unlocked_root.mount('/mnt')
 		else:

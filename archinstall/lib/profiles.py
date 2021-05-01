@@ -7,15 +7,24 @@ from .networking import *
 from .output import log
 from .storage import storage
 
+
 def grab_url_data(path):
-	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
+	safe_path = path[: path.find(':') + 1] + ''.join(
+		[
+			item if item in ('/', '?', '=', '&') else urllib.parse.quote(item)
+			for item in multisplit(path[path.find(':') + 1 :], ('/', '?', '=', '&'))
+		]
+	)
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
-	ssl_context.verify_mode=ssl.CERT_NONE
+	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
-def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
+
+def list_profiles(
+	filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False
+):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
@@ -23,7 +32,9 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
+		for root, folders, files in os.walk(
+			os.path.abspath(os.path.expanduser(PATH_ITEM + subpath))
+		):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
@@ -38,12 +49,16 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 						if first_line[0] == '#':
 							description = first_line[1:].strip()
 
-					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
+					cache[file[:-3]] = {
+						'path': os.path.join(root, file),
+						'description': description,
+						'tailored': tailored,
+					}
 			break
 
 	# Grab profiles from upstream URL
 	if storage['PROFILE_DB']:
-		profiles_url = os.path.join(storage["UPSTREAM_URL"]+subpath, storage['PROFILE_DB'])
+		profiles_url = os.path.join(storage["UPSTREAM_URL"] + subpath, storage['PROFILE_DB'])
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
@@ -52,7 +67,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 		except:
 			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
 			return cache
-		
+
 		for profile in profile_list:
 			if os.path.splitext(profile)[1] == '.py':
 				tailored = False
@@ -61,16 +76,21 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+subpath, profile), 'description' : profile_list[profile], 'tailored' : tailored}
+				cache[profile[:-3]] = {
+					'path': os.path.join(storage["UPSTREAM_URL"] + subpath, profile),
+					'description': profile_list[profile],
+					'tailored': tailored,
+				}
 
 	if filter_top_level_profiles:
 		for profile in list(cache.keys()):
 			if Profile(None, profile).is_top_level_profile() is False:
-				del(cache[profile])
+				del cache[profile]
 
 	return cache
 
-class Script():
+
+class Script:
 	def __init__(self, profile, installer=None):
 		# profile: https://hvornum.se/something.py
 		# profile: desktop
@@ -96,7 +116,10 @@ class Script():
 			self.namespace = self.original_namespace
 
 	def localize_path(self, profile_path):
-		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
+		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in (
+			'https',
+			'http',
+		):
 			if not self.converted_path:
 				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
 
@@ -127,7 +150,9 @@ class Script():
 			if os.path.isfile(self.profile):
 				return self.profile
 
-			raise ProfileNotFound(f"File {self.profile} does not exist in {storage['PROFILE_PATH']}")
+			raise ProfileNotFound(
+				f"File {self.profile} does not exist in {storage['PROFILE_PATH']}"
+			)
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:
@@ -151,12 +176,13 @@ class Script():
 
 		return sys.modules[self.namespace]
 
+
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
 		super(Profile, self).__init__(path, installer)
 
 	def __dump__(self, *args, **kwargs):
-		return {'path' : self.path}
+		return {'path': self.path}
 
 	def __repr__(self, *args, **kwargs):
 		return f'Profile({os.path.basename(self.profile)})'
@@ -235,6 +261,7 @@ class Profile(Script):
 						return imported.__packages__
 		return None
 
+
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):
 		return f'Application({os.path.basename(self.profile)})'
@@ -259,7 +286,9 @@ class Application(Profile):
 			if os.path.isfile(self.profile):
 				return os.path.basename(self.profile)
 
-			raise ProfileNotFound(f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}")
+			raise ProfileNotFound(
+				f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}"
+			)
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:

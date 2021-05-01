@@ -5,7 +5,10 @@ from .general import *
 from .output import log
 from .storage import storage
 
-def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs):
+
+def filter_mirrors_by_region(
+	regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs
+):
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -16,13 +19,22 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tm
 	region_list = []
 	for region in regions.split(','):
 		region_list.append(f'country={region}')
-	o = b''.join(sys_command((f"/usr/bin/wget 'https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O {tmp_dir}/mirrorlist")))
-	o = b''.join(sys_command((f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist")))
+	o = b''.join(
+		sys_command(
+			(
+				f"/usr/bin/wget 'https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O {tmp_dir}/mirrorlist"
+			)
+		)
+	)
+	o = b''.join(
+		sys_command((f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist"))
+	)
 	o = b''.join(sys_command((f"/usr/bin/mv {tmp_dir}/mirrorlist {destination}")))
-	
+
 	return True
 
-def add_custom_mirrors(mirrors:list, *args, **kwargs):
+
+def add_custom_mirrors(mirrors: list, *args, **kwargs):
 	"""
 	This will append custom mirror definitions in pacman.conf
 
@@ -36,6 +48,7 @@ def add_custom_mirrors(mirrors:list, *args, **kwargs):
 			pacman.write(f"Server = {mirror['url']}\n")
 
 	return True
+
 
 def insert_mirrors(mirrors, *args, **kwargs):
 	"""
@@ -58,7 +71,8 @@ def insert_mirrors(mirrors, *args, **kwargs):
 
 	return True
 
-def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
+
+def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	for region, mirrors in regions.items():
 		with open(destination, 'w') as mirrorlist:
@@ -67,10 +81,19 @@ def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
 				mirrorlist.write(f'Server = {mirror}\n')
 	return True
 
+
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
+	if (
+		sys_command(
+			(
+				f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist'
+			)
+		).exit_code
+		== 0
+	):
 		return True
 	return False
+
 
 def list_mirrors():
 	url = f"https://archlinux.org/mirrorlist/?protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
@@ -79,9 +102,10 @@ def list_mirrors():
 	try:
 		response = urllib.request.urlopen(url)
 	except urllib.error.URLError as err:
-		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
+		log(
+			f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow"
+		)
 		return regions
-
 
 	region = 'Unknown region'
 	for line in response.readlines():
