@@ -624,3 +624,11 @@ def get_filesystem_type(path):
 		return b''.join(handle).strip().decode('UTF-8')
 	except SysCallError:
 		return None
+
+def disk_layouts():
+	try:
+		handle = sys_command(f"lsblk -f -o+TYPE,SIZE -J")
+		return json.loads(b''.join(handle).decode('UTF-8'))
+	except SysCallError as err:
+		log(f"Could not return disk layouts: {err}")
+		return None
