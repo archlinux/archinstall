@@ -263,14 +263,14 @@ class MiniCurses():
 		if response:
 			return response
 
-def ask_for_superuser_account(prompt='Username for required super-user with sudo privileges: ', forced=False):
+def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
 
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one (super) user!', fg='red')
+			log(' * Since root is disabled, you need to create a least one superuser!', fg='red')
 			continue
 		elif not new_user and not forced:
 			raise UserError("No superuser was created.")
@@ -282,7 +282,7 @@ def ask_for_superuser_account(prompt='Username for required super-user with sudo
 
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
 	users = {}
-	super_users = {}
+	superusers = {}
 
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -292,12 +292,12 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
-		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
-			super_users[new_user] = {"!password" : password}
+		if input("Should this user be a superuser (sudoer) [y/N]: ").strip(' ').lower() in ('y', 'yes'):
+			superusers[new_user] = {"!password" : password}
 		else:
 			users[new_user] = {"!password" : password}
 
-	return users, super_users
+	return users, superusers
 
 def ask_for_a_timezone():
 	while True:
