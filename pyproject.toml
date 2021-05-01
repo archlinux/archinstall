@@ -1,3 +1,11 @@
+[tool.poetry]
+name = "androgee"
+version = "0.1.0"
+description = "A Discord bot for the egee.io Discord server"
+authors = ["egee-irl <brian@egee.io>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
 [build-system]
 requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
@@ -28,3 +36,21 @@ exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
 
 [tool.flit.metadata.requires-extra]
 doc = ["sphinx"]
+
+[tool.black]
+include = 'androgee/*.py'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.github
+  | _build
+  | buck-out
+  | build
+  | dist
+  | .env
+)/
+'''
+
+
