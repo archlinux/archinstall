@@ -433,7 +433,7 @@ class Installer():
 			self.pacstrap('grub')
 
 			if hasUEFI():
-				self.pacstrap('efibootmgr')`
+				self.pacstrap('efibootmgr')
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				return True
