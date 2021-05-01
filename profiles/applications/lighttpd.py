@@ -6,4 +6,4 @@ __packages__ = ["lighttpd"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service('lighttpd')
+installation.enable_service("lighttpd")

@@ -6,4 +6,4 @@ __packages__ = ["nginx"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service('nginx')
+installation.enable_service("nginx")

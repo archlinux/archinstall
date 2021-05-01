@@ -1,23 +1,41 @@
 class RequirementError(BaseException):
-	pass
+    pass
+
+
 class DiskError(BaseException):
-	pass
+    pass
+
+
 class UnknownFilesystemFormat(BaseException):
-	pass
+    pass
+
+
 class ProfileError(BaseException):
-	pass
+    pass
+
+
 class SysCallError(BaseException):
-	def __init__(self, message, exit_code):
-		super(SysCallError, self).__init__(message)
-		self.message = message
-		self.exit_code = exit_code
+    def __init__(self, message, exit_code):
+        super(SysCallError, self).__init__(message)
+        self.message = message
+        self.exit_code = exit_code
+
+
 class ProfileNotFound(BaseException):
-	pass
+    pass
+
+
 class HardwareIncompatibilityError(BaseException):
-	pass
+    pass
+
+
 class PermissionError(BaseException):
-	pass
+    pass
+
+
 class UserError(BaseException):
-	pass
+    pass
+
+
 class ServiceException(BaseException):
-	pass
+    pass
