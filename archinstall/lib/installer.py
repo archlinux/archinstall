@@ -316,7 +316,7 @@ class Installer:
 				if 'encrypt' not in HOOKS:
 					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
 
-		if not (hasUEFI()):  # TODO: Allow for grub even on EFI
+		if not hasUEFI():  # TODO: Allow for grub even on EFI
 			self.base_packages.append('grub')
 
 		self.pacstrap(self.base_packages)
