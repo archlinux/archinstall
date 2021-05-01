@@ -45,7 +45,10 @@ class Installer:
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
-		self.helper_flags = {'base': False, 'bootloader': False}
+		self.helper_flags = {
+			'base': False,
+			'bootloader': False,
+		}
 
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
@@ -363,7 +366,7 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			if partition.mountpoint == self.target + '/boot':
+			if partition.mountpoint == f"{self.target}/boot":
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
@@ -387,7 +390,10 @@ class Installer:
 				with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
 					loader_data = loader.read().split('\n')
 			else:
-				loader_data = [f"default {self.init_time}", f"timeout 5"]
+				loader_data = [
+					f"default {self.init_time}",
+					f"timeout 5",
+				]
 
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
