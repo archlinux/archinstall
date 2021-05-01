@@ -48,9 +48,7 @@ if archinstall.arguments['harddrive']:
 	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
 		# We use the entire disk instead of setting up partitions on your own
 		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(
-				root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs')
-			)
+			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
 
 		boot = fs.find_partition('/boot')
 		root = fs.find_partition('/')
@@ -63,9 +61,7 @@ if archinstall.arguments['harddrive']:
 			root.encrypted = True
 			root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
 
-			with archinstall.luks2(
-				root, 'luksloop', archinstall.arguments.get('!encryption-password', None)
-			) as unlocked_root:
+			with archinstall.luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
 				unlocked_root.format(root.filesystem)
 				unlocked_root.mount('/mnt')
 		else:

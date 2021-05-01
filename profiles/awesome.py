@@ -50,6 +50,4 @@ if __name__ == 'awesome':
 
 	## Remove some interfering nemo settings
 	installation.arch_chroot("gsettings set org.nemo.desktop show-desktop-icons false")
-	installation.arch_chroot(
-		"xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search"
-	)
+	installation.arch_chroot("xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search")

@@ -22,9 +22,7 @@ def grab_url_data(path):
 	return response.read()
 
 
-def list_profiles(
-	filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False
-):
+def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
@@ -32,9 +30,7 @@ def list_profiles(
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		for root, folders, files in os.walk(
-			os.path.abspath(os.path.expanduser(PATH_ITEM + subpath))
-		):
+		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM + subpath))):
 			for file in files:
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
@@ -49,11 +45,7 @@ def list_profiles(
 						if first_line[0] == '#':
 							description = first_line[1:].strip()
 
-					cache[file[:-3]] = {
-						'path': os.path.join(root, file),
-						'description': description,
-						'tailored': tailored,
-					}
+					cache[file[:-3]] = {'path': os.path.join(root, file), 'description': description, 'tailored': tailored}
 			break
 
 	# Grab profiles from upstream URL
@@ -116,12 +108,11 @@ class Script:
 			self.namespace = self.original_namespace
 
 	def localize_path(self, profile_path):
-		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in (
-			'https',
-			'http',
-		):
+		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
-				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+				self.converted_path = (
+					f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
+				)
 
 				with open(self.converted_path, "w") as temp_file:
 					temp_file.write(urllib.request.urlopen(url.geturl()).read().decode('utf-8'))
@@ -150,9 +141,7 @@ class Script:
 			if os.path.isfile(self.profile):
 				return self.profile
 
-			raise ProfileNotFound(
-				f"File {self.profile} does not exist in {storage['PROFILE_PATH']}"
-			)
+			raise ProfileNotFound(f"File {self.profile} does not exist in {storage['PROFILE_PATH']}")
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:
@@ -286,9 +275,7 @@ class Application(Profile):
 			if os.path.isfile(self.profile):
 				return os.path.basename(self.profile)
 
-			raise ProfileNotFound(
-				f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}"
-			)
+			raise ProfileNotFound(f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}")
 		elif parsed_url.scheme in ('https', 'http'):
 			return self.localize_path(self.profile)
 		else:

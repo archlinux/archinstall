@@ -1,16 +1,6 @@
 import archinstall
 
-__packages__ = [
-	"awesome",
-	"xorg-xrandr",
-	"xterm",
-	"feh",
-	"slock",
-	"terminus-font",
-	"gnu-free-fonts",
-	"ttf-liberation",
-	"xsel",
-]
+__packages__ = ["awesome", "xorg-xrandr", "xterm", "feh", "slock", "terminus-font", "gnu-free-fonts", "ttf-liberation", "xsel"]
 
 installation.install_profile('xorg')
 

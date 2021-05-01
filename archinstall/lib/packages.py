@@ -11,9 +11,7 @@ def find_group(name):
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
 	try:
-		response = urllib.request.urlopen(
-			BASE_GROUP_URL.format(group=name), context=ssl_context
-		)
+		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
 	except urllib.error.HTTPError as err:
 		if err.code == 404:
 			return False

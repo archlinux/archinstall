@@ -4,18 +4,7 @@ import archinstall
 
 is_top_level_profile = False
 
-__packages__ = [
-	"sway",
-	"swaylock",
-	"swayidle",
-	"waybar",
-	"dmenu",
-	"light",
-	"grim",
-	"slurp",
-	"pavucontrol",
-	"alacritty",
-]
+__packages__ = ["sway", "swaylock", "swayidle", "waybar", "dmenu", "light", "grim", "slurp", "pavucontrol", "alacritty"]
 
 
 def _prep_function(*args, **kwargs):
@@ -30,9 +19,7 @@ def _prep_function(*args, **kwargs):
 			"The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues. Continue anyways? [y/N] "
 		)
 		if choice.lower() in ("n", ""):
-			raise archinstall.lib.exceptions.HardwareIncompatibilityError(
-				"Sway does not support the proprietary nvidia drivers."
-			)
+			raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers.")
 
 	__builtins__['_gfx_driver_packages'] = archinstall.select_driver()
 

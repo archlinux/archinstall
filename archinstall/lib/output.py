@@ -102,14 +102,7 @@ def supports_color():
 # Heavily influenced by: https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
 # Color options here: https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
 def stylize_output(text: str, *opts, **kwargs):
-	opt_dict = {
-		'bold': '1',
-		'italic': '3',
-		'underscore': '4',
-		'blink': '5',
-		'reverse': '7',
-		'conceal': '8',
-	}
+	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
 	color_names = ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')
 	foreground = {color_names[x]: '3%s' % x for x in range(8)}
 	background = {color_names[x]: '4%s' % x for x in range(8)}
@@ -151,7 +144,9 @@ def log(*args, **kwargs):
 				log_file.write("")
 		except PermissionError:
 			# Fallback to creating the log file in the current folder
-			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
+			err_string = (
+				f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
+			)
 			absolute_logfile = Path('./').absolute() / filename
 			absolute_logfile.parents[0].mkdir(exist_ok=True)
 			absolute_logfile = str(absolute_logfile)
