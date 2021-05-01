@@ -2,12 +2,12 @@ import archinstall
 import json
 import urllib.request
 
-__packages__ = ["nano", "wget", "git"]
+__packages__ = ['nano', 'wget', 'git']
 
-if __name__ == "52-54-00-12-34-56":
-    awesome = archinstall.Application(installation, "postgresql")
-    awesome.install()
-
+if __name__ == '52-54-00-12-34-56':
+	awesome = archinstall.Application(installation, 'postgresql')
+	awesome.install()
+	
 """
 # Unmount and close previous runs (Mainly only used for re-runs, but won't hurt.)
 archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)

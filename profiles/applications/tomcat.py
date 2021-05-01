@@ -9,4 +9,4 @@ __packages__ = ["tomcat10"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service("tomcat10")
+installation.enable_service('tomcat10')

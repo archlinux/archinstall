@@ -6,4 +6,4 @@ __packages__ = ["openssh"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service("sshd")
+installation.enable_service('sshd')

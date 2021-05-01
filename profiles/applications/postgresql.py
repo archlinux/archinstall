@@ -6,6 +6,6 @@ __packages__ = ["postgresql"]
 
 installation.add_additional_packages(__packages__)
 
-installation.arch_chroot("initdb -D /var/lib/postgres/data", runas="postgres")
+installation.arch_chroot("initdb -D /var/lib/postgres/data", runas='postgres')
 
-installation.enable_service("postgresql")
+installation.enable_service('postgresql')
