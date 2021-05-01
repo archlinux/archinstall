@@ -4,17 +4,7 @@ import archinstall, os, logging
 
 is_top_level_profile = True
 
-available_servers = [
-	"cockpit",
-	"docker",
-	"httpd",
-	"lighttpd",
-	"mariadb",
-	"nginx",
-	"postgresql",
-	"sshd",
-	"tomcat",
-]
+available_servers = ["cockpit", "docker", "httpd", "lighttpd", "mariadb", "nginx", "postgresql", "sshd", "tomcat"]
 
 
 def _prep_function(*args, **kwargs):
@@ -23,8 +13,7 @@ def _prep_function(*args, **kwargs):
 	before continuing any further.
 	"""
 	selected_servers = archinstall.generic_multi_select(
-		available_servers,
-		f"Choose which servers to install and enable (leave blank for a minimal installation): ",
+		available_servers, f"Choose which servers to install and enable (leave blank for a minimal installation): "
 	)
 	archinstall.storage['_selected_servers'] = selected_servers
 

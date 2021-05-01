@@ -6,9 +6,7 @@ from .output import log
 from .storage import storage
 
 
-def filter_mirrors_by_region(
-	regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs
-):
+def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs):
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -26,9 +24,7 @@ def filter_mirrors_by_region(
 			)
 		)
 	)
-	o = b''.join(
-		sys_command((f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist"))
-	)
+	o = b''.join(sys_command((f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist")))
 	o = b''.join(sys_command((f"/usr/bin/mv {tmp_dir}/mirrorlist {destination}")))
 
 	return True
@@ -83,14 +79,7 @@ def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
 
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if (
-		sys_command(
-			(
-				f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist'
-			)
-		).exit_code
-		== 0
-	):
+	if sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
 		return True
 	return False
 
@@ -102,9 +91,7 @@ def list_mirrors():
 	try:
 		response = urllib.request.urlopen(url)
 	except urllib.error.URLError as err:
-		log(
-			f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow"
-		)
+		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
 		return regions
 
 	region = 'Unknown region'

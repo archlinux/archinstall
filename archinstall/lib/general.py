@@ -85,16 +85,7 @@ class sys_command:  # Thread):
 	Stolen from archinstall_gui
 	"""
 
-	def __init__(
-		self,
-		cmd,
-		callback=None,
-		start_callback=None,
-		peak_output=False,
-		environment_vars={},
-		*args,
-		**kwargs,
-	):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
@@ -174,9 +165,7 @@ class sys_command:  # Thread):
 			'started': self.started,
 			'ended': self.ended,
 			'started_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
-			'ended_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended))
-			if self.ended
-			else None,
+			'ended_pprint': ('{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None),
 			'exit_code': self.exit_code,
 		}
 
@@ -271,14 +260,8 @@ class sys_command:  # Thread):
 							trigger_pos = self.trace_log[last_trigger_pos:].lower().find(trigger.lower())
 
 							if 'debug' in self.kwargs and self.kwargs['debug']:
-								self.log(
-									f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}",
-									level=logging.DEBUG,
-								)
-								self.log(
-									f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}",
-									level=logging.DEBUG,
-								)
+								self.log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", level=logging.DEBUG)
+								self.log(f"Writing to subprocess {self.cmd[0]}: {self.kwargs['events'][trigger].decode('UTF-8')}", level=logging.DEBUG)
 
 							last_trigger_pos = trigger_pos
 							os.write(child_fd, self.kwargs['events'][trigger])
@@ -292,9 +275,7 @@ class sys_command:  # Thread):
 					## Adding a exit trigger:
 					if len(self.kwargs['events']) == 0:
 						if 'debug' in self.kwargs and self.kwargs['debug']:
-							self.log(
-								f"Waiting for last command {self.cmd[0]} to finish.", level=logging.DEBUG
-							)
+							self.log(f"Waiting for last command {self.cmd[0]} to finish.", level=logging.DEBUG)
 
 						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0 - len(f']$') - 5 :].lower():
 							if 'debug' in self.kwargs and self.kwargs['debug']:

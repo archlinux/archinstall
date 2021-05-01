@@ -12,15 +12,7 @@ from .storage import storage
 from .hardware import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = [
-	"base",
-	"base-devel",
-	"linux-firmware",
-	"linux",
-	"linux-lts",
-	"linux-zen",
-	"linux-hardened",
-]
+__packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 
 class Installer:
@@ -55,9 +47,7 @@ class Installer:
 
 		self.helper_flags = {'base': False, 'bootloader': False}
 
-		self.base_packages = (
-			base_packages.split(' ') if type(base_packages) is str else base_packages
-		)
+		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
 
@@ -88,22 +78,14 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(
-				f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}"
-			)
-			print(
-				f"    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-			)
+			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
+			print(f"    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
 
 		if not (missing_steps := self.post_install_check()):
-			self.log(
-				'Installation completed without any errors. You may now reboot.',
-				fg='green',
-				level=logging.INFO,
-			)
+			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
 			self.sync_log_to_install_medium()
 
 			return True
@@ -116,13 +98,8 @@ class Installer:
 			for step in missing_steps:
 				self.log(f' - {step}', fg='red', level=logging.WARNING)
 
-			self.log(
-				f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING
-			)
-			self.log(
-				f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues",
-				level=logging.WARNING,
-			)
+			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
+			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
 
 			self.sync_log_to_install_medium()
 			return False
@@ -156,11 +133,7 @@ class Installer:
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (
-				pacstrap := sys_command(
-					f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs
-				)
-			).exit_code == 0:
+			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
@@ -178,9 +151,7 @@ class Installer:
 			fstab_fh.write(fstab)
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
-			raise RequirementError(
-				f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}'
-			)
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
 
 		return True
 
@@ -197,11 +168,7 @@ class Installer:
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
 			fh.write(f'LANG={locale}.{encoding}\n')
 
-		return (
-			True
-			if sys_command(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0
-			else False
-		)
+		return True if sys_command(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
 		if not zone:
@@ -211,16 +178,10 @@ class Installer:
 
 		if (pathlib.Path("/usr") / "share" / "zoneinfo" / zone).exists():
 			(pathlib.Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
-			sys_command(
-				f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime'
-			)
+			sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 		else:
-			self.log(
-				f"Time zone {zone} does not exist, continuing with system default.",
-				level=logging.WARNING,
-				fg='red',
-			)
+			self.log(f"Time zone {zone} does not exist, continuing with system default.", level=logging.WARNING, fg='red')
 
 	def activate_ntp(self):
 		self.log(f'Installing and activating NTP.', level=logging.INFO)
@@ -246,9 +207,7 @@ class Installer:
 	def drop_to_shell(self):
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
-	def configure_nic(
-		self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs
-	):
+	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
 		if dhcp:
 			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
 		else:
@@ -299,9 +258,7 @@ class Installer:
 				os.makedirs(f"{self.target}/etc/systemd/network/")
 
 			for netconf_file in netconfigurations:
-				shutil.copy2(
-					netconf_file, f"{self.target}/etc/systemd/network/{os.path.basename(netconf_file)}"
-				)
+				shutil.copy2(netconf_file, f"{self.target}/etc/systemd/network/{os.path.basename(netconf_file)}")
 
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
@@ -322,8 +279,7 @@ class Installer:
 			return partition
 		elif (
 			partition.parent not in partition.path
-			and Partition(partition.parent, None, autodetect_filesystem=True).filesystem
-			== 'crypto_LUKS'
+			and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS'
 		):
 			return Partition(partition.parent, None, autodetect_filesystem=True)
 
@@ -338,17 +294,7 @@ class Installer:
 		MODULES = []
 		BINARIES = []
 		FILES = []
-		HOOKS = [
-			"base",
-			"udev",
-			"autodetect",
-			"keyboard",
-			"keymap",
-			"modconf",
-			"block",
-			"filesystems",
-			"fsck",
-		]
+		HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
 
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
@@ -385,9 +331,7 @@ class Installer:
 			else:
 				self.log("Unknown cpu vendor not installing ucode")
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
-			fstab.write(
-				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
-			)  # Redundant \n at the start? who knows?
+			fstab.write("\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n")  # Redundant \n at the start? who knows?
 
 		## TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
@@ -424,10 +368,7 @@ class Installer:
 			elif partition.mountpoint == self.target:
 				root_partition = partition
 
-		self.log(
-			f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}',
-			level=logging.INFO,
-		)
+		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			self.pacstrap('efibootmgr')
@@ -439,9 +380,7 @@ class Installer:
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(
-				f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install'
-			)
+			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
@@ -481,21 +420,13 @@ class Installer:
 				if (real_device := self.detect_encryption(root_partition)) :
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(
-						f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.",
-						level=logging.DEBUG,
-					)
-					entry.write(
-						f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n'
-					)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
 				else:
 					log(
-						f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.",
-						level=logging.DEBUG,
+						f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG
 					)
-					entry.write(
-						f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n'
-					)
+					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
 
 				self.helper_flags['bootloader'] = bootloader
 				return True
@@ -518,26 +449,19 @@ class Installer:
 			else:
 				root_device = (
 					subprocess.check_output(
-						f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"',
-						shell=True,
+						f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"', shell=True
 					)
 					.decode()
 					.strip()
 				)
 				if root_device == "block":
 					root_device = f"{root_partition.path}"
-				o = b''.join(
-					sys_command(
-						f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'
-					)
-				)
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = bootloader
 				return True
 		else:
-			raise RequirementError(
-				f"Unknown (or not yet implemented) bootloader requested: {bootloader}"
-			)
+			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)
@@ -566,17 +490,13 @@ class Installer:
 
 	def user_create(self, user: str, password=None, groups=[], sudo=False):
 		self.log(f'Creating user {user}', level=logging.INFO)
-		o = b''.join(
-			sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
-		)
+		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
 		if password:
 			self.user_set_pw(user, password)
 
 		if groups:
 			for group in groups:
-				o = b''.join(
-					sys_command(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}')
-				)
+				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}'))
 
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
@@ -588,19 +508,13 @@ class Installer:
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		o = b''.join(
-			sys_command(
-				f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""
-			)
-		)
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
 
 	def user_set_shell(self, user, shell):
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
-		o = b''.join(
-			sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
-		)
+		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
 
 	def set_keyboard_language(self, language):
@@ -609,9 +523,5 @@ class Installer:
 				vconsole.write(f'KEYMAP={language}\n')
 				vconsole.write(f'FONT=lat9w-16\n')
 		else:
-			self.log(
-				f'Keyboard language was not changed from default (no language specified).',
-				fg="yellow",
-				level=logging.INFO,
-			)
+			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 		return True

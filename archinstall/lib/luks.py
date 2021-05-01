@@ -11,16 +11,7 @@ from .storage import storage
 
 
 class luks2:
-	def __init__(
-		self,
-		partition,
-		mountpoint,
-		password,
-		key_file=None,
-		auto_unmount=False,
-		*args,
-		**kwargs,
-	):
+	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
 		self.password = password
 		self.partition = partition
 		self.mountpoint = mountpoint
@@ -55,19 +46,9 @@ class luks2:
 			raise args[1]
 		return True
 
-	def encrypt(
-		self,
-		partition,
-		password=None,
-		key_size=512,
-		hash_type='sha512',
-		iter_time=10000,
-		key_file=None,
-	):
+	def encrypt(self, partition, password=None, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		if not self.partition.allow_formatting:
-			raise DiskError(
-				f'Could not encrypt volume {self.partition} due to it having a formatting lock.'
-			)
+			raise DiskError(f'Could not encrypt volume {self.partition} due to it having a formatting lock.')
 
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
@@ -123,9 +104,7 @@ class luks2:
 
 				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 				# For instance: /dev/sda
-				devinfo = json.loads(
-					b''.join(sys_command(f"lsblk --fs -J {partition.path}")).decode('UTF-8')
-				)['blockdevices'][0]
+				devinfo = json.loads(b''.join(sys_command(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
 
 				# For each child (sub-partition/sub-device)
 				if len(children := devinfo.get('children', [])):
@@ -163,22 +142,14 @@ class luks2:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
 		wait_timer = time.time()
-		while (
-			pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10
-		):
+		while pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		sys_command(
-			f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2'
-		)
+		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 			unlocked_partition = Partition(
-				self.mapdev,
-				None,
-				encrypted=True,
-				filesystem=get_filesystem_type(self.mapdev),
-				autodetect_filesystem=False,
+				self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False
 			)
 			unlocked_partition.allow_formatting = self.partition.allow_formatting
 			return unlocked_partition
@@ -191,9 +162,5 @@ class luks2:
 		return os.path.islink(self.mapdev) is False
 
 	def format(self, path):
-		if (
-			handle := sys_command(f"/usr/bin/cryptsetup -q -v luksErase {path}")
-		).exit_code != 0:
-			raise DiskError(
-				f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}'
-			)
+		if (handle := sys_command(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
+			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')

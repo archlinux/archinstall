@@ -6,14 +6,7 @@ is_top_level_profile = False
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
-__packages__ = [
-	'i3lock',
-	'i3status',
-	'i3blocks',
-	'xterm',
-	'lightdm-gtk-greeter',
-	'lightdm',
-]
+__packages__ = ['i3lock', 'i3status', 'i3blocks', 'xterm', 'lightdm-gtk-greeter', 'lightdm']
 
 
 def _prep_function(*args, **kwargs):
@@ -26,10 +19,7 @@ def _prep_function(*args, **kwargs):
 
 	supported_configurations = ['i3-wm', 'i3-gaps']
 	desktop = archinstall.generic_select(
-		supported_configurations,
-		'Select your desired configuration: ',
-		allow_empty_input=False,
-		sort=True,
+		supported_configurations, 'Select your desired configuration: ', allow_empty_input=False, sort=True
 	)
 
 	# Temporarily store the selected desktop profile
