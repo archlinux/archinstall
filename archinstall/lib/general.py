@@ -12,9 +12,7 @@ def gen_uid(entropy_length=256):
 
 
 def multisplit(s, splitters):
-	s = [
-		s,
-	]
+	s = [s]
 	for key in splitters:
 		ns = []
 		for obj in s:

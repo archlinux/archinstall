@@ -18,11 +18,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: PEP8 formatting checks using black
         run: |
-<<<<<<< HEAD
-          python -m black --check --skip-string-normalization . || exit 0
-=======
           python -m black --check --skip-string-normalization --line-length 127 . || exit 0
->>>>>>> 56ca6e2805ba54f9de0a52682a221ccb9c7e6a63
 #      - name: Test with pytest
 #        run: |
 #          pytest
