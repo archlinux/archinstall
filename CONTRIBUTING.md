@@ -24,7 +24,6 @@ The exceptions to PEP8 are:
  * [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) should aim for no more than 100 characters, but not strictly enforced.
  * [Line breaks before/after binary operator](https://www.python.org/dev/peps/pep-0008/#should-a-line-break-before-or-after-a-binary-operator) is not enforced, as long as the style of line breaks are consistent within the same code block.
  * Archinstall should always be saved with **Unix-formatted line endings** and no other platform-specific formats.
- * [Blank lines](https://www.python.org/dev/peps/pep-0008/#blank-lines) before/after imports and functions are not followed and discouraged. One space is commonly used in archinstall.
  * Multiple [Imports](https://www.python.org/dev/peps/pep-0008/#imports) on the same line is allowed, but more than five imports should be avoided on any given line. This simply saves up some space at the top of the file *(for non-IDE developers)* and will not be enforced.
  * [String quotes](https://www.python.org/dev/peps/pep-0008/#string-quotes) follow PEP8, the exception being when creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(Example: `f"Welcome {name}"` rather than `f'Welcome {name}'`)*.
 
