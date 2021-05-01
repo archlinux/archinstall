@@ -6,4 +6,4 @@ __packages__ = ["cockpit", "udisks2", "packagekit"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service('cockpit.socket')
+installation.enable_service("cockpit.socket")

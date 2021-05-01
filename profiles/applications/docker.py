@@ -6,4 +6,4 @@ __packages__ = ["docker"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service('docker')
+installation.enable_service("docker")

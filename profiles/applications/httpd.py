@@ -6,4 +6,4 @@ __packages__ = ["apache"]
 
 installation.add_additional_packages(__packages__)
 
-installation.enable_service('httpd')
+installation.enable_service("httpd")

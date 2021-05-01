@@ -6,6 +6,8 @@ __packages__ = ["mariadb"]
 
 installation.add_additional_packages(__packages__)
 
-installation.arch_chroot("mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql")
+installation.arch_chroot(
+    "mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql"
+)
 
-installation.enable_service('mariadb')
+installation.enable_service("mariadb")
