@@ -1,4 +1,4 @@
-import urllib.request
+import urllib.request, logging
 
 from .exceptions import *
 from .general import *
@@ -59,7 +59,7 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
-	log(f'A new package mirror-list has been created: {destination}', level=LOG_LEVELS.Info)
+	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	for region, mirrors in regions.items():
 		with open(destination, 'w') as mirrorlist:
 			for mirror in mirrors:
@@ -79,7 +79,7 @@ def list_mirrors():
 	try:
 		response = urllib.request.urlopen(url)
 	except urllib.error.URLError as err:
-		log(f'Could not fetch an active mirror-list: {err}', level=LOG_LEVELS.Warning, fg="yellow")
+		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
 		return regions
 
 

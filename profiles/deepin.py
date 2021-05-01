@@ -1,10 +1,10 @@
-# A desktop environment using "MATE"
+# A desktop environment using "Deepin".
 
-import archinstall
+import archinstall, os
 
 is_top_level_profile = False
 
-__packages__ = ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"]
+__packages__ = ["deepin", "deepin-terminal", "deepin-editor"]
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -14,7 +14,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# MATE requires a functional xorg installation.
+	# Deepin requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
@@ -22,14 +22,16 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("mate", "/somewhere/mate.py")
-# or through conventional import mate
-if __name__ == 'mate':
+# through importlib.util.spec_from_file_location("deepin", "/somewhere/deepin.py")
+# or through conventional import deepin
+if __name__ == 'deepin':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the MATE packages
+	# Install the Deepin packages
 	installation.add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	# Enable autostart of Deepin for all users
+	installation.enable_service('lightdm')

@@ -21,3 +21,6 @@ SAFETY_LOCK
 **/**.target
 **/**.qcow2
 **/test.py
+**/archiso
+/guided.py
+/install.log

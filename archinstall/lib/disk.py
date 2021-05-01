@@ -1,10 +1,11 @@
 import glob, re, os, json, time, hashlib
-import pathlib, traceback
+import pathlib, traceback, logging
 from collections import OrderedDict
 from .exceptions import DiskError
 from .general import *
-from .output import log, LOG_LEVELS
+from .output import log
 from .storage import storage
+from .hardware import hasUEFI
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -73,7 +74,7 @@ class BlockDevice():
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(sys_command(f'losetup --json', hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(sys_command(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path: continue
 
 				return drive['back-file']
@@ -87,17 +88,17 @@ class BlockDevice():
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
 		else:
-			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=LOG_LEVELS.Debug)
+			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=logging.DEBUG)
 
 	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	#		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
 
 	@property
 	def partitions(self):
-		o = b''.join(sys_command(f'partprobe {self.path}'))
+		o = b''.join(sys_command(['partprobe', self.path]))
 
 		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
-		o = b''.join(sys_command(f'/usr/bin/lsblk -J {self.path}'))
+		o = b''.join(sys_command(['/usr/bin/lsblk', '-J', self.path]))
 
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
@@ -128,7 +129,7 @@ class BlockDevice():
 
 	@property
 	def uuid(self):
-		log(f'BlockDevice().uuid is untested!', level=LOG_LEVELS.Warning, fg='yellow')
+		log(f'BlockDevice().uuid is untested!', level=logging.WARNING, fg='yellow')
 		"""
 		Returns the disk UUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -220,9 +221,6 @@ class Partition():
 
 	@encrypted.setter
 	def encrypted(self, value :bool):
-		if value:
-			log(f'Marking {self} as encrypted: {value}', level=LOG_LEVELS.Debug)
-			#log(f"Callstrack when marking the partition: {''.join(traceback.format_stack())}", level=LOG_LEVELS.Debug)
 
 		self._encrypted = value
 
@@ -239,7 +237,7 @@ class Partition():
 		return self.path
 
 	def detect_inner_filesystem(self, password):
-		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=LOG_LEVELS.Info)
+		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
 		from .luks import luks2
 
 		try:
@@ -268,16 +266,16 @@ class Partition():
 
 	def safe_to_format(self):
 		if self.allow_formatting is False:
-			log(f"Partition {self} is not marked for formatting.", level=LOG_LEVELS.Debug)
+			log(f"Partition {self} is not marked for formatting.", level=logging.DEBUG)
 			return False
 		elif self.target_mountpoint == '/boot':
 			try:
 				if self.has_content():
-					log(f"Partition {self} is a boot partition and has content inside.", level=LOG_LEVELS.Debug)
+					log(f"Partition {self} is a boot partition and has content inside.", level=logging.DEBUG)
 					return False
 			except SysCallError as err:
-				log(err.message, LOG_LEVELS.Debug)
-				log(f"Partition {self} was identified as /boot but we could not mount to check for content, continuing!", level=LOG_LEVELS.Debug)
+				log(err.message, logging.DEBUG)
+				log(f"Partition {self} was identified as /boot but we could not mount to check for content, continuing!", level=logging.DEBUG)
 				pass
 
 		return True
@@ -292,7 +290,7 @@ class Partition():
 			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
 
 		if not self.safe_to_format():
-			log(f"Partition {self} was marked as protected but encrypt() was called on it!", level=LOG_LEVELS.Error, fg="red")
+			log(f"Partition {self} was marked as protected but encrypt() was called on it!", level=logging.ERROR, fg="red")
 			return False
 
 		handle = luks2(self, None, None)
@@ -320,7 +318,7 @@ class Partition():
 			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
 
 		if log_formatting:
-			log(f'Formatting {path} -> {filesystem}', level=LOG_LEVELS.Info)
+			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
 
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {path}'))
@@ -375,7 +373,7 @@ class Partition():
 
 	def mount(self, target, fs=None, options=''):
 		if not self.mountpoint:
-			log(f'Mounting {self} to {target}', level=LOG_LEVELS.Info)
+			log(f'Mounting {self} to {target}', level=logging.INFO)
 			if not fs:
 				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
@@ -427,25 +425,30 @@ class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice, mode=GPT):
+	def __init__(self, blockdevice,mode):
 		self.blockdevice = blockdevice
 		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
 		if self.blockdevice.keep_partitions is False:
-			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=LOG_LEVELS.Debug)
+			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=logging.DEBUG)
 			if self.mode == GPT:
 				if self.raw_parted(f'{self.blockdevice.device} mklabel gpt').exit_code == 0:
 					self.blockdevice.flush_cache()
 					return self
 				else:
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+			elif self.mode == MBR:
+				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
+					return self
+				else:
+					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 		
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
 		elif self.mode == self.blockdevice.partition_table_type:
-			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=LOG_LEVELS.Debug)
+			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
 		else:
 			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
 
@@ -468,7 +471,6 @@ class Filesystem():
 
 	def raw_parted(self, string:str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
-		log(f"'parted -s {string}' returned: {b''.join(x)}", level=LOG_LEVELS.Debug)
 		return x
 
 	def parted(self, string:str):
@@ -481,29 +483,40 @@ class Filesystem():
 		return self.raw_parted(string).exit_code
 
 	def use_entire_disk(self, root_filesystem_type='ext4'):
-		log(f"Using and formatting the entire {self.blockdevice}.", level=LOG_LEVELS.Debug)
-		self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
-		self.set_name(0, 'EFI')
-		self.set(0, 'boot on')
-		# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
-		# https://www.gnu.org/software/parted/manual/html_node/set.html
-		self.set(0, 'esp on')
-		self.add_partition('primary', start='513MiB', end='100%')
+		log(f"Using and formatting the entire {self.blockdevice}.", level=logging.DEBUG)
+		if hasUEFI():
+			self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
+			self.set_name(0, 'EFI')
+			self.set(0, 'boot on')
+			# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
+			# https://www.gnu.org/software/parted/manual/html_node/set.html
+			self.set(0, 'esp on')
+			self.add_partition('primary', start='513MiB', end='100%')
 
-		self.blockdevice.partition[0].filesystem = 'vfat'
-		self.blockdevice.partition[1].filesystem = root_filesystem_type
-		log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=LOG_LEVELS.Debug)
+			self.blockdevice.partition[0].filesystem = 'vfat'
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
 
-		self.blockdevice.partition[0].target_mountpoint = '/boot'
-		self.blockdevice.partition[1].target_mountpoint = '/'
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
 
-		self.blockdevice.partition[0].allow_formatting = True
-		self.blockdevice.partition[1].allow_formatting = True
+			self.blockdevice.partition[0].allow_formatting = True
+			self.blockdevice.partition[1].allow_formatting = True
+		else:
+			#we don't need a seprate boot partition it would be a waste of space
+			self.add_partition('primary', start='1MB', end='100%')
+			self.blockdevice.partition[0].filesystem=root_filesystem_type
+			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
+			self.blockdevice.partition[0].target_mountpoint = '/'
+			self.blockdevice.partition[0].allow_formatting = True
 
 	def add_partition(self, type, start, end, format=None):
-		log(f'Adding partition to {self.blockdevice}', level=LOG_LEVELS.Info)
+		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
 		
 		previous_partitions = self.blockdevice.partitions
+		if self.mode == MBR:
+			if len(self.blockdevice.partitions)>3:
+				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
 		else:
