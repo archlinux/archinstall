@@ -47,8 +47,6 @@ def ask_user_questions():
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
 	else:
 		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
-		if archinstall.arguments['harddrive'] is None:
-			archinstall.arguments['target-mount'] = '/mnt'
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
@@ -234,7 +232,7 @@ def ask_user_questions():
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
 
-def perform_installation_steps():
+def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
@@ -298,9 +296,6 @@ def perform_installation_steps():
 				fs.find_partition('/').mount('/mnt')
 			if hasUEFI():
 				fs.find_partition('/boot').mount('/mnt/boot')
-	
-	perform_installation('/mnt')
-
 
 def perform_installation(mountpoint):
 	"""
@@ -392,4 +387,5 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
 
 ask_user_questions()
-perform_installation_steps()
+perform_filesystem_operations()
+perform_installation(archinstall.arguments.get('target-mountpoint', None))
