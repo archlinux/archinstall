@@ -36,17 +36,24 @@ def ask_user_questions():
 				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 				break
 			except archinstall.RequirementError as e:
-				archinstall.log(e,  fg="red")
+				archinstall.log(e, fg="red")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
 
 
-	# Ask which harddrive/block-device we will install to
-	if archinstall.arguments.get('harddrive', None):
-		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
+	# Ask which harddrives/block-devices we will install to
+	# and convert them into archinstall.BlockDevice() objects.
+	if archinstall.arguments.get('harddrives', None):
+		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 	else:
-		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
+		archinstall.arguments['harddrives'] = [
+			archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.generic_multi_select(archinstall.all_disks(),
+																								text="Select one or more harddrives to use and configure (leave blank to skip this step): "
+																								allow_empty=True)
+		]
+
+
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
