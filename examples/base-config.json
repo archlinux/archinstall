@@ -1,0 +1,26 @@
+{
+    "audio": null,
+    "bootloader": "systemd-bootctl",
+    "filesystem": "btrfs",
+    "harddrive": {
+        "path": "/dev/sdb"
+    },
+    "hostname": "box",
+    "kernels": [
+        "linux",
+        "linux-zen"
+    ],
+    "keyboard-language": "us",
+    "mirror-region": {
+        "Worldwide": {
+            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+        }
+    },
+    "nic": {
+        "NetworkManager": true,
+        "nic": "Use NetworkManager to control and manage your internet connection"
+    },
+    "packages": [],
+    "profile": null,
+    "timezone": "UTC"
+}

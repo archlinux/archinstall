@@ -237,7 +237,8 @@ def perform_installation_steps():
 	archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=logging.INFO)
 	print()
 
-	input('Press Enter to continue.')
+	if not archinstall.arguments.get('silent'):
+		input('Press Enter to continue.')
 
 	"""
 		Issue a final warning before we continue with something un-revertable.
@@ -376,12 +377,13 @@ def perform_installation(mountpoint):
 						exit(1)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
-		choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-		if choice.lower() in ("y", ""):
-			try:
-				installation.drop_to_shell()
-			except:
-				pass
+		if not archinstall.arguments.get('silent'):
+			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")	
+			if choice.lower() in ("y", ""):
+				try:
+					installation.drop_to_shell()
+				except:
+					pass
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)

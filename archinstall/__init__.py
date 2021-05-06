@@ -15,6 +15,7 @@ from .lib.output import *
 from .lib.storage import *
 from .lib.hardware import *
 from argparse import ArgumentParser, FileType
+from dotenv import load_dotenv
 parser = ArgumentParser()
 
 __version__ = "2.2.0"
@@ -26,6 +27,9 @@ __version__ = "2.2.0"
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="json config file", type=FileType("r", encoding="UTF-8"))
+	parser.add_argument("--env", nargs="?", help="env file with sensitive info", type=FileType("r", encoding="UTF-8"))
+	parser.add_argument("--noconfirm", action="store_true",
+                    help="Warning!!! Silent install")
 	parser.add_argument("--vars",
 						metavar="KEY=VALUE",
 						nargs='?',
@@ -48,6 +52,12 @@ def initialize_arguments():
 				config[key] = val
 		except Exception as e:
 			print(e)
+	if args.env is not None:
+		load_dotenv(args.env.name)
+		config['!root-password'] = os.getenv("ROOT_PASSWD")
+		config['users'] = json.loads(os.getenv("USERS"))
+		config['superusers'] = json.loads(os.getenv("SUPERUSERS"))
+	config["silent"] = args.noconfirm
 	return config
 
 arguments = initialize_arguments()
