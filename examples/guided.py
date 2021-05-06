@@ -57,10 +57,10 @@ def ask_user_questions():
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
 	# Get disk encryption password (or skip if blank)
-	if archinstall.arguments['harddrive'] and archinstall.arguments.get('!encryption-password', None) is None:
+	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
-			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
+
 	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):

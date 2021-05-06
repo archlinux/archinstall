@@ -30,7 +30,6 @@ class BlockDevice():
 		# TODO: Currently disk encryption is a BIT misleading.
 		#       It's actually partition-encryption, but for future-proofing this
 		#       I'm placing the encryption password on a BlockDevice level.
-		self.encryption_password = None
 
 	def __repr__(self, *args, **kwargs):
 		return f"BlockDevice({self.device})"
