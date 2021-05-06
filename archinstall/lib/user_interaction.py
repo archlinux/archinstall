@@ -673,6 +673,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 	
 	drivers = sorted(list(options))
+	default_option = options["All open-source (default)"]
 	
 	if drivers:
 		lspci = sys_command(f'/usr/bin/lspci')
@@ -683,7 +684,11 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ", allow_empty_input=False)
+		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
+
+		if not initial_option:
+			return default_option
+
 		selected_driver = options[initial_option]
 
 		if type(selected_driver) == dict:
