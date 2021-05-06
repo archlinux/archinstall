@@ -484,6 +484,48 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
+def select_partitions(block_devices :list):
+	return {
+		"/dev/sda": { # Block Device level
+			"wipe": False, # Safety flags
+			"partitions" : [ # Affected  / New partitions
+				{
+					"PARTUUID" : "654bb317-1b73-4339-9a00-7222792f4ba9", # If existing partition
+					"wipe" : False, # Safety flags
+					"boot" : True,  # Safety flags / new flags
+					"ESP" : True    # Safety flags / new flags
+				}
+			]
+		},
+		"/dev/sdb" : {
+			"wipe" : True,
+			"partitions" : [
+				{
+					# No PARTUUID required here since it's a new partition
+					"type" : "primary", # parted options
+					"size" : "100%",
+					"filesystem" : {
+						"encrypted" : True, # TODO: Not sure about this here
+						"format": "btrfs",  # mkfs options
+					}
+				}
+			]
+		}
+	}
+
+def select_disk_layout(block_devices :list):
+	modes = [
+		"Wipe all selected drives and use a best-effort default partition layout",
+		"Select which partitions to use (and what to do with them)"
+	]
+
+	mode = input("Do you wish to ")
+
+	if mode == 'Select which partitions to use (and what to do with them)':
+		return select_partitions(block_devices)
+	else:
+		return get_default_partition_layout(block_devices)
+
 def select_disk(dict_o_disks):
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.

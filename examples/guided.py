@@ -24,10 +24,12 @@ def ask_user_questions():
 			except archinstall.RequirementError as err:
 				archinstall.log(err, fg="red")
 
+
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
 	if len(archinstall.arguments['keyboard-language']):
 		archinstall.set_keyboard_language(archinstall.arguments['keyboard-language'])
+
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
@@ -56,19 +58,26 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
+
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 
+
+	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+
+
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
 
+
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
+
 
 	# Ask for additional users (super-user if root pw was not set)
 	archinstall.arguments['users'] = {}
@@ -80,11 +89,13 @@ def ask_user_questions():
 	archinstall.arguments['users'] = users
 	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
+
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
 	else:
 		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
+
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
@@ -96,6 +107,7 @@ def ask_user_questions():
 				)
 				exit(1)
 
+
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
 		# only ask for audio server selection on a desktop profile 
@@ -106,10 +118,12 @@ def ask_user_questions():
 			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
 			archinstall.arguments['audio'] = None
 
+
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
 		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
