@@ -24,7 +24,23 @@ Or use `pip install --upgrade archinstall` to use as a library.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # python -m archinstall guided
+    # python -m archinstall --script guided
+
+
+## Running from a declarative [config](examples/base-config.json)
+
+Prequisites:
+   1. Create a .env file with the following contents to provide credentials for user creation.
+    
+    ROOT_PASSWD=<root_password>
+    USERS={ "<user1>": { "!password": "<password>" }, "<user2>": { "!password": "<password>" }}
+    SUPERUSERS={ "<superuser1>": { "!password": "<password>" }, "<superuser2>": { "!password": "<password>" }}
+    
+   2. Edit the [config](examples/base-config.json) according to your requirements.
+
+Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
+
+    # python -m archinstall --config <path to config file> --env <path to your .env file>
 
 # Help?
 
@@ -139,7 +155,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup -fP ./testimage.img
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
-    # python -m archinstall guided
+    # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
 This will create a *5GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
