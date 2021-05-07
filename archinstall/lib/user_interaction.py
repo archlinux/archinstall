@@ -484,7 +484,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
-def select_partitions(block_devices :list):
+def select_partition_layout(block_device):
 	return {
 		"/dev/sda": { # Block Device level
 			"wipe": False, # Safety flags
@@ -493,7 +493,8 @@ def select_partitions(block_devices :list):
 					"PARTUUID" : "654bb317-1b73-4339-9a00-7222792f4ba9", # If existing partition
 					"wipe" : False, # Safety flags
 					"boot" : True,  # Safety flags / new flags
-					"ESP" : True    # Safety flags / new flags
+					"ESP" : True,   # Safety flags / new flags
+					"mountpoint" : "/mnt/boot"
 				}
 			]
 		},
@@ -507,24 +508,43 @@ def select_partitions(block_devices :list):
 					"filesystem" : {
 						"encrypted" : True, # TODO: Not sure about this here
 						"format": "btrfs",  # mkfs options
-					}
+					},
+					"mountpoint" : "/mnt"
 				}
 			]
 		}
 	}
 
+def select_individual_blockdevice_usage(block_devices :list):
+	result = {}
+
+	for device in block_devices:
+		print(f'Select what to do with {device}')
+		modes = [
+			"Wipe and create new partitions",
+			"Re-use partitions"
+		]
+
+		device_mode = generic_select(modes)
+		if device_mode == "Re-use partitions":
+			layout = select_partition_layout(device)
+			result[device.path] = layout
+		else:
+			...
+
+
 def select_disk_layout(block_devices :list):
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
-		"Select which partitions to use (and what to do with them)"
+		"Select what to do with each individual drive (followed by partition usage)"
 	]
 
 	mode = input("Do you wish to ")
 
-	if mode == 'Select which partitions to use (and what to do with them)':
-		return select_partitions(block_devices)
-	else:
+	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
 		return get_default_partition_layout(block_devices)
+	else:
+		partitions = select_individual_blockdevice_usage(block_devices)
 
 def select_disk(dict_o_disks):
 	"""
