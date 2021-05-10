@@ -128,13 +128,19 @@ class Installer():
 		if type(packages[0]) in (list, tuple): packages = packages[0]
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
-				return True
+		n = 5
+		state = False
+		while n > 0:
+			n -= 1
+			if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
+				if (pacstrap := sys_command(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
+					state = True
+					break
+				else:
+					self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
 			else:
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
-		else:
-			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
+				self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
+		return state
 
 	def set_mirrors(self, mirrors):
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
