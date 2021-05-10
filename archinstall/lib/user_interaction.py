@@ -444,6 +444,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	# Therefore, now we can only provide the dictionary itself
 	if type(options) == dict: options = list(options.values())
 	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
+	options = [x for x in options if x] # Clean it up from empty options
 	if len(options) == 0:
 		log(f" * Generic select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
@@ -515,6 +516,77 @@ def select_partition_layout(block_device):
 		}
 	}
 
+def valid_fs_type(fstype :str) -> bool:
+	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+	return fstype in [
+		"ext2",
+		"fat16", "fat32",
+		"hfs", "hfs+", "hfsx",
+		"linux-swap",
+		"NTFS",
+		"reiserfs",
+		"ufs",
+		"btrfs",
+	]
+
+def valid_parted_position(pos :str):
+	return len(pos) and (start.isdigit() or (start[-1] == '%' and start[:-1].isdigit()))
+
+def partition_overlap(partitions :list, start :str, end :str) -> bool:
+	# TODO: Implement sanity check
+	return False
+
+def wipe_and_create_partitions(block_device):
+	if hasUEFI():
+		partition_type = 'gpt'
+	else:
+		partition_type = 'msdos'
+
+	partitions_result = []
+
+	while True:
+		modes = [
+			"Create new partition",
+			"Delete partition" if len(block_device) else "",
+			"Assign mount-point for partition" if len(block_device) else "",
+			"Mark a partition as encrypted" if len(block_device) else "",
+			"Mark a partition as bootable (automatic for /boot)" if len(block_device) else ""
+		]
+
+		task = generic_select(modes,
+				input_text=f"Select what to do with {block_device}: ")
+
+		if task == 'Create new partition':
+			if partition_type == 'gpt':
+				# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+				# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
+				name = input("Enter a desired name for the partition: ").strip()
+			fstype = input("Enter a desired filesystem type for the partition: ").strip()
+			start = input("Enter the start sector of the partition (percentage or block number, ex: 0%): ").strip()
+			end = input("Enter the end sector of the partition (percentage or block number, ex: 100%): ").strip()
+
+			if valid_parted_position(start) and valid_parted_position(end) and valid_fs_type(fstype):
+				if partition_overlap(partitions_result, start, end):
+					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.", fg="red")
+					continue
+
+				partitions_result.append({
+					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"start" : start,
+					"size" : end,
+					"filesystem" : {
+						"format" : fstype
+					}
+				})
+			else:
+				log(f"Invalid start, end or fstype for this partition. Ignoring this partition creation.", fg="red")
+				continue
+
+		elif task == "Delete partition":
+		elif task == "Assign mount-point for partition":
+		elif task == "Mark a partition as encrypted":
+		elif task == "Mark a partition as bootable (automatic for /boot)":
+
 def select_individual_blockdevice_usage(block_devices :list):
 	result = {}
 
@@ -526,11 +598,13 @@ def select_individual_blockdevice_usage(block_devices :list):
 		]
 
 		device_mode = generic_select(modes)
+		
 		if device_mode == "Re-use partitions":
 			layout = select_partition_layout(device)
-			result[device.path] = layout
 		else:
-			...
+			layout = wipe_and_create_partitions(device)
+		
+		result[device.path] = layout
 
 
 def select_disk_layout(block_devices :list):

@@ -44,6 +44,12 @@ def ask_user_questions():
 		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
 
 
+	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
+	# We do this before the disk selection process because there are some soft dependencies
+	# in retards to which boot loader/mode we're in.
+	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+
+
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None):
@@ -63,10 +69,6 @@ def ask_user_questions():
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
-
-
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
 
 	# Get the hostname for the machine
