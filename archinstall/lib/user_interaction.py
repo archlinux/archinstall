@@ -542,7 +542,7 @@ def wipe_and_create_partitions(block_device):
 	else:
 		partition_type = 'msdos'
 
-	partitions_result = []
+	partitions_result = [block_device.__dump__()]
 
 	while True:
 		modes = [
@@ -581,11 +581,33 @@ def wipe_and_create_partitions(block_device):
 			else:
 				log(f"Invalid start, end or fstype for this partition. Ignoring this partition creation.", fg="red")
 				continue
+		else:
+			for index, partition in enumerate(partitions_result):
+				print(partition)
+				print(f"{index}: {partition['start']} -> {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
 
-		elif task == "Delete partition":
-		elif task == "Assign mount-point for partition":
-		elif task == "Mark a partition as encrypted":
-		elif task == "Mark a partition as bootable (automatic for /boot)":
+			if task == "Delete partition":
+				partition = generic_select(partitions_result, 'Select which partition to delete: ', options_output=False)
+				del(partitions_result[partition])
+			elif task == "Assign mount-point for partition":
+				partition = generic_select(partitions_result, 'Select which partition to mount where: ', options_output=False)
+				mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
+
+				if len(mountpoint):
+					partitions_result[partition]['mountpoint'] = mountpoint
+					if mountpoint == '/boot':
+						log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
+						partitions_result[partition]['boot'] = True
+				else:
+					del(partitions_result[partition]['mountpoint'])
+
+			elif task == "Mark a partition as encrypted":
+				partition = generic_select(partitions_result, 'Select which partition to mark as encrypted: ', options_output=False)
+				partitions_result[partition]['encrypted'] = True
+
+			elif task == "Mark a partition as bootable (automatic for /boot)":
+				partition = generic_select(partitions_result, 'Select which partition to mark as bootable: ', options_output=False)
+				partitions_result[partition]['boot'] = True
 
 def select_individual_blockdevice_usage(block_devices :list):
 	result = {}

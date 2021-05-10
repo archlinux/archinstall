@@ -27,6 +27,7 @@ class BlockDevice():
 		self.info = info
 		self.keep_partitions = True
 		self.part_cache = OrderedDict()
+
 		# TODO: Currently disk encryption is a BIT misleading.
 		#       It's actually partition-encryption, but for future-proofing this
 		#       I'm placing the encryption password on a BlockDevice level.
@@ -43,6 +44,9 @@ class BlockDevice():
 			raise KeyError(f'{self} does not contain information: "{key}"')
 		return self.info[key]
 
+	def __len__(self):
+		return len(self.partitions)
+
 	def json(self):
 		"""
 		json() has precedence over __dump__, so this is a way
@@ -56,10 +60,20 @@ class BlockDevice():
 
 	def __dump__(self):
 		return {
-			'path': self.path,
-			'info': self.info,
-			'partition_cache': self.part_cache
+			self.path : {
+				'partuuid' : self.uuid,
+				'wipe' : self.info.get('wipe', None),
+				'partitions' : [part.__dump__() for part in self.partitions.values()]
+			}
 		}
+
+	@property
+	def partition_type(self):
+		output = b"".join(sys_command(f"lsblk --json -o+PTTYPE {self.path}"))
+		output = json.loads(output.decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			return device['pttype']
 
 	@property
 	def device(self):
@@ -202,6 +216,82 @@ class Partition():
 			return f'Partition(path={self.path}, size={self.size}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
 			return f'Partition(path={self.path}, size={self.size}, fs={self.filesystem}{mount_repr})'
+
+	def __dump__(self):
+		return {
+			'type' : 'primary',
+			'PARTUUID' : self.uuid,
+			'wipe' : self.allow_formatting,
+			'boot' : self.boot,
+			'ESP' : self.boot,
+			'mountpoint' : self.target_mountpoint,
+			'encrypted' : self._encrypted,
+			'start' : self.start,
+			'size' : self.end,
+			'filesystem' : {
+				'format' : get_filesystem_type(self.path)
+			}
+		}
+
+	@property
+	def sector_size(self):
+		output = b"".join(sys_command(f"lsblk --json -o+LOG-SEC {self.path}"))
+		output = json.loads(output.decode('UTF-8'))
+		
+		for device in output['blockdevices']:
+			return device.get('log-sec', None)
+
+	@property
+	def start(self):
+		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
+		output = json.loads(output.decode('UTF-8'))
+	
+		for partition in output.get('partitionstable', {}).get('partitions', []):
+			if partition['node'] == self.path:
+				return partition['start']# * self.sector_size
+
+	@property
+	def end(self):
+		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
+		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
+		output = json.loads(output.decode('UTF-8'))
+	
+		for partition in output.get('partitionstable', {}).get('partitions', []):
+			if partition['node'] == self.path:
+				return partition['size']# * self.sector_size
+
+	@property
+	def boot(self):
+		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
+		output = json.loads(output.decode('UTF-8'))
+
+		# Get the bootable flag from the sfdisk output:
+		# {
+		#    "partitiontable": {
+		#       "label":"dos",
+		#       "id":"0xd202c10a",
+		#       "device":"/dev/loop0",
+		#       "unit":"sectors",
+		#       "sectorsize":512,
+		#       "partitions": [
+		#          {"node":"/dev/loop0p1", "start":2048, "size":10483712, "type":"83", "bootable":true}
+		#       ]
+		#    }
+		# }
+
+		for partition in output.get('partitionstable', {}).get('partitions', []):
+			if partition['node'] == self.path:
+				return partition.get('bootable', False)
+
+		return False
+
+	@property
+	def partition_type(self):
+		output = b"".join(sys_command(f"lsblk --json -o+PTTYPE {self.path}"))
+		output = json.loads(output.decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			return device['pttype']
 
 	@property
 	def uuid(self) -> str:
