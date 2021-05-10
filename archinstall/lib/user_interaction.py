@@ -518,6 +518,7 @@ def select_partition_layout(block_device):
 
 def valid_fs_type(fstype :str) -> bool:
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+
 	return fstype in [
 		"ext2",
 		"fat16", "fat32",
@@ -530,7 +531,19 @@ def valid_fs_type(fstype :str) -> bool:
 	]
 
 def valid_parted_position(pos :str):
-	return len(pos) and (start.isdigit() or (start[-1] == '%' and start[:-1].isdigit()))
+	if not len(pos):
+		return False
+
+	if pos.isdigit():
+		return True
+
+	if pos[-1] == '%' and pos[:-1].isdigit():
+		return True
+
+	if pos[-3:].lower() in ['mib', 'kib', 'b', 'tib'] and pos[:-3].isdigit():
+		return True
+
+	return False
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
 	# TODO: Implement sanity check
@@ -542,16 +555,23 @@ def wipe_and_create_partitions(block_device):
 	else:
 		partition_type = 'msdos'
 
-	partitions_result = [block_device.__dump__()]
+	partitions_result = [part.__dump__() for part in block_device.partitions]
 
 	while True:
 		modes = [
 			"Create new partition",
-			"Delete partition" if len(block_device) else "",
-			"Assign mount-point for partition" if len(block_device) else "",
-			"Mark a partition as encrypted" if len(block_device) else "",
-			"Mark a partition as bootable (automatic for /boot)" if len(block_device) else ""
+			"Delete partition" if len(partitions_result) else "",
+			"Assign mount-point for partition" if len(partitions_result) else "",
+			"Mark a partition as encrypted" if len(partitions_result) else "",
+			"Mark a partition as bootable (automatic for /boot)" if len(partitions_result) else ""
 		]
+
+		# Print current partition layout:
+		if len(partitions_result):
+			print('Current partition layout:')
+			for partition in partitions_result:
+				print(partition)
+			print()
 
 		task = generic_select(modes,
 				input_text=f"Select what to do with {block_device}: ")
@@ -574,6 +594,7 @@ def wipe_and_create_partitions(block_device):
 					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
 					"start" : start,
 					"size" : end,
+					"mountpoint" : None,
 					"filesystem" : {
 						"format" : fstype
 					}
@@ -584,11 +605,11 @@ def wipe_and_create_partitions(block_device):
 		else:
 			for index, partition in enumerate(partitions_result):
 				print(partition)
-				print(f"{index}: {partition['start']} -> {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
+				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
 
 			if task == "Delete partition":
 				partition = generic_select(partitions_result, 'Select which partition to delete: ', options_output=False)
-				del(partitions_result[partition])
+				del(partitions_result[partitions_result.index(partition)])
 			elif task == "Assign mount-point for partition":
 				partition = generic_select(partitions_result, 'Select which partition to mount where: ', options_output=False)
 				mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
