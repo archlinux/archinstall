@@ -152,6 +152,16 @@ class BlockDevice():
 		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
 			return partition.get('uuid', None)
 
+	@property
+	def size(self):
+		output = b"".join(sys_command(f"lsblk --json -o+SIZE {self.path}"))
+		output = json.loads(output.decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			assert device['size'][-1] == 'G' # Make sure we're counting in Gigabytes, otherwise the next logic fails.
+
+			return float(device['size'][:-1])
+
 	def has_partitions(self):
 		return len(self.partitions)
 
