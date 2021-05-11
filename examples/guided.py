@@ -51,7 +51,7 @@ def ask_user_questions():
 	else:
 		archinstall.arguments['harddrives'] = [
 			archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.generic_multi_select(archinstall.all_disks(),
-																								text="Select one or more harddrives to use and configure (leave blank to skip this step): "
+																								text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
 																								allow_empty=True)
 		]
 

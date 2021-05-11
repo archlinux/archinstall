@@ -148,7 +148,7 @@ def log(*args, **kwargs):
 			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.DEBUG
 
-		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO) and not 'force' in kwargs:
+		if kwargs['level'] < storage.get('LOG_LEVEL', logging.INFO) and not 'force' in kwargs:
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
