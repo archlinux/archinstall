@@ -146,6 +146,8 @@ def generic_multi_select(options, text="Select one or more of the options above 
 			else:
 				selected_options.append(selected_option)
 
+	sys.stdout.write('\n')
+	sys.stdout.flush()
 	return selected_options
 
 
