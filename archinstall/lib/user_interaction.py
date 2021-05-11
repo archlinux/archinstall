@@ -150,6 +150,20 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	sys.stdout.flush()
 	return selected_options
 
+def select_encrypted_partitions(blockdevices :dict) -> dict:
+	print(blockdevices[0])
+
+	if len(blockdevices) == 1:
+		if len(blockdevices[0]['partitions']) == 2:
+			root = find_partition_by_mountpoint(blockdevices[0]['partitions'], '/')
+			blockdevices[0]['partitions'][root]['encrypted'] = True
+			return True
+
+	options = []
+	for partition in blockdevices.values():
+		options.append({key: val for key, val in partition.items() if val})
+
+	print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
 
 class MiniCurses():
 	def __init__(self, width, height):
@@ -594,7 +608,7 @@ def wipe_and_create_partitions(block_device):
 	else:
 		partition_type = 'msdos'
 
-	partitions_result = [part.__dump__() for part in block_device.partitions.values()]
+	partitions_result = [] # Test code: [part.__dump__() for part in block_device.partitions.values()]
 	suggested_layout = [
 		{   # Boot
 			"type" : "primary",

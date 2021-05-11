@@ -731,3 +731,13 @@ def disk_layouts():
 	except SysCallError as err:
 		log(f"Could not return disk layouts: {err}")
 		return None
+
+def encrypted_partitions(blockdevices :dict) -> bool:
+	for partition in blockdevices.values():
+		if partition.get('encrypted', False):
+			yield partition
+
+def find_partition_by_mountpoint(partitions, relative_mountpoint :str):
+	for partition in partitions:
+		if partition.get('mountpoint', None) == relative_mountpoint:
+			return partition

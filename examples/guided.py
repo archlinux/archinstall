@@ -16,10 +16,10 @@ def ask_user_questions():
 	  Not until we're satisfied with what we want to install
 	  will we continue with the actual installation steps.
 	"""
-	if not archinstall.arguments.get('keyboard-language', None):
+	if not archinstall.arguments.get('keyboard-layout', None):
 		while True:
 			try:
-				archinstall.arguments['keyboard-language'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
+				archinstall.arguments['keyboard-layout'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
 				break
 			except archinstall.RequirementError as err:
 				archinstall.log(err, fg="red")
@@ -27,8 +27,8 @@ def ask_user_questions():
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
-	if len(archinstall.arguments['keyboard-language']):
-		archinstall.set_keyboard_language(archinstall.arguments['keyboard-language'])
+	if len(archinstall.arguments['keyboard-layout']):
+		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
 
 	# Set which region to download packages from during the installation
@@ -64,6 +64,11 @@ def ask_user_questions():
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 
+			# If no partitions was marked as encrypted (rare), but a password was supplied -
+			# then we need to identify which partitions to encrypt. This will default to / (root) if only
+			# root and boot are detected.
+			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
