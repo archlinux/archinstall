@@ -592,7 +592,7 @@ def wipe_and_create_partitions(block_device):
 	else:
 		partition_type = 'msdos'
 
-	partitions_result = [part.__dump__() for part in block_device.partitions]
+	partitions_result = [part.__dump__() for part in block_device.partitions.values()]
 	suggested_layout = [
 		{   # Boot
 			"type" : "primary",
@@ -641,7 +641,7 @@ def wipe_and_create_partitions(block_device):
 		if len(partitions_result):
 			print('Current partition layout:')
 			for partition in partitions_result:
-				print(partition)
+				print({key: val for key, val in partition.items() if val})
 			print()
 
 		task = generic_select(modes,

@@ -256,7 +256,7 @@ class Partition():
 		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
 		output = json.loads(output.decode('UTF-8'))
 	
-		for partition in output.get('partitionstable', {}).get('partitions', []):
+		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition['start']# * self.sector_size
 
@@ -265,8 +265,8 @@ class Partition():
 		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
 		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
 		output = json.loads(output.decode('UTF-8'))
-	
-		for partition in output.get('partitionstable', {}).get('partitions', []):
+
+		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition['size']# * self.sector_size
 
@@ -289,7 +289,7 @@ class Partition():
 		#    }
 		# }
 
-		for partition in output.get('partitionstable', {}).get('partitions', []):
+		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition.get('bootable', False)
 
