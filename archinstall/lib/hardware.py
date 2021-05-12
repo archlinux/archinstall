@@ -91,6 +91,7 @@ def cpuVendor()-> Optional[str]:
 		if info.get('field',None):
 			if info.get('field',None) == "Vendor ID:":
 				return info.get('data',None)
+	return None
 
 def isVM() -> bool:
 	try:
