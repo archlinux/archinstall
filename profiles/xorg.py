@@ -28,22 +28,12 @@ def _prep_function(*args, **kwargs):
 if __name__ == 'xorg':
 	try:
 		if "nvidia" in _gfx_driver_packages:
-			if "linux-zen" in installation.base_packages or "linux-lts" in installation.base_packages:
-				installation.add_additional_packages("dkms")#I've had kernel regen fail if it wasn't installed before nvidia-dkms
-				installation.add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
+			if "linux-zen" in archinstall.storage['installation_session'].base_packages or "linux-lts" in archinstall.storage['installation_session'].base_packages:
+				archinstall.storage['installation_session'].add_additional_packages("dkms")#I've had kernel regen fail if it wasn't installed before nvidia-dkms
+				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:
-				installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 		else:
-			installation.add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
-		installation.add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
-
-	# with open(f'{installation.mountpoint}/etc/X11/xinit/xinitrc', 'a') as X11:
-	# 	X11.write('setxkbmap se\n')
-
-	# with open(f'{installation.mountpoint}/etc/vconsole.conf', 'a') as vconsole:
-	# 	vconsole.write('KEYMAP={keyboard_layout}\n'.format(**arguments))
-	# 	vconsole.write('FONT=lat9w-16\n')
-
-	# awesome = archinstall.Application(installation, 'awesome')
-	# awesome.install()
+		archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install

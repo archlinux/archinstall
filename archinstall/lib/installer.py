@@ -452,14 +452,7 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		# TODO: Replace this with a import archinstall.session instead in the profiles.
-		# The tricky thing with doing the import archinstall.session instead is that
-		# profiles might be run from a different chroot, and there's no way we can
-		# guarantee file-path safety when accessing the installer object that way.
-		# Doing the __builtins__ replacement, ensures that the global variable "installation"
-		# is always kept up to date. It's considered a nasty hack - but it's a safe way
-		# of ensuring 100% accuracy of archinstall session variables.
-		__builtins__['installation'] = self
+		storage['installation_session'] = self
 
 		if type(profile) == str:
 			profile = Profile(self, profile)

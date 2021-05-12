@@ -24,7 +24,7 @@ if __name__ == 'server':
 	archinstall.log(archinstall.storage['_selected_servers'], level=logging.DEBUG)
 	for server in archinstall.storage['_selected_servers']:
 		archinstall.log(f'Installing {server} ...', level=logging.INFO)
-		app = archinstall.Application(installation, server)
+		app = archinstall.Application(archinstall.storage['installation_session'], server)
 		app.install()
 
 	archinstall.log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)

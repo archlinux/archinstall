@@ -48,16 +48,16 @@ if __name__ == 'i3':
 	"""
 	
 	# Install common packages for all i3 configurations
-	installation.add_additional_packages(__packages__[:4])
+	archinstall.storage['installation_session'].add_additional_packages(__packages__[:4])
 
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# gaps is installed by deafult so we are overriding it here with lightdm
-	installation.add_additional_packages(__packages__[4:])
+	archinstall.storage['installation_session'].add_additional_packages(__packages__[4:])
 
 	# Auto start lightdm for all users
-	installation.enable_service('lightdm')
+	archinstall.storage['installation_session'].enable_service('lightdm')
 
 	# install the i3 group now
-	installation.add_additional_packages(archinstall.storage['_i3_configuration'])
+	archinstall.storage['installation_session'].add_additional_packages(archinstall.storage['_i3_configuration'])

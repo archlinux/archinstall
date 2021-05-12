@@ -5,7 +5,7 @@ import urllib.request
 __packages__ = ['nano', 'wget', 'git']
 
 if __name__ == '52-54-00-12-34-56':
-	awesome = archinstall.Application(installation, 'postgresql')
+	awesome = archinstall.Application(archinstall.storage['installation_session'], 'postgresql')
 	awesome.install()
 	
 """
