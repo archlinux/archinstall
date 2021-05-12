@@ -83,16 +83,18 @@ def get_password(prompt="Enter a password: "):
 def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	highest_index_number_length = len(str(len(options)))
 	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
+	spaces_without_option = longest_line - (len(separator) + highest_index_number_length)
 	max_num_of_columns = get_terminal_width() // longest_line
 	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
 
 	if (len(options) > max_options_in_cells):
 		for index, option in enumerate(options):
 			print(f"{index}: {option}")
+		return 1, index
 	else:
 		for row in range(0, (get_terminal_height()-margin_bottom)):
 			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
-				spaces = " "*(longest_line - len(options[column]))
+				spaces = " "*(spaces_without_option - len(options[column]))
 				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
 			print()
 
