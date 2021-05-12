@@ -1,3 +1,4 @@
+from typing import Optional
 import glob, re, os, json, time, hashlib
 import pathlib, traceback, logging
 from collections import OrderedDict
@@ -205,7 +206,7 @@ class Partition():
 			return f'Partition(path={self.path}, size={self.size}, fs={self.filesystem}{mount_repr})'
 
 	@property
-	def uuid(self) -> str:
+	def uuid(self) -> Optional[str]:
 		"""
 		Returns the PARTUUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -214,7 +215,7 @@ class Partition():
 		lsblk = b''.join(sys_command(f'lsblk -J -o+PARTUUID {self.path}'))
 		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
-
+		return None
 	@property
 	def encrypted(self):
 		return self._encrypted
@@ -471,7 +472,6 @@ class Filesystem():
 
 	def raw_parted(self, string:str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
-		log(f"'parted -s {string}' returned: {b''.join(x)}", level=logging.DEBUG)
 		return x
 
 	def parted(self, string:str):
@@ -624,4 +624,12 @@ def get_filesystem_type(path):
 		handle = sys_command(f"blkid -o value -s TYPE {path}")
 		return b''.join(handle).strip().decode('UTF-8')
 	except SysCallError:
+		return None
+
+def disk_layouts():
+	try:
+		handle = sys_command(f"lsblk -f -o+TYPE,SIZE -J")
+		return json.loads(b''.join(handle).decode('UTF-8'))
+	except SysCallError as err:
+		log(f"Could not return disk layouts: {err}")
 		return None

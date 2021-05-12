@@ -4,6 +4,9 @@ import archinstall
 
 is_top_level_profile = False
 
+# Note: GDM should be part of the gnome group, but adding it here for clarity
+__packages__ = ["gnome", "gnome-tweaks", "gdm"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -28,9 +31,8 @@ if __name__ == 'gnome':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application gnome from the template under /applications/
-	gnome = archinstall.Application(installation, 'gnome')
-	gnome.install()
+	# Install the GNOME packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('gdm') # Gnome Display Manager
 	# We could also start it via xinitrc since we do have Xorg,

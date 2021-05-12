@@ -1,8 +1,14 @@
 import archinstall
 import json
 import urllib.request
-import git
 
+__packages__ = ['nano', 'wget', 'git']
+
+if __name__ == '52-54-00-12-34-56':
+	awesome = archinstall.Application(installation, 'postgresql')
+	awesome.install()
+	
+"""
 # Unmount and close previous runs (Mainly only used for re-runs, but won't hurt.)
 archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
@@ -30,22 +36,19 @@ with archinstall.Filesystem(harddrive) as fs:
 			if installation.minimal_installation():
 				installation.add_bootloader()
 
-				installation.add_additional_packages(['nano', 'wget', 'git'])
+				installation.add_additional_packages(__packages__)
 				installation.install_profile('awesome')
 
-				installation.user_create('anton', 'test')
+				installation.user_create('devel', 'devel')
 				installation.user_set_pw('root', 'toor')
 
-				repo = git.Repo('./')
-				commit = repo.head.commit.hexsha[:7]
-
-				print(f'Submitting {commit}: success')
+				print(f'Submitting {archinstall.__version__}: success')
 
 				conditions = {
 					"project": "archinstall",
 					"profile": "52-54-00-12-34-56",
 					"status": "success",
-					"commit": commit
+					"version": archinstall.__version__
 				}
 				req = urllib.request.Request("https://api.archlinux.life/build/success",
 												data=json.dumps(conditions).encode('utf8'),
@@ -54,3 +57,4 @@ with archinstall.Filesystem(harddrive) as fs:
 					urllib.request.urlopen(req, timeout=5)
 				except:
 					pass
+"""

@@ -7,6 +7,9 @@ if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
 
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
+
 def ask_user_questions():
 	"""
 	  First, we'll ask the user for a bunch of user input.
@@ -136,12 +139,14 @@ def ask_user_questions():
 
 			archinstall.log('Using existing partition table reported above.')
 		elif option == 'format-all':
-			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+			if not archinstall.arguments.get('filesystem', None):
+				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
 	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
 		# and ask the user for a root filesystem.
-		archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+		if not archinstall.arguments.get('filesystem', None):
+			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 	# Get disk encryption password (or skip if blank)
@@ -382,6 +387,9 @@ def perform_installation(mountpoint):
 				installation.drop_to_shell()
 			except:
 				pass
+
+	# For support reasons, we'll log the disk layout post installation (crash or no crash)
+	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
 
 ask_user_questions()
 perform_installation_steps()

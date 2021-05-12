@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["cinnamon", "system-config-printer", "gnome-keyring", "gnome-terminal", "blueberry", "metacity", "lightdm", "lightdm-gtk-greeter"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -27,8 +29,7 @@ if __name__ == 'cinnamon':
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# Install the application cinnamon from the template under /applications/
-	cinnamon = archinstall.Application(installation, 'cinnamon')
-	cinnamon.install()
+	# Install the Cinnamon packages
+	installation.add_additional_packages(__packages__)
 
 	installation.enable_service('lightdm') # Light Display Manager

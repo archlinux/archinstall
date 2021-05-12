@@ -3,7 +3,7 @@ from .lib.general import *
 from .lib.disk import *
 from .lib.user_interaction import *
 from .lib.exceptions import *
-from .lib.installer import __packages__, __base_packages__, Installer
+from .lib.installer import __packages__, Installer
 from .lib.profiles import *
 from .lib.luks import *
 from .lib.mirrors import *

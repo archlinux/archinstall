@@ -6,7 +6,7 @@ is_top_level_profile = False
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
-__packages__ = ['i3lock', 'i3status', 'i3blocks', 'xterm']
+__packages__ = ['i3lock', 'i3status', 'i3blocks', 'xterm', 'lightdm-gtk-greeter', 'lightdm', 'dmenu']
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -48,17 +48,16 @@ if __name__ == 'i3':
 	"""
 	
 	# Install common packages for all i3 configurations
-	installation.add_additional_packages(__packages__)
+	installation.add_additional_packages(__packages__[:4])
 
 	# Install dependency profiles
 	installation.install_profile('xorg')
 
-	# gaps is installed by deafult so we are overriding it here
-	installation.add_additional_packages("lightdm-gtk-greeter lightdm")
+	# gaps is installed by deafult so we are overriding it here with lightdm
+	installation.add_additional_packages(__packages__[4:])
 
 	# Auto start lightdm for all users
 	installation.enable_service('lightdm')
 
 	# install the i3 group now
-	i3 = archinstall.Application(installation, archinstall.storage['_i3_configuration'])
-	i3.install()
+	installation.add_additional_packages(archinstall.storage['_i3_configuration'])
