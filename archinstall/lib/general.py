@@ -5,6 +5,7 @@ from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
 from .exceptions import *
 from .output import log
+from typing import Optional, Union
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -160,16 +161,15 @@ class sys_command():#Thread):
 			'exit_code': self.exit_code
 		}
 
-	def peak(self, output :str):
+	def peak(self, output : Union[str, bytes]) -> bool:
 		if type(output) == bytes:
 			try:
 				output = output.decode('UTF-8')
 			except UnicodeDecodeError:
-				return None
-
+				return False
 		output = output.strip('\r\n ')
 		if len(output) <= 0:
-			return None
+			return False
 
 		if self.peak_output:
 			from .user_interaction import get_terminal_width
@@ -191,6 +191,7 @@ class sys_command():#Thread):
 			# And print the new output we're peaking on:
 			sys.stdout.write(output)
 			sys.stdout.flush()
+		return True
 
 	def run(self):
 		self.status = 'running'

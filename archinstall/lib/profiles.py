@@ -1,3 +1,4 @@
+from typing import Optional
 import os, urllib.request, urllib.parse, ssl, json, re
 import importlib.util, sys, glob, hashlib, logging
 from collections import OrderedDict
@@ -49,7 +50,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 		except urllib.error.HTTPError as err:
 			print(f'Error: Listing profiles on URL "{profiles_url}" resulted in:', err)
 			return cache
-		except:
+		except json.decoder.JSONDecodeError as err:
 			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
 			return cache
 		
@@ -215,7 +216,7 @@ class Profile(Script):
 		return True
 
 	@property
-	def packages(self) -> list:
+	def packages(self) -> Optional[list]:
 		"""
 		Returns a list of packages baked into the profile definition.
 		If no package definition has been done, .packages() will return None.
