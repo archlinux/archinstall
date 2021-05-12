@@ -1,0 +1,12 @@
+on: [push, pull_request]
+name: Lint Python and Find Syntax Errors
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: pacman --noconfirm -Syu python python-pip mypy
+      - name: run mypy
+        run: mypy . --ignore-missing-imports
