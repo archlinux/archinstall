@@ -283,8 +283,6 @@ def perform_installation_steps():
 						partition.format()
 				else:
 					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=logging.DEBUG)
-			if hasUEFI():
-				fs.find_partition('/boot').format('vfat')# we don't have a boot partition in bios mode
 
 			if archinstall.arguments.get('!encryption-password', None):
 				# First encrypt and unlock, then format the desired partition inside the encrypted part.
