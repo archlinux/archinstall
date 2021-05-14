@@ -28,9 +28,9 @@ def _prep_function(*args, **kwargs):
 # or through conventional import lxqt
 if __name__ == 'lxqt':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# Install the LXQt packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	installation.enable_service('sddm') # SDDM Display Manager
+	archinstall.storage['installation_session'].enable_service('sddm') # SDDM Display Manager

@@ -44,7 +44,7 @@ if __name__ == "sway":
 			)
 
 	# Install the Sway packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# Install the graphics driver packages
-	installation.add_additional_packages(_gfx_driver_packages)
+	archinstall.storage['installation_session'].add_additional_packages(_gfx_driver_packages)
