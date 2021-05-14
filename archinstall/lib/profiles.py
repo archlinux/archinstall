@@ -36,7 +36,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 					description = ''
 					with open(os.path.join(root, file), 'r') as fh:
 						first_line = fh.readline()
-						if first_line[0] == '#':
+						if len(first_line) and first_line[0] == '#':
 							description = first_line[1:].strip()
 
 					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
