@@ -57,6 +57,12 @@ class Installer():
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
 
+		self.MODULES = []
+		self.BINARIES = []
+		self.FILES = []
+		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		self.KERNEL_PARAMS = []
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -278,16 +284,21 @@ class Installer():
 		
 		return False
 
+	def mkinitcpio(self, *flags):
+		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
+			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
+			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
+			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+
 	def minimal_installation(self):
 		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
 
-		MODULES = []
-		BINARIES = []
-		FILES = []
-		HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		
 
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
@@ -300,14 +311,14 @@ class Installer():
 
 			# Configure mkinitcpio to handle some specific use cases.
 			if partition.filesystem == 'btrfs':
-				if 'btrfs' not in MODULES:
-					MODULES.append('btrfs')
-				if '/usr/bin/btrfs-progs' not in BINARIES:
-					BINARIES.append('/usr/bin/btrfs')
+				if 'btrfs' not in self.MODULES:
+					self.MODULES.append('btrfs')
+				if '/usr/bin/btrfs-progs' not in self.BINARIES:
+					self.BINARIES.append('/usr/bin/btrfs')
 
 			if self.detect_encryption(partition):
-				if 'encrypt' not in HOOKS:
-					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
+				if 'encrypt' not in self.HOOKS:
+					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
 		if not(hasUEFI()): # TODO: Allow for grub even on EFI
 			self.base_packages.append('grub')
@@ -338,12 +349,7 @@ class Installer():
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(MODULES)})\n")
-			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
-			mkinit.write(f"FILES=({' '.join(FILES)})\n")
-			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
+		self.mkinitcpio('-P')
 
 		self.helper_flags['base'] = True
 
@@ -420,10 +426,10 @@ class Installer():
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
+					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 
 				self.helper_flags['bootloader'] = bootloader
 				return True
