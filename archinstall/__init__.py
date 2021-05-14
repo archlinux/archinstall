@@ -28,8 +28,8 @@ def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="json config file", type=FileType("r", encoding="UTF-8"))
 	parser.add_argument("--env", nargs="?", help="env file with sensitive info", type=FileType("r", encoding="UTF-8"))
-	parser.add_argument("--noconfirm", action="store_true",
-                    help="Warning!!! Silent install")
+	parser.add_argument("--silent", action="store_true",
+                    help="Warning!!! Silent install, ignored if config is not passed")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--vars",
 						metavar="KEY=VALUE",
@@ -46,6 +46,8 @@ def initialize_arguments():
 			config = json.load(args.config)
 		except Exception as e:
 			print(e)
+		# Installation can't be silent if config is not passed
+		config["silent"] = args.noconfirm
 	if args.vars is not None:
 		try:
 			for var in args.vars:
@@ -58,7 +60,6 @@ def initialize_arguments():
 		config['!root-password'] = os.getenv("ROOT_PASSWD")
 		config['users'] = json.loads(os.getenv("USERS"))
 		config['superusers'] = json.loads(os.getenv("SUPERUSERS"))
-	config["silent"] = args.noconfirm
 	config["script"] = args.script
 	return config
 
