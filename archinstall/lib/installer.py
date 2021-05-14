@@ -381,7 +381,9 @@ class Installer():
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
+			if sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install').exit_code != 0:
+				# Fallback, try creating the boot loader without touching the EFI variables
+				sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
