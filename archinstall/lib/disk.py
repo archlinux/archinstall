@@ -321,9 +321,6 @@ class Partition():
 		if log_formatting:
 			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
 
-		if path == '/dev/sda1' and filesystem == 'vfat':
-			raise ValueError("Debugging breakpoint!")
-
 		if filesystem == 'btrfs':
 			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {path}'))
 			if b'UUID' not in o:
