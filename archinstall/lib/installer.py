@@ -381,7 +381,7 @@ class Installer():
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
 
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
@@ -397,8 +397,11 @@ class Installer():
 				for line in loader_data:
 					if line[:8] == 'default ':
 						loader.write(f'default {self.init_time}\n')
+					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+						# We add in the default timeout to support dual-boot
+						loader.write(f"{line[1:]}\n")
 					else:
-						loader.write(f"{line}")
+						loader.write(f"{line}\n")
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
