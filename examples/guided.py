@@ -291,8 +291,8 @@ def perform_installation_steps():
 					unlocked_device.format(fs.find_partition('/').filesystem)
 					unlocked_device.mount('/mnt')
 			else:
-				fs.find_partition('/').format(fs.find_partition('/').filesystem)
 				fs.find_partition('/').mount('/mnt')
+			
 			if hasUEFI():
 				fs.find_partition('/boot').mount('/mnt/boot')
 	
