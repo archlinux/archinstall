@@ -36,13 +36,13 @@ if __name__ == 'awesome':
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
-	with open(f'{archinstall.storage['installation_session'].target}/etc/xdg/awesome/rc.lua', 'r') as fh:
+	with open(f"{archinstall.storage['installation_session'].target}/etc/xdg/awesome/rc.lua", 'r') as fh:
 		awesome_lua = fh.read()
 
 	## Replace xterm with alacritty for a smoother experience.
 	awesome_lua = awesome_lua.replace('"xterm"', '"alacritty"')
 
-	with open(f'{archinstall.storage['installation_session'].target}/etc/xdg/awesome/rc.lua', 'w') as fh:
+	with open(f"{archinstall.storage['installation_session'].target}/etc/xdg/awesome/rc.lua", 'w') as fh:
 		fh.write(awesome_lua)
 
 	## TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)
