@@ -13,8 +13,7 @@ from .hardware import *
 from .pulgins import load_plugin
 
 # Any package that the Installer() is responsible for (optional and the default ones)
-__packages__ = ["base", "base-devel", "linux", "linux-firmware", "efibootmgr", "nano", "ntp", "iwd"]
-__base_packages__ = __packages__[:6]
+__packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 class Installer():
 	"""
@@ -40,8 +39,7 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
-	def __init__(self, target, *, base_packages='base base-devel linux-firmware', kernels='linux', plugins=[]):
-		kernels = kernels.split(",")
+	def __init__(self, target, *, base_packages=__packages__[:3], kernels=['linux']):
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -54,10 +52,7 @@ class Installer():
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
-		if hasUEFI():
-			self.base_packages.append("efibootmgr")
-		else:
-			self.base_packages.append("grub")
+
 		self.post_base_install = []
 
 		storage['session'] = self
@@ -218,6 +213,9 @@ class Installer():
 		return sys_command(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
 	def arch_chroot(self, cmd, *args, **kwargs):
+		if 'runas' in kwargs:
+			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+			
 		return self.run_command(cmd)
 
 	def drop_to_shell(self):
@@ -386,12 +384,12 @@ class Installer():
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-		if hasUEFI():
-			self.log(f'Adding bootloader {bootloader} to {boot_partition}', level=logging.INFO)
-		else:
-			self.log(f'Adding bootloader {bootloader} to {root_partition}', level=logging.INFO)
+
+		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
+			self.pacstrap('efibootmgr')
+
 			if not hasUEFI():
 				raise HardwareIncompatibilityError
 			# TODO: Ideally we would want to check if another config
@@ -454,7 +452,10 @@ class Installer():
 
 			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		elif bootloader == "grub-install":
+			self.pacstrap('grub')
+
 			if hasUEFI():
+				self.pacstrap('efibootmgr')
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				return True
@@ -473,14 +474,7 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		# TODO: Replace this with a import archinstall.session instead in the profiles.
-		# The tricky thing with doing the import archinstall.session instead is that
-		# profiles might be run from a different chroot, and there's no way we can
-		# guarantee file-path safety when accessing the installer object that way.
-		# Doing the __builtins__ replacement, ensures that the global variable "installation"
-		# is always kept up to date. It's considered a nasty hack - but it's a safe way
-		# of ensuring 100% accuracy of archinstall session variables.
-		__builtins__['installation'] = self
+		storage['installation_session'] = self
 
 		if type(profile) == str:
 			profile = Profile(self, profile)

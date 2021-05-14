@@ -5,6 +5,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["xfce4", "xfce4-goodies", "lightdm", "lightdm-gtk-greeter"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -26,10 +28,9 @@ def _prep_function(*args, **kwargs):
 # or through conventional import xfce4
 if __name__ == 'xfce4':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
-	# Install the application xfce4 from the template under /applications/
-	xfce = archinstall.Application(installation, 'xfce4')
-	xfce.install()
+	# Install the XFCE4 packages
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager

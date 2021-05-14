@@ -3,22 +3,53 @@ from .general import sys_command
 from .networking import list_interfaces, enrichIfaceTypes
 from typing import Optional
 
+__packages__ = [
+		"mesa",
+		"xf86-video-amdgpu",
+		"xf86-video-ati",
+		"xf86-video-nouveau",
+		"xf86-video-vmware",
+		"libva-mesa-driver",
+		"libva-intel-driver",
+		"intel-media-driver",
+		"vulkan-radeon",
+		"vulkan-intel",
+		"nvidia",
+]
+
 AVAILABLE_GFX_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
 	# and lists are a list of packages to be installed
-	'AMD / ATI' : {
-		'amd' : ['xf86-video-amdgpu'],
-		'ati' : ['xf86-video-ati']
+	"All open-source (default)": [
+		"mesa",
+		"xf86-video-amdgpu",
+		"xf86-video-ati",
+		"xf86-video-nouveau",
+		"xf86-video-vmware",
+		"libva-mesa-driver",
+		"libva-intel-driver",
+		"intel-media-driver",
+		"vulkan-radeon",
+		"vulkan-intel",
+	],
+	"AMD / ATI (open-source)": [
+		"mesa",
+		"xf86-video-amdgpu",
+		"xf86-video-ati",
+		"libva-mesa-driver",
+		"vulkan-radeon",
+	],
+	"Intel (open-source)": [
+		"mesa",
+		"libva-intel-driver",
+		"intel-media-driver",
+		"vulkan-intel",
+	],
+	"Nvidia": {
+		"open-source": ["mesa", "xf86-video-nouveau", "libva-mesa-driver"],
+		"proprietary": ["nvidia"],
 	},
-	'intel' : ['xf86-video-intel'],
-	'nvidia' : {
-		'open-source' : ['xf86-video-nouveau'],
-		'proprietary' : ['nvidia']
-	},
-	'mesa' : ['mesa'],
-	'fbdev' : ['xf86-video-fbdev'],
-	'vesa' : ['xf86-video-vesa'],
-	'vmware' : ['xf86-video-vmware']
+	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
 def hasWifi()->bool:
@@ -60,10 +91,11 @@ def cpuVendor()-> Optional[str]:
 		if info.get('field',None):
 			if info.get('field',None) == "Vendor ID:":
 				return info.get('data',None)
+	return None
 
 def isVM() -> bool:
 	try:
-		subprocess.check_call(["systemd-detect-virt"]) # systemd-detect-virt issues a none 0 exit code if it is not on a virtual machine
+		subprocess.check_call(["systemd-detect-virt"]) # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
 		return True
 	except:
 		return False

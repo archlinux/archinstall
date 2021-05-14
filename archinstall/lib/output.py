@@ -19,7 +19,7 @@ class journald(dict):
 	@abc.abstractmethod
 	def log(message, level=logging.DEBUG):
 		try:
-			import systemd.journal
+			import systemd.journal # type: ignore
 		except ModuleNotFoundError:
 			return False
 
@@ -107,23 +107,22 @@ def log(*args, **kwargs):
 	# we use that one to output everything
 	if (filename := storage.get('LOG_FILE', None)):
 		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
-		if not os.path.isfile(absolute_logfile):
-			try:
-				Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
-			except PermissionError:
-				# Fallback to creating the log file in the current folder
-				err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
-				absolute_logfile = Path('./').absolute()/filename
-				absolute_logfile.parents[0].mkdir(exist_ok=True)
-				absolute_logfile = str(absolute_logfile)
-				storage['LOG_PATH'] = './'
-				log(err_string, fg="red")
 
-			Path(absolute_logfile).touch() # Overkill?
+		try:
+			Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
+			with open(absolute_logfile, 'a') as log_file:
+				log_file.write("")
+		except PermissionError:
+			# Fallback to creating the log file in the current folder
+			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute()/filename} instead."
+			absolute_logfile = Path('./').absolute()/filename
+			absolute_logfile.parents[0].mkdir(exist_ok=True)
+			absolute_logfile = str(absolute_logfile)
+			storage['LOG_PATH'] = './'
+			log(err_string, fg="red")
 
 		with open(absolute_logfile, 'a') as log_file:
 			log_file.write(f"{orig_string}\n")
-
 
 	# If we assigned a level, try to log it to systemd's journald.
 	# Unless the level is higher than we've decided to output interactively.

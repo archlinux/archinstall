@@ -1,3 +1,4 @@
+from typing import Optional
 import os, urllib.request, urllib.parse, ssl, json, re
 import importlib.util, sys, glob, hashlib, logging
 from collections import OrderedDict
@@ -35,7 +36,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 					description = ''
 					with open(os.path.join(root, file), 'r') as fh:
 						first_line = fh.readline()
-						if first_line[0] == '#':
+						if len(first_line) and first_line[0] == '#':
 							description = first_line[1:].strip()
 
 					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
@@ -49,7 +50,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 		except urllib.error.HTTPError as err:
 			print(f'Error: Listing profiles on URL "{profiles_url}" resulted in:', err)
 			return cache
-		except:
+		except json.decoder.JSONDecodeError as err:
 			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
 			return cache
 		
@@ -82,7 +83,6 @@ class Script():
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
-		log(f"Script {self} has been loaded with namespace '{self.namespace}'", level=logging.DEBUG)
 
 	def __enter__(self, *args, **kwargs):
 		self.execute()
@@ -92,6 +92,9 @@ class Script():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
+
+		if self.original_namespace:
+			self.namespace = self.original_namespace
 
 	def localize_path(self, profile_path):
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
@@ -203,11 +206,17 @@ class Profile(Script):
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
-			# TODO: I imagine that there is probably a better way to write this.
-			return 'top_level_profile = True' in source_data
+			if '__name__' in source_data and 'is_top_level_profile' in source_data:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+					if hasattr(imported, 'is_top_level_profile'):
+						return imported.is_top_level_profile
+
+		# Default to True if nothing is specified,
+		# since developers like less code - omitting it should assume they want to present it.
+		return True
 
 	@property
-	def packages(self) -> list:
+	def packages(self) -> Optional[list]:
 		"""
 		Returns a list of packages baked into the profile definition.
 		If no package definition has been done, .packages() will return None.
@@ -226,50 +235,6 @@ class Profile(Script):
 					if hasattr(imported, '__packages__'):
 						return imported.__packages__
 		return None
-	
-
-	def has_post_install(self):
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check and if so, check if it's got a _prep_function()
-			# we can call to ask for more user input.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '_post_install' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '_post_install'):
-						return True
-
-	def is_top_level_profile(self):
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-			return 'top_level_profile = True' in source_data
-
-	@property
-	def packages(self) -> list:
-		"""
-		Returns a list of packages baked into the profile definition.
-		If no package definition has been done, .packages() will return None.
-		"""
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check before importing.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '__packages__' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '__packages__'):
-						return imported.__packages__
-		return None
-	
 
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):

@@ -9,7 +9,6 @@ on:
       - main # In case we adopt this convention in the future
   pull_request:
     paths-ignore:
-    - '.github/**'
     - 'docs/**'
     - '**.editorconfig'
     - '**.gitignore'
@@ -29,7 +28,11 @@ jobs:
     - run: find .
     - run: cat /etc/os-release
     - run: mkdir -p /tmp/archlive/airootfs/root/archinstall-git; cp -r . /tmp/archlive/airootfs/root/archinstall-git
-    - run: echo "pip uninstall archinstall -y; cd archinstall-git; python setup.py install; echo 'Type python -m archinstall to launch archinstall'" > /tmp/archlive/airootfs/root/.zprofile
+    - run: echo "pip uninstall archinstall -y; cd archinstall-git; python setup.py install" > /tmp/archlive/airootfs/root/.zprofile
+    - run: echo "echo \"This is an unofficial ISO for development and testing of archinstall. No support will be provided.\"" >> /tmp/archlive/airootfs/root/.zprofile
+    - run: echo "echo \"This ISO was built from Git SHA $GITHUB_SHA\"" >> /tmp/archlive/airootfs/root/.zprofile
+    - run: echo "echo \"Type archinstall to launch the installer.\"" >> /tmp/archlive/airootfs/root/.zprofile
+    - run: cat /tmp/archlive/airootfs/root/.zprofile
     - run: pacman -Sy; pacman --noconfirm -S git archiso
     - run: cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
     - run: echo -e "git\npython\npython-pip\npython-setuptools" >> /tmp/archlive/packages.x86_64 

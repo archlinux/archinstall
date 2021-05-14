@@ -4,6 +4,9 @@ import archinstall
 
 is_top_level_profile = False
 
+# "It is recommended also to install the gnome group, which contains applications required for the standard GNOME experience." - Arch Wiki 
+__packages__ = ["budgie-desktop", "lightdm", "lightdm-gtk-greeter", "gnome"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -25,10 +28,9 @@ def _prep_function(*args, **kwargs):
 # or through conventional import budgie
 if __name__ == 'budgie':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
-	# Install the application budgie from the template under /applications/
-	budgie = archinstall.Application(installation, 'budgie')
-	budgie.install()
+	# Install the Budgie packages
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager

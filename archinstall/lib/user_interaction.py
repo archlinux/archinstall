@@ -1,5 +1,6 @@
-import getpass, pathlib, os, shutil, re
+import getpass, pathlib, os, shutil, re, time
 import sys, time, signal, ipaddress, logging
+import termios, tty, select # Used for char by char polling of sys.stdin
 from .exceptions import *
 from .profiles import Profile
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
@@ -82,27 +83,218 @@ def get_password(prompt="Enter a password: "):
 def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	highest_index_number_length = len(str(len(options)))
 	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
+	spaces_without_option = longest_line - (len(separator) + highest_index_number_length)
 	max_num_of_columns = get_terminal_width() // longest_line
 	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
 
 	if (len(options) > max_options_in_cells):
 		for index, option in enumerate(options):
 			print(f"{index}: {option}")
+		return 1, index
 	else:
 		for row in range(0, (get_terminal_height()-margin_bottom)):
 			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
-				spaces = " "*(longest_line - len(options[column]))
+				spaces = " "*(spaces_without_option - len(options[column]))
 				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
 			print()
 
-def ask_for_superuser_account(prompt='Username for required super-user with sudo privileges: ', forced=False):
+	return column, row
+
+
+def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
+	# Checking if the options are different from `list` or `dict` or if they are empty
+	if type(options) not in [list, dict]:
+		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
+	if not options:
+		log(f" * Generic multi-select didn't find any options to choose from * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_multi_select() requires at least one option to proceed.')
+	# After passing the checks, function continues to work
+	if type(options) == dict:
+		options = list(options.values())
+	if sort:
+		options = sorted(options)
+
+	section = MiniCurses(get_terminal_width(), len(options))
+
+	selected_options = []
+
+	while True:
+		if not selected_options and default in options:
+			selected_options.append(default)
+
+		printed_options = []
+		for option in options:
+			if option in selected_options:
+				printed_options.append(f'>> {option}')
+			else:
+				printed_options.append(f'{option}')
+
+		section.clear(0, get_terminal_height()-section._cursor_y-1)
+		print_large_list(printed_options, margin_bottom=2)
+		section._cursor_y = len(printed_options)
+		section._cursor_x = 0
+		section.write_line(text)
+		section.input_pos = section._cursor_x
+		selected_option = section.get_keyboard_input(end=None)
+		# This string check is necessary to correct work with it
+		# Without this, Python will raise AttributeError because of stripping `None` 
+		# It also allows to remove empty spaces if the user accidentally entered them.
+		if isinstance(selected_option, str):
+			selected_option = selected_option.strip()
+		try:
+			if not selected_option:
+				if not selected_options and default:
+					selected_options = [default]
+				elif selected_options or allow_empty:
+					break
+				else:
+					raise RequirementError('Please select at least one option to continue')
+			elif selected_option.isnumeric():
+				if (selected_option := int(selected_option)) >= len(options):
+					raise RequirementError(f'Selected option "{selected_option}" is out of range')
+				selected_option = options[selected_option]
+				if selected_option in selected_options:
+					selected_options.remove(selected_option)
+				else:
+					selected_options.append(selected_option)
+			elif selected_option in options:
+				if selected_option in selected_options:
+					selected_options.remove(selected_option)
+				else:
+					selected_options.append(selected_option)
+			else:
+				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
+		except RequirementError as e:
+			log(f" * {e} * ", fg='red')
+
+	return selected_options
+
+
+class MiniCurses():
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
+
+		self._cursor_y = 0
+		self._cursor_x = 0
+
+		self.input_pos = 0
+
+	def write_line(self, text, clear_line=True):
+		if clear_line:
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+			sys.stdout.write(" " * (get_terminal_width()-1))
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % 0)
+			sys.stdout.flush()
+		sys.stdout.write(text)
+		sys.stdout.flush()
+		self._cursor_x += len(text)
+
+	def clear(self, x, y):
+		if x < 0: x = 0
+		if y < 0: y = 0
+
+		#import time
+		#sys.stdout.write(f"Clearing from: {x, y}")
+		#sys.stdout.flush()
+		#time.sleep(2)
+
+		sys.stdout.flush()
+		sys.stdout.write('\033[%d;%df' % (y, x))
+		for line in range(get_terminal_height()-y-1, y):
+			sys.stdout.write(" " * (get_terminal_width()-1))
+		sys.stdout.flush()
+		sys.stdout.write('\033[%d;%df' % (y, x))
+		sys.stdout.flush()
+
+	def deal_with_control_characters(self, char):
+		mapper = {
+			'\x7f' : 'BACKSPACE',
+			'\r' : 'CR',
+			'\n' : 'NL'
+		}
+
+		if (mapped_char := mapper.get(char, None)) == 'BACKSPACE':
+			if self._cursor_x <= self.input_pos:
+				# Don't backspace futher back than the cursor start position during input
+				return True
+			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.flush()
+
+			# Write a blank space
+			sys.stdout.flush()
+			sys.stdout.write(" ")
+			sys.stdout.flush()
+
+			# And move back again
+			sys.stdout.flush()
+			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.flush()
+
+			self._cursor_x -= 1
+
+			return True
+		elif mapped_char in ('CR', 'NL'):
+			return True
+
+		return None
+
+	def get_keyboard_input(self, strip_rowbreaks=True, end='\n'):
+		assert end in ['\r', '\n', None]
+
+		poller = select.epoll()
+		response = ''
+
+		sys_fileno = sys.stdin.fileno()
+		old_settings = termios.tcgetattr(sys_fileno)
+		tty.setraw(sys_fileno)
+
+		poller.register(sys.stdin.fileno(), select.EPOLLIN)
+
+		EOF = False
+		while EOF is False:
+			for fileno, event in poller.poll(0.025):
+				char = sys.stdin.read(1)
+
+				#sys.stdout.write(f"{[char]}")
+				#sys.stdout.flush()
+
+				if (newline := (char in ('\n', '\r'))):
+					EOF = True
+
+				if not newline or strip_rowbreaks is False:
+					response += char
+
+				if self.deal_with_control_characters(char) is not True:
+					self.write_line(response[-1], clear_line=False)
+
+		termios.tcsetattr(sys_fileno, termios.TCSADRAIN, old_settings)
+
+		if end:
+			sys.stdout.write(end)
+			sys.stdout.flush()
+			self._cursor_x = 0
+			self._cursor_y += 1
+
+		if response:
+			return response
+
+def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
 
 		if not new_user and forced:
 			# TODO: make this text more generic?
 			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one (super) user!', fg='red')
+			log(' * Since root is disabled, you need to create a least one superuser!', fg='red')
 			continue
 		elif not new_user and not forced:
 			raise UserError("No superuser was created.")
@@ -114,7 +306,7 @@ def ask_for_superuser_account(prompt='Username for required super-user with sudo
 
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
 	users = {}
-	super_users = {}
+	superusers = {}
 
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -124,12 +316,12 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		
-		if input("Should this user be a sudo (super) user (y/N): ").strip(' ').lower() in ('y', 'yes'):
-			super_users[new_user] = {"!password" : password}
+		if input("Should this user be a superuser (sudoer) [y/N]: ").strip(' ').lower() in ('y', 'yes'):
+			superusers[new_user] = {"!password" : password}
 		else:
 			users[new_user] = {"!password" : password}
 
-	return users, super_users
+	return users, superusers
 
 def ask_for_a_timezone():
 	while True:
@@ -267,20 +459,24 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	this function returns an item from list, a string, or None
 	"""
 
-	# Checking if options are different from `list` or `dict`
+	# Checking if the options are different from `list` or `dict` or if they are empty
 	if type(options) not in [list, dict]:
 		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
-	# To allow only `list` and `dict`, converting values of options here.
-	# Therefore, now we can only provide the dictionary itself
-	if type(options) == dict: options = list(options.values())
-	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
-	if len(options) == 0:
+	if not options:
 		log(f" * Generic select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires at least one option to proceed.')
-	
+	# After passing the checks, function continues to work
+	if type(options) == dict:
+		# To allow only `list` and `dict`, converting values of options here.
+		# Therefore, now we can only provide the dictionary itself
+		options = list(options.values())
+	if sort:
+		# As we pass only list and dict (converted to list), we can skip converting to list
+		options = sorted(options)
+
 
 	# Added ability to disable the output of options items,
 	# if another function displays something different from this
@@ -292,8 +488,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	# Now the try...except block handles validation for invalid input from the user
 	while True:
 		try:
-			selected_option = input(input_text)
-			if len(selected_option.strip()) == 0:
+			selected_option = input(input_text).strip()
+			if not selected_option:
 				# `allow_empty_input` parameter handles return of None on empty input, if necessary
 				# Otherwise raise `RequirementError`
 				if allow_empty_input:
@@ -301,8 +497,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				raise RequirementError('Please select an option to continue')
 			# Replaced `isdigit` with` isnumeric` to discard all negative numbers
 			elif selected_option.isnumeric():
-				selected_option = int(selected_option)
-				if selected_option >= len(options):
+				if (selected_option := int(selected_option)) >= len(options):
 					raise RequirementError(f'Selected option "{selected_option}" is out of range')
 				selected_option = options[selected_option]
 				break
@@ -312,7 +507,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
 		except RequirementError as err:
 			log(f" * {err} * ", fg='red')
-			continue
 
 	return selected_option
 
@@ -481,6 +675,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 	
 	drivers = sorted(list(options))
+	default_option = options["All open-source (default)"]
 	
 	if drivers:
 		lspci = sys_command(f'/usr/bin/lspci')
@@ -492,6 +687,10 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
 		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
+
+		if not initial_option:
+			return default_option
+
 		selected_driver = options[initial_option]
 
 		if type(selected_driver) == dict:
@@ -523,9 +722,6 @@ def select_kernel(options):
 	kernels = sorted(list(options))
 	
 	if kernels:
-		selected_kernels = generic_select(kernels, f"Choose which kernel to use (leave blank for default: {DEFAULT_KERNEL}): ")
-		if not selected_kernels:
-			return DEFAULT_KERNEL
-		return selected_kernels
+		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL, sort=False)
 		
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")

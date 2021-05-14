@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = False
 
+__packages__ = ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"]
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -25,10 +27,9 @@ def _prep_function(*args, **kwargs):
 # or through conventional import mate
 if __name__ == 'mate':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
-	# Install the application mate from the template under /applications/
-	mate = archinstall.Application(installation, 'mate')
-	mate.install()
+	# Install the MATE packages
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager
