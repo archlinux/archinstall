@@ -37,10 +37,10 @@ def _post_install(*args, **kwargs):
 # or through conventional import kde
 if __name__ == 'kde':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# Install the KDE packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# Enable autostart of KDE for all users
-	installation.enable_service('sddm')
+	archinstall.storage['installation_session'].enable_service('sddm')

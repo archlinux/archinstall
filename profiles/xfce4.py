@@ -28,9 +28,9 @@ def _prep_function(*args, **kwargs):
 # or through conventional import xfce4
 if __name__ == 'xfce4':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# Install the XFCE4 packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	installation.enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager

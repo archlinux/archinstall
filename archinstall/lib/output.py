@@ -19,7 +19,7 @@ class journald(dict):
 	@abc.abstractmethod
 	def log(message, level=logging.DEBUG):
 		try:
-			import systemd.journal
+			import systemd.journal # type: ignore
 		except ModuleNotFoundError:
 			return False
 
