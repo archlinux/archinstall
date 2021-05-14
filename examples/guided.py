@@ -391,7 +391,7 @@ def perform_installation(mountpoint):
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LOG_LEVELS.Debug)
 
-if not archinstall.arguments:
+if not archinstall.arguments.get('silent', None):
 	ask_user_questions()
 else:
 	# Workarounds if config is loaded from a file

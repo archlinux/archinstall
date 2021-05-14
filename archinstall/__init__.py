@@ -30,6 +30,7 @@ def initialize_arguments():
 	parser.add_argument("--env", nargs="?", help="env file with sensitive info", type=FileType("r", encoding="UTF-8"))
 	parser.add_argument("--noconfirm", action="store_true",
                     help="Warning!!! Silent install")
+	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--vars",
 						metavar="KEY=VALUE",
 						nargs='?',
@@ -58,6 +59,7 @@ def initialize_arguments():
 		config['users'] = json.loads(os.getenv("USERS"))
 		config['superusers'] = json.loads(os.getenv("SUPERUSERS"))
 	config["silent"] = args.noconfirm
+	config["script"] = args.script
 	return config
 
 arguments = initialize_arguments()
@@ -74,10 +76,8 @@ def run_as_a_module():
 
 	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
 	storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
-	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	args = parser.parse_args()
 	try:
-		script = Script(args.script)
+		script = Script(arguments.get('script', None))
 	except ProfileNotFound as err:
 		print(f"Couldn't find file: {err}")
 		sys.exit(1)
