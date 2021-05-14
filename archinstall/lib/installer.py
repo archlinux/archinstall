@@ -397,8 +397,11 @@ class Installer():
 				for line in loader_data:
 					if line[:8] == 'default ':
 						loader.write(f'default {self.init_time}\n')
+					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+						# We add in the default timeout to support dual-boot
+						loader.write(f"{line[1:]}\n")
 					else:
-						loader.write(f"{line}")
+						loader.write(f"{line}\n")
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
