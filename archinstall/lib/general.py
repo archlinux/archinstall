@@ -1,11 +1,18 @@
-import os, json, hashlib, shlex, sys
-import time, pty, logging
+import hashlib
+import json
+import logging
+import os
+import pty
+import shlex
+import sys
+import time
 from datetime import datetime, date
-from subprocess import Popen, STDOUT, PIPE, check_output
 from select import epoll, EPOLLIN, EPOLLHUP
+from typing import Union
+
 from .exceptions import *
 from .output import log
-from typing import Optional, Union
+
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -37,16 +44,16 @@ class JSON_Encoder:
 		if isinstance(obj, dict):
 			## We'll need to iterate not just the value that default() usually gets passed
 			## But also iterate manually over each key: value pair in order to trap the keys.
-			
+
 			copy = {}
 			for key, val in list(obj.items()):
 				if isinstance(val, dict):
 					val = json.loads(json.dumps(val, cls=JSON)) # This, is a EXTREMELY ugly hack..
-                                                            # But it's the only quick way I can think of to 
+                                                            # But it's the only quick way I can think of to
                                                             # trigger a encoding of sub-dictionaries.
 				else:
 					val = JSON_Encoder._encode(val)
-				
+
 				if type(key) == str and key[0] == '!':
 					copy[JSON_Encoder._encode(key)] = '******'
 				else:

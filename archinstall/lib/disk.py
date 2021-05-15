@@ -1,12 +1,11 @@
-from typing import Optional
-import glob, re, os, json, time, hashlib
-import pathlib, traceback, logging
+import glob
+import pathlib
+import re
 from collections import OrderedDict
-from .exceptions import DiskError
+
 from .general import *
-from .output import log
-from .storage import storage
 from .hardware import hasUEFI
+from .output import log
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -172,7 +171,7 @@ class Partition():
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		
+
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
 
@@ -250,14 +249,14 @@ class Partition():
 	def has_content(self):
 		if not get_filesystem_type(self.path):
 			return False
-		
+
 		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
 		temporary_path = pathlib.Path(temporary_mountpoint)
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
 		if (handle := sys_command(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
-		
+
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		sys_command(f'/usr/bin/umount {temporary_mountpoint}')
 
@@ -385,7 +384,7 @@ class Partition():
 				sys_command(f'/usr/bin/mount {self.path} {target}')
 			except SysCallError as err:
 				raise err
-			
+
 			self.mountpoint = target
 			return True
 
@@ -446,7 +445,7 @@ class Filesystem():
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
-		
+
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
 		elif self.mode == self.blockdevice.partition_table_type:
 			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
@@ -513,7 +512,7 @@ class Filesystem():
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
-		
+
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions)>3:

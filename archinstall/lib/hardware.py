@@ -1,7 +1,10 @@
-import os, subprocess, json
-from .general import sys_command
-from .networking import list_interfaces, enrichIfaceTypes
+import json
+import os
+import subprocess
 from typing import Optional
+
+from .general import sys_command
+from .networking import list_interfaces, enrich_iface_types
 
 __packages__ = [
 		"mesa",
@@ -53,7 +56,7 @@ AVAILABLE_GFX_DRIVERS = {
 }
 
 def hasWifi()->bool:
-	return 'WIRELESS' in enrichIfaceTypes(list_interfaces().values()).values()
+	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
 
 def hasAMDCPU()->bool:
 	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():

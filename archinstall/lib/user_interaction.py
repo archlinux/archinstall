@@ -1,26 +1,39 @@
-import getpass, pathlib, os, shutil, re, time
-import sys, time, signal, ipaddress, logging
-import termios, tty, select # Used for char by char polling of sys.stdin
+import getpass
+import ipaddress
+import logging
+import pathlib
+import re
+import select  # Used for char by char polling of sys.stdin
+import shutil
+import signal
+import sys
+import termios
+import time
+import tty
+
 from .exceptions import *
-from .profiles import Profile
-from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
-from .output import log
-from .storage import storage
-from .networking import list_interfaces
 from .general import sys_command
 from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
+from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
+from .networking import list_interfaces
+from .output import log
+from .profiles import Profile
 
-## TODO: Some inconsistencies between the selection processes.
-##       Some return the keys from the options, some the values?
+
+# TODO: Some inconsistencies between the selection processes.
+#       Some return the keys from the options, some the values?
 
 def get_terminal_height():
 	return shutil.get_terminal_size().lines
 
+
 def get_terminal_width():
 	return shutil.get_terminal_size().columns
 
+
 def get_longest_option(options):
 	return max([len(x) for x in options])
+
 
 def check_for_correct_username(username):
 	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
@@ -31,6 +44,7 @@ def check_for_correct_username(username):
 		fg='red'
 	)
 	return False
+
 
 def do_countdown():
 	SIG_TRIGGER = False
@@ -67,6 +81,7 @@ def do_countdown():
 	signal.signal(signal.SIGINT, original_sigint_handler)
 	return True
 
+
 def get_password(prompt="Enter a password: "):
 	while (passwd := getpass.getpass(prompt)):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
@@ -79,6 +94,7 @@ def get_password(prompt="Enter a password: "):
 
 		return passwd
 	return None
+
 
 def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	highest_index_number_length = len(str(len(options)))
@@ -140,7 +156,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 		section.input_pos = section._cursor_x
 		selected_option = section.get_keyboard_input(end=None)
 		# This string check is necessary to correct work with it
-		# Without this, Python will raise AttributeError because of stripping `None` 
+		# Without this, Python will raise AttributeError because of stripping `None`
 		# It also allows to remove empty spaces if the user accidentally entered them.
 		if isinstance(selected_option, str):
 			selected_option = selected_option.strip()
@@ -173,7 +189,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	return selected_options
 
 
-class MiniCurses():
+class MiniCurses:
 	def __init__(self, width, height):
 		self.width = width
 		self.height = height
@@ -200,10 +216,10 @@ class MiniCurses():
 		if x < 0: x = 0
 		if y < 0: y = 0
 
-		#import time
-		#sys.stdout.write(f"Clearing from: {x, y}")
-		#sys.stdout.flush()
-		#time.sleep(2)
+		# import time
+		# sys.stdout.write(f"Clearing from: {x, y}")
+		# sys.stdout.flush()
+		# time.sleep(2)
 
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
@@ -259,16 +275,16 @@ class MiniCurses():
 
 		poller.register(sys.stdin.fileno(), select.EPOLLIN)
 
-		EOF = False
-		while EOF is False:
+		eof = False
+		while eof is False:
 			for fileno, event in poller.poll(0.025):
 				char = sys.stdin.read(1)
 
-				#sys.stdout.write(f"{[char]}")
-				#sys.stdout.flush()
+				# sys.stdout.write(f"{[char]}")
+				# sys.stdout.flush()
 
-				if (newline := (char in ('\n', '\r'))):
-					EOF = True
+				if newline := (char in ('\n', '\r')):
+					eof = True
 
 				if not newline or strip_rowbreaks is False:
 					response += char
@@ -287,6 +303,7 @@ class MiniCurses():
 		if response:
 			return response
 
+
 def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -304,6 +321,7 @@ def ask_for_superuser_account(prompt='Username for required superuser with sudo 
 		password = get_password(prompt=f'Password for user {new_user}: ')
 		return {new_user: {"!password" : password}}
 
+
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
 	users = {}
 	superusers = {}
@@ -315,13 +333,14 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		if not check_for_correct_username(new_user):
 			continue
 		password = get_password(prompt=f'Password for user {new_user}: ')
-		
+
 		if input("Should this user be a superuser (sudoer) [y/N]: ").strip(' ').lower() in ('y', 'yes'):
 			superusers[new_user] = {"!password" : password}
 		else:
 			users[new_user] = {"!password" : password}
 
 	return users, superusers
+
 
 def ask_for_a_timezone():
 	while True:
@@ -337,6 +356,7 @@ def ask_for_a_timezone():
 				fg='red'
 			)
 
+
 def ask_for_bootloader() -> str:
 	bootloader = "systemd-bootctl"
 	if hasUEFI()==False:
@@ -347,6 +367,7 @@ def ask_for_bootloader() -> str:
 			bootloader="grub-install"
 	return bootloader
 
+
 def ask_for_audio_selection():
 	audio = "pulseaudio" # Default for most desktop environments
 	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
@@ -354,6 +375,7 @@ def ask_for_audio_selection():
 		audio = "pipewire"
 
 	return audio
+
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.
@@ -422,6 +444,7 @@ def ask_to_configure_network():
 
 	return {}
 
+
 def ask_for_disk_layout():
 	options = {
 		'keep-existing' : 'Keep existing partition layout and select which ones to use where',
@@ -432,6 +455,7 @@ def ask_for_disk_layout():
 	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ",
 						  allow_empty_input=False, sort=True)
 	return next((key for key, val in options.items() if val == value), None)
+
 
 def ask_for_main_filesystem_format():
 	options = {
@@ -444,6 +468,7 @@ def ask_for_main_filesystem_format():
 	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ",
 						  allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
+
 
 def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True, sort=False):
 	"""
@@ -477,7 +502,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		# As we pass only list and dict (converted to list), we can skip converting to list
 		options = sorted(options)
 
-
 	# Added ability to disable the output of options items,
 	# if another function displays something different from this
 	if options_output:
@@ -510,6 +534,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
+
 def select_disk(dict_o_disks):
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.
@@ -525,17 +550,17 @@ def select_disk(dict_o_disks):
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
-		
+
 		log(f"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
-		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ',
-							  options_output=False)
+		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ', options_output=False)
 		if not drive:
 			return drive
-		
+
 		drive = dict_o_disks[drive]
 		return drive
 
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
+
 
 def select_profile(options):
 	"""
@@ -565,6 +590,7 @@ def select_profile(options):
 	else:
 		raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
+
 def select_language(options, show_only_country_codes=True):
 	"""
 	Asks the user to select a language from the `options` dictionary parameter.
@@ -579,8 +605,8 @@ def select_language(options, show_only_country_codes=True):
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
-	DEFAULT_KEYBOARD_LANGUAGE = 'us'
-	
+	default_keyboard_language = 'us'
+
 	if show_only_country_codes:
 		languages = sorted([language for language in list(options) if len(language) == 2])
 	else:
@@ -596,7 +622,7 @@ def select_language(options, show_only_country_codes=True):
 		while True:
 			selected_language = input('Select one of the above keyboard languages (by name or full name): ')
 			if not selected_language:
-				return DEFAULT_KEYBOARD_LANGUAGE
+				return default_keyboard_language
 			elif selected_language.lower() in ('?', 'help'):
 				while True:
 					filter_string = input("Search for layout containing (example: \"sv-\") or enter 'exit' to exit from search: ")
@@ -623,6 +649,7 @@ def select_language(options, show_only_country_codes=True):
 				log(" * Given language wasn't found * ", fg='red')
 
 	raise RequirementError("Selecting languages require a least one language to be given as an option.")
+
 
 def select_mirror_regions(mirrors, show_top_mirrors=True):
 	"""
@@ -665,6 +692,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 
 	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
 
+
 def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 	Some what convoluted function, which's job is simple.
@@ -673,10 +701,10 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-	
+
 	drivers = sorted(list(options))
 	default_option = options["All open-source (default)"]
-	
+
 	if drivers:
 		lspci = sys_command(f'/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
@@ -696,8 +724,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		if type(selected_driver) == dict:
 			driver_options = sorted(list(selected_driver))
 
-			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ',
-                                                 allow_empty_input=False)
+			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ', allow_empty_input=False)
 			driver_package_group = selected_driver[driver_package_group]
 
 			return driver_package_group
@@ -705,6 +732,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		return selected_driver
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
+
 
 def select_kernel(options):
 	"""
@@ -716,12 +744,12 @@ def select_kernel(options):
 	:return: The string as a selected kernel
 	:rtype: string
 	"""
-	
-	DEFAULT_KERNEL = "linux"
-	
+
+	default_kernel = "linux"
+
 	kernels = sorted(list(options))
-	
+
 	if kernels:
-		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {DEFAULT_KERNEL}): ", default=DEFAULT_KERNEL, sort=False)
-		
+		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {default_kernel}): ", default=default_kernel, sort=False)
+
 	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")

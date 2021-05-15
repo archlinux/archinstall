@@ -1,15 +1,11 @@
-import os, stat, time, shutil, pathlib
-import subprocess, logging
-from .exceptions import *
 from .disk import *
-from .general import *
-from .user_interaction import *
-from .profiles import Profile
-from .mirrors import *
-from .systemd import Networkd
-from .output import log
-from .storage import storage
 from .hardware import *
+from .mirrors import *
+from .output import log
+from .profiles import Profile
+from .storage import storage
+from .systemd import Networkd
+from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -47,7 +43,7 @@ class Installer():
 			'base' : False,
 			'bootloader' : False
 		}
-		
+
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
@@ -100,10 +96,10 @@ class Installer():
 			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
 			for step in missing_steps:
 				self.log(f' - {step}', fg='red', level=logging.WARNING)
-            
+
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
 			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
-               
+
 			self.sync_log_to_install_medium()
 			return False
 
@@ -116,7 +112,7 @@ class Installer():
 
 				if not os.path.isdir(f"{self.target}/{os.path.dirname(absolute_logfile)}"):
 					os.makedirs(f"{self.target}/{os.path.dirname(absolute_logfile)}")
-				
+
 				shutil.copy2(absolute_logfile, f"{self.target}/{absolute_logfile}")
 
 		return True
@@ -124,7 +120,7 @@ class Installer():
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
 			os.makedirs(f'{self.target}{mountpoint}')
-			
+
 		partition.mount(f'{self.target}{mountpoint}')
 
 	def post_install_check(self, *args, **kwargs):
@@ -147,7 +143,7 @@ class Installer():
 
 	def genfstab(self, flags='-pU'):
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
-		
+
 		fstab = sys_command(f'/usr/bin/genfstab {flags} {self.target}').trace_log
 		with open(f"{self.target}/etc/fstab", 'ab') as fstab_fh:
 			fstab_fh.write(fstab)
@@ -204,7 +200,7 @@ class Installer():
 	def arch_chroot(self, cmd, *args, **kwargs):
 		if 'runas' in kwargs:
 			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
-			
+
 		return self.run_command(cmd)
 
 	def drop_to_shell(self):
@@ -224,7 +220,7 @@ class Installer():
 				network["DNS"] = dns
 
 			conf = Networkd(Match={"Name": nic}, Network=network)
-		
+
 		with open(f"{self.target}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
 
@@ -272,7 +268,7 @@ class Installer():
 				# Otherwise, we can go ahead and enable the services
 				else:
 					self.enable_service('systemd-networkd', 'systemd-resolved')
-					
+
 
 		return True
 
@@ -281,7 +277,7 @@ class Installer():
 			return partition
 		elif partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS':
 			return Partition(partition.parent, None, autodetect_filesystem=True)
-		
+
 		return False
 
 	def mkinitcpio(self, *flags):
@@ -298,7 +294,7 @@ class Installer():
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
 
-		
+
 
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
@@ -322,7 +318,7 @@ class Installer():
 
 		if not(hasUEFI()):
 			self.base_packages.append('grub')
-										
+
 		if not isVM():
 			vendor = cpuVendor()
 			if vendor ==  "AuthenticAMD":
@@ -331,7 +327,7 @@ class Installer():
 				self.base_packages.append("intel-ucode")
 			else:
 				self.log("Unknown cpu vendor not installing ucode")
-					
+
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
@@ -395,7 +391,7 @@ class Installer():
 					f"default {self.init_time}",
 					f"timeout 5"
 				]
-			
+
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':
@@ -500,7 +496,7 @@ class Installer():
 
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
 		pass
-						  
+
 	def user_set_shell(self, user, shell):
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 

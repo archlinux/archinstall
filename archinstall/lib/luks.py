@@ -1,13 +1,9 @@
-import os
-import shlex
-import time
 import pathlib
-import logging
-from .exceptions import *
-from .general import *
+
 from .disk import Partition
+from .general import *
 from .output import log
-from .storage import storage
+
 
 class luks2():
 	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
@@ -22,12 +18,12 @@ class luks2():
 		self.mapdev = None
 
 	def __enter__(self):
-		#if self.partition.allow_formatting:
-		#	self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
-		#else:
+		# if self.partition.allow_formatting:
+		# 	self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
+		# else:
 		if not self.key_file:
 			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
-		
+
 		if type(self.password) != bytes:
 			self.password = bytes(self.password, 'UTF-8')
 
@@ -112,7 +108,7 @@ class luks2():
 
 		if cmd_handle.exit_code != 0:
 			raise DiskError(f'Could not encrypt volume "{partition.path}": {cmd_output}')
-	
+
 		return key_file
 
 	def unlock(self, partition, mountpoint, key_file):

@@ -1,12 +1,16 @@
+import hashlib
+import importlib.util
+import json
+import re
+import ssl
+import sys
+import urllib.parse
+import urllib.request
 from typing import Optional
-import os, urllib.request, urllib.parse, ssl, json, re
-import importlib.util, sys, glob, hashlib, logging
-from collections import OrderedDict
-from .general import multisplit, sys_command
-from .exceptions import *
+from .general import multisplit
 from .networking import *
-from .output import log
 from .storage import storage
+
 
 def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
@@ -15,6 +19,7 @@ def grab_url_data(path):
 	ssl_context.verify_mode=ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
+
 
 def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
 	# TODO: Grab from github page as well, not just local static files
@@ -55,7 +60,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 		except json.decoder.JSONDecodeError as err:
 			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
 			return cache
-		
+
 		for profile in profile_list:
 			if os.path.splitext(profile)[1] == '.py':
 				tailored = False
@@ -73,7 +78,8 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 
 	return cache
 
-class Script():
+
+class Script:
 	def __init__(self, profile, installer=None):
 		# profile: https://hvornum.se/something.py
 		# profile: desktop
@@ -153,6 +159,7 @@ class Script():
 		self.spec.loader.exec_module(sys.modules[self.namespace])
 
 		return sys.modules[self.namespace]
+
 
 class Profile(Script):
 	def __init__(self, installer, path, args={}):
@@ -237,6 +244,7 @@ class Profile(Script):
 					if hasattr(imported, '__packages__'):
 						return imported.__packages__
 		return None
+
 
 class Application(Profile):
 	def __repr__(self, *args, **kwargs):

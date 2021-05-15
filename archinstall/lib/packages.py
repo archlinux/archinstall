@@ -1,9 +1,13 @@
-import urllib.request, urllib.parse
-import ssl, json
+import json
+import ssl
+import urllib.parse
+import urllib.request
+
 from .exceptions import *
 
 BASE_URL = 'https://archlinux.org/packages/search/json/?name={package}'
 BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
+
 
 def find_group(name):
 	ssl_context = ssl.create_default_context()
@@ -16,10 +20,11 @@ def find_group(name):
 			return False
 		else:
 			raise err
-	
+
 	# Just to be sure some code didn't slip through the exception
 	if response.code == 200:
 		return True
+
 
 def find_package(name):
 	"""
@@ -33,6 +38,7 @@ def find_package(name):
 	data = response.read().decode('UTF-8')
 	return json.loads(data)
 
+
 def find_packages(*names):
 	"""
 	This function returns the search results for many packages.
@@ -44,6 +50,7 @@ def find_packages(*names):
 		result[package] = find_package(package)
 	return result
 
+
 def validate_package_list(packages :list):
 	"""
 	Validates a list of given packages.
@@ -53,7 +60,7 @@ def validate_package_list(packages :list):
 	for package in packages:
 		if not find_package(package)['results'] and not find_group(package):
 			invalid_packages.append(package)
-	
+
 	if invalid_packages:
 		raise RequirementError(f"Invalid package names: {invalid_packages}")
 
