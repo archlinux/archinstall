@@ -319,7 +319,7 @@ def perform_installation(mountpoint):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
-			if archinstall.arguments['mirror-region'].get("mirrors", {}) is not None:
+			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
 			if archinstall.arguments["bootloader"]=="grub-install" and hasUEFI()==True:
 				installation.add_additional_packages("grub")
