@@ -1,13 +1,13 @@
 import archinstall
 
 # Select a harddrive and a disk password
-archinstall.log(f"Minimal only supports:")
-archinstall.log(f" * Being installed to a single disk")
+archinstall.log("Minimal only supports:")
+archinstall.log(" * Being installed to a single disk")
 
 if archinstall.arguments.get('help', None):
-	archinstall.log(f" - Optional disk encryption via --!encryption-password=<password>")
-	archinstall.log(f" - Optional filesystem type via --filesystem=<fs type>")
-	archinstall.log(f" - Optional systemd network via --network")
+	archinstall.log(" - Optional disk encryption via --!encryption-password=<password>")
+	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
+	archinstall.log(" - Optional systemd network via --network")
 
 archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
@@ -33,9 +33,9 @@ def install_on(mountpoint):
 
 	# Once this is done, we output some useful information to the user
 	# And the installation is complete.
-	archinstall.log(f"There are two new accounts in your installation after reboot:")
-	archinstall.log(f" * root (password: airoot)")
-	archinstall.log(f" * devel (password: devel)")
+	archinstall.log("There are two new accounts in your installation after reboot:")
+	archinstall.log(" * root (password: airoot)")
+	archinstall.log(" * devel (password: devel)")
 
 
 if archinstall.arguments['harddrive']:
