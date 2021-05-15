@@ -7,6 +7,7 @@ is_top_level_profile = True
 
 __packages__ = ['dkms', 'xorg-server', 'xorg-xinit', 'nvidia-dkms', 'xorg-server', *archinstall.lib.hardware.__packages__]
 
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer

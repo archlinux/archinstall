@@ -6,6 +6,7 @@ is_top_level_profile = True
 
 available_servers = ["cockpit", "docker", "httpd", "lighttpd", "mariadb", "nginx", "postgresql", "sshd", "tomcat"]
 
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -13,8 +14,9 @@ def _prep_function(*args, **kwargs):
 	"""
 	selected_servers = archinstall.generic_multi_select(available_servers, f"Choose which servers to install and enable (leave blank for a minimal installation): ")
 	archinstall.storage['_selected_servers'] = selected_servers
-	
+
 	return True
+
 
 if __name__ == 'server':
 	"""

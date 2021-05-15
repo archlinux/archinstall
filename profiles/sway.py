@@ -39,9 +39,7 @@ if __name__ == "sway":
 			"The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues. Continue anyways? [y/N] "
 		)
 		if choice.lower() in ("n", ""):
-			raise archinstall.lib.exceptions.HardwareIncompatibilityError(
-				"Sway does not support the proprietary nvidia drivers."
-			)
+			raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers.")
 
 	# Install the Sway packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)

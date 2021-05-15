@@ -6,6 +6,7 @@ is_top_level_profile = False
 
 __packages__ = ["enlightenment", "terminology", "lightdm", "lightdm-gtk-greeter"]
 
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer

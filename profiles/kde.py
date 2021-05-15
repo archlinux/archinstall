@@ -8,6 +8,7 @@ __packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-way
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
+
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -23,6 +24,7 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
 
 """
 def _post_install(*args, **kwargs):
