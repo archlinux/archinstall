@@ -24,7 +24,7 @@ jobs:
           # stop the build if there are Python syntax errors
           flake8 . --count --select=E9,F63,F7 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --ignore=E501,W191,E741,E266 --exit-zero --max-complexity=10 --max-line-length=127 --statistics
   pytest:
     runs-on: ubuntu-latest
     container:
