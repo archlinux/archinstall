@@ -12,7 +12,8 @@ __packages__ = [
 	"ttf-freefont",
 	"leafpad",
 	"slock",
-	"sddm",
+	"lightdm",
+	"lightdm-gtk-greeter",
 ]
 
 
@@ -43,4 +44,5 @@ if __name__ == 'lxqt':
 	# Install the LXQt packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('sddm')  # SDDM Display Manager
+	# Enable autostart of LXQt for all users
+	archinstall.storage['installation_session'].enable_service('lightdm')

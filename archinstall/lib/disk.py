@@ -388,7 +388,10 @@ class Partition:
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
 			try:
-				sys_command(f'/usr/bin/mount {self.path} {target}')
+				if options:
+					sys_command(f'/usr/bin/mount -o {options} {self.path} {target}')
+				else:
+					sys_command(f'/usr/bin/mount {self.path} {target}')
 			except SysCallError as err:
 				raise err
 
