@@ -50,11 +50,6 @@ if __name__ == 'desktop':
 	
 	# Install common packages for all desktop environments
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
-
-	available_x11_languages = list(archinstall.list_x11_keyboard_languages())
-	if(x11_keyboard_language := archinstall.select_language(available_x11_languages,
-									input_text='Select one of the above X11 keyboard languages (by number or full name): ')):
-		archinstall.storage['installation_session'].set_x11_keyboard_language(x11_keyboard_language)
 	
 	archinstall.storage['installation_session'].install_profile(archinstall.storage['_desktop_profile'])
 
