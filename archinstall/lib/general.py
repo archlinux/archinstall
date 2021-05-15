@@ -45,15 +45,14 @@ def locate_binary(name):
 class JSON_Encoder:
 	def _encode(obj):
 		if isinstance(obj, dict):
-			## We'll need to iterate not just the value that default() usually gets passed
-			## But also iterate manually over each key: value pair in order to trap the keys.
+			# We'll need to iterate not just the value that default() usually gets passed
+			# But also iterate manually over each key: value pair in order to trap the keys.
 
 			copy = {}
 			for key, val in list(obj.items()):
 				if isinstance(val, dict):
-					val = json.loads(json.dumps(val, cls=JSON)) # This, is a EXTREMELY ugly hack..
-                                                            # But it's the only quick way I can think of to
-                                                            # trigger a encoding of sub-dictionaries.
+					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
+					val = json.loads(json.dumps(val, cls=JSON))
 				else:
 					val = JSON_Encoder._encode(val)
 
@@ -84,7 +83,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
 
-class sys_command():#Thread):
+class sys_command:
 	"""
 	Stolen from archinstall_gui
 	"""
@@ -128,7 +127,7 @@ class sys_command():#Thread):
 
 		user_catalogue = os.path.expanduser('~')
 
-		if (workdir := kwargs.get('workdir', None)):
+		if workdir := kwargs.get('workdir', None):
 			self.cwd = workdir
 			self.exec_dir = workdir
 		else:
@@ -275,7 +274,7 @@ class sys_command():#Thread):
 					if broke:
 						continue
 
-					## Adding a exit trigger:
+					# Adding a exit trigger:
 					if len(self.kwargs['events']) == 0:
 						if 'debug' in self.kwargs and self.kwargs['debug']:
 							self.log(f"Waiting for last command {self.cmd[0]} to finish.", level=logging.DEBUG)
