@@ -4,7 +4,12 @@ import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["xfce4", "xfce4-goodies", "lightdm", "lightdm-gtk-greeter"]
+__packages__ = [
+	"xfce4",
+	"xfce4-goodies",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
 
 
 def _prep_function(*args, **kwargs):
