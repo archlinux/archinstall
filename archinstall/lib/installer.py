@@ -320,12 +320,9 @@ class Installer():
 				if 'encrypt' not in self.HOOKS:
 					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
-		if not(hasUEFI()): # TODO: Allow for grub even on EFI
+		if not(hasUEFI()):
 			self.base_packages.append('grub')
 										
-		self.pacstrap(self.base_packages)
-		self.helper_flags['base-strapped'] = True
-		#self.genfstab()
 		if not isVM():
 			vendor = cpuVendor()
 			if vendor ==  "AuthenticAMD":
@@ -334,6 +331,10 @@ class Installer():
 				self.base_packages.append("intel-ucode")
 			else:
 				self.log("Unknown cpu vendor not installing ucode")
+					
+		self.pacstrap(self.base_packages)
+		self.helper_flags['base-strapped'] = True
+
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
 			fstab.write(
 				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
