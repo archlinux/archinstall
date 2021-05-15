@@ -1,8 +1,10 @@
+import logging
 import subprocess
 import os
 
-from .exceptions import *
+from .exceptions import ServiceException
 from .general import sys_command
+from .output import log
 
 def list_keyboard_languages():
 	for line in sys_command("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
@@ -30,7 +32,14 @@ def search_keyboard_layout(filter):
 			yield language
 
 def set_keyboard_language(locale):
-	if (output := self.arch_chroot(f'localectl set-keymap {locale}')).exit_code != 0:
-		raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
+	if len(locale.strip()):
+		if not verify_keyboard_layout(locale):
+			log(f"Invalid keyboard locale specified: {locale}", fg="red", level=logging.ERROR)
+			return False
 
-	return True
+		if (output := sys_command(f'localectl set-keymap {locale}')).exit_code != 0:
+			raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
+
+		return True
+
+	return False
