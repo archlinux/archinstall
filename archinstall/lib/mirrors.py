@@ -22,7 +22,7 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tm
 	return True
 
 
-def add_custom_mirrors(mirrors:list, *args, **kwargs):
+def add_custom_mirrors(mirrors: list, *args, **kwargs):
 	"""
 	This will append custom mirror definitions in pacman.conf
 

@@ -108,7 +108,7 @@ def cpuVendor() -> Optional[str]:
 
 def isVM() -> bool:
 	try:
-		subprocess.check_call(["systemd-detect-virt"]) # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
+		subprocess.check_call(["systemd-detect-virt"])  # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
 		return True
 	except:
 		return False

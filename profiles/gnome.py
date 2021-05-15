@@ -37,5 +37,5 @@ if __name__ == 'gnome':
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	archinstall.storage['installation_session'].enable_service('gdm')  # Gnome Display Manager
-	# We could also start it via xinitrc since we do have Xorg,
-	# but for gnome that's deprecated and wayland is preferred.
+# We could also start it via xinitrc since we do have Xorg,
+# but for gnome that's deprecated and wayland is preferred.

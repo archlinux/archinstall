@@ -14,7 +14,7 @@ from .storage import storage
 
 
 def grab_url_data(path):
-	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
+	safe_path = path[:path.find(':') + 1] + ''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -47,7 +47,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 						if len(first_line) and first_line[0] == '#':
 							description = first_line[1:].strip()
 
-					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}
+					cache[file[:-3]] = {'path': os.path.join(root, file), 'description': description, 'tailored': tailored}
 			break
 
 	# Grab profiles from upstream URL
@@ -70,7 +70,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path' : os.path.join(storage["UPSTREAM_URL"]+subpath, profile), 'description' : profile_list[profile], 'tailored' : tailored}
+				cache[profile[:-3]] = {'path': os.path.join(storage["UPSTREAM_URL"] + subpath, profile), 'description': profile_list[profile], 'tailored': tailored}
 
 	if filter_top_level_profiles:
 		for profile in list(cache.keys()):

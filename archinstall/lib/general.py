@@ -83,10 +83,12 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
 
+
 class sys_command:
 	"""
 	Stolen from archinstall_gui
 	"""
+
 	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)

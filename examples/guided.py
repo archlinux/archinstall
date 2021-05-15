@@ -85,7 +85,7 @@ def ask_user_questions():
 				# If we provide keys as options, it's better to convert them to list and sort before passing
 				mountpoints_list = sorted(list(partition_mountpoints.keys()))
 				partition = archinstall.generic_select(mountpoints_list,
-														"Select a partition by number that you want to set a mount-point for (leave blank when done): ")
+													   "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
 					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
 						break
@@ -119,8 +119,9 @@ def ask_user_questions():
 						try:
 							partition.format(new_filesystem, path='/dev/null', log_formatting=False, allow_formatting=True)
 						except archinstall.UnknownFilesystemFormat:
-							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}', please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
-							archinstall.log(f"Until then, please enter another supported filesystem.")
+							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}',")
+							archinstall.log("please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
+							archinstall.log("Until then, please enter another supported filesystem.")
 							continue
 						except archinstall.SysCallError:
 							pass  # Expected exception since mkfs.<format> can not format /dev/null. But that means our .format() function supported it.
@@ -316,12 +317,12 @@ def perform_installation(mountpoint):
 			time.sleep(1)
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
-			archinstall.use_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors for the live medium
+			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 		if installation.minimal_installation():
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region']) # Set the mirrors in the installation medium
-			if archinstall.arguments["bootloader"]=="grub-install" and hasUEFI()==True:
+				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+			if archinstall.arguments["bootloader"] == "grub-install" and hasUEFI() == True:
 				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -329,8 +330,8 @@ def perform_installation(mountpoint):
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
 			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
-				installation.copy_ISO_network_config(enable_services=True) # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic', {}).get('NetworkManager',False):
+				installation.copy_ISO_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
+			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
