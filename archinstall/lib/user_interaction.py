@@ -12,8 +12,8 @@ import time
 import tty
 
 from .exceptions import *
-from .general import sys_command
-from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
+from .general import SysCommand
+from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
@@ -22,6 +22,7 @@ from .profiles import Profile
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
+
 
 def get_terminal_height():
 	return shutil.get_terminal_size().lines
@@ -84,7 +85,7 @@ def do_countdown():
 
 
 def get_password(prompt="Enter a password: "):
-	while (passwd := getpass.getpass(prompt)):
+	while passwd := getpass.getpass(prompt):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
@@ -104,7 +105,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	max_num_of_columns = get_terminal_width() // longest_line
 	max_options_in_cells = max_num_of_columns * (get_terminal_height() - margin_bottom)
 
-	if (len(options) > max_options_in_cells):
+	if len(options) > max_options_in_cells:
 		for index, option in enumerate(options):
 			print(f"{index}: {option}")
 		return 1, index
@@ -214,8 +215,10 @@ class MiniCurses:
 		self._cursor_x += len(text)
 
 	def clear(self, x, y):
-		if x < 0: x = 0
-		if y < 0: y = 0
+		if x < 0:
+			x = 0
+		if y < 0:
+			y = 0
 
 		# import time
 		# sys.stdout.write(f"Clearing from: {x, y}")
@@ -243,7 +246,7 @@ class MiniCurses:
 				return True
 			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
 			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.write("\033[%dG" % self._cursor_x)
 			sys.stdout.flush()
 
 			# Write a blank space
@@ -253,7 +256,7 @@ class MiniCurses:
 
 			# And move back again
 			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.write("\033[%dG" % self._cursor_x)
 			sys.stdout.flush()
 
 			self._cursor_x -= 1
@@ -360,7 +363,7 @@ def ask_for_a_timezone():
 
 def ask_for_bootloader() -> str:
 	bootloader = "systemd-bootctl"
-	if hasUEFI() == False:
+	if not has_uefi():
 		bootloader = "grub-install"
 	else:
 		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
@@ -401,8 +404,7 @@ def ask_to_configure_network():
 		for index, mode in enumerate(modes):
 			print(f"{index}: {mode}")
 
-		mode = generic_select(['DHCP', 'IP'], f"Select which mode to configure for {nic} or leave blank for DHCP: ",
-							  options_output=False)
+		mode = generic_select(['DHCP', 'IP'], f"Select which mode to configure for {nic} or leave blank for DHCP: ", options_output=False)
 		if mode == 'IP':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
@@ -450,11 +452,10 @@ def ask_for_disk_layout():
 	options = {
 		'keep-existing': 'Keep existing partition layout and select which ones to use where',
 		'format-all': 'Format entire drive and setup a basic partition scheme',
-		'abort': 'Abort the installation'
+		'abort': 'Abort the installation',
 	}
 
-	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ",
-						   allow_empty_input=False, sort=True)
+	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ", allow_empty_input=False, sort=True)
 	return next((key for key, val in options.items() if val == value), None)
 
 
@@ -466,8 +467,7 @@ def ask_for_main_filesystem_format():
 		'f2fs': 'f2fs'
 	}
 
-	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ",
-						   allow_empty_input=False)
+	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
 
 
@@ -584,8 +584,7 @@ def select_profile(options):
 		print(' -- They might make it easier to install things like desktop environments. --')
 		print(' -- (Leave blank and hit enter to skip this step and continue) --')
 
-		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ',
-										  options_output=False)
+		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ', options_output=False)
 		if selected_profile:
 			return Profile(None, selected_profile)
 	else:
@@ -675,9 +674,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
-		selected_mirror = generic_select(regions,
-										 'Select one of the above regions to download packages from (by number or full name): ',
-										 options_output=False)
+		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ', options_output=False)
 		if not selected_mirror:
 			# Returning back empty options which can be both used to
 			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
@@ -708,7 +705,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		lspci = sys_command('/usr/bin/lspci')
+		lspci = SysCommand('/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():

@@ -3,7 +3,7 @@ import logging
 import time
 
 import archinstall
-from archinstall.lib.hardware import hasUEFI
+from archinstall.lib.hardware import has_uefi
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -84,8 +84,7 @@ def ask_user_questions():
 				# Select a partition
 				# If we provide keys as options, it's better to convert them to list and sort before passing
 				mountpoints_list = sorted(list(partition_mountpoints.keys()))
-				partition = archinstall.generic_select(mountpoints_list,
-													   "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
+				partition = archinstall.generic_select(mountpoints_list, "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
 					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
 						break
@@ -105,7 +104,7 @@ def ask_user_questions():
 								if not old_password:
 									old_password = input(f'Enter the old encryption password for {partition}: ')
 
-								if (autodetected_filesystem := partition.detect_inner_filesystem(old_password)):
+								if autodetected_filesystem := partition.detect_inner_filesystem(old_password):
 									new_filesystem = autodetected_filesystem
 								else:
 									archinstall.log("Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
@@ -258,7 +257,7 @@ def perform_installation_steps():
 			Once that's done, we'll hand over to perform_installation()
 		"""
 		mode = archinstall.GPT
-		if hasUEFI() is False:
+		if has_uefi() is False:
 			mode = archinstall.MBR
 
 		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
@@ -295,7 +294,7 @@ def perform_installation_steps():
 			else:
 				fs.find_partition('/').mount('/mnt')
 
-			if hasUEFI():
+			if has_uefi():
 				fs.find_partition('/boot').mount('/mnt/boot')
 
 	perform_installation('/mnt')
@@ -322,7 +321,7 @@ def perform_installation(mountpoint):
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments["bootloader"] == "grub-install" and hasUEFI() == True:
+			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -330,7 +329,7 @@ def perform_installation(mountpoint):
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
 			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
-				installation.copy_ISO_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
+				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
 			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
@@ -373,10 +372,7 @@ def perform_installation(mountpoint):
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
-						archinstall.log(
-							' * Profile\'s post configuration requirements was not fulfilled.',
-							fg='red'
-						)
+						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")

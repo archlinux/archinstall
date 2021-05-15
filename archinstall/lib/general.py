@@ -42,7 +42,7 @@ def locate_binary(name):
 			break  # Don't recurse
 
 
-class JSON_Encoder:
+class JsonEncoder:
 	def _encode(obj):
 		if isinstance(obj, dict):
 			# We'll need to iterate not just the value that default() usually gets passed
@@ -54,12 +54,12 @@ class JSON_Encoder:
 					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
 					val = json.loads(json.dumps(val, cls=JSON))
 				else:
-					val = JSON_Encoder._encode(val)
+					val = JsonEncoder._encode(val)
 
 				if type(key) == str and key[0] == '!':
-					copy[JSON_Encoder._encode(key)] = '******'
+					copy[JsonEncoder._encode(key)] = '******'
 				else:
-					copy[JSON_Encoder._encode(key)] = val
+					copy[JsonEncoder._encode(key)] = val
 			return copy
 		elif hasattr(obj, 'json'):
 			return obj.json()
@@ -78,18 +78,20 @@ class JSON_Encoder:
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	def _encode(self, obj):
-		return JSON_Encoder._encode(obj)
+		return JsonEncoder._encode(obj)
 
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
 
 
-class sys_command:
+class SysCommand:
 	"""
 	Stolen from archinstall_gui
 	"""
 
-	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars=None, *args, **kwargs):
+		if environment_vars is None:
+			environment_vars = {}
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
@@ -170,7 +172,7 @@ class sys_command:
 			'ended': self.ended,
 			'started_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
 			'ended_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
-			'exit_code': self.exit_code
+			'exit_code': self.exit_code,
 		}
 
 	def peak(self, output: Union[str, bytes]) -> bool:
@@ -256,7 +258,7 @@ class sys_command:
 							original = trigger
 							trigger = bytes(original, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][original]
-							del (self.kwargs['events'][original])
+							del self.kwargs['events'][original]
 						if type(self.kwargs['events'][trigger]) != bytes:
 							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 
@@ -269,7 +271,7 @@ class sys_command:
 
 							last_trigger_pos = trigger_pos
 							os.write(child_fd, self.kwargs['events'][trigger])
-							del (self.kwargs['events'][trigger])
+							del self.kwargs['events'][trigger]
 							broke = True
 							break
 
@@ -334,4 +336,4 @@ def prerequisite_check():
 
 
 def reboot():
-	o = b''.join(sys_command("/usr/bin/reboot"))
+	o = b''.join(SysCommand("/usr/bin/reboot"))

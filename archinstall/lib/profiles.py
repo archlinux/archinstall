@@ -14,7 +14,7 @@ from .storage import storage
 
 
 def grab_url_data(path):
-	safe_path = path[:path.find(':') + 1] + ''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))])
+	safe_path = path[: path.find(':') + 1] + ''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -75,7 +75,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 	if filter_top_level_profiles:
 		for profile in list(cache.keys()):
 			if Profile(None, profile).is_top_level_profile() is False:
-				del (cache[profile])
+				del cache[profile]
 
 	return cache
 
@@ -154,7 +154,7 @@ class Script:
 		return self
 
 	def execute(self):
-		if not self.namespace in sys.modules or self.spec is None:
+		if self.namespace not in sys.modules or self.spec is None:
 			self.load_instructions()
 
 		self.spec.loader.exec_module(sys.modules[self.namespace])
@@ -163,8 +163,10 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer, path, args={}):
+	def __init__(self, installer, path, args=None):
 		super(Profile, self).__init__(path, installer)
+		if args is None:
+			args = {}
 
 	def __dump__(self, *args, **kwargs):
 		return {'path': self.path}
