@@ -107,7 +107,7 @@ class Installer:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
 		if self.helper_flags.get('base-strapped', False) is True:
-			if (filename := storage.get('LOG_FILE', None)):
+			if filename := storage.get('LOG_FILE', None):
 				absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 
 				if not os.path.isdir(f"{self.target}/{os.path.dirname(absolute_logfile)}"):
@@ -231,7 +231,7 @@ class Installer:
 	def copy_ISO_network_config(self, enable_services=False):
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):
-			if (psk_files := glob.glob('/var/lib/iwd/*.psk')):
+			if psk_files := glob.glob('/var/lib/iwd/*.psk'):
 				if not os.path.isdir(f"{self.target}/var/lib/iwd"):
 					os.makedirs(f"{self.target}/var/lib/iwd")
 
@@ -257,7 +257,7 @@ class Installer:
 					shutil.copy2(psk, f"{self.target}/var/lib/iwd/{os.path.basename(psk)}")
 
 		# Copy (if any) systemd-networkd config files
-		if (netconfigurations := glob.glob('/etc/systemd/network/*')):
+		if netconfigurations := glob.glob('/etc/systemd/network/*'):
 			if not os.path.isdir(f"{self.target}/etc/systemd/network/"):
 				os.makedirs(f"{self.target}/etc/systemd/network/")
 
@@ -426,7 +426,7 @@ class Installer:
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
 
-				if (real_device := self.detect_encryption(root_partition)):
+				if real_device := self.detect_encryption(root_partition):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)

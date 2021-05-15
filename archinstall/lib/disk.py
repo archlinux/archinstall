@@ -179,11 +179,11 @@ class Partition:
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
 
-		if (target := mount_information.get('target', None)):
+		if target := mount_information.get('target', None):
 			self.mountpoint = target
 
 		if not self.filesystem and autodetect_filesystem:
-			if (fstype := mount_information.get('fstype', get_filesystem_type(path))):
+			if fstype := mount_information.get('fstype', get_filesystem_type(path)):
 				self.filesystem = fstype
 
 		if self.filesystem == 'crypto_LUKS':
@@ -236,7 +236,7 @@ class Partition:
 	@property
 	def real_device(self):
 		for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
-			if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
+			if parent := self.find_parent_of(blockdevice, os.path.basename(self.path)):
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
@@ -373,7 +373,7 @@ class Partition:
 			return parent
 		elif 'children' in data:
 			for child in data['children']:
-				if (parent := self.find_parent_of(child, name, parent=data['name'])):
+				if parent := self.find_parent_of(child, name, parent=data['name']):
 					return parent
 
 	def mount(self, target, fs=None, options=''):
@@ -403,7 +403,7 @@ class Partition:
 			# Without to much research, it seams that low error codes are errors.
 			# And above 8k is indicators such as "/dev/x not mounted.".
 			# So anything in between 0 and 8k are errors (?).
-			if exit_code > 0 and exit_code < 8000:
+			if 0 < exit_code < 8000:
 				raise err
 
 		self.mountpoint = None

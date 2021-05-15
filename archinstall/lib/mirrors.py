@@ -15,9 +15,9 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tm
 	region_list = []
 	for region in regions.split(','):
 		region_list.append(f'country={region}')
-	o = b''.join(sys_command((f"/usr/bin/wget 'https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O {tmp_dir}/mirrorlist")))
-	o = b''.join(sys_command((f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist")))
-	o = b''.join(sys_command((f"/usr/bin/mv {tmp_dir}/mirrorlist {destination}")))
+	o = b''.join(sys_command(f"/usr/bin/wget 'https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O {tmp_dir}/mirrorlist"))
+	o = b''.join(sys_command(f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist"))
+	o = b''.join(sys_command(f"/usr/bin/mv {tmp_dir}/mirrorlist {destination}"))
 
 	return True
 
@@ -71,7 +71,7 @@ def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
 
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if sys_command((f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist')).exit_code == 0:
+	if sys_command(f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist').exit_code == 0:
 		return True
 	return False
 

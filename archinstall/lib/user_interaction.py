@@ -85,7 +85,7 @@ def do_countdown():
 
 
 def get_password(prompt="Enter a password: "):
-	while (passwd := getpass.getpass(prompt)):
+	while passwd := getpass.getpass(prompt):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
@@ -246,7 +246,7 @@ class MiniCurses:
 				return True
 			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
 			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.write("\033[%dG" % self._cursor_x)
 			sys.stdout.flush()
 
 			# Write a blank space
@@ -256,7 +256,7 @@ class MiniCurses:
 
 			# And move back again
 			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % (self._cursor_x))
+			sys.stdout.write("\033[%dG" % self._cursor_x)
 			sys.stdout.flush()
 
 			self._cursor_x -= 1

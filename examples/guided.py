@@ -104,7 +104,7 @@ def ask_user_questions():
 								if not old_password:
 									old_password = input(f'Enter the old encryption password for {partition}: ')
 
-								if (autodetected_filesystem := partition.detect_inner_filesystem(old_password)):
+								if autodetected_filesystem := partition.detect_inner_filesystem(old_password):
 									new_filesystem = autodetected_filesystem
 								else:
 									archinstall.log("Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
