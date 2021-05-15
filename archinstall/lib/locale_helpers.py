@@ -5,7 +5,7 @@ from .exceptions import *
 from .general import sys_command
 
 def list_keyboard_languages():
-	for line in sys_command("localectl --no-pager list-keymaps"):
+	for line in sys_command("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
 		yield line.decode('UTF-8').strip()
 
 def verify_keyboard_layout(layout):
