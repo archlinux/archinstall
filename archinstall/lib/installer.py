@@ -1,14 +1,13 @@
 from .disk import *
 from .hardware import *
 from .mirrors import *
-from .output import log
-from .profiles import Profile
 from .storage import storage
 from .systemd import Networkd
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
+
 
 class Installer():
 	"""
@@ -34,14 +33,15 @@ class Installer():
 	:type hostname: str, optional
 
 	"""
+
 	def __init__(self, target, *, base_packages=__packages__[:3], kernels=['linux']):
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 
 		self.helper_flags = {
-			'base' : False,
-			'bootloader' : False
+			'base': False,
+			'bootloader': False
 		}
 
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
@@ -74,7 +74,7 @@ class Installer():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
-			#self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
+			# self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
 			self.log(args[1], level=logging.ERROR, fg='red')
 
 			self.sync_log_to_install_medium()
@@ -169,10 +169,10 @@ class Installer():
 
 	def set_timezone(self, zone, *args, **kwargs):
 		if not zone: return True
-		if not len(zone): return True # Redundant
+		if not len(zone): return True  # Redundant
 
-		if (pathlib.Path("/usr")/"share"/"zoneinfo"/zone).exists():
-			(pathlib.Path(self.target)/"etc"/"localtime").unlink(missing_ok=True)
+		if (pathlib.Path("/usr") / "share" / "zoneinfo" / zone).exists():
+			(pathlib.Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
 			sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 		else:
@@ -235,6 +235,7 @@ class Installer():
 					# If we haven't installed the base yet (function called pre-maturely)
 					if self.helper_flags.get('base', False) is False:
 						self.base_packages.append('iwd')
+
 						# This function will be called after minimal_installation()
 						# as a hook for post-installs. This hook is only needed if
 						# base is not installed yet.
@@ -264,18 +265,19 @@ class Installer():
 				if self.helper_flags.get('base', False) is False:
 					def post_install_enable_networkd_resolved(*args, **kwargs):
 						self.enable_service('systemd-networkd', 'systemd-resolved')
+
 					self.post_base_install.append(post_install_enable_networkd_resolved)
 				# Otherwise, we can go ahead and enable the services
 				else:
 					self.enable_service('systemd-networkd', 'systemd-resolved')
-
 
 		return True
 
 	def detect_encryption(self, partition):
 		if partition.encrypted:
 			return partition
-		elif partition.parent not in partition.path and Partition(partition.parent, None, autodetect_filesystem=True).filesystem == 'crypto_LUKS':
+		elif partition.parent not in partition.path and Partition(partition.parent, None,
+																  autodetect_filesystem=True).filesystem == 'crypto_LUKS':
 			return Partition(partition.parent, None, autodetect_filesystem=True)
 
 		return False
@@ -294,11 +296,9 @@ class Installer():
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
 
-
-
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
-			#if partition.encrypted:
+				# if partition.encrypted:
 				self.base_packages.append('btrfs-progs')
 			if partition.filesystem == 'xfs':
 				self.base_packages.append('xfsprogs')
@@ -316,12 +316,12 @@ class Installer():
 				if 'encrypt' not in self.HOOKS:
 					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
-		if not(hasUEFI()):
+		if not (hasUEFI()):
 			self.base_packages.append('grub')
 
 		if not isVM():
 			vendor = cpuVendor()
-			if vendor ==  "AuthenticAMD":
+			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
 			elif vendor == "GenuineIntel":
 				self.base_packages.append("intel-ucode")
@@ -337,9 +337,9 @@ class Installer():
 			)  # Redundant \n at the start? who knows?
 
 		## TODO: Support locale and timezone
-		#os.remove(f'{self.target}/etc/localtime')
-		#sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
-		#sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
+		# os.remove(f'{self.target}/etc/localtime')
+		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
+		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname('archinstall')
 		self.set_locale('en_US')
 
@@ -361,7 +361,7 @@ class Installer():
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			if partition.mountpoint == self.target+'/boot':
+			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
@@ -404,7 +404,7 @@ class Installer():
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
-			#UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
+			# UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
 			# Setup the loader entry
 			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
 				entry.write(f'# Created by: archinstall\n')
@@ -413,7 +413,7 @@ class Installer():
 				entry.write(f'linux /vmlinuz-linux\n')
 				if not isVM():
 					vendor = cpuVendor()
-					if vendor ==  "AuthenticAMD":
+					if vendor == "AuthenticAMD":
 						entry.write("initrd /amd-ucode.img\n")
 					elif vendor == "GenuineIntel":
 						entry.write("initrd /intel-ucode.img\n")
@@ -468,13 +468,13 @@ class Installer():
 		self.log(f'Installing network profile {profile}', level=logging.INFO)
 		return profile.install()
 
-	def enable_sudo(self, entity :str, group=False):
+	def enable_sudo(self, entity: str, group=False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 		with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
-	def user_create(self, user :str, password=None, groups=[], sudo=False):
+	def user_create(self, user: str, password=None, groups=[], sudo=False):
 		self.log(f'Creating user {user}', level=logging.INFO)
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
 		if password:
