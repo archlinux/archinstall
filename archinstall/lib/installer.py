@@ -10,6 +10,7 @@ from .systemd import Networkd
 from .output import log
 from .storage import storage
 from .hardware import *
+from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -509,9 +510,26 @@ class Installer():
 
 	def set_keyboard_language(self, language :str) -> bool:
 		if len(language.strip()):
+			if not verify_keyboard_layout(language):
+				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				return False
+
 			if (output := self.arch_chroot(f'localectl set-keymap {language}')).exit_code != 0:
 				raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
 		else:
 			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+
+		return True
+
+	def set_x11_keyboard_language(self, language :str) -> bool:
+		if len(language.strip()):
+			if not verify_x11_keyboard_layout(language):
+				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				return False
+
+			if (output := self.arch_chroot(f'localectl set-x11-keymap {language}')).exit_code != 0:
+				raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
+		else:
+			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
 		return True

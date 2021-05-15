@@ -8,8 +8,18 @@ def list_keyboard_languages():
 	for line in sys_command("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
 		yield line.decode('UTF-8').strip()
 
+def list_x11_keyboard_languages():
+	for line in sys_command("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS' : '0'}):
+		yield line.decode('UTF-8').strip()
+
 def verify_keyboard_layout(layout):
 	for language in list_keyboard_languages():
+		if layout.lower() == language.lower():
+			return True
+	return False
+
+def verify_x11_keyboard_layout(layout):
+	for language in list_x11_keyboard_languages():
 		if layout.lower() == language.lower():
 			return True
 	return False
