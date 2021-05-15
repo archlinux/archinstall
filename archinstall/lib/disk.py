@@ -2,6 +2,7 @@ import glob
 import pathlib
 import re
 from collections import OrderedDict
+from typing import Optional
 
 from .general import *
 from .hardware import hasUEFI
