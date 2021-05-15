@@ -20,13 +20,15 @@ to the version it will become on release *(Patches to `v2.1.4` will be done on b
 ## Discussions
 
 Currently, questions, bugs and suggestions should be reported
-through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
+through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).
+
 For less formal discussions there are also a [archinstall Discord server](https://discord.gg/cqXU88y).
 
 ## Coding convention
 
 Archinstall's goal is to follow [PEP8](https://www.python.org/dev/peps/pep-0008/) as best as it can with some minor
-exceptions.<br>
+exceptions.
+
 The exceptions to PEP8 are:
 
 * Archinstall uses [tabs instead of spaces](https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces) simply to make it
@@ -41,13 +43,15 @@ The exceptions to PEP8 are:
   creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(
   Example: `f"Welcome {name}"` rather than `f'Welcome {name}'`)*.
 
-Most of these style guidelines have been put into place after the fact *(in an attempt to clean up the code)*.<br>
+Most of these style guidelines have been put into place after the fact *(in an attempt to clean up the code)*.
+
 There might therefore be older code which does not follow the coding convention and the code is subject to change.
 
 ## Submitting Changes
 
 Archinstall uses Github's pull-request workflow and all contributions in terms of code should be done through pull
-requests.<br>
+requests.
+
 
 Anyone interested in archinstall may review your code. One of the core developers will merge your pull request when they
 think it is ready. For every pull request, we aim to promptly either merge it or say why it is not yet ready; if you go
