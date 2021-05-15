@@ -1,6 +1,6 @@
 import archinstall
-import json
-import urllib.request
+# import json
+# import urllib.request
 
 __packages__ = ['nano', 'wget', 'git']
 
@@ -27,7 +27,7 @@ with archinstall.Filesystem(harddrive) as fs:
 
 	with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
 		unlocked_device.format('btrfs')
-		
+
 		with archinstall.Installer(
 				unlocked_device,
 				boot_partition=harddrive.partition[0],

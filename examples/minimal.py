@@ -11,8 +11,9 @@ if archinstall.arguments.get('help', None):
 
 archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 
+
 def install_on(mountpoint):
-	# We kick off the installer by telling it where the 
+	# We kick off the installer by telling it where the
 	with archinstall.Installer(mountpoint) as installation:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
@@ -36,9 +37,10 @@ def install_on(mountpoint):
 	archinstall.log(f" * root (password: airoot)")
 	archinstall.log(f" * devel (password: devel)")
 
+
 if archinstall.arguments['harddrive']:
 	archinstall.arguments['harddrive'].keep_partitions = False
-	
+
 	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
 	archinstall.do_countdown()
 
