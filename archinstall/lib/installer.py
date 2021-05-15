@@ -70,7 +70,7 @@ class Installer():
 		return self
 
 	def __exit__(self, *args, **kwargs):
-		# b''.join(sys_command(f'sync')) # No need to, since the underlying fs() object will call sync.
+		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
@@ -82,7 +82,7 @@ class Installer():
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
-			print(f"    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
+			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
 		self.genfstab()
@@ -98,7 +98,7 @@ class Installer():
 				self.log(f' - {step}', fg='red', level=logging.WARNING)
 
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
-			self.log(f"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
+			self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
 
 			self.sync_log_to_install_medium()
 			return False
@@ -183,7 +183,7 @@ class Installer():
 			)
 
 	def activate_ntp(self):
-		self.log(f'Installing and activating NTP.', level=logging.INFO)
+		self.log('Installing and activating NTP.', level=logging.INFO)
 		if self.pacstrap('ntp'):
 			if self.enable_service('ntpd'):
 				return True
@@ -389,7 +389,7 @@ class Installer():
 			else:
 				loader_data = [
 					f"default {self.init_time}",
-					f"timeout 5"
+					"timeout 5"
 				]
 
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
@@ -407,10 +407,10 @@ class Installer():
 			# UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
 			# Setup the loader entry
 			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
-				entry.write(f'# Created by: archinstall\n')
+				entry.write('# Created by: archinstall\n')
 				entry.write(f'# Created on: {self.init_time}\n')
-				entry.write(f'title Arch Linux\n')
-				entry.write(f'linux /vmlinuz-linux\n')
+				entry.write('title Arch Linux\n')
+				entry.write('linux /vmlinuz-linux\n')
 				if not isVM():
 					vendor = cpuVendor()
 					if vendor == "AuthenticAMD":
@@ -419,7 +419,7 @@ class Installer():
 						entry.write("initrd /intel-ucode.img\n")
 					else:
 						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
-				entry.write(f'initrd /initramfs-linux.img\n')
+				entry.write('initrd /initramfs-linux.img\n')
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
 
@@ -506,7 +506,7 @@ class Installer():
 		if len(language.strip()):
 			with open(f'{self.target}/etc/vconsole.conf', 'w') as vconsole:
 				vconsole.write(f'KEYMAP={language}\n')
-				vconsole.write(f'FONT=lat9w-16\n')
+				vconsole.write('FONT=lat9w-16\n')
 		else:
-			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 		return True
