@@ -3,6 +3,7 @@ from .lib.disk import *
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
+from .lib.installer import __packages__, Installer
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
