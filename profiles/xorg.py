@@ -36,4 +36,4 @@ if __name__ == 'xorg':
 		else:
 			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
-		archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
+		archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install

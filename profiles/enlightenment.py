@@ -1,6 +1,6 @@
 # A desktop environment using "Enlightenment".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
