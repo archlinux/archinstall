@@ -321,7 +321,7 @@ def perform_installation(mountpoint):
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments["bootloader"] == "grub-install" and hasUEFI() == True:
+			if archinstall.arguments["bootloader"] == "grub-install" and hasUEFI():
 				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
