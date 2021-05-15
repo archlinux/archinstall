@@ -507,11 +507,11 @@ class Installer():
 		o = b''.join(sys_command(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
 
-	def set_keyboard_language(self, language):
+	def set_keyboard_language(self, language :str) -> bool:
 		if len(language.strip()):
-			with open(f'{self.target}/etc/vconsole.conf', 'w') as vconsole:
-				vconsole.write(f'KEYMAP={language}\n')
-				vconsole.write(f'FONT=lat9w-16\n')
+			if (output := self.arch_chroot(f'localectl set-keymap {language}')).exit_code != 0:
+				raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
 		else:
 			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+
 		return True
