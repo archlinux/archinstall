@@ -5,7 +5,7 @@ import struct
 from collections import OrderedDict
 
 from .exceptions import *
-from .general import sys_command
+from .general import SysCommand
 from .storage import storage
 
 
@@ -53,7 +53,7 @@ def wireless_scan(interface):
 	if interfaces[interface] != 'WIRELESS':
 		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
 
-	sys_command(f"iwctl station {interface} scan")
+	SysCommand(f"iwctl station {interface} scan")
 
 	if '_WIFI' not in storage:
 		storage['_WIFI'] = {}
@@ -72,5 +72,5 @@ def get_wireless_networks(interface):
 		wireless_scan(interface)
 		time.sleep(5)
 
-	for line in sys_command(f"iwctl station {interface} get-networks"):
+	for line in SysCommand(f"iwctl station {interface} get-networks"):
 		print(line)

@@ -42,7 +42,7 @@ def locate_binary(name):
 			break  # Don't recurse
 
 
-class JSON_Encoder:
+class JsonEncoder:
 	def _encode(obj):
 		if isinstance(obj, dict):
 			# We'll need to iterate not just the value that default() usually gets passed
@@ -54,12 +54,12 @@ class JSON_Encoder:
 					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
 					val = json.loads(json.dumps(val, cls=JSON))
 				else:
-					val = JSON_Encoder._encode(val)
+					val = JsonEncoder._encode(val)
 
 				if type(key) == str and key[0] == '!':
-					copy[JSON_Encoder._encode(key)] = '******'
+					copy[JsonEncoder._encode(key)] = '******'
 				else:
-					copy[JSON_Encoder._encode(key)] = val
+					copy[JsonEncoder._encode(key)] = val
 			return copy
 		elif hasattr(obj, 'json'):
 			return obj.json()
@@ -78,13 +78,13 @@ class JSON_Encoder:
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	def _encode(self, obj):
-		return JSON_Encoder._encode(obj)
+		return JsonEncoder._encode(obj)
 
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
 
 
-class sys_command:
+class SysCommand:
 	"""
 	Stolen from archinstall_gui
 	"""
@@ -336,4 +336,4 @@ def prerequisite_check():
 
 
 def reboot():
-	o = b''.join(sys_command("/usr/bin/reboot"))
+	o = b''.join(SysCommand("/usr/bin/reboot"))

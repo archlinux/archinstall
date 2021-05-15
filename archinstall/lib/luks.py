@@ -78,7 +78,7 @@ class luks2:
 
 		try:
 			# Try to setup the crypt-device
-			cmd_handle = sys_command(cryptsetup_args)
+			cmd_handle = SysCommand(cryptsetup_args)
 		except SysCallError as err:
 			if err.exit_code == 256:
 				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
@@ -87,7 +87,7 @@ class luks2:
 
 				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 				# For instance: /dev/sda
-				devinfo = json.loads(b''.join(sys_command(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
+				devinfo = json.loads(b''.join(SysCommand(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
 
 				# For each child (sub-partition/sub-device)
 				if len(children := devinfo.get('children', [])):
@@ -95,14 +95,14 @@ class luks2:
 						# Unmount the child location
 						if child_mountpoint := child.get('mountpoint', None):
 							log(f'Unmounting {child_mountpoint}', level=logging.DEBUG)
-							sys_command(f"umount -R {child_mountpoint}")
+							SysCommand(f"umount -R {child_mountpoint}")
 
 						# And close it if possible.
 						log(f"Closing crypt device {child['name']}", level=logging.DEBUG)
-						sys_command(f"cryptsetup close {child['name']}")
+						SysCommand(f"cryptsetup close {child['name']}")
 
 				# Then try again to set up the crypt-device
-				cmd_handle = sys_command(cryptsetup_args)
+				cmd_handle = SysCommand(cryptsetup_args)
 			else:
 				raise err
 
@@ -128,7 +128,7 @@ class luks2:
 		while pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		sys_command(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
+		SysCommand(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 			unlocked_partition = Partition(self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
@@ -139,9 +139,9 @@ class luks2:
 		if not mountpoint:
 			mountpoint = self.mapdev
 
-		sys_command(f'/usr/bin/cryptsetup close {self.mapdev}')
+		SysCommand(f'/usr/bin/cryptsetup close {self.mapdev}')
 		return os.path.islink(self.mapdev) is False
 
 	def format(self, path):
-		if (handle := sys_command(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
+		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
 			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')

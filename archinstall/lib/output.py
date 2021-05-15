@@ -18,7 +18,7 @@ class LogLevels:
 	Debug = 0b111
 
 
-class journald(dict):
+class Journald(dict):
 	@abc.abstractmethod
 	def log(message, level=logging.DEBUG):
 		try:
@@ -161,7 +161,7 @@ def log(*args, **kwargs):
 			return None
 
 	try:
-		journald.log(string, level=kwargs.get('level', logging.INFO))
+		Journald.log(string, level=kwargs.get('level', logging.INFO))
 	except ModuleNotFoundError:
 		pass  # Ignore writing to journald
 

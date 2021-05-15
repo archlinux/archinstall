@@ -23,7 +23,7 @@ def install_on(mountpoint):
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):
-				installation.copy_ISO_network_config(enable_services=True)
+				installation.copy_iso_network_config(enable_services=True)
 
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 			installation.install_profile('minimal')

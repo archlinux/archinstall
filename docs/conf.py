@@ -8,8 +8,8 @@ sys.path.insert(0, os.path.abspath('..'))
 def process_docstring(app, what, name, obj, options, lines):
 	spaces_pat = re.compile(r"( {8})")
 	ll = []
-	for l in lines:
-		ll.append(spaces_pat.sub("    ", l))
+	for line in lines:
+		ll.append(spaces_pat.sub("    ", line))
 	lines[:] = ll
 
 

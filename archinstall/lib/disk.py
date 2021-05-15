@@ -5,7 +5,7 @@ from collections import OrderedDict
 from typing import Optional
 
 from .general import *
-from .hardware import hasUEFI
+from .hardware import has_uefi
 from .output import log
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
@@ -77,7 +77,7 @@ class BlockDevice:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(sys_command(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(SysCommand(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path:
 					continue
 
@@ -99,10 +99,10 @@ class BlockDevice:
 
 	@property
 	def partitions(self):
-		o = b''.join(sys_command(['partprobe', self.path]))
+		o = b''.join(SysCommand(['partprobe', self.path]))
 
 		# o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
-		o = b''.join(sys_command(['/usr/bin/lsblk', '-J', self.path]))
+		o = b''.join(SysCommand(['/usr/bin/lsblk', '-J', self.path]))
 
 		if b'not a block device' in o:
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
@@ -116,7 +116,7 @@ class BlockDevice:
 			for part in r['blockdevices'][0]['children']:
 				part_id = part['name'][len(os.path.basename(self.path)):]
 				if part_id not in self.part_cache:
-					## TODO: Force over-write even if in cache?
+					# TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
 						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
 
@@ -139,7 +139,7 @@ class BlockDevice:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
-		lsblk = b''.join(sys_command(f'lsblk -J -o+UUID {self.path}'))
+		lsblk = b''.join(SysCommand(f'lsblk -J -o+UUID {self.path}'))
 		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
 			return partition.get('uuid', None)
 
@@ -216,7 +216,7 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
-		lsblk = b''.join(sys_command(f'lsblk -J -o+PARTUUID {self.path}'))
+		lsblk = b''.join(SysCommand(f'lsblk -J -o+PARTUUID {self.path}'))
 		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
 		return None
@@ -236,7 +236,7 @@ class Partition:
 
 	@property
 	def real_device(self):
-		for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
+		for blockdevice in json.loads(b''.join(SysCommand('lsblk -J')).decode('UTF-8'))['blockdevices']:
 			if parent := self.find_parent_of(blockdevice, os.path.basename(self.path)):
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
@@ -260,11 +260,11 @@ class Partition:
 		temporary_path = pathlib.Path(temporary_mountpoint)
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
-		if (handle := sys_command(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
+		if (handle := SysCommand(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
-		sys_command(f'/usr/bin/umount {temporary_mountpoint}')
+		SysCommand(f'/usr/bin/umount {temporary_mountpoint}')
 
 		temporary_path.rmdir()
 
@@ -327,29 +327,29 @@ class Partition:
 			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
 
 		if filesystem == 'btrfs':
-			o = b''.join(sys_command(f'/usr/bin/mkfs.btrfs -f {path}'))
+			o = b''.join(SysCommand(f'/usr/bin/mkfs.btrfs -f {path}'))
 			if b'UUID' not in o:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {o}')
 			self.filesystem = 'btrfs'
 
 		elif filesystem == 'vfat':
-			o = b''.join(sys_command(f'/usr/bin/mkfs.vfat -F32 {path}'))
+			o = b''.join(SysCommand(f'/usr/bin/mkfs.vfat -F32 {path}'))
 			if (b'mkfs.fat' not in o and b'mkfs.vfat' not in o) or b'command not found' in o:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {o}')
 			self.filesystem = 'vfat'
 
 		elif filesystem == 'ext4':
-			if (handle := sys_command(f'/usr/bin/mkfs.ext4 -F {path}')).exit_code != 0:
+			if (handle := SysCommand(f'/usr/bin/mkfs.ext4 -F {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
 
 		elif filesystem == 'xfs':
-			if (handle := sys_command(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
+			if (handle := SysCommand(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'xfs'
 
 		elif filesystem == 'f2fs':
-			if (handle := sys_command(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
+			if (handle := SysCommand(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'f2fs'
 
@@ -389,9 +389,9 @@ class Partition:
 
 			try:
 				if options:
-					sys_command(f'/usr/bin/mount -o {options} {self.path} {target}')
+					SysCommand(f'/usr/bin/mount -o {options} {self.path} {target}')
 				else:
-					sys_command(f'/usr/bin/mount {self.path} {target}')
+					SysCommand(f'/usr/bin/mount {self.path} {target}')
 			except SysCallError as err:
 				raise err
 
@@ -400,7 +400,7 @@ class Partition:
 
 	def unmount(self):
 		try:
-			exit_code = sys_command(f'/usr/bin/umount {self.path}').exit_code
+			exit_code = SysCommand(f'/usr/bin/umount {self.path}').exit_code
 		except SysCallError as err:
 			exit_code = err.exit_code
 
@@ -450,7 +450,7 @@ class Filesystem:
 				else:
 					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
 			elif self.mode == MBR:
-				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
+				if SysCommand(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
 					return self
 				else:
 					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
@@ -472,7 +472,7 @@ class Filesystem:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		b''.join(sys_command('sync'))
+		b''.join(SysCommand('sync'))
 		return True
 
 	def find_partition(self, mountpoint):
@@ -481,7 +481,7 @@ class Filesystem:
 				return partition
 
 	def raw_parted(self, string: str):
-		x = sys_command(f'/usr/bin/parted -s {string}')
+		x = SysCommand(f'/usr/bin/parted -s {string}')
 		return x
 
 	def parted(self, string: str):
@@ -495,7 +495,7 @@ class Filesystem:
 
 	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=logging.DEBUG)
-		if hasUEFI():
+		if has_uefi():
 			self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
 			self.set_name(0, 'EFI')
 			self.set(0, 'boot on')
@@ -572,7 +572,7 @@ def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
-	for drive in json.loads(b''.join(sys_command('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
+	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part':
 			continue
 
@@ -605,7 +605,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 def get_mount_info(path):
 	try:
-		output = b''.join(sys_command(f'/usr/bin/findmnt --json {path}'))
+		output = b''.join(SysCommand(f'/usr/bin/findmnt --json {path}'))
 	except SysCallError:
 		return {}
 
@@ -620,7 +620,7 @@ def get_mount_info(path):
 
 def get_partitions_in_use(mountpoint):
 	try:
-		output = b''.join(sys_command(f'/usr/bin/findmnt --json -R {mountpoint}'))
+		output = b''.join(SysCommand(f'/usr/bin/findmnt --json -R {mountpoint}'))
 	except SysCallError:
 		return {}
 
@@ -639,7 +639,7 @@ def get_partitions_in_use(mountpoint):
 
 def get_filesystem_type(path):
 	try:
-		handle = sys_command(f"blkid -o value -s TYPE {path}")
+		handle = SysCommand(f"blkid -o value -s TYPE {path}")
 		return b''.join(handle).strip().decode('UTF-8')
 	except SysCallError:
 		return None
@@ -647,7 +647,7 @@ def get_filesystem_type(path):
 
 def disk_layouts():
 	try:
-		handle = sys_command("lsblk -f -o+TYPE,SIZE -J")
+		handle = SysCommand("lsblk -f -o+TYPE,SIZE -J")
 		return json.loads(b''.join(handle).decode('UTF-8'))
 	except SysCallError as err:
 		log(f"Could not return disk layouts: {err}")

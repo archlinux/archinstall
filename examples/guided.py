@@ -3,7 +3,7 @@ import logging
 import time
 
 import archinstall
-from archinstall.lib.hardware import hasUEFI
+from archinstall.lib.hardware import has_uefi
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -257,7 +257,7 @@ def perform_installation_steps():
 			Once that's done, we'll hand over to perform_installation()
 		"""
 		mode = archinstall.GPT
-		if hasUEFI() is False:
+		if has_uefi() is False:
 			mode = archinstall.MBR
 
 		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
@@ -294,7 +294,7 @@ def perform_installation_steps():
 			else:
 				fs.find_partition('/').mount('/mnt')
 
-			if hasUEFI():
+			if has_uefi():
 				fs.find_partition('/boot').mount('/mnt/boot')
 
 	perform_installation('/mnt')
@@ -321,7 +321,7 @@ def perform_installation(mountpoint):
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments["bootloader"] == "grub-install" and hasUEFI():
+			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -329,7 +329,7 @@ def perform_installation(mountpoint):
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
 			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
-				installation.copy_ISO_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
+				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
 			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')

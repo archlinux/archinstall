@@ -12,8 +12,8 @@ import time
 import tty
 
 from .exceptions import *
-from .general import sys_command
-from .hardware import AVAILABLE_GFX_DRIVERS, hasUEFI
+from .general import SysCommand
+from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
@@ -363,7 +363,7 @@ def ask_for_a_timezone():
 
 def ask_for_bootloader() -> str:
 	bootloader = "systemd-bootctl"
-	if not hasUEFI():
+	if not has_uefi():
 		bootloader = "grub-install"
 	else:
 		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
@@ -705,7 +705,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		lspci = sys_command('/usr/bin/lspci')
+		lspci = SysCommand('/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():
