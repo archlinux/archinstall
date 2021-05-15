@@ -1,4 +1,6 @@
-import getpass, time, json, os, logging
+import time
+import json
+import logging
 import archinstall
 from archinstall.lib.hardware import hasUEFI
 from archinstall.lib.profiles import Profile
