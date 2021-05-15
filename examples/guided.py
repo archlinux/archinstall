@@ -39,10 +39,10 @@ def ask_user_questions():
 				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
 				break
 			except archinstall.RequirementError as e:
-				archinstall.log(e,  fg="red")
+				archinstall.log(e, fg="red")
 	else:
 		selected_region = archinstall.arguments['mirror-region']
-		archinstall.arguments['mirror-region'] = {selected_region : archinstall.list_mirrors()[selected_region]}
+		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 
 	# Ask which harddrive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
@@ -219,7 +219,7 @@ def ask_user_questions():
 				break
 			except archinstall.RequirementError as e:
 				archinstall.log(e, fg='red')
-				archinstall.arguments['packages'] = None # Clear the packages to trigger a new input question
+				archinstall.arguments['packages'] = None  # Clear the packages to trigger a new input question
 		else:
 			# no additional packages were selected, which we'll allow
 			break
@@ -388,6 +388,7 @@ def perform_installation(mountpoint):
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LogLevels.Debug)
+
 
 ask_user_questions()
 perform_installation_steps()
