@@ -274,11 +274,11 @@ class Installer():
 		return True
 
 	def detect_encryption(self, partition):
+		part = Partition(partition.parent, None, autodetect_filesystem=True)
 		if partition.encrypted:
 			return partition
-		elif partition.parent not in partition.path and Partition(partition.parent, None,
-																  autodetect_filesystem=True).filesystem == 'crypto_LUKS':
-			return Partition(partition.parent, None, autodetect_filesystem=True)
+		elif partition.parent not in partition.path and part.filesystem == 'crypto_LUKS':
+			return part
 
 		return False
 
