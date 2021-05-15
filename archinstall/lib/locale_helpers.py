@@ -30,4 +30,7 @@ def search_keyboard_layout(filter):
 			yield language
 
 def set_keyboard_language(locale):
-	return subprocess.call(['loadkeys', locale]) == 0
+	if (output := self.arch_chroot(f'localectl set-keymap {locale}')).exit_code != 0:
+		raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
+
+	return True
