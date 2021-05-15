@@ -1,6 +1,6 @@
 # Used to select various server application profiles on top of a minimal installation.
 
-import archinstall, os, logging
+import archinstall, logging
 
 is_top_level_profile = True
 

@@ -1,6 +1,5 @@
 # A system with "xorg" installed
 
-import os
 import archinstall
 
 is_top_level_profile = True

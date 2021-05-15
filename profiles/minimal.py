@@ -1,7 +1,5 @@
 # Used to do a minimal install
 
-import archinstall, os
-
 is_top_level_profile = True
 
 

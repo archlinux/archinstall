@@ -1,6 +1,6 @@
 # A desktop environment using "KDE".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
