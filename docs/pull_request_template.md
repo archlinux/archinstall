@@ -12,5 +12,4 @@ If the PR is larger than ~20 lines, please describe it here unless described in 
 
 # Testing
 
-Any new feature or stability improvement should be tested if possible. Please follow the test instructions at the bottom
-of the README or use the ISO built on each PR.
+Any new feature or stability improvement should be tested if possible. Please follow the test instructions at the bottom of the README or use the ISO built on each PR.

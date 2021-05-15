@@ -152,8 +152,9 @@ class BlockDevice():
 	def flush_cache(self):
 		self.part_cache = OrderedDict()
 
+
 class Partition():
-	def __init__(self, path :str, block_device :BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path: str, block_device: BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
 
@@ -506,9 +507,9 @@ class Filesystem():
 			self.blockdevice.partition[0].allow_formatting = True
 			self.blockdevice.partition[1].allow_formatting = True
 		else:
-			#we don't need a seprate boot partition it would be a waste of space
+			# we don't need a seprate boot partition it would be a waste of space
 			self.add_partition('primary', start='1MB', end='100%')
-			self.blockdevice.partition[0].filesystem=root_filesystem_type
+			self.blockdevice.partition[0].filesystem = root_filesystem_type
 			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
 			self.blockdevice.partition[0].target_mountpoint = '/'
 			self.blockdevice.partition[0].allow_formatting = True
@@ -558,27 +559,30 @@ def device_state(name, *args, **kwargs):
 					return
 	return True
 
+
 # lsblk --json -l -n -o path
 def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
-	#for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
+	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
 	for drive in json.loads(b''.join(sys_command(f'lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part': continue
 
 		drives[drive['path']] = BlockDevice(drive['path'], drive)
 	return drives
 
+
 def convert_to_gigabytes(string):
 	unit = string.strip()[-1]
 	size = float(string.strip()[:-1])
 
 	if unit == 'M':
-		size = size/1024
+		size = size / 1024
 	elif unit == 'T':
-		size = size*1024
+		size = size * 1024
 
 	return size
+
 
 def harddrive(size=None, model=None, fuzzy=False):
 	collection = all_disks()

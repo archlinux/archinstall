@@ -153,7 +153,7 @@ class Installer():
 
 		return True
 
-	def set_hostname(self, hostname :str, *args, **kwargs):
+	def set_hostname(self, hostname: str, *args, **kwargs):
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
@@ -423,7 +423,6 @@ class Installer():
 				## blkid doesn't trigger on loopback devices really well,
 				## so we'll use the old manual method until we get that sorted out.
 
-
 				if (real_device := self.detect_encryption(root_partition)):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
@@ -446,7 +445,7 @@ class Installer():
 				sys_command('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				return True
 			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/","")}/..)"', shell=True).decode().strip()
+				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
 				if root_device == "block":
 					root_device = f"{root_partition.path}"
 				o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))

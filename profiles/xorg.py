@@ -30,11 +30,11 @@ if __name__ == 'xorg':
 	try:
 		if "nvidia" in _gfx_driver_packages:
 			if "linux-zen" in archinstall.storage['installation_session'].base_packages or "linux-lts" in archinstall.storage['installation_session'].base_packages:
-				archinstall.storage['installation_session'].add_additional_packages("dkms")#I've had kernel regen fail if it wasn't installed before nvidia-dkms
+				archinstall.storage['installation_session'].add_additional_packages("dkms")  # I've had kernel regen fail if it wasn't installed before nvidia-dkms
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:
 				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 		else:
 			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
-		archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
+		archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit")  # Prep didn't run, so there's no driver to install
