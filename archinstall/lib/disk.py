@@ -496,7 +496,7 @@ class Filesystem:
 	def use_entire_disk(self, root_filesystem_type='ext4'):
 		log(f"Using and formatting the entire {self.blockdevice}.", level=logging.DEBUG)
 		if has_uefi():
-			self.add_partition('primary', start='1MiB', end='513MiB', format='fat32')
+			self.add_partition('primary', start='1MiB', end='513MiB', partition_format='fat32')
 			self.set_name(0, 'EFI')
 			self.set(0, 'boot on')
 			# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
@@ -521,17 +521,17 @@ class Filesystem:
 			self.blockdevice.partition[0].target_mountpoint = '/'
 			self.blockdevice.partition[0].allow_formatting = True
 
-	def add_partition(self, type, start, end, format=None):
+	def add_partition(self, partition_type, start, end, partition_format=None):
 		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
 
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
 				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
-		if format:
-			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
+		if partition_format:
+			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}') == 0
 		else:
-			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {start} {end}') == 0
+			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {start} {end}') == 0
 
 		if partitioning:
 			start_wait = time.time()

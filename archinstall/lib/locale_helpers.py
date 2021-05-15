@@ -27,9 +27,9 @@ def verify_keyboard_layout(layout):
 	return False
 
 
-def search_keyboard_layout(filter):
+def search_keyboard_layout(layout_filter):
 	for language in list_keyboard_languages():
-		if filter.lower() in language.lower():
+		if layout_filter.lower() in language.lower():
 			yield language
 
 
