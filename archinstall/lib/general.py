@@ -281,7 +281,7 @@ class sys_command:
 						if 'debug' in self.kwargs and self.kwargs['debug']:
 							self.log(f"Waiting for last command {self.cmd[0]} to finish.", level=logging.DEBUG)
 
-						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0 - len(f']$') - 5:].lower():
+						if bytes(']$'.lower(), 'UTF-8') in self.trace_log[0 - len(']$') - 5:].lower():
 							if 'debug' in self.kwargs and self.kwargs['debug']:
 								self.log(f"{self.cmd[0]} has finished.", level=logging.DEBUG)
 							alive = False

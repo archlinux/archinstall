@@ -78,7 +78,7 @@ def hasUEFI() -> bool:
 
 def graphicsDevices() -> dict:
 	cards = {}
-	for line in sys_command(f"lspci"):
+	for line in sys_command("lspci"):
 		if b' VGA ' in line:
 			_, identifier = line.split(b': ', 1)
 			cards[identifier.strip().lower().decode('UTF-8')] = line

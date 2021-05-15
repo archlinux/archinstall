@@ -125,7 +125,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
 	if not options:
-		log(f" * Generic multi-select didn't find any options to choose from * ", fg='red')
+		log(" * Generic multi-select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_multi_select() requires at least one option to proceed.')
 	# After passing the checks, function continues to work
@@ -491,7 +491,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
 	if not options:
-		log(f" * Generic select didn't find any options to choose from * ", fg='red')
+		log(" * Generic select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires at least one option to proceed.')
 	# After passing the checks, function continues to work
@@ -552,7 +552,7 @@ def select_disk(dict_o_disks):
 		for index, drive in enumerate(drives):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 
-		log(f"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
+		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
 		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ', options_output=False)
 		if not drive:
 			return drive
@@ -708,7 +708,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		lspci = sys_command(f'/usr/bin/lspci')
+		lspci = sys_command('/usr/bin/lspci')
 		for line in lspci.trace_log.split(b'\r\n'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():

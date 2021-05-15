@@ -105,7 +105,7 @@ class BlockDevice():
 			raise DiskError(f'Can not read partitions off something that isn\'t a block device: {self.path}')
 
 		if not o[:1] == b'{':
-			raise DiskError(f'Error getting JSON output from:', f'/usr/bin/lsblk -J {self.path}')
+			raise DiskError('Error getting JSON output from:', f'/usr/bin/lsblk -J {self.path}')
 
 		r = json.loads(o.decode('UTF-8'))
 		if len(r['blockdevices']) and 'children' in r['blockdevices'][0]:
@@ -130,7 +130,7 @@ class BlockDevice():
 
 	@property
 	def uuid(self):
-		log(f'BlockDevice().uuid is untested!', level=logging.WARNING, fg='yellow')
+		log('BlockDevice().uuid is untested!', level=logging.WARNING, fg='yellow')
 		"""
 		Returns the disk UUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -441,12 +441,12 @@ class Filesystem():
 					self.blockdevice.flush_cache()
 					return self
 				else:
-					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
 			elif self.mode == MBR:
 				if sys_command(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
 					return self
 				else:
-					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
+					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
@@ -465,7 +465,7 @@ class Filesystem():
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
-		b''.join(sys_command(f'sync'))
+		b''.join(sys_command('sync'))
 		return True
 
 	def find_partition(self, mountpoint):
@@ -565,7 +565,7 @@ def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
-	for drive in json.loads(b''.join(sys_command(f'lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
+	for drive in json.loads(b''.join(sys_command('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part': continue
 
 		drives[drive['path']] = BlockDevice(drive['path'], drive)
@@ -639,7 +639,7 @@ def get_filesystem_type(path):
 
 def disk_layouts():
 	try:
-		handle = sys_command(f"lsblk -f -o+TYPE,SIZE -J")
+		handle = sys_command("lsblk -f -o+TYPE,SIZE -J")
 		return json.loads(b''.join(handle).decode('UTF-8'))
 	except SysCallError as err:
 		log(f"Could not return disk layouts: {err}")
