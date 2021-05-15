@@ -154,7 +154,7 @@ class Script:
 		return self
 
 	def execute(self):
-		if not self.namespace in sys.modules or self.spec is None:
+		if self.namespace not in sys.modules or self.spec is None:
 			self.load_instructions()
 
 		self.spec.loader.exec_module(sys.modules[self.namespace])

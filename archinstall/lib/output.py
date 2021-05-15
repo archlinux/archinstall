@@ -83,11 +83,11 @@ def stylize_output(text: str, *opts, **kwargs):
 	color_names = ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')
 	foreground = {color_names[x]: '3%s' % x for x in range(8)}
 	background = {color_names[x]: '4%s' % x for x in range(8)}
-	RESET = '0'
+	reset = '0'
 
 	code_list = []
 	if text == '' and len(opts) == 1 and opts[0] == 'reset':
-		return '\x1b[%sm' % RESET
+		return '\x1b[%sm' % reset
 	for k, v in kwargs.items():
 		if k == 'fg':
 			code_list.append(foreground[v])
@@ -97,7 +97,7 @@ def stylize_output(text: str, *opts, **kwargs):
 		if o in opt_dict:
 			code_list.append(opt_dict[o])
 	if 'noreset' not in opts:
-		text = '%s\x1b[%sm' % (text or '', RESET)
+		text = '%s\x1b[%sm' % (text or '', reset)
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
 
@@ -112,7 +112,7 @@ def log(*args, **kwargs):
 
 	# If a logfile is defined in storage,
 	# we use that one to output everything
-	if (filename := storage.get('LOG_FILE', None)):
+	if filename := storage.get('LOG_FILE', None):
 		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
 
 		try:
@@ -155,7 +155,7 @@ def log(*args, **kwargs):
 			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
 			kwargs['level'] = logging.DEBUG
 
-		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO) and not 'force' in kwargs:
+		if kwargs['level'] > storage.get('LOG_LEVEL', logging.INFO) and 'force' not in kwargs:
 			# Level on log message was Debug, but output level is set to Info.
 			# In that case, we'll drop it.
 			return None
