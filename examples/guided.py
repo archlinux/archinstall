@@ -10,7 +10,7 @@ if archinstall.arguments.get('help'):
 	exit(0)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=archinstall.LogLevels.Debug)
+archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
 def ask_user_questions():
@@ -387,7 +387,7 @@ def perform_installation(mountpoint):
 				pass
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=archinstall.LogLevels.Debug)
+	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
 ask_user_questions()
