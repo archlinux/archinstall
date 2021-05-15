@@ -1,5 +1,6 @@
-import archinstall
 import time
+
+import archinstall
 
 archinstall.storage['UPSTREAM_URL'] = 'https://archlinux.life/profiles'
 archinstall.storage['PROFILE_DB'] = 'index.json'

@@ -22,6 +22,7 @@ def _prep_function(*args, **kwargs):
 
 	return True
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("xorg", "/somewhere/xorg.py")
 # or through conventional import xorg

@@ -6,6 +6,7 @@ is_top_level_profile = False
 
 __packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-wayland-session", "egl-wayland"]
 
+
 # TODO: Remove hard dependency of bash (due to .bash_profile)
 
 
