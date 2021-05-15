@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: [ push, pull_request ]
 name: Lint Python and Find Syntax Errors
 jobs:
   mypy:

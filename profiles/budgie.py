@@ -4,8 +4,9 @@ import archinstall
 
 is_top_level_profile = False
 
-# "It is recommended also to install the gnome group, which contains applications required for the standard GNOME experience." - Arch Wiki 
+# "It is recommended also to install the gnome group, which contains applications required for the standard GNOME experience." - Arch Wiki
 __packages__ = ["budgie-desktop", "lightdm", "lightdm-gtk-greeter", "gnome"]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -23,6 +24,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("budgie", "/somewhere/budgie.py")
 # or through conventional import budgie
@@ -33,4 +35,4 @@ if __name__ == 'budgie':
 	# Install the Budgie packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm')  # Light Display Manager

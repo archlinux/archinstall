@@ -1,10 +1,13 @@
 # Used to select various server application profiles on top of a minimal installation.
 
-import archinstall, os, logging
+import logging
+
+import archinstall
 
 is_top_level_profile = True
 
 available_servers = ["cockpit", "docker", "httpd", "lighttpd", "mariadb", "nginx", "postgresql", "sshd", "tomcat"]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -13,8 +16,9 @@ def _prep_function(*args, **kwargs):
 	"""
 	selected_servers = archinstall.generic_multi_select(available_servers, f"Choose which servers to install and enable (leave blank for a minimal installation): ")
 	archinstall.storage['_selected_servers'] = selected_servers
-	
+
 	return True
+
 
 if __name__ == 'server':
 	"""

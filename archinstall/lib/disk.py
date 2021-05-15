@@ -1,21 +1,21 @@
-from typing import Optional
-import glob, re, os, json, time, hashlib
-import pathlib, traceback, logging
+import glob
+import pathlib
+import re
 from collections import OrderedDict
-from .exceptions import DiskError
+
 from .general import *
-from .output import log
-from .storage import storage
 from .hardware import hasUEFI
+from .output import log
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
 MBR = 0b00000010
 
-#import ctypes
-#import ctypes.util
-#libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
-#libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
+
+# import ctypes
+# import ctypes.util
+# libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
+# libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
 class BlockDevice():
 	def __init__(self, path, info=None):
@@ -51,9 +51,9 @@ class BlockDevice():
 		to give less/partial information for user readability.
 		"""
 		return {
-			'path' : self.path,
-			'size' : self.info['size'] if 'size' in self.info else '<unknown>',
-			'model' : self.info['model'] if 'model' in self.info else '<unknown>'
+			'path': self.path,
+			'size': self.info['size'] if 'size' in self.info else '<unknown>',
+			'model': self.info['model'] if 'model' in self.info else '<unknown>'
 		}
 
 	def __dump__(self):
@@ -98,7 +98,7 @@ class BlockDevice():
 	def partitions(self):
 		o = b''.join(sys_command(['partprobe', self.path]))
 
-		#o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
+		# o = b''.join(sys_command('/usr/bin/lsblk -o name -J -b {dev}'.format(dev=dev)))
 		o = b''.join(sys_command(['/usr/bin/lsblk', '-J', self.path]))
 
 		if b'not a block device' in o:
@@ -163,16 +163,16 @@ class Partition():
 		self.mountpoint = mountpoint
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
-		self.size = size # TODO: Refresh?
+		self.size = size  # TODO: Refresh?
 		self._encrypted = None
 		self.encrypted = encrypted
-		self.allow_formatting = False # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
+		self.allow_formatting = False  # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
 
 		if mountpoint:
 			self.mount(mountpoint)
 
 		mount_information = get_mount_info(self.path)
-		
+
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
 
@@ -191,7 +191,7 @@ class Partition():
 			left_comparitor = left_comparitor.path
 		else:
 			left_comparitor = str(left_comparitor)
-		return self.path < left_comparitor # Not quite sure the order here is correct. But /dev/nvme0n1p1 comes before /dev/nvme0n1p5 so seems correct.
+		return self.path < left_comparitor  # Not quite sure the order here is correct. But /dev/nvme0n1p1 comes before /dev/nvme0n1p5 so seems correct.
 
 	def __repr__(self, *args, **kwargs):
 		mount_repr = ''
@@ -216,12 +216,13 @@ class Partition():
 		for partition in json.loads(lsblk.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
 		return None
+
 	@property
 	def encrypted(self):
 		return self._encrypted
 
 	@encrypted.setter
-	def encrypted(self, value :bool):
+	def encrypted(self, value: bool):
 
 		self._encrypted = value
 
@@ -250,14 +251,14 @@ class Partition():
 	def has_content(self):
 		if not get_filesystem_type(self.path):
 			return False
-		
-		temporary_mountpoint = '/tmp/'+hashlib.md5(bytes(f"{time.time()}", 'UTF-8')+os.urandom(12)).hexdigest()
+
+		temporary_mountpoint = '/tmp/' + hashlib.md5(bytes(f"{time.time()}", 'UTF-8') + os.urandom(12)).hexdigest()
 		temporary_path = pathlib.Path(temporary_mountpoint)
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
 		if (handle := sys_command(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
-		
+
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		sys_command(f'/usr/bin/umount {temporary_mountpoint}')
 
@@ -349,9 +350,9 @@ class Partition():
 			self.filesystem = 'f2fs'
 
 		elif filesystem == 'crypto_LUKS':
-		#	from .luks import luks2
-		#	encrypted_partition = luks2(self, None, None)
-		#	encrypted_partition.format(path)
+			#	from .luks import luks2
+			#	encrypted_partition = luks2(self, None, None)
+			#	encrypted_partition.format(path)
 			self.filesystem = 'crypto_LUKS'
 
 		else:
@@ -385,7 +386,7 @@ class Partition():
 				sys_command(f'/usr/bin/mount {self.path} {target}')
 			except SysCallError as err:
 				raise err
-			
+
 			self.mountpoint = target
 			return True
 
@@ -417,16 +418,17 @@ class Partition():
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
 		except SysCallError:
-			pass # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
+			pass  # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True
+
 
 class Filesystem():
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice,mode):
+	def __init__(self, blockdevice, mode):
 		self.blockdevice = blockdevice
 		self.mode = mode
 
@@ -446,7 +448,7 @@ class Filesystem():
 					raise DiskError(f'Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
-		
+
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
 		elif self.mode == self.blockdevice.partition_table_type:
 			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
@@ -470,11 +472,11 @@ class Filesystem():
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
 				return partition
 
-	def raw_parted(self, string:str):
+	def raw_parted(self, string: str):
 		x = sys_command(f'/usr/bin/parted -s {string}')
 		return x
 
-	def parted(self, string:str):
+	def parted(self, string: str):
 		"""
 		Performs a parted execution of the given string
 
@@ -513,10 +515,10 @@ class Filesystem():
 
 	def add_partition(self, type, start, end, format=None):
 		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
-		
+
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
-			if len(self.blockdevice.partitions)>3:
+			if len(self.blockdevice.partitions) > 3:
 				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 		if format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {type} {format} {start} {end}') == 0
@@ -526,17 +528,18 @@ class Filesystem():
 		if partitioning:
 			start_wait = time.time()
 			while previous_partitions == self.blockdevice.partitions:
-				time.sleep(0.025) # Let the new partition come up in the kernel
+				time.sleep(0.025)  # Let the new partition come up in the kernel
 				if time.time() - start_wait > 10:
 					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
 
 			return True
 
-	def set_name(self, partition:int, name:str):
-		return self.parted(f'{self.blockdevice.device} name {partition+1} "{name}"') == 0
+	def set_name(self, partition: int, name: str):
+		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
 
-	def set(self, partition:int, string:str):
-		return self.parted(f'{self.blockdevice.device} set {partition+1} {string}') == 0
+	def set(self, partition: int, string: str):
+		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
+
 
 def device_state(name, *args, **kwargs):
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
@@ -587,6 +590,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 		return collection[drive]
 
+
 def get_mount_info(path):
 	try:
 		output = b''.join(sys_command(f'/usr/bin/findmnt --json {path}'))
@@ -600,6 +604,7 @@ def get_mount_info(path):
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
 
 		return output['filesystems'][0]
+
 
 def get_partitions_in_use(mountpoint):
 	try:
@@ -619,12 +624,14 @@ def get_partitions_in_use(mountpoint):
 
 	return mounts
 
+
 def get_filesystem_type(path):
 	try:
 		handle = sys_command(f"blkid -o value -s TYPE {path}")
 		return b''.join(handle).strip().decode('UTF-8')
 	except SysCallError:
 		return None
+
 
 def disk_layouts():
 	try:

@@ -1,7 +1,5 @@
-import os
-
-from .exceptions import *
 from .general import *
+
 
 def service_state(service_name: str):
 	if os.path.splitext(service_name)[1] != '.service':

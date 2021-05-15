@@ -1,4 +1,4 @@
-class Ini():
+class Ini:
 	def __init__(self, *args, **kwargs):
 		"""
 		Limited INI handler for now.
@@ -25,10 +25,12 @@ class Ini():
 
 		return result
 
+
 class Systemd(Ini):
 	"""
 	Placeholder class to do systemd specific setups.
 	"""
+
 
 class Networkd(Systemd):
 	"""
