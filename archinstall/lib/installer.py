@@ -34,7 +34,11 @@ class Installer:
 
 	"""
 
-	def __init__(self, target, *, base_packages=__packages__[:3], kernels=['linux']):
+	def __init__(self, target, *, base_packages=None, kernels=None):
+		if base_packages is None:
+			base_packages = __packages__[:3]
+		if kernels is None:
+			kernels = ['linux']
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -476,7 +480,9 @@ class Installer:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
-	def user_create(self, user: str, password=None, groups=[], sudo=False):
+	def user_create(self, user: str, password=None, groups=None, sudo=False):
+		if groups is None:
+			groups = []
 		self.log(f'Creating user {user}', level=logging.INFO)
 		o = b''.join(sys_command(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
 		if password:

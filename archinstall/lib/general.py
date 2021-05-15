@@ -89,7 +89,9 @@ class sys_command:
 	Stolen from archinstall_gui
 	"""
 
-	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars={}, *args, **kwargs):
+	def __init__(self, cmd, callback=None, start_callback=None, peak_output=False, environment_vars=None, *args, **kwargs):
+		if environment_vars is None:
+			environment_vars = {}
 		kwargs.setdefault("worker_id", gen_uid())
 		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)

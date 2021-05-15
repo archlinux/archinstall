@@ -163,8 +163,10 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer, path, args={}):
+	def __init__(self, installer, path, args=None):
 		super(Profile, self).__init__(path, installer)
+		if args is None:
+			args = {}
 
 	def __dump__(self, *args, **kwargs):
 		return {'path': self.path}
