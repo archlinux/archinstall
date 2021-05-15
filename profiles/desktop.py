@@ -17,6 +17,7 @@ def _prep_function(*args, **kwargs):
 	"""
 
 	supported_desktops = ['gnome', 'kde', 'awesome', 'sway', 'cinnamon', 'xfce4', 'lxqt', 'i3', 'budgie', 'mate', 'deepin', 'enlightenment']
+
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ',
 										 allow_empty_input=False, sort=True)
 	
