@@ -34,7 +34,8 @@ for arg in sys.argv[1:]:
 
 
 # TODO: Learn the dark arts of argparse...
-#	   (I summon thee dark spawn of cPython)
+# 	   (I summon thee dark spawn of cPython)
+
 
 def run_as_a_module():
 	"""

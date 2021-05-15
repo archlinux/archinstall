@@ -35,9 +35,7 @@ def _prep_function(*args, **kwargs):
 # or through conventional import sway
 if __name__ == "sway":
 	if "nvidia" in _gfx_driver_packages:
-		choice = input(
-			"The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues. Continue anyways? [y/N] "
-		)
+		choice = input("The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues. Continue anyways? [y/N] ")
 		if choice.lower() in ("n", ""):
 			raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers.")
 

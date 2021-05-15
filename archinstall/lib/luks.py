@@ -5,7 +5,7 @@ from .general import *
 from .output import log
 
 
-class luks2():
+class luks2:
 	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
 		self.password = password
 		self.partition = partition
@@ -120,6 +120,7 @@ class luks2():
 		:type mountpoint: str
 		"""
 		from .disk import get_filesystem_type
+
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 

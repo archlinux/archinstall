@@ -123,8 +123,5 @@ man_pages = [("index", "archinstall", u"archinstall Documentation", [u"Anton Hvo
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-	(
-		"index", "archinstall", u"archinstall Documentation",
-		u"Anton Hvornum", "archinstall", "Simple and minimal HTTP server."
-	),
+	("index", "archinstall", u"archinstall Documentation", u"Anton Hvornum", "archinstall", "Simple and minimal HTTP server."),
 ]

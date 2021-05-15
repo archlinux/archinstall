@@ -84,8 +84,7 @@ def ask_user_questions():
 				# Select a partition
 				# If we provide keys as options, it's better to convert them to list and sort before passing
 				mountpoints_list = sorted(list(partition_mountpoints.keys()))
-				partition = archinstall.generic_select(mountpoints_list,
-													   "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
+				partition = archinstall.generic_select(mountpoints_list, "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
 				if not partition:
 					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
 						break
@@ -373,10 +372,7 @@ def perform_installation(mountpoint):
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
-						archinstall.log(
-							' * Profile\'s post configuration requirements was not fulfilled.',
-							fg='red'
-						)
+						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")

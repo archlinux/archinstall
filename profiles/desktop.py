@@ -43,9 +43,7 @@ def _prep_function(*args, **kwargs):
 		'enlightenment',
 	]
 
-	desktop = archinstall.generic_select(
-		supported_desktops, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True
-	)
+	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
 
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded

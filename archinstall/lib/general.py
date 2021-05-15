@@ -170,7 +170,7 @@ class sys_command:
 			'ended': self.ended,
 			'started_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.started)),
 			'ended_pprint': '{}-{}-{} {}:{}:{}'.format(*time.localtime(self.ended)) if self.ended else None,
-			'exit_code': self.exit_code
+			'exit_code': self.exit_code,
 		}
 
 	def peak(self, output: Union[str, bytes]) -> bool:
@@ -256,7 +256,7 @@ class sys_command:
 							original = trigger
 							trigger = bytes(original, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][original]
-							del (self.kwargs['events'][original])
+							del self.kwargs['events'][original]
 						if type(self.kwargs['events'][trigger]) != bytes:
 							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 
@@ -269,7 +269,7 @@ class sys_command:
 
 							last_trigger_pos = trigger_pos
 							os.write(child_fd, self.kwargs['events'][trigger])
-							del (self.kwargs['events'][trigger])
+							del self.kwargs['events'][trigger]
 							broke = True
 							break
 

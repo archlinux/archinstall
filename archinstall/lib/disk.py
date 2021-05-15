@@ -17,7 +17,8 @@ MBR = 0b00000010
 # libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
 # libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
-class BlockDevice():
+
+class BlockDevice:
 	def __init__(self, path, info=None):
 		if not info:
 			# If we don't give any information, we need to auto-fill it.
@@ -76,7 +77,8 @@ class BlockDevice():
 
 		if self.info['type'] == 'loop':
 			for drive in json.loads(b''.join(sys_command(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
-				if not drive['name'] == self.path: continue
+				if not drive['name'] == self.path:
+					continue
 
 				return drive['back-file']
 		elif self.info['type'] == 'disk':
@@ -91,8 +93,8 @@ class BlockDevice():
 		else:
 			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=logging.DEBUG)
 
-	#	if not stat.S_ISBLK(os.stat(full_path).st_mode):
-	#		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
+	# 	if not stat.S_ISBLK(os.stat(full_path).st_mode):
+	# 		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
 
 	@property
 	def partitions(self):
@@ -153,7 +155,7 @@ class BlockDevice():
 		self.part_cache = OrderedDict()
 
 
-class Partition():
+class Partition:
 	def __init__(self, path: str, block_device: BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
@@ -236,7 +238,7 @@ class Partition():
 		for blockdevice in json.loads(b''.join(sys_command('lsblk -J')).decode('UTF-8'))['blockdevices']:
 			if (parent := self.find_parent_of(blockdevice, os.path.basename(self.path))):
 				return f"/dev/{parent}"
-		#	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
+		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
 
 	def detect_inner_filesystem(self, password):
@@ -351,9 +353,9 @@ class Partition():
 			self.filesystem = 'f2fs'
 
 		elif filesystem == 'crypto_LUKS':
-			#	from .luks import luks2
-			#	encrypted_partition = luks2(self, None, None)
-			#	encrypted_partition.format(path)
+			# 	from .luks import luks2
+			# 	encrypted_partition = luks2(self, None, None)
+			# 	encrypted_partition.format(path)
 			self.filesystem = 'crypto_LUKS'
 
 		else:
@@ -378,7 +380,8 @@ class Partition():
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
 			if not fs:
-				if not self.filesystem: raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
+				if not self.filesystem:
+					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
@@ -425,7 +428,7 @@ class Partition():
 		return True
 
 
-class Filesystem():
+class Filesystem:
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
@@ -566,7 +569,8 @@ def all_disks(*args, **kwargs):
 	drives = OrderedDict()
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
 	for drive in json.loads(b''.join(sys_command('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
-		if not kwargs['partitions'] and drive['type'] == 'part': continue
+		if not kwargs['partitions'] and drive['type'] == 'part':
+			continue
 
 		drives[drive['path']] = BlockDevice(drive['path'], drive)
 	return drives

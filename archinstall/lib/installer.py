@@ -9,7 +9,7 @@ from .user_interaction import *
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 
-class Installer():
+class Installer:
 	"""
 	`Installer()` is the wrapper for most basic installation steps.
 	It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
@@ -127,7 +127,8 @@ class Installer():
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def pacstrap(self, *packages, **kwargs):
-		if type(packages[0]) in (list, tuple): packages = packages[0]
+		if type(packages[0]) in (list, tuple):
+			packages = packages[0]
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := sys_command('/usr/bin/pacman -Syy')).exit_code == 0:
@@ -158,7 +159,8 @@ class Installer():
 			fh.write(hostname + '\n')
 
 	def set_locale(self, locale, encoding='UTF-8', *args, **kwargs):
-		if not len(locale): return True
+		if not len(locale):
+			return True
 
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
 			fh.write(f'{locale}.{encoding} {encoding}\n')
@@ -168,8 +170,10 @@ class Installer():
 		return True if sys_command(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
 	def set_timezone(self, zone, *args, **kwargs):
-		if not zone: return True
-		if not len(zone): return True  # Redundant
+		if not zone:
+			return True
+		if not len(zone):
+			return True  # Redundant
 
 		if (pathlib.Path("/usr") / "share" / "zoneinfo" / zone).exists():
 			(pathlib.Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
@@ -263,6 +267,7 @@ class Installer():
 			if enable_services:
 				# If we haven't installed the base yet (function called pre-maturely)
 				if self.helper_flags.get('base', False) is False:
+
 					def post_install_enable_networkd_resolved(*args, **kwargs):
 						self.enable_service('systemd-networkd', 'systemd-resolved')
 
@@ -332,9 +337,7 @@ class Installer():
 		self.helper_flags['base-strapped'] = True
 
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
-			fstab.write(
-				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
-			)  # Redundant \n at the start? who knows?
+			fstab.write("\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n")  # Redundant \n at the start? who knows?
 
 		## TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
