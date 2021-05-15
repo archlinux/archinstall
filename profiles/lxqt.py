@@ -4,7 +4,16 @@ import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["lxqt", "breeze-icons", "oxygen-icons", "xdg-utils", "ttf-freefont", "leafpad", "slock", "sddm"]
+__packages__ = [
+	"lxqt",
+	"breeze-icons",
+	"oxygen-icons",
+	"xdg-utils",
+	"ttf-freefont",
+	"leafpad",
+	"slock",
+	"sddm",
+]
 
 
 def _prep_function(*args, **kwargs):
