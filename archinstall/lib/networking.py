@@ -1,8 +1,9 @@
-import os
 import fcntl
+import os
 import socket
 import struct
 from collections import OrderedDict
+
 from .exceptions import *
 from .general import sys_command
 from .storage import storage
@@ -10,7 +11,7 @@ from .storage import storage
 
 def get_hw_addr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in info[18:24])
 
 
@@ -25,7 +26,7 @@ def list_interfaces(skip_loopback=True):
 	return interfaces
 
 
-def enrich_iface_types(interfaces :dict):
+def enrich_iface_types(interfaces: dict):
 	result = {}
 	for iface in interfaces:
 		if os.path.isdir(f"/sys/class/net/{iface}/bridge/"):

@@ -48,6 +48,7 @@ def check_for_correct_username(username):
 
 def do_countdown():
 	SIG_TRIGGER = False
+
 	def kill_handler(sig, frame):
 		print()
 		exit(0)
@@ -101,17 +102,17 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
 	spaces_without_option = longest_line - (len(separator) + highest_index_number_length)
 	max_num_of_columns = get_terminal_width() // longest_line
-	max_options_in_cells = max_num_of_columns * (get_terminal_height()-margin_bottom)
+	max_options_in_cells = max_num_of_columns * (get_terminal_height() - margin_bottom)
 
 	if (len(options) > max_options_in_cells):
 		for index, option in enumerate(options):
 			print(f"{index}: {option}")
 		return 1, index
 	else:
-		for row in range(0, (get_terminal_height()-margin_bottom)):
-			for column in range(row, len(options), (get_terminal_height()-margin_bottom)):
-				spaces = " "*(spaces_without_option - len(options[column]))
-				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end = spaces)
+		for row in range(0, (get_terminal_height() - margin_bottom)):
+			for column in range(row, len(options), (get_terminal_height() - margin_bottom)):
+				spaces = " " * (spaces_without_option - len(options[column]))
+				print(f"{str(column): >{highest_index_number_length}}{separator}{options[column]}", end=spaces)
 			print()
 
 	return column, row
@@ -148,7 +149,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 			else:
 				printed_options.append(f'{option}')
 
-		section.clear(0, get_terminal_height()-section._cursor_y-1)
+		section.clear(0, get_terminal_height() - section._cursor_y - 1)
 		print_large_list(printed_options, margin_bottom=2)
 		section._cursor_y = len(printed_options)
 		section._cursor_x = 0
@@ -204,7 +205,7 @@ class MiniCurses:
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % 0)
 			sys.stdout.flush()
-			sys.stdout.write(" " * (get_terminal_width()-1))
+			sys.stdout.write(" " * (get_terminal_width() - 1))
 			sys.stdout.flush()
 			sys.stdout.write("\033[%dG" % 0)
 			sys.stdout.flush()
@@ -223,17 +224,17 @@ class MiniCurses:
 
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
-		for line in range(get_terminal_height()-y-1, y):
-			sys.stdout.write(" " * (get_terminal_width()-1))
+		for line in range(get_terminal_height() - y - 1, y):
+			sys.stdout.write(" " * (get_terminal_width() - 1))
 		sys.stdout.flush()
 		sys.stdout.write('\033[%d;%df' % (y, x))
 		sys.stdout.flush()
 
 	def deal_with_control_characters(self, char):
 		mapper = {
-			'\x7f' : 'BACKSPACE',
-			'\r' : 'CR',
-			'\n' : 'NL'
+			'\x7f': 'BACKSPACE',
+			'\r': 'CR',
+			'\n': 'NL'
 		}
 
 		if (mapped_char := mapper.get(char, None)) == 'BACKSPACE':
@@ -319,7 +320,7 @@ def ask_for_superuser_account(prompt='Username for required superuser with sudo 
 			continue
 
 		password = get_password(prompt=f'Password for user {new_user}: ')
-		return {new_user: {"!password" : password}}
+		return {new_user: {"!password": password}}
 
 
 def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
@@ -335,9 +336,9 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 		password = get_password(prompt=f'Password for user {new_user}: ')
 
 		if input("Should this user be a superuser (sudoer) [y/N]: ").strip(' ').lower() in ('y', 'yes'):
-			superusers[new_user] = {"!password" : password}
+			superusers[new_user] = {"!password": password}
 		else:
-			users[new_user] = {"!password" : password}
+			users[new_user] = {"!password": password}
 
 	return users, superusers
 
@@ -347,7 +348,7 @@ def ask_for_a_timezone():
 		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip().strip('*.')
 		if timezone == '':
 			timezone = 'UTC'
-		if (pathlib.Path("/usr")/"share"/"zoneinfo"/timezone).exists():
+		if (pathlib.Path("/usr") / "share" / "zoneinfo" / timezone).exists():
 			return timezone
 		else:
 			log(
@@ -359,17 +360,17 @@ def ask_for_a_timezone():
 
 def ask_for_bootloader() -> str:
 	bootloader = "systemd-bootctl"
-	if hasUEFI()==False:
-		bootloader="grub-install"
+	if hasUEFI() == False:
+		bootloader = "grub-install"
 	else:
 		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
 		if bootloader_choice == "y":
-			bootloader="grub-install"
+			bootloader = "grub-install"
 	return bootloader
 
 
 def ask_for_audio_selection():
-	audio = "pulseaudio" # Default for most desktop environments
+	audio = "pulseaudio"  # Default for most desktop environments
 	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
 	if pipewire_choice in ("y", ""):
 		audio = "pipewire"
@@ -379,18 +380,18 @@ def ask_for_audio_selection():
 
 def ask_to_configure_network():
 	# Optionally configure one network interface.
-	#while 1:
+	# while 1:
 	# {MAC: Ifname}
 	interfaces = {
-		'ISO-CONFIG' : 'Copy ISO network configuration to installation',
-		'NetworkManager':'Use NetworkManager to control and manage your internet connection',
+		'ISO-CONFIG': 'Copy ISO network configuration to installation',
+		'NetworkManager': 'Use NetworkManager to control and manage your internet connection',
 		**list_interfaces()
 	}
 
 	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager to control and manage your internet connection':
-			return {'nic': nic,'NetworkManager':True}
+			return {'nic': nic, 'NetworkManager': True}
 
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
@@ -401,7 +402,7 @@ def ask_to_configure_network():
 			print(f"{index}: {mode}")
 
 		mode = generic_select(['DHCP', 'IP'], f"Select which mode to configure for {nic} or leave blank for DHCP: ",
-							 options_output=False)
+							  options_output=False)
 		if mode == 'IP':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
@@ -436,7 +437,7 @@ def ask_to_configure_network():
 			if len(dns_input := input('Enter your DNS servers (space separated, blank for none): ').strip()):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway' : gateway, 'dns' : dns}
+			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
 		else:
 			return {'nic': nic}
 	elif nic:
@@ -447,26 +448,26 @@ def ask_to_configure_network():
 
 def ask_for_disk_layout():
 	options = {
-		'keep-existing' : 'Keep existing partition layout and select which ones to use where',
-		'format-all' : 'Format entire drive and setup a basic partition scheme',
-		'abort' : 'Abort the installation'
+		'keep-existing': 'Keep existing partition layout and select which ones to use where',
+		'format-all': 'Format entire drive and setup a basic partition scheme',
+		'abort': 'Abort the installation'
 	}
 
 	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ",
-						  allow_empty_input=False, sort=True)
+						   allow_empty_input=False, sort=True)
 	return next((key for key, val in options.items() if val == value), None)
 
 
 def ask_for_main_filesystem_format():
 	options = {
-		'btrfs' : 'btrfs',
-		'ext4' : 'ext4',
-		'xfs' : 'xfs',
-		'f2fs' : 'f2fs'
+		'btrfs': 'btrfs',
+		'ext4': 'ext4',
+		'xfs': 'xfs',
+		'f2fs': 'f2fs'
 	}
 
 	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ",
-						  allow_empty_input=False)
+						   allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
 
 
@@ -526,7 +527,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 				selected_option = options[selected_option]
 				break
 			elif selected_option in options:
-				break # We gave a correct absolute value
+				break  # We gave a correct absolute value
 			else:
 				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
 		except RequirementError as err:
@@ -584,7 +585,7 @@ def select_profile(options):
 		print(' -- (Leave blank and hit enter to skip this step and continue) --')
 
 		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ',
-										 options_output=False)
+										  options_output=False)
 		if selected_profile:
 			return Profile(None, selected_profile)
 	else:
@@ -674,8 +675,9 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 		print_large_list(regions, margin_bottom=4)
 
 		print(' -- You can skip this step by leaving the option blank --')
-		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ',
-										options_output=False)
+		selected_mirror = generic_select(regions,
+										 'Select one of the above regions to download packages from (by number or full name): ',
+										 options_output=False)
 		if not selected_mirror:
 			# Returning back empty options which can be both used to
 			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining

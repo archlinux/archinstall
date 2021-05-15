@@ -60,7 +60,7 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 
-def use_mirrors(regions :dict, destination='/etc/pacman.d/mirrorlist'):
+def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	for region, mirrors in regions.items():
 		with open(destination, 'w') as mirrorlist:
@@ -85,7 +85,6 @@ def list_mirrors():
 	except urllib.error.URLError as err:
 		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
 		return regions
-
 
 	region = 'Unknown region'
 	for line in response.readlines():

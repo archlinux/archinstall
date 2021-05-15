@@ -1,9 +1,9 @@
-import time
 import json
 import logging
+import time
+
 import archinstall
 from archinstall.lib.hardware import hasUEFI
-from archinstall.lib.profiles import Profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

@@ -51,7 +51,7 @@ def find_packages(*names):
 	return result
 
 
-def validate_package_list(packages :list):
+def validate_package_list(packages: list):
 	"""
 	Validates a list of given packages.
 	Raises `RequirementError` if one or more packages are not found.

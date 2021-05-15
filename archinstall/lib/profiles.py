@@ -7,6 +7,7 @@ import sys
 import urllib.parse
 import urllib.request
 from typing import Optional
+
 from .general import multisplit
 from .networking import *
 from .storage import storage
@@ -16,7 +17,7 @@ def grab_url_data(path):
 	safe_path = path[:path.find(':')+1]+''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':')+1:], ('/', '?', '=', '&'))])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
-	ssl_context.verify_mode=ssl.CERT_NONE
+	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
 	return response.read()
 
@@ -29,7 +30,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 	cache = {}
 	# Grab all local profiles found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
-		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
+		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM + subpath))):
 			for file in files:
 				if file == '__init__.py':
 					continue
@@ -51,7 +52,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 
 	# Grab profiles from upstream URL
 	if storage['PROFILE_DB']:
-		profiles_url = os.path.join(storage["UPSTREAM_URL"]+subpath, storage['PROFILE_DB'])
+		profiles_url = os.path.join(storage["UPSTREAM_URL"] + subpath, storage['PROFILE_DB'])
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
@@ -74,7 +75,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 	if filter_top_level_profiles:
 		for profile in list(cache.keys()):
 			if Profile(None, profile).is_top_level_profile() is False:
-				del(cache[profile])
+				del (cache[profile])
 
 	return cache
 
@@ -166,7 +167,7 @@ class Profile(Script):
 		super(Profile, self).__init__(path, installer)
 
 	def __dump__(self, *args, **kwargs):
-		return {'path' : self.path}
+		return {'path': self.path}
 
 	def __repr__(self, *args, **kwargs):
 		return f'Profile({os.path.basename(self.profile)})'
