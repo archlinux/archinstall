@@ -413,8 +413,8 @@ class Partition():
 		"""
 		The support for a filesystem (this partition) is tested by calling
 		partition.format() with a path set to '/dev/null' which returns two exceptions:
-		 1. SysCallError saying that /dev/null is not formattable - but the filesystem is supported
-		 2. UnknownFilesystemFormat that indicates that we don't support the given filesystem type
+			1. SysCallError saying that /dev/null is not formattable - but the filesystem is supported
+			2. UnknownFilesystemFormat that indicates that we don't support the given filesystem type
 		"""
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
