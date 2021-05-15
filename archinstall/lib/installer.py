@@ -316,7 +316,7 @@ class Installer():
 				if 'encrypt' not in self.HOOKS:
 					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
-		if not (hasUEFI()):
+		if not hasUEFI():
 			self.base_packages.append('grub')
 
 		if not isVM():
