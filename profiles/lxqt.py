@@ -4,7 +4,17 @@ import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["lxqt", "breeze-icons", "oxygen-icons", "xdg-utils", "ttf-freefont", "leafpad", "slock", "sddm"]
+__packages__ = [
+	"lxqt",
+	"breeze-icons",
+	"oxygen-icons",
+	"xdg-utils",
+	"ttf-freefont",
+	"leafpad",
+	"slock",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
 
 
 def _prep_function(*args, **kwargs):
@@ -34,4 +44,5 @@ if __name__ == 'lxqt':
 	# Install the LXQt packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('sddm')  # SDDM Display Manager
+	# Enable autostart of LXQt for all users
+	archinstall.storage['installation_session'].enable_service('lightdm')
