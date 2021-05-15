@@ -57,6 +57,12 @@ class Installer():
 		storage['session'] = self
 		self.partitions = get_partitions_in_use(self.target)
 
+		self.MODULES = []
+		self.BINARIES = []
+		self.FILES = []
+		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		self.KERNEL_PARAMS = []
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -278,16 +284,21 @@ class Installer():
 		
 		return False
 
+	def mkinitcpio(self, *flags):
+		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
+			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
+			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
+			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
+		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+
 	def minimal_installation(self):
 		## Add necessary packages if encrypting the drive
 		## (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		## TODO: Perhaps this should be living in the function which dictates
 		##       the partitioning. Leaving here for now.
 
-		MODULES = []
-		BINARIES = []
-		FILES = []
-		HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		
 
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
@@ -300,21 +311,18 @@ class Installer():
 
 			# Configure mkinitcpio to handle some specific use cases.
 			if partition.filesystem == 'btrfs':
-				if 'btrfs' not in MODULES:
-					MODULES.append('btrfs')
-				if '/usr/bin/btrfs-progs' not in BINARIES:
-					BINARIES.append('/usr/bin/btrfs')
+				if 'btrfs' not in self.MODULES:
+					self.MODULES.append('btrfs')
+				if '/usr/bin/btrfs-progs' not in self.BINARIES:
+					self.BINARIES.append('/usr/bin/btrfs')
 
 			if self.detect_encryption(partition):
-				if 'encrypt' not in HOOKS:
-					HOOKS.insert(HOOKS.index('filesystems'), 'encrypt')
+				if 'encrypt' not in self.HOOKS:
+					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
-		if not(hasUEFI()): # TODO: Allow for grub even on EFI
+		if not(hasUEFI()):
 			self.base_packages.append('grub')
 										
-		self.pacstrap(self.base_packages)
-		self.helper_flags['base-strapped'] = True
-		#self.genfstab()
 		if not isVM():
 			vendor = cpuVendor()
 			if vendor ==  "AuthenticAMD":
@@ -323,6 +331,10 @@ class Installer():
 				self.base_packages.append("intel-ucode")
 			else:
 				self.log("Unknown cpu vendor not installing ucode")
+					
+		self.pacstrap(self.base_packages)
+		self.helper_flags['base-strapped'] = True
+
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
 			fstab.write(
 				"\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n"
@@ -338,12 +350,7 @@ class Installer():
 		# TODO: Use python functions for this
 		sys_command(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(MODULES)})\n")
-			mkinit.write(f"BINARIES=({' '.join(BINARIES)})\n")
-			mkinit.write(f"FILES=({' '.join(FILES)})\n")
-			mkinit.write(f"HOOKS=({' '.join(HOOKS)})\n")
-		sys_command(f'/usr/bin/arch-chroot {self.target} mkinitcpio -P')
+		self.mkinitcpio('-P')
 
 		self.helper_flags['base'] = True
 
@@ -375,7 +382,9 @@ class Installer():
 			# And in which case we should do some clean up.
 
 			# Install the boot loader
-			sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+			if sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install').exit_code != 0:
+				# Fallback, try creating the boot loader without touching the EFI variables
+				sys_command(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
@@ -391,8 +400,11 @@ class Installer():
 				for line in loader_data:
 					if line[:8] == 'default ':
 						loader.write(f'default {self.init_time}\n')
+					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+						# We add in the default timeout to support dual-boot
+						loader.write(f"{line[1:]}\n")
 					else:
-						loader.write(f"{line}")
+						loader.write(f"{line}\n")
 
 			## For some reason, blkid and /dev/disk/by-uuid are not getting along well.
 			## And blkid is wrong in terms of LUKS.
@@ -420,10 +432,10 @@ class Installer():
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp\n')
+					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp\n')
+					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 
 				self.helper_flags['bootloader'] = bootloader
 				return True
@@ -452,14 +464,7 @@ class Installer():
 		return self.pacstrap(*packages)
 
 	def install_profile(self, profile):
-		# TODO: Replace this with a import archinstall.session instead in the profiles.
-		# The tricky thing with doing the import archinstall.session instead is that
-		# profiles might be run from a different chroot, and there's no way we can
-		# guarantee file-path safety when accessing the installer object that way.
-		# Doing the __builtins__ replacement, ensures that the global variable "installation"
-		# is always kept up to date. It's considered a nasty hack - but it's a safe way
-		# of ensuring 100% accuracy of archinstall session variables.
-		__builtins__['installation'] = self
+		storage['installation_session'] = self
 
 		if type(profile) == str:
 			profile = Profile(self, profile)

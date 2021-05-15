@@ -26,6 +26,8 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 	for PATH_ITEM in storage['PROFILE_PATH']:
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM+subpath))):
 			for file in files:
+				if file == '__init__.py':
+					continue
 				if os.path.splitext(file)[1] == '.py':
 					tailored = False
 					if len(mac := re.findall('(([a-zA-z0-9]{2}[-:]){5}([a-zA-z0-9]{2}))', file)):
@@ -36,7 +38,7 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 					description = ''
 					with open(os.path.join(root, file), 'r') as fh:
 						first_line = fh.readline()
-						if first_line[0] == '#':
+						if len(first_line) and first_line[0] == '#':
 							description = first_line[1:].strip()
 
 					cache[file[:-3]] = {'path' : os.path.join(root, file), 'description' : description, 'tailored' : tailored}

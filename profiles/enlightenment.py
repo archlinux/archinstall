@@ -1,11 +1,10 @@
+# A desktop environment using "Enlightenment".
 
-# A desktop environment using "LXQt"
-
-import archinstall
+import archinstall, os
 
 is_top_level_profile = False
 
-__packages__ = ["lxqt", "breeze-icons", "oxygen-icons", "xdg-utils", "ttf-freefont", "leafpad", "slock", "sddm"]
+__packages__ = ["enlightenment", "terminology", "lightdm", "lightdm-gtk-greeter"]
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -15,7 +14,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	# LXQt requires a functional xorg installation.
+	# Enlightenment requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
 		if hasattr(imported, '_prep_function'):
@@ -23,14 +22,16 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
-# through importlib.util.spec_from_file_location("lxqt", "/somewhere/lxqt.py")
-# or through conventional import lxqt
-if __name__ == 'lxqt':
+# through importlib.util.spec_from_file_location("enlightenment", "/somewhere/enlightenment.py")
+# or through conventional import enlightenment
+if __name__ == 'enlightenment':
 	# Install dependency profiles
 	archinstall.storage['installation_session'].install_profile('xorg')
 
-	# Install the LXQt packages
+	# Install the enlightenment packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('sddm') # SDDM Display Manager
+	# Enable autostart of enlightenment for all users
+	archinstall.storage['installation_session'].enable_service('lightdm')

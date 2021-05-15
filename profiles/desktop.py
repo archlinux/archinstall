@@ -16,7 +16,8 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	supported_desktops = ['gnome', 'kde', 'awesome', 'sway', 'cinnamon', 'xfce4', 'lxqt', 'i3', 'budgie', 'mate']
+	supported_desktops = ['gnome', 'kde', 'awesome', 'sway', 'cinnamon', 'xfce4', 'lxqt', 'i3', 'budgie', 'mate', 'deepin', 'enlightenment']
+
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ',
 										 allow_empty_input=False, sort=True)
 	
@@ -48,9 +49,7 @@ if __name__ == 'desktop':
 	"""
 	
 	# Install common packages for all desktop environments
-	installation.add_additional_packages(__packages__)
-
-	# TODO: Remove magic variable 'installation' and place it
-	#       in archinstall.storage or archinstall.session/archinstall.installation
-	installation.install_profile(archinstall.storage['_desktop_profile'])
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
+	
+	archinstall.storage['installation_session'].install_profile(archinstall.storage['_desktop_profile'])
 
