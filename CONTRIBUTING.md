@@ -70,6 +70,7 @@ At present the current contributors are (alphabetically):
 * Anton Hvornum ([@Torxed](https://github.com/Torxed))
 * Borislav Kosharov ([@nikibobi](https://github.com/nikibobi))
 * demostanis ([@demostanis](https://github.com/demostanis))
+* Dylan Taylor ([@dylanmtaylor](https://github.com/dylanmtaylor))
 * Giancarlo Razzolini (@[grazzolini](https://github.com/grazzolini))
 * j-james ([@j-james](https://github.com/j-james))
 * Jerker Bengtsson ([@jaybent](https://github.com/jaybent))
