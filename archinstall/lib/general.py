@@ -17,8 +17,9 @@ from .output import log
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
+
 def multisplit(s, splitters):
-	s = [s,]
+	s = [s, ]
 	for key in splitters:
 		ns = []
 		for obj in s:
@@ -26,10 +27,11 @@ def multisplit(s, splitters):
 			for index, part in enumerate(x):
 				if len(part):
 					ns.append(part)
-				if index < len(x)-1:
+				if index < len(x) - 1:
 					ns.append(key)
 		s = ns
 	return s
+
 
 def locate_binary(name):
 	for PATH in os.environ['PATH'].split(':'):
@@ -37,7 +39,8 @@ def locate_binary(name):
 			for file in files:
 				if file == name:
 					return os.path.join(root, file)
-			break # Don't recurse
+			break  # Don't recurse
+
 
 class JSON_Encoder:
 	def _encode(obj):
@@ -72,6 +75,7 @@ class JSON_Encoder:
 			return r
 		else:
 			return obj
+
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	def _encode(self, obj):
@@ -135,8 +139,8 @@ class sys_command():#Thread):
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore. So back to square one..
 
-			#self.log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
-			#self.log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
+			# self.log('Worker command is not executed with absolute path, trying to find: {}'.format(self.cmd[0]), origin='spawn', level=5)
+			# self.log('This is the binary {} for {}'.format(o.decode('UTF-8'), self.cmd[0]), origin='spawn', level=5)
 			self.cmd[0] = locate_binary(self.cmd[0])
 
 		if not os.path.isdir(self.exec_dir):
@@ -168,7 +172,7 @@ class sys_command():#Thread):
 			'exit_code': self.exit_code
 		}
 
-	def peak(self, output : Union[str, bytes]) -> bool:
+	def peak(self, output: Union[str, bytes]) -> bool:
 		if type(output) == bytes:
 			try:
 				output = output.decode('UTF-8')
@@ -205,7 +209,7 @@ class sys_command():#Thread):
 		old_dir = os.getcwd()
 		os.chdir(self.exec_dir)
 		self.pid, child_fd = pty.fork()
-		if not self.pid: # Child process
+		if not self.pid:  # Child process
 			# Replace child process with our main process
 			if not self.kwargs['emulate']:
 				try:
@@ -251,7 +255,7 @@ class sys_command():#Thread):
 							original = trigger
 							trigger = bytes(original, 'UTF-8')
 							self.kwargs['events'][trigger] = self.kwargs['events'][original]
-							del(self.kwargs['events'][original])
+							del (self.kwargs['events'][original])
 						if type(self.kwargs['events'][trigger]) != bytes:
 							self.kwargs['events'][trigger] = bytes(self.kwargs['events'][trigger], 'UTF-8')
 
@@ -264,7 +268,7 @@ class sys_command():#Thread):
 
 							last_trigger_pos = trigger_pos
 							os.write(child_fd, self.kwargs['events'][trigger])
-							del(self.kwargs['events'][trigger])
+							del (self.kwargs['events'][trigger])
 							broke = True
 							break
 
@@ -276,7 +280,7 @@ class sys_command():#Thread):
 						if 'debug' in self.kwargs and self.kwargs['debug']:
 							self.log(f"Waiting for last command {self.cmd[0]} to finish.", level=logging.DEBUG)
 
-						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0-len(f']$')-5:].lower():
+						if bytes(f']$'.lower(), 'UTF-8') in self.trace_log[0 - len(f']$') - 5:].lower():
 							if 'debug' in self.kwargs and self.kwargs['debug']:
 								self.log(f"{self.cmd[0]} has finished.", level=logging.DEBUG)
 							alive = False
@@ -305,9 +309,11 @@ class sys_command():#Thread):
 			self.exit_code = 0
 
 		if self.exit_code != 0 and not self.kwargs['suppress_errors']:
-			#self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
-			#self.log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", level=logging.ERROR)
-			raise SysCallError(message=f"{self.trace_log.decode('UTF-8')}\n'{self.raw_cmd}' did not exit gracefully (trace log above), exit code: {self.exit_code}", exit_code=self.exit_code)
+			# self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
+			# self.log(f"'{self.raw_cmd}' did not exit gracefully, exit code {self.exit_code}.", level=logging.ERROR)
+			raise SysCallError(
+				message=f"{self.trace_log.decode('UTF-8')}\n'{self.raw_cmd}' did not exit gracefully (trace log above), exit code: {self.exit_code}",
+				exit_code=self.exit_code)
 
 		self.ended = time.time()
 		with open(f'{self.cwd}/trace.log', 'wb') as fh:
@@ -324,6 +330,7 @@ def prerequisite_check():
 		raise RequirementError("Archinstall only supports machines in UEFI mode.")
 
 	return True
+
 
 def reboot():
 	o = b''.join(sys_command("/usr/bin/reboot"))
