@@ -20,21 +20,6 @@ parser = ArgumentParser()
 
 __version__ = "2.2.0.dev1"
 
-# Basic version of arg.parse() supporting:
-#  --key=value
-#  --boolean
-arguments = {}
-positionals = []
-for arg in sys.argv[1:]:
-	if '--' == arg[:2]:
-		if '=' in arg:
-			key, val = [x.strip() for x in arg[2:].split('=', 1)]
-		else:
-			key, val = arg[2:], True
-		arguments[key] = val
-	else:
-		positionals.append(arg)
-
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="json config file", type=FileType("r", encoding="UTF-8"))
