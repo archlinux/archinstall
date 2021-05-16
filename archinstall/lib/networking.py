@@ -26,6 +26,14 @@ def list_interfaces(skip_loopback=True):
 	return interfaces
 
 
+def check_mirror_reachable():
+	try:
+		check = SysCommand("pacman -Sy")
+		return check.exit_code == 0
+	except:
+		return False		
+
+
 def enrich_iface_types(interfaces: dict):
 	result = {}
 	for iface in interfaces:
