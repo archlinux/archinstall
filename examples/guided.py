@@ -4,6 +4,7 @@ import time
 
 import archinstall
 from archinstall.lib.hardware import has_uefi
+from archinstall.lib.networking import check_mirror_reachable
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -387,7 +388,10 @@ def perform_installation(mountpoint):
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
-
+if not check_mirror_reachable():
+	archinstall.log("Arch Linux mirrors are not reachable. Please check your internet connection and try again.", level=logging.INFO, fg="red")
+	exit(1)
+                                                                
 if archinstall.arguments.get('silent', None) is None:
 	ask_user_questions()
 else:
@@ -401,6 +405,5 @@ else:
 	# Temporary workaround to make Desktop Environments work
 	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop', None)
 	archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
-
 
 perform_installation_steps()
