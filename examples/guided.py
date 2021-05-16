@@ -177,7 +177,8 @@ def ask_user_questions():
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
 	else:
-		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
+		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
+
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
 		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
@@ -399,5 +400,7 @@ else:
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
 	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop', None)
+	archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
+
 
 perform_installation_steps()
