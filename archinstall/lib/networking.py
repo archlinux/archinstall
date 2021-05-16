@@ -1,28 +1,32 @@
-import os
 import fcntl
+import os
 import socket
 import struct
 from collections import OrderedDict
+
 from .exceptions import *
-from .general import sys_command
+from .general import SysCommand
 from .storage import storage
 
-def getHwAddr(ifname):
+
+def get_hw_addr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in info[18:24])
-	
+
+
 def list_interfaces(skip_loopback=True):
 	interfaces = OrderedDict()
 	for index, iface in socket.if_nameindex():
 		if skip_loopback and iface == "lo":
 			continue
 
-		mac = getHwAddr(iface).replace(':', '-').lower()
+		mac = get_hw_addr(iface).replace(':', '-').lower()
 		interfaces[mac] = iface
 	return interfaces
 
-def enrichIfaceTypes(interfaces :dict):
+
+def enrich_iface_types(interfaces: dict):
 	result = {}
 	for iface in interfaces:
 		if os.path.isdir(f"/sys/class/net/{iface}/bridge/"):
@@ -39,30 +43,34 @@ def enrichIfaceTypes(interfaces :dict):
 			result[iface] = 'UNKNOWN'
 	return result
 
+
 def get_interface_from_mac(mac):
 	return list_interfaces().get(mac.lower(), None)
 
-def wirelessScan(interface):
-	interfaces = enrichIfaceTypes(list_interfaces().values())
+
+def wireless_scan(interface):
+	interfaces = enrich_iface_types(list_interfaces().values())
 	if interfaces[interface] != 'WIRELESS':
 		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
 
-	sys_command(f"iwctl station {interface} scan")
+	SysCommand(f"iwctl station {interface} scan")
 
-	if not '_WIFI' in storage:
+	if '_WIFI' not in storage:
 		storage['_WIFI'] = {}
-	if not interface in storage['_WIFI']:
+	if interface not in storage['_WIFI']:
 		storage['_WIFI'][interface] = {}
 
 	storage['_WIFI'][interface]['scanning'] = True
 
+
 # TODO: Full WiFi experience might get evolved in the future, pausing for now 2021-01-25
-def getWirelessNetworks(interface):
+def get_wireless_networks(interface):
 	# TODO: Make this oneliner pritter to check if the interface is scanning or not.
-	if not '_WIFI' in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning', False) is False:
+	if '_WIFI' not in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning', False) is False:
 		import time
-		wirelessScan(interface)
+
+		wireless_scan(interface)
 		time.sleep(5)
 
-	for line in sys_command(f"iwctl station {interface} get-networks"):
+	for line in SysCommand(f"iwctl station {interface} get-networks"):
 		print(line)

@@ -1,20 +1,23 @@
-import os, subprocess, json
-from .general import sys_command
-from .networking import list_interfaces, enrichIfaceTypes
+import json
+import os
+import subprocess
 from typing import Optional
 
+from .general import SysCommand
+from .networking import list_interfaces, enrich_iface_types
+
 __packages__ = [
-		"mesa",
-		"xf86-video-amdgpu",
-		"xf86-video-ati",
-		"xf86-video-nouveau",
-		"xf86-video-vmware",
-		"libva-mesa-driver",
-		"libva-intel-driver",
-		"intel-media-driver",
-		"vulkan-radeon",
-		"vulkan-intel",
-		"nvidia",
+	"mesa",
+	"xf86-video-amdgpu",
+	"xf86-video-ati",
+	"xf86-video-nouveau",
+	"xf86-video-vmware",
+	"libva-mesa-driver",
+	"libva-intel-driver",
+	"intel-media-driver",
+	"vulkan-radeon",
+	"vulkan-intel",
+	"nvidia",
 ]
 
 AVAILABLE_GFX_DRIVERS = {
@@ -52,50 +55,60 @@ AVAILABLE_GFX_DRIVERS = {
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
-def hasWifi()->bool:
-	return 'WIRELESS' in enrichIfaceTypes(list_interfaces().values()).values()
 
-def hasAMDCPU()->bool:
+def has_wifi() -> bool:
+	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
+
+
+def has_amd_cpu() -> bool:
 	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
 		return True
 	return False
-def hasIntelCPU()->bool:
+
+
+def has_intel_cpu() -> bool:
 	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
 		return True
 	return False
 
-def hasUEFI()->bool:
+
+def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
 
-def graphicsDevices()->dict:
+
+def graphics_devices() -> dict:
 	cards = {}
-	for line in sys_command(f"lspci"):
+	for line in SysCommand("lspci"):
 		if b' VGA ' in line:
-			_, identifier = line.split(b': ',1)
+			_, identifier = line.split(b': ', 1)
 			cards[identifier.strip().lower().decode('UTF-8')] = line
 	return cards
 
-def hasNvidiaGraphics()->bool:
-	return any('nvidia' in x for x in graphicsDevices())
 
-def hasAmdGraphics()->bool:
-	return any('amd' in x for x in graphicsDevices())
-
-def hasIntelGraphics()->bool:
-	return any('intel' in x for x in graphicsDevices())
+def has_nvidia_graphics() -> bool:
+	return any('nvidia' in x for x in graphics_devices())
 
 
-def cpuVendor()-> Optional[str]:
+def has_amd_graphics() -> bool:
+	return any('amd' in x for x in graphics_devices())
+
+
+def has_intel_graphics() -> bool:
+	return any('intel' in x for x in graphics_devices())
+
+
+def cpu_vendor() -> Optional[str]:
 	cpu_info = json.loads(subprocess.check_output("lscpu -J", shell=True).decode('utf-8'))['lscpu']
 	for info in cpu_info:
-		if info.get('field',None):
-			if info.get('field',None) == "Vendor ID:":
-				return info.get('data',None)
+		if info.get('field', None):
+			if info.get('field', None) == "Vendor ID:":
+				return info.get('data', None)
 	return None
 
-def isVM() -> bool:
+
+def is_vm() -> bool:
 	try:
-		subprocess.check_call(["systemd-detect-virt"]) # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
+		subprocess.check_call(["systemd-detect-virt"])  # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
 		return True
 	except:
 		return False

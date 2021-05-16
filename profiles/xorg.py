@@ -1,11 +1,18 @@
 # A system with "xorg" installed
 
-import os
 import archinstall
 
 is_top_level_profile = True
 
-__packages__ = ['dkms', 'xorg-server', 'xorg-xinit', 'nvidia-dkms', 'xorg-server', *archinstall.lib.hardware.__packages__]
+__packages__ = [
+	'dkms',
+	'xorg-server',
+	'xorg-xinit',
+	'nvidia-dkms',
+	'xorg-server',
+	*archinstall.lib.hardware.__packages__,
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -22,6 +29,7 @@ def _prep_function(*args, **kwargs):
 
 	return True
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("xorg", "/somewhere/xorg.py")
 # or through conventional import xorg
@@ -29,11 +37,11 @@ if __name__ == 'xorg':
 	try:
 		if "nvidia" in _gfx_driver_packages:
 			if "linux-zen" in archinstall.storage['installation_session'].base_packages or "linux-lts" in archinstall.storage['installation_session'].base_packages:
-				archinstall.storage['installation_session'].add_additional_packages("dkms")#I've had kernel regen fail if it wasn't installed before nvidia-dkms
+				archinstall.storage['installation_session'].add_additional_packages("dkms")  # I've had kernel regen fail if it wasn't installed before nvidia-dkms
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:
 				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 		else:
 			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
-		archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
+		archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit")  # Prep didn't run, so there's no driver to install

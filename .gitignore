@@ -24,3 +24,5 @@ SAFETY_LOCK
 **/archiso
 /guided.py
 /install.log
+venv
+.idea/**

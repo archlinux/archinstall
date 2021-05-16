@@ -1,28 +1,39 @@
 """Arch Linux installer - guided, templates etc."""
-from .lib.general import *
 from .lib.disk import *
-from .lib.user_interaction import *
 from .lib.exceptions import *
+from .lib.general import *
+from .lib.hardware import *
 from .lib.installer import __packages__, Installer
-from .lib.profiles import *
+from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
-from .lib.locale_helpers import *
-from .lib.services import *
-from .lib.packages import *
 from .lib.output import *
+from .lib.packages import *
+from .lib.profiles import *
+from .lib.services import *
 from .lib.storage import *
-from .lib.hardware import *
+from .lib.user_interaction import *
 from argparse import ArgumentParser, FileType
 from dotenv import load_dotenv
 parser = ArgumentParser()
 
-__version__ = "2.2.0"
+__version__ = "2.2.0.dev1"
 
-## Basic version of arg.parse() supporting:
-##  --key=value
-##  --boolean
+# Basic version of arg.parse() supporting:
+#  --key=value
+#  --boolean
+arguments = {}
+positionals = []
+for arg in sys.argv[1:]:
+	if '--' == arg[:2]:
+		if '=' in arg:
+			key, val = [x.strip() for x in arg[2:].split('=', 1)]
+		else:
+			key, val = arg[2:], True
+		arguments[key] = val
+	else:
+		positionals.append(arg)
 
 def initialize_arguments():
 	config = {}
@@ -65,8 +76,8 @@ def initialize_arguments():
 
 arguments = initialize_arguments()
 
-# TODO: Learn the dark arts of argparse...
-#	   (I summon thee dark spawn of cPython)
+# TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
+
 
 def run_as_a_module():
 	"""

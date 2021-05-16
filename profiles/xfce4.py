@@ -1,11 +1,16 @@
-
 # A desktop environment using "Xfce4"
 
 import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["xfce4", "xfce4-goodies", "lightdm", "lightdm-gtk-greeter"]
+__packages__ = [
+	"xfce4",
+	"xfce4-goodies",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -23,6 +28,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("xfce4", "/somewhere/xfce4.py")
 # or through conventional import xfce4
@@ -33,4 +39,4 @@ if __name__ == 'xfce4':
 	# Install the XFCE4 packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm')  # Light Display Manager
