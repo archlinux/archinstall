@@ -77,6 +77,7 @@ def ask_user_questions():
 			archinstall.log("Safely aborting the installation. No changes to the disk or system has been made.")
 			exit(1)
 		elif option == 'keep-existing':
+			unmount_mnt_recursively()
 			archinstall.arguments['harddrive'].keep_partitions = True
 
 			archinstall.log(" ** You will now select which partitions to use by selecting mount points (inside the installation). **")
@@ -141,7 +142,7 @@ def ask_user_questions():
 
 			archinstall.log('Using existing partition table reported above.')
 		elif option == 'format-all':
-			SysCommand("umount -R /mnt")
+			unmount_mnt_recursively()
 			if not archinstall.arguments.get('filesystem', None):
 				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
@@ -235,6 +236,13 @@ def ask_user_questions():
 
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
+
+
+def unmount_mnt_recursively():
+	try:
+		SysCommand("umount -R /mnt")
+	except:
+		pass
 
 
 def perform_installation_steps():
