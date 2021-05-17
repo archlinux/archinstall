@@ -339,7 +339,7 @@ class Installer:
 				if (ucode := pathlib.Path(f"{self.target}/boot/intel-ucode.img")).exists():
 					ucode.unlink()
 			else:
-				self.log("Unknown cpu vendor not installing ucode", level=logging.INFO)
+				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True

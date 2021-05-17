@@ -98,11 +98,12 @@ def has_intel_graphics() -> bool:
 
 
 def cpu_vendor() -> Optional[str]:
-	cpu_info = json.loads(subprocess.check_output("lscpu -J", shell=True).decode('utf-8'))['lscpu']
+	cpu_info_raw = SysCommand("lscpu -J")
+	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+
 	for info in cpu_info:
-		if info.get('field', None):
-			if info.get('field', None) == "Vendor ID:":
-				return info.get('data', None)
+		if info.get('field', None) == "Vendor ID:":
+			return info.get('data', None)
 	return None
 
 
