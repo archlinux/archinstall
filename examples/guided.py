@@ -3,6 +3,7 @@ import logging
 import time
 
 import archinstall
+from archinstall.lib.general import SysCommand
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
 
@@ -140,6 +141,7 @@ def ask_user_questions():
 
 			archinstall.log('Using existing partition table reported above.')
 		elif option == 'format-all':
+			SysCommand("umount -R /mnt")
 			if not archinstall.arguments.get('filesystem', None):
 				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
