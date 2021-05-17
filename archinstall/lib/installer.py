@@ -130,23 +130,13 @@ class Installer:
 	def post_install_check(self, *args, **kwargs):
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def pacstrap(self, *packages, options=[], **kwargs):
+	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
-		if type(packages) != list: # Redundant?
-			packages = packages.split(' ')
-
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		cmd_struct = [
-			"/usr/bin/pacman",
-			*options,
-			self.target,
-			*packages
-		]
-
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(cmd_struct, **kwargs)).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
@@ -342,12 +332,16 @@ class Installer:
 			vendor = cpu_vendor()
 			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
+				if (ucode := pathlib.Path(f"{self.target}/boot/amd-ucode.img")).exists():
+					ucode.unlink()
 			elif vendor == "GenuineIntel":
 				self.base_packages.append("intel-ucode")
+				if (ucode := pathlib.Path(f"{self.target}/boot/intel-ucode.img")).exists():
+					ucode.unlink()
 			else:
-				self.log("Unknown cpu vendor not installing ucode")
+				self.log("Unknown cpu vendor not installing ucode", level=logging.INFO)
 
-		self.pacstrap(self.base_packages, options=['--overwrite', "/boot/*-ucode.img"])
+		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
 		with open(f"{self.target}/etc/fstab", "a") as fstab:
