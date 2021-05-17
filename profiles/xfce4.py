@@ -7,6 +7,7 @@ is_top_level_profile = False
 __packages__ = [
 	"xfce4",
 	"xfce4-goodies",
+	"pavucontrol",
 	"lightdm",
 	"lightdm-gtk-greeter",
 ]
