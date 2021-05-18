@@ -369,8 +369,10 @@ def perform_installation(mountpoint):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
+			# This step must be after profile installs to allow profiles to install language pre-requisits.
+			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
-			
+
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
