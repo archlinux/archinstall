@@ -1,6 +1,7 @@
 import glob
 import pathlib
 import re
+import time
 from collections import OrderedDict
 from typing import Optional
 
@@ -264,7 +265,8 @@ class Partition:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
-		SysCommand(f'/usr/bin/umount {temporary_mountpoint}')
+		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0:
+			time.sleep(1)
 
 		temporary_path.rmdir()
 
@@ -425,7 +427,7 @@ class Partition:
 		"""
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
-		except SysCallError:
+		except (SysCallError, DiskError):
 			pass  # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
