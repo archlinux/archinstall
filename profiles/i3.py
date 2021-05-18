@@ -62,7 +62,7 @@ if __name__ == 'i3':
 	# Install dependency profiles
 	archinstall.storage['installation_session'].install_profile('xorg')
 
-	# gaps is installed by deafult so we are overriding it here with lightdm
+	# gaps is installed by default so we are overriding it here with lightdm
 	archinstall.storage['installation_session'].add_additional_packages(__packages__[4:])
 
 	# Auto start lightdm for all users
