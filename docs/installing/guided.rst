@@ -3,7 +3,7 @@ Guided installation
 
 This is the default scripted installation you'll encounter on the official Arch Linux Archinstall package as well as the unofficial ISO found on `https://archlinux.life <https://archlinux.life>`_. It will guide your through a very basic installation of Arch Linux.
 
-The installer has two pre-requisits:
+The installer has two pre-requisites:
 
  * A Physical or Virtual machine to install on
  * An active internet connection prior to running archinstall

@@ -242,7 +242,7 @@ class MiniCurses:
 
 		if (mapped_char := mapper.get(char, None)) == 'BACKSPACE':
 			if self._cursor_x <= self.input_pos:
-				# Don't backspace futher back than the cursor start position during input
+				# Don't backspace further back than the cursor start position during input
 				return True
 			# Move back to the current known position (BACKSPACE doesn't updated x-pos)
 			sys.stdout.flush()
@@ -694,7 +694,7 @@ def select_mirror_regions(mirrors, show_top_mirrors=True):
 
 def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
-	Some what convoluted function, which's job is simple.
+	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
 
 	(The template xorg is for beginner users, not advanced, and should

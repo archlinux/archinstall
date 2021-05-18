@@ -26,7 +26,7 @@ class Journald(dict):
 		except ModuleNotFoundError:
 			return False
 
-		# For backwards compability, convert old style log-levels
+		# For backwards compatibility, convert old style log-levels
 		# to logging levels (and warn about deprecated usage)
 		# There's some code re-usage here but that should be fine.
 		# TODO: Remove these in a few versions:
@@ -135,7 +135,7 @@ def log(*args, **kwargs):
 	# Unless the level is higher than we've decided to output interactively.
 	# (Remember, log files still get *ALL* the output despite level restrictions)
 	if 'level' in kwargs:
-		# For backwards compability, convert old style log-levels
+		# For backwards compatibility, convert old style log-levels
 		# to logging levels (and warn about deprecated usage)
 		# There's some code re-usage here but that should be fine.
 		# TODO: Remove these in a few versions:
