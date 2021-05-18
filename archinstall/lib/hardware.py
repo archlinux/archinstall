@@ -98,19 +98,23 @@ def has_intel_graphics() -> bool:
 
 
 def cpu_vendor() -> Optional[str]:
-	cpu_info = json.loads(subprocess.check_output("lscpu -J", shell=True).decode('utf-8'))['lscpu']
+	cpu_info_raw = SysCommand("lscpu -J")
+	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+
 	for info in cpu_info:
-		if info.get('field', None):
-			if info.get('field', None) == "Vendor ID:":
-				return info.get('data', None)
+		if info.get('field', None) == "Vendor ID:":
+			return info.get('data', None)
 	return None
 
 
 def is_vm() -> bool:
 	try:
-		subprocess.check_call(["systemd-detect-virt"])  # systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		return True
+		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
+		if b"".join(SysCommand("systemd-detect-virt")).lower() != b"none":
+			return True
 	except:
-		return False
+		pass
+
+	return False
 
 # TODO: Add more identifiers
