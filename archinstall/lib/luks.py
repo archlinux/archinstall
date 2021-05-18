@@ -43,7 +43,7 @@ class luks2:
 
 	def encrypt(self, partition, password=None, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
 		if not self.partition.allow_formatting:
-			raise DiskError(f'Could not encrypt volume {self.partition} due to it having a formatting lock.')
+			raise DiskError(f'Could not encrypt volume {partition} due to it having a formatting lock.')
 
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
@@ -107,7 +107,7 @@ class luks2:
 				raise err
 
 		if cmd_handle.exit_code != 0:
-			raise DiskError(f'Could not encrypt volume "{partition.path}": {cmd_output}')
+			raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 
 		return key_file
 
