@@ -3,16 +3,16 @@ import os
 import subprocess
 
 from .exceptions import ServiceException
-from .general import sys_command
+from .general import SysCommand
 from .output import log
 from .storage import storage
 
 def list_keyboard_languages():
-	for line in sys_command("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
+	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
 		yield line.decode('UTF-8').strip()
 
 def list_x11_keyboard_languages():
-	for line in sys_command("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS' : '0'}):
+	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS' : '0'}):
 		yield line.decode('UTF-8').strip()
 
 
@@ -40,7 +40,7 @@ def set_keyboard_language(locale):
 			log(f"Invalid keyboard locale specified: {locale}", fg="red", level=logging.ERROR)
 			return False
 
-		if (output := sys_command(f'localectl set-keymap {locale}')).exit_code != 0:
+		if (output := SysCommand(f'localectl set-keymap {locale}')).exit_code != 0:
 			raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
 
 		return True
