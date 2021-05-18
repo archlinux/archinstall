@@ -616,7 +616,7 @@ def select_language(options, show_only_country_codes=True, input_text='Select on
 		print_large_list(languages, margin_bottom=4)
 
 		print(" -- You can choose a layout that isn't in this list, but whose name you know --")
-		print(" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use {DEFAULT_KEYBOARD_LANGUAGE} layout --")
+		print(f" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use {default_keyboard_language} layout --")
 
 		while True:
 			selected_language = input(input_text)

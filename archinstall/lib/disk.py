@@ -77,7 +77,7 @@ class BlockDevice:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(SysCommand(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(SysCommand(['losetup', '--json'])).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path:
 					continue
 
@@ -572,7 +572,7 @@ def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
-	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
+	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model')).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part':
 			continue
 
