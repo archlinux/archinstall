@@ -532,7 +532,7 @@ class Installer:
 
 			self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
-			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
 		return True
 
