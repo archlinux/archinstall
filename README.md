@@ -50,8 +50,7 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 You could just copy [guided.py](examples/guided.py) as a starting point.
 
-However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines on to local disk images.<br>
-This is probably what you'll need, a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library.
+However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines on to local disk images, here is a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library:<br>
 
 ```python
 import archinstall, getpass
