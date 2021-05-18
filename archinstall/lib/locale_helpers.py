@@ -1,18 +1,17 @@
 import logging
-import os
-import subprocess
 
 from .exceptions import ServiceException
 from .general import SysCommand
 from .output import log
-from .storage import storage
+
 
 def list_keyboard_languages():
-	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):
+	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS': '0'}):
 		yield line.decode('UTF-8').strip()
 
+
 def list_x11_keyboard_languages():
-	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS' : '0'}):
+	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS': '0'}):
 		yield line.decode('UTF-8').strip()
 
 
@@ -22,11 +21,13 @@ def verify_keyboard_layout(layout):
 			return True
 	return False
 
+
 def verify_x11_keyboard_layout(layout):
 	for language in list_x11_keyboard_languages():
 		if layout.lower() == language.lower():
 			return True
 	return False
+
 
 def search_keyboard_layout(layout):
 	for language in list_keyboard_languages():

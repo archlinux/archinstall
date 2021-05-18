@@ -1,8 +1,9 @@
 import logging
 
-from .installer import Installer
 from .general import SysCommand
+from .installer import Installer
 from .output import log
+
 
 class Ini:
 	def __init__(self, *args, **kwargs):
@@ -43,8 +44,9 @@ class Networkd(Systemd):
 	Placeholder class to do systemd-network specific setups.
 	"""
 
+
 class Boot:
-	def __init__(self, installation :Installer):
+	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.session = None
 
