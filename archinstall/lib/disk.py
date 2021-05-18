@@ -606,7 +606,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 		return collection[drive]
 
 
-def get_mount_info(path):
+def get_mount_info(path) -> dict:
 	try:
 		output = SysCommand(f'/usr/bin/findmnt --json {path}')
 	except SysCallError:
@@ -625,15 +625,19 @@ def get_mount_info(path):
 		return output['filesystems'][0]
 
 
-def get_partitions_in_use(mountpoint):
+def get_partitions_in_use(mountpoint) -> list:
 	try:
-		output = b''.join(SysCommand(f'/usr/bin/findmnt --json -R {mountpoint}'))
+		output = SysCommand(f'/usr/bin/findmnt --json -R {mountpoint}')
 	except SysCallError:
-		return {}
+		return []
 
 	mounts = []
 
 	output = output.decode('UTF-8')
+
+	if not output:
+		return []
+
 	output = json.loads(output)
 	for target in output.get('filesystems', []):
 		mounts.append(Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target']))
