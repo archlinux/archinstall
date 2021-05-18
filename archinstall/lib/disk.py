@@ -265,7 +265,8 @@ class Partition:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
-		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0:
+		iterations = 0
+		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and (iterations := iterations+1) < 10:
 			time.sleep(1)
 
 		temporary_path.rmdir()
