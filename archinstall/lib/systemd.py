@@ -44,7 +44,7 @@ class Networkd(Systemd):
 	"""
 
 class Boot:
-	def __init__(installation :Installer):
+	def __init__(self, installation :Installer):
 		self.instance = installation
 		self.session = None
 
