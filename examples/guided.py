@@ -167,69 +167,7 @@ def ask_user_to_configure_partitions():
 			archinstall.log("Safely aborting the installation. No changes to the disk or system has been made.")
 			exit(1)
 		elif option == 'keep-existing':
-			archinstall.arguments['harddrive'].keep_partitions = True
-
-			archinstall.log(" ** You will now select which partitions to use by selecting mount points (inside the installation). **")
-			archinstall.log(" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
-			mountpoints_set = []
-			while True:
-				# Select a partition
-				# If we provide keys as options, it's better to convert them to list and sort before passing
-				mountpoints_list = sorted(list(partition_mountpoints.keys()))
-				partition = archinstall.generic_select(mountpoints_list, "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
-				if not partition:
-					if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
-						break
-
-					continue
-
-				# Select a mount-point
-				mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
-				if len(mountpoint):
-
-					# Get a valid & supported filesystem for the partition:
-					while 1:
-						new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
-						if len(new_filesystem) <= 0:
-							if partition.encrypted and partition.filesystem == 'crypto_LUKS':
-								old_password = archinstall.arguments.get('!encryption-password', None)
-								if not old_password:
-									old_password = input(f'Enter the old encryption password for {partition}: ')
-
-								if autodetected_filesystem := partition.detect_inner_filesystem(old_password):
-									new_filesystem = autodetected_filesystem
-								else:
-									archinstall.log("Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
-									archinstall.log("A filesystem must be defined for the unlocked encrypted partition.")
-									continue
-							break
-
-						# Since the potentially new filesystem is new
-						# we have to check if we support it. We can do this by formatting /dev/null with the partitions filesystem.
-						# There's a nice wrapper for this on the partition object itself that supports a path-override during .format()
-						try:
-							partition.format(new_filesystem, path='/dev/null', log_formatting=False, allow_formatting=True)
-						except archinstall.UnknownFilesystemFormat:
-							archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}',")
-							archinstall.log("please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
-							archinstall.log("Until then, please enter another supported filesystem.")
-							continue
-						except archinstall.SysCallError:
-							pass  # Expected exception since mkfs.<format> can not format /dev/null. But that means our .format() function supported it.
-						break
-
-					# When we've selected all three criteria,
-					# We can safely mark the partition for formatting and where to mount it.
-					# TODO: allow_formatting might be redundant since target_mountpoint should only be
-					#       set if we actually want to format it anyway.
-					mountpoints_set.append(mountpoint)
-					partition.allow_formatting = True
-					partition.target_mountpoint = mountpoint
-					# Only overwrite the filesystem definition if we selected one:
-					if len(new_filesystem):
-						partition.filesystem = new_filesystem
-
-			archinstall.log('Using existing partition table reported above.')
+			perform_keep_existing_partition_configuration(partition_mountpoints)
 		elif option == 'format-all':
 			if not archinstall.arguments.get('filesystem', None):
 				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
@@ -240,6 +178,70 @@ def ask_user_to_configure_partitions():
 		if not archinstall.arguments.get('filesystem', None):
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
+
+
+def perform_keep_existing_partition_configuration(partition_mountpoints):
+	archinstall.arguments['harddrive'].keep_partitions = True
+	archinstall.log(" ** You will now select which partitions to use by selecting mount points (inside the installation). **")
+	archinstall.log(" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
+	mountpoints_set = []
+	while True:
+		# Select a partition
+		# If we provide keys as options, it's better to convert them to list and sort before passing
+		mountpoints_list = sorted(list(partition_mountpoints.keys()))
+		partition = archinstall.generic_select(mountpoints_list, "Select a partition by number that you want to set a mount-point for (leave blank when done): ")
+		if not partition:
+			if set(mountpoints_set) & {'/', '/boot'} == {'/', '/boot'}:
+				break
+
+			continue
+
+		# Select a mount-point
+		mountpoint = input(f"Enter a mount-point for {partition}: ").strip(' ')
+		if len(mountpoint):
+
+			# Get a valid & supported filesystem for the partition:
+			while 1:
+				new_filesystem = input(f"Enter a valid filesystem for {partition} (leave blank for {partition.filesystem}): ").strip(' ')
+				if len(new_filesystem) <= 0:
+					if partition.encrypted and partition.filesystem == 'crypto_LUKS':
+						old_password = archinstall.arguments.get('!encryption-password', None)
+						if not old_password:
+							old_password = input(f'Enter the old encryption password for {partition}: ')
+
+						if autodetected_filesystem := partition.detect_inner_filesystem(old_password):
+							new_filesystem = autodetected_filesystem
+						else:
+							archinstall.log("Could not auto-detect the filesystem inside the encrypted volume.", fg='red')
+							archinstall.log("A filesystem must be defined for the unlocked encrypted partition.")
+							continue
+					break
+
+				# Since the potentially new filesystem is new
+				# we have to check if we support it. We can do this by formatting /dev/null with the partitions filesystem.
+				# There's a nice wrapper for this on the partition object itself that supports a path-override during .format()
+				try:
+					partition.format(new_filesystem, path='/dev/null', log_formatting=False, allow_formatting=True)
+				except archinstall.UnknownFilesystemFormat:
+					archinstall.log(f"Selected filesystem is not supported yet. If you want archinstall to support '{new_filesystem}',")
+					archinstall.log("please create a issue-ticket suggesting it on github at https://github.com/archlinux/archinstall/issues.")
+					archinstall.log("Until then, please enter another supported filesystem.")
+					continue
+				except archinstall.SysCallError:
+					pass  # Expected exception since mkfs.<format> can not format /dev/null. But that means our .format() function supported it.
+				break
+
+			# When we've selected all three criteria,
+			# We can safely mark the partition for formatting and where to mount it.
+			# TODO: allow_formatting might be redundant since target_mountpoint should only be
+			#       set if we actually want to format it anyway.
+			mountpoints_set.append(mountpoint)
+			partition.allow_formatting = True
+			partition.target_mountpoint = mountpoint
+			# Only overwrite the filesystem definition if we selected one:
+			if len(new_filesystem):
+				partition.filesystem = new_filesystem
+	archinstall.log('Using existing partition table reported above.')
 
 
 def perform_installation_steps():
