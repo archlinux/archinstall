@@ -1,3 +1,4 @@
+import urllib.error
 import urllib.request
 
 from .general import *
