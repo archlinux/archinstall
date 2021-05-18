@@ -3,7 +3,6 @@ from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
-from .systemd import Networkd
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -216,6 +215,8 @@ class Installer:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
 	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
+		from .systemd import Networkd
+		
 		if dhcp:
 			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
 		else:
