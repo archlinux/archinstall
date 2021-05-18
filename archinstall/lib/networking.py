@@ -31,7 +31,7 @@ def check_mirror_reachable():
 		check = SysCommand("pacman -Sy")
 		return check.exit_code == 0
 	except:
-		return False		
+		return False
 
 
 def enrich_iface_types(interfaces: dict):

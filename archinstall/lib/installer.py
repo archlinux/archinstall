@@ -1,6 +1,6 @@
 from .disk import *
 from .hardware import *
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale_helpers import verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
 from .user_interaction import *
@@ -216,7 +216,7 @@ class Installer:
 
 	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
 		from .systemd import Networkd
-		
+
 		if dhcp:
 			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
 		else:
@@ -517,7 +517,7 @@ class Installer:
 		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
 
-	def set_keyboard_language(self, language :str) -> bool:
+	def set_keyboard_language(self, language: str) -> bool:
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
 				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
@@ -536,7 +536,7 @@ class Installer:
 
 		return True
 
-	def set_x11_keyboard_language(self, language :str) -> bool:
+	def set_x11_keyboard_language(self, language: str) -> bool:
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.

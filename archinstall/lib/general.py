@@ -115,7 +115,7 @@ class SysCommandWorker:
 		self.started = None
 		self.ended = None
 
-	def __contains__(self, key :bytes):
+	def __contains__(self, key: bytes):
 		"""
 		Contains will also move the current buffert position forward.
 		This is to avoid re-checking the same data when looking for output.
@@ -130,7 +130,7 @@ class SysCommandWorker:
 	def __iter__(self, *args, **kwargs):
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
 			if line:
-				yield line+b'\n'
+				yield line + b'\n'
 
 		self._trace_log_pos = self._trace_log.rfind(b'\n')
 
@@ -152,7 +152,7 @@ class SysCommandWorker:
 				pass
 
 		if len(args) >= 2 and args[1]:
-			log("moo",args[1], level=logging.ERROR, fg='red')
+			log("moo", args[1], level=logging.ERROR, fg='red')
 
 	def is_alive(self):
 		self.poll()
@@ -162,8 +162,8 @@ class SysCommandWorker:
 
 		return False
 
-	def write(self, data :bytes, line_ending=True):
-		assert type(data) == bytes # TODO: Maybe we can support str as well and encode it
+	def write(self, data: bytes, line_ending=True):
+		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
 
@@ -294,11 +294,11 @@ class SysCommand:
 
 	def __json__(self):
 		return {
-			'cmd' : self.cmd,
-			'callbacks' : self._callbacks,
-			'peak' : self.peak_output,
-			'environment_vars' : self.environment_vars,
-			'session' : True if self.session else False
+			'cmd': self.cmd,
+			'callbacks': self._callbacks,
+			'peak': self.peak_output,
+			'environment_vars': self.environment_vars,
+			'session': True if self.session else False
 		}
 
 	def create_session(self):
@@ -318,6 +318,7 @@ class SysCommand:
 
 	def decode(self, fmt='UTF-8'):
 		return self.session.trace_log.decode(fmt)
+
 
 def prerequisite_check():
 	if not os.path.isdir("/sys/firmware/efi"):
