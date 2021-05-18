@@ -333,7 +333,8 @@ class SysCommand:
 		return True
 
 	def decode(self, fmt='UTF-8'):
-		return self.session.trace_log.decode(fmt)
+		self.create_session()
+		return self.session._trace_log.decode(fmt)
 
 	@property
 	def exit_code(self):

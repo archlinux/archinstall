@@ -605,11 +605,15 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 def get_mount_info(path):
 	try:
-		output = b''.join(SysCommand(f'/usr/bin/findmnt --json {path}'))
+		output = SysCommand(f'/usr/bin/findmnt --json {path}')
 	except SysCallError:
 		return {}
 
 	output = output.decode('UTF-8')
+
+	if not output:
+		return {}
+
 	output = json.loads(output)
 	if 'filesystems' in output:
 		if len(output['filesystems']) > 1:
