@@ -1,12 +1,24 @@
 # A desktop environment selector.
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = True
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
-__packages__ = ['nano', 'vim', 'openssh', 'htop', 'wget', 'iwd', 'wireless_tools', 'wpa_supplicant', 'smartmontools', 'xdg-utils']
+__packages__ = [
+	'nano',
+	'vim',
+	'openssh',
+	'htop',
+	'wget',
+	'iwd',
+	'wireless_tools',
+	'wpa_supplicant',
+	'smartmontools',
+	'xdg-utils',
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -16,11 +28,23 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	supported_desktops = ['gnome', 'kde', 'awesome', 'sway', 'cinnamon', 'xfce4', 'lxqt', 'i3', 'budgie', 'mate', 'deepin', 'enlightenment']
+	supported_desktops = [
+		'gnome',
+		'kde',
+		'awesome',
+		'sway',
+		'cinnamon',
+		'xfce4',
+		'lxqt',
+		'i3',
+		'budgie',
+		'mate',
+		'deepin',
+		'enlightenment',
+	]
 
-	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ',
-										 allow_empty_input=False, sort=True)
-	
+	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
+
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded
 	# the next time it gets executed.
@@ -33,6 +57,7 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print(f"Deprecated (??): {desktop} profile has no _prep_function() anymore")
+
 
 if __name__ == 'desktop':
 	"""
@@ -47,9 +72,8 @@ if __name__ == 'desktop':
 	There are plenty of desktop-turn-key-solutions based on Arch Linux,
 	this is therefore just a helper to get started
 	"""
-	
+
 	# Install common packages for all desktop environments
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
-	
-	archinstall.storage['installation_session'].install_profile(archinstall.storage['_desktop_profile'])
 
+	archinstall.storage['installation_session'].install_profile(archinstall.storage['_desktop_profile'])

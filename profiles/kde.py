@@ -1,12 +1,22 @@
 # A desktop environment using "KDE".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-wayland-session", "egl-wayland"]
+__packages__ = [
+	"plasma-meta",
+	"konsole",
+	"kate",
+	"dolphin",
+	"sddm",
+	"plasma-wayland-session",
+	"egl-wayland",
+]
+
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -23,6 +33,7 @@ def _prep_function(*args, **kwargs):
 			return imported._prep_function()
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
 
 """
 def _post_install(*args, **kwargs):

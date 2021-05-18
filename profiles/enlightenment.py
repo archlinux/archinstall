@@ -1,10 +1,16 @@
 # A desktop environment using "Enlightenment".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["enlightenment", "terminology", "lightdm", "lightdm-gtk-greeter"]
+__packages__ = [
+	"enlightenment",
+	"terminology",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""

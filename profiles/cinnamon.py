@@ -4,7 +4,17 @@ import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["cinnamon", "system-config-printer", "gnome-keyring", "gnome-terminal", "blueberry", "metacity", "lightdm", "lightdm-gtk-greeter"]
+__packages__ = [
+	"cinnamon",
+	"system-config-printer",
+	"gnome-keyring",
+	"gnome-terminal",
+	"blueberry",
+	"metacity",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -22,6 +32,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 # Ensures that this code only gets executed if executed
 # through importlib.util.spec_from_file_location("cinnamon", "/somewhere/cinnamon.py")
 # or through conventional import cinnamon
@@ -32,4 +43,4 @@ if __name__ == 'cinnamon':
 	# Install the Cinnamon packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager
+	archinstall.storage['installation_session'].enable_service('lightdm')  # Light Display Manager
