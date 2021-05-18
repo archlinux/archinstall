@@ -93,13 +93,9 @@ class SysCommand:
 		if environment_vars is None:
 			environment_vars = {}
 		kwargs.setdefault("worker_id", gen_uid())
-		kwargs.setdefault("emulate", False)
 		kwargs.setdefault("suppress_errors", False)
 
 		self.log = kwargs.get('log', log)
-
-		if kwargs['emulate']:
-			self.log(f"Starting command '{cmd}' in emulation mode.", level=logging.DEBUG)
 
 		if type(cmd) is list:
 			# if we get a list of arguments
@@ -214,14 +210,13 @@ class SysCommand:
 		self.pid, child_fd = pty.fork()
 		if not self.pid:  # Child process
 			# Replace child process with our main process
-			if not self.kwargs['emulate']:
-				try:
-					os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
-				except FileNotFoundError:
-					self.status = 'done'
-					self.log(f"{self.cmd[0]} does not exist.", level=logging.DEBUG)
-					self.exit_code = 1
-					return False
+			try:
+				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
+			except FileNotFoundError:
+				self.status = 'done'
+				self.log(f"{self.cmd[0]} does not exist.", level=logging.DEBUG)
+				self.exit_code = 1
+				return False
 
 		os.chdir(old_dir)
 
@@ -234,7 +229,7 @@ class SysCommand:
 
 		alive = True
 		last_trigger_pos = 0
-		while alive and not self.kwargs['emulate']:
+		while alive:
 			for fileno, event in poller.poll(0.1):
 				try:
 					output = os.read(child_fd, 8192)
@@ -294,16 +289,13 @@ class SysCommand:
 		if 'debug' in self.kwargs and self.kwargs['debug']:
 			self.log(f"{self.cmd[0]} waiting for exit code.", level=logging.DEBUG)
 
-		if not self.kwargs['emulate']:
+		try:
+			self.exit_code = os.waitpid(self.pid, 0)[1]
+		except ChildProcessError:
 			try:
-				self.exit_code = os.waitpid(self.pid, 0)[1]
+				self.exit_code = os.waitpid(child_fd, 0)[1]
 			except ChildProcessError:
-				try:
-					self.exit_code = os.waitpid(child_fd, 0)[1]
-				except ChildProcessError:
-					self.exit_code = 1
-		else:
-			self.exit_code = 0
+				self.exit_code = 1
 
 		if 'debug' in self.kwargs and self.kwargs['debug']:
 			self.log(f"{self.cmd[0]} got exit code: {self.exit_code}", level=logging.DEBUG)
