@@ -335,6 +335,11 @@ class SysCommand:
 	def decode(self, fmt='UTF-8'):
 		return self.session.trace_log.decode(fmt)
 
+	@property
+	def exit_code(self):
+		self.create_session()
+		return self.session.exit_code
+
 
 def prerequisite_check():
 	if not os.path.isdir("/sys/firmware/efi"):
