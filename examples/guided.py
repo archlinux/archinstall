@@ -20,6 +20,7 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
+	# Ask user to select a keyboard language
 	if not archinstall.arguments.get('keyboard-language', None):
 		while True:
 			try:
@@ -45,7 +46,7 @@ def ask_user_questions():
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 
-	# Ask which harddrive/block-device we will install to
+	# Ask which hard drive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
 	else:
@@ -53,6 +54,96 @@ def ask_user_questions():
 		if archinstall.arguments['harddrive'] is None:
 			archinstall.arguments['target-mount'] = '/mnt'
 
+	# Ask user how they would like their partitions to be configured. This is a separate method due to complexity.
+	ask_user_to_configure_partitions()
+
+	# Get disk encryption password (or skip if blank)
+	if archinstall.arguments['harddrive'] and archinstall.arguments.get('!encryption-password', None) is None:
+		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+			archinstall.arguments['!encryption-password'] = passwd
+			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
+	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+
+	# Get the hostname for the machine
+	if not archinstall.arguments.get('hostname', None):
+		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
+
+	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
+	if not archinstall.arguments.get('!root-password', None):
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
+
+	# Ask for additional users (super-user if root pw was not set)
+	archinstall.arguments['users'] = {}
+	archinstall.arguments['superusers'] = {}
+	if not archinstall.arguments.get('!root-password', None):
+		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+
+	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
+	archinstall.arguments['users'] = users
+	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
+
+	# Ask for archinstall-specific profiles (such as desktop environments etc)
+	if not archinstall.arguments.get('profile', None):
+		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
+	else:
+		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
+
+	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
+	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
+		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+			if not imported._prep_function():
+				archinstall.log(
+					' * Profile\'s preparation requirements was not fulfilled.',
+					fg='red'
+				)
+				exit(1)
+
+	# Ask about audio server selection if one is not already set
+	if not archinstall.arguments.get('audio', None):
+		# only ask for audio server selection on a desktop profile
+		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
+			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
+		else:
+			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
+			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
+			archinstall.arguments['audio'] = None
+
+	# Ask for preferred kernel:
+	if not archinstall.arguments.get("kernels", None):
+		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
+		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+
+	# Additional packages (with some light weight error handling for invalid package names)
+	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+	while True:
+		if not archinstall.arguments.get('packages', None):
+			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
+
+		if len(archinstall.arguments['packages']):
+			# Verify packages that were given
+			try:
+				archinstall.log("Verifying that additional packages exist (this might take a few seconds)")
+				archinstall.validate_package_list(archinstall.arguments['packages'])
+				break
+			except archinstall.RequirementError as e:
+				archinstall.log(e, fg='red')
+				archinstall.arguments['packages'] = None  # Clear the packages to trigger a new input question
+		else:
+			# no additional packages were selected, which we'll allow
+			break
+
+	# Ask or Call the helper function that asks the user to optionally configure a network.
+	if not archinstall.arguments.get('nic', None):
+		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
+		if not archinstall.arguments['nic']:
+			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
+
+	if not archinstall.arguments.get('timezone', None):
+		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
+
+
+def ask_user_to_configure_partitions():
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
 	# 3. Check that we support the current partitions
@@ -149,90 +240,6 @@ def ask_user_questions():
 		if not archinstall.arguments.get('filesystem', None):
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
-
-	# Get disk encryption password (or skip if blank)
-	if archinstall.arguments['harddrive'] and archinstall.arguments.get('!encryption-password', None) is None:
-		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-			archinstall.arguments['!encryption-password'] = passwd
-			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
-	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
-	# Get the hostname for the machine
-	if not archinstall.arguments.get('hostname', None):
-		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
-
-	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
-
-	# Ask for additional users (super-user if root pw was not set)
-	archinstall.arguments['users'] = {}
-	archinstall.arguments['superusers'] = {}
-	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-
-	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
-	archinstall.arguments['users'] = users
-	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
-
-	# Ask for archinstall-specific profiles (such as desktop environments etc)
-	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
-	else:
-		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
-
-	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
-		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
-			if not imported._prep_function():
-				archinstall.log(
-					' * Profile\'s preparation requirements was not fulfilled.',
-					fg='red'
-				)
-				exit(1)
-
-	# Ask about audio server selection if one is not already set
-	if not archinstall.arguments.get('audio', None):
-		# only ask for audio server selection on a desktop profile
-		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
-			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
-		else:
-			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
-			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
-			archinstall.arguments['audio'] = None
-
-	# Ask for preferred kernel:
-	if not archinstall.arguments.get("kernels", None):
-		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
-
-	# Additional packages (with some light weight error handling for invalid package names)
-	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
-	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-	while True:
-		if not archinstall.arguments.get('packages', None):
-			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
-
-		if len(archinstall.arguments['packages']):
-			# Verify packages that were given
-			try:
-				archinstall.log("Verifying that additional packages exist (this might take a few seconds)")
-				archinstall.validate_package_list(archinstall.arguments['packages'])
-				break
-			except archinstall.RequirementError as e:
-				archinstall.log(e, fg='red')
-				archinstall.arguments['packages'] = None  # Clear the packages to trigger a new input question
-		else:
-			# no additional packages were selected, which we'll allow
-			break
-
-	# Ask or Call the helper function that asks the user to optionally configure a network.
-	if not archinstall.arguments.get('nic', None):
-		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
-		if not archinstall.arguments['nic']:
-			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
-
-	if not archinstall.arguments.get('timezone', None):
-		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
 
 def perform_installation_steps():
