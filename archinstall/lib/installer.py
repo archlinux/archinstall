@@ -522,6 +522,10 @@ class Installer:
 				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
 				return False
 
+			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
+			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
+			self.arch_chroot('localectl set-keymap ""')
+
 			if (output := self.arch_chroot(f'localectl set-keymap {language}')).exit_code != 0:
 				raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
 		else:
@@ -530,6 +534,10 @@ class Installer:
 		return True
 
 	def set_x11_keyboard_language(self, language :str) -> bool:
+		"""
+		A fallback function to set x11 layout specifically and separately from console layout.
+		This isn't strictly necessary since .set_keyboard_language() does this as well.
+		"""
 		if len(language.strip()):
 			if not verify_x11_keyboard_layout(language):
 				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)

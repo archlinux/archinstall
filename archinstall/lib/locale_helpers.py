@@ -5,7 +5,7 @@ import subprocess
 from .exceptions import ServiceException
 from .general import sys_command
 from .output import log
-
+from .storage import storage
 
 def list_keyboard_languages():
 	for line in sys_command("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS' : '0'}):

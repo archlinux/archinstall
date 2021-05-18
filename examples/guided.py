@@ -324,7 +324,6 @@ def perform_installation(mountpoint):
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
 			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
-			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
@@ -370,6 +369,8 @@ def perform_installation(mountpoint):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
+			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
+			
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():

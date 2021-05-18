@@ -45,8 +45,3 @@ if __name__ == 'xorg':
 			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
 	except:
 		archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit") # Prep didn't run, so there's no driver to install
-
-	available_x11_languages = list(archinstall.list_x11_keyboard_languages())
-	if(x11_keyboard_language := archinstall.select_language(available_x11_languages,
-									input_text='Select one of the above X11 keyboard languages (by number or full name): ')):
-		archinstall.storage['installation_session'].set_x11_keyboard_language(x11_keyboard_language)
