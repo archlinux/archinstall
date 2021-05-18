@@ -78,7 +78,6 @@ class Installer:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
-			# self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
 			self.log(args[1], level=logging.ERROR, fg='red')
 
 			self.sync_log_to_install_medium()
@@ -149,9 +148,8 @@ class Installer:
 	def genfstab(self, flags='-pU'):
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
-		fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').trace_log
-		with open(f"{self.target}/etc/fstab", 'ab') as fstab_fh:
-			fstab_fh.write(fstab)
+		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
+			fstab_fh.write(SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode())
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')

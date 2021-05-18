@@ -52,7 +52,7 @@ def ask_user_questions():
 	else:
 		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 		if archinstall.arguments['harddrive'] is None:
-			archinstall.arguments['target-mount'] = '/mnt'
+			archinstall.arguments['target-mount'] = archinstall.storage.get('MOUNT_POINT', '/mnt')
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
@@ -292,14 +292,14 @@ def perform_installation_steps():
 				# unlocks the drive so that it can be used as a normal block-device within archinstall.
 				with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
 					unlocked_device.format(fs.find_partition('/').filesystem)
-					unlocked_device.mount('/mnt')
+					unlocked_device.mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 			else:
-				fs.find_partition('/').mount('/mnt')
+				fs.find_partition('/').mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
 			if has_uefi():
-				fs.find_partition('/boot').mount('/mnt/boot')
+				fs.find_partition('/boot').mount(archinstall.storage.get('MOUNT_POINT', '/mnt')+'/boot')
 
-	perform_installation('/mnt')
+	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
 
 def perform_installation(mountpoint):

@@ -704,8 +704,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		lspci = SysCommand('/usr/bin/lspci')
-		for line in lspci.trace_log.split(b'\r\n'):
+		for line in SysCommand('/usr/bin/lspci'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():
 					print(' ** nvidia card detected, suggested driver: nvidia **')
