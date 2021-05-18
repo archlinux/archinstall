@@ -26,3 +26,4 @@ SAFETY_LOCK
 /install.log
 venv
 .idea/**
+**/install.log
