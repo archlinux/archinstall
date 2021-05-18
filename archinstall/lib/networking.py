@@ -35,7 +35,6 @@ def check_mirror_reachable():
 
 	return False
 
-
 def enrich_iface_types(interfaces: dict):
 	result = {}
 	for iface in interfaces:

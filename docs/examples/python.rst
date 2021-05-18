@@ -27,7 +27,7 @@ Lets create a `test_installer` - installer as an example. This is assuming that 
 We begin by creating `./archinstall/examples/test_installer.py`. The placement here is important later.
 
 This script can now already be called using `python -m archinstall test_installer` after a successful installation of the library itself.
-But the script won't do much. So we'll do something simple like list all the harddrives as an example.
+But the script won't do much. So we'll do something simple like list all the hard drives as an example.
 
 To do this, we'll begin by importing `archinstall` in our `./archinstall/examples/test_installer.py` and call some functions.
 

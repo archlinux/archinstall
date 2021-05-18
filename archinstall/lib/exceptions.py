@@ -29,10 +29,6 @@ class HardwareIncompatibilityError(BaseException):
 	pass
 
 
-class PermissionError(BaseException):
-	pass
-
-
 class UserError(BaseException):
 	pass
 

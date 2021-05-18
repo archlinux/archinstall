@@ -446,7 +446,6 @@ class Installer:
 				self.helper_flags['bootloader'] = bootloader
 				return True
 
-			raise RequirementError(f"Could not identify the UUID of {self.partition}, there for {self.target}/boot/loader/entries/arch.conf will be broken until fixed.")
 		elif bootloader == "grub-install":
 			self.pacstrap('grub')
 
