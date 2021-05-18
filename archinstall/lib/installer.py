@@ -528,6 +528,8 @@ class Installer:
 
 			if (output := self.arch_chroot(f'localectl set-keymap {language}')).exit_code != 0:
 				raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+
+			self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
 			self.log(f'Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
