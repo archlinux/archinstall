@@ -51,7 +51,7 @@ class Boot:
 	def __enter__(self):
 		self.session = SysCommand([
 			'/usr/bin/systemd-nspawn',
-			'-D', installation.target,
+			'-D', self.instance.target,
 			'-b',
 			'--machine', 'temporary'
 		])
