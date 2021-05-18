@@ -41,6 +41,8 @@ def locate_binary(name):
 					return os.path.join(root, file)
 			break  # Don't recurse
 
+	raise RequirementError(f"Binary {name} does not exist.")
+
 
 class JsonEncoder:
 	def _encode(obj):
@@ -94,7 +96,7 @@ class SysCommandWorker:
 		if type(cmd) is str:
 			cmd = shlex.split(cmd)
 
-		if not cmd[0][0] != '/' and cmd[0][0] != './':
+		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore.
 			# We there for fall back on manual lookup in os.PATH
@@ -152,7 +154,7 @@ class SysCommandWorker:
 				pass
 
 		if len(args) >= 2 and args[1]:
-			log("moo", args[1], level=logging.ERROR, fg='red')
+			log(args[1], level=logging.ERROR, fg='red')
 
 	def is_alive(self):
 		self.poll()
@@ -171,7 +173,7 @@ class SysCommandWorker:
 
 	def make_sure_we_are_executing(self):
 		if not self.started:
-			self.execute()
+			return self.execute()
 
 	def tell(self) -> int:
 		self.make_sure_we_are_executing()
@@ -217,14 +219,28 @@ class SysCommandWorker:
 
 	def poll(self):
 		self.make_sure_we_are_executing()
+
+		no_output = True
 		for fileno, event in self.poll_object.poll(0.1):
 			try:
 				output = os.read(self.child_fd, 8192)
+				no_output = False
 				self.peak(output)
 				self._trace_log += output
+				return True
 			except OSError as err:
 				self.ended = time.time()
 				break
+
+		if no_output:
+			self.ended = time.time()
+			try:
+				self.exit_code = os.waitpid(self.pid, 0)[1]
+			except ChildProcessError:
+				try:
+					self.exit_code = os.waitpid(self.child_fd, 0)[1]
+				except ChildProcessError:
+					self.exit_code = 1
 
 	def execute(self) -> bool:
 		if (old_dir := os.getcwd()) != self.working_directory:
