@@ -405,6 +405,7 @@ else:
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
 	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop', None)
-	archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
+	if not archinstall.arguments.get('profile', None):
+		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
 
 perform_installation_steps()
