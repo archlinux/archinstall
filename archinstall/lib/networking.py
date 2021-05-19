@@ -1,4 +1,5 @@
 import fcntl
+import logging
 import os
 import socket
 import struct
@@ -6,6 +7,7 @@ from collections import OrderedDict
 
 from .exceptions import *
 from .general import SysCommand
+from .output import log
 from .storage import storage
 
 
@@ -27,11 +29,12 @@ def list_interfaces(skip_loopback=True):
 
 
 def check_mirror_reachable():
-	try:
-		check = SysCommand("pacman -Sy")
-		return check.exit_code == 0
-	except:
-		return False
+	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
+		return True
+	elif exit_code == 256:
+		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
+
+	return False
 
 
 def enrich_iface_types(interfaces: dict):

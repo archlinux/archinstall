@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import time
 
 import archinstall
@@ -52,7 +53,7 @@ def ask_user_questions():
 	else:
 		archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
 		if archinstall.arguments['harddrive'] is None:
-			archinstall.arguments['target-mount'] = '/mnt'
+			archinstall.arguments['target-mount'] = archinstall.storage.get('MOUNT_POINT', '/mnt')
 
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
@@ -292,14 +293,14 @@ def perform_installation_steps():
 				# unlocks the drive so that it can be used as a normal block-device within archinstall.
 				with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
 					unlocked_device.format(fs.find_partition('/').filesystem)
-					unlocked_device.mount('/mnt')
+					unlocked_device.mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 			else:
-				fs.find_partition('/').mount('/mnt')
+				fs.find_partition('/').mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
 			if has_uefi():
-				fs.find_partition('/boot').mount('/mnt/boot')
+				fs.find_partition('/boot').mount(archinstall.storage.get('MOUNT_POINT', '/mnt') + '/boot')
 
-	perform_installation('/mnt')
+	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
 
 def perform_installation(mountpoint):
@@ -325,7 +326,6 @@ def perform_installation(mountpoint):
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
 			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
-			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
@@ -371,6 +371,10 @@ def perform_installation(mountpoint):
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
+			# This step must be after profile installs to allow profiles to install language pre-requisits.
+			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
+			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
+
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
@@ -379,7 +383,7 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")	
+			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
 			if choice.lower() in ("y", ""):
 				try:
 					installation.drop_to_shell()
@@ -389,10 +393,12 @@ def perform_installation(mountpoint):
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
+
 if not check_mirror_reachable():
-	archinstall.log("Arch Linux mirrors are not reachable. Please check your internet connection and try again.", level=logging.INFO, fg="red")
+	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
+	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
-                                                                
+
 if archinstall.arguments.get('silent', None) is None:
 	ask_user_questions()
 else:

@@ -1,8 +1,8 @@
 from .disk import *
 from .hardware import *
+from .locale_helpers import verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
-from .systemd import Networkd
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -78,7 +78,6 @@ class Installer:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
-			# self.log(self.trace_log.decode('UTF-8'), level=logging.DEBUG)
 			self.log(args[1], level=logging.ERROR, fg='red')
 
 			self.sync_log_to_install_medium()
@@ -136,7 +135,7 @@ class Installer:
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', **kwargs)).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', peak_output=True)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
@@ -149,9 +148,8 @@ class Installer:
 	def genfstab(self, flags='-pU'):
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
-		fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').trace_log
-		with open(f"{self.target}/etc/fstab", 'ab') as fstab_fh:
-			fstab_fh.write(fstab)
+		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
+			fstab_fh.write(SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode())
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
@@ -215,6 +213,8 @@ class Installer:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
 	def configure_nic(self, nic, dhcp=True, ip=None, gateway=None, dns=None, *args, **kwargs):
+		from .systemd import Networkd
+
 		if dhcp:
 			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
 		else:
@@ -514,11 +514,44 @@ class Installer:
 		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
 
-	def set_keyboard_language(self, language):
+	def set_keyboard_language(self, language: str) -> bool:
 		if len(language.strip()):
-			with open(f'{self.target}/etc/vconsole.conf', 'w') as vconsole:
-				vconsole.write(f'KEYMAP={language}\n')
-				vconsole.write('FONT=lat9w-16\n')
+			if not verify_keyboard_layout(language):
+				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				return False
+
+			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
+			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
+			from .systemd import Boot
+
+			with Boot(self) as session:
+				session.SysCommand(["localectl", "set-keymap", '""'])
+
+				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+
+				self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
 			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+
+		return True
+
+	def set_x11_keyboard_language(self, language: str) -> bool:
+		"""
+		A fallback function to set x11 layout specifically and separately from console layout.
+		This isn't strictly necessary since .set_keyboard_language() does this as well.
+		"""
+		if len(language.strip()):
+			if not verify_x11_keyboard_layout(language):
+				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				return False
+
+			with Boot(self) as session:
+				session.SysCommand(["localectl", "set-x11-keymap", '""'])
+
+				if (output := session.SysCommand(["localectl", "set-x11-keymap", language])).exit_code != 0:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
+		else:
+			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+
 		return True

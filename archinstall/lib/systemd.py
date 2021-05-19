@@ -1,3 +1,11 @@
+import logging
+
+from .general import SysCommand, SysCommandWorker, locate_binary
+from .installer import Installer
+from .output import log
+from .storage import storage
+
+
 class Ini:
 	def __init__(self, *args, **kwargs):
 		"""
@@ -36,3 +44,78 @@ class Networkd(Systemd):
 	"""
 	Placeholder class to do systemd-network specific setups.
 	"""
+
+
+class Boot:
+	def __init__(self, installation: Installer):
+		self.instance = installation
+		self.container_name = 'archinstall'
+		self.session = None
+		self.ready = False
+
+	def __enter__(self):
+		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
+			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
+
+		if existing_session:
+			self.session = existing_session.session
+			self.ready = existing_session.ready
+		else:
+			self.session = SysCommandWorker([
+				'/usr/bin/systemd-nspawn',
+				'-D', self.instance.target,
+				'-b',
+				'--machine', self.container_name
+			])
+
+		if not self.ready:
+			while self.session.is_alive():
+				if b' login:' in self.session:
+					self.ready = True
+					break
+
+		storage['active_boot'] = self
+		return self
+
+	def __exit__(self, *args, **kwargs):
+		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+
+		if len(args) >= 2 and args[1]:
+			log(args[1], level=logging.ERROR, fg='red')
+			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
+
+		SysCommand(f'machinectl shell {self.container_name} /bin/bash -c "shutdown now"')
+
+	def __iter__(self):
+		if self.session:
+			for value in self.session:
+				yield value
+
+	def __contains__(self, key: bytes):
+		if self.session is None:
+			return False
+
+		return key in self.session
+
+	def is_alive(self):
+		if self.session is None:
+			return False
+
+		return self.session.is_alive()
+
+	def SysCommand(self, cmd: list, *args, **kwargs):
+		if cmd[0][0] != '/' and cmd[0][:2] != './':
+			# This check is also done in SysCommand & SysCommandWorker.
+			# However, that check is done for `machinectl` and not for our chroot command.
+			# So this wrapper for SysCommand will do this additionally.
+
+			cmd[0] = locate_binary(cmd[0])
+
+		return SysCommand(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)
+
+	def SysCommandWorker(self, cmd: list, *args, **kwargs):
+		if cmd[0][0] != '/' and cmd[0][:2] != './':
+			cmd[0] = locate_binary(cmd[0])
+
+		return SysCommandWorker(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)

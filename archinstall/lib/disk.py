@@ -77,7 +77,7 @@ class BlockDevice:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
 		if self.info['type'] == 'loop':
-			for drive in json.loads(b''.join(SysCommand(['losetup', '--json'], hide_from_log=True)).decode('UTF_8'))['loopdevices']:
+			for drive in json.loads(b''.join(SysCommand(['losetup', '--json'])).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path:
 					continue
 
@@ -264,7 +264,9 @@ class Partition:
 			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
-		SysCommand(f'/usr/bin/umount {temporary_mountpoint}')
+		iterations = 0
+		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and (iterations := iterations + 1) < 10:
+			time.sleep(1)
 
 		temporary_path.rmdir()
 
@@ -425,7 +427,7 @@ class Partition:
 		"""
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
-		except SysCallError:
+		except (SysCallError, DiskError):
 			pass  # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
@@ -572,7 +574,7 @@ def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
 	drives = OrderedDict()
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
-	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model', *args, **kwargs, hide_from_log=True)).decode('UTF_8'))['blockdevices']:
+	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model')).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part':
 			continue
 
@@ -603,13 +605,17 @@ def harddrive(size=None, model=None, fuzzy=False):
 		return collection[drive]
 
 
-def get_mount_info(path):
+def get_mount_info(path) -> dict:
 	try:
-		output = b''.join(SysCommand(f'/usr/bin/findmnt --json {path}'))
+		output = SysCommand(f'/usr/bin/findmnt --json {path}')
 	except SysCallError:
 		return {}
 
 	output = output.decode('UTF-8')
+
+	if not output:
+		return {}
+
 	output = json.loads(output)
 	if 'filesystems' in output:
 		if len(output['filesystems']) > 1:
@@ -618,15 +624,19 @@ def get_mount_info(path):
 		return output['filesystems'][0]
 
 
-def get_partitions_in_use(mountpoint):
+def get_partitions_in_use(mountpoint) -> list:
 	try:
-		output = b''.join(SysCommand(f'/usr/bin/findmnt --json -R {mountpoint}'))
+		output = SysCommand(f'/usr/bin/findmnt --json -R {mountpoint}')
 	except SysCallError:
-		return {}
+		return []
 
 	mounts = []
 
 	output = output.decode('UTF-8')
+
+	if not output:
+		return []
+
 	output = json.loads(output)
 	for target in output.get('filesystems', []):
 		mounts.append(Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target']))
