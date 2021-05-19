@@ -46,7 +46,7 @@ def initialize_arguments():
 		config["silent"] = args.silent
 	if args.vars is not None:
 		try:
-			for var in args.vars:
+			for var in args.vars.split(' '):
 				key, val = var.split("=")
 				config[key] = val
 		except Exception as e:
