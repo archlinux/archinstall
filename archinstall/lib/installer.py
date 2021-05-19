@@ -525,9 +525,9 @@ class Installer:
 			from .systemd import Boot
 
 			with Boot(self) as session:
-				session.SysCommand('localectl set-keymap ""')
+				session.SysCommand(["localectl", "set-keymap", '""'])
 
-				if (output := session.SysCommand(f'localectl set-keymap {language}')).exit_code != 0:
+				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
 					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
 
 				self.log(f"Keyboard language for this installation is now set to: {language}")
