@@ -4,6 +4,7 @@ import os
 import time
 
 import archinstall
+from archinstall.lib.general import SysCommand
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
@@ -380,6 +381,13 @@ def perform_installation(mountpoint):
 					if not imported._post_install():
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
+						
+		# If the user provided custom commands to be run post-installation, execute them now.
+		if len(archinstall.arguments['custom-commands']):
+			for command in archinstall.arguments['custom-commands']:
+				archinstall.log(f'Executing custom command "{command}" ...', fg='yellow')
+				SysCommand(f"arch-chroot /mnt {command}")
+
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
