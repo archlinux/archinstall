@@ -5,6 +5,7 @@ import time
 import archinstall
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
+from archinstall.lib.profiles import Profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
