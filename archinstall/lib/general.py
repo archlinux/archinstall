@@ -4,6 +4,7 @@ import logging
 import os
 import pty
 import shlex
+import subprocess
 import sys
 import time
 from datetime import datetime, date
@@ -239,7 +240,7 @@ class SysCommandWorker:
 				self.ended = time.time()
 				break
 
-		if self.ended or (got_output is False and (self.cmd[0] != '/usr/bin/ps' and pid_exists(self.pid) is False)):
+		if self.ended or (got_output is False and pid_exists(self.pid) is False):
 			self.ended = time.time()
 			try:
 				self.exit_code = os.waitpid(self.pid, 0)[1]
@@ -360,6 +361,6 @@ def reboot():
 
 def pid_exists(pid :int):
 	try:
-		return any(SysCommand(f"/usr/bin/ps --no-headers -o pid -p {pid}").decode('UTF-8').strip())
-	except SysCallError:
+		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
+	except subprocess.CalledProcessError:
 		return False
