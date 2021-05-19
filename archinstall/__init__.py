@@ -1,5 +1,8 @@
 """Arch Linux installer - guided, templates etc."""
-from argparse import ArgumentParser, FileType
+import urllib.error
+import urllib.parse
+import urllib.request
+from argparse import ArgumentParser
 
 from .lib.disk import *
 from .lib.exceptions import *
@@ -25,7 +28,7 @@ __version__ = "2.2.0.dev1"
 
 def initialize_arguments():
 	config = {}
-	parser.add_argument("--config", nargs="?", help="json config file", type=FileType("r", encoding="UTF-8"))
+	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
@@ -41,7 +44,15 @@ def initialize_arguments():
 	args = parser.parse_args()
 	if args.config is not None:
 		try:
-			config = json.load(args.config)
+			# First, let's check if this is a URL scheme instead of a filename
+			parsed_url = urllib.parse.urlparse(args.config)
+
+			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
+				with open(args.config) as file:
+					config = json.load(file)
+			else:  # Attempt to load the configuration from the URL.
+				with urllib.request.urlopen(args.config) as response:
+					config = json.loads(response.read())
 		except Exception as e:
 			print(e)
 		# Installation can't be silent if config is not passed
