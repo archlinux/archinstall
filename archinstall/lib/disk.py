@@ -32,9 +32,9 @@ class BlockDevice:
 		self.keep_partitions = True
 		self.part_cache = OrderedDict()
 
-		# TODO: Currently disk encryption is a BIT misleading.
-		#       It's actually partition-encryption, but for future-proofing this
-		#       I'm placing the encryption password on a BlockDevice level.
+	# TODO: Currently disk encryption is a BIT misleading.
+	#       It's actually partition-encryption, but for future-proofing this
+	#       I'm placing the encryption password on a BlockDevice level.
 
 	def __repr__(self, *args, **kwargs):
 		return f"BlockDevice({self.device})"
@@ -64,10 +64,10 @@ class BlockDevice:
 
 	def __dump__(self):
 		return {
-			self.path : {
-				'partuuid' : self.uuid,
-				'wipe' : self.info.get('wipe', None),
-				'partitions' : [part.__dump__() for part in self.partitions.values()]
+			self.path: {
+				'partuuid': self.uuid,
+				'wipe': self.info.get('wipe', None),
+				'partitions': [part.__dump__() for part in self.partitions.values()]
 			}
 		}
 
@@ -75,7 +75,7 @@ class BlockDevice:
 	def partition_type(self):
 		output = b"".join(sys_command(f"lsblk --json -o+PTTYPE {self.path}"))
 		output = json.loads(output.decode('UTF-8'))
-	
+
 		for device in output['blockdevices']:
 			return device['pttype']
 
@@ -161,9 +161,9 @@ class BlockDevice:
 	def size(self):
 		output = b"".join(sys_command(f"lsblk --json -o+SIZE {self.path}"))
 		output = json.loads(output.decode('UTF-8'))
-	
+
 		for device in output['blockdevices']:
-			assert device['size'][-1] == 'G' # Make sure we're counting in Gigabytes, otherwise the next logic fails.
+			assert device['size'][-1] == 'G'  # Make sure we're counting in Gigabytes, otherwise the next logic fails.
 
 			return float(device['size'][:-1])
 
@@ -235,17 +235,17 @@ class Partition:
 
 	def __dump__(self):
 		return {
-			'type' : 'primary',
-			'PARTUUID' : self.uuid,
-			'wipe' : self.allow_formatting,
-			'boot' : self.boot,
-			'ESP' : self.boot,
-			'mountpoint' : self.target_mountpoint,
-			'encrypted' : self._encrypted,
-			'start' : self.start,
-			'size' : self.end,
-			'filesystem' : {
-				'format' : get_filesystem_type(self.path)
+			'type': 'primary',
+			'PARTUUID': self.uuid,
+			'wipe': self.allow_formatting,
+			'boot': self.boot,
+			'ESP': self.boot,
+			'mountpoint': self.target_mountpoint,
+			'encrypted': self._encrypted,
+			'start': self.start,
+			'size': self.end,
+			'filesystem': {
+				'format': get_filesystem_type(self.path)
 			}
 		}
 
@@ -253,7 +253,7 @@ class Partition:
 	def sector_size(self):
 		output = b"".join(sys_command(f"lsblk --json -o+LOG-SEC {self.path}"))
 		output = json.loads(output.decode('UTF-8'))
-		
+
 		for device in output['blockdevices']:
 			return device.get('log-sec', None)
 
@@ -261,10 +261,10 @@ class Partition:
 	def start(self):
 		output = b"".join(sys_command(f"sfdisk --json {self.block_device.path}"))
 		output = json.loads(output.decode('UTF-8'))
-	
+
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['start']# * self.sector_size
+				return partition['start']  # * self.sector_size
 
 	@property
 	def end(self):
@@ -274,7 +274,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['size']# * self.sector_size
+				return partition['size']  # * self.sector_size
 
 	@property
 	def boot(self):
@@ -305,7 +305,7 @@ class Partition:
 	def partition_type(self):
 		output = b"".join(sys_command(f"lsblk --json -o+PTTYPE {self.path}"))
 		output = json.loads(output.decode('UTF-8'))
-	
+
 		for device in output['blockdevices']:
 			return device['pttype']
 
@@ -763,12 +763,14 @@ def disk_layouts():
 		log(f"Could not return disk layouts: {err}")
 		return None
 
-def encrypted_partitions(blockdevices :dict) -> bool:
+
+def encrypted_partitions(blockdevices: dict) -> bool:
 	for partition in blockdevices.values():
 		if partition.get('encrypted', False):
 			yield partition
 
-def find_partition_by_mountpoint(partitions, relative_mountpoint :str):
+
+def find_partition_by_mountpoint(partitions, relative_mountpoint: str):
 	for partition in partitions:
 		if partition.get('mountpoint', None) == relative_mountpoint:
 			return partition

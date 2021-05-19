@@ -189,20 +189,22 @@ def generic_multi_select(options, text="Select one or more of the options above 
 			log(f" * {e} * ", fg='red')
 
 		elif selected_option.isdigit():
-			if (selected_option := int(selected_option)) >= len(options):
-				log('* Option is out of range, please select another one!', fg='red')
-				continue
-			selected_option = options[selected_option]
-			if selected_option in selected_options:
-				selected_options.remove(selected_option)
-			else:
-				selected_options.append(selected_option)
+		if (selected_option := int(selected_option)) >= len(options):
+			log('* Option is out of range, please select another one!', fg='red')
+			continue
+		selected_option = options[selected_option]
+		if selected_option in selected_options:
+			selected_options.remove(selected_option)
+		else:
+			selected_options.append(selected_option)
 
-	sys.stdout.write('\n')
-	sys.stdout.flush()
-	return selected_options
 
-def select_encrypted_partitions(blockdevices :dict) -> dict:
+sys.stdout.write('\n')
+sys.stdout.flush()
+return selected_options
+
+
+def select_encrypted_partitions(blockdevices: dict) -> dict:
 	print(blockdevices[0])
 
 	if len(blockdevices) == 1:
@@ -216,6 +218,7 @@ def select_encrypted_partitions(blockdevices :dict) -> dict:
 		options.append({key: val for key, val in partition.items() if val})
 
 	print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+
 
 class MiniCurses():
 	def __init__(self, width, height):
@@ -519,8 +522,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	# To allow only `list` and `dict`, converting values of options here.
 	# Therefore, now we can only provide the dictionary itself
 	if type(options) == dict: options = list(options.values())
-	if sort: options = sorted(options) # As we pass only list and dict (converted to list), we can skip converting to list
-	options = [x for x in options if x] # Clean it up from empty options
+	if sort: options = sorted(options)  # As we pass only list and dict (converted to list), we can skip converting to list
+	options = [x for x in options if x]  # Clean it up from empty options
 	if len(options) == 0:
 		log(f" * Generic select didn't find any options to choose from * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
@@ -566,38 +569,40 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
+
 def select_partition_layout(block_device):
 	return {
-		"/dev/sda": { # Block Device level
-			"wipe": False, # Safety flags
-			"partitions" : [ # Affected  / New partitions
+		"/dev/sda": {  # Block Device level
+			"wipe": False,  # Safety flags
+			"partitions": [  # Affected  / New partitions
 				{
-					"PARTUUID" : "654bb317-1b73-4339-9a00-7222792f4ba9", # If existing partition
-					"wipe" : False, # Safety flags
-					"boot" : True,  # Safety flags / new flags
-					"ESP" : True,   # Safety flags / new flags
-					"mountpoint" : "/mnt/boot"
+					"PARTUUID": "654bb317-1b73-4339-9a00-7222792f4ba9",  # If existing partition
+					"wipe": False,  # Safety flags
+					"boot": True,  # Safety flags / new flags
+					"ESP": True,  # Safety flags / new flags
+					"mountpoint": "/mnt/boot"
 				}
 			]
 		},
-		"/dev/sdb" : {
-			"wipe" : True,
-			"partitions" : [
+		"/dev/sdb": {
+			"wipe": True,
+			"partitions": [
 				{
 					# No PARTUUID required here since it's a new partition
-					"type" : "primary", # parted options
-					"size" : "100%",
-					"filesystem" : {
-						"encrypted" : True, # TODO: Not sure about this here
+					"type": "primary",  # parted options
+					"size": "100%",
+					"filesystem": {
+						"encrypted": True,  # TODO: Not sure about this here
 						"format": "btrfs",  # mkfs options
 					},
-					"mountpoint" : "/mnt"
+					"mountpoint": "/mnt"
 				}
 			]
 		}
 	}
 
-def valid_fs_type(fstype :str) -> bool:
+
+def valid_fs_type(fstype: str) -> bool:
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 
 	return fstype in [
@@ -611,7 +616,8 @@ def valid_fs_type(fstype :str) -> bool:
 		"btrfs",
 	]
 
-def valid_parted_position(pos :str):
+
+def valid_parted_position(pos: str):
 	if not len(pos):
 		return False
 
@@ -626,46 +632,49 @@ def valid_parted_position(pos :str):
 
 	return False
 
-def partition_overlap(partitions :list, start :str, end :str) -> bool:
+
+def partition_overlap(partitions: list, start: str, end: str) -> bool:
 	# TODO: Implement sanity check
 	return False
+
 
 def get_default_partition_layout(block_devices):
 	if len(block_devices) == 1:
 		return {
-			block_devices[0] : [
-				{   # Boot
-					"type" : "primary",
-					"start" : "0MiB",
-					"size" : "513MiB",
-					"boot" : True,
-					"mountpoint" : "/boot",
-					"filesystem" : {
-						"format" : "fat32"
+			block_devices[0]: [
+				{  # Boot
+					"type": "primary",
+					"start": "0MiB",
+					"size": "513MiB",
+					"boot": True,
+					"mountpoint": "/boot",
+					"filesystem": {
+						"format": "fat32"
 					}
 				},
-				{   # Root
-					"type" : "primary",
-					"start" : "513MiB",
-					"encrypted" : True,
-					"size" : f"{max(block_devices[0].size*0.2, 20)}GiB",
-					"mountpoint" : "",
-					"filesystem" : {
-						"format" : "btrfs"
+				{  # Root
+					"type": "primary",
+					"start": "513MiB",
+					"encrypted": True,
+					"size": f"{max(block_devices[0].size * 0.2, 20)}GiB",
+					"mountpoint": "",
+					"filesystem": {
+						"format": "btrfs"
 					}
 				},
-				{   # Home
-					"type" : "primary",
-					"encrypted" : True,
-					"start" : f"{max(block_devices[0].size*0.2, 20)}GiB",
-					"size" : "100%",
-					"mountpoint" : "/home",
-					"filesystem" : {
-						"format" : "btrfs"
+				{  # Home
+					"type": "primary",
+					"encrypted": True,
+					"start": f"{max(block_devices[0].size * 0.2, 20)}GiB",
+					"size": "100%",
+					"mountpoint": "/home",
+					"filesystem": {
+						"format": "btrfs"
 					}
 				}
 			]
 		}
+
 
 def wipe_and_create_partitions(block_device):
 	if hasUEFI():
@@ -673,36 +682,36 @@ def wipe_and_create_partitions(block_device):
 	else:
 		partition_type = 'msdos'
 
-	partitions_result = [] # Test code: [part.__dump__() for part in block_device.partitions.values()]
+	partitions_result = []  # Test code: [part.__dump__() for part in block_device.partitions.values()]
 	suggested_layout = [
-		{   # Boot
-			"type" : "primary",
-			"start" : "0MiB",
-			"size" : "513MiB",
-			"boot" : True,
-			"mountpoint" : "/boot",
-			"filesystem" : {
-				"format" : "fat32"
+		{  # Boot
+			"type": "primary",
+			"start": "0MiB",
+			"size": "513MiB",
+			"boot": True,
+			"mountpoint": "/boot",
+			"filesystem": {
+				"format": "fat32"
 			}
 		},
-		{   # Root
-			"type" : "primary",
-			"start" : "513MiB",
-			"encrypted" : True,
-			"size" : f"{max(block_device.size*0.2, 20)}GiB",
-			"mountpoint" : "",
-			"filesystem" : {
-				"format" : "btrfs"
+		{  # Root
+			"type": "primary",
+			"start": "513MiB",
+			"encrypted": True,
+			"size": f"{max(block_device.size * 0.2, 20)}GiB",
+			"mountpoint": "",
+			"filesystem": {
+				"format": "btrfs"
 			}
 		},
-		{   # Home
-			"type" : "primary",
-			"encrypted" : True,
-			"start" : f"{max(block_device.size*0.2, 20)}GiB",
-			"size" : "100%",
-			"mountpoint" : "/home",
-			"filesystem" : {
-				"format" : "btrfs"
+		{  # Home
+			"type": "primary",
+			"encrypted": True,
+			"start": f"{max(block_device.size * 0.2, 20)}GiB",
+			"size": "100%",
+			"mountpoint": "/home",
+			"filesystem": {
+				"format": "btrfs"
 			}
 		}
 	]
@@ -726,7 +735,7 @@ def wipe_and_create_partitions(block_device):
 			print()
 
 		task = generic_select(modes,
-				input_text=f"Select what to do with {block_device} (leave blank when done): ")
+							  input_text=f"Select what to do with {block_device} (leave blank when done): ")
 
 		if task == 'Create new partition':
 			if partition_type == 'gpt':
@@ -743,12 +752,12 @@ def wipe_and_create_partitions(block_device):
 					continue
 
 				partitions_result.append({
-					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
-					"start" : start,
-					"size" : end,
-					"mountpoint" : None,
-					"filesystem" : {
-						"format" : fstype
+					"type": "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"start": start,
+					"size": end,
+					"mountpoint": None,
+					"filesystem": {
+						"format": fstype
 					}
 				})
 			else:
@@ -764,11 +773,12 @@ def wipe_and_create_partitions(block_device):
 			return partitions_result
 		else:
 			for index, partition in enumerate(partitions_result):
-				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
+				print(
+					f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: ' + partition['mountpoint'] if partition['mountpoint'] else ''})")
 
 			if task == "Delete partition":
 				if (partition := generic_select(partitions_result, 'Select which partition to delete: ', options_output=False)):
-					del(partitions_result[partitions_result.index(partition)])
+					del (partitions_result[partitions_result.index(partition)])
 			elif task == "Assign mount-point for partition":
 				if (partition := generic_select(partitions_result, 'Select which partition to mount where: ', options_output=False)):
 					print(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')
@@ -780,7 +790,7 @@ def wipe_and_create_partitions(block_device):
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
 							partitions_result[partitions_result.index(partition)]['boot'] = True
 					else:
-						del(partitions_result[partitions_result.index(partition)]['mountpoint'])
+						del (partitions_result[partitions_result.index(partition)]['mountpoint'])
 
 			elif task == "Mark/Unmark a partition as encrypted":
 				if (partition := generic_select(partitions_result, 'Select which partition to mark as encrypted: ', options_output=False)):
@@ -793,7 +803,8 @@ def wipe_and_create_partitions(block_device):
 
 	return partitions_result
 
-def select_individual_blockdevice_usage(block_devices :list):
+
+def select_individual_blockdevice_usage(block_devices: list):
 	result = {}
 
 	for device in block_devices:
@@ -804,20 +815,20 @@ def select_individual_blockdevice_usage(block_devices :list):
 		]
 
 		device_mode = generic_select(modes)
-		
+
 		if device_mode == "Re-use partitions":
 			layout = select_partition_layout(device)
 		elif device_mode == "Wipe and create new partitions":
 			layout = wipe_and_create_partitions(device)
 		else:
 			continue
-		
+
 		result[device] = layout
 
 	return result
 
 
-def select_disk_layout(block_devices :list):
+def select_disk_layout(block_devices: list):
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -829,6 +840,7 @@ def select_disk_layout(block_devices :list):
 		return get_default_partition_layout(block_devices)
 	else:
 		return select_individual_blockdevice_usage(block_devices)
+
 
 def select_disk(dict_o_disks):
 	"""
