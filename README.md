@@ -27,10 +27,10 @@ Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
     # python -m archinstall --script guided
 
 
-## Running from a declarative [config](examples/base-config.json)
+## Running from a declarative [config](examples/config-sample.json)
 
 Prequisites:
-   1. Edit the [config](examples/base-config.json) according to your requirements.
+   1. Edit the [config](examples/config-sample.json) according to your requirements.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
