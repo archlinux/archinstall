@@ -522,12 +522,15 @@ class Installer:
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			self.arch_chroot('localectl set-keymap ""')
+			from .systemd import Boot
 
-			if (output := self.arch_chroot(f'localectl set-keymap {language}')).exit_code != 0:
-				raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+			with Boot(self.target) as session:
+				session.SysCommand('localectl set-keymap ""')
 
-			self.log(f"Keyboard language for this installation is now set to: {language}")
+				if (output := session.SysCommand(f'localectl set-keymap {language}')).exit_code != 0:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+
+				self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
 			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
