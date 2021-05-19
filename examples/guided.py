@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import time
-import os
 
 import archinstall
 from archinstall.lib.hardware import has_uefi
