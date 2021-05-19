@@ -101,7 +101,9 @@ class SysCommandWorker:
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore.
 			# We there for fall back on manual lookup in os.PATH
-			cmd[0] = locate_binary(cmd[0])
+			cmd_absolute_path = locate_binary(cmd[0])
+			log(f"Converting executable path from {cmd[0]} to {cmd_absolute_path}.")
+			cmd[0] = cmd_absolute_path
 
 		self.cmd = cmd
 		self.callbacks = callbacks

@@ -546,8 +546,11 @@ class Installer:
 				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
 				return False
 
-			if (output := self.arch_chroot(f'localectl set-x11-keymap {language}')).exit_code != 0:
-				raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
+			with Boot(self) as session:
+				session.SysCommand(["localectl", "set-x11-keymap", '""'])
+
+				if (output := session.SysCommand(["localectl", "set-x11-keymap", language])).exit_code != 0:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
 		else:
 			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
