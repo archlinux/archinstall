@@ -1,7 +1,6 @@
 import fcntl
 import logging
 import os
-import logging
 import socket
 import struct
 from collections import OrderedDict
