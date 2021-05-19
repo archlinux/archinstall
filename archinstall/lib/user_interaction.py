@@ -591,7 +591,7 @@ def select_profile(options):
 		raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
 
 
-def select_language(options, show_only_country_codes=True):
+def select_language(options, show_only_country_codes=True, input_text='Select one of the above keyboard languages (by number or full name): '):
 	"""
 	Asks the user to select a language from the `options` dictionary parameter.
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -613,14 +613,13 @@ def select_language(options, show_only_country_codes=True):
 		languages = sorted(list(options))
 
 	if len(languages) >= 1:
-		for index, language in enumerate(languages):
-			print(f"{index}: {language}")
+		print_large_list(languages, margin_bottom=4)
 
 		print(" -- You can choose a layout that isn't in this list, but whose name you know --")
-		print(" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use US layout --")
+		print(f" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use {default_keyboard_language} layout --")
 
 		while True:
-			selected_language = input('Select one of the above keyboard languages (by name or full name): ')
+			selected_language = input(input_text)
 			if not selected_language:
 				return default_keyboard_language
 			elif selected_language.lower() in ('?', 'help'):
@@ -705,8 +704,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		lspci = SysCommand('/usr/bin/lspci')
-		for line in lspci.trace_log.split(b'\r\n'):
+		for line in SysCommand('/usr/bin/lspci'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():
 					print(' ** nvidia card detected, suggested driver: nvidia **')

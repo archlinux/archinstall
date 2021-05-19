@@ -9,7 +9,7 @@ is_top_level_profile = False
 __packages__ = [
 	"nemo",
 	"gpicview",
-	"main",
+	"maim",
 	"alacritty",
 ]
 

@@ -1,5 +1,6 @@
 import fcntl
 import os
+import logging
 import socket
 import struct
 from collections import OrderedDict
@@ -7,7 +8,7 @@ from collections import OrderedDict
 from .exceptions import *
 from .general import SysCommand
 from .storage import storage
-
+from .output import log
 
 def get_hw_addr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,12 +28,12 @@ def list_interfaces(skip_loopback=True):
 
 
 def check_mirror_reachable():
-	try:
-		check = SysCommand("pacman -Sy")
-		return check.exit_code == 0
-	except:
-		return False
+	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
+		return True
+	elif exit_code == 256:
+		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 
+	return False
 
 def enrich_iface_types(interfaces: dict):
 	result = {}

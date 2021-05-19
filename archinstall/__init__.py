@@ -13,6 +13,7 @@ from .lib.packages import *
 from .lib.profiles import *
 from .lib.services import *
 from .lib.storage import *
+from .lib.systemd import *
 from .lib.user_interaction import *
 
 __version__ = "2.2.0.dev1"
