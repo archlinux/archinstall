@@ -266,7 +266,7 @@ class Partition:
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		iterations = 0
-		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and (iterations := iterations+1) < 10:
+		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and (iterations := iterations + 1) < 10:
 			time.sleep(1)
 
 		temporary_path.rmdir()

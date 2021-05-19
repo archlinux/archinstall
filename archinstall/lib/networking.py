@@ -1,14 +1,14 @@
 import fcntl
-import os
 import logging
+import os
 import socket
 import struct
 from collections import OrderedDict
 
 from .exceptions import *
 from .general import SysCommand
-from .storage import storage
 from .output import log
+from .storage import storage
 
 def get_hw_addr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

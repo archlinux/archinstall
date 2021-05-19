@@ -48,7 +48,8 @@ def _prep_function(*args, **kwargs):
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded
 	# the next time it gets executed.
-	archinstall.storage['_desktop_profile'] = desktop
+	if '_desktop_profile' not in archinstall.storage.keys():
+		archinstall.storage['_desktop_profile'] = desktop
 
 	profile = archinstall.Profile(None, desktop)
 	# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.

@@ -360,7 +360,8 @@ def prerequisite_check():
 def reboot():
 	o = b''.join(SysCommand("/usr/bin/reboot"))
 
-def pid_exists(pid :int):
+
+def pid_exists(pid: int):
 	try:
 		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
