@@ -51,7 +51,7 @@ def initialize_arguments():
 				with open(args.config) as file:
 					config = json.load(file)
 			else:  # Attempt to load the configuration from the URL.
-				with urllib.request.urlopen(args.config) as response:
+				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config = json.loads(response.read())
 		except Exception as e:
 			print(e)
