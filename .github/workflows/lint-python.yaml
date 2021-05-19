@@ -1,0 +1,40 @@
+on: [ push, pull_request ]
+name: Lint Python and Find Syntax Errors
+jobs:
+  mypy:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: pacman --noconfirm -Syu python mypy
+      - name: run mypy
+        run: mypy . --ignore-missing-imports || exit 0
+  flake8:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: pacman --noconfirm -Syu python python-pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install flake8
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors
+          flake8 . --count --select=E9,F63,F7 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  pytest:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: pacman --noconfirm -Syu python python-pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install pytest
+      # TODO: Add tests and enable pytest checks.
+#      - name: Test with pytest
+#        run: |
+#          pytest

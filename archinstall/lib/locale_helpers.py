@@ -1,20 +1,19 @@
-import subprocess
-import os
+import logging
 
-from .exceptions import *
-# from .general import sys_command
+from .exceptions import ServiceException
+from .general import SysCommand
+from .output import log
+
 
 def list_keyboard_languages():
-	locale_dir = '/usr/share/kbd/keymaps/'
+	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS': '0'}):
+		yield line.decode('UTF-8').strip()
 
-	if not os.path.isdir(locale_dir):
-		raise RequirementError(f'Directory containing locales does not exist: {locale_dir}')
 
-	for root, folders, files in os.walk(locale_dir):
+def list_x11_keyboard_languages():
+	for line in SysCommand("localectl --no-pager list-x11-keymap-layouts", environment_vars={'SYSTEMD_COLORS': '0'}):
+		yield line.decode('UTF-8').strip()
 
-		for file in files:
-			if os.path.splitext(file)[1] == '.gz':
-				yield file.strip('.gz').strip('.map')
 
 def verify_keyboard_layout(layout):
 	for language in list_keyboard_languages():
@@ -22,10 +21,29 @@ def verify_keyboard_layout(layout):
 			return True
 	return False
 
-def search_keyboard_layout(filter):
+
+def verify_x11_keyboard_layout(layout):
+	for language in list_x11_keyboard_languages():
+		if layout.lower() == language.lower():
+			return True
+	return False
+
+
+def search_keyboard_layout(layout):
 	for language in list_keyboard_languages():
-		if filter.lower() in language.lower():
+		if layout.lower() in language.lower():
 			yield language
 
+
 def set_keyboard_language(locale):
-	return subprocess.call(['loadkeys', locale]) == 0
+	if len(locale.strip()):
+		if not verify_keyboard_layout(locale):
+			log(f"Invalid keyboard locale specified: {locale}", fg="red", level=logging.ERROR)
+			return False
+
+		if (output := SysCommand(f'localectl set-keymap {locale}')).exit_code != 0:
+			raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
+
+		return True
+
+	return False
