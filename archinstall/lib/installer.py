@@ -524,7 +524,7 @@ class Installer:
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
 
-			with Boot(self.target) as session:
+			with Boot(self) as session:
 				session.SysCommand('localectl set-keymap ""')
 
 				if (output := session.SysCommand(f'localectl set-keymap {language}')).exit_code != 0:
