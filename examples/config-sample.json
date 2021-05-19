@@ -1,14 +1,14 @@
 {
+    "!root-password": "<root_password>",
     "audio": null,
     "bootloader": "systemd-bootctl",
     "filesystem": "btrfs",
     "harddrive": {
-        "path": "/dev/sdb"
+        "path": "/dev/sda"
     },
     "hostname": "box",
     "kernels": [
-        "linux",
-        "linux-zen"
+        "linux"
     ],
     "keyboard-language": "us",
     "mirror-region": {
@@ -17,10 +17,19 @@
         }
     },
     "nic": {
-        "NetworkManager": true,
-        "nic": "Use NetworkManager to control and manage your internet connection"
+        "NetworkManager": true
     },
     "packages": [],
     "profile": null,
-    "timezone": "UTC"
+    "superusers": {
+        "<username>": {
+            "!password": "<password>"
+        }
+    },
+    "timezone": "UTC",
+    "users": {
+        "<username>": {
+            "!password": "<password>"
+        }
+    }
 }
