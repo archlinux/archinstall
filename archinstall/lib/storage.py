@@ -18,5 +18,5 @@ storage = {
 	'PROFILE_DB': None,  # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',
-	'MOUNT_POINT': '/mnt/archinstall',
+	'MOUNT_POINT': '/mnt',
 }

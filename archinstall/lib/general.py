@@ -157,7 +157,8 @@ class SysCommandWorker:
 		if self.peak_output:
 			# To make sure any peaked output didn't leave us hanging
 			# on the same line we were on.
-			print()
+			sys.stdout.write("\n")
+			sys.stdout.flush()
 
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
