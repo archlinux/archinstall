@@ -1,3 +1,4 @@
+import urllib.error
 import urllib.request
 
 from .general import *
@@ -9,8 +10,8 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tm
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
 
-	:param region: A series of country codes separated by `,`. For instance `SE,US` for sweden and United States.
-	:type region: str
+	:param regions: A series of country codes separated by `,`. For instance `SE,US` for sweden and United States.
+	:type regions: str
 	"""
 	region_list = []
 	for region in regions.split(','):

@@ -1,32 +1,28 @@
 # Contributing to archinstall
 
-Any contributions through pull requests are welcome as this project aims to be a community based project to ease some
-Arch Linux installation steps. Bear in mind that in the future this repo might be transferred to the
-official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if GitLab becomes open to the general
-public)*.
+Any contributions through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps.
+Bear in mind that in the future this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) 
+  *(if GitLab becomes open to the general public)*.
 
-Therefore guidelines and style changes to the code might come into affect as well as guidelines surrounding bug
-reporting and discussions.
+Therefore, guidelines and style changes to the code might come into effect as well as guidelines surrounding bug reporting and discussions.
 
 ## Branches
 
-`master` is currently the default branch, and that's where all future feature work is being done, this means
-that `master` is a living entity and will most likely never be in a fully stable state. For stable releases, please see
-the tagged commits.
+`master` is currently the default branch, and that's where all future feature work is being done, this means that `master` is a living entity and will most likely never be in a fully stable state.
+For stable releases, please see the tagged commits.
 
-Patch releases will be done against their own branches, branched from stable tagged releases and will be named according
-to the version it will become on release *(Patches to `v2.1.4` will be done on branch `v2.1.5` for instance)*.
+Patch releases will be done against their own branches, branched from stable tagged releases and will be named according to the version it will become on release.
+  *(Patches to `v2.1.4` will be done on branch `v2.1.5` for instance)*.
 
 ## Discussions
 
-Currently, questions, bugs and suggestions should be reported
-through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
+Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
 For less formal discussions there are also a [archinstall Discord server](https://discord.gg/cqXU88y).
 
 ## Coding convention
 
-Archinstall's goal is to follow [PEP8](https://www.python.org/dev/peps/pep-0008/) as best as it can with some minor
-exceptions.<br>
+ArchInstall's goal is to follow [PEP8](https://www.python.org/dev/peps/pep-0008/) as best as it can with some minor exceptions.<br>
+
 The exceptions to PEP8 are:
 
 * Archinstall uses [tabs instead of spaces](https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces) simply to make it
@@ -46,8 +42,7 @@ There might therefore be older code which does not follow the coding convention 
 
 ## Submitting Changes
 
-Archinstall uses Github's pull-request workflow and all contributions in terms of code should be done through pull
-requests.<br>
+Archinstall uses GitHub's pull-request workflow and all contributions in terms of code should be done through pull requests.<br>
 
 Anyone interested in archinstall may review your code. One of the core developers will merge your pull request when they
 think it is ready. For every pull request, we aim to promptly either merge it or say why it is not yet ready; if you go

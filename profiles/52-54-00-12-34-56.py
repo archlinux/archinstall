@@ -23,7 +23,7 @@ with archinstall.Filesystem(harddrive) as fs:
 	fs.use_entire_disk('luks2')
 
 	if harddrive.partition[1].size == '512M':
-		raise OSError('Trying to encrypt the boot partition for petes sake..')
+		raise OSError('Trying to encrypt the boot partition for Pete's sake..')
 	harddrive.partition[0].format('fat32')
 
 	with archinstall.luks2(harddrive.partition[1], 'luksloop', disk_password) as unlocked_device:
