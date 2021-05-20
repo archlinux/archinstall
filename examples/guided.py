@@ -383,7 +383,8 @@ def perform_installation(mountpoint):
 				archinstall.log(f'Executing custom command "{command}" ...', fg='yellow')
 				with open(f"/mnt/var/tmp/user-command.{index}.sh", "w") as temp_script:
 					temp_script.write(command)
-				SysCommand(f"arch-chroot /mnt bash /var/tmp/user-command.{index}.sh")
+				execution_output = SysCommand(f"arch-chroot /mnt bash /var/tmp/user-command.{index}.sh")
+				archinstall.log(execution_output)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
