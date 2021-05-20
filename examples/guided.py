@@ -379,7 +379,7 @@ def perform_installation(mountpoint):
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if len(archinstall.arguments['custom-commands']):
-			with Boot(archinstall) as session:
+			with Boot(installation) as session:
 				for command in archinstall.arguments['custom-commands']:
 					archinstall.log(f'Executing custom command "{command}" ...', fg='yellow')
 					session.SysCommand(["bash", "-c"] + command.split(' '))
