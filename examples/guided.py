@@ -408,6 +408,6 @@ else:
 	# Temporarily disabling keep_partitions if config file is loaded
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
-	archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('desktop', None))
+	archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
 
 perform_installation_steps()
