@@ -1,9 +1,10 @@
 <!-- <div align="center"> -->
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
-# Arch Installer
+[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml)
 
 <!-- </div> -->
+# Arch Installer
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
@@ -27,14 +28,14 @@ Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
     # python -m archinstall --script guided
 
 
-## Running from a declarative [config](examples/base-config.json)
+## Running from a declarative configuration file or URL
 
 Prequisites:
-   1. Edit the [config](examples/base-config.json) according to your requirements.
+   1. Edit the [configuration file](examples/config-sample.json) according to your requirements.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # python -m archinstall --config <path to config file> --vars '<space_seperated KEY=VALUE pairs>'
+    # python -m archinstall --config <path to config file or URL> --vars '<space_seperated KEY=VALUE pairs>'
 
 # Help?
 
