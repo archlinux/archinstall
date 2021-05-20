@@ -2,8 +2,9 @@
     "audio": "pipewire",
     "bootloader": "systemd-bootctl",
     "custom-commands": [
-        "cd /tmp; git clone https://aur.archlinux.org/paru.git; cd paru; makepkg -si",
-        "paru -S --noconfirm bitwarden discord etcher-bin google-chrome steam visual-studio-code-bin"    
+        "cd /home/devel; git clone https://aur.archlinux.org/paru.git",
+        "chown -R devel:devel /home/devel/paru",
+        "usermod -aG docker devel"
     ],
     "desktop": "gnome",
     "!encryption-password": "supersecret",
@@ -24,7 +25,8 @@
     "nic": {
         "NetworkManager": true
     },
-    "packages": ["docker", "firefox", "gimp", "git", "hexchat", "libreoffice-fresh", "vlc", "wget", "zsh"],
+    "packages": ["docker", "git", "wget", "zsh"],
+    "profile": "desktop",
     "superusers": {
         "devel": {
             "!password": "devel"
@@ -32,5 +34,4 @@
     },
     "timezone": "US/Eastern",
     "users": {}
-    }
 }
