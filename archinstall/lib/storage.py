@@ -11,7 +11,7 @@ storage = {
 	'PROFILE_PATH': [
 		'./profiles',
 		'~/.config/archinstall/profiles',
-		os.path.join(os.path.dirname(os.path.abspath(__file__)), 'profiles'),
+		os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'profiles'),
 		# os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
 	],
 	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
