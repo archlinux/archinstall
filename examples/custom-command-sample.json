@@ -6,7 +6,6 @@
         "chown -R devel:devel /home/devel/paru",
         "usermod -aG docker devel"
     ],
-    "desktop": "gnome",
     "!encryption-password": "supersecret",
     "filesystem": "btrfs",
     "harddrive": {
@@ -26,7 +25,7 @@
         "NetworkManager": true
     },
     "packages": ["docker", "git", "wget", "zsh"],
-    "profile": "desktop",
+    "profile": "gnome",
     "superusers": {
         "devel": {
             "!password": "devel"
