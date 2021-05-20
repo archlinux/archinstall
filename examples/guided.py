@@ -378,7 +378,7 @@ def perform_installation(mountpoint):
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):
-			run_custom_user_commands(archinstall.arguments['custom-commands'])
+			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
