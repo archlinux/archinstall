@@ -385,6 +385,7 @@ def perform_installation(mountpoint):
 					temp_script.write(command)
 				execution_output = SysCommand(f"arch-chroot /mnt bash /var/tmp/user-command.{index}.sh")
 				archinstall.log(execution_output)
+				os.unlink(f"/mnt/var/tmp/user-command.{index}.sh")
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
