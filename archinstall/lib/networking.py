@@ -10,6 +10,7 @@ from .general import SysCommand
 from .output import log
 from .storage import storage
 
+
 def get_hw_addr(ifname):
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
@@ -34,6 +35,7 @@ def check_mirror_reachable():
 		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 
 	return False
+
 
 def enrich_iface_types(interfaces: dict):
 	result = {}
