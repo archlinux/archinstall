@@ -366,3 +366,13 @@ def pid_exists(pid: int):
 		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
 		return False
+
+
+def run_custom_user_commands(commands):
+	for index, command in enumerate(commands):
+		log(f'Executing custom command "{command}" ...', fg='yellow')
+		with open(f"/mnt/var/tmp/user-command.{index}.sh", "w") as temp_script:
+			temp_script.write(command)
+		execution_output = SysCommand(f"arch-chroot /mnt bash /var/tmp/user-command.{index}.sh")
+		log(execution_output)
+		os.unlink(f"/mnt/var/tmp/user-command.{index}.sh")

@@ -4,10 +4,9 @@ import os
 import time
 
 import archinstall
-from archinstall.lib.general import SysCommand
+from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
-from archinstall.lib.profiles import Profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -378,14 +377,8 @@ def perform_installation(mountpoint):
 						exit(1)
 
 		# If the user provided custom commands to be run post-installation, execute them now.
-		if len(archinstall.arguments['custom-commands']):
-			for index, command in enumerate(archinstall.arguments['custom-commands']):
-				archinstall.log(f'Executing custom command "{command}" ...', fg='yellow')
-				with open(f"/mnt/var/tmp/user-command.{index}.sh", "w") as temp_script:
-					temp_script.write(command)
-				execution_output = SysCommand(f"arch-chroot /mnt bash /var/tmp/user-command.{index}.sh")
-				archinstall.log(execution_output)
-				os.unlink(f"/mnt/var/tmp/user-command.{index}.sh")
+		if archinstall.arguments.get('custom-commands', None):
+			run_custom_user_commands(archinstall.arguments['custom-commands'])
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
