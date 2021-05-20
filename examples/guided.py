@@ -386,7 +386,7 @@ def perform_installation(mountpoint):
 		if len(archinstall.arguments['custom-commands']):
 			for command in archinstall.arguments['custom-commands']:
 				archinstall.log(f'Executing custom command "{command}" ...', fg='yellow')
-				SysCommand(f"arch-chroot /mnt {command}")
+				SysCommand(f"arch-chroot /mnt bash -c '{command}'")
 
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
