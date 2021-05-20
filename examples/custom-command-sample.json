@@ -1,0 +1,36 @@
+{
+    "audio": "pipewire",
+    "bootloader": "systemd-bootctl",
+    "custom-commands": [
+        "cd /tmp; git clone https://aur.archlinux.org/paru.git; cd paru; makepkg -si",
+        "paru -S --noconfirm bitwarden discord etcher-bin google-chrome steam visual-studio-code-bin"    
+    ],
+    "desktop": "gnome",
+    "!encryption-password": "supersecret",
+    "filesystem": "btrfs",
+    "harddrive": {
+        "path": "/dev/nvme0n1"
+    },
+    "hostname": "development-box",
+    "kernels": [
+        "linux"
+    ],
+    "keyboard-language": "us",
+    "mirror-region": {
+        "Worldwide": {
+            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+        }
+    },
+    "nic": {
+        "NetworkManager": true
+    },
+    "packages": ["docker", "firefox", "gimp", "git", "hexchat", "libreoffice-fresh", "vlc", "wget", "zsh"],
+    "superusers": {
+        "devel": {
+            "!password": "devel"
+        }
+    },
+    "timezone": "US/Eastern",
+    "users": {}
+    }
+}
