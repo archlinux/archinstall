@@ -417,6 +417,6 @@ else:
 	# Temporary workaround to make Desktop Environments work
 	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop', None)
 	if archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
+		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
 
 perform_installation_steps()
