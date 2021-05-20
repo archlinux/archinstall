@@ -5,7 +5,7 @@ from .general import *
 from .output import log
 
 
-def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tmp_dir='/root', *args, **kwargs):
+def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', *args, **kwargs):
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -16,9 +16,10 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', tm
 	region_list = []
 	for region in regions.split(','):
 		region_list.append(f'country={region}')
-	o = b''.join(SysCommand(f"/usr/bin/wget 'https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on' -O {tmp_dir}/mirrorlist"))
-	o = b''.join(SysCommand(f"/usr/bin/sed -i 's/#Server/Server/' {tmp_dir}/mirrorlist"))
-	o = b''.join(SysCommand(f"/usr/bin/mv {tmp_dir}/mirrorlist {destination}"))
+	response = urllib.request.urlopen(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on'")
+	new_list = response.read().replace(b"#Server", b"Server")
+	with open(destination, "wb") as mirrorlist:
+		mirrorlist.write(new_list)
 
 	return True
 
