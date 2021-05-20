@@ -3,6 +3,7 @@ from .hardware import *
 from .locale_helpers import verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
+from .systemd import Boot
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -522,8 +523,6 @@ class Installer:
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			from .systemd import Boot
-
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-keymap", '""'])
 
