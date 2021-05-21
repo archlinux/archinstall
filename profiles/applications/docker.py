@@ -4,6 +4,6 @@ import archinstall
 # which packages will be installed by this profile
 __packages__ = ["docker"]
 
-installation.add_additional_packages(__packages__)
+archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-installation.enable_service('docker')
+archinstall.storage['installation_session'].enable_service('docker')

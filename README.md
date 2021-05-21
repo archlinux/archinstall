@@ -1,17 +1,17 @@
 <!-- <div align="center"> -->
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
-# Arch Installer
 <!-- </div> -->
+# Arch Installer
+[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
 
- * archinstall [discord](https://discord.gg/cqXU88y) server
- * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
- * archinstall [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
- * archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
-
+* archinstall [discord](https://discord.gg/cqXU88y) server
+* archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
+* archinstall [#archinstall@freenode (IRC)](irc://#archinstall@FreeNode)
+* archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
 
 # Installation & Usage
 
@@ -22,24 +22,37 @@ Or use `pip install --upgrade archinstall` to use as a library.
 
 ## Running the [guided](examples/guided.py) installer
 
+Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
+
+    # python -m archinstall --script guided
+
+
+## Running from a declarative configuration file or URL
+
+Prequisites:
+   1. Edit the [configuration file](examples/config-sample.json) according to your requirements.
+
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # python -m archinstall guided
+    # python -m archinstall --config <path to config file or URL> --vars '<space_seperated KEY=VALUE pairs>'
 
 # Help?
 
-Submit an issue here on Github, or submit a post in the discord help channel.<br>
+Submit an issue here on GitHub, or submit a post in the discord help channel.<br>
 When doing so, attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
 
 # Mission Statement
 
-Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
+Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows
+the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
 
-The guided installer will provide user friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone. The guided installer itself is also optional to use if so desired and not forced upon anyone.
+The guided installer will provide user-friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone.
+The guided installer itself is also optional to use if so desired and not forced upon anyone.
 
 ---
 
-Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system. This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
+Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
+This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
 
 Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compability after notifying about such changes.
 
@@ -47,8 +60,7 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 You could just copy [guided.py](examples/guided.py) as a starting point.
 
-But assuming you're building your own ISO and want to create an automated install process, or you want to install virtual machines on to local disk images.<br>
-This is probably what you'll need, a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library.
+However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines on to local disk images, here is a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library:<br>
 
 ```python
 import archinstall, getpass
@@ -99,34 +111,36 @@ with archinstall.Installer('/mnt') as installation:
 
 This installer will perform the following:
 
- * Prompt the user to select a disk and disk-password
- * Proceed to wipe the selected disk with a `GPT` partition table on a UEFI system and MBR on a bios system.
- * Sets up a default 100% used disk with encryption.
- * Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
- * Installs and configures a bootloader to partition 0 on uefi. on bios it sets the root to partition 0.
- * Install additional packages *(nano, wget, git)*
- * Installs a profile with a window manager called [awesome](https://github.com/archlinux/archinstall/blob/master/profiles/awesome.py) *(more on profile installations in the [documentation](https://python-archinstall.readthedocs.io/en/latest/archinstall/Profile.html))*.
+* Prompt the user to select a disk and disk-password
+* Proceed to wipe the selected disk with a `GPT` partition table on a UEFI system and MBR on a BIOS system.
+* Sets up a default 100% used disk with encryption.
+* Installs a basic instance of Arch Linux *(base base-devel linux linux-firmware btrfs-progs efibootmgr)*
+* Installs and configures a bootloader to partition 0 on uefi. On BIOS, it sets the root to partition 0.
+* Install additional packages *(nano, wget, git)*
 
 > **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
 
 ## Unattended installation based on MAC address
 
-Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address. For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py). If it's found, the unattended installation will commence and source that profile as it's installation proceedure.
+Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
+For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py).
+If it's found, the unattended installation will commence and source that profile as it's installation procedure.
 
 # Testing
 
 ## Using a Live ISO Image
 
-If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image, you can replace the version of archinstall with a new version and run that with the steps described below.
+If you want to test a commit, branch or bleeding edge release from the repository using the vanilla Arch Live ISO image,
+you can replace the version of archinstall with a new version and run that with the steps described below:
 
- 1. You need a working network connection
- 2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
-    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
- 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
- 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
- 5. Enter the repository with `cd archinstall`
-    *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
- 6. Build the project and install it using `python setup.py install`
+1. You need a working network connection
+2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
+   *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
+3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
+4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
+5. Enter the repository with `cd archinstall`
+   *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
+6. Build the project and install it using `python setup.py install`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
 
@@ -139,12 +153,12 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # losetup -fP ./testimage.img
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
-    # python -m archinstall guided
+    # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
-This will create a *5GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
-`archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete,<br>
-~~you can use qemu/kvm to boot the test media.~~ *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium so this won't work entirely out of the box, but gives you a general idea of what we're going for here)*
+This will create a *5 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
+`archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
+*(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.

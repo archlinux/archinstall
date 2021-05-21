@@ -1,10 +1,17 @@
 # A desktop environment using "Deepin".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["deepin", "deepin-terminal", "deepin-editor"]
+__packages__ = [
+	"deepin",
+	"deepin-terminal",
+	"deepin-editor",
+	"lightdm",
+	"lightdm-gtk-greeter",
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -28,10 +35,10 @@ def _prep_function(*args, **kwargs):
 # or through conventional import deepin
 if __name__ == 'deepin':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# Install the Deepin packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# Enable autostart of Deepin for all users
-	installation.enable_service('lightdm')
+	archinstall.storage['installation_session'].enable_service('lightdm')

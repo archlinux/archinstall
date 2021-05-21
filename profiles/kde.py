@@ -1,12 +1,22 @@
 # A desktop environment using "KDE".
 
-import archinstall, os
+import archinstall
 
 is_top_level_profile = False
 
-__packages__ = ["plasma-meta", "konsole", "kate", "dolphin", "sddm", "plasma-wayland-session", "egl-wayland"]
+__packages__ = [
+	"plasma-meta",
+	"konsole",
+	"kate",
+	"dolphin",
+	"sddm",
+	"plasma-wayland-session",
+	"egl-wayland",
+]
+
 
 # TODO: Remove hard dependency of bash (due to .bash_profile)
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -24,6 +34,7 @@ def _prep_function(*args, **kwargs):
 		else:
 			print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
+
 """
 def _post_install(*args, **kwargs):
 	if "nvidia" in _gfx_driver_packages:
@@ -37,10 +48,10 @@ def _post_install(*args, **kwargs):
 # or through conventional import kde
 if __name__ == 'kde':
 	# Install dependency profiles
-	installation.install_profile('xorg')
+	archinstall.storage['installation_session'].install_profile('xorg')
 
 	# Install the KDE packages
-	installation.add_additional_packages(__packages__)
+	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# Enable autostart of KDE for all users
-	installation.enable_service('sddm')
+	archinstall.storage['installation_session'].enable_service('sddm')

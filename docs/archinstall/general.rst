@@ -1,7 +1,7 @@
 .. _archinstall.helpers:
 
 .. warning::
-    All these helper functions are mostly, if not all, related to outside-installation-instructions. Meaning the calls will affect your current running system - and not touch your installed system.
+	All these helper functions are mostly, if not all, related to outside-installation-instructions. Meaning the calls will affect your current running system - and not touch your installed system.
 
 Profile related helpers
 =======================
