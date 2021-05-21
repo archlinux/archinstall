@@ -4,6 +4,7 @@ import os
 import time
 
 import archinstall
+from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
@@ -186,10 +187,7 @@ def ask_user_questions():
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
 		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 			if not imported._prep_function():
-				archinstall.log(
-					' * Profile\'s preparation requirements was not fulfilled.',
-					fg='red'
-				)
+				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 				exit(1)
 
 	# Ask about audio server selection if one is not already set
@@ -380,6 +378,10 @@ def perform_installation(mountpoint):
 					if not imported._post_install():
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
+
+		# If the user provided custom commands to be run post-installation, execute them now.
+		if archinstall.arguments.get('custom-commands', None):
+			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
