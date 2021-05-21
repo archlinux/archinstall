@@ -4,6 +4,7 @@ import os
 import time
 
 import archinstall
+from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import has_uefi
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
@@ -180,16 +181,13 @@ def ask_user_questions():
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
 	else:
-		archinstall.arguments['profile'] = archinstall.list_profiles()[archinstall.arguments['profile']]
+		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
 		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 			if not imported._prep_function():
-				archinstall.log(
-					' * Profile\'s preparation requirements was not fulfilled.',
-					fg='red'
-				)
+				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 				exit(1)
 
 	# Ask about audio server selection if one is not already set
@@ -381,6 +379,10 @@ def perform_installation(mountpoint):
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
 
+		# If the user provided custom commands to be run post-installation, execute them now.
+		if archinstall.arguments.get('custom-commands', None):
+			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
+
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
 			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
@@ -410,8 +412,9 @@ else:
 	# Temporarily disabling keep_partitions if config file is loaded
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop', None)
-	if archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile']['path'])
+	if archinstall.arguments.get('profile', None) is not None:
+		archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
+	else:
+		archinstall.arguments['profile'] = None
 
 perform_installation_steps()
