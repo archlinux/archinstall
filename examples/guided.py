@@ -379,6 +379,11 @@ def perform_installation(mountpoint):
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
 
+		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
+		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
+		if archinstall.arguments.get('services', None):
+			installation.enable_service(*archinstall.arguments['services'])
+
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):
 			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
