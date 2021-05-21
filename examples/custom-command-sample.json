@@ -26,6 +26,7 @@
     },
     "packages": ["docker", "git", "wget", "zsh"],
     "profile": "gnome",
+    "services": ["docker"],
     "superusers": {
         "devel": {
             "!password": "devel"
