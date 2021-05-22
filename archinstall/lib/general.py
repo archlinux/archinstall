@@ -333,6 +333,10 @@ class SysCommand:
 			while self.session.ended is None:
 				self.session.poll()
 
+			if self.peak_output:
+				sys.stdout.write('\n')
+				sys.stdout.flush()
+
 		except SysCallError:
 			return False
 
