@@ -15,6 +15,9 @@ on:
       - '**.md'
       - 'LICENSE'
       - 'PKGBUILD'
+  release:
+    types:
+      - created
 
 jobs:
   build:
