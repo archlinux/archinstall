@@ -12,6 +12,9 @@ from archinstall.lib.profiles import Profile
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
+if os.getuid() != 0:
+	print("Archinstall requires root privileges to run. See --help for more.")
+	exit(1)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
