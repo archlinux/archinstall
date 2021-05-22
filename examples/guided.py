@@ -239,6 +239,8 @@ def ask_user_questions():
 
 	if not archinstall.arguments.get('ntp', False):
 		archinstall.arguments['ntp'] = input("Would you like to use automatic time syncronization (ntp) with default time servers? N/y: ").strip().lower() in ('y', 'yes')
+		if archinstall.arguments['ntp']:
+			archinstall.log("Hardware time and other post configuration might be required for ntp to work. Please see wiki!", fg="yellow")
 
 
 def perform_installation_steps():
