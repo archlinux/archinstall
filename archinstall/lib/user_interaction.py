@@ -565,8 +565,7 @@ def select_disk(dict_o_disks):
 
 def select_profile():
 	"""
-	Asks the user to select a profile from the `options` dictionary parameter.
-	Usually this is combined with :ref:`archinstall.list_profiles`.
+	Asks the user to select a profile from the available profiles.
 
 	:return: The name/dictionary key of the selected profile
 	:rtype: str
