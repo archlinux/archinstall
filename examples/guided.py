@@ -56,9 +56,9 @@ def ask_user_questions():
 		archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
 		archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
 
-	if not archinstall.arguments['sys-language']:
+	if not archinstall.arguments.get('sys-language', None):
 		archinstall.arguments['sys-language'] = 'en_US'
-	if not archinstall.arguments['sys-encoding']:
+	if not archinstall.arguments.get('sys-encoding', None):
 		archinstall.arguments['sys-encoding'] = 'utf-8'
 
 
