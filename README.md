@@ -24,7 +24,7 @@ Or use `pip install --upgrade archinstall` to use as a library.
 
 Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
 
-    # python -m archinstall --script guided
+    # archinstall
 
 
 ## Running from a declarative configuration file or URL
@@ -34,7 +34,7 @@ Prequisites:
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # python -m archinstall --config <path to config file or URL> --vars '<space_seperated KEY=VALUE pairs>'
+    # archinstall --config <path to config file or URL> [optional: --vars '<space_seperated KEY=VALUE pairs>']
 
 # Help?
 
