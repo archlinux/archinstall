@@ -17,7 +17,7 @@ from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
-from .profiles import Profile
+from .profiles import Profile, list_profiles
 
 
 # TODO: Some inconsistencies between the selection processes.
@@ -570,8 +570,8 @@ def select_profile():
 	:return: The name/dictionary key of the selected profile
 	:rtype: str
 	"""
-	shown_profiles = sorted(list(archinstall.list_profiles(filter_top_level_profiles=True)))
-	actual_profiles_raw = shown_profiles + sorted([profile for profile in archinstall.list_profiles() if profile not in shown_profiles])
+	shown_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
+	actual_profiles_raw = shown_profiles + sorted([profile for profile in list_profiles() if profile not in shown_profiles])
 
 	if len(shown_profiles) >= 1:
 		for index, profile in enumerate(shown_profiles):
