@@ -237,6 +237,12 @@ def ask_user_questions():
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
+	if archinstall.arguments['timezone']:
+		if not archinstall.arguments.get('ntp', False):
+			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes')
+			if archinstall.arguments['ntp']:
+				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+
 
 def perform_installation_steps():
 	print()
@@ -368,6 +374,9 @@ def perform_installation(mountpoint):
 
 			if timezone := archinstall.arguments.get('timezone', None):
 				installation.set_timezone(timezone)
+
+			if archinstall.arguments.get('ntp', False):
+				installation.activate_ntp()
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
