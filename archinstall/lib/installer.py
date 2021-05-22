@@ -453,6 +453,7 @@ class Installer:
 				self.pacstrap('efibootmgr')
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				self.helper_flags['bootloder'] = True
 				return True
 			else:
 				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
@@ -460,7 +461,7 @@ class Installer:
 					root_device = f"{root_partition.path}"
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = bootloader
+				self.helper_flags['bootloader'] = True
 				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
