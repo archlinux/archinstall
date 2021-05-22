@@ -54,13 +54,13 @@ def ask_user_questions():
 	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
 		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
 		archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
-
-		if not archinstall.arguments['sys-language']:
-			archinstall.arguments['sys-language'] = 'en_US'
-		if not archinstall.arguments['sys-encoding']:
-			archinstall.arguments['sys-encoding'] = 'utf-8'
-
 		archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
+
+	if not archinstall.arguments.get('sys-language', None):
+		archinstall.arguments['sys-language'] = 'en_US'
+	if not archinstall.arguments.get('sys-encoding', None):
+		archinstall.arguments['sys-encoding'] = 'utf-8'
+
 
 	# Ask which harddrive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
@@ -193,7 +193,7 @@ def ask_user_questions():
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
+		archinstall.arguments['profile'] = archinstall.select_profile()
 	else:
 		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
 

@@ -17,7 +17,7 @@ from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
-from .profiles import Profile
+from .profiles import Profile, list_profiles
 
 
 # TODO: Some inconsistencies between the selection processes.
@@ -563,28 +563,25 @@ def select_disk(dict_o_disks):
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 
-def select_profile(options):
+def select_profile():
 	"""
-	Asks the user to select a profile from the `options` dictionary parameter.
-	Usually this is combined with :ref:`archinstall.list_profiles`.
-
-	:param options: A `dict` where keys are the profile name, value should be a dict containing profile information.
-	:type options: dict
+	Asks the user to select a profile from the available profiles.
 
 	:return: The name/dictionary key of the selected profile
 	:rtype: str
 	"""
-	profiles = sorted(list(options))
+	shown_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
+	actual_profiles_raw = shown_profiles + sorted([profile for profile in list_profiles() if profile not in shown_profiles])
 
-	if len(profiles) >= 1:
-		for index, profile in enumerate(profiles):
+	if len(shown_profiles) >= 1:
+		for index, profile in enumerate(shown_profiles):
 			print(f"{index}: {profile}")
 
 		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
 		print(' -- (Leave blank and hit enter to skip this step and continue) --')
 
-		selected_profile = generic_select(profiles, 'Enter a pre-programmed profile name if you want to install one: ', options_output=False)
+		selected_profile = generic_select(actual_profiles_raw, 'Enter a pre-programmed profile name if you want to install one: ', options_output=False)
 		if selected_profile:
 			return Profile(None, selected_profile)
 	else:
