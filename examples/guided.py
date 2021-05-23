@@ -51,6 +51,17 @@ def ask_user_questions():
 		selected_region = archinstall.arguments['mirror-region']
 		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 
+	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
+		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
+		archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
+		archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
+
+	if not archinstall.arguments.get('sys-language', None):
+		archinstall.arguments['sys-language'] = 'en_US'
+	if not archinstall.arguments.get('sys-encoding', None):
+		archinstall.arguments['sys-encoding'] = 'utf-8'
+
+
 	# Ask which harddrive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
@@ -182,7 +193,7 @@ def ask_user_questions():
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile(archinstall.list_profiles(filter_top_level_profiles=True))
+		archinstall.arguments['profile'] = archinstall.select_profile()
 	else:
 		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
 
@@ -328,6 +339,7 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 		if installation.minimal_installation():
+			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
