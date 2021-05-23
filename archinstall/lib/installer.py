@@ -1,6 +1,6 @@
 from .disk import *
 from .hardware import *
-from .locale_helpers import verify_x11_keyboard_layout
+from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
 from .user_interaction import *
@@ -546,6 +546,8 @@ class Installer:
 			if not verify_x11_keyboard_layout(language):
 				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
 				return False
+
+			from .systemd import Boot
 
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
