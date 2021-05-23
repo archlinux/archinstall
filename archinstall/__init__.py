@@ -56,7 +56,6 @@ def initialize_arguments():
 				key, val = arg[2:], True
 			config[key] = val
 	config["script"] = args.script
-	print(config)
 	return config
 
 
