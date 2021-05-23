@@ -446,6 +446,7 @@ else:
 	else:
 		archinstall.arguments['profile'] = None
 	if archinstall.arguments.get('mirror-region', None) is not None:
-		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[archinstall.arguments.get('mirror-region', None)]}
+		selected_region = archinstall.arguments.get('mirror-region', None)
+		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 
 perform_installation_steps()
