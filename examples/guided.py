@@ -445,5 +445,10 @@ else:
 		archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
 	else:
 		archinstall.arguments['profile'] = None
-
+	if archinstall.arguments.get('mirror-region', None) is not None:
+		selected_region = archinstall.arguments.get('mirror-region', None)
+		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
+	archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
+	archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
+	
 perform_installation_steps()
