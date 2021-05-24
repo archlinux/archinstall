@@ -23,6 +23,8 @@ for plugin_definition in metadata.entry_points()['archinstall.plugin']:
 		log(err, level=logging.ERROR)
 		log(f"The above error was detected when loading the plugin: {plugin_definition}", fg="red", level=logging.ERROR)
 
+
+# The following functions and core are support structures for load_plugin()
 def localize_path(profile_path :str) -> str:
 	if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 		converted_path = f"/tmp/{os.path.basename(profile_path).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
@@ -33,6 +35,7 @@ def localize_path(profile_path :str) -> str:
 		return converted_path
 	else:
 		return profile_path
+
 
 def import_via_path(path :str, namespace=None): # -> module (not sure how to write that in type definitions)
 	if not namespace:
@@ -53,6 +56,7 @@ def import_via_path(path :str, namespace=None): # -> module (not sure how to wri
 		log(err, level=logging.ERROR)
 		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
 
+
 def load_plugin(path :str): # -> module (not sure how to write that in type definitions)
 	parsed_url = urllib.parse.urlparse(path)
 
@@ -68,4 +72,4 @@ def load_plugin(path :str): # -> module (not sure how to write that in type defi
 		plugins[namespace] = sys.modules[namespace].Plugin()
 	except Exception as err:
 		log(err, level=logging.ERROR)
-		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
+		log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)
