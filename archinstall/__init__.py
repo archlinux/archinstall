@@ -60,7 +60,7 @@ def initialize_arguments():
 
 
 arguments = initialize_arguments()
-from .lib.plugins import plugins
+from .lib.plugins import plugins # This initiates the plugin loading ceremony
 
 
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
