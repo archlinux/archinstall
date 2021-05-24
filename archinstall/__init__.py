@@ -58,6 +58,7 @@ def initialize_arguments():
 	config["script"] = args.script
 	return config
 
+
 arguments = initialize_arguments()
 from .lib.plugins import plugins
 
