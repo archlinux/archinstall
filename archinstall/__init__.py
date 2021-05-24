@@ -23,7 +23,7 @@ from .lib.user_interaction import *
 
 parser = ArgumentParser()
 
-__version__ = "2.2.0.dev1"
+__version__ = "2.2.0.RC1"
 
 
 def initialize_arguments():
@@ -32,16 +32,7 @@ def initialize_arguments():
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	parser.add_argument("--vars",
-						metavar="KEY=VALUE",
-						nargs='?',
-						help="Set a number of key-value pairs "
-							 "(do not put spaces before or after the = sign). "
-							 "If a value contains spaces, you should define "
-							 "it with double quotes: "
-							 'foo="this is a sentence". Note that '
-							 "values are always treated as strings.")
-	args = parser.parse_args()
+	args, unknowns = parser.parse_known_args()
 	if args.config is not None:
 		try:
 			# First, let's check if this is a URL scheme instead of a filename
@@ -57,13 +48,13 @@ def initialize_arguments():
 			print(e)
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
-	if args.vars is not None:
-		try:
-			for var in args.vars.split(' '):
-				key, val = var.split("=")
-				config[key] = val
-		except Exception as e:
-			print(e)
+	for arg in unknowns:
+		if '--' == arg[:2]:
+			if '=' in arg:
+				key, val = [x.strip() for x in arg[2:].split('=', 1)]
+			else:
+				key, val = arg[2:], True
+			config[key] = val
 	config["script"] = args.script
 	return config
 

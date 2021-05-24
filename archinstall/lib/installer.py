@@ -1,6 +1,6 @@
 from .disk import *
 from .hardware import *
-from .locale_helpers import verify_x11_keyboard_layout
+from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
 from .user_interaction import *
@@ -453,6 +453,7 @@ class Installer:
 				self.pacstrap('efibootmgr')
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				self.helper_flags['bootloader'] = True
 				return True
 			else:
 				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
@@ -460,7 +461,7 @@ class Installer:
 					root_device = f"{root_partition.path}"
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = bootloader
+				self.helper_flags['bootloader'] = True
 				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
@@ -545,6 +546,8 @@ class Installer:
 			if not verify_x11_keyboard_layout(language):
 				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
 				return False
+
+			from .systemd import Boot
 
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
