@@ -3,6 +3,7 @@ import importlib
 import logging
 import os
 import sys
+import pathlib
 import urllib.parse
 import urllib.request
 from importlib import metadata
@@ -37,16 +38,20 @@ def import_via_path(path :str, namespace=None): # -> module (not sure how to wri
 	if not namespace:
 		namespace = os.path.basename(path)
 
+		if namespace == '__init__.py':
+			path = pathlib.PurePath(path)
+			namespace = path.parent.name
+
 	try:
 		spec = importlib.util.spec_from_file_location(namespace, path)
 		imported = importlib.util.module_from_spec(spec)
 		sys.modules[namespace] = imported
 		spec.loader.exec_module(sys.modules[namespace])
+
+		return namespace
 	except Exception as err:
 		log(err, level=logging.ERROR)
 		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
-
-	return sys.modules[namespace]
 
 def load_plugin(path :str): # -> module (not sure how to write that in type definitions)
 	parsed_url = urllib.parse.urlparse(path)
@@ -55,6 +60,12 @@ def load_plugin(path :str): # -> module (not sure how to write that in type defi
 	if not parsed_url.scheme:
 		# Path was not found in any known examples, check if it's an absolute path
 		if os.path.isfile(path):
-			return import_via_path(path)
+			namespace = import_via_path(path)
 	elif parsed_url.scheme in ('https', 'http'):
-		return import_via_path(localize_path(path))
+		namespace = import_via_path(localize_path(path))
+
+	try:
+		plugins[namespace] = sys.modules[namespace].Plugin()
+	except Exception as err:
+		log(err, level=logging.ERROR)
+		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
