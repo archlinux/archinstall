@@ -3,7 +3,7 @@ from importlib import metadata
 plugins = {}
 
 # 1: List archinstall.plugin definitions
-# 2: Loade the plugin entry point
+# 2: Load the plugin entry point
 # 3: Initiate the plugin and store it as .name in plugins
 for plugin_definition in metadata.entry_points()['archinstall.plugin']:
 	plugin_entrypoint = plugin_definition.load()
