@@ -63,6 +63,8 @@ def initialize_arguments():
 arguments = initialize_arguments()
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
+if arguments.get('plugin', None):
+	load_plugin(arguments['plugin'])
 
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
 
