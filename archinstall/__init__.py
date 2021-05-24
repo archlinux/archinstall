@@ -26,6 +26,7 @@ parser = ArgumentParser()
 __version__ = "2.2.0.RC1"
 storage['__version__'] = __version__
 
+
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
