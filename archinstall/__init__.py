@@ -58,10 +58,9 @@ def initialize_arguments():
 	config["script"] = args.script
 	return config
 
-storage['arguments'] = arguments
+arguments = initialize_arguments()
 from .lib.plugins import plugins
 
-arguments = initialize_arguments()
 
 
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
