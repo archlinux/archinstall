@@ -9,6 +9,7 @@ import urllib.request
 from importlib import metadata
 
 from .output import log
+from .storage import storage
 
 plugins = {}
 
@@ -56,6 +57,17 @@ def import_via_path(path :str, namespace=None): # -> module (not sure how to wri
 		log(err, level=logging.ERROR)
 		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
 
+		try:
+			del(sys.modules[namespace])
+		except:
+			pass
+
+def find_nth(haystack, needle, n):
+	start = haystack.find(needle)
+	while start >= 0 and n > 1:
+		start = haystack.find(needle, start+len(needle))
+		n -= 1
+	return start
 
 def load_plugin(path :str): # -> module (not sure how to write that in type definitions)
 	parsed_url = urllib.parse.urlparse(path)
@@ -68,8 +80,20 @@ def load_plugin(path :str): # -> module (not sure how to write that in type defi
 	elif parsed_url.scheme in ('https', 'http'):
 		namespace = import_via_path(localize_path(path))
 
-	try:
-		plugins[namespace] = sys.modules[namespace].Plugin()
-	except Exception as err:
-		log(err, level=logging.ERROR)
-		log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)
+	# Version dependency via __archinstall__version__ variable (if present) in the plugin
+	# Any errors in version inconsistency will be handled through normal error handling if not defined.
+	if namespace in sys.modules:
+		if hasattr(sys.modules[namespace], '__archinstall__version__'):
+			archinstall_major_and_minor_version = float(storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
+
+			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
+				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.", fg="red", level=logging.ERROR)
+
+		if hasattr(sys.modules[namespace], 'Plugin'):
+			try:
+				plugins[namespace] = sys.modules[namespace].Plugin()
+			except Exception as err:
+				log(err, level=logging.ERROR)
+				log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)
+		else:
+			log(f"Plugin '{path}' is missing a valid entry-point or is corrupt.", fg="yellow", level=logging.WARNING)

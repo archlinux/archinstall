@@ -24,7 +24,7 @@ from .lib.user_interaction import *
 parser = ArgumentParser()
 
 __version__ = "2.2.0.RC1"
-
+storage['__version__'] = __version__
 
 def initialize_arguments():
 	config = {}
