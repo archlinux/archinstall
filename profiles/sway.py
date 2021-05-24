@@ -25,7 +25,7 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	__builtins__["_gfx_driver_packages"] = archinstall.select_driver()
+	archinstall.storage["gfx_driver_packages"] = archinstall.select_driver()
 
 	return True
 
@@ -34,7 +34,7 @@ def _prep_function(*args, **kwargs):
 # through importlib.util.spec_from_file_location("sway", "/somewhere/sway.py")
 # or through conventional import sway
 if __name__ == "sway":
-	if "nvidia" in _gfx_driver_packages:
+	if "nvidia" in archinstall.storage.get("gfx_driver_packages", None):
 		choice = input("The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues. Continue anyways? [y/N] ")
 		if choice.lower() in ("n", ""):
 			raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers.")
@@ -43,4 +43,4 @@ if __name__ == "sway":
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 	# Install the graphics driver packages
-	archinstall.storage['installation_session'].add_additional_packages(_gfx_driver_packages)
+	archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', None))}")
