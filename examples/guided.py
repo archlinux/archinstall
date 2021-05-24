@@ -5,7 +5,7 @@ import time
 
 import archinstall
 from archinstall.lib.general import run_custom_user_commands
-from archinstall.lib.hardware import has_uefi
+from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
@@ -450,5 +450,8 @@ else:
 		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 	archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
 	archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-	
+	if archinstall.arguments.get('gfx_driver', None) is not None:
+		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+
+
 perform_installation_steps()
