@@ -34,7 +34,7 @@ Prequisites:
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # archinstall --config <path to config file or URL> [optional: --vars '<space_seperated KEY=VALUE pairs>']
+    # archinstall --config <path to config file or URL>
 
 # Help?
 
