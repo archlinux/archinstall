@@ -80,15 +80,17 @@ def load_plugin(path :str): # -> module (not sure how to write that in type defi
 	elif parsed_url.scheme in ('https', 'http'):
 		namespace = import_via_path(localize_path(path))
 
-	# Version dependency via __archinstall__version__ variable (if present) in the plugin
-	# Any errors in version inconsistency will be handled through normal error handling if not defined.
 	if namespace in sys.modules:
+		# Version dependency via __archinstall__version__ variable (if present) in the plugin
+		# Any errors in version inconsistency will be handled through normal error handling if not defined.
 		if hasattr(sys.modules[namespace], '__archinstall__version__'):
 			archinstall_major_and_minor_version = float(storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
 				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.", fg="red", level=logging.ERROR)
 
+		# Locate the plugin entry-point called Plugin()
+		# This in accordance with the entry_points() from setup.cfg above
 		if hasattr(sys.modules[namespace], 'Plugin'):
 			try:
 				plugins[namespace] = sys.modules[namespace].Plugin()
