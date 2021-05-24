@@ -3,7 +3,7 @@ Guided installation
 
 This is the default scripted installation you'll encounter on the official Arch Linux Archinstall package as well as the unofficial ISO found on `https://archlinux.life <https://archlinux.life>`_. It will guide your through a very basic installation of Arch Linux.
 
-The installer has two pre-requisits:
+The installer has two pre-requisites:
 
  * A Physical or Virtual machine to install on
  * An active internet connection prior to running archinstall
@@ -26,17 +26,113 @@ Running the guided installation
 
 To install archinstall and subsequently the guided installer, simply do the following:
 
-.. code::bash
-    # pacman -S python-archinstall
+.. code-block:: sh
+
+    pacman -S python-archinstall
 
 And to run it, execute archinstall as a Python module:
 
-.. code::bash
-    # python -m archinstall guided
+.. code-block:: sh
 
-| The guided parameter is optional as it's the default behavior.
+    python -m archinstall --script guided
+    
+| The ``--script guided`` argument is optional as it's the default behavior.
 | But this will start the process of guiding you through a installation of a quite minimal Arch Linux experience.
 
+Installing directly from a config file
+--------------------------------------
+
+.. note::
+    Edit the following json according to your needs,
+    save this as a json file, and provide the local or remote path (URL)
+    
+.. code-block:: json
+
+    {
+        "audio": "pipewire",
+        "bootloader": "systemd-bootctl",
+        "custom-commands": [
+            "cd /home/devel; git clone https://aur.archlinux.org/paru.git",
+            "chown -R devel:devel /home/devel/paru",
+            "usermod -aG docker devel"
+        ],
+        "!encryption-password": "supersecret",
+        "filesystem": "btrfs",
+        "harddrive": {
+            "path": "/dev/nvme0n1"
+        },
+        "hostname": "development-box",
+        "kernels": [
+            "linux"
+        ],
+        "keyboard-language": "us",
+        "mirror-region": {
+            "Worldwide": {
+                "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+            }
+        },
+        "nic": {
+            "NetworkManager": true
+        },
+        "packages": ["docker", "git", "wget", "zsh"],
+        "profile": "gnome",
+        "services": ["docker"],
+        "superusers": {
+            "devel": {
+                "!password": "devel"
+            }
+        },
+        "timezone": "US/Eastern",
+        "users": {}
+    }
+
+To run it, execute archinstall as a Python module:
+
+.. code-block:: sh
+
+    python -m archinstall --config <local path or remote URL>
+    
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+|         Key          |                   Values/Description                   |                                Description                                 |                   Required                    |
+|                      |                                                        |                                                                            |                                               |
++======================+========================================================+============================================================================+===============================================+
+| audio                | pipewire/pulseaudio                                    | Audioserver to be installed                                                | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| bootloader           | systemd-bootctl/grub-install                           | Bootloader to be installed                                                 | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| custom-commands      | [ <command1>, <command2>, ...]                         | Custom commands to be run post install                                     | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| !encryption-password | any                                                    | Password to encrypt disk, not encrypted if password not provided           | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| filesystem           | ext4 / btrfs / fat32 etc.                              | Filesystem for root and home partitions                                    | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| harddrive            | { "path": <path of device> }                           | Path of device to be used                                                  | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| hostname             | any                                                    | Hostname of machine after installation                                     | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc            | Atleast 1                                     |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| keyboard-language    | 2 letter code for your keyboard language               | eg: us, de etc                                                             | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| mirror-region        | {"<Region Name>": { "Mirror Name": True/False}, ..}    | List of regions and mirrors to use                                         | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| nic                  | nic to use, Use value NetworkManager for installing it |                                                                            | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| packages             | [ "package1", "package2", ..]                          | List of packages to install post-installation                              | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| profile              | Name of profile to install                             | profiles are present in profiles/, use the name of a profile to install it | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| !root-password       | any                                                    | The root account password                                                  | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| services             | [ "service1", "service2", ..]                          | Services to enable post-installation                                       | No                                            |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| superusers           | { "<username>": { "!password": "<password>"}, ..}      | List of superuser credentials, see config for reference                    | Yes, if root account password is not provided |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| timezone             | Timezone to configure in installation                  | Timezone eg: UTC, Asia/Kolkata etc.                                        | Yes                                           |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+| users                | { "<username>": { "!password": "<password>"}, ..}      | List of regular user credentials, see config for reference                 | Yes, can be {}                                |
++----------------------+--------------------------------------------------------+----------------------------------------------------------------------------+-----------------------------------------------+
+    
 Description individual steps
 ============================
 

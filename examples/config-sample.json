@@ -1,0 +1,35 @@
+{
+    "!root-password": "<root_password>",
+    "audio": null,
+    "bootloader": "systemd-bootctl",
+    "filesystem": "btrfs",
+    "harddrive": {
+        "path": "/dev/sda"
+    },
+    "hostname": "box",
+    "kernels": [
+        "linux"
+    ],
+    "keyboard-language": "us",
+    "mirror-region": {
+        "Worldwide": {
+            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+        }
+    },
+    "nic": {
+        "NetworkManager": true
+    },
+    "packages": [],
+    "profile": null,
+    "superusers": {
+        "<username>": {
+            "!password": "<password>"
+        }
+    },
+    "timezone": "UTC",
+    "users": {
+        "<username>": {
+            "!password": "<password>"
+        }
+    }
+}

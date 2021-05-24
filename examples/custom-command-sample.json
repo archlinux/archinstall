@@ -1,0 +1,37 @@
+{
+    "audio": "pipewire",
+    "bootloader": "systemd-bootctl",
+    "custom-commands": [
+        "cd /home/devel; git clone https://aur.archlinux.org/paru.git",
+        "chown -R devel:devel /home/devel/paru",
+        "usermod -aG docker devel"
+    ],
+    "!encryption-password": "supersecret",
+    "filesystem": "btrfs",
+    "harddrive": {
+        "path": "/dev/nvme0n1"
+    },
+    "hostname": "development-box",
+    "kernels": [
+        "linux"
+    ],
+    "keyboard-language": "us",
+    "mirror-region": {
+        "Worldwide": {
+            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+        }
+    },
+    "nic": {
+        "NetworkManager": true
+    },
+    "packages": ["docker", "git", "wget", "zsh"],
+    "profile": "gnome",
+    "services": ["docker"],
+    "superusers": {
+        "devel": {
+            "!password": "devel"
+        }
+    },
+    "timezone": "US/Eastern",
+    "users": {}
+}

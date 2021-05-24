@@ -1,42 +1,71 @@
 """Arch Linux installer - guided, templates etc."""
-from .lib.general import *
+import urllib.error
+import urllib.parse
+import urllib.request
+from argparse import ArgumentParser
+
 from .lib.disk import *
-from .lib.user_interaction import *
 from .lib.exceptions import *
+from .lib.general import *
+from .lib.hardware import *
 from .lib.installer import __packages__, Installer
-from .lib.profiles import *
+from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
-from .lib.locale_helpers import *
-from .lib.services import *
-from .lib.packages import *
 from .lib.output import *
+from .lib.packages import *
+from .lib.profiles import *
+from .lib.services import *
 from .lib.storage import *
-from .lib.hardware import *
+from .lib.systemd import *
+from .lib.user_interaction import *
 
-__version__ = "2.2.0"
+parser = ArgumentParser()
 
-## Basic version of arg.parse() supporting:
-##  --key=value
-##  --boolean
-arguments = {}
-positionals = []
-for arg in sys.argv[1:]:
-	if '--' == arg[:2]:
-		if '=' in arg:
-			key, val = [x.strip() for x in arg[2:].split('=', 1)]
-		else:
-			key, val = arg[2:], True
-		arguments[key] = val
-	else:
-		positionals.append(arg)
+__version__ = "2.2.0.RC1"
+
+
+def initialize_arguments():
+	config = {}
+	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
+	parser.add_argument("--silent", action="store_true",
+						help="Warning!!! No prompts, ignored if config is not passed")
+	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
+	args, unknowns = parser.parse_known_args()
+	if args.config is not None:
+		try:
+			# First, let's check if this is a URL scheme instead of a filename
+			parsed_url = urllib.parse.urlparse(args.config)
+
+			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
+				with open(args.config) as file:
+					config = json.load(file)
+			else:  # Attempt to load the configuration from the URL.
+				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
+					config = json.loads(response.read())
+		except Exception as e:
+			print(e)
+		# Installation can't be silent if config is not passed
+		config["silent"] = args.silent
+	for arg in unknowns:
+		if '--' == arg[:2]:
+			if '=' in arg:
+				key, val = [x.strip() for x in arg[2:].split('=', 1)]
+			else:
+				key, val = arg[2:], True
+			config[key] = val
+	config["script"] = args.script
+	return config
 
 storage['arguments'] = arguments
 from .lib.plugins import plugins
 
-# TODO: Learn the dark arts of argparse...
-#	   (I summon thee dark spawn of cPython)
+arguments = initialize_arguments()
+
+
+# TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
+
 
 def run_as_a_module():
 	"""
@@ -47,12 +76,8 @@ def run_as_a_module():
 
 	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
 	storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
-
-	if len(sys.argv) == 1:
-		sys.argv.append('guided')
-
 	try:
-		script = Script(sys.argv[1])
+		script = Script(arguments.get('script', None))
 	except ProfileNotFound as err:
 		print(f"Couldn't find file: {err}")
 		sys.exit(1)
