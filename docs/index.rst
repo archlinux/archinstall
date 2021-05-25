@@ -6,9 +6,6 @@ python-archinstall Documentation
 | 
 | A demo can be viewed here: `https://www.youtube.com/watch?v=9Xt7X_Iqg6E <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_ which uses the default guided installer.
 
-.. warning::
-    This installer currently requires that your machine has EFI-mode enabled.
-
 Some of the features of Archinstall are:
 
 * **No external dependencies or installation requirements.** Runs without any external requirements or installation processes.
