@@ -39,7 +39,7 @@ And to run it, execute archinstall as a Python module:
 | The ``--script guided`` argument is optional as it's the default behavior.
 | But this will start the process of guiding you through a installation of a quite minimal Arch Linux experience.
 
-Installing directly from a config file
+Installing directly from a configuration file
 --------------------------------------
 
 .. note::
@@ -58,6 +58,7 @@ Installing directly from a config file
         ],
         "!encryption-password": "supersecret",
         "filesystem": "btrfs",
+        "gfx_driver": "VMware / VirtualBox (open-source)",
         "harddrive": {
             "path": "/dev/nvme0n1"
         },
@@ -66,14 +67,11 @@ Installing directly from a config file
             "linux"
         ],
         "keyboard-language": "us",
-        "mirror-region": {
-            "Worldwide": {
-                "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
-            }
-        },
+        "mirror-region": "Worldwide",
         "nic": {
             "NetworkManager": true
         },
+        "ntp": true,
         "packages": ["docker", "git", "wget", "zsh"],
         "profile": "gnome",
         "services": ["docker"],
@@ -82,6 +80,8 @@ Installing directly from a config file
                 "!password": "devel"
             }
         },
+        "sys-encoding": "utf-8",
+        "sys-language": "en_US",
         "timezone": "US/Eastern",
         "users": {}
     }
@@ -125,7 +125,7 @@ To run it, execute archinstall as a Python module:
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | packages             | [ "package1", "package2", ..]                                                                                                        | List of packages to install post-installation                                        | No                                            |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| profile              | Name of profile to install                                                                                                           | profiles are present in profiles/, use the name of a profile to install it           | No                                            |
+| profile              | Name of the profile to install                                                                                                       | Profiles are present in profiles/, use the name of a profile to install it           | No                                            |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | !root-password       | any                                                                                                                                  | The root account password                                                            | No                                            |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
@@ -135,11 +135,11 @@ To run it, execute archinstall as a Python module:
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | sys-language         | "en_US"                                                                                                                              | Set to change system language post-install, ignored if --advanced flag is not passed | No                                            |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| superusers           | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of superuser credentials, see config for reference                              | Yes, if root account password is not provided |
+| superusers           | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of superuser credentials, see configuration for reference                       | Yes, if root account password is not provided |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | timezone             | Timezone to configure in installation                                                                                                | Timezone eg: UTC, Asia/Kolkata etc.                                                  | Yes                                           |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| users                | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of regular user credentials, see config for reference                           | Yes, can be {}                                |
+| users                | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of regular user credentials, see configuration for reference                    | Yes, can be {}                                |
 +----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
     
 Description individual steps
