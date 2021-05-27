@@ -23,7 +23,7 @@ from .lib.user_interaction import *
 
 parser = ArgumentParser()
 
-__version__ = "2.2.0.RC1"
+__version__ = "2.2.0"
 
 
 def initialize_arguments():
