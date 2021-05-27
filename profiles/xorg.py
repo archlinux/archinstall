@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = True
 
+__description__ = 'Installs a minimal system as well as xorg and graphics drivers.'
+
 __packages__ = [
 	'dkms',
 	'xorg-server',

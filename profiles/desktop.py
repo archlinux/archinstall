@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = True
 
+__description__ = 'Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway'
+
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
 __packages__ = [
