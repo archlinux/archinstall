@@ -579,7 +579,7 @@ def select_profile():
 
 		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- The desktop profile will let you select a DE/WM profile, e.g sway,kde plasma and gnome --')
+		print(' -- The desktop profile will let you select a DE/WM profile, e.g gnome, kde, sway --')
 		print(' -- (Leave blank and hit enter to skip this step and continue) --')
 
 		selected_profile = generic_select(actual_profiles_raw, 'Enter a pre-programmed profile name if you want to install one: ', options_output=False)
