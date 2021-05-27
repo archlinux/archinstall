@@ -110,7 +110,7 @@ def cpu_vendor() -> Optional[str]:
 def is_vm() -> bool:
 	try:
 		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"".join(SysCommand("systemd-detect-virt")).lower() != b"none":
+		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
 			return True
 	except:
 		pass
