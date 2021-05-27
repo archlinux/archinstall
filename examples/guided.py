@@ -61,7 +61,6 @@ def ask_user_questions():
 	if not archinstall.arguments.get('sys-encoding', None):
 		archinstall.arguments['sys-encoding'] = 'utf-8'
 
-
 	# Ask which harddrive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
@@ -452,6 +451,5 @@ else:
 	archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
 		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-
 
 perform_installation_steps()
