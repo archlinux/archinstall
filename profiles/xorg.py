@@ -4,6 +4,8 @@ import archinstall
 
 is_top_level_profile = True
 
+__description__ = 'Installs a minimal system as well as xorg and graphics drivers.'
+
 __packages__ = [
 	'dkms',
 	'xorg-server',
@@ -22,7 +24,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	__builtins__['_gfx_driver_packages'] = archinstall.select_driver()
+	archinstall.storage["gfx_driver_packages"] = archinstall.select_driver()
 
 	# TODO: Add language section and/or merge it with the locale selected
 	#       earlier in for instance guided.py installer.
@@ -35,13 +37,13 @@ def _prep_function(*args, **kwargs):
 # or through conventional import xorg
 if __name__ == 'xorg':
 	try:
-		if "nvidia" in _gfx_driver_packages:
+		if "nvidia" in archinstall.storage.get("gfx_driver_packages", None):
 			if "linux-zen" in archinstall.storage['installation_session'].base_packages or "linux-lts" in archinstall.storage['installation_session'].base_packages:
 				archinstall.storage['installation_session'].add_additional_packages("dkms")  # I've had kernel regen fail if it wasn't installed before nvidia-dkms
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:
-				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', None))}")
 		else:
-			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(_gfx_driver_packages)}")
+			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', None))}")
 	except:
 		archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit")  # Prep didn't run, so there's no driver to install
