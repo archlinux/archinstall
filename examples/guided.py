@@ -444,7 +444,10 @@ else:
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
 	if archinstall.arguments.get('profile', None) is not None:
-		archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
+		if type(archinstall.arguments.get('profile', None)) is dict:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
+		else:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
 	else:
 		archinstall.arguments['profile'] = None
 	if archinstall.arguments.get('mirror-region', None) is not None:
