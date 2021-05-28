@@ -260,7 +260,7 @@ def perform_installation_steps():
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
 	user_configuration = json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-	with open("/var/log/archinstall/user_configuration.json") as config_file:
+	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 	print()
 
