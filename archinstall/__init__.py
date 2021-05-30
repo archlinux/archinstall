@@ -32,7 +32,7 @@ def initialize_arguments():
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
-	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
+	parser.add_argument("--script", nargs="?", help="Script to run for installation", type=str)
 	args, unknowns = parser.parse_known_args()
 	if args.config is not None:
 		try:
@@ -56,7 +56,11 @@ def initialize_arguments():
 			else:
 				key, val = arg[2:], True
 			config[key] = val
-	config["script"] = args.script
+	if args.script:
+		config["script"] = args.script
+	# if script not set by config file, then set the default value
+	elif not "script" in config.keys():
+		config["script"] = "guided"
 	return config
 
 
