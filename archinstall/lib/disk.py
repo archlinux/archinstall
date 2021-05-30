@@ -456,7 +456,7 @@ class Filesystem:
 				if SysCommand(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
 					return self
 				else:
-					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
+					raise DiskError('Problem setting the partition format to MBR:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
