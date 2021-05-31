@@ -40,6 +40,7 @@ class Installer:
 			base_packages = __packages__[:3]
 		if kernels is None:
 			kernels = ['linux']
+		self.kernels = kernels
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -52,6 +53,7 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+
 
 		self.post_base_install = []
 
@@ -453,45 +455,43 @@ class Installer:
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':
-						loader.write(f'default {self.init_time}\n')
+						loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
 					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
 						# We add in the default timeout to support dual-boot
 						loader.write(f"{line[1:]}\n")
 					else:
 						loader.write(f"{line}\n")
 
-			# For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-			# And blkid is wrong in terms of LUKS.
-			# UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-			# Setup the loader entry
-			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
-				entry.write('# Created by: archinstall\n')
-				entry.write(f'# Created on: {self.init_time}\n')
-				entry.write('title Arch Linux\n')
-				entry.write('linux /vmlinuz-linux\n') # Issue: hardcoded
-				if not is_vm():
-					vendor = cpu_vendor()
-					if vendor == "AuthenticAMD":
-						entry.write("initrd /amd-ucode.img\n")
-					elif vendor == "GenuineIntel":
-						entry.write("initrd /intel-ucode.img\n")
+			for kernel in self.kernels:
+				# Setup the loader entry
+				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
+					entry.write('# Created by: archinstall\n')
+					entry.write(f'# Created on: {self.init_time}\n')
+					entry.write('title Arch Linux\n')
+					entry.write(f"linux /vmlinuz-{kernel}\n") # Issue: hardcoded
+					if not is_vm():
+						vendor = cpu_vendor()
+						if vendor == "AuthenticAMD":
+							entry.write("initrd /amd-ucode.img\n")
+						elif vendor == "GenuineIntel":
+							entry.write("initrd /intel-ucode.img\n")
+						else:
+							self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
+					entry.write(f"initrd /initramfs-{kernel}.img\n")
+					# blkid doesn't trigger on loopback devices really well,
+					# so we'll use the old manual method until we get that sorted out.
+
+					if real_device := self.detect_encryption(root_partition):
+						# TODO: We need to detect if the encrypted device is a whole disk encryption,
+						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
-						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
-				entry.write('initrd /initramfs-linux.img\n')
-				# blkid doesn't trigger on loopback devices really well,
-				# so we'll use the old manual method until we get that sorted out.
+						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 
-				if real_device := self.detect_encryption(root_partition):
-					# TODO: We need to detect if the encrypted device is a whole disk encryption,
-					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
-				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
-
-				self.helper_flags['bootloader'] = bootloader
-				return True
+					self.helper_flags['bootloader'] = bootloader
+					return True
 
 		elif bootloader == "grub-install":
 			self.pacstrap('grub')
