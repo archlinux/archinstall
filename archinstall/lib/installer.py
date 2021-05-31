@@ -491,7 +491,6 @@ class Installer:
 						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 
 					self.helper_flags['bootloader'] = bootloader
-					return True
 
 		elif bootloader == "grub-install":
 			self.pacstrap('grub')
@@ -509,9 +508,10 @@ class Installer:
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
-				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
+
+		return True
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)
