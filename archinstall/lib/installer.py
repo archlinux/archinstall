@@ -468,7 +468,7 @@ class Installer:
 				entry.write('# Created by: archinstall\n')
 				entry.write(f'# Created on: {self.init_time}\n')
 				entry.write('title Arch Linux\n')
-				entry.write('linux /vmlinuz-linux\n')
+				entry.write('linux /vmlinuz-linux\n') # Issue: hardcoded
 				if not is_vm():
 					vendor = cpu_vendor()
 					if vendor == "AuthenticAMD":
