@@ -1,4 +1,3 @@
-<!-- Libera Chat TXT record: libera-Gh2cCe9mw9ePkHvLBYsYAdcA -->
 <!-- <div align="center"> -->
 <img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
 
