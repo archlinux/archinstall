@@ -1,4 +1,3 @@
-import fcntl
 import logging
 import os
 import socket
@@ -12,6 +11,7 @@ from .storage import storage
 
 
 def get_hw_addr(ifname):
+	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in info[18:24])
