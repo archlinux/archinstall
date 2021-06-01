@@ -16,7 +16,7 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', *a
 	region_list = []
 	for region in regions.split(','):
 		region_list.append(f'country={region}')
-	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
+	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
 	new_list = response.read().replace(b"#Server", b"Server")
 	with open(destination, "wb") as mirrorlist:
 		mirrorlist.write(new_list)
@@ -79,7 +79,7 @@ def re_rank_mirrors(top=10, *positionals, **kwargs):
 
 
 def list_mirrors():
-	url = "https://archlinux.org/mirrorlist/?protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
+	url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
 	regions = {}
 
 	try:
