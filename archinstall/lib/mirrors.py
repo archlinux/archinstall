@@ -1,5 +1,6 @@
 import urllib.error
 import urllib.request
+from typing import Union
 
 from .general import *
 from .output import log
@@ -50,7 +51,7 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	return new_raw_data
 
 
-def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', sort_order=["https", "http"], *args, **kwargs):
+def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', sort_order=["https", "http"], *args, **kwargs) -> Union[bool, bytes]:
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
