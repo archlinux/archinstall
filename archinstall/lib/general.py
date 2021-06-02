@@ -265,7 +265,7 @@ class SysCommandWorker:
 		if not self.pid:
 			try:
 				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
-				if storage.arguments.get('debug'):
+				if storage['arguments'].get('debug'):
 					log(f"Executing: {self.cmd}", level=logging.DEBUG)
 			except FileNotFoundError:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
