@@ -575,7 +575,8 @@ def select_profile():
 
 	if len(shown_profiles) >= 1:
 		for index, profile in enumerate(shown_profiles):
-			print(f"{index}: {profile}")
+			description = Profile(None, profile).get_profile_description()
+			print(f"{index}: {profile}: {description}")
 
 		print(' -- The above list is a set of pre-programmed profiles. --')
 		print(' -- They might make it easier to install things like desktop environments. --')
