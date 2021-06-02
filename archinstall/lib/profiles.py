@@ -228,6 +228,18 @@ class Profile(Script):
 		# since developers like less code - omitting it should assume they want to present it.
 		return True
 
+	def get_profile_description(self):
+		with open(self.path, 'r') as source:
+			source_data = source.read()
+
+			if '__description__' in source_data:
+				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
+					if hasattr(imported, '__description__'):
+						return imported.__description__
+
+		# Default to this string if the profile does not have a description.
+		return "This profile does not have the __description__ attribute set."
+
 	@property
 	def packages(self) -> Optional[list]:
 		"""
