@@ -13,7 +13,7 @@ from typing import Union
 
 from .exceptions import *
 from .output import log
-
+from .storage import storage
 
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
@@ -265,6 +265,8 @@ class SysCommandWorker:
 		if not self.pid:
 			try:
 				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
+				if storage.arguments.get('debug'):
+					log(f"Executing: {self.cmd}", level=logging.DEBUG)
 			except FileNotFoundError:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
 				self.exit_code = 1
