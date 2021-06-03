@@ -119,12 +119,12 @@ def cpu_model() -> Optional[str]:
 
 def sys_vendor() -> Optional[str]:
 	with open(f"/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
-		return vendor.read()
+		return vendor.read().strip()
 
 
 def product_name() -> Optional[str]:
 	with open(f"/sys/devices/virtual/dmi/id/product_name") as product:
-		return product.read()
+		return product.read().strip()
 
 
 def mem_info():
@@ -142,6 +142,10 @@ def mem_free() -> Optional[str]:
 
 def mem_total() -> Optional[str]:
 	return mem_info()['MemTotal']
+
+
+def virtualization() -> Optional[str]:
+	return str(SysCommand("systemd-detect-virt")).strip('\r\n')
 
 
 def is_vm() -> bool:
