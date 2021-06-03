@@ -254,7 +254,8 @@ class Partition:
 			return None
 
 	def has_content(self):
-		if not get_filesystem_type(self.path):
+		fs_type = get_filesystem_type(self.path)
+		if not fs_type or "swap" in fs_type:
 			return False
 
 		temporary_mountpoint = '/tmp/' + hashlib.md5(bytes(f"{time.time()}", 'UTF-8') + os.urandom(12)).hexdigest()
