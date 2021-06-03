@@ -2,8 +2,8 @@ from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
-from .storage import storage
 from .plugins import plugins
+from .storage import storage
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -53,7 +53,6 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
-
 
 		self.post_base_install = []
 
@@ -442,6 +441,10 @@ class Installer:
 				# Fallback, try creating the boot loader without touching the EFI variables
 				SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
+			# Ensure that the /boot/loader directory exists before we try to create files in it
+			if not os.path.exists(f'{self.target}/boot/loader'):
+				os.makedirs(f'{self.target}/boot/loader')
+
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
 				with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
@@ -461,6 +464,10 @@ class Installer:
 						loader.write(f"{line[1:]}\n")
 					else:
 						loader.write(f"{line}\n")
+
+			# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+			if not os.path.exists(f'{self.target}/boot/loader/entries'):
+				os.makedirs(f'{self.target}/boot/loader/entries')
 
 			for kernel in self.kernels:
 				# Setup the loader entry
