@@ -107,6 +107,43 @@ def cpu_vendor() -> Optional[str]:
 	return None
 
 
+def cpu_model() -> Optional[str]:
+	cpu_info_raw = SysCommand("lscpu -J")
+	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+
+	for info in cpu_info:
+		if info.get('field', None) == "Model name:":
+			return info.get('data', None)
+	return None
+
+
+def sys_vendor() -> Optional[str]:
+	with open(f"/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
+		return vendor.read()
+
+
+def product_name() -> Optional[str]:
+	with open(f"/sys/devices/virtual/dmi/id/product_name") as product:
+		return product.read()
+
+
+def mem_info():
+	# This implementation is from https://stackoverflow.com/a/28161352
+	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+
+
+def mem_available() -> Optional[str]:
+	return mem_info()['MemAvailable']
+
+
+def mem_free() -> Optional[str]:
+	return mem_info()['MemFree']
+
+
+def mem_total() -> Optional[str]:
+	return mem_info()['MemTotal']
+
+
 def is_vm() -> bool:
 	try:
 		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
