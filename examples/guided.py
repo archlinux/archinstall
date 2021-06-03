@@ -5,7 +5,7 @@ import time
 
 import archinstall
 from archinstall.lib.general import run_custom_user_commands
-from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
+from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
@@ -15,6 +15,13 @@ if archinstall.arguments.get('help'):
 if os.getuid() != 0:
 	print("Archinstall requires root privileges to run. See --help for more.")
 	exit(1)
+
+# Log various information about hardware before starting the installation. This might assist in troubleshooting
+archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
+archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
+archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
+archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
+archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)

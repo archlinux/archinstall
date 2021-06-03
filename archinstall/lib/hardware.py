@@ -79,22 +79,22 @@ def has_uefi() -> bool:
 def graphics_devices() -> dict:
 	cards = {}
 	for line in SysCommand("lspci"):
-		if b' VGA ' in line:
+		if b' VGA ' in line or b' 3D ' in line:
 			_, identifier = line.split(b': ', 1)
-			cards[identifier.strip().lower().decode('UTF-8')] = line
+			cards[identifier.strip().decode('UTF-8')] = line
 	return cards
 
 
 def has_nvidia_graphics() -> bool:
-	return any('nvidia' in x for x in graphics_devices())
+	return any('nvidia' in x.lower() for x in graphics_devices())
 
 
 def has_amd_graphics() -> bool:
-	return any('amd' in x for x in graphics_devices())
+	return any('amd' in x.lower() for x in graphics_devices())
 
 
 def has_intel_graphics() -> bool:
-	return any('intel' in x for x in graphics_devices())
+	return any('intel' in x.lower() for x in graphics_devices())
 
 
 def cpu_vendor() -> Optional[str]:
@@ -105,6 +105,47 @@ def cpu_vendor() -> Optional[str]:
 		if info.get('field', None) == "Vendor ID:":
 			return info.get('data', None)
 	return None
+
+
+def cpu_model() -> Optional[str]:
+	cpu_info_raw = SysCommand("lscpu -J")
+	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+
+	for info in cpu_info:
+		if info.get('field', None) == "Model name:":
+			return info.get('data', None)
+	return None
+
+
+def sys_vendor() -> Optional[str]:
+	with open(f"/sys/devices/virtual/dmi/id/sys_vendor") as vendor:
+		return vendor.read().strip()
+
+
+def product_name() -> Optional[str]:
+	with open(f"/sys/devices/virtual/dmi/id/product_name") as product:
+		return product.read().strip()
+
+
+def mem_info():
+	# This implementation is from https://stackoverflow.com/a/28161352
+	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+
+
+def mem_available() -> Optional[str]:
+	return mem_info()['MemAvailable']
+
+
+def mem_free() -> Optional[str]:
+	return mem_info()['MemFree']
+
+
+def mem_total() -> Optional[str]:
+	return mem_info()['MemTotal']
+
+
+def virtualization() -> Optional[str]:
+	return str(SysCommand("systemd-detect-virt")).strip('\r\n')
 
 
 def is_vm() -> bool:
