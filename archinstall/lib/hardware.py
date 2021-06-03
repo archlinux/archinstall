@@ -81,20 +81,20 @@ def graphics_devices() -> dict:
 	for line in SysCommand("lspci"):
 		if b' VGA ' in line or b' 3D ' in line:
 			_, identifier = line.split(b': ', 1)
-			cards[identifier.strip().lower().decode('UTF-8')] = line
+			cards[identifier.strip().decode('UTF-8')] = line
 	return cards
 
 
 def has_nvidia_graphics() -> bool:
-	return any('nvidia' in x for x in graphics_devices())
+	return any('nvidia' in x.lower() for x in graphics_devices())
 
 
 def has_amd_graphics() -> bool:
-	return any('amd' in x for x in graphics_devices())
+	return any('amd' in x.lower() for x in graphics_devices())
 
 
 def has_intel_graphics() -> bool:
-	return any('intel' in x for x in graphics_devices())
+	return any('intel' in x.lower() for x in graphics_devices())
 
 
 def cpu_vendor() -> Optional[str]:
