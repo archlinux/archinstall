@@ -2,8 +2,8 @@ from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
-from .storage import storage
 from .plugins import plugins
+from .storage import storage
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -40,6 +40,7 @@ class Installer:
 			base_packages = __packages__[:3]
 		if kernels is None:
 			kernels = ['linux']
+		self.kernels = kernels
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -440,6 +441,10 @@ class Installer:
 				# Fallback, try creating the boot loader without touching the EFI variables
 				SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
+			# Ensure that the /boot/loader directory exists before we try to create files in it
+			if not os.path.exists(f'{self.target}/boot/loader'):
+				os.makedirs(f'{self.target}/boot/loader')
+
 			# Modify or create a loader.conf
 			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
 				with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
@@ -453,45 +458,46 @@ class Installer:
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':
-						loader.write(f'default {self.init_time}\n')
+						loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
 					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
 						# We add in the default timeout to support dual-boot
 						loader.write(f"{line[1:]}\n")
 					else:
 						loader.write(f"{line}\n")
 
-			# For some reason, blkid and /dev/disk/by-uuid are not getting along well.
-			# And blkid is wrong in terms of LUKS.
-			# UUID = sys_command('blkid -s PARTUUID -o value {drive}{partition_2}'.format(**args)).decode('UTF-8').strip()
-			# Setup the loader entry
-			with open(f'{self.target}/boot/loader/entries/{self.init_time}.conf', 'w') as entry:
-				entry.write('# Created by: archinstall\n')
-				entry.write(f'# Created on: {self.init_time}\n')
-				entry.write('title Arch Linux\n')
-				entry.write('linux /vmlinuz-linux\n')
-				if not is_vm():
-					vendor = cpu_vendor()
-					if vendor == "AuthenticAMD":
-						entry.write("initrd /amd-ucode.img\n")
-					elif vendor == "GenuineIntel":
-						entry.write("initrd /intel-ucode.img\n")
+			# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+			if not os.path.exists(f'{self.target}/boot/loader/entries'):
+				os.makedirs(f'{self.target}/boot/loader/entries')
+
+			for kernel in self.kernels:
+				# Setup the loader entry
+				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
+					entry.write('# Created by: archinstall\n')
+					entry.write(f'# Created on: {self.init_time}\n')
+					entry.write('title Arch Linux\n')
+					entry.write(f"linux /vmlinuz-{kernel}\n")
+					if not is_vm():
+						vendor = cpu_vendor()
+						if vendor == "AuthenticAMD":
+							entry.write("initrd /amd-ucode.img\n")
+						elif vendor == "GenuineIntel":
+							entry.write("initrd /intel-ucode.img\n")
+						else:
+							self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
+					entry.write(f"initrd /initramfs-{kernel}.img\n")
+					# blkid doesn't trigger on loopback devices really well,
+					# so we'll use the old manual method until we get that sorted out.
+
+					if real_device := self.detect_encryption(root_partition):
+						# TODO: We need to detect if the encrypted device is a whole disk encryption,
+						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
-						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
-				entry.write('initrd /initramfs-linux.img\n')
-				# blkid doesn't trigger on loopback devices really well,
-				# so we'll use the old manual method until we get that sorted out.
+						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
 
-				if real_device := self.detect_encryption(root_partition):
-					# TODO: We need to detect if the encrypted device is a whole disk encryption,
-					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
-				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
-
-				self.helper_flags['bootloader'] = bootloader
-				return True
+					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
 			self.pacstrap('grub')
@@ -509,9 +515,10 @@ class Installer:
 				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
-				return True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
+
+		return True
 
 	def add_additional_packages(self, *packages):
 		return self.pacstrap(*packages)

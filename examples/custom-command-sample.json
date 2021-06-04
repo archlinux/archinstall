@@ -8,7 +8,7 @@
     ],
     "!encryption-password": "supersecret",
     "filesystem": "btrfs",
-    "gfx_driver": "VMware / VirtualBox (open-source)",
+    "gfx_driver": "All open-source (default)",
     "harddrive": {
         "path": "/dev/nvme0n1"
     },

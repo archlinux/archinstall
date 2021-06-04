@@ -61,6 +61,10 @@ def initialize_arguments():
 
 
 arguments = initialize_arguments()
+storage['arguments'] = arguments
+if arguments.get('debug'):
+	log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
+
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
 if arguments.get('plugin', None):

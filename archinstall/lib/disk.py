@@ -353,7 +353,8 @@ class Partition:
 			return None
 
 	def has_content(self):
-		if not get_filesystem_type(self.path):
+		fs_type = get_filesystem_type(self.path)
+		if not fs_type or "swap" in fs_type:
 			return False
 
 		temporary_mountpoint = '/tmp/' + hashlib.md5(bytes(f"{time.time()}", 'UTF-8') + os.urandom(12)).hexdigest()
@@ -555,7 +556,7 @@ class Filesystem:
 				if SysCommand(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
 					return self
 				else:
-					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
+					raise DiskError('Problem setting the partition format to MBR:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
