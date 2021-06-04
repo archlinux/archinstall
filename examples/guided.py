@@ -5,7 +5,7 @@ import time
 
 import archinstall
 from archinstall.lib.general import run_custom_user_commands
-from archinstall.lib.hardware import has_uefi
+from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
@@ -186,7 +186,10 @@ def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-	archinstall.log(json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON), level=logging.INFO)
+	user_configuration = json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON)
+	archinstall.log(user_configuration, level=logging.INFO)
+	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
+		config_file.write(user_configuration)
 	print()
 
 	if not archinstall.arguments.get('silent'):
@@ -369,15 +372,24 @@ else:
 	archinstall.arguments['harddrive'].keep_partitions = False
 	# Temporary workaround to make Desktop Environments work
 	if archinstall.arguments.get('profile', None) is not None:
-		archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
+		if type(archinstall.arguments.get('profile', None)) is dict:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
+		else:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
 	else:
 		archinstall.arguments['profile'] = None
 
 	if archinstall.arguments.get('mirror-region', None) is not None:
-		selected_region = archinstall.arguments.get('mirror-region', None)
-		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
+		if type(archinstall.arguments.get('mirror-region', None)) is dict:
+			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
+		else:
+			selected_region = archinstall.arguments.get('mirror-region', None)
+			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 	archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
 	archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	
+	if archinstall.arguments.get('gfx_driver', None) is not None:
+		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+
 perform_filesystem_operations()
 perform_installation(archinstall.arguments.get('target-mountpoint', None))

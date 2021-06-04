@@ -3,6 +3,7 @@ from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import *
 from .storage import storage
+from .plugins import plugins
 from .user_interaction import *
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -132,6 +133,12 @@ class Installer:
 	def pacstrap(self, *packages, **kwargs):
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_pacstrap'):
+				if (result := plugin.on_pacstrap(packages)):
+					packages = result
+
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
@@ -143,6 +150,11 @@ class Installer:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 
 	def set_mirrors(self, mirrors):
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_mirrors'):
+				if result := plugin.on_mirrors(mirrors):
+					mirrors = result
+
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
 
 	def genfstab(self, flags='-pU'):
@@ -153,6 +165,10 @@ class Installer:
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_genfstab'):
+				plugin.on_genfstab(self)
 
 		return True
 
@@ -177,6 +193,11 @@ class Installer:
 		if not len(zone):
 			return True  # Redundant
 
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_timezone'):
+				if result := plugin.on_timezone(zone):
+					zone = result
+
 		if (pathlib.Path("/usr") / "share" / "zoneinfo" / zone).exists():
 			(pathlib.Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
 			SysCommand(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
@@ -199,6 +220,10 @@ class Installer:
 			self.log(f'Enabling service {service}', level=logging.INFO)
 			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
 				raise ServiceException(f"Unable to start service {service}: {output}")
+
+			for plugin in plugins.values():
+				if hasattr(plugin, 'on_service'):
+					plugin.on_service(service)
 
 	def run_command(self, cmd, *args, **kwargs):
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
@@ -228,6 +253,11 @@ class Installer:
 				network["DNS"] = dns
 
 			conf = Networkd(Match={"Name": nic}, Network=network)
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_configure_nic'):
+				if (new_conf := plugin.on_configure_nic(nic, dhcp, ip, gateway, dns)):
+					conf = new_conf
 
 		with open(f"{self.target}/etc/systemd/network/10-{nic}.network", "a") as netconf:
 			netconf.write(str(conf))
@@ -292,6 +322,12 @@ class Installer:
 		return False
 
 	def mkinitcpio(self, *flags):
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_mkinitcpio'):
+				# Allow plugins to override the usage of mkinitcpio altogether.
+				if plugin.on_mkinitcpio(self):
+					return True
+
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
@@ -366,9 +402,20 @@ class Installer:
 			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
 			function(self)
 
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_install'):
+				plugin.on_install(self)
+
 		return True
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_add_bootloader'):
+				# Allow plugins to override the boot-loader handling.
+				# This allows for bot configuring and installing bootloaders.
+				if plugin.on_add_bootloader(self):
+					return True
+
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
@@ -487,8 +534,19 @@ class Installer:
 	def user_create(self, user: str, password=None, groups=None, sudo=False):
 		if groups is None:
 			groups = []
-		self.log(f'Creating user {user}', level=logging.INFO)
-		o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
+
+		# This plugin hook allows for the plugin to handle the creation of the user.
+		# Password and Group management is still handled by user_create()
+		handled_by_plugin = False
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_user_create'):
+				if result := plugin.on_user_create(user):
+					handled_by_plugin = result
+
+		if not handled_by_plugin:
+			self.log(f'Creating user {user}', level=logging.INFO)
+			o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
+
 		if password:
 			self.user_set_pw(user, password)
 

@@ -2,6 +2,8 @@
 
 is_top_level_profile = True
 
+__description__ = 'A very basic installation that allows you to customize Arch Linux as you see fit.'
+
 
 def _prep_function(*args, **kwargs):
 	"""

@@ -8,6 +8,7 @@
     ],
     "!encryption-password": "supersecret",
     "filesystem": "btrfs",
+    "gfx_driver": "VMware / VirtualBox (open-source)",
     "harddrive": {
         "path": "/dev/nvme0n1"
     },
@@ -16,14 +17,11 @@
         "linux"
     ],
     "keyboard-language": "us",
-    "mirror-region": {
-        "Worldwide": {
-            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
-        }
-    },
+    "mirror-region": "Worldwide",
     "nic": {
         "NetworkManager": true
     },
+    "ntp": true,
     "packages": ["docker", "git", "wget", "zsh"],
     "profile": "gnome",
     "services": ["docker"],
@@ -32,6 +30,8 @@
             "!password": "devel"
         }
     },
+    "sys-encoding": "utf-8",
+    "sys-language": "en_US",
     "timezone": "US/Eastern",
     "users": {}
 }
