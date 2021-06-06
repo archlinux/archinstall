@@ -633,8 +633,8 @@ def get_default_partition_layout(block_devices):
 					"type" : "primary",
 					"start" : "513MiB",
 					"encrypted" : True,
-					"size" : f"{max(block_devices[0].size*0.2, 20)}GiB",
-					"mountpoint" : "",
+					"size" : f"{max(block_devices[0].size*0.2, 20)*1024}MiB", # Warning: Won't work on small where max size is 16GB for instance.
+					"mountpoint" : "/",
 					"filesystem" : {
 						"format" : "btrfs"
 					}
@@ -642,7 +642,7 @@ def get_default_partition_layout(block_devices):
 				{   # Home
 					"type" : "primary",
 					"encrypted" : True,
-					"start" : f"{max(block_devices[0].size*0.2, 20)}GiB",
+					"start" : f"{513 + (max(block_devices[0].size*0.2, 20)*1024)}MiB",
 					"size" : "100%",
 					"mountpoint" : "/home",
 					"filesystem" : {

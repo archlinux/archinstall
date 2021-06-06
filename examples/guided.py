@@ -82,6 +82,8 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
+	print(archinstall.arguments['harddrives'])
+	print(archinstall.storage['disk_layouts'])
 	exit(0)
 
 	# Get disk encryption password (or skip if blank)
