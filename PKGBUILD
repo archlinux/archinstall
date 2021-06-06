@@ -13,7 +13,6 @@ depends=('python')
 makedepends=('python-setuptools' 'python-sphinx')
 provides=('python-archinstall')
 conflicts=('archinstall' 'python-archinstall' 'python-archinstall-git')
-md5sums=('SKIP')
 
 build() {
         cd "$startdir"
