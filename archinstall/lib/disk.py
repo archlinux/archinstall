@@ -2,7 +2,6 @@ import glob
 import pathlib
 import re
 import time
-from collections import OrderedDict
 from typing import Optional
 
 from .general import *
@@ -30,7 +29,7 @@ class BlockDevice:
 		self.path = path
 		self.info = info
 		self.keep_partitions = True
-		self.part_cache = OrderedDict()
+		self.part_cache = {}
 
 		# TODO: Currently disk encryption is a BIT misleading.
 		#       It's actually partition-encryption, but for future-proofing this
@@ -177,7 +176,7 @@ class BlockDevice:
 		return False
 
 	def flush_cache(self):
-		self.part_cache = OrderedDict()
+		self.part_cache = {}
 
 
 class Partition:
@@ -673,7 +672,7 @@ def device_state(name, *args, **kwargs):
 # lsblk --json -l -n -o path
 def all_disks(*args, **kwargs):
 	kwargs.setdefault("partitions", False)
-	drives = OrderedDict()
+	drives = {}
 	# for drive in json.loads(sys_command(f'losetup --json', *args, **lkwargs, hide_from_log=True)).decode('UTF_8')['loopdevices']:
 	for drive in json.loads(b''.join(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model')).decode('UTF_8'))['blockdevices']:
 		if not kwargs['partitions'] and drive['type'] == 'part':
