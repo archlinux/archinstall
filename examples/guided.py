@@ -75,15 +75,14 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 	else:
-		archinstall.arguments['harddrives'] = [
-			archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.generic_multi_select(archinstall.all_disks(),
-																								text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-																								allow_empty=True)
-		]
+		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
+												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
+												allow_empty=True)
 
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
+	exit(0)
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
