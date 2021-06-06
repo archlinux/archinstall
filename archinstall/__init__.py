@@ -30,7 +30,7 @@ storage['__version__'] = __version__
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
-	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file or URL")
+	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
