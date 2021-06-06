@@ -30,6 +30,7 @@ storage['__version__'] = __version__
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
+	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file or URL")
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
@@ -42,6 +43,9 @@ def initialize_arguments():
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
 				with open(args.config) as file:
 					config = json.load(file)
+				if args.creds is not None:
+					with open(args.creds) as file:
+						config.update(json.load(file))
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config = json.loads(response.read())
