@@ -43,14 +43,14 @@ def initialize_arguments():
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
 				with open(args.config) as file:
 					config = json.load(file)
-				if args.creds is not None:
-					with open(args.creds) as file:
-						config.update(json.load(file))
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config = json.loads(response.read())
 		except Exception as e:
 			print(e)
+		if args.creds is not None:
+			with open(args.creds) as file:
+				config.update(json.load(file))
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
 	for arg in unknowns:
