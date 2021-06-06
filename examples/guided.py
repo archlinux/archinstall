@@ -82,9 +82,6 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
-	print(archinstall.arguments['harddrives'])
-	print(archinstall.storage['disk_layouts'])
-	exit(0)
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
@@ -208,7 +205,7 @@ def perform_filesystem_operations():
 		We mention the drive one last time, and count from 5 to 0.
 	"""
 
-	if archinstall.arguments.get('harddrive', None):
+	if archinstall.arguments.get('harddrives', None):
 		print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
 		archinstall.do_countdown()
 
@@ -219,42 +216,10 @@ def perform_filesystem_operations():
 		mode = archinstall.GPT
 		if has_uefi() is False:
 			mode = archinstall.MBR
-		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
-			# Wipe the entire drive if the disk flag `keep_partitions`is False.
-			if archinstall.arguments['harddrive'].keep_partitions is False:
-				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
 
-			# Check if encryption is desired and mark the root partition as encrypted.
-			if archinstall.arguments.get('!encryption-password', None):
-				root_partition = fs.find_partition('/')
-				root_partition.encrypted = True
-
-			# After the disk is ready, iterate the partitions and check
-			# which ones are safe to format, and format those.
-			for partition in archinstall.arguments['harddrive']:
-				if partition.safe_to_format():
-					# Partition might be marked as encrypted due to the filesystem type crypt_LUKS
-					# But we might have omitted the encryption password question to skip encryption.
-					# In which case partition.encrypted will be true, but passwd will be false.
-					if partition.encrypted and (passwd := archinstall.arguments.get('!encryption-password', None)):
-						partition.encrypt(password=passwd)
-					else:
-						partition.format()
-				else:
-					archinstall.log(f"Did not format {partition} because .safe_to_format() returned False or .allow_formatting was False.", level=logging.DEBUG)
-
-			if archinstall.arguments.get('!encryption-password', None):
-				# First encrypt and unlock, then format the desired partition inside the encrypted part.
-				# archinstall.luks2() encrypts the partition when entering the with context manager, and
-				# unlocks the drive so that it can be used as a normal block-device within archinstall.
-				with archinstall.luks2(fs.find_partition('/'), 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_device:
-					unlocked_device.format(fs.find_partition('/').filesystem)
-					unlocked_device.mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
-			else:
-				fs.find_partition('/').mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
-
-			if has_uefi():
-				fs.find_partition('/boot').mount(archinstall.storage.get('MOUNT_POINT', '/mnt') + '/boot')
+		for drive in archinstall.arguments['harddrives']:
+			with archinstall.Filesystem(drive, mode) as fs:
+				fs.load_layout(archinstall.arguments['harddrives'][drive])
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 

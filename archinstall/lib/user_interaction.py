@@ -651,6 +651,7 @@ def get_default_partition_layout(block_devices):
 				}
 			]
 		}
+	# TODO: Implement sane generic layout for 2+ drives
 
 def wipe_and_create_partitions(block_device):
 	if hasUEFI():
