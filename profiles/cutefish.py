@@ -16,6 +16,7 @@ __packages__ = [
 	"cutefish-statusbar",
 	"cutefish-wallpapers",
 	"cutefish-calculator",
+	"noto-fonts",
 	"konsole",
 	"sddm"
 ]
