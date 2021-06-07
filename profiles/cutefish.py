@@ -5,17 +5,7 @@ import archinstall
 is_top_level_profile = False
 
 __packages__ = [
-	"cutefish-core",
-	"cutefish-dock",
-	"cutefish-filemanager",
-	"cutefish-icons",
-	"cutefish-kwin-plugins",
-	"cutefish-launcher",
-	"cutefish-qt-plugins",
-	"cutefish-settings",
-	"cutefish-statusbar",
-	"cutefish-wallpapers",
-	"cutefish-calculator",
+	"cutefish",
 	"noto-fonts",
 	"konsole",
 	"sddm"
