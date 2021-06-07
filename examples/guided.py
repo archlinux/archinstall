@@ -206,7 +206,7 @@ def perform_filesystem_operations():
 	"""
 
 	if archinstall.arguments.get('harddrives', None):
-		print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
+		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
 		archinstall.do_countdown()
 
 		"""

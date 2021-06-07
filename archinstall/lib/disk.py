@@ -570,6 +570,12 @@ class Filesystem:
 		SysCommand('sync')
 		return True
 
+	def load_layout(self, layout :dict):
+		for partition in layout:
+			print(partition)
+
+		exit(0)
+
 	def find_partition(self, mountpoint):
 		for partition in self.blockdevice:
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
