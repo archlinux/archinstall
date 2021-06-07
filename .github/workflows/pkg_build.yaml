@@ -1,0 +1,26 @@
+# This workflow will build an ArchInstall Package with the commit on it
+
+name: Build ArchInstall Package with ArchInstall Commit
+
+on:
+  push:
+    branches:
+      - master
+      - main # In case we adopt this convention in the future
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - run: makepkg
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ArchInstall Package
+          path: ./*.tar.gz
