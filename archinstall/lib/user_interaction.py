@@ -11,6 +11,7 @@ import termios
 import time
 import tty
 
+from . import arguments
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -699,8 +700,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 
 	drivers = sorted(list(options))
-	default_option = options["All open-source (default)"]
-
+	
 	if drivers:
 		for line in SysCommand('/usr/bin/lspci'):
 			if b' vga ' in line.lower():
@@ -709,22 +709,12 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 				elif b'amd' in line.lower():
 					print(' ** AMD card detected, suggested driver: AMD / ATI **')
 
-		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
-
-		if not initial_option:
-			return default_option
-
-		selected_driver = options[initial_option]
-
-		if type(selected_driver) == dict:
-			driver_options = sorted(list(selected_driver))
-
-			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ', allow_empty_input=False)
-			driver_package_group = selected_driver[driver_package_group]
-
-			return driver_package_group
-
-		return selected_driver
+		arguments['gfx_driver'] = generic_select(drivers, input_text="Select your graphics card driver: ")
+		
+		if arguments.get('gfx_driver', None) is None:
+			arguments['gfx_driver'] = "All open-source (default)"
+			
+		return options.get(arguments.get('gfx_driver'))
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
