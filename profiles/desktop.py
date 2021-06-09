@@ -42,7 +42,7 @@ def _prep_function(*args, **kwargs):
 		'budgie',
 		'mate',
 		'deepin',
-		'enlightenment'
+		'enlightenment',
 	]
 
 	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
