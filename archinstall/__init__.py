@@ -33,6 +33,8 @@ def initialize_arguments():
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
 						help="Warning!!! No prompts, ignored if config is not passed")
+	parser.add_argument("--dry-run", action="store_true",
+						help="Warning!!! Only creates config, does not install")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	args, unknowns = parser.parse_known_args()
 	if args.config is not None:
