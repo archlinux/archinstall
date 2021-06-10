@@ -1,11 +1,57 @@
 import urllib.error
 import urllib.request
+from typing import Union
 
 from .general import *
 from .output import log
 
+def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
+	"""
+	This function can sort /etc/pacman.d/mirrorlist according to the
+	mirror's URL prefix. By default places HTTPS before HTTP but it also
+	preserves the country/rank-order.
 
-def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', *args, **kwargs):
+	This assumes /etc/pacman.d/mirrorlist looks like the following:
+
+	## Comment
+	Server = url
+
+	or
+
+	## Comment
+	#Server = url
+
+	But the Comments need to start with double-hashmarks to be distringuished
+	from server url definitions (commented or uncommented).
+	"""
+	comments_and_whitespaces = b""
+
+	categories = {key: [] for key in sort_order+["Unknown"]}
+	for line in raw_data.split(b"\n"):
+		if line[0:2] in (b'##', b''):
+			comments_and_whitespaces += line + b'\n'
+		elif line[:6].lower() == b'server' or line[:7].lower() == b'#server':
+			opening, url = line.split(b'=', 1)
+			opening, url = opening.strip(), url.strip()
+			if (category := url.split(b'://',1)[0].decode('UTF-8')) in categories:
+				categories[category].append(comments_and_whitespaces)
+				categories[category].append(opening+b' = '+url+b'\n')
+			else:
+				categories["Unknown"].append(comments_and_whitespaces)
+				categories["Unknown"].append(opening+b' = '+url+b'\n')
+
+			comments_and_whitespaces = b""
+
+
+	new_raw_data = b''
+	for category in sort_order+["Unknown"]:
+		for line in categories[category]:
+			new_raw_data += line
+
+	return new_raw_data
+
+
+def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', sort_order=["https", "http"], *args, **kwargs) -> Union[bool, bytes]:
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -16,12 +62,19 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', *a
 	region_list = []
 	for region in regions.split(','):
 		region_list.append(f'country={region}')
-	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
+	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
 	new_list = response.read().replace(b"#Server", b"Server")
-	with open(destination, "wb") as mirrorlist:
-		mirrorlist.write(new_list)
 
-	return True
+	if sort_order:
+		new_list = sort_mirrorlist(new_list, sort_order=sort_order)
+
+	if destination:
+		with open(destination, "wb") as mirrorlist:
+			mirrorlist.write(new_list)
+
+		return True
+	else:
+		return new_list.decode('UTF-8')
 
 
 def add_custom_mirrors(mirrors: list, *args, **kwargs):
@@ -78,8 +131,8 @@ def re_rank_mirrors(top=10, *positionals, **kwargs):
 	return False
 
 
-def list_mirrors():
-	url = "https://archlinux.org/mirrorlist/?protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
+def list_mirrors(sort_order=["https", "http"]):
+	url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
 	regions = {}
 
 	try:
@@ -88,8 +141,12 @@ def list_mirrors():
 		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
 		return regions
 
+	mirrorlist = response.read()
+	if sort_order:
+		mirrorlist = sort_mirrorlist(mirrorlist, sort_order=sort_order)
+
 	region = 'Unknown region'
-	for line in response.readlines():
+	for line in mirrorlist.split(b'\n'):
 		if len(line.strip()) == 0:
 			continue
 
