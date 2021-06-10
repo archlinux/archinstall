@@ -94,7 +94,8 @@ def ask_user_questions():
 				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+	if not archinstall.arguments.get("bootloader", None):
+		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
 
 	# Get the hostname for the machine
