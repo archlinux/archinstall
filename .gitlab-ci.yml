@@ -1,10 +1,14 @@
 # This file contains GitLab CI/CD configuration for the ArchInstall project.
 # It defines several jobs that get run when a new commit is made, and is comparable to the GitHub workflows.
-# All jons will be run in the official archlinux container image, so we will declare that here.
 # There is an expectation that a runner exists that has the --privileged flag enabled for the build ISO job to run correctly.
 # These jobs should leverage the same tag as that runner. If necessary, change the tag from 'docker' to the one it uses.
+# All jobs will be run in the official archlinux container image, so we will declare that here.
 
 image: archlinux:latest
+
+# This can be used to handle common actions. In this case, we do a pacman -Sy to make sure repos are ready to use.
+before_script:
+  - pacman -Sy
 
 stages:
   - lint
@@ -58,7 +62,7 @@ build_iso:
     - echo "echo \"This ISO was built from Git SHA $CI_COMMIT_SHA\"" >> /tmp/archlive/airootfs/root/.zprofile
     - echo "echo \"Type archinstall to launch the installer.\"" >> /tmp/archlive/airootfs/root/.zprofile
     - cat /tmp/archlive/airootfs/root/.zprofile
-    - pacman -Sy; pacman --noconfirm -S git archiso
+    - pacman --noconfirm -S git archiso
     - cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
     - echo -e "git\npython\npython-pip\npython-setuptools" >> /tmp/archlive/packages.x86_64
     - find /tmp/archlive
@@ -69,6 +73,7 @@ build_iso:
       - /tmp/archlive/out/*.iso
     expire_in: 1 week
 
+## This job only runs when a tag is created on the master branch. This is because we do not want to try to publish to PyPi every time we commit.
 ## The following CI/CD variables need to be set to the PyPi username and password in the GitLab project's settings for this stage to work.
 # * FLIT_USERNAME
 # * FLIT_PASSWORD
@@ -77,7 +82,11 @@ publish_pypi:
   tags:
     - docker
   script:
-    - pacman -Sy; pacman --noconfirm -S python python-pip
+    - pacman --noconfirm -S python python-pip
     - python -m pip install --upgrade pip
     - pip install setuptools wheel flit
     - flit
+  only:
+    - tags
+  except:
+    - branches
