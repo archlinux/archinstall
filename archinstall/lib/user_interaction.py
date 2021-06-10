@@ -18,7 +18,7 @@ from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, sea
 from .networking import list_interfaces
 from .output import log
 from .profiles import Profile, list_profiles
-
+from .storage import *
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
