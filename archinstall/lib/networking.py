@@ -31,9 +31,8 @@ def list_interfaces(skip_loopback=True):
 def check_mirror_reachable():
 	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
 		return True
-	elif exit_code == 256:
-		if os.geteuid() != 0:
-			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
+	elif os.geteuid() != 0:
+		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 
 	return False
 
