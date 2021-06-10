@@ -212,14 +212,8 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
-		# only ask for audio server selection on a desktop profile
-		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
-			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
-		else:
-			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
-			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
-			archinstall.arguments['audio'] = None
-
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
+	
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
 		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
