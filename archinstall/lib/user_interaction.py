@@ -191,8 +191,6 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	return selected_options
 
 def select_encrypted_partitions(blockdevices :dict) -> dict:
-	print(blockdevices[0])
-
 	if len(blockdevices) == 1:
 		if len(blockdevices[0]['partitions']) == 2:
 			root = find_partition_by_mountpoint(blockdevices[0]['partitions'], '/')
@@ -617,40 +615,53 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 
 def get_default_partition_layout(block_devices):
 	if len(block_devices) == 1:
-		return {
-			block_devices[0] : [
-				{   # Boot
-					"type" : "primary",
-					"start" : "0MiB",
-					"size" : "513MiB",
-					"boot" : True,
-					"mountpoint" : "/boot",
-					"filesystem" : {
-						"format" : "fat32"
-					}
-				},
-				{   # Root
-					"type" : "primary",
-					"start" : "513MiB",
-					"encrypted" : True,
-					"size" : f"{max(block_devices[0].size*0.2, 20)*1024}MiB", # Warning: Won't work on small where max size is 16GB for instance.
-					"mountpoint" : "/",
-					"filesystem" : {
-						"format" : "btrfs"
-					}
-				},
-				{   # Home
-					"type" : "primary",
-					"encrypted" : True,
-					"start" : f"{513 + (max(block_devices[0].size*0.2, 20)*1024)}MiB",
-					"size" : "100%",
-					"mountpoint" : "/home",
-					"filesystem" : {
-						"format" : "btrfs"
-					}
-				}
-			]
+		MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
+
+		layout = {
+			block_devices[0] : {
+				"wipe" : True,
+				"partitions" : []
+			}
 		}
+
+		layout[block_devices[0]]['partitions'].append({
+			# Boot
+			"type" : "primary",
+			"start" : "1MiB",
+			"size" : "513MiB",
+			"boot" : True,
+			"mountpoint" : "/boot",
+			"filesystem" : {
+				"format" : "fat32"
+			}
+		})
+		layout[block_devices[0]]['partitions'].append({
+			# Root
+			"type" : "primary",
+			"start" : "513MiB",
+			"encrypted" : True,
+			"size" : "100%" if block_devices[0].size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_devices[0].size, 20)*1024}MiB",
+			"mountpoint" : "/",
+			"filesystem" : {
+				"format" : "btrfs"
+			}
+		})
+
+		if block_devices[0].size > MIN_SIZE_TO_ALLOW_HOME_PART:
+			layout[block_devices[0]]['partitions'].append({
+				# Home
+				"type" : "primary",
+				"encrypted" : True,
+				"start" : f"{min(block_devices[0].size*0.2, 20)*1024}MiB",
+				"size" : "100%",
+				"mountpoint" : "/home",
+				"filesystem" : {
+					"format" : "btrfs"
+				}
+			})
+
+		return layout
+
 	# TODO: Implement sane generic layout for 2+ drives
 
 def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
@@ -663,7 +674,7 @@ def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
 	suggested_layout = [
 		{   # Boot
 			"type" : "primary",
-			"start" : "0MiB",
+			"start" : "1MiB",
 			"size" : "513MiB",
 			"boot" : True,
 			"mountpoint" : "/boot",

@@ -322,6 +322,15 @@ class SysCommand:
 		for line in self.session:
 			yield line
 
+	def __getitem__(self, key):
+		if type(key) is slice:
+			start = key.start if key.start else 0
+			end = key.stop if key.stop else len(self.session._trace_log)
+
+			return self.session._trace_log[start:end]
+		else:
+			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
+
 	def __repr__(self, *args, **kwargs):
 		return self.session._trace_log.decode('UTF-8')
 

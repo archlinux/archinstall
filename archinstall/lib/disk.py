@@ -571,15 +571,23 @@ class Filesystem:
 		return True
 
 	def load_layout(self, layout :dict):
-		for partition in layout:
+		# If the layout tells us to wipe the drive, we do so
+		if layout.get('wipe', False):
+			if self.mode == GPT:
+				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
+					raise KeyError(f"Could not create a GPT label on {self}")
+			elif self.mode == MBR:
+				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+					raise KeyError(f"Could not create a MSDOS label on {self}")
+
+		# We then iterate the partitions in order
+		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if 'UUID' not in partition:
 				self.add_partition(partition.get('type', 'primary'),
 								start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 								end=partition.get('size', '100%'),
 								partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
-				
-
 
 		exit(0)
 
@@ -589,7 +597,9 @@ class Filesystem:
 				return partition
 
 	def raw_parted(self, string: str):
-		return SysCommand(f'/usr/bin/parted -s {string}')
+		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
+			log(f"Could not generate partition: {cmd_handle}", level=logging.ERROR, fg="red")
+		return cmd_handle
 
 	def parted(self, string: str):
 		"""
@@ -601,35 +611,11 @@ class Filesystem:
 		return self.raw_parted(string).exit_code
 
 	def use_entire_disk(self, root_filesystem_type='ext4'):
-		log(f"Using and formatting the entire {self.blockdevice}.", level=logging.DEBUG)
-		if has_uefi():
-			self.add_partition('primary', start='1MiB', end='513MiB', partition_format='fat32')
-			self.set_name(0, 'EFI')
-			self.set(0, 'boot on')
-			# TODO: Probably redundant because in GPT mode 'esp on' is an alias for "boot on"?
-			# https://www.gnu.org/software/parted/manual/html_node/set.html
-			self.set(0, 'esp on')
-			self.add_partition('primary', start='513MiB', end='100%')
-
-			self.blockdevice.partition[0].filesystem = 'vfat'
-			self.blockdevice.partition[1].filesystem = root_filesystem_type
-			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
-
-			self.blockdevice.partition[0].target_mountpoint = '/boot'
-			self.blockdevice.partition[1].target_mountpoint = '/'
-
-			self.blockdevice.partition[0].allow_formatting = True
-			self.blockdevice.partition[1].allow_formatting = True
-		else:
-			# we don't need a seprate boot partition it would be a waste of space
-			self.add_partition('primary', start='1MB', end='100%')
-			self.blockdevice.partition[0].filesystem = root_filesystem_type
-			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
-			self.blockdevice.partition[0].target_mountpoint = '/'
-			self.blockdevice.partition[0].allow_formatting = True
+		# TODO: Implement this with declarative profiles instead.
+		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
 	def add_partition(self, partition_type, start, end, partition_format=None):
-		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
+		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
