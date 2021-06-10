@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice
+from .disk import BlockDevice, valid_fs_type
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -580,20 +580,6 @@ def select_partition_layout(block_device):
 		}
 	}
 
-def valid_fs_type(fstype :str) -> bool:
-	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
-
-	return fstype in [
-		"ext2",
-		"fat16", "fat32",
-		"hfs", "hfs+", "hfsx",
-		"linux-swap",
-		"NTFS",
-		"reiserfs",
-		"ufs",
-		"btrfs",
-	]
-
 def valid_parted_position(pos :str):
 	if not len(pos):
 		return False
@@ -630,6 +616,7 @@ def get_default_partition_layout(block_devices):
 			"start" : "1MiB",
 			"size" : "513MiB",
 			"boot" : True,
+			"format" : True,
 			"mountpoint" : "/boot",
 			"filesystem" : {
 				"format" : "fat32"
@@ -640,6 +627,7 @@ def get_default_partition_layout(block_devices):
 			"type" : "primary",
 			"start" : "513MiB",
 			"encrypted" : True,
+			"format" : True,
 			"size" : "100%" if block_devices[0].size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_devices[0].size, 20)*1024}MiB",
 			"mountpoint" : "/",
 			"filesystem" : {
@@ -652,6 +640,7 @@ def get_default_partition_layout(block_devices):
 				# Home
 				"type" : "primary",
 				"encrypted" : True,
+				"format" : True,
 				"start" : f"{min(block_devices[0].size*0.2, 20)*1024}MiB",
 				"size" : "100%",
 				"mountpoint" : "/home",

@@ -223,6 +223,7 @@ def perform_filesystem_operations():
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
 				fs.load_layout(archinstall.storage['disk_layouts'][drive])
+				fs.mount_ordered_layout(archinstall.storage['disk_layouts'][drive])
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
