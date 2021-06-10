@@ -1,4 +1,3 @@
-import fcntl
 import logging
 import os
 import socket
@@ -12,6 +11,7 @@ from .storage import storage
 
 
 def get_hw_addr(ifname):
+	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
 	return ':'.join('%02x' % b for b in info[18:24])
@@ -31,7 +31,7 @@ def list_interfaces(skip_loopback=True):
 def check_mirror_reachable():
 	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
 		return True
-	elif exit_code == 256:
+	elif os.geteuid() != 0:
 		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 
 	return False

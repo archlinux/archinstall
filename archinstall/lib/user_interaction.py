@@ -7,9 +7,7 @@ import select  # Used for char by char polling of sys.stdin
 import shutil
 import signal
 import sys
-import termios
 import time
-import tty
 
 from .exceptions import *
 from .general import SysCommand
@@ -269,6 +267,8 @@ class MiniCurses:
 
 	def get_keyboard_input(self, strip_rowbreaks=True, end='\n'):
 		assert end in ['\r', '\n', None]
+		import termios
+		import tty
 
 		poller = select.epoll()
 		response = ''
