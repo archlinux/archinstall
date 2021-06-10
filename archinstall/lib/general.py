@@ -202,27 +202,6 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			output = output.strip('\r\n ')
-			if len(output) <= 0:
-				return False
-
-			from .user_interaction import get_terminal_width
-
-			# Move back to the beginning of the terminal
-			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % 0)
-			sys.stdout.flush()
-
-			# Clear the line
-			sys.stdout.write(" " * get_terminal_width())
-			sys.stdout.flush()
-
-			# Move back to the beginning again
-			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % 0)
-			sys.stdout.flush()
-
-			# And print the new output we're peaking on:
 			sys.stdout.write(output)
 			sys.stdout.flush()
 		return True
