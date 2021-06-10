@@ -16,11 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
-      options: --privileged
     steps:
       - uses: actions/checkout@v2
-      - run: pacman --noconfirm -Sy
-      - run: pacman --noconfirm -S python python-setuptools python-sphinx
+      - run: sudo pacman --noconfirm -Sy
+      - run: sudo pacman --noconfirm -S python python-setuptools python-sphinx
       - run: makepkg
       - uses: actions/upload-artifact@v2
         with:
