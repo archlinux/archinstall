@@ -448,16 +448,16 @@ class Filesystem:
 		if self.blockdevice.keep_partitions is False:
 			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=logging.DEBUG)
 			if self.mode == GPT:
-				if self.raw_parted(f'{self.blockdevice.device} mklabel gpt').exit_code == 0:
+				if self.parted_mklabel(self.blockdevice.device, "gpt"):
 					self.blockdevice.flush_cache()
 					return self
 				else:
-					raise DiskError('Problem setting the partition format to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
+					raise DiskError('Problem setting the disk label type to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
 			elif self.mode == MBR:
-				if SysCommand(f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos').exit_code == 0:
+				if self.parted_mklabel(self.blockdevice.device, "msdos"):
 					return self
 				else:
-					raise DiskError('Problem setting the partition format to MBR:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
+					raise DiskError('Problem setting the disk label type to msdos:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
 			else:
 				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
 
@@ -551,6 +551,14 @@ class Filesystem:
 
 	def set(self, partition: int, string: str):
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
+
+	def parted_mklabel(self, device: str, disk_label: str):
+		# Try to unmount devices before attempting to run mklabel
+		try:
+			SysCommand(f'bash -c "umount {device}?"')
+		except:
+			pass
+		return self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
 
 
 def device_state(name, *args, **kwargs):
