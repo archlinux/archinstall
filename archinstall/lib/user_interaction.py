@@ -11,7 +11,7 @@ import time
 
 from .exceptions import *
 from .general import SysCommand
-from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
+from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
@@ -702,12 +702,12 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	default_option = options["All open-source (default)"]
 
 	if drivers:
-		for line in SysCommand('/usr/bin/lspci'):
-			if b' vga ' in line.lower():
-				if b'nvidia' in line.lower():
-					print(' ** nvidia card detected, suggested driver: nvidia **')
-				elif b'amd' in line.lower():
-					print(' ** AMD card detected, suggested driver: AMD / ATI **')
+		if has_amd_graphics():
+			print('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') 
+		if has_intel_graphics():
+			print('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.')
+		if has_nvidia_graphics():
+			print('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.')
 
 		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
 
