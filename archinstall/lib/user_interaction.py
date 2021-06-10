@@ -11,6 +11,7 @@ import termios
 import time
 import tty
 
+from .disk import BlockDevice
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -18,7 +19,6 @@ from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, sea
 from .networking import list_interfaces
 from .output import log
 from .profiles import Profile, list_profiles
-
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
@@ -553,7 +553,7 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 def select_partition_layout(block_device):
 	return {
-		"/dev/sda": { # Block Device level
+		BlockDevice("/dev/sda"): { # Block Device level
 			"wipe": False, # Safety flags
 			"partitions" : [ # Affected  / New partitions
 				{
@@ -565,7 +565,7 @@ def select_partition_layout(block_device):
 				}
 			]
 		},
-		"/dev/sdb" : {
+		BlockDevice("/dev/sdb") : {
 			"wipe" : True,
 			"partitions" : [
 				{
@@ -653,7 +653,7 @@ def get_default_partition_layout(block_devices):
 		}
 	# TODO: Implement sane generic layout for 2+ drives
 
-def wipe_and_create_partitions(block_device):
+def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
 	if hasUEFI():
 		partition_type = 'gpt'
 	else:
@@ -747,7 +747,9 @@ def wipe_and_create_partitions(block_device):
 
 			partitions_result = [*suggested_layout]
 		elif task is None:
-			return partitions_result
+			return {
+				block_device : partitions_result
+			}
 		else:
 			for index, partition in enumerate(partitions_result):
 				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
@@ -777,7 +779,9 @@ def wipe_and_create_partitions(block_device):
 				if (partition := generic_select(partitions_result, 'Select which partition to mark as bootable: ', options_output=False)):
 					partitions_result[partitions_result.index(partition)]['boot'] = not partitions_result[partitions_result.index(partition)].get('boot', False)
 
-	return partitions_result
+	return {
+		block_device : partitions_result
+	}
 
 def select_individual_blockdevice_usage(block_devices :list):
 	result = {}

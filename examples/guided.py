@@ -73,7 +73,7 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None):
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
+		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives'].split(',')]
 	else:
 		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
 												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
@@ -81,7 +81,6 @@ def ask_user_questions():
 
 	if archinstall.arguments.get('harddrives', None):
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
-
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
@@ -219,7 +218,7 @@ def perform_filesystem_operations():
 
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
-				fs.load_layout(archinstall.arguments['harddrives'][drive])
+				fs.load_layout(archinstall.storage['disk_layouts'][drive])
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 

@@ -572,7 +572,14 @@ class Filesystem:
 
 	def load_layout(self, layout :dict):
 		for partition in layout:
-			print(partition)
+			# We don't want to re-add an existing partition (those containing a UUID already)
+			if 'UUID' not in partition:
+				self.add_partition(partition.get('type', 'primary'),
+								start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
+								end=partition.get('size', '100%'),
+								partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
+				
+
 
 		exit(0)
 
