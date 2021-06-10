@@ -11,7 +11,7 @@ import termios
 import time
 import tty
 
-from . import arguments
+from .. import arguments
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
