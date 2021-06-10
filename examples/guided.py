@@ -195,7 +195,10 @@ def perform_filesystem_operations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 	print()
-
+	
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
+	
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
 

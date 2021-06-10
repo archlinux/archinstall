@@ -10,16 +10,18 @@ arch=('any')
 url="https://github.com/archlinux/archinstall"
 license=('GPL')
 depends=('python')
-makedepends=('python-setuptools')
+makedepends=('python-setuptools' 'python-sphinx')
 provides=('python-archinstall')
 conflicts=('archinstall' 'python-archinstall' 'python-archinstall-git')
 
 build() {
         cd "$startdir"
         python setup.py build
+        make man -C docs
 }
 
 package() {
         cd "$startdir"
         python setup.py install --root="${pkgdir}" --optimize=1 --skip-build
+        install -vDm 644 docs/_build/man/archinstall.1 -t "${pkgdir}/usr/share/man/man1/"
 }

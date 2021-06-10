@@ -30,8 +30,11 @@ storage['__version__'] = __version__
 def initialize_arguments():
 	config = {}
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
+	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
-						help="Warning!!! No prompts, ignored if config is not passed")
+						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
+	parser.add_argument("--dry-run", action="store_true",
+						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	args, unknowns = parser.parse_known_args()
 	if args.config is not None:
@@ -47,6 +50,9 @@ def initialize_arguments():
 					config = json.loads(response.read())
 		except Exception as e:
 			print(e)
+		if args.creds is not None:
+			with open(args.creds) as file:
+				config.update(json.load(file))
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
 	for arg in unknowns:
@@ -57,6 +63,8 @@ def initialize_arguments():
 				key, val = arg[2:], True
 			config[key] = val
 	config["script"] = args.script
+	if args.dry_run is not None:
+		config["dry_run"] = args.dry_run
 	return config
 
 

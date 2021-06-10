@@ -2,14 +2,41 @@ import hashlib
 import json
 import logging
 import os
-import pty
 import shlex
 import subprocess
 import sys
 import time
 from datetime import datetime, date
-from select import epoll, EPOLLIN, EPOLLHUP
 from typing import Union
+try:
+	from select import epoll, EPOLLIN, EPOLLHUP
+except:
+	import select
+	EPOLLIN = 0
+	EPOLLHUP = 0
+	class epoll():
+		""" #!if windows
+		Create a epoll() implementation that simulates the epoll() behavior.
+		This so that the rest of the code doesn't need to worry weither we're using select() or epoll().
+		"""
+		def __init__(self):
+			self.sockets = {}
+			self.monitoring = {}
+
+		def unregister(self, fileno, *args, **kwargs):
+			try:
+				del(self.monitoring[fileno])
+			except:
+				pass
+
+		def register(self, fileno, *args, **kwargs):
+			self.monitoring[fileno] = True
+
+		def poll(self, timeout=0.05, *args, **kwargs):
+			try:
+				return [[fileno, 1] for fileno in select.select(list(self.monitoring.keys()), [], [], timeout)[0]]
+			except OSError:
+				return []
 
 from .exceptions import *
 from .output import log
@@ -203,27 +230,6 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			output = output.strip('\r\n ')
-			if len(output) <= 0:
-				return False
-
-			from .user_interaction import get_terminal_width
-
-			# Move back to the beginning of the terminal
-			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % 0)
-			sys.stdout.flush()
-
-			# Clear the line
-			sys.stdout.write(" " * get_terminal_width())
-			sys.stdout.flush()
-
-			# Move back to the beginning again
-			sys.stdout.flush()
-			sys.stdout.write("\033[%dG" % 0)
-			sys.stdout.flush()
-
-			# And print the new output we're peaking on:
 			sys.stdout.write(output)
 			sys.stdout.flush()
 		return True
@@ -253,6 +259,8 @@ class SysCommandWorker:
 					self.exit_code = 1
 
 	def execute(self) -> bool:
+		import pty
+
 		if (old_dir := os.getcwd()) != self.working_directory:
 			os.chdir(self.working_directory)
 

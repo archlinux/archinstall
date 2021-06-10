@@ -41,7 +41,7 @@ copyright = '2020, Anton Hvornum'
 author = 'Anton Hvornum'
 
 # The full version, including alpha/beta/rc tags
-release = 'v2.1.0'
+release = 'v2.3.0.dev0'
 
 # -- General configuration ---------------------------------------------------
 
