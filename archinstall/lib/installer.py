@@ -122,6 +122,14 @@ class Installer:
 
 		return True
 
+	def mount_ordered_layout(self, layout :dict):
+		mountpoints = {}
+		for partition in layout['partitions']:
+			mountpoints[partition['mountpoint']] = partition['device_instance']
+
+		for mountpoint in sorted(mountpoints.keys()):
+			mountpoints[mountpoint].mount(f"{self.target}{mountpoint}")
+
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
 			os.makedirs(f'{self.target}{mountpoint}')

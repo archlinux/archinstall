@@ -223,7 +223,6 @@ def perform_filesystem_operations():
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
 				fs.load_layout(archinstall.storage['disk_layouts'][drive])
-				fs.mount_ordered_layout(archinstall.storage['disk_layouts'][drive])
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
@@ -234,7 +233,14 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+
+
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
+		# Mount all the drives to the desired mountpoint
+		# This *can* be done outside of the installation, but the installer can deal with it.
+		for drive in archinstall.arguments['harddrives']:
+			installation.mount_ordered_layout(archinstall.storage['disk_layouts'][drive])
+
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
