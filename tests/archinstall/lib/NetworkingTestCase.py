@@ -21,7 +21,7 @@ class NetworkingTest(unittest.TestCase):
     @patch.object(archinstall.lib.networking.os, 'geteuid')
     @patch.object(archinstall.lib.general.SysCommand, '__init__')
     @patch.object(archinstall.lib.general.SysCommand, 'exit_code')
-    def test_mirror_reachable(self, mock_exit_code, mock_init, mock_geteuid):
+    def test_mirror_is_not_reachable(self, mock_exit_code, mock_init, mock_geteuid):
         mock_exit_code.return_value = 1
         mock_init.return_value = None
         mock_geteuid.return_value = 0
