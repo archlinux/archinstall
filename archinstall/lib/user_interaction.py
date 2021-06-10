@@ -11,7 +11,6 @@ import termios
 import time
 import tty
 
-from .. import arguments
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -702,6 +701,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	drivers = sorted(list(options))
 	
 	if drivers:
+		arguments = storage.get('arguments')
 		for line in SysCommand('/usr/bin/lspci'):
 			if b' vga ' in line.lower():
 				if b'nvidia' in line.lower():
