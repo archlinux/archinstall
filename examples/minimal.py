@@ -53,7 +53,7 @@ if archinstall.arguments['harddrive']:
 		boot = fs.find_partition('/boot')
 		root = fs.find_partition('/')
 
-		boot.format('vfat')
+		boot.format('fat32')
 
 		# We encrypt the root partition if we got a password to do so with,
 		# Otherwise we just skip straight to formatting and installation
