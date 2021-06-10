@@ -9,7 +9,6 @@ from .general import SysCommand
 from .output import log
 from .storage import storage
 
-
 def get_hw_addr(ifname):
 	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -29,7 +28,7 @@ def list_interfaces(skip_loopback=True):
 
 
 def check_mirror_reachable():
-	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
+	if SysCommand("pacman -Sy").exit_code == 0:
 		return True
 	elif os.geteuid() != 0:
 		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
