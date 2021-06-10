@@ -48,10 +48,12 @@ AVAILABLE_GFX_DRIVERS = {
 		"intel-media-driver",
 		"vulkan-intel",
 	],
-	"Nvidia": {
-		"open-source": ["mesa", "xf86-video-nouveau", "libva-mesa-driver"],
-		"proprietary": ["nvidia"],
-	},
+	"Nvidia (open-source)": [
+		"mesa",
+		"xf86-video-nouveau",
+		"libva-mesa-driver"
+	],
+	"Nvidia (proprietary)": ["nvidia"],
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
