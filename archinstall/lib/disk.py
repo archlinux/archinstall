@@ -636,7 +636,7 @@ class Filesystem:
 		:param string: A raw string passed to /usr/bin/parted -s <string>
 		:type string: str
 		"""
-		return self.raw_parted(string).exit_code
+		return self.raw_parted(string).exit_code == 0
 
 	def use_entire_disk(self, root_filesystem_type='ext4') -> Partition:
 		# TODO: Implement this with declarative profiles instead.
@@ -652,19 +652,21 @@ class Filesystem:
 				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
 
 		if partition_format:
-			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}') == 0
+			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}'
 		else:
-			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {start} {end}') == 0
+			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {start} {end}'
 
-		if partitioning:
+		if self.parted(parted_string):
 			start_wait = time.time()
 			while previous_partition_uuids == {partition.uuid for partition in self.blockdevice.partitions.values()}:
 				if time.time() - start_wait > 10:
 					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
 				time.sleep(0.025)
 
+
 			time.sleep(0.5) # Let the kernel catch up with quick block devices (nvme for instance)
 			return self.blockdevice.get_partition(uuid=(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()}).pop())
+
 
 	def set_name(self, partition: int, name: str):
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
@@ -673,6 +675,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):
+		log(f"Creating a new partition labling on {device}", level=logging.INFO, fg="yellow")
 		# Try to unmount devices before attempting to run mklabel
 		try:
 			SysCommand(f'bash -c "umount {device}?"')

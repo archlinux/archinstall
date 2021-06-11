@@ -57,7 +57,6 @@ class Installer:
 		self.post_base_install = []
 
 		storage['session'] = self
-		self.partitions = get_partitions_in_use(self.target)
 
 		self.MODULES = []
 		self.BINARIES = []
@@ -107,6 +106,10 @@ class Installer:
 
 			self.sync_log_to_install_medium()
 			return False
+
+	@property
+	def partitions(self):
+		return get_partitions_in_use(self.target)
 
 	def sync_log_to_install_medium(self):
 		# Copy over the install log (if there is one) to the install medium if

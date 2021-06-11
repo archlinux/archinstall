@@ -224,8 +224,6 @@ def perform_filesystem_operations():
 			with archinstall.Filesystem(drive, mode) as fs:
 				fs.load_layout(archinstall.storage['disk_layouts'][drive])
 
-	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
-
 
 def perform_installation(mountpoint):
 	"""
@@ -308,7 +306,7 @@ def perform_installation(mountpoint):
 
 			# This step must be after profile installs to allow profiles to install language pre-requisits.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
+			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
 			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
@@ -375,4 +373,4 @@ else:
 		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 
 perform_filesystem_operations()
-perform_installation(archinstall.arguments.get('target-mountpoint', None))
+perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
