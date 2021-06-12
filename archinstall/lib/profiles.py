@@ -23,9 +23,19 @@ def grab_url_data(path):
 	return response.read()
 
 
-def is_desktop_profile(profile_name) -> bool:
-	if str(profile_name) == 'Profile(desktop)':
+def is_desktop_profile(profile) -> bool:
+	if str(profile) == 'Profile(desktop)':
 		return True
+
+	desktop_profile = Profile(None, "desktop")
+	with open(desktop_profile.path, 'r') as source:
+		source_data = source.read()
+
+		if '__name__' in source_data and '__supported__' in source_data:
+			with desktop_profile.load_instructions(namespace=f"{desktop_profile.namespace}.py") as imported:
+				if hasattr(imported, '__supported__'):
+					desktop_profiles = imported.__supported__
+					return str(profile) in [f"Profile({s})" for s in desktop_profiles]
 
 
 def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
