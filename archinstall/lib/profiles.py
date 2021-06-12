@@ -23,6 +23,11 @@ def grab_url_data(path):
 	return response.read()
 
 
+def is_desktop_profile(profile_name) -> bool:
+	if str(profile_name) == 'Profile(desktop)':
+		return True
+
+
 def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
 	# TODO: Grab from github page as well, not just local static files
 	if filter_irrelevant_macs:
