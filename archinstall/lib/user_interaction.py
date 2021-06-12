@@ -372,11 +372,12 @@ def ask_for_bootloader() -> str:
 	return bootloader
 
 
-def ask_for_audio_selection(desktop = True):
-	audio = "pulseaudio"  # Default for most desktop environments
-	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
-	if pipewire_choice in ("y", ""):
-		audio = "pipewire"
+def ask_for_audio_selection(desktop=True):
+	audio = "pipewire"  # Default for most desktop environments
+	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
+	selection = generic_select(choices, 'Choose an audio server or leave blank to use pipewire: ', options_output=False)
+	if selection != "":
+		audio = selection
 
 	return audio
 
