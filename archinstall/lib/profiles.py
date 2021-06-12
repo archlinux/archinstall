@@ -37,6 +37,8 @@ def is_desktop_profile(profile) -> bool:
 					desktop_profiles = imported.__supported__
 					return str(profile) in [f"Profile({s})" for s in desktop_profiles]
 
+	return False
+
 
 def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
 	# TODO: Grab from github page as well, not just local static files
