@@ -119,7 +119,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 
 def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
 	# Checking if the options are different from `list` or `dict` or if they are empty
-	if type(options) not in [list, dict]:
+	if type(options) not in [list, dict, type({}.keys()), type({}.values())]:
 		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
@@ -130,6 +130,8 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	# After passing the checks, function continues to work
 	if type(options) == dict:
 		options = list(options.values())
+	elif type(options) in (type({}.keys()), type({}.values())):
+		options = list(options)
 	if sort:
 		options = sorted(options)
 
@@ -550,36 +552,33 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
-def select_partition_layout(block_device):
-	return {
-		BlockDevice("/dev/sda"): { # Block Device level
-			"wipe": False, # Safety flags
-			"partitions" : [ # Affected  / New partitions
-				{
-					"PARTUUID" : "654bb317-1b73-4339-9a00-7222792f4ba9", # If existing partition
-					"wipe" : False, # Safety flags
-					"boot" : True,  # Safety flags / new flags
-					"ESP" : True,   # Safety flags / new flags
-					"mountpoint" : "/mnt/boot"
-				}
-			]
-		},
-		BlockDevice("/dev/sdb") : {
-			"wipe" : True,
-			"partitions" : [
-				{
-					# No PARTUUID required here since it's a new partition
-					"type" : "primary", # parted options
-					"size" : "100%",
-					"filesystem" : {
-						"encrypted" : True, # TODO: Not sure about this here
-						"format": "btrfs",  # mkfs options
-					},
-					"mountpoint" : "/mnt"
-				}
-			]
-		}
+def select_reusage_of_partitions(block_device):
+	log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
+	partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
+	partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
+	
+	mountpoints = {}
+	struct = {
+		"partitions" : []
 	}
+	for partition in partitions:
+		mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
+		
+		part_struct = {}
+		if mountpoint:
+			part_struct['mountpoint'] = mountpoint
+			if mountpoint == '/boot':
+				part_struct['boot'] = True
+				if has_uefi():
+					part_struct['ESP'] = True
+		if partition.uuid:
+			part_struct['PARTUUID'] = partition.uuid
+		if partition in partitions_to_wipe:
+			part_struct['wipe'] = True
+
+		struct['partitions'].append(part_struct)
+
+	return struct
 
 def valid_parted_position(pos :str):
 	if not len(pos):
@@ -719,7 +718,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 		device_mode = generic_select(modes)
 		
 		if device_mode == "Re-use partitions":
-			layout = select_partition_layout(device)
+			layout = select_reusage_of_partitions(device)
 		elif device_mode == "Wipe and create new partitions":
 			layout = wipe_and_create_partitions(device)
 		else:

@@ -402,9 +402,9 @@ class Partition:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
 		if self._encrypted:
-			return f'Partition(path={self.path}, size={self.size}, real_device={self.real_device}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
-			return f'Partition(path={self.path}, size={self.size}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, fs={self.filesystem}{mount_repr})'
 
 	def __dump__(self):
 		return {
@@ -738,13 +738,13 @@ class Filesystem:
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
-			if partition.get('format', False) and not partition.get('uuid', None):
+			if partition.get('format', False) and not partition.get('PARTUUID', None):
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 
-			elif partition_uuid := partition.get('uuid'):
+			elif partition_uuid := partition.get('PARTUUID'):
 				if partition_instance := self.blockdevice.get_partition(uuid=partition_uuid):
 					partition['device_instance'] = partition_instance
 			else:
