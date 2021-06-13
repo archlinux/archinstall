@@ -87,11 +87,11 @@ def ask_user_questions():
 		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
 			archinstall.arguments['!encryption-password'] = passwd
 
-			# If no partitions was marked as encrypted (rare), but a password was supplied -
-			# then we need to identify which partitions to encrypt. This will default to / (root) if only
-			# root and boot are detected.
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'])
+	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
+		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+		# Then we need to identify which partitions to encrypt. This will default to / (root).
+		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):

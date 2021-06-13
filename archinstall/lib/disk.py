@@ -76,6 +76,7 @@ def suggest_single_disk_layout(block_device):
 		"start" : "1MiB",
 		"size" : "513MiB",
 		"boot" : True,
+		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
@@ -86,7 +87,7 @@ def suggest_single_disk_layout(block_device):
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
-		"encrypted" : True,
+		"encrypted" : False,
 		"format" : True,
 		"size" : "100%" if block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
@@ -99,7 +100,7 @@ def suggest_single_disk_layout(block_device):
 		layout[block_device]['partitions'].append({
 			# Home
 			"type" : "primary",
-			"encrypted" : True,
+			"encrypted" : False,
 			"format" : True,
 			"start" : f"{min(block_device.size*0.2, 20)*1024}MiB",
 			"size" : "100%",
@@ -138,6 +139,7 @@ def suggest_multi_disk_layout(block_devices):
 		"start" : "1MiB",
 		"size" : "513MiB",
 		"boot" : True,
+		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
@@ -148,7 +150,7 @@ def suggest_multi_disk_layout(block_devices):
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
-		"encrypted" : True,
+		"encrypted" : False,
 		"format" : True,
 		"size" : "100%",
 		"mountpoint" : "/",
@@ -160,7 +162,7 @@ def suggest_multi_disk_layout(block_devices):
 	layout[home_device]['partitions'].append({
 		# Home
 		"type" : "primary",
-		"encrypted" : True,
+		"encrypted" : False,
 		"format" : True,
 		"start" : "4MiB",
 		"size" : "100%",
@@ -514,7 +516,7 @@ class Partition:
 		from .luks import luks2
 
 		try:
-			with luks2(self, 'luksloop', password, auto_unmount=True) as unlocked_device:
+			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai')+'loop', password, auto_unmount=True) as unlocked_device:
 				return unlocked_device.filesystem
 		except SysCallError:
 			return None
@@ -540,34 +542,11 @@ class Partition:
 
 		return True if files > 0 else False
 
-	def safe_to_format(self):
-		if self.allow_formatting is False:
-			log(f"Partition {self} is not marked for formatting.", level=logging.DEBUG)
-			return False
-		elif self.target_mountpoint == '/boot':
-			try:
-				if self.has_content():
-					log(f"Partition {self} is a boot partition and has content inside.", level=logging.DEBUG)
-					return False
-			except SysCallError as err:
-				log(err.message, logging.DEBUG)
-				log(f"Partition {self} was identified as /boot but we could not mount to check for content, continuing!", level=logging.DEBUG)
-				pass
-
-		return True
-
 	def encrypt(self, *args, **kwargs):
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
 		from .luks import luks2
-
-		if not self._encrypted:
-			raise DiskError(f"Attempting to encrypt a partition that was not marked for encryption: {self}")
-
-		if not self.safe_to_format():
-			log(f"Partition {self} was marked as protected but encrypt() was called on it!", level=logging.ERROR, fg="red")
-			return False
 
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
@@ -745,6 +724,8 @@ class Filesystem:
 		return True
 
 	def load_layout(self, layout :dict):
+		from .luks import luks2
+
 		# If the layout tells us to wipe the drive, we do so
 		if layout.get('wipe', False):
 			if self.mode == GPT:
@@ -770,11 +751,11 @@ class Filesystem:
 				raise ValueError("BlockDevice().load_layout() doesn't know how to continue without either a UUID or creation of partition.")
 
 			if partition.get('filesystem', {}).get('format', None):
-				if partition.get('encrypt', False):
+				if partition.get('encrypted', False):
 					assert partition.get('password')
 
 					partition['device_instance'].encrypt(password=partition['password'])
-					with archinstall.luks2(partition['device_instance'], 'luksloop', partition['password']) as unlocked_device:
+					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai')+'loop', partition['password']) as unlocked_device:
 						unlocked_device.format(partition['filesystem']['format'], allow_formatting=partition.get('format', False))
 				else:
 					partition['device_instance'].format(partition['filesystem']['format'], allow_formatting=partition.get('format', False))
@@ -957,7 +938,8 @@ def encrypted_partitions(blockdevices :dict) -> bool:
 		if partition.get('encrypted', False):
 			yield partition
 
-def find_partition_by_mountpoint(partitions, relative_mountpoint :str):
-	for partition in partitions:
-		if partition.get('mountpoint', None) == relative_mountpoint:
-			return partition
+def find_partition_by_mountpoint(block_devices, relative_mountpoint :str):
+	for device in block_devices:
+		for partition in block_devices[device]['partitions']:
+			if partition.get('mountpoint', None) == relative_mountpoint:
+				return partition

@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type, suggest_single_disk_layout, suggest_multi_disk_layout
+from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -190,18 +190,19 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	sys.stdout.flush()
 	return selected_options
 
-def select_encrypted_partitions(blockdevices :dict) -> dict:
-	if len(blockdevices) == 1:
-		if len(blockdevices[0]['partitions']) == 2:
-			root = find_partition_by_mountpoint(blockdevices[0]['partitions'], '/')
-			blockdevices[0]['partitions'][root]['encrypted'] = True
-			return True
+def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
+	root = find_partition_by_mountpoint(block_devices, '/')
+	root['encrypted'] = True
+	root['password'] = password
 
-	options = []
-	for partition in blockdevices.values():
-		options.append({key: val for key, val in partition.items() if val})
+	return block_devices
 
-	print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+	# TODO: Next version perhaps we can support multiple encrypted partitions
+	#options = []
+	#for partition in block_devices.values():
+	#	options.append({key: val for key, val in partition.items() if val})
+
+	#print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
 
 class MiniCurses:
 	def __init__(self, width, height):
