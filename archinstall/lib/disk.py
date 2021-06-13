@@ -228,6 +228,20 @@ class BlockDevice:
 
 			return float(device['size'][:-1])
 
+	@property
+	def bus_type(self):
+		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			return device['tran']
+	
+	@property
+	def spinning(self):
+		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			return device['rota'] is True
+
 	def has_partitions(self):
 		return len(self.partitions)
 
