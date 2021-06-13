@@ -601,55 +601,9 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 
 def get_default_partition_layout(block_devices):
 	if len(block_devices) == 1:
-		MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
-
-		layout = {
-			block_devices[0] : {
-				"wipe" : True,
-				"partitions" : []
-			}
-		}
-
-		layout[block_devices[0]]['partitions'].append({
-			# Boot
-			"type" : "primary",
-			"start" : "1MiB",
-			"size" : "513MiB",
-			"boot" : True,
-			"format" : True,
-			"mountpoint" : "/boot",
-			"filesystem" : {
-				"format" : "fat32"
-			}
-		})
-		layout[block_devices[0]]['partitions'].append({
-			# Root
-			"type" : "primary",
-			"start" : "513MiB",
-			"encrypted" : True,
-			"format" : True,
-			"size" : "100%" if block_devices[0].size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_devices[0].size, 20)*1024}MiB",
-			"mountpoint" : "/",
-			"filesystem" : {
-				"format" : "btrfs"
-			}
-		})
-
-		if block_devices[0].size > MIN_SIZE_TO_ALLOW_HOME_PART:
-			layout[block_devices[0]]['partitions'].append({
-				# Home
-				"type" : "primary",
-				"encrypted" : True,
-				"format" : True,
-				"start" : f"{min(block_devices[0].size*0.2, 20)*1024}MiB",
-				"size" : "100%",
-				"mountpoint" : "/home",
-				"filesystem" : {
-					"format" : "btrfs"
-				}
-			})
-
-		return layout
+		return suggest_single_disk_layout(blockdevices[0])
+	else:
+		return suggest_multi_disk_layout(blockdevices)
 
 	# TODO: Implement sane generic layout for 2+ drives
 
@@ -660,38 +614,6 @@ def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
 		partition_type = 'msdos'
 
 	partitions_result = [] # Test code: [part.__dump__() for part in block_device.partitions.values()]
-	suggested_layout = [
-		{   # Boot
-			"type" : "primary",
-			"start" : "1MiB",
-			"size" : "513MiB",
-			"boot" : True,
-			"mountpoint" : "/boot",
-			"filesystem" : {
-				"format" : "fat32"
-			}
-		},
-		{   # Root
-			"type" : "primary",
-			"start" : "513MiB",
-			"encrypted" : True,
-			"size" : f"{max(block_device.size*0.2, 20)}GiB",
-			"mountpoint" : "",
-			"filesystem" : {
-				"format" : "btrfs"
-			}
-		},
-		{   # Home
-			"type" : "primary",
-			"encrypted" : True,
-			"start" : f"{max(block_device.size*0.2, 20)}GiB",
-			"size" : "100%",
-			"mountpoint" : "/home",
-			"filesystem" : {
-				"format" : "btrfs"
-			}
-		}
-	]
 	# TODO: Squeeze in BTRFS subvolumes here
 
 	while True:
@@ -745,7 +667,7 @@ def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
 				if input(f"{block_device} contains queued partitions, this will remove those, are you sure? y/N: ").strip().lower() in ('', 'n'):
 					continue
 
-			partitions_result = [*suggested_layout]
+			partitions_result = suggest_single_disk_layout(block_device)[block_device]
 		elif task is None:
 			return {
 				block_device : partitions_result

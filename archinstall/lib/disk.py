@@ -27,6 +27,60 @@ def valid_fs_type(fstype :str) -> bool:
 		"btrfs",
 	]
 
+def suggest_single_disk_layout(blockdevice):
+	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
+
+	layout = {
+		blockdevice : {
+			"wipe" : True,
+			"partitions" : []
+		}
+	}
+
+	layout[blockdevice]['partitions'].append({
+		# Boot
+		"type" : "primary",
+		"start" : "1MiB",
+		"size" : "513MiB",
+		"boot" : True,
+		"format" : True,
+		"mountpoint" : "/boot",
+		"filesystem" : {
+			"format" : "fat32"
+		}
+	})
+	layout[blockdevice]['partitions'].append({
+		# Root
+		"type" : "primary",
+		"start" : "513MiB",
+		"encrypted" : True,
+		"format" : True,
+		"size" : "100%" if blockdevice.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(blockdevice.size, 20)*1024}MiB",
+		"mountpoint" : "/",
+		"filesystem" : {
+			"format" : "btrfs"
+		}
+	})
+
+	if blockdevice.size > MIN_SIZE_TO_ALLOW_HOME_PART:
+		layout[blockdevice]['partitions'].append({
+			# Home
+			"type" : "primary",
+			"encrypted" : True,
+			"format" : True,
+			"start" : f"{min(blockdevice.size*0.2, 20)*1024}MiB",
+			"size" : "100%",
+			"mountpoint" : "/home",
+			"filesystem" : {
+				"format" : "btrfs"
+			}
+		})
+
+	return layout
+
+def suggest_multi_disk_layout(blockdevices):
+	pass
+
 
 class BlockDevice:
 	def __init__(self, path, info=None):
@@ -323,6 +377,7 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
+
 		lsblk = json.loads(SysCommand(f'lsblk -J -o+PARTUUID {self.path}').decode('UTF-8'))
 		for partition in lsblk['blockdevices']:
 			return partition.get('partuuid', None)
