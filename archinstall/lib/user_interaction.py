@@ -372,11 +372,12 @@ def ask_for_bootloader() -> str:
 	return bootloader
 
 
-def ask_for_audio_selection():
-	audio = "pulseaudio"  # Default for most desktop environments
-	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
-	if pipewire_choice in ("y", ""):
-		audio = "pipewire"
+def ask_for_audio_selection(desktop=True):
+	audio = 'pipewire' if desktop else 'none'
+	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
+	selection = generic_select(choices, f'Choose an audio server or leave blank to use {audio}: ', options_output=True)
+	if selection != "":
+		audio = selection
 
 	return audio
 
@@ -703,7 +704,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	if drivers:
 		arguments = storage.get('arguments', {})
 		if has_amd_graphics():
-			print('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') 
+			print('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')
 		if has_intel_graphics():
 			print('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.')
 		if has_nvidia_graphics():
