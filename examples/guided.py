@@ -437,7 +437,7 @@ if not check_mirror_reachable():
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if archinstall.arguments.get('silent', None) is None:
+if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 else:
 	# Workarounds if config is loaded from a file
