@@ -125,10 +125,11 @@ class Installer:
 
 		return True
 
-	def mount_ordered_layout(self, layout :dict):
+	def mount_ordered_layout(self, layouts :dict):
 		mountpoints = {}
-		for partition in layout['partitions']:
-			mountpoints[partition['mountpoint']] = partition['device_instance']
+		for blockdevice in layouts:
+			for partition in layouts[blockdevice]['partitions']:
+				mountpoints[partition['mountpoint']] = partition['device_instance']
 
 		for mountpoint in sorted(mountpoints.keys()):
 			mountpoints[mountpoint].mount(f"{self.target}{mountpoint}")

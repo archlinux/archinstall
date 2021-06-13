@@ -236,8 +236,7 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		for drive in archinstall.arguments['harddrives']:
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'][drive])
+		installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
