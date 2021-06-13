@@ -27,17 +27,50 @@ def valid_fs_type(fstype :str) -> bool:
 		"btrfs",
 	]
 
-def suggest_single_disk_layout(blockdevice):
+
+def sort_block_devices_based_on_performance(block_devices):
+	result = {device: 0 for device in block_devices}
+
+	for device, weight in result.items():
+		if device.spinning:
+			weight -= 10
+		else:
+			weight += 5
+
+		if device.bus_type == 'nvme':
+			weight += 20
+		elif device.bus_type == 'sata':
+			weight += 10
+
+		result[device] = weight
+
+	return result
+
+def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
+	if not filter_out:
+		filter_out = []
+
+	copy_devices = [*devices]
+	for filter_device in filter_out:
+		if filter_device in copy_devices:
+			copy_devices.pop(copy_devices.index(filter_device))
+
+	if not len(copy_devices):
+		return None
+
+	return min(copy_devices, key=(lambda device : abs(device.size - 40)))
+
+def suggest_single_disk_layout(block_device):
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 
 	layout = {
-		blockdevice : {
+		block_device : {
 			"wipe" : True,
 			"partitions" : []
 		}
 	}
 
-	layout[blockdevice]['partitions'].append({
+	layout[block_device]['partitions'].append({
 		# Boot
 		"type" : "primary",
 		"start" : "1MiB",
@@ -49,26 +82,26 @@ def suggest_single_disk_layout(blockdevice):
 			"format" : "fat32"
 		}
 	})
-	layout[blockdevice]['partitions'].append({
+	layout[block_device]['partitions'].append({
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
 		"encrypted" : True,
 		"format" : True,
-		"size" : "100%" if blockdevice.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(blockdevice.size, 20)*1024}MiB",
+		"size" : "100%" if block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
 		"filesystem" : {
 			"format" : "btrfs"
 		}
 	})
 
-	if blockdevice.size > MIN_SIZE_TO_ALLOW_HOME_PART:
-		layout[blockdevice]['partitions'].append({
+	if block_device.size > MIN_SIZE_TO_ALLOW_HOME_PART:
+		layout[block_device]['partitions'].append({
 			# Home
 			"type" : "primary",
 			"encrypted" : True,
 			"format" : True,
-			"start" : f"{min(blockdevice.size*0.2, 20)*1024}MiB",
+			"start" : f"{min(block_device.size*0.2, 20)*1024}MiB",
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
@@ -78,8 +111,66 @@ def suggest_single_disk_layout(blockdevice):
 
 	return layout
 
-def suggest_multi_disk_layout(blockdevices):
-	pass
+
+def suggest_multi_disk_layout(block_devices):
+	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
+
+	block_devices = sort_block_devices_based_on_performance(block_devices).keys()
+
+	root_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
+	home_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART, filter_out=[root_device])
+
+
+	layout = {
+		root_device : {
+			"wipe" : True,
+			"partitions" : []
+		},
+		home_device : {
+			"wipe" : True,
+			"partitions" : []
+		},
+	}
+
+	layout[root_device]['partitions'].append({
+		# Boot
+		"type" : "primary",
+		"start" : "1MiB",
+		"size" : "513MiB",
+		"boot" : True,
+		"format" : True,
+		"mountpoint" : "/boot",
+		"filesystem" : {
+			"format" : "fat32"
+		}
+	})
+	layout[root_device]['partitions'].append({
+		# Root
+		"type" : "primary",
+		"start" : "513MiB",
+		"encrypted" : True,
+		"format" : True,
+		"size" : "100%",
+		"mountpoint" : "/",
+		"filesystem" : {
+			"format" : "btrfs"
+		}
+	})
+
+	layout[home_device]['partitions'].append({
+		# Home
+		"type" : "primary",
+		"encrypted" : True,
+		"format" : True,
+		"start" : "4MiB",
+		"size" : "100%",
+		"mountpoint" : "/home",
+		"filesystem" : {
+			"format" : "btrfs"
+		}
+	})
+
+	return layout
 
 
 class BlockDevice:

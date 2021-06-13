@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type
+from .disk import BlockDevice, valid_fs_type, suggest_single_disk_layout, suggest_multi_disk_layout
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
@@ -601,9 +601,9 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 
 def get_default_partition_layout(block_devices):
 	if len(block_devices) == 1:
-		return suggest_single_disk_layout(blockdevices[0])
+		return suggest_single_disk_layout(block_devices[0])
 	else:
-		return suggest_multi_disk_layout(blockdevices)
+		return suggest_multi_disk_layout(block_devices)
 
 	# TODO: Implement sane generic layout for 2+ drives
 
