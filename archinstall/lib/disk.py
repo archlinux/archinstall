@@ -25,7 +25,7 @@ def valid_fs_type(fstype :str) -> bool:
 		erfs", "udf", or "xfs".
 	"""
 
-	return fstype in [
+	return fstype.lower() in [
 		"btrfs",
 		"ext2",
 		"ext3", "ext4", # `man parted` allows these
