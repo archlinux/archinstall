@@ -615,30 +615,35 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 	# return struct
 
-	partitions_result = [] # Test code: [part.__dump__() for part in block_device.partitions.values()]
+	mountpoints = {}
+	block_device_struct = {
+		"partitions" : []
+	}
+	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
 	while True:
 		modes = [
-			"Create new partition",
-			"Suggest partition layout",
-			"Delete partition" if len(partitions_result) else "",
-			"Assign mount-point for partition" if len(partitions_result) else "",
-			"Mark/Unmark a partition as encrypted" if len(partitions_result) else "",
-			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(partitions_result) else ""
+			"Create a new partition",
+			f"Suggest partition layout for {block_device}",
+			"Delete a partition" if len(block_device_struct) else "",
+			"Clear/Delete all partitions" if len(block_device_struct) else "",
+			"Assign mount-point for a partition" if len(block_device_struct) else "",
+			"Mark/Unmark a partition as encrypted" if len(block_device_struct) else "",
+			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(block_device_struct) else ""
 		]
 
 		# Print current partition layout:
-		if len(partitions_result):
+		if len(block_device_struct["partitions"]):
 			print('Current partition layout:')
-			for partition in partitions_result:
-				print({key: val for key, val in partition.items() if val})
+			for partition in block_device_struct["partitions"]:
+				print(partition)
 			print()
 
 		task = generic_select(modes,
 				input_text=f"Select what to do with {block_device} (leave blank when done): ")
 
-		if task == 'Create new partition':
+		if task == 'Create a new partition':
 			if partition_type == 'gpt':
 				# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 				# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
@@ -648,11 +653,11 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			end = input("Enter the end sector of the partition (percentage or block number, ex: 100%): ").strip()
 
 			if valid_parted_position(start) and valid_parted_position(end) and valid_fs_type(fstype):
-				if partition_overlap(partitions_result, start, end):
+				if partition_overlap(block_device_struct, start, end):
 					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.", fg="red")
 					continue
 
-				partitions_result.append({
+				block_device_struct.append({
 					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
 					"start" : start,
 					"size" : end,
@@ -664,47 +669,49 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			else:
 				log(f"Invalid start, end or fstype for this partition. Ignoring this partition creation.", fg="red")
 				continue
-		elif task == "Suggest partition layout":
-			if len(partitions_result):
+		elif task[:len("Suggest partition layout")] == "Suggest partition layout":
+			if len(block_device_struct):
 				if input(f"{block_device} contains queued partitions, this will remove those, are you sure? y/N: ").strip().lower() in ('', 'n'):
 					continue
 
-			partitions_result = suggest_single_disk_layout(block_device)[block_device]
+			block_device_struct = suggest_single_disk_layout(block_device)[block_device]
 		elif task is None:
 			return {
-				block_device : partitions_result
+				block_device : block_device_struct
 			}
 		else:
-			for index, partition in enumerate(partitions_result):
+			for index, partition in enumerate(block_device_struct):
 				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
 
-			if task == "Delete partition":
-				if (partition := generic_select(partitions_result, 'Select which partition to delete: ', options_output=False)):
-					del(partitions_result[partitions_result.index(partition)])
-			elif task == "Assign mount-point for partition":
-				if (partition := generic_select(partitions_result, 'Select which partition to mount where: ', options_output=False)):
+			if task == "Delete a partition":
+				if (partition := generic_select(block_device_struct, 'Select which partition to delete: ', options_output=False)):
+					del(block_device_struct[block_device_struct.index(partition)])
+			elif task == "Clear/Delete all partitions":
+				block_device_struct = []
+			elif task == "Assign mount-point for a partition":
+				if (partition := generic_select(block_device_struct, 'Select which partition to mount where: ', options_output=False)):
 					print(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')
 					mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
 
 					if len(mountpoint):
-						partitions_result[partitions_result.index(partition)]['mountpoint'] = mountpoint
+						block_device_struct[block_device_struct.index(partition)]['mountpoint'] = mountpoint
 						if mountpoint == '/boot':
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
-							partitions_result[partitions_result.index(partition)]['boot'] = True
+							block_device_struct[block_device_struct.index(partition)]['boot'] = True
 					else:
-						del(partitions_result[partitions_result.index(partition)]['mountpoint'])
+						del(block_device_struct[block_device_struct.index(partition)]['mountpoint'])
 
 			elif task == "Mark/Unmark a partition as encrypted":
-				if (partition := generic_select(partitions_result, 'Select which partition to mark as encrypted: ', options_output=False)):
+				if (partition := generic_select(block_device_struct, 'Select which partition to mark as encrypted: ', options_output=False)):
 					# Negate the current encryption marking
-					partitions_result[partitions_result.index(partition)]['encrypted'] = not partitions_result[partitions_result.index(partition)].get('encrypted', False)
+					block_device_struct[block_device_struct.index(partition)]['encrypted'] = not block_device_struct[block_device_struct.index(partition)].get('encrypted', False)
 
 			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
-				if (partition := generic_select(partitions_result, 'Select which partition to mark as bootable: ', options_output=False)):
-					partitions_result[partitions_result.index(partition)]['boot'] = not partitions_result[partitions_result.index(partition)].get('boot', False)
+				if (partition := generic_select(block_device_struct, 'Select which partition to mark as bootable: ', options_output=False)):
+					block_device_struct[block_device_struct.index(partition)]['boot'] = not block_device_struct[block_device_struct.index(partition)].get('boot', False)
 
 	return {
-		block_device : partitions_result
+		block_device : block_device_struct
 	}
 
 def select_individual_blockdevice_usage(block_devices :list):
