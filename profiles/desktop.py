@@ -21,6 +21,21 @@ __packages__ = [
 	'xdg-utils',
 ]
 
+__supported__ = [
+	'gnome',
+	'kde',
+	'awesome',
+	'sway',
+	'cinnamon',
+	'xfce4',
+	'lxqt',
+	'i3',
+	'budgie',
+	'mate',
+	'deepin',
+	'enlightenment',
+]
+
 
 def _prep_function(*args, **kwargs):
 	"""
@@ -30,22 +45,7 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	supported_desktops = [
-		'gnome',
-		'kde',
-		'awesome',
-		'sway',
-		'cinnamon',
-		'xfce4',
-		'lxqt',
-		'i3',
-		'budgie',
-		'mate',
-		'deepin',
-		'enlightenment',
-	]
-
-	desktop = archinstall.generic_select(supported_desktops, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
+	desktop = archinstall.generic_select(__supported__, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
 
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded
@@ -54,6 +54,8 @@ def _prep_function(*args, **kwargs):
 		archinstall.storage['_desktop_profile'] = desktop
 
 	profile = archinstall.Profile(None, desktop)
+	# Set the resolved profile path to the actual desktop environment
+	archinstall.arguments['profile'] = profile
 	# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
 	with profile.load_instructions(namespace=f"{desktop}.py") as imported:
 		if hasattr(imported, '_prep_function'):

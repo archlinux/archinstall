@@ -12,11 +12,12 @@ import time
 from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout
 from .exceptions import *
 from .general import SysCommand
-from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi
+from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
 from .profiles import Profile, list_profiles
+from .storage import *
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
@@ -389,11 +390,12 @@ def ask_for_bootloader() -> str:
 	return bootloader
 
 
-def ask_for_audio_selection():
-	audio = "pulseaudio"  # Default for most desktop environments
-	pipewire_choice = input("Would you like to install pipewire instead of pulseaudio as the default audio server? [Y/n] ").lower()
-	if pipewire_choice in ("y", ""):
-		audio = "pipewire"
+def ask_for_audio_selection(desktop=True):
+	audio = 'pipewire' if desktop else 'none'
+	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
+	selection = generic_select(choices, f'Choose an audio server or leave blank to use {audio}: ', options_output=True)
+	if selection != "":
+		audio = selection
 
 	return audio
 
@@ -893,32 +895,22 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 
 	drivers = sorted(list(options))
-	default_option = options["All open-source (default)"]
-
+	
 	if drivers:
-		for line in SysCommand('/usr/bin/lspci'):
-			if b' vga ' in line.lower():
-				if b'nvidia' in line.lower():
-					print(' ** nvidia card detected, suggested driver: nvidia **')
-				elif b'amd' in line.lower():
-					print(' ** AMD card detected, suggested driver: AMD / ATI **')
+		arguments = storage.get('arguments', {})
+		if has_amd_graphics():
+			print('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')
+		if has_intel_graphics():
+			print('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.')
+		if has_nvidia_graphics():
+			print('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.')
 
-		initial_option = generic_select(drivers, input_text="Select your graphics card driver: ")
-
-		if not initial_option:
-			return default_option
-
-		selected_driver = options[initial_option]
-
-		if type(selected_driver) == dict:
-			driver_options = sorted(list(selected_driver))
-
-			driver_package_group = generic_select(driver_options, f'Which driver-type do you want for {initial_option}: ', allow_empty_input=False)
-			driver_package_group = selected_driver[driver_package_group]
-
-			return driver_package_group
-
-		return selected_driver
+		arguments['gfx_driver'] = generic_select(drivers, input_text="Select your graphics card driver: ")
+		
+		if arguments.get('gfx_driver', None) is None:
+			arguments['gfx_driver'] = "All open-source (default)"
+			
+		return options.get(arguments.get('gfx_driver'))
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
