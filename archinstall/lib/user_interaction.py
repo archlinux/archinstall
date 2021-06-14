@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout
+from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
@@ -554,24 +554,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
-def valid_parted_position(pos :str):
-	if not len(pos):
-		return False
-
-	if pos.isdigit():
-		return True
-
-	if pos[-1] == '%' and pos[:-1].isdigit():
-		return True
-
-	if pos[-3:].lower() in ['mib', 'kib', 'b', 'tib'] and pos[:-3].isdigit():
-		return True
-
-	if pos[-2:].lower() in ['kb', 'mb', 'gb', 'tb'] and pos[:-2].isdigit():
-		return True
-
-	return False
-
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
 	# TODO: Implement sanity check
 	return False
@@ -679,7 +661,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					}
 				})
 			else:
-				log(f"Invalid start, end or fstype for this partition. Ignoring this partition creation.", fg="red")
+				log(f"Invalid start ({valid_parted_position(start)}), end ({valid_parted_position(end)}) or fstype ({valid_fs_type(fstype)}) for this partition. Ignoring this partition creation.", fg="red")
 				continue
 		elif task[:len("Suggest partition layout")] == "Suggest partition layout":
 			if len(block_device_struct):
