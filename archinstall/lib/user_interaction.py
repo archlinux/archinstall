@@ -552,34 +552,6 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
-def select_reusage_of_partitions(block_device):
-	log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
-	partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
-	partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
-	
-	mountpoints = {}
-	struct = {
-		"partitions" : []
-	}
-	for partition in partitions:
-		mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
-		
-		part_struct = {}
-		if mountpoint:
-			part_struct['mountpoint'] = mountpoint
-			if mountpoint == '/boot':
-				part_struct['boot'] = True
-				if has_uefi():
-					part_struct['ESP'] = True
-		if partition.uuid:
-			part_struct['PARTUUID'] = partition.uuid
-		if partition in partitions_to_wipe:
-			part_struct['wipe'] = True
-
-		struct['partitions'].append(part_struct)
-
-	return struct
-
 def valid_parted_position(pos :str):
 	if not len(pos):
 		return False
@@ -607,11 +579,39 @@ def get_default_partition_layout(block_devices):
 
 	# TODO: Implement sane generic layout for 2+ drives
 
-def wipe_and_create_partitions(block_device :BlockDevice) -> dict:
-	if hasUEFI():
+def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
+	if has_uefi():
 		partition_type = 'gpt'
 	else:
 		partition_type = 'msdos'
+
+	# log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
+	# partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
+	# partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
+	
+	# mountpoints = {}
+	# struct = {
+	# 	"partitions" : []
+	# }
+	# for partition in partitions:
+	# 	mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
+		
+	# 	part_struct = {}
+	# 	if mountpoint:
+	# 		part_struct['mountpoint'] = mountpoint
+	# 		if mountpoint == '/boot':
+	# 			part_struct['boot'] = True
+	# 			if has_uefi():
+	# 				part_struct['ESP'] = True
+	# 		elif mountpoint == '/' and 
+	# 	if partition.uuid:
+	# 		part_struct['PARTUUID'] = partition.uuid
+	# 	if partition in partitions_to_wipe:
+	# 		part_struct['wipe'] = True
+
+	# 	struct['partitions'].append(part_struct)
+
+	# return struct
 
 	partitions_result = [] # Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
@@ -709,20 +709,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 	result = {}
 
 	for device in block_devices:
-		log(f'Select what to do with {device}', fg="yellow")
-		modes = [
-			"Wipe and create new partitions",
-			"Re-use partitions"
-		]
-
-		device_mode = generic_select(modes)
-		
-		if device_mode == "Re-use partitions":
-			layout = select_reusage_of_partitions(device)
-		elif device_mode == "Wipe and create new partitions":
-			layout = wipe_and_create_partitions(device)
-		else:
-			continue
+		layout = manage_new_and_existing_partitions(device)
 		
 		result[device] = layout
 
