@@ -7,7 +7,7 @@ import archinstall
 from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
-from archinstall.lib.profiles import Profile
+from archinstall.lib.profiles import Profile, is_desktop_profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -136,13 +136,8 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
-		# only ask for audio server selection on a desktop profile
-		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
-			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
-		else:
-			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
-			# we will not try to remove packages post-installation to not have audio, as that may cause multiple issues
-			archinstall.arguments['audio'] = None
+		# The argument to ask_for_audio_selection lets the library know if it's a desktop profile
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(is_desktop_profile(archinstall.arguments['profile']))
 
 
 	# Ask for preferred kernel:
@@ -196,10 +191,10 @@ def perform_filesystem_operations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 	print()
-	
+
 	if archinstall.arguments.get('dry_run'):
 		exit(0)
-	
+
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
 
@@ -340,7 +335,7 @@ if not check_mirror_reachable():
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if archinstall.arguments.get('silent', None) is None:
+if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 else:
 	# Workarounds if config is loaded from a file

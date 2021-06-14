@@ -29,6 +29,7 @@ def list_interfaces(skip_loopback=True):
 
 
 def check_mirror_reachable():
+	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
 	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
 		return True
 	elif os.geteuid() != 0:
