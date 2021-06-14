@@ -15,16 +15,27 @@ MBR = 0b00000010
 
 def valid_fs_type(fstype :str) -> bool:
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+	# Above link doesn't agree with `man parted` /mkpart documentation:
+	"""
+		fs-type can
+		be  one  of  "btrfs",  "ext2",
+		"ext3",    "ext4",    "fat16",
+		"fat32",    "hfs",     "hfs+",
+		"linux-swap",  "ntfs",  "reis‐
+		erfs", "udf", or "xfs".
+	"""
 
 	return fstype in [
-		"ext2",
-		"fat16", "fat32",
-		"hfs", "hfs+", "hfsx",
-		"linux-swap",
-		"NTFS",
-		"reiserfs",
-		"ufs",
 		"btrfs",
+		"ext2",
+		"ext3", "ext4", # `man parted` allows these
+		"fat16", "fat32",
+		"hfs", "hfs+", # "hfsx", not included in `man parted`
+		"linux-swap",
+		"ntfs",
+		"reiserfs",
+		"udf", # "ufs", not included in `man parted`
+		"xfs", # `man parted` allows this
 	]
 
 
@@ -334,6 +345,25 @@ class BlockDevice:
 	
 		for device in output['blockdevices']:
 			return device['rota'] is True
+
+	@property
+	def free_space(self):
+		for line in SysCommand(f"parted --machine {self.path} print free"):
+			if 'free' in (free_space := line.decode('UTF-8')):
+				_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
+				yield (start, end, size)
+
+	@property
+	def largest_free_space(self):
+		info = None
+		for space_info in self.free_space:
+			if not info:
+				info = space_info
+			else:
+				# [-1] = size
+				if space_info[-1] > info[-1]:
+					info = space_info
+		return info
 
 	def has_partitions(self):
 		return len(self.partitions)

@@ -567,6 +567,9 @@ def valid_parted_position(pos :str):
 	if pos[-3:].lower() in ['mib', 'kib', 'b', 'tib'] and pos[:-3].isdigit():
 		return True
 
+	if pos[-2:].lower() in ['kb', 'mb', 'gb', 'tb'] and pos[:-2].isdigit():
+		return True
+
 	return False
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
@@ -617,7 +620,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 	mountpoints = {}
 	block_device_struct = {
-		"partitions" : []
+		"partitions" : [partition.__dump__() for partition in block_device.partitions.values()]
 	}
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
@@ -648,9 +651,18 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 				# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 				# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
 				name = input("Enter a desired name for the partition: ").strip()
+			
 			fstype = input("Enter a desired filesystem type for the partition: ").strip()
-			start = input("Enter the start sector of the partition (percentage or block number, ex: 0%): ").strip()
-			end = input("Enter the end sector of the partition (percentage or block number, ex: 100%): ").strip()
+			
+			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
+			if not start.strip():
+				start = block_device.largest_free_space[0]
+				end_suggested = block_device.largest_free_space[1]
+			else:
+				end_suggested = '100%'
+			end = input(f"Enter the end sector of the partition (percentage or block number, ex: {end_suggested}): ").strip()
+			if not end.strip():
+				end = end_suggested
 
 			if valid_parted_position(start) and valid_parted_position(end) and valid_fs_type(fstype):
 				if partition_overlap(block_device_struct, start, end):
