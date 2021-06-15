@@ -415,7 +415,7 @@ class Partition:
 		self.size = size  # TODO: Refresh?
 		self._encrypted = None
 		self.encrypted = encrypted
-		self.allow_formatting = False  # A fail-safe for unconfigured partitions, such as windows NTFS partitions.
+		self.allow_formatting = False
 
 		if mountpoint:
 			self.mount(mountpoint)
@@ -599,7 +599,7 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem=None, path=None, allow_formatting=None, log_formatting=True):
+	def format(self, filesystem=None, path=None, log_formatting=True):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -609,16 +609,11 @@ class Partition:
 
 		if path is None:
 			path = self.path
-		if allow_formatting is None:
-			allow_formatting = self.allow_formatting
 
 		# To avoid "unable to open /dev/x: No such file or directory"
 		start_wait = time.time()
 		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
 			time.sleep(0.025)
-
-		if not allow_formatting:
-			raise PermissionError(f"{self} is not formatable either because instance is locked ({self.allow_formatting}) or a blocking flag was given ({allow_formatting})")
 
 		if log_formatting:
 			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
@@ -792,21 +787,39 @@ class Filesystem:
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 
-			elif partition_uuid := partition.get('PARTUUID'):
-				if partition_instance := self.blockdevice.get_partition(uuid=partition_uuid):
-					partition['device_instance'] = partition_instance
+			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
+				partition['device_instance'] = partition_instance
 			else:
-				raise ValueError("BlockDevice().load_layout() doesn't know how to continue without either a UUID or creation of partition.")
+				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
 
 			if partition.get('filesystem', {}).get('format', None):
 				if partition.get('encrypted', False):
-					assert partition.get('password')
+					if not partition.get('password'):
+						if storage['arguments'] == 'silent':
+							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
+						else:
+							from .user_interaction import get_password
+							partition['password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 					partition['device_instance'].encrypt(password=partition['password'])
 					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai')+'loop', partition['password']) as unlocked_device:
-						unlocked_device.format(partition['filesystem']['format'], allow_formatting=partition.get('format', False))
-				else:
-					partition['device_instance'].format(partition['filesystem']['format'], allow_formatting=partition.get('format', False))
+						if not partition.get('format'):
+							if storage['arguments'] == 'silent':
+								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
+							else:
+								if not partition.get('filesystem'):
+									partition['filesystem'] = {}
+
+								while True:
+									partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
+									if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
+										pint("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
+										continue
+									break
+
+							unlocked_device.format(partition['filesystem']['format'])
+				elif partition.get('format', False):
+					partition['device_instance'].format(partition['filesystem']['format'])
 
 	def find_partition(self, mountpoint):
 		for partition in self.blockdevice:
