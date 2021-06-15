@@ -221,7 +221,7 @@ class BlockDevice:
 		#       I'm placing the encryption password on a BlockDevice level.
 
 	def __repr__(self, *args, **kwargs):
-		return f"BlockDevice({self.device})"
+		return f"BlockDevice({self.device}, size={self.size}GB, free_space={'+'.join(part[2] for part in self.free_space)}, bus_type={self.bus_type})"
 
 	def __iter__(self):
 		for partition in self.partitions:
