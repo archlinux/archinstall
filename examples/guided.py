@@ -190,6 +190,10 @@ def perform_filesystem_operations():
 	archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
+	user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	archinstall.log(user_disk_layout, level=logging.INFO)
+	with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+		disk_layout_file.write(user_disk_layout)
 	print()
 
 	if archinstall.arguments.get('dry_run'):

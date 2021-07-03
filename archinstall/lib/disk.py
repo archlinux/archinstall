@@ -243,11 +243,7 @@ class BlockDevice:
 		json() has precedence over __dump__, so this is a way
 		to give less/partial information for user readability.
 		"""
-		return {
-			'path': self.path,
-			'size': self.info['size'] if 'size' in self.info else '<unknown>',
-			'model': self.info['model'] if 'model' in self.info else '<unknown>'
-		}
+		return self.path
 
 	def __dump__(self):
 		return {
