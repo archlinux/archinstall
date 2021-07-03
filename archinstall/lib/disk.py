@@ -810,14 +810,15 @@ class Filesystem:
 								if not partition.get('filesystem'):
 									partition['filesystem'] = {}
 
-								while True:
-									partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
-									if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-										pint("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
-										continue
-									break
+								if not partition['filesystem'].get('format', False):
+									while True:
+										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
+										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
+											pint("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
+											continue
+										break
 
-							unlocked_device.format(partition['filesystem']['format'])
+						unlocked_device.format(partition['filesystem']['format'])
 				elif partition.get('format', False):
 					partition['device_instance'].format(partition['filesystem']['format'])
 
