@@ -614,8 +614,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			"Delete a partition" if len(block_device_struct) else "",
 			"Clear/Delete all partitions" if len(block_device_struct) else "",
 			"Assign mount-point for a partition" if len(block_device_struct) else "",
+			"Mark/Unmark a partition to be formatted (wipes data)" if len(block_device_struct) else "",
 			"Mark/Unmark a partition as encrypted" if len(block_device_struct) else "",
-			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(block_device_struct) else ""
+			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(block_device_struct) else "",
+			"Set desired filesystem for a partition" if len(block_device_struct) else "",
 		]
 
 		# Print current partition layout:
@@ -697,6 +699,11 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					else:
 						del(block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['mountpoint'])
 
+			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mask for formatting: ', options_output=False)):
+					# Negate the current encryption marking
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['format'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('format', False)
+
 			elif task == "Mark/Unmark a partition as encrypted":
 				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as encrypted: ', options_output=False)):
 					# Negate the current encryption marking
@@ -705,6 +712,20 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
 				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as bootable: ', options_output=False)):
 					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('boot', False)
+
+			elif task == "Set desired filesystem for a partition":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
+					if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
+						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+
+					while True:
+						fstype = input("Enter a desired filesystem type for the partition: ").strip()
+						if not valid_fs_type(fstype):
+							log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
+							continue
+						break
+
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
 
 	return block_device_struct
 

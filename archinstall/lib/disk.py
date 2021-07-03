@@ -788,7 +788,7 @@ class Filesystem:
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
 
-			if partition.get('filesystem', {}).get('format', None):
+			if partition.get('filesystem', {}).get('format', False):
 				if partition.get('encrypted', False):
 					if not partition.get('password'):
 						if storage['arguments'] == 'silent':
