@@ -701,7 +701,23 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
 				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mask for formatting: ', options_output=False)):
-					# Negate the current encryption marking
+					# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
+					# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
+					# it's safe to change the filesystem for this partition.
+					if block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', {}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
+						if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
+							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+
+						while True:
+							fstype = input("Enter a desired filesystem type for the partition: ").strip()
+							if not valid_fs_type(fstype):
+								log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
+								continue
+							break
+
+						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
+
+					# Negate the current wipe marking
 					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['format'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('format', False)
 
 			elif task == "Mark/Unmark a partition as encrypted":
