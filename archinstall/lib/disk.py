@@ -395,7 +395,6 @@ class BlockDevice:
 		for partition in self:
 			if partition.uuid == uuid:
 				return partition
-		print('Returning False on get_partition()')
 
 
 class Partition:
