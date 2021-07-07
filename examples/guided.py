@@ -322,8 +322,7 @@ def perform_installation_steps():
 			else:
 				fs.find_partition('/').mount(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
-			if has_uefi():
-				fs.find_partition('/boot').mount(archinstall.storage.get('MOUNT_POINT', '/mnt') + '/boot')
+			fs.find_partition('/boot').mount(archinstall.storage.get('MOUNT_POINT', '/mnt') + '/boot')
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 
@@ -352,7 +351,7 @@ def perform_installation(mountpoint):
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
 			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
-			installation.add_bootloader(archinstall.arguments["bootloader"])
+			installation.add_bootloader(archinstall.arguments["harddrive"], archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config

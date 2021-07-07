@@ -347,6 +347,11 @@ class Partition:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
 
+		elif filesystem == 'ext2':
+			if (handle := SysCommand(f'/usr/bin/mkfs.ext2 -F {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
+			self.filesystem = 'ext2'
+
 		elif filesystem == 'xfs':
 			if (handle := SysCommand(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
@@ -518,12 +523,20 @@ class Filesystem:
 			self.blockdevice.partition[0].allow_formatting = True
 			self.blockdevice.partition[1].allow_formatting = True
 		else:
-			# we don't need a seprate boot partition it would be a waste of space
-			self.add_partition('primary', start='1MB', end='100%')
-			self.blockdevice.partition[0].filesystem = root_filesystem_type
-			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
-			self.blockdevice.partition[0].target_mountpoint = '/'
+			self.add_partition('primary', start='1MiB', end='513MiB', partition_format='ext2')
+			self.set(0, 'boot on')
+			self.add_partition('primary', start='513MiB', end='100%')
+
+			self.blockdevice.partition[0].filesystem = 'ext2'
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
+
+			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
+
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
+
 			self.blockdevice.partition[0].allow_formatting = True
+			self.blockdevice.partition[1].allow_formatting = True
 
 	def add_partition(self, partition_type, start, end, partition_format=None):
 		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)

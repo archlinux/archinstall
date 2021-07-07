@@ -409,7 +409,7 @@ class Installer:
 
 		return True
 
-	def add_bootloader(self, bootloader='systemd-bootctl'):
+	def add_bootloader(self, _device, bootloader='systemd-bootctl'):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_add_bootloader'):
 				# Allow plugins to override the boot-loader handling.
@@ -500,7 +500,16 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')
+			self.pacstrap('grub') # no need?
+
+			if real_device := self.detect_encryption(root_partition):
+				_file = "/etc/default/grub"
+				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
+				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
+
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 
 			if has_uefi():
 				self.pacstrap('efibootmgr')
@@ -509,10 +518,7 @@ class Installer:
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
-				if root_device == "block":
-					root_device = f"{root_partition.path}"
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
+				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {_device.path}'))
 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
 		else:
