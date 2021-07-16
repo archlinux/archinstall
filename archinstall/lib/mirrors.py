@@ -59,9 +59,7 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', so
 	:param regions: A series of country codes separated by `,`. For instance `SE,US` for sweden and United States.
 	:type regions: str
 	"""
-	region_list = []
-	for region in regions.split(','):
-		region_list.append(f'country={region}')
+	region_list = [f'country={region}' for region in regions.split(',')]
 	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
 	new_list = response.read().replace(b"#Server", b"Server")
 

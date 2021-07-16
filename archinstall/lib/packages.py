@@ -46,10 +46,7 @@ def find_packages(*names):
 	The function itself is rather slow, so consider not sending to
 	many packages to the search query.
 	"""
-	result = {}
-	for package in names:
-		result[package] = find_package(package)
-	return result
+	return {package: find_package(package) for package in names}
 
 
 def validate_package_list(packages: list):
@@ -57,11 +54,11 @@ def validate_package_list(packages: list):
 	Validates a list of given packages.
 	Raises `RequirementError` if one or more packages are not found.
 	"""
-	invalid_packages = []
-	for package in packages:
-		if not find_package(package)['results'] and not find_group(package):
-			invalid_packages.append(package)
-
+	invalid_packages = [
+		package
+		for package in packages
+		if not find_package(package)['results'] and not find_group(package)
+	]
 	if invalid_packages:
 		raise RequirementError(f"Invalid package names: {invalid_packages}")
 
