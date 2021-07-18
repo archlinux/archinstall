@@ -280,7 +280,7 @@ def perform_installation_steps():
 		config_file.write(user_configuration)
 	print()
 
-	if archinstall.arguments.get('dry_run'):
+	if archinstall.arguments.get('dry-run'):
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
