@@ -519,6 +519,8 @@ class Filesystem:
 			self.blockdevice.partition[1].allow_formatting = True
 		else:
 			# we don't need a seprate boot partition it would be a waste of space
+			if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+				raise KeyError(f"Could not create a MSDOS label on {self}")
 			self.add_partition('primary', start='1MB', end='100%')
 			self.blockdevice.partition[0].filesystem = root_filesystem_type
 			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
@@ -539,11 +541,9 @@ class Filesystem:
 
 		if partitioning:
 			start_wait = time.time()
-			while previous_partitions == self.blockdevice.partitions:
-				time.sleep(0.025)  # Let the new partition come up in the kernel
-				if time.time() - start_wait > 10:
-					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
-
+			time.sleep(0.025)  # Let the new partition come up in the kernel
+			if time.time() - start_wait > 20:
+				raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
 			return True
 
 	def set_name(self, partition: int, name: str):
