@@ -37,6 +37,7 @@ def load_config():
 			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
 		else:
 			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
+	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
 	if archinstall.arguments.get('mirror-region', None) is not None:
 		if type(archinstall.arguments.get('mirror-region', None)) is dict:
 			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
