@@ -8,8 +8,6 @@ __packages__ = [
 	"deepin",
 	"deepin-terminal",
 	"deepin-editor",
-	"lightdm",
-	"lightdm-gtk-greeter",
 ]
 
 
