@@ -337,14 +337,24 @@ class BlockDevice:
 		for partition in json.loads(SysCommand(f'lsblk -J -o+UUID {self.path}').decode('UTF-8'))['blockdevices']:
 			return partition.get('uuid', None)
 
+	def convert_size_to_gb(self, size):
+		units = {
+			'P' : lambda s : float(s) * 2048,
+			'T' : lambda s : float(s) * 1024,
+			'G' : lambda s : float(s),
+			'M' : lambda s : float(s) / 1024,
+			'K' : lambda s : float(s) / 2048,
+			'B' : lambda s : float(s) / 3072,
+		}
+		unit = size[-1]
+		return float(units.get(unit, lambda s : None)(size[:-1]))
+
 	@property
 	def size(self):
 		output = json.loads(SysCommand(f"lsblk --json -o+SIZE {self.path}").decode('UTF-8'))
 	
 		for device in output['blockdevices']:
-			assert device['size'][-1] == 'G' # Make sure we're counting in Gigabytes, otherwise the next logic fails.
-
-			return float(device['size'][:-1])
+			return self.convert_size_to_gb(device['size'])
 
 	@property
 	def bus_type(self):
@@ -362,7 +372,11 @@ class BlockDevice:
 
 	@property
 	def free_space(self):
-		for line in SysCommand(f"parted --machine {self.path} print free"):
+		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
+		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
+		# so the free will ignore the ESP partition and just give the "free" space.
+		# Doesn't harm us, but worth noting in case something weird happens.
+		for line in SysCommand(f"parted -s --machine {self.path} print free"):
 			if 'free' in (free_space := line.decode('UTF-8')):
 				_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
 				yield (start, end, size)
@@ -912,6 +926,7 @@ def all_disks(*args, **kwargs):
 			continue
 
 		drives[drive['path']] = BlockDevice(drive['path'], drive)
+
 	return drives
 
 
