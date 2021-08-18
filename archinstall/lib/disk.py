@@ -75,6 +75,20 @@ def sort_block_devices_based_on_performance(block_devices):
 
 	return result
 
+def select_largest_device(devices, gigabytes, filter_out=None):
+	if not filter_out:
+		filter_out = []
+
+	copy_devices = [*devices]
+	for filter_device in filter_out:
+		if filter_device in copy_devices:
+			copy_devices.pop(copy_devices.index(filter_device))
+
+	if not len(copy_devices):
+		return None
+
+	return max(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
+
 def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 	if not filter_out:
 		filter_out = []
@@ -87,7 +101,7 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 	if not len(copy_devices):
 		return None
 
-	return min(copy_devices, key=(lambda device : abs(device.size - 40)))
+	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
 def suggest_single_disk_layout(block_device):
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
@@ -144,12 +158,14 @@ def suggest_single_disk_layout(block_device):
 
 def suggest_multi_disk_layout(block_devices):
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
+	ARCH_LINUX_INSTALLED_SIZE = 20 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 
 	block_devices = sort_block_devices_based_on_performance(block_devices).keys()
 
-	root_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
-	home_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART, filter_out=[root_device])
+	home_device = select_largest_device(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
+	root_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=ARCH_LINUX_INSTALLED_SIZE, filter_out=[home_device])
 
+	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 
 	layout = {
 		root_device : {
@@ -792,12 +808,14 @@ class Filesystem:
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('format', False) and not partition.get('PARTUUID', None):
+				print("Adding partition....")
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
+				print("Re-using partition_instance:", partition_instance)
 				partition['device_instance'] = partition_instance
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
@@ -830,6 +848,7 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'])
 				elif partition.get('format', False):
+					print(partition)
 					partition['device_instance'].format(partition['filesystem']['format'])
 
 	def find_partition(self, mountpoint):
