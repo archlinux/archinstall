@@ -8,6 +8,7 @@ from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile, is_desktop_profile
+from archinstall.lib.profiles.server import available_servers
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -50,7 +51,9 @@ def load_config():
 		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
 		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-
+	if archinstall.arguments.get('servers', None) is not None:
+		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
+	
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
