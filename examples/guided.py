@@ -8,7 +8,6 @@ from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile, is_desktop_profile
-from archinstall.lib.profiles.server import available_servers
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
