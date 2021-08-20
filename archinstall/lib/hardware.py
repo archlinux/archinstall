@@ -62,7 +62,6 @@ CPUINFO = Path("/proc/cpuinfo")
 
 def cpuinfo() -> Iterator[dict[str, str]]:
 	"""Yields information about the CPUs of the system."""
-
 	cpu = {}
 
 	with CPUINFO.open() as file:
