@@ -1,7 +1,8 @@
 import json
 import os
 import subprocess
-from typing import Optional
+from pathlib import Path
+from typing import Iterator, Optional
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -56,6 +57,24 @@ AVAILABLE_GFX_DRIVERS = {
 	"Nvidia (proprietary)": ["nvidia"],
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
+
+CPUINFO = Path("/proc/cpuinfo")
+
+
+def cpuinfo() -> Iterator[dict[str, str]]:
+	"""Yields information about the CPUs of the system."""
+
+	cpu = {}
+
+	with CPUINFO.open() as file:
+		for line in file:
+			if not (line := line.strip()):
+				yield cpu
+				cpu = {}
+				continue
+
+			key, value = line.split(":", maxsplit=1)
+			cpu[key.strip()] = value.strip()
 
 
 def has_wifi() -> bool:
