@@ -1,6 +1,5 @@
 import json
 import os
-import subprocess
 from pathlib import Path
 from typing import Iterator, Optional
 
@@ -82,15 +81,11 @@ def has_wifi() -> bool:
 
 
 def has_amd_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-		return True
-	return False
+    return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
 
 
 def has_intel_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
-		return True
-	return False
+    return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
 
 
 def has_uefi() -> bool:
