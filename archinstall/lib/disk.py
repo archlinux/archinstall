@@ -87,7 +87,7 @@ def select_largest_device(devices, gigabytes, filter_out=None):
 	if not len(copy_devices):
 		return None
 
-	return max(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
+	return max(copy_devices, key=(lambda device : device.size if device.size > gigabytes else 0))
 
 def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 	if not filter_out:
