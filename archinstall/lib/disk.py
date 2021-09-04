@@ -75,6 +75,11 @@ def sort_block_devices_based_on_performance(block_devices):
 
 	return result
 
+def filter_disks_below_size_in_gb(devices, gigabytes):
+	for disk in devices:
+		if disk.size >= gigabytes:
+			yield disk
+
 def select_largest_device(devices, gigabytes, filter_out=None):
 	if not filter_out:
 		filter_out = []
@@ -84,10 +89,12 @@ def select_largest_device(devices, gigabytes, filter_out=None):
 		if filter_device in copy_devices:
 			copy_devices.pop(copy_devices.index(filter_device))
 
+	copy_devices = list(filter_disks_below_size_in_gb(copy_devices, gigabytes))
+
 	if not len(copy_devices):
 		return None
 
-	return max(copy_devices, key=(lambda device : device.size if device.size > gigabytes else 0))
+	return max(copy_devices, key=(lambda device : device.size))
 
 def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 	if not filter_out:
