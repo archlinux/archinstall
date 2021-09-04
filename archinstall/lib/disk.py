@@ -146,7 +146,7 @@ def suggest_single_disk_layout(block_device):
 		}
 	})
 
-	if block_device.size > MIN_SIZE_TO_ALLOW_HOME_PART:
+	if block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		layout[block_device]['partitions'].append({
 			# Home
 			"type" : "primary",
