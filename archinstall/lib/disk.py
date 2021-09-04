@@ -799,6 +799,14 @@ class Filesystem:
 		SysCommand('sync')
 		return True
 
+	def partuuid_to_index(self, uuid):
+		output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+	
+		for device in output['blockdevices']:
+			for index, partition in enumerate(device['children']):
+				if partition['partuuid'].lower() == uuid:
+					return index
+
 	def load_layout(self, layout :dict):
 		from .luks import luks2
 
@@ -820,6 +828,8 @@ class Filesystem:
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
+				# TODO: device_instance some times become None
+				# print('Device instance:', partition['device_instance'])
 
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
 				print("Re-using partition_instance:", partition_instance)
@@ -855,8 +865,10 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'])
 				elif partition.get('format', False):
-					print(partition)
 					partition['device_instance'].format(partition['filesystem']['format'])
+
+			if partition.get('boot', False):
+				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
 
 	def find_partition(self, mountpoint):
 		for partition in self.blockdevice:
@@ -865,7 +877,7 @@ class Filesystem:
 
 	def raw_parted(self, string: str):
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
-			log(f"Could not generate partition: {cmd_handle}", level=logging.ERROR, fg="red")
+			log(f"Parted ended with a bad exit code: {cmd_handle}", level=logging.ERROR, fg="red")
 		return cmd_handle
 
 	def parted(self, string: str):
@@ -911,6 +923,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
 
 	def set(self, partition: int, string: str):
+		log(f"Setting {string} on (parted) partition index {partition+1}", level=logging.INFO)
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):
