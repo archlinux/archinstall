@@ -131,7 +131,10 @@ def product_name() -> Optional[str]:
 
 def mem_info():
 	# This implementation is from https://stackoverflow.com/a/28161352
-	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+	return {
+		i.split()[0].rstrip(':'): int(i.split()[1])
+		for i in open('/proc/meminfo').readlines()
+	}
 
 
 def mem_available() -> Optional[str]:
