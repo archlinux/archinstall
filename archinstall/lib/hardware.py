@@ -80,10 +80,10 @@ def has_wifi() -> bool:
 
 
 def has_amd_cpu() -> bool:
-    return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
+	return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
 
 def has_intel_cpu() -> bool:
-    return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
+	return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
