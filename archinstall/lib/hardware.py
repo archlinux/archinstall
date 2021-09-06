@@ -63,13 +63,19 @@ def has_wifi() -> bool:
 
 
 def has_amd_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-		return True
+	try:
+		return subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode()
+	except:
+		pass
 	return False
 
 
 def has_intel_cpu() -> bool:
-	return subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode()
+	try:
+		return subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode()
+	except:
+		pass
+	return False
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
