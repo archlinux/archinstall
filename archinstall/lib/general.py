@@ -71,6 +71,8 @@ def locate_binary(name):
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
+def json_dumps(*args, **kwargs):
+	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
 	def _encode(obj):
@@ -109,7 +111,6 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
-
 
 class SysCommandWorker:
 	def __init__(self, cmd, callbacks=None, peak_output=False, environment_vars=None, logfile=None, working_directory='./'):
@@ -317,6 +318,15 @@ class SysCommand:
 
 		for line in self.session:
 			yield line
+
+	def __getitem__(self, key):
+		if type(key) is slice:
+			start = key.start if key.start else 0
+			end = key.stop if key.stop else len(self.session._trace_log)
+
+			return self.session._trace_log[start:end]
+		else:
+			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
 	def __repr__(self, *args, **kwargs):
 		return self.session._trace_log.decode('UTF-8')

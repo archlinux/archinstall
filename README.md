@@ -149,7 +149,7 @@ After this, running archinstall with `python -m archinstall` will run against wh
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
-    # dd if=/dev/zero of=./testimage.img bs=1G count=5
+    # truncate -s 20G testimage.img
     # losetup -fP ./testimage.img
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall

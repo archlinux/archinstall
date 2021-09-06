@@ -18,9 +18,6 @@ class luks2:
 		self.mapdev = None
 
 	def __enter__(self):
-		# if self.partition.allow_formatting:
-		# 	self.key_file = self.encrypt(self.partition, *self.args, **self.kwargs)
-		# else:
 		if not self.key_file:
 			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
 
@@ -42,9 +39,6 @@ class luks2:
 		return True
 
 	def encrypt(self, partition, password=None, key_size=512, hash_type='sha512', iter_time=10000, key_file=None):
-		if not self.partition.allow_formatting:
-			raise DiskError(f'Could not encrypt volume {partition} due to it having a formatting lock.')
-
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
 		if not key_file:
@@ -132,7 +126,6 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 			unlocked_partition = Partition(self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
-			unlocked_partition.allow_formatting = self.partition.allow_formatting
 			return unlocked_partition
 
 	def close(self, mountpoint=None):

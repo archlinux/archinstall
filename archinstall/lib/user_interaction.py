@@ -9,6 +9,7 @@ import signal
 import sys
 import time
 
+from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from .exceptions import *
 from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
@@ -119,7 +120,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 
 def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
 	# Checking if the options are different from `list` or `dict` or if they are empty
-	if type(options) not in [list, dict]:
+	if type(options) not in [list, dict, type({}.keys()), type({}.values())]:
 		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
@@ -130,6 +131,8 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	# After passing the checks, function continues to work
 	if type(options) == dict:
 		options = list(options.values())
+	elif type(options) in (type({}.keys()), type({}.values())):
+		options = list(options)
 	if sort:
 		options = sorted(options)
 
@@ -186,8 +189,23 @@ def generic_multi_select(options, text="Select one or more of the options above 
 		except RequirementError as e:
 			log(f" * {e} * ", fg='red')
 
+	sys.stdout.write('\n')
+	sys.stdout.flush()
 	return selected_options
 
+def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
+	root = find_partition_by_mountpoint(block_devices, '/')
+	root['encrypted'] = True
+	root['password'] = password
+
+	return block_devices
+
+	# TODO: Next version perhaps we can support multiple encrypted partitions
+	#options = []
+	#for partition in block_devices.values():
+	#	options.append({key: val for key, val in partition.items() if val})
+
+	#print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
 
 class MiniCurses:
 	def __init__(self, width, height):
@@ -535,6 +553,221 @@ def generic_select(options, input_text="Select one of the above by index or abso
 			log(f" * {err} * ", fg='red')
 
 	return selected_option
+
+def partition_overlap(partitions :list, start :str, end :str) -> bool:
+	# TODO: Implement sanity check
+	return False
+
+def get_default_partition_layout(block_devices):
+	if len(block_devices) == 1:
+		return suggest_single_disk_layout(block_devices[0])
+	else:
+		return suggest_multi_disk_layout(block_devices)
+
+	# TODO: Implement sane generic layout for 2+ drives
+
+def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
+	if has_uefi():
+		partition_type = 'gpt'
+	else:
+		partition_type = 'msdos'
+
+	# log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
+	# partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
+	# partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
+	
+	# mountpoints = {}
+	# struct = {
+	# 	"partitions" : []
+	# }
+	# for partition in partitions:
+	# 	mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
+		
+	# 	part_struct = {}
+	# 	if mountpoint:
+	# 		part_struct['mountpoint'] = mountpoint
+	# 		if mountpoint == '/boot':
+	# 			part_struct['boot'] = True
+	# 			if has_uefi():
+	# 				part_struct['ESP'] = True
+	# 		elif mountpoint == '/' and 
+	# 	if partition.uuid:
+	# 		part_struct['PARTUUID'] = partition.uuid
+	# 	if partition in partitions_to_wipe:
+	# 		part_struct['wipe'] = True
+
+	# 	struct['partitions'].append(part_struct)
+
+	# return struct
+
+	mountpoints = {}
+	block_device_struct = {
+		"partitions" : [partition.__dump__() for partition in block_device.partitions.values()]
+	}
+	# Test code: [part.__dump__() for part in block_device.partitions.values()]
+	# TODO: Squeeze in BTRFS subvolumes here
+
+	while True:
+		modes = [
+			"Create a new partition",
+			f"Suggest partition layout for {block_device}",
+			"Delete a partition" if len(block_device_struct) else "",
+			"Clear/Delete all partitions" if len(block_device_struct) else "",
+			"Assign mount-point for a partition" if len(block_device_struct) else "",
+			"Mark/Unmark a partition to be formatted (wipes data)" if len(block_device_struct) else "",
+			"Mark/Unmark a partition as encrypted" if len(block_device_struct) else "",
+			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(block_device_struct) else "",
+			"Set desired filesystem for a partition" if len(block_device_struct) else "",
+		]
+
+		# Print current partition layout:
+		if len(block_device_struct["partitions"]):
+			print('Current partition layout:')
+			for partition in block_device_struct["partitions"]:
+				print(partition)
+			print()
+
+		task = generic_select(modes,
+				input_text=f"Select what to do with {block_device} (leave blank when done): ")
+
+		if not task:
+			break
+		
+		if task == 'Create a new partition':
+			if partition_type == 'gpt':
+				# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+				# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
+				name = input("Enter a desired name for the partition: ").strip()
+			
+			fstype = input("Enter a desired filesystem type for the partition: ").strip()
+			
+			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
+			if not start.strip():
+				start = block_device.largest_free_space[0]
+				end_suggested = block_device.largest_free_space[1]
+			else:
+				end_suggested = '100%'
+			end = input(f"Enter the end sector of the partition (percentage or block number, ex: {end_suggested}): ").strip()
+			if not end.strip():
+				end = end_suggested
+
+			if valid_parted_position(start) and valid_parted_position(end) and valid_fs_type(fstype):
+				if partition_overlap(block_device_struct["partitions"], start, end):
+					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.", fg="red")
+					continue
+
+				block_device_struct["partitions"].append({
+					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"start" : start,
+					"size" : end,
+					"mountpoint" : None,
+					"wipe" : True,
+					"filesystem" : {
+						"format" : fstype
+					}
+				})
+			else:
+				log(f"Invalid start ({valid_parted_position(start)}), end ({valid_parted_position(end)}) or fstype ({valid_fs_type(fstype)}) for this partition. Ignoring this partition creation.", fg="red")
+				continue
+		elif task[:len("Suggest partition layout")] == "Suggest partition layout":
+			if len(block_device_struct["partitions"]):
+				if input(f"{block_device} contains queued partitions, this will remove those, are you sure? y/N: ").strip().lower() in ('', 'n'):
+					continue
+
+			block_device_struct["partitions"] = suggest_single_disk_layout(block_device)[block_device]
+		elif task is None:
+			return block_device_struct
+		else:
+			for index, partition in enumerate(block_device_struct["partitions"]):
+				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
+
+			if task == "Delete a partition":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to delete: ', options_output=False)):
+					del(block_device_struct["partitions"][block_device_struct["partitions"].index(partition)])
+			elif task == "Clear/Delete all partitions":
+				block_device_struct["partitions"] = []
+			elif task == "Assign mount-point for a partition":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mount where: ', options_output=False)):
+					print(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')
+					mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
+
+					if len(mountpoint):
+						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['mountpoint'] = mountpoint
+						if mountpoint == '/boot':
+							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
+							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = True
+					else:
+						del(block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['mountpoint'])
+
+			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mask for formatting: ', options_output=False)):
+					# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
+					# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
+					# it's safe to change the filesystem for this partition.
+					if block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', {}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
+						if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
+							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+
+						while True:
+							fstype = input("Enter a desired filesystem type for the partition: ").strip()
+							if not valid_fs_type(fstype):
+								log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
+								continue
+							break
+
+						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
+
+					# Negate the current wipe marking
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['format'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('format', False)
+
+			elif task == "Mark/Unmark a partition as encrypted":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as encrypted: ', options_output=False)):
+					# Negate the current encryption marking
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['encrypted'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('encrypted', False)
+
+			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as bootable: ', options_output=False)):
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('boot', False)
+
+			elif task == "Set desired filesystem for a partition":
+				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
+					if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
+						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+
+					while True:
+						fstype = input("Enter a desired filesystem type for the partition: ").strip()
+						if not valid_fs_type(fstype):
+							log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
+							continue
+						break
+
+					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
+
+	return block_device_struct
+
+def select_individual_blockdevice_usage(block_devices :list):
+	result = {}
+
+	for device in block_devices:
+		layout = manage_new_and_existing_partitions(device)
+		
+		result[device] = layout
+
+	return result
+
+
+def select_disk_layout(block_devices :list):
+	modes = [
+		"Wipe all selected drives and use a best-effort default partition layout",
+		"Select what to do with each individual drive (followed by partition usage)"
+	]
+
+	mode = generic_select(modes, input_text=f"Select what you wish to do with the selected block devices: ")
+
+	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
+		return get_default_partition_layout(block_devices)
+	else:
+		return select_individual_blockdevice_usage(block_devices)
 
 
 def select_disk(dict_o_disks):

@@ -57,7 +57,6 @@ class Installer:
 		self.post_base_install = []
 
 		storage['session'] = self
-		self.partitions = get_partitions_in_use(self.target)
 
 		self.MODULES = []
 		self.BINARIES = []
@@ -108,6 +107,10 @@ class Installer:
 			self.sync_log_to_install_medium()
 			return False
 
+	@property
+	def partitions(self):
+		return get_partitions_in_use(self.target)
+
 	def sync_log_to_install_medium(self):
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
@@ -121,6 +124,23 @@ class Installer:
 				shutil.copy2(absolute_logfile, f"{self.target}/{absolute_logfile}")
 
 		return True
+
+	def mount_ordered_layout(self, layouts :dict):
+		from .luks import luks2
+
+		mountpoints = {}
+		for blockdevice in layouts:
+			for partition in layouts[blockdevice]['partitions']:
+				mountpoints[partition['mountpoint']] = partition
+
+		for mountpoint in sorted(mountpoints.keys()):
+			if mountpoints[mountpoint]['encrypted']:
+				loopdev = storage.get('ENC_IDENTIFIER', 'ai')+'loop'
+				password = mountpoints[mountpoint]['password']
+				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					unlocked_device.mount(f"{self.target}{mountpoint}")
+			else:
+				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
@@ -424,6 +444,9 @@ class Installer:
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
+
+		if boot_partition is None and root_partition is None:
+			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
 
 		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
