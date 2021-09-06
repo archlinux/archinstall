@@ -82,10 +82,8 @@ def has_wifi() -> bool:
 def has_amd_cpu() -> bool:
     return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
 
-
 def has_intel_cpu() -> bool:
     return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
-
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
@@ -119,7 +117,7 @@ def cpu_vendor() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Vendor ID:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def cpu_model() -> Optional[str]:
@@ -129,7 +127,7 @@ def cpu_model() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Model name:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def sys_vendor() -> Optional[str]:
@@ -144,7 +142,10 @@ def product_name() -> Optional[str]:
 
 def mem_info():
 	# This implementation is from https://stackoverflow.com/a/28161352
-	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+	return {
+		i.split()[0].rstrip(':'): int(i.split()[1])
+		for i in open('/proc/meminfo').readlines()
+	}
 
 
 def mem_available() -> Optional[str]:
@@ -164,13 +165,6 @@ def virtualization() -> Optional[str]:
 
 
 def is_vm() -> bool:
-	try:
-		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
-			return True
-	except:
-		pass
-
-	return False
+	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
 
 # TODO: Add more identifiers

@@ -98,10 +98,7 @@ class JsonEncoder:
 		elif isinstance(obj, (datetime, date)):
 			return obj.isoformat()
 		elif isinstance(obj, (list, set, tuple)):
-			r = []
-			for item in obj:
-				r.append(json.loads(json.dumps(item, cls=JSON)))
-			return r
+			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
 		else:
 			return obj
 

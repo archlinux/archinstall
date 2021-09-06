@@ -347,6 +347,11 @@ class Partition:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext4'
 
+		elif filesystem == 'ext2':
+			if (handle := SysCommand(f'/usr/bin/mkfs.ext2 -F {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
+			self.filesystem = 'ext2'
+
 		elif filesystem == 'xfs':
 			if (handle := SysCommand(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
@@ -518,12 +523,24 @@ class Filesystem:
 			self.blockdevice.partition[0].allow_formatting = True
 			self.blockdevice.partition[1].allow_formatting = True
 		else:
-			# we don't need a seprate boot partition it would be a waste of space
-			self.add_partition('primary', start='1MB', end='100%')
-			self.blockdevice.partition[0].filesystem = root_filesystem_type
-			log(f"Set the root partition {self.blockdevice.partition[0]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
-			self.blockdevice.partition[0].target_mountpoint = '/'
+			if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+				raise KeyError(f"Could not create a MSDOS label on {self}")
+
+			self.add_partition('primary', start='1MiB', end='513MiB', partition_format='ext4')
+			self.set(0, 'boot on')
+			self.add_partition('primary', start='513MiB', end='100%')
+
+			self.blockdevice.partition[0].filesystem = 'ext4' # TODO: Up for debate weither or not this should be user-supplied: https://github.com/archlinux/archinstall/pull/595/files
+			self.blockdevice.partition[1].filesystem = root_filesystem_type
+
+			log(f"Set the boot partition {self.blockdevice.partition[0]} to use filesystem {'ext4'}.", level=logging.DEBUG)
+			log(f"Set the root partition {self.blockdevice.partition[1]} to use filesystem {root_filesystem_type}.", level=logging.DEBUG)
+
+			self.blockdevice.partition[0].target_mountpoint = '/boot'
+			self.blockdevice.partition[1].target_mountpoint = '/'
+
 			self.blockdevice.partition[0].allow_formatting = True
+			self.blockdevice.partition[1].allow_formatting = True
 
 	def add_partition(self, partition_type, start, end, partition_format=None):
 		log(f'Adding partition to {self.blockdevice}', level=logging.INFO)
@@ -531,7 +548,7 @@ class Filesystem:
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
-				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
+				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
 		if partition_format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}') == 0
 		else:
@@ -539,11 +556,9 @@ class Filesystem:
 
 		if partitioning:
 			start_wait = time.time()
-			while previous_partitions == self.blockdevice.partitions:
-				time.sleep(0.025)  # Let the new partition come up in the kernel
-				if time.time() - start_wait > 10:
-					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
-
+			time.sleep(0.025)  # Let the new partition come up in the kernel
+			if time.time() - start_wait > 20:
+				raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
 			return True
 
 	def set_name(self, partition: int, name: str):
