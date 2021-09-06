@@ -111,23 +111,17 @@ def has_intel_graphics() -> bool:
 
 
 def cpu_vendor() -> Optional[str]:
-	cpu_info_raw = SysCommand("lscpu -J")
-	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+	for cpu in cpuinfo():
+		return cpu.get("vendor_id")
 
-	for info in cpu_info:
-		if info.get('field', None) == "Vendor ID:":
-			return info.get('data', None)
-	return
+	return None
 
 
 def cpu_model() -> Optional[str]:
-	cpu_info_raw = SysCommand("lscpu -J")
-	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+	for cpu in cpuinfo():
+		return cpu.get("model name")
 
-	for info in cpu_info:
-		if info.get('field', None) == "Model name:":
-			return info.get('data', None)
-	return
+	return None
 
 
 def sys_vendor() -> Optional[str]:
