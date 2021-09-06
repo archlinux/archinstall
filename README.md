@@ -156,7 +156,7 @@ This can be done by installing `pacman -S arch-install-scripts util-linux` local
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
-This will create a *5 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
+This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
 *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
 
