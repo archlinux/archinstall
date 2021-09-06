@@ -149,16 +149,5 @@ def virtualization() -> Optional[str]:
 
 def is_vm() -> bool:
 	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
-	"""
-	try:
-		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
-			return True
-	except:
-		pass
-
-	return False
-	
-	"""
 
 # TODO: Add more identifiers
