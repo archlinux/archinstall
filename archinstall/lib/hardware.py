@@ -63,16 +63,19 @@ def has_wifi() -> bool:
 
 
 def has_amd_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-		return True
+	try:
+		return subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode()
+	except:
+		pass
 	return False
 
 
 def has_intel_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
-		return True
+	try:
+		return subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode()
+	except:
+		pass
 	return False
-
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
@@ -106,7 +109,7 @@ def cpu_vendor() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Vendor ID:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def cpu_model() -> Optional[str]:
@@ -116,7 +119,7 @@ def cpu_model() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Model name:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def sys_vendor() -> Optional[str]:
@@ -154,13 +157,6 @@ def virtualization() -> Optional[str]:
 
 
 def is_vm() -> bool:
-	try:
-		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
-			return True
-	except:
-		pass
-
-	return False
+	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
 
 # TODO: Add more identifiers
