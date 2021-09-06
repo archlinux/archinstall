@@ -548,7 +548,7 @@ class Filesystem:
 		previous_partitions = self.blockdevice.partitions
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
-				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
+				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
 		if partition_format:
 			partitioning = self.parted(f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}') == 0
 		else:
