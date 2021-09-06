@@ -667,6 +667,11 @@ class Partition:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
+		elif filesystem == 'ext2':
+			if (handle := SysCommand(f'/usr/bin/mkfs.ext2 -F {path}')).exit_code != 0:
+				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
+			self.filesystem = 'ext2'
+
 		elif filesystem == 'xfs':
 			if (handle := SysCommand(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
@@ -909,6 +914,7 @@ class Filesystem:
 
 		if self.parted(parted_string):
 			start_wait = time.time()
+
 			while previous_partition_uuids == {partition.uuid for partition in self.blockdevice.partitions.values()}:
 				if time.time() - start_wait > 10:
 					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
@@ -917,7 +923,6 @@ class Filesystem:
 
 			time.sleep(0.5) # Let the kernel catch up with quick block devices (nvme for instance)
 			return self.blockdevice.get_partition(uuid=(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()}).pop())
-
 
 	def set_name(self, partition: int, name: str):
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0

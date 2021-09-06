@@ -406,13 +406,13 @@ def ask_to_configure_network():
 	# {MAC: Ifname}
 	interfaces = {
 		'ISO-CONFIG': 'Copy ISO network configuration to installation',
-		'NetworkManager': 'Use NetworkManager to control and manage your internet connection',
+		'NetworkManager': 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)',
 		**list_interfaces()
 	}
 
 	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
 	if nic and nic != 'Copy ISO network configuration to installation':
-		if nic == 'Use NetworkManager to control and manage your internet connection':
+		if nic == 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)':
 			return {'nic': nic, 'NetworkManager': True}
 
 		# Current workaround:
@@ -933,7 +933,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	"""
 
 	drivers = sorted(list(options))
-	
+
 	if drivers:
 		arguments = storage.get('arguments', {})
 		if has_amd_graphics():
@@ -943,11 +943,12 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		if has_nvidia_graphics():
 			print('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.')
 
-		arguments['gfx_driver'] = generic_select(drivers, input_text="Select a graphics driver or leave blank to install all open-source drivers: ")
-		
+		if not arguments.get('gfx_driver', None):
+			arguments['gfx_driver'] = generic_select(drivers, input_text="Select a graphics driver or leave blank to install all open-source drivers: ")
+
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = "All open-source (default)"
-			
+
 		return options.get(arguments.get('gfx_driver'))
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")

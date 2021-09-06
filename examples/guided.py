@@ -26,7 +26,32 @@ archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().key
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
-
+def load_config():
+	if archinstall.arguments.get('harddrives', None) is not None:
+		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives'].split(',')]
+		# Temporarily disabling keep_partitions if config file is loaded
+		# Temporary workaround to make Desktop Environments work
+	if archinstall.arguments.get('profile', None) is not None:
+		if type(archinstall.arguments.get('profile', None)) is dict:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
+		else:
+			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
+	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
+	if archinstall.arguments.get('mirror-region', None) is not None:
+		if type(archinstall.arguments.get('mirror-region', None)) is dict:
+			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
+		else:
+			selected_region = archinstall.arguments.get('mirror-region', None)
+			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
+	if archinstall.arguments.get('sys-language', None) is not None:
+		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
+	if archinstall.arguments.get('sys-encoding', None) is not None:
+		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
+	if archinstall.arguments.get('gfx_driver', None) is not None:
+		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+	if archinstall.arguments.get('servers', None) is not None:
+		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
+	
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -56,9 +81,6 @@ def ask_user_questions():
 				break
 			except archinstall.RequirementError as e:
 				archinstall.log(e, fg="red")
-	else:
-		selected_region = archinstall.arguments['mirror-region']
-		archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
 
 	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
 		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
@@ -109,21 +131,16 @@ def ask_user_questions():
 
 
 	# Ask for additional users (super-user if root pw was not set)
-	archinstall.arguments['users'] = {}
-	archinstall.arguments['superusers'] = {}
-	if not archinstall.arguments.get('!root-password', None):
+	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('superusers', None):
 		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-
-	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
-	archinstall.arguments['users'] = users
-	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
+		users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
+		archinstall.arguments['users'] = users
+		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile()
-	else:
-		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
 
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
@@ -196,7 +213,7 @@ def perform_filesystem_operations():
 		disk_layout_file.write(user_disk_layout)
 	print()
 
-	if archinstall.arguments.get('dry_run'):
+	if archinstall.arguments.get('dry-run'):
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
@@ -230,8 +247,6 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-
-
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
@@ -254,7 +269,7 @@ def perform_installation(mountpoint):
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
 			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
 				installation.add_additional_packages("grub")
-			installation.add_bootloader(archinstall.arguments["bootloader"])
+			installation.add_bootloader(archinstall.arguments["harddrive"], archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -339,36 +354,9 @@ if not check_mirror_reachable():
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
+load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
-else:
-	# Workarounds if config is loaded from a file
-	# The harddrive section should be moved to perform_installation_steps, where it's actually being performed
-	# Blockdevice object should be created in perform_installation_steps
-	# This needs to be done until then
-	archinstall.arguments['harddrive'] = archinstall.BlockDevice(path=archinstall.arguments['harddrive']['path'])
-	# Temporarily disabling keep_partitions if config file is loaded
-	archinstall.arguments['harddrive'].keep_partitions = False
-	# Temporary workaround to make Desktop Environments work
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-	else:
-		archinstall.arguments['profile'] = None
-
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-	archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-	
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

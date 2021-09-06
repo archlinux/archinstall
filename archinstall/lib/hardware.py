@@ -1,7 +1,7 @@
 import json
 import os
-import subprocess
-from typing import Optional
+from pathlib import Path
+from typing import Iterator, Optional
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -57,22 +57,33 @@ AVAILABLE_GFX_DRIVERS = {
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
+CPUINFO = Path("/proc/cpuinfo")
+
+
+def cpuinfo() -> Iterator[dict[str, str]]:
+	"""Yields information about the CPUs of the system."""
+	cpu = {}
+
+	with CPUINFO.open() as file:
+		for line in file:
+			if not (line := line.strip()):
+				yield cpu
+				cpu = {}
+				continue
+
+			key, value = line.split(":", maxsplit=1)
+			cpu[key.strip()] = value.strip()
+
 
 def has_wifi() -> bool:
 	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
 
 
 def has_amd_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-		return True
-	return False
-
+    return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
 
 def has_intel_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
-		return True
-	return False
-
+    return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
@@ -106,7 +117,7 @@ def cpu_vendor() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Vendor ID:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def cpu_model() -> Optional[str]:
@@ -116,7 +127,7 @@ def cpu_model() -> Optional[str]:
 	for info in cpu_info:
 		if info.get('field', None) == "Model name:":
 			return info.get('data', None)
-	return None
+	return
 
 
 def sys_vendor() -> Optional[str]:
@@ -131,7 +142,10 @@ def product_name() -> Optional[str]:
 
 def mem_info():
 	# This implementation is from https://stackoverflow.com/a/28161352
-	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+	return {
+		i.split()[0].rstrip(':'): int(i.split()[1])
+		for i in open('/proc/meminfo').readlines()
+	}
 
 
 def mem_available() -> Optional[str]:
@@ -151,13 +165,6 @@ def virtualization() -> Optional[str]:
 
 
 def is_vm() -> bool:
-	try:
-		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
-			return True
-	except:
-		pass
-
-	return False
+	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
 
 # TODO: Add more identifiers
