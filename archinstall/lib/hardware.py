@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Union
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -58,6 +58,7 @@ AVAILABLE_GFX_DRIVERS = {
 }
 
 CPUINFO = Path("/proc/cpuinfo")
+MEMINFO = Path("/proc/meminfo")
 
 
 def cpuinfo() -> Iterator[dict[str, str]]:
@@ -73,6 +74,24 @@ def cpuinfo() -> Iterator[dict[str, str]]:
 
 			key, value = line.split(":", maxsplit=1)
 			cpu[key.strip()] = value.strip()
+
+
+def meminfo(key: Optional[str] = None) -> Union[dict[str, int], int]:
+	"""Returns a dict with memory info if called with no args
+	or the value of the given key of said dict.
+	"""
+	mem_info = {}
+
+	with MEMINFO.open() as file:
+		mem_info = {
+			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
+			for line in file
+		}
+
+	if key is None:
+		return mem_info
+
+	return mem_info.get(key)
 
 
 def has_wifi() -> bool:
@@ -134,24 +153,16 @@ def product_name() -> Optional[str]:
 		return product.read().strip()
 
 
-def mem_info():
-	# This implementation is from https://stackoverflow.com/a/28161352
-	return {
-		i.split()[0].rstrip(':'): int(i.split()[1])
-		for i in open('/proc/meminfo').readlines()
-	}
-
-
 def mem_available() -> Optional[str]:
-	return mem_info()['MemAvailable']
+	return meminfo('MemAvailable')
 
 
 def mem_free() -> Optional[str]:
-	return mem_info()['MemFree']
+	return meminfo('MemFree')
 
 
 def mem_total() -> Optional[str]:
-	return mem_info()['MemTotal']
+	return meminfo('MemTotal')
 
 
 def virtualization() -> Optional[str]:
