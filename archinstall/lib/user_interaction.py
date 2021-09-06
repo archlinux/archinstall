@@ -710,7 +710,8 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 		if has_nvidia_graphics():
 			print('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.')
 
-		arguments['gfx_driver'] = generic_select(drivers, input_text="Select a graphics driver or leave blank to install all open-source drivers: ")
+		if not arguments.get('gfx_driver', None):
+			arguments['gfx_driver'] = generic_select(drivers, input_text="Select a graphics driver or leave blank to install all open-source drivers: ")
 		
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = "All open-source (default)"

@@ -64,7 +64,7 @@ def initialize_arguments():
 			config[key] = val
 	config["script"] = args.script
 	if args.dry_run is not None:
-		config["dry_run"] = args.dry_run
+		config["dry-run"] = args.dry_run
 	return config
 
 
