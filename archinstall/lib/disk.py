@@ -921,7 +921,9 @@ class Filesystem:
 				time.sleep(0.025)
 
 
-			time.sleep(0.5) # Let the kernel catch up with quick block devices (nvme for instance)
+			# Todo: Find a better way to detect if the new UUID of the partition has showed up.
+			#       But this will address (among other issues)
+			time.sleep(float(storage['arguments'].get('disk-sleep', 2.0))) # Let the kernel catch up with quick block devices (nvme for instance)
 			return self.blockdevice.get_partition(uuid=(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()}).pop())
 
 	def set_name(self, partition: int, name: str):
