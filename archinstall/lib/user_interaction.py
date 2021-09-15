@@ -751,7 +751,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 	for device in block_devices:
 		layout = manage_new_and_existing_partitions(device)
 		
-		result[device] = layout
+		result[device.path] = layout
 
 	return result
 

@@ -58,16 +58,14 @@ def load_config():
 		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
 			try:
 				with open(dl_path) as fh:
-					archinstall.arguments['disk_layouts'] = json.load(fh)
+					archinstall.storage['disk_layouts'] = json.load(fh)
 			except Exception as e:
 				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
 		else:
 			try:
-				archinstall.arguments['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
+				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
 			except:
 				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
-		archinstall.storage['disk_layouts'] = {archinstall.BlockDevice(disk) : struct for disk, struct in archinstall.arguments['disk_layouts'].items()}
-
 	
 def ask_user_questions():
 	"""
@@ -111,15 +109,12 @@ def ask_user_questions():
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	if archinstall.arguments.get('harddrives', None):
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives'].split(',')]
-	else:
+	if archinstall.arguments.get('harddrives', None) is None:
 		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
 												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
 												allow_empty=True)
 
-	if archinstall.arguments.get('harddrives', None):
+	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
 	# Get disk encryption password (or skip if blank)
@@ -256,8 +251,7 @@ def perform_filesystem_operations():
 
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
-				fs.load_layout(archinstall.storage['disk_layouts'][drive])
-
+				fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	"""

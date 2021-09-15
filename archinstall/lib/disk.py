@@ -114,13 +114,13 @@ def suggest_single_disk_layout(block_device):
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 
 	layout = {
-		block_device : {
+		block_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		}
 	}
 
-	layout[block_device]['partitions'].append({
+	layout[block_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
 		"start" : "1MiB",
@@ -133,7 +133,7 @@ def suggest_single_disk_layout(block_device):
 			"format" : "fat32"
 		}
 	})
-	layout[block_device]['partitions'].append({
+	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
@@ -147,7 +147,7 @@ def suggest_single_disk_layout(block_device):
 	})
 
 	if block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
-		layout[block_device]['partitions'].append({
+		layout[block_device.path]['partitions'].append({
 			# Home
 			"type" : "primary",
 			"encrypted" : False,
@@ -175,17 +175,17 @@ def suggest_multi_disk_layout(block_devices):
 	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 
 	layout = {
-		root_device : {
+		root_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		},
-		home_device : {
+		home_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		},
 	}
 
-	layout[root_device]['partitions'].append({
+	layout[root_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
 		"start" : "1MiB",
@@ -198,7 +198,7 @@ def suggest_multi_disk_layout(block_devices):
 			"format" : "fat32"
 		}
 	})
-	layout[root_device]['partitions'].append({
+	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
@@ -211,7 +211,7 @@ def suggest_multi_disk_layout(block_devices):
 		}
 	})
 
-	layout[home_device]['partitions'].append({
+	layout[home_device.path]['partitions'].append({
 		# Home
 		"type" : "primary",
 		"encrypted" : False,
