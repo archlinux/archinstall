@@ -29,7 +29,9 @@ archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", 
 
 def load_config():
 	if archinstall.arguments.get('harddrives', None) is not None:
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives'].split(',')]
+		if type(archinstall.arguments['harddrives']) is str:
+			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
+		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
 	if archinstall.arguments.get('profile', None) is not None:
