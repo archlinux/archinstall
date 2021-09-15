@@ -51,6 +51,9 @@ def load_config():
 		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
+	if archinstall.arguments.get('disk_layouts', None) is not None:
+		archinstall.storage['disk_layouts'] = {archinstall.BlockDevice(disk) : struct for disk, struct in archinstall.arguments['disk_layouts']}
+
 	
 def ask_user_questions():
 	"""
@@ -102,7 +105,7 @@ def ask_user_questions():
 												allow_empty=True)
 
 	if archinstall.arguments.get('harddrives', None):
-		archinstall.arguments['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
+		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
@@ -112,8 +115,8 @@ def ask_user_questions():
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
 		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
-			archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
+		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
@@ -207,7 +210,7 @@ def perform_filesystem_operations():
 	archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
-	user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_disk_layout, level=logging.INFO)
 	with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 		disk_layout_file.write(user_disk_layout)
@@ -238,7 +241,7 @@ def perform_filesystem_operations():
 
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
-				fs.load_layout(archinstall.arguments['disk_layouts'][drive])
+				fs.load_layout(archinstall.storage['disk_layouts'][drive])
 
 
 def perform_installation(mountpoint):
@@ -250,7 +253,7 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
+		installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
