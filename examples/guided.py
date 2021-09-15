@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pathlib
 import time
 
 import archinstall
@@ -52,6 +53,14 @@ def load_config():
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
+		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
+			with open(dl_path) as fh:
+				archinstall.arguments['disk_layouts'] = json.load(fh)
+		else:
+			try:
+				archinstall.arguments['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
+			except:
+				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 		archinstall.storage['disk_layouts'] = {archinstall.BlockDevice(disk) : struct for disk, struct in archinstall.arguments['disk_layouts']}
 
 	
