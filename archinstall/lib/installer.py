@@ -403,9 +403,6 @@ class Installer:
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		with open(f"{self.target}/etc/fstab", "a") as fstab:
-			fstab.write("\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n")  # Redundant \n at the start? who knows?
-
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
