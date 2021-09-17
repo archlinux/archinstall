@@ -10,6 +10,7 @@ __packages__ = [
 	"pavucontrol",
 	"lightdm",
 	"lightdm-gtk-greeter",
+	"gvfs",
 ]
 
 
