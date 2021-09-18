@@ -110,7 +110,11 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 
 	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
-def suggest_single_disk_layout(block_device):
+def suggest_single_disk_layout(block_device, default_filesystem=None):
+	if not default_filesystem:
+		from .user_interaction import ask_for_main_filesystem_format
+		default_filesystem = ask_for_main_filesystem_format()
+		
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 
 	layout = {
@@ -142,7 +146,7 @@ def suggest_single_disk_layout(block_device):
 		"size" : "100%" if block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
@@ -156,14 +160,18 @@ def suggest_single_disk_layout(block_device):
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
-				"format" : "btrfs"
+				"format" : default_filesystem
 			}
 		})
 
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices):
+def suggest_multi_disk_layout(block_devices, default_filesystem=None):
+	if not default_filesystem:
+		from .user_interaction import ask_for_main_filesystem_format
+		default_filesystem = ask_for_main_filesystem_format()
+
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	ARCH_LINUX_INSTALLED_SIZE = 20 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 
@@ -207,7 +215,7 @@ def suggest_multi_disk_layout(block_devices):
 		"size" : "100%",
 		"mountpoint" : "/",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
@@ -220,7 +228,7 @@ def suggest_multi_disk_layout(block_devices):
 		"size" : "100%",
 		"mountpoint" : "/home",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
