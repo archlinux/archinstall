@@ -110,6 +110,19 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 
 	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
+def disk_layout_filesystem_checks(layout):
+	# This can probably be compressed into a any(<list comprehension>)
+	options = {}
+	for block_device in layout:
+		for partition in block_device.get('partitions', []):
+			if partition.get('filesystem', {}).get('format', False) == 'btrfs':
+				if not partition['filesystem'].get('subvolume', None):
+					if not options.get('btrfs-subvolumes', None) is None:
+						options['btrfs-subvolumes'] = input('Would you like to use BTRFS subvolumes? (Y/n)').strip().lower() in ('', 'y', 'yes')
+
+					if options['btrfs-subvolumes']:
+						partition['filesystem']['subvolume'] = '@' # Detect /home etc, and set up sane defaults?
+
 def suggest_single_disk_layout(block_device, default_filesystem=None):
 	if not default_filesystem:
 		from .user_interaction import ask_for_main_filesystem_format
