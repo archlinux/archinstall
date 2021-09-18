@@ -111,19 +111,6 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 
 	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
-def disk_layout_filesystem_checks(layout):
-	# This can probably be compressed into a any(<list comprehension>)
-	options = {}
-	for block_device in layout:
-		for partition in block_device.get('partitions', []):
-			if partition.get('filesystem', {}).get('format', False) == 'btrfs':
-				if not partition['filesystem'].get('subvolume', None):
-					if not options.get('btrfs-subvolumes', None) is None:
-						options['btrfs-subvolumes'] = input('Would you like to use BTRFS subvolumes? (Y/n)').strip().lower() in ('', 'y', 'yes')
-
-					if options['btrfs-subvolumes']:
-						btrfs.create_subvolume(partition)
-
 def suggest_single_disk_layout(block_device, default_filesystem=None):
 	if not default_filesystem:
 		from .user_interaction import ask_for_main_filesystem_format
@@ -164,7 +151,23 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 		}
 	})
 
-	if block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+	if default_filesystem == 'btrfs' and input('Would you like to use BTRFS subvolumes? (Y/n)').strip().lower() in ('', 'y', 'yes'):
+		# https://btrfs.wiki.kernel.org/index.php/FAQ
+		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
+		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+		layout[block_device.path]['partitions'][1]['btrfs'] = {
+			"subvolumes" : {
+				'@home' : '/home',
+				'@log' : '/var/log',
+				'@pkgs' : '/var/cache/pacman/pkg',
+				'@.snapshots' : '/.snapshots'
+			}
+		}
+
+	elif block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+		# If we don't want to use subvolumes,
+		# But we want to be able to re-use data between re-installs..
+		# A second partition for /home would be nice if we have the space for it
 		layout[block_device.path]['partitions'].append({
 			# Home
 			"type" : "primary",
@@ -185,6 +188,10 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	if not default_filesystem:
 		from .user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format()
+
+	# Not really a rock solid foundation of information to stand on, but it's a start:
+	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
+	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	ARCH_LINUX_INSTALLED_SIZE = 20 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?

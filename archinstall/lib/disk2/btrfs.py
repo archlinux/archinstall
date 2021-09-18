@@ -1,9 +1,4 @@
-def create_subvolume(partition):
-	if partition['mountpoint'] == '/':
-		partition['filesystem']['subvolume'] = '@'
-	elif partition['mountpoint'] == '/home':
-		partition['filesystem']['subvolume'] = '@home'
+from ..general import SysCommand
 
-	# @.snapshots /.snapshots
-	# @log /var/log
-	# @pkg /var/cache/pacman/pkg
+def create_subvolume(installation):
+	SysCommand(f"btrfs subvolume create {installation.target}/@")
