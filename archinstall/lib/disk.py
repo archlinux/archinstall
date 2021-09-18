@@ -7,6 +7,7 @@ from typing import Optional
 from .general import *
 from .hardware import has_uefi
 from .output import log
+from .disk2 import btrfs # TODO: rename disk2 to disk, once we migrate all the code here into a structure
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GPT = 0b00000001
@@ -121,7 +122,7 @@ def disk_layout_filesystem_checks(layout):
 						options['btrfs-subvolumes'] = input('Would you like to use BTRFS subvolumes? (Y/n)').strip().lower() in ('', 'y', 'yes')
 
 					if options['btrfs-subvolumes']:
-						partition['filesystem']['subvolume'] = '@' # Detect /home etc, and set up sane defaults?
+						btrfs.create_subvolume(partition)
 
 def suggest_single_disk_layout(block_device, default_filesystem=None):
 	if not default_filesystem:
