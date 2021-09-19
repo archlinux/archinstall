@@ -6,7 +6,9 @@ is_top_level_profile = False
 
 __packages__ = [
 	"xfce4",
-	"xfce4-goodies",
+	"xfce4-pulseaudio-plugin",
+	"xfce4-whiskermenu-plugin",
+	"xfce4-screenshooter",
 	"pavucontrol",
 	"lightdm",
 	"lightdm-gtk-greeter",
