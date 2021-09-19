@@ -106,7 +106,6 @@ with archinstall.Installer('/mnt') as installation:
 
         installation.user_create('devel', 'devel')
         installation.user_set_pw('root', 'airoot')
-        
 ```
 
 This installer will perform the following:
