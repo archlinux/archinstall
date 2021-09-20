@@ -730,7 +730,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('boot', False)
 
 			elif task == "Set desired filesystem for a partition":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
+				if not block_device_struct["partitions"]:
+					log("No partitions found. Create some partitions first", level=logging.WARNING, fg='yellow')
+					continue
+				elif (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
 					if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
 						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
 
