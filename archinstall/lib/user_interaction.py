@@ -674,7 +674,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 				if input(f"{block_device} contains queued partitions, this will remove those, are you sure? y/N: ").strip().lower() in ('', 'n'):
 					continue
 
-			block_device_struct["partitions"] = suggest_single_disk_layout(block_device)[block_device]
+			block_device_struct.update( suggest_single_disk_layout(block_device)[block_device] )
 		elif task is None:
 			return block_device_struct
 		else:
