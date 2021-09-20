@@ -39,6 +39,8 @@ if __name__ == 'xorg':
 	try:
 		if "nvidia" in archinstall.storage.get("gfx_driver_packages", None):
 			if "linux-zen" in archinstall.storage['installation_session'].base_packages or "linux-lts" in archinstall.storage['installation_session'].base_packages:
+				for kernel in archinstall.storage['installation_session'].kernels:
+					archinstall.storage['installation_session'].add_additional_packages(f"{kernel}-headers") # Fixes https://github.com/archlinux/archinstall/issues/585
 				archinstall.storage['installation_session'].add_additional_packages("dkms")  # I've had kernel regen fail if it wasn't installed before nvidia-dkms
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:

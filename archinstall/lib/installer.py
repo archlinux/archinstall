@@ -163,10 +163,12 @@ class Installer:
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', peak_output=True)).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
+				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
+				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.ERROR, fg="red")
+				raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 		else:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 
@@ -401,9 +403,6 @@ class Installer:
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		with open(f"{self.target}/etc/fstab", "a") as fstab:
-			fstab.write("\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n")  # Redundant \n at the start? who knows?
-
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
@@ -429,7 +428,7 @@ class Installer:
 
 		return True
 
-	def add_bootloader(self, _device, bootloader='systemd-bootctl'):
+	def add_bootloader(self, bootloader='systemd-bootctl'):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_add_bootloader'):
 				# Allow plugins to override the boot-loader handling.
@@ -535,14 +534,15 @@ class Installer:
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 
 			if has_uefi():
-				self.pacstrap('efibootmgr')
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
-				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				self.pacstrap('efibootmgr') # TODO: Do we need?
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {_device.path}'))
-				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+				boot_partition = filesystem.find_partition(mountpoint=f"{self.target}/boot")
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")

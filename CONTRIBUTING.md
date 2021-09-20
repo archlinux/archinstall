@@ -1,8 +1,7 @@
 # Contributing to archinstall
 
 Any contributions through pull requests are welcome as this project aims to be a community based project to ease some Arch Linux installation steps.
-Bear in mind that in the future this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) 
-  *(if GitLab becomes open to the general public)*.
+Bear in mind that in the future this repo might be transferred to the official [GitLab repo under Arch Linux](http://gitlab.archlinux.org/archlinux/) *(if GitLab becomes open to the general public)*.
 
 Therefore, guidelines and style changes to the code might come into effect as well as guidelines surrounding bug reporting and discussions.
 

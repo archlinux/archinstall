@@ -110,17 +110,21 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 
 	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
-def suggest_single_disk_layout(block_device):
+def suggest_single_disk_layout(block_device, default_filesystem=None):
+	if not default_filesystem:
+		from .user_interaction import ask_for_main_filesystem_format
+		default_filesystem = ask_for_main_filesystem_format()
+		
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 
 	layout = {
-		block_device : {
+		block_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		}
 	}
 
-	layout[block_device]['partitions'].append({
+	layout[block_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
 		"start" : "1MiB",
@@ -133,7 +137,7 @@ def suggest_single_disk_layout(block_device):
 			"format" : "fat32"
 		}
 	})
-	layout[block_device]['partitions'].append({
+	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
@@ -142,12 +146,12 @@ def suggest_single_disk_layout(block_device):
 		"size" : "100%" if block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
 	if block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
-		layout[block_device]['partitions'].append({
+		layout[block_device.path]['partitions'].append({
 			# Home
 			"type" : "primary",
 			"encrypted" : False,
@@ -156,14 +160,18 @@ def suggest_single_disk_layout(block_device):
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
-				"format" : "btrfs"
+				"format" : default_filesystem
 			}
 		})
 
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices):
+def suggest_multi_disk_layout(block_devices, default_filesystem=None):
+	if not default_filesystem:
+		from .user_interaction import ask_for_main_filesystem_format
+		default_filesystem = ask_for_main_filesystem_format()
+
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	ARCH_LINUX_INSTALLED_SIZE = 20 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 
@@ -175,17 +183,17 @@ def suggest_multi_disk_layout(block_devices):
 	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 
 	layout = {
-		root_device : {
+		root_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		},
-		home_device : {
+		home_device.path : {
 			"wipe" : True,
 			"partitions" : []
 		},
 	}
 
-	layout[root_device]['partitions'].append({
+	layout[root_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
 		"start" : "1MiB",
@@ -198,7 +206,7 @@ def suggest_multi_disk_layout(block_devices):
 			"format" : "fat32"
 		}
 	})
-	layout[root_device]['partitions'].append({
+	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
 		"start" : "513MiB",
@@ -207,11 +215,11 @@ def suggest_multi_disk_layout(block_devices):
 		"size" : "100%",
 		"mountpoint" : "/",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
-	layout[home_device]['partitions'].append({
+	layout[home_device.path]['partitions'].append({
 		# Home
 		"type" : "primary",
 		"encrypted" : False,
@@ -220,7 +228,7 @@ def suggest_multi_disk_layout(block_devices):
 		"size" : "100%",
 		"mountpoint" : "/home",
 		"filesystem" : {
-			"format" : "btrfs"
+			"format" : default_filesystem
 		}
 	})
 
@@ -931,7 +939,9 @@ class Filesystem:
 				time.sleep(0.025)
 
 
-			time.sleep(0.5) # Let the kernel catch up with quick block devices (nvme for instance)
+			# Todo: Find a better way to detect if the new UUID of the partition has showed up.
+			#       But this will address (among other issues)
+			time.sleep(float(storage['arguments'].get('disk-sleep', 2.0))) # Let the kernel catch up with quick block devices (nvme for instance)
 			return self.blockdevice.get_partition(uuid=(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()}).pop())
 
 	def set_name(self, partition: int, name: str):
