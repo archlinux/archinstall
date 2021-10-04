@@ -1,2 +1,8 @@
 [flake8]
-ignore = E501, W191, E741, E266
+count = True
+# Several of the following could be autofixed or improved by running the code through psf/black
+ignore = E126,E128,E203,E226,E231,E261,E265,E301,E302,E303,E402,E722,F401,F403,F405,F541,F841,W191,W293
+max-complexity = 39
+max-line-length = 236
+show-source = True
+statistics = True
