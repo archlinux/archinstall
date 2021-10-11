@@ -1,6 +1,7 @@
 # Common package for i3, lets user select which i3 configuration they want.
 
 import archinstall
+from archinstall import Menu
 
 is_top_level_profile = False
 
@@ -26,7 +27,8 @@ def _prep_function(*args, **kwargs):
 	"""
 
 	supported_configurations = ['i3-wm', 'i3-gaps']
-	desktop = archinstall.generic_select(supported_configurations, 'Select your desired configuration: ', allow_empty_input=False, sort=True)
+
+	desktop = Menu('Select your desired configuration', supported_configurations, skip=False).run()
 
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded

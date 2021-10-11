@@ -15,6 +15,10 @@ classifiers = [ "License :: OSI Approved :: GNU General Public License v3 or lat
 ]
 description-file = "README.md"
 requires-python=">=3.8"
+requires = [
+  'simple-term-menu>=1.4.1'
+]
+
 [tool.flit.metadata.urls]
 Source = "https://github.com/archlinux/archinstall"
 Documentation = "https://archinstall.readthedocs.io/"

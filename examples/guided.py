@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import pathlib
 import time
 
@@ -8,7 +7,7 @@ import archinstall
 from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
-from archinstall.lib.profiles import Profile, is_desktop_profile
+from archinstall.lib.profiles import is_desktop_profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -67,6 +66,7 @@ def load_config():
 			except:
 				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
+
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -74,28 +74,16 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 	if not archinstall.arguments.get('keyboard-layout', None):
-		while True:
-			try:
-				archinstall.arguments['keyboard-layout'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
-				break
-			except archinstall.RequirementError as err:
-				archinstall.log(err, fg="red")
-
+		archinstall.arguments['keyboard-layout'] = archinstall.select_language()
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
 	if len(archinstall.arguments['keyboard-layout']):
 		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
-
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		while True:
-			try:
-				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
-				break
-			except archinstall.RequirementError as e:
-				archinstall.log(e, fg="red")
+		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
 
 	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
 		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
@@ -110,9 +98,7 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None) is None:
-		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
-												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-												allow_empty=True)
+		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
 
 	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
@@ -150,15 +136,14 @@ def ask_user_questions():
 		archinstall.arguments['users'] = users
 		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
-
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile()
 
-
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
-		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+		namespace = f"{archinstall.arguments['profile'].namespace}.py"
+		with archinstall.arguments['profile'].load_instructions(namespace=namespace) as imported:
 			if not imported._prep_function():
 				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 				exit(1)
@@ -172,8 +157,7 @@ def ask_user_questions():
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
-		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+		archinstall.arguments['kernels'] = archinstall.select_kernel()
 
 
 	# Additional packages (with some light weight error handling for invalid package names)

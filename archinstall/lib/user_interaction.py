@@ -1,7 +1,7 @@
 import getpass
 import ipaddress
+import json
 import logging
-import pathlib
 import re
 import select  # Used for char by char polling of sys.stdin
 import shutil
@@ -9,15 +9,17 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
+from build.lib import archinstall
+from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, \
+	suggest_multi_disk_layout, valid_parted_position
 from .exceptions import *
-from .general import SysCommand
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
-from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
+from .locale_helpers import list_keyboard_languages, list_timezones
+from archinstall.lib.menu import Menu
 from .networking import list_interfaces
 from .output import log
-from .profiles import Profile, list_profiles
 from .storage import *
+
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
@@ -118,81 +120,6 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 	return column, row
 
 
-def generic_multi_select(options, text="Select one or more of the options above (leave blank to continue): ", sort=True, default=None, allow_empty=False):
-	# Checking if the options are different from `list` or `dict` or if they are empty
-	if type(options) not in [list, dict, type({}.keys()), type({}.values())]:
-		log(f" * Generic multi-select doesn't support ({type(options)}) as type of options * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError("generic_multi_select() requires list or dictionary as options.")
-	if not options:
-		log(" * Generic multi-select didn't find any options to choose from * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError('generic_multi_select() requires at least one option to proceed.')
-	# After passing the checks, function continues to work
-	if type(options) == dict:
-		options = list(options.values())
-	elif type(options) in (type({}.keys()), type({}.values())):
-		options = list(options)
-	if sort:
-		options = sorted(options)
-
-	section = MiniCurses(get_terminal_width(), len(options))
-
-	selected_options = []
-
-	while True:
-		if not selected_options and default in options:
-			selected_options.append(default)
-
-		printed_options = []
-		for option in options:
-			if option in selected_options:
-				printed_options.append(f'>> {option}')
-			else:
-				printed_options.append(f'{option}')
-
-		section.clear(0, get_terminal_height() - section._cursor_y - 1)
-		print_large_list(printed_options, margin_bottom=2)
-		section._cursor_y = len(printed_options)
-		section._cursor_x = 0
-		section.write_line(text)
-		section.input_pos = section._cursor_x
-		selected_option = section.get_keyboard_input(end=None)
-		# This string check is necessary to correct work with it
-		# Without this, Python will raise AttributeError because of stripping `None`
-		# It also allows to remove empty spaces if the user accidentally entered them.
-		if isinstance(selected_option, str):
-			selected_option = selected_option.strip()
-		try:
-			if not selected_option:
-				if not selected_options and default:
-					selected_options = [default]
-				elif selected_options or allow_empty:
-					break
-				else:
-					raise RequirementError('Please select at least one option to continue')
-			elif selected_option.isnumeric():
-				if (selected_option := int(selected_option)) >= len(options):
-					raise RequirementError(f'Selected option "{selected_option}" is out of range')
-				selected_option = options[selected_option]
-				if selected_option in selected_options:
-					selected_options.remove(selected_option)
-				else:
-					selected_options.append(selected_option)
-			elif selected_option in options:
-				if selected_option in selected_options:
-					selected_options.remove(selected_option)
-				else:
-					selected_options.append(selected_option)
-			else:
-				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
-		except RequirementError as e:
-			log(f" * {e} * ", fg='red')
-
-	sys.stdout.write('\n')
-	sys.stdout.flush()
-	return selected_options
-
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	root = find_partition_by_mountpoint(block_devices, '/')
 	root['encrypted'] = True
@@ -206,6 +133,7 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	#	options.append({key: val for key, val in partition.items() if val})
 
 	#print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+
 
 class MiniCurses:
 	def __init__(self, width, height):
@@ -365,18 +293,17 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 
 
 def ask_for_a_timezone():
-	while True:
-		timezone = input('Enter a valid timezone (examples: Europe/Stockholm, US/Eastern) or press enter to use UTC: ').strip().strip('*.')
-		if timezone == '':
-			timezone = 'UTC'
-		if (pathlib.Path("/usr") / "share" / "zoneinfo" / timezone).exists():
-			return timezone
-		else:
-			log(
-				f"Specified timezone {timezone} does not exist.",
-				level=logging.WARNING,
-				fg='red'
-			)
+	timezones = list_timezones()
+	default = 'UTC'
+
+	selected_tz = Menu(
+		f'Select a timezone or leave blank to use default "{default}"',
+		timezones,
+		skip=False,
+		default_option=default
+	).run()
+
+	return selected_tz
 
 
 def ask_for_bootloader() -> str:
@@ -393,11 +320,8 @@ def ask_for_bootloader() -> str:
 def ask_for_audio_selection(desktop=True):
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selection = generic_select(choices, f'Choose an audio server or leave blank to use {audio}: ', options_output=True)
-	if selection != "":
-		audio = selection
-
-	return audio
+	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
+	return selected_audio
 
 
 def ask_to_configure_network():
@@ -410,7 +334,8 @@ def ask_to_configure_network():
 		**list_interfaces()
 	}
 
-	nic = generic_select(interfaces, "Select one network interface to configure (leave blank to skip): ")
+	nic = Menu('Select one network interface to configure', interfaces.values()).run()
+
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)':
 			return {'nic': nic, 'NetworkManager': True}
@@ -420,11 +345,15 @@ def ask_to_configure_network():
 		# printing out this part separate from options, passed in
 		# `generic_select`
 		modes = ['DHCP (auto detect)', 'IP (static)']
-		for index, mode in enumerate(modes):
-			print(f"{index}: {mode}")
+		default_mode = 'DHCP (auto detect)'
 
-		mode = generic_select(['DHCP', 'IP'], f"Select which mode to configure for {nic} or leave blank for DHCP: ", options_output=False)
-		if mode == 'IP':
+		mode = Menu(
+			f'Select which mode to configure for "{nic}" or leave blank for default "{default_mode}"',
+			modes,
+			default_option=default_mode
+		).run()
+
+		if mode == 'IP (static)':
 			while 1:
 				ip = input(f"Enter the IP and subnet for {nic} (example: 192.168.0.5/24): ").strip()
 				# Implemented new check for correct IP/subnet input
@@ -467,17 +396,6 @@ def ask_to_configure_network():
 	return {}
 
 
-def ask_for_disk_layout():
-	options = {
-		'keep-existing': 'Keep existing partition layout and select which ones to use where',
-		'format-all': 'Format entire drive and setup a basic partition scheme',
-		'abort': 'Abort the installation',
-	}
-
-	value = generic_select(options, "Found partitions on the selected drive, (select by number) what you want to do: ", allow_empty_input=False, sort=True)
-	return next((key for key, val in options.items() if val == value), None)
-
-
 def ask_for_main_filesystem_format():
 	options = {
 		'btrfs': 'btrfs',
@@ -486,7 +404,7 @@ def ask_for_main_filesystem_format():
 		'f2fs': 'f2fs'
 	}
 
-	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)
+	value = Menu('Select which filesystem your main partition should use', options, skip=False).run()
 	return next((key for key, val in options.items() if val == value), None)
 
 
@@ -503,6 +421,8 @@ def generic_select(options, input_text="Select one of the above by index or abso
 	When the user has entered the option correctly,
 	this function returns an item from list, a string, or None
 	"""
+
+	print(options)
 
 	# Checking if the options are different from `list` or `dict` or if they are empty
 	if type(options) not in [list, dict]:
@@ -554,9 +474,11 @@ def generic_select(options, input_text="Select one of the above by index or abso
 
 	return selected_option
 
+
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
 	# TODO: Implement sanity check
 	return False
+
 
 def get_default_partition_layout(block_devices):
 	if len(block_devices) == 1:
@@ -565,6 +487,7 @@ def get_default_partition_layout(block_devices):
 		return suggest_multi_disk_layout(block_devices)
 
 	# TODO: Implement sane generic layout for 2+ drives
+
 
 def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	if has_uefi():
@@ -620,15 +543,16 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			"Set desired filesystem for a partition" if len(block_device_struct) else "",
 		]
 
-		# Print current partition layout:
-		if len(block_device_struct["partitions"]):
-			print('Current partition layout:')
-			for partition in block_device_struct["partitions"]:
-				print(partition)
-			print()
+		title = f'Select what to do with \n{block_device}'
 
-		task = generic_select(modes,
-				input_text=f"Select what to do with {block_device} (leave blank when done): ")
+		# show current partition layout:
+		if len(block_device_struct["partitions"]):
+			title += '\n\nCurrent partition layout:\n'
+			for partition in block_device_struct["partitions"]:
+				title += json.dumps(partition)
+			title += '\n'
+
+		task = Menu(title, modes).run()
 
 		if not task:
 			break
@@ -745,6 +669,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 	return block_device_struct
 
+
 def select_individual_blockdevice_usage(block_devices :list):
 	result = {}
 
@@ -762,7 +687,7 @@ def select_disk_layout(block_devices :list):
 		"Select what to do with each individual drive (followed by partition usage)"
 	]
 
-	mode = generic_select(modes, input_text=f"Select what you wish to do with the selected block devices: ")
+	mode = Menu('Select what you wish to do with the selected block devices', modes, skip=False).run()
 
 	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
 		return get_default_partition_layout(block_devices)
@@ -787,7 +712,8 @@ def select_disk(dict_o_disks):
 			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
 
 		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
-		drive = generic_select(drives, 'Select one of the above disks (by name or number) or leave blank to use /mnt: ', options_output=False)
+
+		drive = Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
 		if not drive:
 			return drive
 
@@ -799,128 +725,90 @@ def select_disk(dict_o_disks):
 
 def select_profile():
 	"""
-	Asks the user to select a profile from the available profiles.
+	# Asks the user to select a profile from the available profiles.
+	#
+	# :return: The name/dictionary key of the selected profile
+	# :rtype: str
+	# """
+	top_level_profiles = sorted(list(archinstall.list_profiles(filter_top_level_profiles=True)))
+	options = {}
 
-	:return: The name/dictionary key of the selected profile
-	:rtype: str
+	for profile in top_level_profiles:
+		profile = archinstall.Profile(None, profile)
+		description = profile.get_profile_description()
+
+		option = f'{profile.profile}: {description}'
+		options[option] = profile
+
+	title = 'This is a list of pre-programmed profiles, ' \
+		'they might make it easier to install things like desktop environments'
+
+	selection = Menu(title=title, options=options.keys()).run()
+
+	if selection is not None:
+		return options[selection]
+
+	return None
+
+
+def select_language():
 	"""
-	shown_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
-	actual_profiles_raw = shown_profiles + sorted([profile for profile in list_profiles() if profile not in shown_profiles])
-
-	if len(shown_profiles) >= 1:
-		for index, profile in enumerate(shown_profiles):
-			description = Profile(None, profile).get_profile_description()
-			print(f"{index}: {profile}: {description}")
-
-		print(' -- The above list is a set of pre-programmed profiles. --')
-		print(' -- They might make it easier to install things like desktop environments. --')
-		print(' -- (Leave blank and hit enter to skip this step and continue) --')
-
-		selected_profile = generic_select(actual_profiles_raw, 'Enter a pre-programmed profile name if you want to install one: ', options_output=False)
-		if selected_profile:
-			return Profile(None, selected_profile)
-	else:
-		raise RequirementError("Selecting profiles require a least one profile to be given as an option.")
-
-
-def select_language(options, show_only_country_codes=True, input_text='Select one of the above keyboard languages (by number or full name): '):
-	"""
-	Asks the user to select a language from the `options` dictionary parameter.
+	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
-
-	:param options: A `generator` or `list` where keys are the language name, value should be a dict containing language information.
-	:type options: generator or list
-
-	:param show_only_country_codes: Filters out languages that are not len(lang) == 2. This to limit the number of results from stuff like dvorak and x-latin1 alternatives.
-	:type show_only_country_codes: bool
 
 	:return: The language/dictionary key of the selected language
 	:rtype: str
 	"""
-	default_keyboard_language = 'us'
+	kb_lang = list_keyboard_languages()
+	# sort alphabetically and then by length
+	# it's fine if the list is big because the Menu
+	# allows for searching anyways
+	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	if show_only_country_codes:
-		languages = sorted([language for language in list(options) if len(language) == 2])
-	else:
-		languages = sorted(list(options))
-
-	if len(languages) >= 1:
-		print_large_list(languages, margin_bottom=4)
-
-		print(" -- You can choose a layout that isn't in this list, but whose name you know --")
-		print(f" -- Also, you can enter '?' or 'help' to search for more languages, or skip to use {default_keyboard_language} layout --")
-
-		while True:
-			selected_language = input(input_text)
-			if not selected_language:
-				return default_keyboard_language
-			elif selected_language.lower() in ('?', 'help'):
-				while True:
-					filter_string = input("Search for layout containing (example: \"sv-\") or enter 'exit' to exit from search: ")
-
-					if filter_string.lower() == 'exit':
-						return select_language(list_keyboard_languages())
-
-					new_options = list(search_keyboard_layout(filter_string))
-
-					if len(new_options) <= 0:
-						log(f"Search string '{filter_string}' yielded no results, please try another search.", fg='yellow')
-						continue
-
-					return select_language(new_options, show_only_country_codes=False)
-			elif selected_language.isnumeric():
-				selected_language = int(selected_language)
-				if selected_language >= len(languages):
-					log(' * Selected option is out of range * ', fg='red')
-					continue
-				return languages[selected_language]
-			elif verify_keyboard_layout(selected_language):
-				return selected_language
-			else:
-				log(" * Given language wasn't found * ", fg='red')
-
-	raise RequirementError("Selecting languages require a least one language to be given as an option.")
+	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
+	return selected_lang
 
 
-def select_mirror_regions(mirrors, show_top_mirrors=True):
+def select_mirror_regions():
 	"""
-	Asks the user to select a mirror or region from the `mirrors` dictionary parameter.
+	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
-
-	:param mirrors: A `dict` where keys are the mirror region name, value should be a dict containing mirror information.
-	:type mirrors: dict
-
-	:param show_top_mirrors: Will limit the list to the top 10 fastest mirrors based on rank-mirror *(Currently not implemented but will be)*.
-	:type show_top_mirrors: bool
 
 	:return: The dictionary information about a mirror/region.
 	:rtype: dict
 	"""
 
 	# TODO: Support multiple options and country codes, SE,UK for instance.
-	regions = sorted(list(mirrors.keys()))
-	selected_mirrors = {}
 
-	if len(regions) >= 1:
-		print_large_list(regions, margin_bottom=4)
+	mirrors = archinstall.list_mirrors()
+	selected_mirror = Menu('Select one of the regions to download packages from', mirrors.keys()).run()
 
-		print(' -- You can skip this step by leaving the option blank --')
-		selected_mirror = generic_select(regions, 'Select one of the above regions to download packages from (by number or full name): ', options_output=False)
-		if not selected_mirror:
-			# Returning back empty options which can be both used to
-			# do "if x:" logic as well as do `x.get('mirror', {}).get('sub', None)` chaining
-			return {}
+	if selected_mirror is not None:
+		return {selected_mirror: mirrors[selected_mirror]}
 
-		# I'm leaving "mirrors" on purpose here.
-		# Since region possibly contains a known region of
-		# all possible regions, and we might want to write
-		# for instance Sweden (if we know that exists) without having to
-		# go through the search step.
+	return {}
 
-		selected_mirrors[selected_mirror] = mirrors[selected_mirror]
-		return selected_mirrors
 
-	raise RequirementError("Selecting mirror region require a least one region to be given as an option.")
+def select_harddrives():
+	"""
+	Asks the user to select one or multiple hard drives
+
+	:return: List of selected hard drives
+	:rtype: list
+	"""
+	hard_drives = archinstall.all_disks().values()
+	options = {f'{option}': option for option in hard_drives}
+
+	selected_harddrive = Menu(
+		'Select one or more hard drives to use and configure',
+		options.keys(),
+		multi=True
+	).run()
+
+	if selected_harddrive and len(selected_harddrive) > 0:
+		return [options[i] for i in selected_harddrive]
+
+	return []
 
 
 def select_driver(options=AVAILABLE_GFX_DRIVERS):
@@ -936,15 +824,18 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 
 	if drivers:
 		arguments = storage.get('arguments', {})
+		title = ''
+
 		if has_amd_graphics():
-			print('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')
+			title += 'For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.\n'
 		if has_intel_graphics():
-			print('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.')
+			title += 'For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'
 		if has_nvidia_graphics():
-			print('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.')
+			title += 'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
 
 		if not arguments.get('gfx_driver', None):
-			arguments['gfx_driver'] = generic_select(drivers, input_text="Select a graphics driver or leave blank to install all open-source drivers: ")
+			title += '\n\nSelect a graphics driver or leave blank to install all open-source drivers'
+			arguments['gfx_driver'] = Menu(title, drivers).run()
 
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = "All open-source (default)"
@@ -954,22 +845,23 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def select_kernel(options):
+def select_kernel():
 	"""
 	Asks the user to select a kernel for system.
-
-	:param options: A `list` with kernel options
-	:type options: list
 
 	:return: The string as a selected kernel
 	:rtype: string
 	"""
 
+	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 	default_kernel = "linux"
 
-	kernels = sorted(list(options))
+	selected_kernels = Menu(
+		f'Choose which kernels to use or leave blank for default "{default_kernel}"',
+		kernels,
+		sort=True,
+		multi=True,
+		default_option=default_kernel
+	).run()
 
-	if kernels:
-		return generic_multi_select(kernels, f"Choose which kernels to use (leave blank for default: {default_kernel}): ", default=default_kernel, sort=False)
-
-	raise RequirementError("Selecting kernels require a least one kernel to be given as an option.")
+	return selected_kernels
