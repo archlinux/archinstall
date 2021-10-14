@@ -1,8 +1,9 @@
 [flake8]
 count = True
 # Several of the following could be autofixed or improved by running the code through psf/black
-ignore = E126,E128,E203,E226,E231,E261,E265,E301,E302,E303,E402,E722,F401,F403,F405,F541,F841,W191,W293
+ignore = E126,E128,E203,E231,E261,E302,E402,E722,F541,W191
 max-complexity = 39
 max-line-length = 236
 show-source = True
 statistics = True
+per-file-ignores = __init__.py:F401,F403,F405
