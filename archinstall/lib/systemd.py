@@ -64,6 +64,7 @@ class Boot:
 			self.session = SysCommandWorker([
 				'/usr/bin/systemd-nspawn',
 				'-D', self.instance.target,
+				'--timezone=off',
 				'-b',
 				'--machine', self.container_name
 			])
