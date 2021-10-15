@@ -1,6 +1,6 @@
 import urllib.error
 import urllib.request
-from typing import Union
+from typing import Union, Mapping, Iterable
 
 from .general import *
 from .output import log
@@ -113,10 +113,13 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 
-def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
+def use_mirrors(
+	regions: Mapping[str, Iterable[str]],
+	destination: str ='/etc/pacman.d/mirrorlist'
+) -> bool:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
-	for region, mirrors in regions.items():
-		with open(destination, 'w') as mirrorlist:
+	with open(destination, 'w') as mirrorlist:
+		for region, mirrors in regions.items():
 			for mirror in mirrors:
 				mirrorlist.write(f'## {region}\n')
 				mirrorlist.write(f'Server = {mirror}\n')
