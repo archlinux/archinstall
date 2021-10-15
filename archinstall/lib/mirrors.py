@@ -123,10 +123,17 @@ def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
 	return True
 
 
-def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if SysCommand(f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist').exit_code == 0:
-		return True
-	return False
+def re_rank_mirrors(
+	top: int = 10,
+	src: str = '/etc/pacman.d/mirrorlist',
+	dst: str = '/etc/pacman.d/mirrorlist',
+) -> bool:
+	cmd = SysCommand(f"/usr/bin/rankmirrors -n {top} {src}")
+	if cmd.exit_code != 0:
+		return False
+	with open(dst, 'w') as f:
+		f.write(str(cmd))
+	return True
 
 
 def list_mirrors(sort_order=["https", "http"]):
