@@ -79,8 +79,6 @@ def meminfo(key: Optional[str] = None) -> Union[dict[str, int], int]:
 	"""Returns a dict with memory info if called with no args
 	or the value of the given key of said dict.
 	"""
-	mem_info = {}
-
 	with MEMINFO.open() as file:
 		mem_info = {
 			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
