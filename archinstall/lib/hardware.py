@@ -152,15 +152,15 @@ def product_name() -> Optional[str]:
 		return product.read().strip()
 
 
-def mem_available() -> Optional[str]:
+def mem_available() -> Optional[int]:
 	return meminfo('MemAvailable')
 
 
-def mem_free() -> Optional[str]:
+def mem_free() -> Optional[int]:
 	return meminfo('MemFree')
 
 
-def mem_total() -> Optional[str]:
+def mem_total() -> Optional[int]:
 	return meminfo('MemTotal')
 
 
