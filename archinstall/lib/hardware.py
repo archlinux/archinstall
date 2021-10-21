@@ -76,7 +76,7 @@ def cpuinfo() -> Iterator[dict[str, str]]:
 			cpu[key.strip()] = value.strip()
 
 
-def meminfo(key: Optional[str] = None) -> Union[dict[str, int], int]:
+def meminfo(key: Optional[str] = None) -> Union[dict[str, int], Optional[int]]:
 	"""Returns a dict with memory info if called with no args
 	or the value of the given key of said dict.
 	"""
