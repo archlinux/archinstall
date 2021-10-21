@@ -1,4 +1,5 @@
 import os
+from functools import partial
 from pathlib import Path
 from typing import Iterator, Optional, Union
 
@@ -95,11 +96,11 @@ def has_wifi() -> bool:
 	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
 
 
-def has_amd_cpu() -> bool:
-	return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
+def has_cpu_vendor(vendor_id: str) -> bool:
+	return any(cpu.get("vendor_id") == vendor_id for cpu in cpuinfo())
 
-def has_intel_cpu() -> bool:
-	return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
+has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
+has_intel_cpu = partial(has_cpu_vendor, "GenuineIntel")
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
