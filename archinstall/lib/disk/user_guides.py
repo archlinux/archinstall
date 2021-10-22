@@ -3,7 +3,7 @@ from ..output import log
 
 def suggest_single_disk_layout(block_device, default_filesystem=None):
 	if not default_filesystem:
-		from .user_interaction import ask_for_main_filesystem_format
+		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format()
 		
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
@@ -76,7 +76,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 
 def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	if not default_filesystem:
-		from .user_interaction import ask_for_main_filesystem_format
+		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format()
 
 	# Not really a rock solid foundation of information to stand on, but it's a start:

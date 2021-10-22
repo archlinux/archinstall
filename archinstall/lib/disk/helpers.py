@@ -132,6 +132,8 @@ def get_mount_info(path) -> dict:
 
 
 def get_partitions_in_use(mountpoint) -> list:
+	from .partition import Partition
+
 	try:
 		output = SysCommand(f"/usr/bin/findmnt --json -R {mountpoint}").decode('UTF-8')
 	except SysCallError:

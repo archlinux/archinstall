@@ -140,7 +140,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
 
 
 	# Ask for additional users (super-user if root pw was not set)
@@ -245,9 +245,9 @@ def perform_filesystem_operations():
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
 		"""
-		mode = archinstall.GPT
+		mode = archinstall.disk.GPT
 		if has_uefi() is False:
-			mode = archinstall.MBR
+			mode = archinstall.disk.MBR
 
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:

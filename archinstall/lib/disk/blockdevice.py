@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from ..output import log
@@ -94,6 +95,7 @@ class BlockDevice:
 
 	@property
 	def partitions(self):
+		from .filesystem import Partition
 		SysCommand(['partprobe', self.path])
 
 		result = SysCommand(['/usr/bin/lsblk', '-J', self.path])
@@ -123,6 +125,7 @@ class BlockDevice:
 
 	@property
 	def partition_table_type(self):
+		from .filesystem import GPT
 		return GPT
 
 	@property

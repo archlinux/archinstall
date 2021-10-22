@@ -2,9 +2,13 @@ import glob
 import pathlib
 import time
 import logging
+import json
+import os
 from typing import Optional
 from .blockdevice import BlockDevice
+from .helpers import get_mount_info, get_filesystem_type
 from ..output import log
+from ..general import SysCommand
 
 class Partition:
 	def __init__(self, path: str, block_device: BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
