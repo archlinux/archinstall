@@ -1,5 +1,6 @@
 import re
 import json
+from .blockdevice import BlockDevice
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log

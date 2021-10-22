@@ -1,4 +1,6 @@
+import json
 from ..output import log
+from ..general import SysCommand
 
 class BlockDevice:
 	def __init__(self, path, info=None):
