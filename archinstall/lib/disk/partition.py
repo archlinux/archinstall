@@ -1,6 +1,7 @@
 import glob
 import pathlib
 import time
+import logging
 from typing import Optional
 from .blockdevice import BlockDevice
 from ..output import log

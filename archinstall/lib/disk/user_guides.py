@@ -1,3 +1,4 @@
+import logging
 from ..output import log
 
 def suggest_single_disk_layout(block_device, default_filesystem=None):
