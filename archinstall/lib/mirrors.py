@@ -116,14 +116,13 @@ def insert_mirrors(mirrors, *args, **kwargs):
 def use_mirrors(
 	regions: Mapping[str, Iterable[str]],
 	destination: str ='/etc/pacman.d/mirrorlist'
-) -> bool:
+) -> None:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	with open(destination, 'w') as mirrorlist:
 		for region, mirrors in regions.items():
 			for mirror in mirrors:
 				mirrorlist.write(f'## {region}\n')
 				mirrorlist.write(f'Server = {mirror}\n')
-	return True
 
 
 def re_rank_mirrors(top=10, *positionals, **kwargs):
