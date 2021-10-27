@@ -1,5 +1,7 @@
 import re
 import json
+import pathlib
+from typing import Union
 from .blockdevice import BlockDevice
 from ..exceptions import SysCallError
 from ..general import SysCommand
@@ -114,7 +116,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 		return collection[drive]
 
 
-def get_mount_info(path) -> dict:
+def get_mount_info(path :Union[pathlib.Path, str]) -> dict:
 	try:
 		output = SysCommand(f'/usr/bin/findmnt --json {path}').decode('UTF-8')
 	except SysCallError:
