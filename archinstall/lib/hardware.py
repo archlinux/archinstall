@@ -1,4 +1,5 @@
 import os
+from functools import partial
 from pathlib import Path
 from typing import Iterator, Optional, Union
 
@@ -75,12 +76,10 @@ def cpuinfo() -> Iterator[dict[str, str]]:
 			cpu[key.strip()] = value.strip()
 
 
-def meminfo(key: Optional[str] = None) -> Union[dict[str, int], int]:
+def meminfo(key: Optional[str] = None) -> Union[dict[str, int], Optional[int]]:
 	"""Returns a dict with memory info if called with no args
 	or the value of the given key of said dict.
 	"""
-	mem_info = {}
-
 	with MEMINFO.open() as file:
 		mem_info = {
 			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
@@ -97,11 +96,11 @@ def has_wifi() -> bool:
 	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
 
 
-def has_amd_cpu() -> bool:
-	return any(cpu.get("vendor_id") == "AuthenticAMD" for cpu in cpuinfo())
+def has_cpu_vendor(vendor_id: str) -> bool:
+	return any(cpu.get("vendor_id") == vendor_id for cpu in cpuinfo())
 
-def has_intel_cpu() -> bool:
-	return any(cpu.get("vendor_id") == "GenuineIntel" for cpu in cpuinfo())
+has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
+has_intel_cpu = partial(has_cpu_vendor, "GenuineIntel")
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
@@ -152,15 +151,15 @@ def product_name() -> Optional[str]:
 		return product.read().strip()
 
 
-def mem_available() -> Optional[str]:
+def mem_available() -> Optional[int]:
 	return meminfo('MemAvailable')
 
 
-def mem_free() -> Optional[str]:
+def mem_free() -> Optional[int]:
 	return meminfo('MemFree')
 
 
-def mem_total() -> Optional[str]:
+def mem_total() -> Optional[int]:
 	return meminfo('MemTotal')
 
 
