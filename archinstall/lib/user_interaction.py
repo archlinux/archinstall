@@ -9,15 +9,16 @@ import signal
 import sys
 import time
 
-from build.lib import archinstall
+import archinstall
 from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, \
 	suggest_multi_disk_layout, valid_parted_position
 from .exceptions import *
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones
-from archinstall.lib.menu import Menu
+from .menu import Menu
 from .networking import list_interfaces
 from .output import log
+from .profiles import Profile, list_profiles
 from .storage import *
 
 
@@ -730,11 +731,11 @@ def select_profile():
 	# :return: The name/dictionary key of the selected profile
 	# :rtype: str
 	# """
-	top_level_profiles = sorted(list(archinstall.list_profiles(filter_top_level_profiles=True)))
+	top_level_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
 	options = {}
 
 	for profile in top_level_profiles:
-		profile = archinstall.Profile(None, profile)
+		profile = Profile(None, profile)
 		description = profile.get_profile_description()
 
 		option = f'{profile.profile}: {description}'
