@@ -47,4 +47,5 @@ def create_subvolume(installation, location :Union[pathlib.Path, str]) -> bool:
 	@location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
 	"""
 	log(f"Creating a subvolume on {installation.target}/{str(location)}", level=logging.INFO)
-	SysCommand(f"btrfs subvolume create {installation.target}/{str(location)}")
+	if (cmd := SysCommand(f"btrfs subvolume create {installation.target}/{str(location)}")).exit_code != 0:
+		raise DiskError(f"Could not create a subvolume at {installation.target}/{str(location)}: {cmd}")
