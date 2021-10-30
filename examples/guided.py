@@ -245,9 +245,9 @@ def perform_filesystem_operations():
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
 		"""
-		mode = archinstall.disk.GPT
+		mode = archinstall.GPT
 		if has_uefi() is False:
-			mode = archinstall.disk.MBR
+			mode = archinstall.MBR
 
 		for drive in archinstall.arguments['harddrives']:
 			with archinstall.Filesystem(drive, mode) as fs:
