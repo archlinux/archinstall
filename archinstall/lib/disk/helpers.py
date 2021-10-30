@@ -1,5 +1,6 @@
 import re
 import json
+import logging
 import pathlib
 from typing import Union
 from .blockdevice import BlockDevice
@@ -119,6 +120,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 def get_mount_info(path :Union[pathlib.Path, str], traverse=False) -> dict:
 	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
 		try:
+			log(f"Getting mount information at location {traversal}", level=logging.INFO)
 			output = SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')
 			if output:
 				break
