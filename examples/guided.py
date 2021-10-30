@@ -66,7 +66,7 @@ def load_config():
 				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
 			except:
 				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
-	
+
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
