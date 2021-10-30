@@ -56,8 +56,17 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 
 	target = installation_mountpoint / subvolume_location.relative_to(subvolume_location.anchor)
 
-	if not target.exists():
-		target.mkdir(parents=True)
+	# Difference from mount_subvolume:
+	#  We only check if the parent exists, since we'll run in to "target path already exists" otherwise
+	if not target.parent.exists():
+		target.parent.mkdir(parents=True)
+
+	if glob.glob(str(target/'*')) and force is False:
+		raise DiskError(f"Cannot create subvolume at {target} because it contains data (non-empty folder target)")
+
+	# Remove the target if it exists
+	if target.exists():
+		target.rmdir()
 
 	log(f"Creating a subvolume on {target}", level=logging.INFO)
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
