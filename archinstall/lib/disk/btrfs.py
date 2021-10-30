@@ -24,8 +24,8 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 
 	target = installation_mountpoint / subvolume_location.relative_to(subvolume_location.anchor)
 
-	if not (target).exists():
-		(target).mkdir(parents=True)
+	if not target.exists():
+		target.mkdir(parents=True)
 
 	if glob.glob(str(target/'*')) and force is False:
 		raise DiskError(f"Cannot mount subvolume to {target} because it contains data (non-empty folder target)")
@@ -39,13 +39,26 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 
 	return SysCommand(f"mount {mount_information['source']} {target} -o subvol=@{subvolume_location}").exit_code == 0
 
-def create_subvolume(installation, location :Union[pathlib.Path, str]) -> bool:
+def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str]) -> bool:
 	"""
 	This function uses btrfs to create a subvolume.
 
 	@installation: archinstall.Installer instance
-	@location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
+	@subvolume_location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
 	"""
-	log(f"Creating a subvolume on {installation.target}/{str(location)}", level=logging.INFO)
-	if (cmd := SysCommand(f"btrfs subvolume create {installation.target}/{str(location)}")).exit_code != 0:
-		raise DiskError(f"Could not create a subvolume at {installation.target}/{str(location)}: {cmd}")
+	
+	installation_mountpoint = installation.target
+	if type(installation_mountpoint) == str:
+		installation_mountpoint = pathlib.Path(installation_mountpoint)
+	# Set up the required physical structure
+	if type(subvolume_location) == str:
+		subvolume_location = pathlib.Path(subvolume_location)
+
+	target = installation_mountpoint / subvolume_location.relative_to(subvolume_location.anchor)
+
+	if not target.exists():
+		target.mkdir(parents=True)
+
+	log(f"Creating a subvolume on {target}", level=logging.INFO)
+	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
+		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
