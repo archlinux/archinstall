@@ -116,7 +116,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 		return collection[drive]
 
 
-def get_mount_info(path :Union[pathlib.Path, str]) -> dict:
+def get_mount_info(path :Union[pathlib.Path, str], traverse=False) -> dict:
 	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
 		try:
 			output = SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')
@@ -124,6 +124,9 @@ def get_mount_info(path :Union[pathlib.Path, str]) -> dict:
 				break
 		except SysCallError:
 			pass
+
+		if not traverse:
+			break
 
 	if not output:
 		return {}

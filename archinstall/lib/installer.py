@@ -1,11 +1,14 @@
+import time
 from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .helpers import get_mount_info
 from .mirrors import *
 from .plugins import plugins
 from .storage import storage
 from .user_interaction import *
 from .disk.btrfs import create_subvolume, mount_subvolume
+from .exceptions import DiskError, ServiceException
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -143,6 +146,10 @@ class Installer:
 
 			else:
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+
+			time.sleep(1)
+			if not get_mount_info(f"{self.target}{mountpoint}", traverse=False):
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly.")
 
 			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
