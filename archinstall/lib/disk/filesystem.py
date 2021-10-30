@@ -132,6 +132,7 @@ class Filesystem:
 	def raw_parted(self, string: str):
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
 			log(f"Parted ended with a bad exit code: {cmd_handle}", level=logging.ERROR, fg="red")
+		time.sleep(0.5)
 		return cmd_handle
 
 	def parted(self, string: str):

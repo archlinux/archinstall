@@ -23,7 +23,9 @@ def mount_subvolume(installation, location :Union[pathlib.Path, str], force=Fals
 		raise DiskError(f"Cannot mount subvolume to {installation.target/location} because it contains data (non-empty folder target)")
 	
 	# Mount the logical volume to the physical structure
-	return SysCommand(f"mount {get_mount_info(installation.target/location)['source']} {installation.target}/{str(location)} -o subvol=@/{str(location)}").exit_code == 0
+	mount_location = get_mount_info(installation.target/location)['source']
+	SysCommand(f"umount {mount_location}")
+	return SysCommand(f"mount {mount_location} {installation.target}/{str(location)} -o subvol=@/{str(location)}").exit_code == 0
 
 def create_subvolume(installation, location :Union[pathlib.Path, str]) -> bool:
 	"""

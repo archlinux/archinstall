@@ -5,6 +5,7 @@ from .mirrors import *
 from .plugins import plugins
 from .storage import storage
 from .user_interaction import *
+from .disk.btrfs import create_subvolume, mount_subvolume
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -139,8 +140,14 @@ class Installer:
 				password = mountpoints[mountpoint]['password']
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
 					unlocked_device.mount(f"{self.target}{mountpoint}")
+
 			else:
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+
+			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
+				for name, location in subvolumes.items():
+					create_subvolume(self, location)
+					mount_subvolume(self, location)
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
