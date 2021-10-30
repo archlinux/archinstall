@@ -208,7 +208,7 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem=None, path=None, log_formatting=True):
+	def format(self, filesystem=None, path=None, log_formatting=True, options=[]):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -228,33 +228,45 @@ class Partition:
 			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
 
 		if filesystem == 'btrfs':
-			if 'UUID:' not in (mkfs := SysCommand(f'/usr/bin/mkfs.btrfs -f {path}').decode('UTF-8')):
+			options = ['-f'] + options
+
+			if 'UUID:' not in (mkfs := SysCommand(f"/usr/bin/mkfs.btrfs {' '.join(options)} {path}").decode('UTF-8')):
 				raise DiskError(f'Could not format {path} with {filesystem} because: {mkfs}')
 			self.filesystem = filesystem
 
 		elif filesystem == 'fat32':
-			mkfs = SysCommand(f'/usr/bin/mkfs.vfat -F32 {path}').decode('UTF-8')
+			options = ['-F32'] + options
+
+			mkfs = SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}").decode('UTF-8')
 			if ('mkfs.fat' not in mkfs and 'mkfs.vfat' not in mkfs) or 'command not found' in mkfs:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {mkfs}")
 			self.filesystem = filesystem
 
 		elif filesystem == 'ext4':
-			if (handle := SysCommand(f'/usr/bin/mkfs.ext4 -F {path}')).exit_code != 0:
+			options = ['-F'] + options
+
+			if (handle := SysCommand(f"/usr/bin/mkfs.ext4 {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
 		elif filesystem == 'ext2':
-			if (handle := SysCommand(f'/usr/bin/mkfs.ext2 -F {path}')).exit_code != 0:
+			options = ['-F'] + options
+
+			if (handle := SysCommand(f"/usr/bin/mkfs.ext2 {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
 			self.filesystem = 'ext2'
 
 		elif filesystem == 'xfs':
-			if (handle := SysCommand(f'/usr/bin/mkfs.xfs -f {path}')).exit_code != 0:
+			options = ['-f'] + options
+
+			if (handle := SysCommand(f"/usr/bin/mkfs.xfs {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
 		elif filesystem == 'f2fs':
-			if (handle := SysCommand(f'/usr/bin/mkfs.f2fs -f {path}')).exit_code != 0:
+			options = ['-f'] + options
+			
+			if (handle := SysCommand(f"/usr/bin/mkfs.f2fs {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 

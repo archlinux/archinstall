@@ -117,9 +117,9 @@ class Filesystem:
 											continue
 										break
 
-						unlocked_device.format(partition['filesystem']['format'])
+						unlocked_device.format(partition['filesystem']['format'], options=partition.get('options', []))
 				elif partition.get('format', False):
-					partition['device_instance'].format(partition['filesystem']['format'])
+					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
 
 			if partition.get('boot', False):
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
