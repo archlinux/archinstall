@@ -2,7 +2,7 @@ import time
 from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .helpers import get_mount_info
+from .disk.helpers import get_mount_info
 from .mirrors import *
 from .plugins import plugins
 from .storage import storage
