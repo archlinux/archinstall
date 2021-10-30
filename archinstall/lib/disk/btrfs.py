@@ -32,12 +32,12 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 	
 	log(f"Mounting {target} as a subvolume", level=logging.INFO)
 	# Mount the logical volume to the physical structure
-	mountpoint_device, mountpoint_device_real_path = get_mount_info(target, traverse=True, return_real_path=True)['source']
+	mount_information, mountpoint_device_real_path = get_mount_info(target, traverse=True, return_real_path=True)
 	if mountpoint_device_real_path == str(target):
-		log(f"Unmounting non-subvolume {mountpoint_device} previously mounted at {target}")
-		SysCommand(f"umount {mountpoint_device}")
+		log(f"Unmounting non-subvolume {mount_information['source']} previously mounted at {target}")
+		SysCommand(f"umount {mount_information['source']}")
 
-	return SysCommand(f"mount {mountpoint_device} {target} -o subvol=@{subvolume_location}").exit_code == 0
+	return SysCommand(f"mount {mount_information['source']} {target} -o subvol=@{subvolume_location}").exit_code == 0
 
 def create_subvolume(installation, location :Union[pathlib.Path, str]) -> bool:
 	"""
