@@ -117,7 +117,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 		return collection[drive]
 
 
-def get_mount_info(path :Union[pathlib.Path, str], traverse=False) -> dict:
+def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_path=False) -> dict:
 	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
 		try:
 			log(f"Getting mount information at location {traversal}", level=logging.INFO)
@@ -131,16 +131,25 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse=False) -> dict:
 			break
 
 	if not output:
-		return {}
+		if return_real_path:
+			return {}, None
+		else:
+			return {}
 
 	output = json.loads(output)
 	if 'filesystems' in output:
 		if len(output['filesystems']) > 1:
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
 
-		return output['filesystems'][0]
+		if return_real_path:
+			return output['filesystems'][0], traversal
+		else:
+			return output['filesystems'][0]
 
-	return {}
+	if return_real_path:
+		return {}, traversal
+	else:
+		return {}
 
 
 def get_partitions_in_use(mountpoint) -> list:
