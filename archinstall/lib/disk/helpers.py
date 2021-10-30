@@ -117,10 +117,13 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 
 def get_mount_info(path :Union[pathlib.Path, str]) -> dict:
-	try:
-		output = SysCommand(f'/usr/bin/findmnt --json {path}').decode('UTF-8')
-	except SysCallError:
-		return {}
+	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
+		try:
+			output = SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')
+			if output:
+				break
+		except SysCallError:
+			pass
 
 	if not output:
 		return {}
@@ -131,6 +134,8 @@ def get_mount_info(path :Union[pathlib.Path, str]) -> dict:
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
 
 		return output['filesystems'][0]
+
+	return {}
 
 
 def get_partitions_in_use(mountpoint) -> list:
