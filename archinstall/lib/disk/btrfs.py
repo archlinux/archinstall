@@ -18,13 +18,13 @@ def mount_subvolume(installation, location :Union[pathlib.Path, str], force=Fals
 	if type(location) == str:
 		location = pathlib.Path(location)
 
-	if not location.exists():
-		location.mkdir(parents=True)
+	if not (installation.target/location).exists():
+		(installation.target/location).mkdir(parents=True)
 
 	if glob.glob(str(installation.target/location/'*')) and force is False:
 		raise DiskError(f"Cannot mount subvolume to {installation.target/location} because it contains data (non-empty folder target)")
 	
-	log(f"Mounting {location} as a subvolume", level=logging.INFO)
+	log(f"Mounting {installation.target/location} as a subvolume", level=logging.INFO)
 	# Mount the logical volume to the physical structure
 	mount_location = get_mount_info(installation.target/location, traverse=True)['source']
 	SysCommand(f"umount {mount_location}")
