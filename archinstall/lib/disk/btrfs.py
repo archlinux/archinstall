@@ -1,4 +1,5 @@
 import pathlib, glob
+import logging
 from typing import Union
 from .helpers import get_mount_info
 from ..exceptions import DiskError
