@@ -1,4 +1,5 @@
 import time
+import shlex
 from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -265,9 +266,9 @@ class Installer:
 	def run_command(self, cmd, *args, **kwargs):
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd, *args, **kwargs):
-		if 'runas' in kwargs:
-			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+	def arch_chroot(self, cmd, run_as=None):
+		if run_as:
+			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
 		return self.run_command(cmd)
 
