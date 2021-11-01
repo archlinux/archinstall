@@ -14,6 +14,18 @@ from .exceptions import DiskError, ServiceException
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 
+class InstallationFile:
+	def __init__(self, installation, filename, owner):
+		self.installation = installation
+		self.filename = filename
+		self.owner = owner
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self):
+		self.installation.chown(owner, self.filename)
+
 class Installer:
 	"""
 	`Installer()` is the wrapper for most basic installation steps.
@@ -622,6 +634,12 @@ class Installer:
 
 		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
 		pass
+
+	def chown(self, owner, path, options=[]):
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path}")
+
+	def create_file(self, filename, owner=None):
+		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
 		if len(language.strip()):
