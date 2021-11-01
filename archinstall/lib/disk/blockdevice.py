@@ -7,6 +7,7 @@ from ..general import SysCommand
 class BlockDevice:
 	def __init__(self, path, info=None):
 		if not info:
+			from .helpers import all_disks
 			# If we don't give any information, we need to auto-fill it.
 			# Otherwise any subsequent usage will break.
 			info = all_disks()[path].info
