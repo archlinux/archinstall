@@ -450,6 +450,9 @@ class Installer:
 			self.pacstrap('zram-generator')
 			zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+
+			if self.enable_service('systemd-zram-setup@zram0.service') and self.enable_service('systemd-zram-setup@zram1.service'):
+				return True
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
