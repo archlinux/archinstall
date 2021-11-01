@@ -1,4 +1,5 @@
 import time
+import shutil
 from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -9,6 +10,7 @@ from .storage import storage
 from .user_interaction import *
 from .disk.btrfs import create_subvolume, mount_subvolume
 from .exceptions import DiskError, ServiceException
+from .output import log
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -441,6 +443,15 @@ class Installer:
 				plugin.on_install(self)
 
 		return True
+
+	def setup_swap(self, kind='zram'):
+		if kind == 'zram':
+			self.log(f"Setting up swap on zram")
+			self.pacstrap('zram-generator')
+			zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
+			shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+		else:
+			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
 	def add_bootloader(self, bootloader='systemd-bootctl'):
 		for plugin in plugins.values():
