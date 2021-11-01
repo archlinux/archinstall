@@ -4,7 +4,7 @@ import socket
 import struct
 from collections import OrderedDict
 
-from .exceptions import *
+from .exceptions import HardwareIncompatibilityError
 from .general import SysCommand
 from .output import log
 from .storage import storage
@@ -30,7 +30,7 @@ def list_interfaces(skip_loopback=True):
 
 def check_mirror_reachable():
 	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
-	if (exit_code := SysCommand("pacman -Sy").exit_code) == 0:
+	if SysCommand("pacman -Sy").exit_code == 0:
 		return True
 	elif os.geteuid() != 0:
 		log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
