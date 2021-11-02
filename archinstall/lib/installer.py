@@ -248,7 +248,7 @@ class Installer:
 
 	def activate_ntp(self):
 		self.log('Installing and activating NTP.', level=logging.INFO)
-		self.enable_service('systemd-timesyncd'):
+		self.enable_service('systemd-timesyncd')
 		
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
 			fh.write("[Time]\n")
