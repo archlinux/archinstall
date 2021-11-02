@@ -248,9 +248,9 @@ class Installer:
 
 	def activate_ntp(self):
 		self.log('Installing and activating NTP.', level=logging.INFO)
-		if self.pacstrap('ntp'):
-			with Boot(self) as session:
-				session.SysCommand(["timedatectl", "set-ntp", 'true'])
+		self.enable_service('systemd-timesyncd'):
+		with Boot(self) as session:
+			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
 	def enable_service(self, *services):
 		for service in services:
