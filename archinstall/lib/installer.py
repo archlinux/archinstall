@@ -13,6 +13,7 @@ from .disk.helpers import get_mount_info
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
+from .systemd import Boot
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
@@ -256,10 +257,20 @@ class Installer:
 			)
 
 	def activate_ntp(self):
-		self.log('Installing and activating NTP.', level=logging.INFO)
-		if self.pacstrap('ntp'):
-			if self.enable_service('ntpd'):
-				return True
+		log(f"activate_ntp() is deprecated, use activate_time_syncronization()", fg="yellow", level=logging.INFO)
+		self.activate_time_syncronization()
+
+	def activate_time_syncronization(self):
+		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
+		self.enable_service('systemd-timesyncd')
+		
+		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
+			fh.write("[Time]\n")
+			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
+			fh.write("FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org\n")
+
+		with Boot(self) as session:
+			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
 	def enable_service(self, *services):
 		for service in services:
