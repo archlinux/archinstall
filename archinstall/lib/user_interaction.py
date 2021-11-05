@@ -328,6 +328,7 @@ class MiniCurses:
 def ask_for_swap(prompt='Would you like to use swap on zram? (Y/n): ', forced=False):
 	return True if input(prompt).strip(' ').lower() not in ('n', 'no') else False
 
+
 def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
 	while 1:
 		new_user = input(prompt).strip(' ')

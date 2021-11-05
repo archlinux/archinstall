@@ -127,7 +127,7 @@ def ask_user_questions():
 		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
 	if not archinstall.arguments.get('swap', None):
-		archinstall.archinstall['swap'] = archinstall.ask_for_swap()
+		archinstall.arguments['swap'] = archinstall.ask_for_swap()
 
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
@@ -271,7 +271,7 @@ def perform_installation(mountpoint):
 			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
-			if archinstall.archinstall['swap']:
+			if archinstall.arguments['swap']:
 				installation.setup_swap('zram')
 
 			# If user selected to copy the current ISO network configuration
