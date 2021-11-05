@@ -1,10 +1,11 @@
 import re
+import os
 import json
 import logging
 import pathlib
 from typing import Union
 from .blockdevice import BlockDevice
-from ..exceptions import SysCallError
+from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
 

@@ -1,16 +1,25 @@
 import time
+import logging
+import os
 import shutil
-from .disk import *
-from .hardware import *
+import shlex
+import pathlib
+import subprocess
+import glob
+from .disk import get_partitions_in_use, Partition, find_partition
+from .general import SysCommand
+from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
-from .mirrors import *
+from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
-from .user_interaction import *
-from .disk.btrfs import create_subvolume, mount_subvolume
-from .exceptions import DiskError, ServiceException
+from .systemd import Boot
+# from .user_interaction import *
 from .output import log
+from .profiles import Profile
+from .disk.btrfs import create_subvolume, mount_subvolume
+from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -141,7 +150,7 @@ class Installer:
 
 		for mountpoint in sorted(mountpoints.keys()):
 			if mountpoints[mountpoint]['encrypted']:
-				loopdev = storage.get('ENC_IDENTIFIER', 'ai')+'loop'
+				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				password = mountpoints[mountpoint]['password']
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
 					unlocked_device.mount(f"{self.target}{mountpoint}")
@@ -200,7 +209,7 @@ class Installer:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
-			fstab_fh.write(SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode())
+			fstab_fh.write((fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).decode())
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
@@ -249,10 +258,20 @@ class Installer:
 			)
 
 	def activate_ntp(self):
-		self.log('Installing and activating NTP.', level=logging.INFO)
-		if self.pacstrap('ntp'):
-			if self.enable_service('ntpd'):
-				return True
+		log(f"activate_ntp() is deprecated, use activate_time_syncronization()", fg="yellow", level=logging.INFO)
+		self.activate_time_syncronization()
+
+	def activate_time_syncronization(self):
+		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
+		self.enable_service('systemd-timesyncd')
+		
+		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
+			fh.write("[Time]\n")
+			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
+			fh.write("FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org\n")
+
+		with Boot(self) as session:
+			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
 	def enable_service(self, *services):
 		for service in services:
@@ -267,9 +286,9 @@ class Installer:
 	def run_command(self, cmd, *args, **kwargs):
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd, *args, **kwargs):
-		if 'runas' in kwargs:
-			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+	def arch_chroot(self, cmd, run_as=None):
+		if run_as:
+			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
 		return self.run_command(cmd)
 
@@ -568,7 +587,7 @@ class Installer:
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				boot_partition = filesystem.find_partition(mountpoint=f"{self.target}/boot")
+				boot_partition = find_partition(mountpoint=f"{self.target}/boot")
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
@@ -609,14 +628,14 @@ class Installer:
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)
-			o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
+			SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
 
 		if password:
 			self.user_set_pw(user, password)
 
 		if groups:
 			for group in groups:
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}'))
+				SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}')
 
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
@@ -628,14 +647,12 @@ class Installer:
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
-		pass
+		SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\"")
 
 	def user_set_shell(self, user, shell):
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
-		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
-		pass
+		SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
 
 	def set_keyboard_language(self, language: str) -> bool:
 		if len(language.strip()):
