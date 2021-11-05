@@ -4,7 +4,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from .exceptions import *
+from .exceptions import RequirementError
 
 BASE_URL = 'https://archlinux.org/packages/search/json/?name={package}'
 BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'

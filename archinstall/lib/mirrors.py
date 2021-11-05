@@ -1,8 +1,9 @@
+import logging
 import urllib.error
 import urllib.request
 from typing import Union, Mapping, Iterable
 
-from .general import *
+from .general import SysCommand
 from .output import log
 
 def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
@@ -26,7 +27,7 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	"""
 	comments_and_whitespaces = b""
 
-	categories = {key: [] for key in sort_order+["Unknown"]}
+	categories = {key: [] for key in sort_order + ["Unknown"]}
 	for line in raw_data.split(b"\n"):
 		if line[0:2] in (b'##', b''):
 			comments_and_whitespaces += line + b'\n'
@@ -35,16 +36,15 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 			opening, url = opening.strip(), url.strip()
 			if (category := url.split(b'://',1)[0].decode('UTF-8')) in categories:
 				categories[category].append(comments_and_whitespaces)
-				categories[category].append(opening+b' = '+url+b'\n')
+				categories[category].append(opening + b' = ' + url + b'\n')
 			else:
 				categories["Unknown"].append(comments_and_whitespaces)
-				categories["Unknown"].append(opening+b' = '+url+b'\n')
+				categories["Unknown"].append(opening + b' = ' + url + b'\n')
 
 			comments_and_whitespaces = b""
 
-
 	new_raw_data = b''
-	for category in sort_order+["Unknown"]:
+	for category in sort_order + ["Unknown"]:
 		for line in categories[category]:
 			new_raw_data += line
 
@@ -115,7 +115,7 @@ def insert_mirrors(mirrors, *args, **kwargs):
 
 def use_mirrors(
 	regions: Mapping[str, Iterable[str]],
-	destination: str ='/etc/pacman.d/mirrorlist'
+	destination: str = '/etc/pacman.d/mirrorlist'
 ) -> None:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	with open(destination, 'w') as mirrorlist:
