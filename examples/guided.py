@@ -158,7 +158,7 @@ def ask_user_questions():
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
 		# The argument to ask_for_audio_selection lets the library know if it's a desktop profile
-		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.profiles.is_desktop_profile(archinstall.arguments['profile']))
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments['profile']))
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
