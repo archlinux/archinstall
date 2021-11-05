@@ -13,6 +13,7 @@ from typing import Optional
 from .general import multisplit
 from .networking import list_interfaces
 from .storage import storage
+from .exceptions import ProfileNotFound
 
 
 def grab_url_data(path):

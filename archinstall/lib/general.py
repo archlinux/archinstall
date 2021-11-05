@@ -14,7 +14,7 @@ except:
 	import select
 	EPOLLIN = 0
 	EPOLLHUP = 0
-	
+
 	class epoll():
 		""" #!if windows
 		Create a epoll() implementation that simulates the epoll() behavior.

@@ -1,4 +1,5 @@
-import pathlib, glob
+import pathlib
+import glob
 import logging
 from typing import Union
 from .helpers import get_mount_info
@@ -27,9 +28,9 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 	if not target.exists():
 		target.mkdir(parents=True)
 
-	if glob.glob(str(target/'*')) and force is False:
+	if glob.glob(str(target / '*')) and force is False:
 		raise DiskError(f"Cannot mount subvolume to {target} because it contains data (non-empty folder target)")
-	
+
 	log(f"Mounting {target} as a subvolume", level=logging.INFO)
 	# Mount the logical volume to the physical structure
 	mount_information, mountpoint_device_real_path = get_mount_info(target, traverse=True, return_real_path=True)
@@ -46,7 +47,7 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 	@installation: archinstall.Installer instance
 	@subvolume_location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
 	"""
-	
+
 	installation_mountpoint = installation.target
 	if type(installation_mountpoint) == str:
 		installation_mountpoint = pathlib.Path(installation_mountpoint)
@@ -61,7 +62,7 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 	if not target.parent.exists():
 		target.parent.mkdir(parents=True)
 
-	if glob.glob(str(target/'*')) and force is False:
+	if glob.glob(str(target / '*')):
 		raise DiskError(f"Cannot create subvolume at {target} because it contains data (non-empty folder target)")
 
 	# Remove the target if it exists

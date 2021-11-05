@@ -1,4 +1,5 @@
 import logging
+from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..output import log
 
 def suggest_single_disk_layout(block_device, default_filesystem=None):
@@ -55,7 +56,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 				}
 			}
 		else:
-			pass #... implement a guided setup
+			pass # ... implement a guided setup
 
 	elif block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		# If we don't want to use subvolumes,
