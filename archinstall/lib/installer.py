@@ -6,7 +6,7 @@ import shlex
 import pathlib
 import subprocess
 import glob
-from .disk import get_partitions_in_use, Partition, find_partition
+from .disk import get_partitions_in_use, Partition, find_partition_by_mountpoint
 from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -591,7 +591,7 @@ class Installer:
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				boot_partition = find_partition(mountpoint=f"{self.target}/boot")
+				boot_partition = find_partition_by_mountpoint(self.partitions, relative_mountpoint=f"/boot")
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
