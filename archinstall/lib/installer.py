@@ -13,6 +13,7 @@ from .disk.helpers import get_mount_info
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
+from .systemd import Boot
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
