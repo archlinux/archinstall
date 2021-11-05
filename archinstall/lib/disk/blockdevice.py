@@ -3,8 +3,8 @@
 import os
 import json
 import logging
-from .exceptions import DiskError
 from .helpers import all_disks
+from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
 
