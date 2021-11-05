@@ -260,7 +260,7 @@ class Installer:
 		self.activate_time_syncronization()
 
 	def activate_time_syncronization(self):
-		self.log('Installing and activating time synchronization.', level=logging.INFO)
+		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
 		
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
