@@ -14,7 +14,6 @@ from .disk.helpers import get_mount_info
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
-from .systemd import Boot
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
@@ -270,6 +269,7 @@ class Installer:
 			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
 			fh.write("FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org\n")
 
+		from .systemd import Boot
 		with Boot(self) as session:
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
@@ -668,6 +668,7 @@ class Installer:
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
 
+			from .systemd import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-keymap", '""'])
 
@@ -692,6 +693,7 @@ class Installer:
 
 			from .systemd import Boot
 
+			from .systemd import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 

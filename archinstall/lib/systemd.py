@@ -1,5 +1,4 @@
 import logging
-
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
