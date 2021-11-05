@@ -472,7 +472,7 @@ class Installer:
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
 			with open(f"{self.target}/usr/lib/systemd/zram-generator.conf", "w") as zram_conf:
-				zram_conf.write("[zram0]")
+				zram_conf.write("[zram0]\n")
 
 			if self.enable_service('systemd-zram-setup@zram0.service'):
 				return True
