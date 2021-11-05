@@ -310,7 +310,7 @@ def perform_installation(mountpoint):
 				installation.set_timezone(timezone)
 
 			if archinstall.arguments.get('ntp', False):
-				installation.activate_ntp()
+				installation.activate_time_syncronization()
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)

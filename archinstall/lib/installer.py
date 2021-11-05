@@ -256,7 +256,11 @@ class Installer:
 			)
 
 	def activate_ntp(self):
-		self.log('Installing and activating NTP.', level=logging.INFO)
+		log(f"activate_ntp() is deprecated, use activate_time_syncronization()", fg="yellow", level=logging.INFO)
+		self.activate_time_syncronization()
+
+	def activate_time_syncronization(self):
+		self.log('Installing and activating time synchronization.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
 		
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
