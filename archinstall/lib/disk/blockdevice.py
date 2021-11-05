@@ -1,9 +1,6 @@
-# flake8: noqa
-# The above ignore, see issue: https://github.com/archlinux/archinstall/pull/650#issuecomment-961995949
 import os
 import json
 import logging
-from .helpers import all_disks
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
