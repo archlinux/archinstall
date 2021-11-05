@@ -471,7 +471,7 @@ class Installer:
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
-			with open(f"{self.target}/usr/lib/systemd/zram-generator.conf", "w") as zram_conf:
+			with open(f"{self.target}/etc/systemd/zram-generator.conf", "w") as zram_conf:
 				zram_conf.write("[zram0]\n")
 
 			if self.enable_service('systemd-zram-setup@zram0.service'):
@@ -667,8 +667,6 @@ class Installer:
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
-
-			from .systemd import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-keymap", '""'])
 
@@ -690,8 +688,6 @@ class Installer:
 			if not verify_x11_keyboard_layout(language):
 				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
 				return False
-
-			from .systemd import Boot
 
 			from .systemd import Boot
 			with Boot(self) as session:
