@@ -10,14 +10,13 @@ import sys
 import time
 
 from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
-from .exceptions import *
-from .general import SysCommand
+from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
 from .networking import list_interfaces
 from .output import log
 from .profiles import Profile, list_profiles
-from .storage import *
+from .storage import storage
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
@@ -201,11 +200,11 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	return block_devices
 
 	# TODO: Next version perhaps we can support multiple encrypted partitions
-	#options = []
-	#for partition in block_devices.values():
-	#	options.append({key: val for key, val in partition.items() if val})
+	# options = []
+	# for partition in block_devices.values():
+	# 	options.append({key: val for key, val in partition.items() if val})
 
-	#print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+	# print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
 
 class MiniCurses:
 	def __init__(self, width, height):
@@ -567,22 +566,22 @@ def get_default_partition_layout(block_devices):
 	# TODO: Implement sane generic layout for 2+ drives
 
 def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
-	if has_uefi():
-		partition_type = 'gpt'
-	else:
-		partition_type = 'msdos'
+	# if has_uefi():
+	# 	partition_type = 'gpt'
+	# else:
+	# 	partition_type = 'msdos'
 
 	# log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
 	# partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
 	# partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
-	
+
 	# mountpoints = {}
 	# struct = {
 	# 	"partitions" : []
 	# }
 	# for partition in partitions:
 	# 	mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
-		
+
 	# 	part_struct = {}
 	# 	if mountpoint:
 	# 		part_struct['mountpoint'] = mountpoint
@@ -590,7 +589,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	# 			part_struct['boot'] = True
 	# 			if has_uefi():
 	# 				part_struct['ESP'] = True
-	# 		elif mountpoint == '/' and 
+	# 		elif mountpoint == '/' and
 	# 	if partition.uuid:
 	# 		part_struct['PARTUUID'] = partition.uuid
 	# 	if partition in partitions_to_wipe:
@@ -600,7 +599,6 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 	# return struct
 
-	mountpoints = {}
 	block_device_struct = {
 		"partitions" : [partition.__dump__() for partition in block_device.partitions.values()]
 	}
@@ -632,15 +630,15 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 		if not task:
 			break
-		
+
 		if task == 'Create a new partition':
-			if partition_type == 'gpt':
-				# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
-				# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
-				name = input("Enter a desired name for the partition: ").strip()
-			
+			# if partition_type == 'gpt':
+			# 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
+			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
+			# 	name = input("Enter a desired name for the partition: ").strip()
+
 			fstype = input("Enter a desired filesystem type for the partition: ").strip()
-			
+
 			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
 			if not start.strip():
 				start = block_device.largest_free_space[0]
@@ -674,7 +672,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 				if input(f"{block_device} contains queued partitions, this will remove those, are you sure? y/N: ").strip().lower() in ('', 'n'):
 					continue
 
-			block_device_struct["partitions"] = suggest_single_disk_layout(block_device)[block_device]
+			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
 		elif task is None:
 			return block_device_struct
 		else:
@@ -730,7 +728,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('boot', False)
 
 			elif task == "Set desired filesystem for a partition":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
+				if not block_device_struct["partitions"]:
+					log("No partitions found. Create some partitions first", level=logging.WARNING, fg='yellow')
+					continue
+				elif (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
 					if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
 						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
 
@@ -750,7 +751,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 
 	for device in block_devices:
 		layout = manage_new_and_existing_partitions(device)
-		
+
 		result[device.path] = layout
 
 	return result

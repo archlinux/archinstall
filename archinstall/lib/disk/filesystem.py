@@ -1,8 +1,9 @@
 import time
 import logging
 import json
+from .exceptions import DiskError
 from .partition import Partition
-from .blockdevice import BlockDevice
+from .validators import valid_fs_type
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage
@@ -55,7 +56,7 @@ class Filesystem:
 
 	def partuuid_to_index(self, uuid):
 		output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
-	
+
 		for device in output['blockdevices']:
 			for index, partition in enumerate(device['children']):
 				if partition['partuuid'].lower() == uuid:
@@ -101,7 +102,7 @@ class Filesystem:
 							partition['password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 					partition['device_instance'].encrypt(password=partition['password'])
-					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai')+'loop', partition['password']) as unlocked_device:
+					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['password']) as unlocked_device:
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
@@ -113,13 +114,13 @@ class Filesystem:
 									while True:
 										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
 										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-											pint("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
+											print("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
 											continue
 										break
 
-						unlocked_device.format(partition['filesystem']['format'])
+						unlocked_device.format(partition['filesystem']['format'], options=partition.get('options', []))
 				elif partition.get('format', False):
-					partition['device_instance'].format(partition['filesystem']['format'])
+					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
 
 			if partition.get('boot', False):
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
@@ -169,7 +170,6 @@ class Filesystem:
 				if time.time() - start_wait > 10:
 					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
 				time.sleep(0.025)
-
 
 			# Todo: Find a better way to detect if the new UUID of the partition has showed up.
 			#       But this will address (among other issues)
