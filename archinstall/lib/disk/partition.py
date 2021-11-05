@@ -4,9 +4,12 @@ import time
 import logging
 import json
 import os
+import hashlib
 from typing import Optional
 from .blockdevice import BlockDevice
+from .exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from .helpers import get_mount_info, get_filesystem_type
+from .storage import storage
 from ..output import log
 from ..general import SysCommand
 
@@ -82,14 +85,14 @@ class Partition:
 	@property
 	def sector_size(self):
 		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.path}").decode('UTF-8'))
-		
+
 		for device in output['blockdevices']:
 			return device.get('log-sec', None)
 
 	@property
 	def start(self):
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
-	
+
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition['start']# * self.sector_size
@@ -173,7 +176,7 @@ class Partition:
 		from .luks import luks2
 
 		try:
-			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai')+'loop', password, auto_unmount=True) as unlocked_device:
+			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
 				return unlocked_device.filesystem
 		except SysCallError:
 			return None
