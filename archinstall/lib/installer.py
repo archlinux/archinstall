@@ -2,6 +2,7 @@ import time
 import logging
 import os
 import shutil
+import shlex
 import pathlib
 import subprocess
 import glob
@@ -285,9 +286,9 @@ class Installer:
 	def run_command(self, cmd, *args, **kwargs):
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd, *args, **kwargs):
-		if 'runas' in kwargs:
-			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+	def arch_chroot(self, cmd, run_as=None):
+		if run_as:
+			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
 		return self.run_command(cmd)
 
