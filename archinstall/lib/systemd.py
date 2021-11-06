@@ -58,10 +58,10 @@ class Boot:
 			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
 
 		if not self.user:
-			if (self.user := self.instance.cached_credentials.get('root', None)):
-				pass # We'll use root
-			elif (self.user := self.instance.cached_credentials.keys()[0]):
-				pass # We'll use the first available user
+			if (user := self.instance.cached_credentials.get('root', None)):
+				self.user = user # We'll use root
+			elif (user := self.instance.cached_credentials.keys()[0]):
+				self.user = user # We'll use the first available user
 			else:
 				raise ValueError(f"archinstall.Boot() requires you to first call either archinstall.user_create(), archinstall.user_set_pw() or specify user=X in Boot() for at least one user before Boot() can be used and get passed the login prompt.")
 

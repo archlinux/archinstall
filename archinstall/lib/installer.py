@@ -665,7 +665,7 @@ class Installer:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
 
 		self.cached_credentials[user] = None
-		
+
 		if password:
 			self.user_set_pw(user, password)
 
@@ -675,7 +675,6 @@ class Installer:
 
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
-
 
 	def user_set_pw(self, user, password):
 		self.log(f'Setting password for {user}', level=logging.INFO)
