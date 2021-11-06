@@ -1,4 +1,5 @@
 import logging
+import time
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
@@ -63,7 +64,8 @@ class Boot:
 			elif (user := self.instance.cached_credentials.keys()[0]):
 				self.user = user # We'll use the first available user
 			else:
-				raise ValueError(f"archinstall.Boot() requires you to first call either archinstall.user_create(), archinstall.user_set_pw() or specify user=X in Boot() for at least one user before Boot() can be used and get passed the login prompt.")
+				raise ValueError(f"archinstall.Boot() requires you to first call either archinstall.user_create(), archinstall.user_set_pw() or specify user=X in Boot() for at least one user before Boot() can be used."
+								" This in order to get passed the login prompt when booting up the installed system.")
 
 		if existing_session:
 			self.session = existing_session.session
