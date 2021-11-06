@@ -1,9 +1,9 @@
 import time
 import logging
 import json
-from .exceptions import DiskError
 from .partition import Partition
 from .validators import valid_fs_type
+from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage

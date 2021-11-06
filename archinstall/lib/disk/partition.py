@@ -7,9 +7,9 @@ import os
 import hashlib
 from typing import Optional
 from .blockdevice import BlockDevice
-from .exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from .helpers import get_mount_info, get_filesystem_type
-from .storage import storage
+from ..storage import storage
+from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
 

@@ -126,6 +126,9 @@ def ask_user_questions():
 	if not archinstall.arguments.get("bootloader", None):
 		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
+	if not archinstall.arguments.get('swap', None):
+		archinstall.arguments['swap'] = archinstall.ask_for_swap()
+
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
@@ -155,7 +158,7 @@ def ask_user_questions():
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
 		# The argument to ask_for_audio_selection lets the library know if it's a desktop profile
-		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.profiles.is_desktop_profile(archinstall.arguments['profile']))
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments['profile']))
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
@@ -268,6 +271,8 @@ def perform_installation(mountpoint):
 			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
+			if archinstall.arguments['swap']:
+				installation.setup_swap('zram')
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
