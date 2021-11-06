@@ -14,6 +14,7 @@ except:
 	import select
 	EPOLLIN = 0
 	EPOLLHUP = 0
+
 	class epoll():
 		""" #!if windows
 		Create a epoll() implementation that simulates the epoll() behavior.
@@ -38,7 +39,7 @@ except:
 			except OSError:
 				return []
 
-from .exceptions import *
+from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
@@ -241,7 +242,7 @@ class SysCommandWorker:
 				got_output = True
 				self.peak(output)
 				self._trace_log += output
-			except OSError as err:
+			except OSError:
 				self.ended = time.time()
 				break
 
@@ -379,8 +380,7 @@ def prerequisite_check():
 
 
 def reboot():
-	o = b''.join(SysCommand("/usr/bin/reboot"))
-
+	SysCommand("/usr/bin/reboot")
 
 def pid_exists(pid: int):
 	try:

@@ -99,8 +99,12 @@ def has_wifi() -> bool:
 def has_cpu_vendor(vendor_id: str) -> bool:
 	return any(cpu.get("vendor_id") == vendor_id for cpu in cpuinfo())
 
+
 has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
+
+
 has_intel_cpu = partial(has_cpu_vendor, "GenuineIntel")
+
 
 def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')

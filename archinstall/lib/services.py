@@ -1,4 +1,5 @@
-from .general import *
+import os
+from .general import SysCommand
 
 
 def service_state(service_name: str):
