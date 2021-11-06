@@ -104,6 +104,8 @@ class Installer:
 		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
+		self.cached_credentials = {} # Used by systemd.py Boot() to get passed the login prompt
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -130,6 +132,8 @@ class Installer:
 			raise args[1]
 
 		self.genfstab()
+
+		self.cached_credentials = {}
 
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
@@ -660,6 +664,8 @@ class Installer:
 			self.log(f'Creating user {user}', level=logging.INFO)
 			SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
 
+		self.cached_credentials[user] = None
+		
 		if password:
 			self.user_set_pw(user, password)
 
@@ -670,8 +676,11 @@ class Installer:
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
 
+
 	def user_set_pw(self, user, password):
 		self.log(f'Setting password for {user}', level=logging.INFO)
+
+		self.cached_credentials[user] = password
 
 		if user == 'root':
 			# This means the root account isn't locked/disabled with * in /etc/passwd

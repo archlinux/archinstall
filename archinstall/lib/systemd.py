@@ -46,15 +46,24 @@ class Networkd(Systemd):
 
 
 class Boot:
-	def __init__(self, installation: Installer):
+	def __init__(self, installation: Installer, user=None):
 		self.instance = installation
 		self.container_name = 'archinstall'
 		self.session = None
 		self.ready = False
+		self.user = user
 
 	def __enter__(self):
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
 			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
+
+		if not self.user:
+			if (self.user := self.instance.cached_credentials.get('root', None)):
+				pass # We'll use root
+			elif (self.user := self.instance.cached_credentials.keys()[0]):
+				pass # We'll use the first available user
+			else:
+				raise ValueError(f"archinstall.Boot() requires you to first call either archinstall.user_create(), archinstall.user_set_pw() or specify user=X in Boot() for at least one user before Boot() can be used and get passed the login prompt.")
 
 		if existing_session:
 			self.session = existing_session.session
@@ -65,12 +74,24 @@ class Boot:
 				'-D', self.instance.target,
 				'--timezone=off',
 				'-b',
+				'--no-pager',
 				'--machine', self.container_name
 			])
+			# '-P' or --console=pipe  could help us not having to do a bunch of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 
 		if not self.ready:
 			while self.session.is_alive():
 				if b' login:' in self.session:
+					self.session.write(bytes(self.user, 'UTF-8'))
+					time.sleep(2)
+
+					if b'Password: ' in self.session:
+						if not (password := self.instance.cached_credentials[self.user]):
+							raise ValueError(f"No password found for {self.user} when trying to archinstall.Boot() into the system. The attempted boot will hang indefinitely so the installer cannot continue. call archinstall.user_set_pw() on {self.user} before calling archinstall.Boot()")
+						
+						self.session.write(bytes(password, 'UTF-8'))
+						time.sleep(2)
+
 					self.ready = True
 					break
 
