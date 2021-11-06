@@ -1,5 +1,4 @@
 import logging
-import time
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
@@ -61,8 +60,6 @@ class Boot:
 			self.session = existing_session.session
 			self.ready = existing_session.ready
 		else:
-			log(f"Temporarily booting up installed system using systemd-nspawn")
-			time.sleep(1)
 			self.session = SysCommandWorker([
 				'/usr/bin/systemd-nspawn',
 				'-D', self.instance.target,
