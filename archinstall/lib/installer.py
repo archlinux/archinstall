@@ -24,7 +24,7 @@ class InstallationFile:
 		return self
 
 	def __exit__(self):
-		self.installation.chown(owner, self.filename)
+		self.installation.chown(self.owner, self.filename)
 
 class Installer:
 	"""
