@@ -89,7 +89,9 @@ class Boot:
 
 					if b'Password: ' in self.session:
 						if not (password := self.instance.cached_credentials[self.user]):
-							raise ValueError(f"No password found for {self.user} when trying to archinstall.Boot() into the system. The attempted boot will hang indefinitely so the installer cannot continue. call archinstall.user_set_pw() on {self.user} before calling archinstall.Boot()")
+							raise ValueError(f"No password found for {self.user} when trying to archinstall.Boot() into the system."
+											" The attempted boot will hang indefinitely so the installer cannot continue."
+											f" Call archinstall.user_set_pw() on {self.user} before calling archinstall.Boot()")
 						
 						self.session.write(bytes(password, 'UTF-8'))
 						time.sleep(2)
