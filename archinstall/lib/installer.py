@@ -1,4 +1,5 @@
 import time
+from typing import Union
 import logging
 import os
 import shutil
@@ -23,6 +24,31 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
+
+class InstallationFile:
+	def __init__(self, installation, filename, owner, mode="w"):
+		self.installation = installation
+		self.filename = filename
+		self.owner = owner
+		self.mode = mode
+		self.fh = None
+
+	def __enter__(self):
+		self.fh = open(self.filename, self.mode)
+		return self
+
+	def __exit__(self, *args):
+		self.fh.close()
+		self.installation.chown(self.owner, self.filename)
+	
+	def write(self, data :Union[str, bytes]):
+		return self.fh.write(data)
+	
+	def read(self, *args):
+		return self.fh.read(*args)
+	
+	def poll(self, *args):
+		return self.fh.poll(*args)
 
 class Installer:
 	"""
@@ -657,6 +683,12 @@ class Installer:
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
 		SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
+
+	def chown(self, owner, path, options=[]):
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path}")
+
+	def create_file(self, filename, owner=None):
+		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
 		if len(language.strip()):
