@@ -85,7 +85,8 @@ class Boot:
 			log(args[1], level=logging.ERROR, fg='red')
 			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
-		SysCommand(f'machinectl shell {self.container_name} /bin/bash -c "shutdown now"')
+		if SysCommand(f'machinectl shell {self.container_name} /bin/bash -c "shutdown now"').exit_code == 0:
+			storage['active_boot'] = None
 
 	def __iter__(self):
 		if self.session:
