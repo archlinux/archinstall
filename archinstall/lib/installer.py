@@ -1,4 +1,5 @@
 import time
+from typing import Union
 from .disk import *
 from .hardware import *
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -15,16 +16,29 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 
 
 class InstallationFile:
-	def __init__(self, installation, filename, owner):
+	def __init__(self, installation, filename, owner, mode="w"):
 		self.installation = installation
 		self.filename = filename
 		self.owner = owner
+		self.mode = mode
+		self.fh = None
 
 	def __enter__(self):
+		self.fh = open(self.filename, self.mode)
 		return self
 
-	def __exit__(self):
+	def __exit__(self, *args):
+		self.fh.close()
 		self.installation.chown(self.owner, self.filename)
+	
+	def write(self, data :Union[str, bytes]):
+		return self.fh.write(data)
+	
+	def read(self, *args):
+		return self.fh.read(*args)
+	
+	def poll(self, *args):
+		return self.fh.poll(*args)
 
 class Installer:
 	"""
