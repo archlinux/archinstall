@@ -691,6 +691,7 @@ class Installer:
 		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
+		log(f"Setting keyboard language to {language}", level=logging.INFO)
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
 				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
@@ -712,6 +713,7 @@ class Installer:
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
+		log(f"Setting x11 keyboard language to {language}", level=logging.INFO)
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.
