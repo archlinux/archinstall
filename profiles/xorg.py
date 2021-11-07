@@ -11,7 +11,6 @@ __packages__ = [
 	'xorg-server',
 	'xorg-xinit',
 	'nvidia-dkms',
-	'xorg-server',
 	*archinstall.lib.hardware.__packages__,
 ]
 

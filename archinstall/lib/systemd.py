@@ -1,5 +1,4 @@
 import logging
-
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
@@ -64,6 +63,7 @@ class Boot:
 			self.session = SysCommandWorker([
 				'/usr/bin/systemd-nspawn',
 				'-D', self.instance.target,
+				'--timezone=off',
 				'-b',
 				'--machine', self.container_name
 			])

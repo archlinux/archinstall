@@ -4,10 +4,7 @@ import pathlib
 import time
 
 import archinstall
-from archinstall.lib.general import run_custom_user_commands
 from archinstall.lib.hardware import *
-from archinstall.lib.networking import check_mirror_reachable
-from archinstall.lib.profiles import is_desktop_profile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -50,7 +47,7 @@ def load_config():
 	if archinstall.arguments.get('sys-encoding', None) is not None:
 		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+		archinstall.storage['gfx_driver_packages'] = archinstall.hardware.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
@@ -118,21 +115,21 @@ def ask_user_questions():
 	if not archinstall.arguments.get("bootloader", None):
 		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
 
+	if not archinstall.arguments.get('swap', None):
+		archinstall.arguments['swap'] = archinstall.ask_for_swap()
 
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
 
-
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
-
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('superusers', None):
 		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
+		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
 		archinstall.arguments['users'] = users
 		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
@@ -148,17 +145,14 @@ def ask_user_questions():
 				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 				exit(1)
 
-
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
 		# The argument to ask_for_audio_selection lets the library know if it's a desktop profile
-		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(is_desktop_profile(archinstall.arguments['profile']))
-
+		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments['profile']))
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
 		archinstall.arguments['kernels'] = archinstall.select_kernel()
-
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
@@ -230,7 +224,7 @@ def perform_filesystem_operations():
 			Once that's done, we'll hand over to perform_installation()
 		"""
 		mode = archinstall.GPT
-		if has_uefi() is False:
+		if archinstall.has_uefi() is False:
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments['harddrives']:
@@ -263,9 +257,11 @@ def perform_installation(mountpoint):
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
+			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
+			if archinstall.arguments['swap']:
+				installation.setup_swap('zram')
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -308,7 +304,7 @@ def perform_installation(mountpoint):
 				installation.set_timezone(timezone)
 
 			if archinstall.arguments.get('ntp', False):
-				installation.activate_ntp()
+				installation.activate_time_syncronization()
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
@@ -330,7 +326,7 @@ def perform_installation(mountpoint):
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):
-			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
+			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
@@ -345,7 +341,7 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
-if not check_mirror_reachable():
+if not archinstall.check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
