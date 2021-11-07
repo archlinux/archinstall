@@ -75,7 +75,6 @@ class Boot:
 		if not self.ready:
 			while self.session.is_alive():
 				if b' login:' in self.session:
-					
 					self.ready = True
 					break
 
