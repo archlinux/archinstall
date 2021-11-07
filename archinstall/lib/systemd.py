@@ -84,18 +84,7 @@ class Boot:
 		if not self.ready:
 			while self.session.is_alive():
 				if b' login:' in self.session:
-					self.session.write(bytes(self.user, 'UTF-8'))
-					time.sleep(2)
-
-					if b'Password: ' in self.session:
-						if not (password := self.instance.cached_credentials[self.user]):
-							raise ValueError(f"No password found for {self.user} when trying to archinstall.Boot() into the system."
-											" The attempted boot will hang indefinitely so the installer cannot continue."
-											f" Call archinstall.user_set_pw() on {self.user} before calling archinstall.Boot()")
-						
-						self.session.write(bytes(password, 'UTF-8'))
-						time.sleep(2)
-
+					
 					self.ready = True
 					break
 
@@ -110,7 +99,7 @@ class Boot:
 			log(args[1], level=logging.ERROR, fg='red')
 			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
-		if SysCommand(f'machinectl shell {self.container_name} /bin/bash -c "shutdown now"').exit_code == 0:
+		if SysCommand(f'systemd-run --machine={self.container_name} --pty /bin/bash -c "shutdown now"').exit_code == 0:
 			storage['active_boot'] = None
 
 	def __iter__(self):
@@ -138,10 +127,10 @@ class Boot:
 
 			cmd[0] = locate_binary(cmd[0])
 
-		return SysCommand(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)
+		return SysCommand(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
 
 	def SysCommandWorker(self, cmd: list, *args, **kwargs):
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			cmd[0] = locate_binary(cmd[0])
 
-		return SysCommandWorker(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)
+		return SysCommandWorker(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
