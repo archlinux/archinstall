@@ -48,25 +48,15 @@ class Networkd(Systemd):
 
 
 class Boot:
-	def __init__(self, installation: Installer, user=None):
+	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.container_name = 'archinstall'
 		self.session = None
 		self.ready = False
-		self.user = user
 
 	def __enter__(self):
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
 			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
-
-		if not self.user:
-			if (user := self.instance.cached_credentials.get('root', None)):
-				self.user = user # We'll use root
-			elif (user := list(self.instance.cached_credentials.keys())[0]):
-				self.user = user # We'll use the first available user
-			else:
-				raise ValueError(f"archinstall.Boot() requires you to first call either archinstall.user_create(), archinstall.user_set_pw() or specify user=X in Boot() for at least one user before Boot() can be used."
-								" This in order to get passed the login prompt when booting up the installed system.")
 
 		if existing_session:
 			self.session = existing_session.session
