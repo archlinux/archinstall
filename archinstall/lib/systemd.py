@@ -1,5 +1,6 @@
 import logging
 import time
+from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
@@ -99,8 +100,16 @@ class Boot:
 			log(args[1], level=logging.ERROR, fg='red')
 			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
-		if SysCommand(f'systemd-run --machine={self.container_name} --pty /bin/bash -c "shutdown now"').exit_code == 0:
+		shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty /bin/bash -c "shutdown now"')
+		while self.session.is_alive():
+			time.sleep(0.25)
+
+		log(f"Shutdown traceback: {shutdown}")
+		
+		if shutdown.exit_code == 0:
 			storage['active_boot'] = None
+		else:
+			raise SysCallError(f"Could not shut down temporary boot of {self.instance}", level=logging.ERROR, fg="red")
 
 	def __iter__(self):
 		if self.session:
