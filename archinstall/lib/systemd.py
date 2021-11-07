@@ -104,8 +104,6 @@ class Boot:
 		while self.session.is_alive():
 			time.sleep(0.25)
 
-		log(f"Shutdown traceback: {shutdown}")
-		
 		if shutdown.exit_code == 0:
 			storage['active_boot'] = None
 		else:
