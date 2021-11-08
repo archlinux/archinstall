@@ -3,7 +3,6 @@
 import logging
 
 import archinstall
-from archinstall import Menu
 
 is_top_level_profile = True
 

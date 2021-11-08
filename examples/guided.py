@@ -1,10 +1,10 @@
 import json
 import logging
+import os
 import pathlib
 import time
 
 import archinstall
-from archinstall.lib.hardware import *
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

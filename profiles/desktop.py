@@ -1,6 +1,5 @@
 # A desktop environment selector.
 import archinstall
-from archinstall.lib.menu import Menu
 
 is_top_level_profile = True
 

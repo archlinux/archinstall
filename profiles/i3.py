@@ -1,7 +1,6 @@
 # Common package for i3, lets user select which i3 configuration they want.
 
 import archinstall
-from archinstall import Menu
 
 is_top_level_profile = False
 

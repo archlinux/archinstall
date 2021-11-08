@@ -1,4 +1,4 @@
-from simple_term_menu import TerminalMenu
+from .simple_menu import TerminalMenu
 
 
 class Menu(TerminalMenu):
