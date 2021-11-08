@@ -173,7 +173,7 @@ class Partition:
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
-		from .luks import luks2
+		from ..luks import luks2
 
 		try:
 			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
@@ -206,7 +206,7 @@ class Partition:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
-		from .luks import luks2
+		from ..luks import luks2
 
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
@@ -274,7 +274,7 @@ class Partition:
 			self.filesystem = filesystem
 
 		elif filesystem == 'crypto_LUKS':
-			# 	from .luks import luks2
+			# 	from ..luks import luks2
 			# 	encrypted_partition = luks2(self, None, None)
 			# 	encrypted_partition.format(path)
 			self.filesystem = filesystem
