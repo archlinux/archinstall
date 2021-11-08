@@ -154,7 +154,7 @@ class BlockDevice:
 			return partition.get('uuid', None)
 
 	def convert_size_to_gb(self, size):
-		return size / GIGA
+		return round(size / GIGA,1)
 
 	@property
 	def size(self):
