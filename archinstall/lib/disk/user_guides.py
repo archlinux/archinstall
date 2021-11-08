@@ -8,6 +8,10 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 		default_filesystem = ask_for_main_filesystem_format()
 		
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
+	using_subvolumes = False
+
+	if default_filesystem == 'btrfs':
+		using_subvolumes = input('Would you like to use BTRFS subvolumes? (Y/n): ').strip().lower() in ('', 'y', 'yes')
 
 	layout = {
 		block_device.path : {
@@ -35,14 +39,14 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 		"start" : "513MiB",
 		"encrypted" : False,
 		"format" : True,
-		"size" : "100%" if block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART else f"{min(block_device.size, 20)*1024}MiB",
+		"size" : "100%" if (using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART) else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
 		"filesystem" : {
 			"format" : default_filesystem
 		}
 	})
 
-	if default_filesystem == 'btrfs' and input('Would you like to use BTRFS subvolumes? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
+	if default_filesystem == 'btrfs' and using_subvolumes:
 		if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
 			# https://btrfs.wiki.kernel.org/index.php/FAQ
 			# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
