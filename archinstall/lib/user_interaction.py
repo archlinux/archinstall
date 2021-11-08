@@ -815,7 +815,7 @@ def select_harddrives():
 	if selected_harddrive and len(selected_harddrive) > 0:
 		return [options[i] for i in selected_harddrive]
 
-	return []
+	return None
 
 
 def select_driver(options=AVAILABLE_GFX_DRIVERS):

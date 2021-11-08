@@ -97,7 +97,7 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None) is None:
 		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
 
-	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
+	if archinstall.arguments['harddrives'] and archinstall.storage.get('disk_layouts', None) is None:
 		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
 
 	# Get disk encryption password (or skip if blank)
