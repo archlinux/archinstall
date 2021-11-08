@@ -5,6 +5,8 @@ from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
 
+GIGA=2**30
+
 class BlockDevice:
 	def __init__(self, path, info=None):
 		if not info:
@@ -152,20 +154,11 @@ class BlockDevice:
 			return partition.get('uuid', None)
 
 	def convert_size_to_gb(self, size):
-		units = {
-			'P' : lambda s : float(s) * 2048,
-			'T' : lambda s : float(s) * 1024,
-			'G' : lambda s : float(s),
-			'M' : lambda s : float(s) / 1024,
-			'K' : lambda s : float(s) / 2048,
-			'B' : lambda s : float(s) / 3072,
-		}
-		unit = size[-1]
-		return float(units.get(unit, lambda s : None)(size[:-1]))
+		return size / GIGA
 
 	@property
 	def size(self):
-		output = json.loads(SysCommand(f"lsblk --json -o+SIZE {self.path}").decode('UTF-8'))
+		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return self.convert_size_to_gb(device['size'])
