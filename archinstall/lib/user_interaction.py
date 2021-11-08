@@ -494,6 +494,44 @@ def get_default_partition_layout(block_devices):
 	# TODO: Implement sane generic layout for 2+ drives
 
 
+def current_partition_layout(partitions):
+	def do_padding(name, max_len):
+		spaces = abs(len(str(name)) - max_len) + 2
+		pad_left = int(spaces/2)
+		pad_right = spaces - pad_left
+		return f'{pad_right * " "}{name}{pad_left * " "}|'
+
+	column_names = {}
+	# determine all attribute names and the max length
+	# of the value among all partitions to know the width
+	# of the table cells
+	for p in partitions:
+		for attribute, value in p.items():
+			if attribute in column_names.keys():
+				column_names[attribute] = max([column_names[attribute], len(str(value)), len(attribute)])
+			else:
+				column_names[attribute] = max([len(str(value)), len(attribute)])
+
+	title = ''
+	for name, max_len in column_names.items():
+		title += do_padding(name, max_len)
+
+	# remove last pipe
+	title = f'{title[:-1]}\n{"-" * len(title)}\n'
+
+	for p in partitions:
+		row = ''
+		for name, max_len in column_names.items():
+			if name in p:
+				row += do_padding(p[name], max_len)
+			else:
+				row += ' ' * (max_len + 2) + '|'
+
+		title += f'{row[:-1]}\n'
+
+	return title
+
+
 def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	# if has_uefi():
 	# 	partition_type = 'gpt'
@@ -529,7 +567,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	# return struct
 
 	block_device_struct = {
-		"partitions" : [partition.__dump__() for partition in block_device.partitions.values()]
+		"partitions": [partition.__dump__() for partition in block_device.partitions.values()]
 	}
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
@@ -551,10 +589,8 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 		# show current partition layout:
 		if len(block_device_struct["partitions"]):
-			title += '\n\nCurrent partition layout:\n'
-			for partition in block_device_struct["partitions"]:
-				title += json.dumps(partition)
-			title += '\n'
+			title += '\n\nCurrent partition layout:\n\n'
+			title += current_partition_layout(block_device_struct['partitions']) + '\n'
 
 		task = Menu(title, modes).run()
 
