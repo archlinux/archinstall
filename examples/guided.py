@@ -247,6 +247,7 @@ def perform_installation(mountpoint):
 		"!users" : archinstall.arguments['!users'],
 		"!superusers" : archinstall.arguments['!users'],
 		"!root-password" : archinstall.arguments['!users'],
+		"!encryption-password" : archinstall.arguments['!encryption-password'],
 	}, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON)
 
 	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
