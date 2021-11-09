@@ -121,11 +121,11 @@ class JsonEncoder:
 			for key, val in list(obj.items()):
 				if isinstance(val, dict):
 					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
-					val = json.loads(json.dumps(val, cls=JSON))
+					val = json.loads(json.dumps(val, cls=UNSAFE_JSON))
 				else:
-					val = JsonEncoder._encode(val)
+					val = JsonEncoder._unsafe_encode(val)
 
-					copy[JsonEncoder._encode(key)] = val
+				copy[JsonEncoder._unsafe_encode(key)] = val
 			return copy
 		else:
 			return JsonEncoder._encode(obj)
