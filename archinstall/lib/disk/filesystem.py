@@ -98,7 +98,7 @@ class Filesystem:
 						if storage['arguments'] == 'silent':
 							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
 						else:
-							from .user_interaction import get_password
+							from ..user_interaction import get_password
 							partition['password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 					partition['device_instance'].encrypt(password=partition['password'])
