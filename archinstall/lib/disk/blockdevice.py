@@ -5,7 +5,7 @@ from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
 
-GIGA=2**30
+GIGA = 2 ** 30
 
 class BlockDevice:
 	def __init__(self, path, info=None):
