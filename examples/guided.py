@@ -132,6 +132,8 @@ def ask_user_questions():
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
 		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
+		if not archinstall.arguments['hostname']:
+			archinstall.arguments['hostname'] = "archinstall"
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
