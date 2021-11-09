@@ -16,7 +16,8 @@ def valid_parted_position(pos :str):
 
 	return False
 
-def valid_fs_type(fstype :str) -> bool:
+
+def fs_types():
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 	# Above link doesn't agree with `man parted` /mkpart documentation:
 	"""
@@ -27,16 +28,19 @@ def valid_fs_type(fstype :str) -> bool:
 		"linux-swap",  "ntfs",  "reis‐
 		erfs", "udf", or "xfs".
 	"""
-
-	return fstype.lower() in [
+	return [
 		"btrfs",
 		"ext2",
-		"ext3", "ext4", # `man parted` allows these
+		"ext3", "ext4",  # `man parted` allows these
 		"fat16", "fat32",
-		"hfs", "hfs+", # "hfsx", not included in `man parted`
+		"hfs", "hfs+",  # "hfsx", not included in `man parted`
 		"linux-swap",
 		"ntfs",
 		"reiserfs",
-		"udf", # "ufs", not included in `man parted`
-		"xfs", # `man parted` allows this
+		"udf",  # "ufs", not included in `man parted`
+		"xfs",  # `man parted` allows this
 	]
+
+
+def valid_fs_type(fstype :str) -> bool:
+	return fstype.lower() in fs_types

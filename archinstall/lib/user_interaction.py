@@ -1,6 +1,5 @@
 import getpass
 import ipaddress
-import json
 import logging
 import re
 import select  # Used for char by char polling of sys.stdin
@@ -24,6 +23,7 @@ from .storage import storage
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
+from .. import fs_types
 
 
 def get_terminal_height():
@@ -494,7 +494,7 @@ def get_default_partition_layout(block_devices):
 	# TODO: Implement sane generic layout for 2+ drives
 
 
-def current_partition_layout(partitions):
+def current_partition_layout(partitions, with_idx=False):
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces/2)
@@ -502,6 +502,11 @@ def current_partition_layout(partitions):
 		return f'{pad_right * " "}{name}{pad_left * " "}|'
 
 	column_names = {}
+
+	# this will add an initial index to the table for each partition
+	if with_idx:
+		column_names['index'] = max([len(str(len(partitions))), len('index')])
+
 	# determine all attribute names and the max length
 	# of the value among all partitions to know the width
 	# of the table cells
@@ -512,24 +517,38 @@ def current_partition_layout(partitions):
 			else:
 				column_names[attribute] = max([len(str(value)), len(attribute)])
 
-	title = ''
+	current_layout = ''
 	for name, max_len in column_names.items():
-		title += do_padding(name, max_len)
+		current_layout += do_padding(name, max_len)
 
-	# remove last pipe
-	title = f'{title[:-1]}\n{"-" * len(title)}\n'
+	current_layout = f'{current_layout[:-1]}\n{"-" * len(current_layout)}\n'
 
-	for p in partitions:
+	for idx, p in enumerate(partitions):
 		row = ''
 		for name, max_len in column_names.items():
-			if name in p:
+			if name == 'index':
+				row += do_padding(str(idx), max_len)
+			elif name in p:
 				row += do_padding(p[name], max_len)
 			else:
 				row += ' ' * (max_len + 2) + '|'
 
-		title += f'{row[:-1]}\n'
+		current_layout += f'{row[:-1]}\n'
 
-	return title
+	return f'\n\nCurrent partition layout:\n\n{current_layout}'
+
+
+def select_partition(title, partitions, multiple=False):
+	partition_indexes = list(map(str, range(len(partitions))))
+	partition = Menu(title, partition_indexes, multi=multiple).run()
+
+	if partition is not None:
+		if isinstance(partition, list):
+			return [int(p) for p in partition]
+		else:
+			return int(partition)
+
+	return None
 
 
 def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
@@ -589,10 +608,9 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 		# show current partition layout:
 		if len(block_device_struct["partitions"]):
-			title += '\n\nCurrent partition layout:\n\n'
 			title += current_partition_layout(block_device_struct['partitions']) + '\n'
 
-		task = Menu(title, modes).run()
+		task = Menu(title, modes, sort=False).run()
 
 		if not task:
 			break
@@ -603,7 +621,8 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
 			# 	name = input("Enter a desired name for the partition: ").strip()
 
-			fstype = input("Enter a desired filesystem type for the partition: ").strip()
+			fstype_title = 'Enter a desired filesystem type for the partition: '
+			fstype = Menu(fstype_title, fs_types(), skip=False).run()
 
 			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
 			if not start.strip():
@@ -611,11 +630,13 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 				end_suggested = block_device.largest_free_space[1]
 			else:
 				end_suggested = '100%'
+
 			end = input(f"Enter the end sector of the partition (percentage or block number, ex: {end_suggested}): ").strip()
+
 			if not end.strip():
 				end = end_suggested
 
-			if valid_parted_position(start) and valid_parted_position(end) and valid_fs_type(fstype):
+			if valid_parted_position(start) and valid_parted_position(end):
 				if partition_overlap(block_device_struct["partitions"], start, end):
 					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.", fg="red")
 					continue
@@ -631,7 +652,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					}
 				})
 			else:
-				log(f"Invalid start ({valid_parted_position(start)}), end ({valid_parted_position(end)}) or fstype ({valid_fs_type(fstype)}) for this partition. Ignoring this partition creation.", fg="red")
+				log(f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.", fg="red")
 				continue
 		elif task[:len("Suggest partition layout")] == "Suggest partition layout":
 			if len(block_device_struct["partitions"]):
@@ -642,56 +663,65 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 		elif task is None:
 			return block_device_struct
 		else:
-			for index, partition in enumerate(block_device_struct["partitions"]):
-				print(f"{index}: Start: {partition['start']}, End: {partition['size']} ({partition['filesystem']['format']}{', mounting at: '+partition['mountpoint'] if partition['mountpoint'] else ''})")
+			current_layout = current_partition_layout(block_device_struct['partitions'], with_idx=True)
 
 			if task == "Delete a partition":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to delete: ', options_output=False)):
-					del(block_device_struct["partitions"][block_device_struct["partitions"].index(partition)])
+				title = f'{current_layout}\n\nSelect by index which partitions to delete'
+				to_delete = select_partition(title, block_device_struct["partitions"], multiple=True)
+
+				if to_delete:
+					block_device_struct['partitions'] = [p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete]
 			elif task == "Clear/Delete all partitions":
 				block_device_struct["partitions"] = []
 			elif task == "Assign mount-point for a partition":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mount where: ', options_output=False)):
+				title = f'{current_layout}\n\nSelect by index which partition to mount where'
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
 					print(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')
 					mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
 
 					if len(mountpoint):
-						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['mountpoint'] = mountpoint
+						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
 						if mountpoint == '/boot':
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
 							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = True
 					else:
-						del(block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['mountpoint'])
+						del(block_device_struct["partitions"][partition]['mountpoint'])
 
 			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mask for formatting: ', options_output=False)):
+				title = f'{current_layout}\n\nSelect which partition to mask for formatting'
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
 					# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 					# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 					# it's safe to change the filesystem for this partition.
-					if block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', {}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
-						if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
-							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+					if block_device_struct["partitions"][partition].get('filesystem', {}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
+						if not block_device_struct["partitions"][partition].get('filesystem', None):
+							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						while True:
-							fstype = input("Enter a desired filesystem type for the partition: ").strip()
-							if not valid_fs_type(fstype):
-								log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
-								continue
-							break
+						fstype = Menu('Enter a desired filesystem type for the partition', fs_types(), skip=False).run()
 
-						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
+						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 					# Negate the current wipe marking
-					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['format'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('format', False)
+					block_device_struct["partitions"][partition]['format'] = not block_device_struct["partitions"][partition].get('format', False)
 
 			elif task == "Mark/Unmark a partition as encrypted":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as encrypted: ', options_output=False)):
+				title = f'{current_layout}\n\nSelect which partition to mark as encrypted'
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
 					# Negate the current encryption marking
-					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['encrypted'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('encrypted', False)
+					block_device_struct["partitions"][partition]['encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
 
 			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
-				if (partition := generic_select(block_device_struct["partitions"], 'Select which partition to mark as bootable: ', options_output=False)):
-					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('boot', False)
+				title = f'{current_layout}\n\nSelect which partition to mark as bootable'
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
+					block_device_struct["partitions"][partition]['boot'] = not block_device_struct["partitions"][partition].get('boot', False)
 
 			elif task == "Set desired filesystem for a partition":
 				if not block_device_struct["partitions"]:
