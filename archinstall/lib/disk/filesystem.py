@@ -143,7 +143,10 @@ class Filesystem:
 		:param string: A raw string passed to /usr/bin/parted -s <string>
 		:type string: str
 		"""
-		return self.raw_parted(string).exit_code == 0
+		if (parted_handle := self.raw_parted(string)).exit_code == 0:
+			return True
+		else:
+			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
 
 	def use_entire_disk(self, root_filesystem_type='ext4') -> Partition:
 		# TODO: Implement this with declarative profiles instead.
