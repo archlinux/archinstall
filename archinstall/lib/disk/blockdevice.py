@@ -223,7 +223,7 @@ class BlockDevice:
 			else:
 				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)
 				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
-				count +=1
+				count += 1
 		else:
 			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
 			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")
