@@ -1,9 +1,11 @@
 import os
 import json
 import logging
+import time
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
+from ..storage import storage
 
 GIGA = 2 ** 30
 
@@ -213,6 +215,15 @@ class BlockDevice:
 		self.part_cache = {}
 
 	def get_partition(self, uuid):
-		for partition in self:
-			if partition.uuid == uuid:
-				return partition
+		count = 0
+		while count < 5:
+			for partition in self:
+				if partition.uuid == uuid:
+					return partition
+			else:
+				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)
+				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
+				count +=1
+		else:
+			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
+			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")
