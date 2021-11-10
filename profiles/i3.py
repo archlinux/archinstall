@@ -27,7 +27,7 @@ def _prep_function(*args, **kwargs):
 
 	supported_configurations = ['i3-wm', 'i3-gaps']
 
-	desktop = Menu('Select your desired configuration', supported_configurations, skip=False).run()
+	desktop = archinstall.Menu('Select your desired configuration', supported_configurations, skip=False).run()
 
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded

@@ -9,12 +9,11 @@ import sys
 import time
 
 import archinstall
-from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
+from .disk import BlockDevice, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from .exceptions import RequirementError, UserError, DiskError
 
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones
-from .menu import Menu
 from .networking import list_interfaces
 from .output import log
 from .profiles import Profile, list_profiles
@@ -301,7 +300,7 @@ def ask_for_a_timezone():
 	timezones = list_timezones()
 	default = 'UTC'
 
-	selected_tz = Menu(
+	selected_tz = archinstall.Menu(
 		f'Select a timezone or leave blank to use default "{default}"',
 		timezones,
 		skip=False,
@@ -325,7 +324,7 @@ def ask_for_bootloader() -> str:
 def ask_for_audio_selection(desktop=True):
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
+	selected_audio = archinstall.Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
 	return selected_audio
 
 
@@ -339,7 +338,7 @@ def ask_to_configure_network():
 		**list_interfaces()
 	}
 
-	nic = Menu('Select one network interface to configure', interfaces.values()).run()
+	nic = archinstall.Menu('Select one network interface to configure', interfaces.values()).run()
 
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)':
@@ -352,7 +351,7 @@ def ask_to_configure_network():
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
 
-		mode = Menu(
+		mode = archinstall.Menu(
 			f'Select which mode to configure for "{nic}" or leave blank for default "{default_mode}"',
 			modes,
 			default_option=default_mode
@@ -409,75 +408,8 @@ def ask_for_main_filesystem_format():
 		'f2fs': 'f2fs'
 	}
 
-	value = Menu('Select which filesystem your main partition should use', options, skip=False).run()
+	value = archinstall.Menu('Select which filesystem your main partition should use', options, skip=False).run()
 	return next((key for key, val in options.items() if val == value), None)
-
-
-def generic_select(options, input_text="Select one of the above by index or absolute value: ", allow_empty_input=True, options_output=True, sort=False):
-	"""
-	A generic select function that does not output anything
-	other than the options and their indexes. As an example:
-
-	generic_select(["first", "second", "third option"])
-	0: first
-	1: second
-	2: third option
-
-	When the user has entered the option correctly,
-	this function returns an item from list, a string, or None
-	"""
-
-	print(options)
-
-	# Checking if the options are different from `list` or `dict` or if they are empty
-	if type(options) not in [list, dict]:
-		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError("generic_select() requires list or dictionary as options.")
-	if not options:
-		log(" * Generic select didn't find any options to choose from * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError('generic_select() requires at least one option to proceed.')
-	# After passing the checks, function continues to work
-	if type(options) == dict:
-		# To allow only `list` and `dict`, converting values of options here.
-		# Therefore, now we can only provide the dictionary itself
-		options = list(options.values())
-	if sort:
-		# As we pass only list and dict (converted to list), we can skip converting to list
-		options = sorted(options)
-
-	# Added ability to disable the output of options items,
-	# if another function displays something different from this
-	if options_output:
-		for index, option in enumerate(options):
-			print(f"{index}: {option}")
-
-	# The new changes introduce a single while loop for all inputs processed by this function
-	# Now the try...except block handles validation for invalid input from the user
-	while True:
-		try:
-			selected_option = input(input_text).strip()
-			if not selected_option:
-				# `allow_empty_input` parameter handles return of None on empty input, if necessary
-				# Otherwise raise `RequirementError`
-				if allow_empty_input:
-					return None
-				raise RequirementError('Please select an option to continue')
-			# Replaced `isdigit` with` isnumeric` to discard all negative numbers
-			elif selected_option.isnumeric():
-				if (selected_option := int(selected_option)) >= len(options):
-					raise RequirementError(f'Selected option "{selected_option}" is out of range')
-				selected_option = options[selected_option]
-				break
-			elif selected_option in options:
-				break  # We gave a correct absolute value
-			else:
-				raise RequirementError(f'Selected option "{selected_option}" does not exist in available options')
-		except RequirementError as err:
-			log(f" * {err} * ", fg='red')
-
-	return selected_option
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
@@ -540,7 +472,7 @@ def current_partition_layout(partitions, with_idx=False):
 
 def select_partition(title, partitions, multiple=False):
 	partition_indexes = list(map(str, range(len(partitions))))
-	partition = Menu(title, partition_indexes, multi=multiple).run()
+	partition = archinstall.Menu(title, partition_indexes, multi=multiple).run()
 
 	if partition is not None:
 		if isinstance(partition, list):
@@ -594,15 +526,19 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	while True:
 		modes = [
 			"Create a new partition",
-			f"Suggest partition layout for {block_device}",
-			"Delete a partition" if len(block_device_struct) else "",
-			"Clear/Delete all partitions" if len(block_device_struct) else "",
-			"Assign mount-point for a partition" if len(block_device_struct) else "",
-			"Mark/Unmark a partition to be formatted (wipes data)" if len(block_device_struct) else "",
-			"Mark/Unmark a partition as encrypted" if len(block_device_struct) else "",
-			"Mark/Unmark a partition as bootable (automatic for /boot)" if len(block_device_struct) else "",
-			"Set desired filesystem for a partition" if len(block_device_struct) else "",
+			f"Suggest partition layout for {block_device}"
 		]
+
+		if len(block_device_struct['partitions']):
+			modes += [
+				"Delete a partition",
+				"Clear/Delete all partitions",
+				"Assign mount-point for a partition",
+				"Mark/Unmark a partition to be formatted (wipes data)",
+				"Mark/Unmark a partition as encrypted",
+				"Mark/Unmark a partition as bootable (automatic for /boot)",
+				"Set desired filesystem for a partition",
+			]
 
 		title = f'Select what to do with \n{block_device}'
 
@@ -610,7 +546,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 		if len(block_device_struct["partitions"]):
 			title += current_partition_layout(block_device_struct['partitions']) + '\n'
 
-		task = Menu(title, modes, sort=False).run()
+		task = archinstall.Menu(title, modes, sort=False).run()
 
 		if not task:
 			break
@@ -621,8 +557,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
 			# 	name = input("Enter a desired name for the partition: ").strip()
 
-			fstype_title = 'Enter a desired filesystem type for the partition: '
-			fstype = Menu(fstype_title, fs_types(), skip=False).run()
+			fstype = archinstall.Menu('Enter a desired filesystem type for the partition', fs_types(), skip=False).run()
 
 			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
 			if not start.strip():
@@ -642,7 +577,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					continue
 
 				block_device_struct["partitions"].append({
-					"type" : "primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"type" : "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
 					"start" : start,
 					"size" : end,
 					"mountpoint" : None,
@@ -701,7 +636,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu('Enter a desired filesystem type for the partition', fs_types(), skip=False).run()
+						fstype = archinstall.Menu('Enter a desired filesystem type for the partition', fs_types(), skip=False).run()
 
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
@@ -724,26 +659,22 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 					block_device_struct["partitions"][partition]['boot'] = not block_device_struct["partitions"][partition].get('boot', False)
 
 			elif task == "Set desired filesystem for a partition":
-				if not block_device_struct["partitions"]:
-					log("No partitions found. Create some partitions first", level=logging.WARNING, fg='yellow')
-					continue
-				elif (partition := generic_select(block_device_struct["partitions"], 'Select which partition to set a filesystem on: ', options_output=False)):
-					if not block_device_struct["partitions"][block_device_struct["partitions"].index(partition)].get('filesystem', None):
-						block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem'] = {}
+				title = f'{current_layout}\n\nSelect which partition to set a filesystem on'
+				partition = select_partition(title, block_device_struct["partitions"])
 
-					while True:
-						fstype = input("Enter a desired filesystem type for the partition: ").strip()
-						if not valid_fs_type(fstype):
-							log(f"Desired filesystem {fstype} is not a valid filesystem.", level=logging.ERROR, fg="red")
-							continue
-						break
+				if partition is not None:
+					if not block_device_struct["partitions"][partition].get('filesystem', None):
+						block_device_struct["partitions"][partition]['filesystem'] = {}
 
-					block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['filesystem']['format'] = fstype
+					fstype_title = 'Enter a desired filesystem type for the partition: '
+					fstype = archinstall.Menu(fstype_title, fs_types(), skip=False).run()
+
+					block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 	return block_device_struct
 
 
-def select_individual_blockdevice_usage(block_devices :list):
+def select_individual_blockdevice_usage(block_devices: list):
 	result = {}
 
 	for device in block_devices:
@@ -754,13 +685,13 @@ def select_individual_blockdevice_usage(block_devices :list):
 	return result
 
 
-def select_disk_layout(block_devices :list):
+def select_disk_layout(block_devices: list):
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
 	]
 
-	mode = Menu('Select what you wish to do with the selected block devices', modes, skip=False).run()
+	mode = archinstall.Menu('Select what you wish to do with the selected block devices', modes, skip=False).run()
 
 	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
 		return get_default_partition_layout(block_devices)
@@ -786,7 +717,7 @@ def select_disk(dict_o_disks):
 
 		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
 
-		drive = Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
+		drive = archinstall.Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
 		if not drive:
 			return drive
 
@@ -816,7 +747,7 @@ def select_profile():
 	title = 'This is a list of pre-programmed profiles, ' \
 		'they might make it easier to install things like desktop environments'
 
-	selection = Menu(title=title, options=options.keys()).run()
+	selection = archinstall.Menu(title=title, options=options.keys()).run()
 
 	if selection is not None:
 		return options[selection]
@@ -838,7 +769,7 @@ def select_language():
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
+	selected_lang = archinstall.Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
 	return selected_lang
 
 
@@ -854,7 +785,7 @@ def select_mirror_regions():
 	# TODO: Support multiple options and country codes, SE,UK for instance.
 
 	mirrors = archinstall.list_mirrors()
-	selected_mirror = Menu('Select one of the regions to download packages from', mirrors.keys()).run()
+	selected_mirror = archinstall.Menu('Select one of the regions to download packages from', mirrors.keys()).run()
 
 	if selected_mirror is not None:
 		return {selected_mirror: mirrors[selected_mirror]}
@@ -872,7 +803,7 @@ def select_harddrives():
 	hard_drives = archinstall.all_disks().values()
 	options = {f'{option}': option for option in hard_drives}
 
-	selected_harddrive = Menu(
+	selected_harddrive = archinstall.Menu(
 		'Select one or more hard drives to use and configure',
 		options.keys(),
 		multi=True
@@ -908,7 +839,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 
 		if not arguments.get('gfx_driver', None):
 			title += '\n\nSelect a graphics driver or leave blank to install all open-source drivers'
-			arguments['gfx_driver'] = Menu(title, drivers).run()
+			arguments['gfx_driver'] = archinstall.Menu(title, drivers).run()
 
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = "All open-source (default)"
@@ -929,7 +860,7 @@ def select_kernel():
 	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 	default_kernel = "linux"
 
-	selected_kernels = Menu(
+	selected_kernels = archinstall.Menu(
 		f'Choose which kernels to use or leave blank for default "{default_kernel}"',
 		kernels,
 		sort=True,
