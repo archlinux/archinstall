@@ -401,15 +401,8 @@ def ask_to_configure_network():
 
 
 def ask_for_main_filesystem_format():
-	options = {
-		'btrfs': 'btrfs',
-		'ext4': 'ext4',
-		'xfs': 'xfs',
-		'f2fs': 'f2fs'
-	}
-
-	value = archinstall.Menu('Select which filesystem your main partition should use', options, skip=False).run()
-	return next((key for key, val in options.items() if val == value), None)
+	options = ['btrfs', 'ext4', 'xfs', 'f2fs']
+	return archinstall.Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
