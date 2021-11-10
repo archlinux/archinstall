@@ -27,7 +27,7 @@ def _prep_function(*args, **kwargs):
 	before continuing any further.
 	"""
 	if not archinstall.storage.get('_selected_servers', None):
-		servers = Menu(
+		servers = archinstall.Menu(
 			'Choose which servers to install, if none then a minimal installation wil be done', available_servers,
 			multi=True
 		).run()
