@@ -70,29 +70,27 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	# if not archinstall.arguments.get('keyboard-layout', None):
-	# 	archinstall.arguments['keyboard-layout'] = archinstall.select_language()
-	#
-	# # Before continuing, set the preferred keyboard layout/language in the current terminal.
-	# # This will just help the user with the next following questions.
-	# if len(archinstall.arguments['keyboard-layout']):
-	# 	archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
-	#
-	# # Set which region to download packages from during the installation
-	# if not archinstall.arguments.get('mirror-region', None):
-	# 	archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
-	#
-	# if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
-	# 	archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
-	# 	archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
-	# 	archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
-	#
-	# if not archinstall.arguments.get('sys-language', None):
-	# 	archinstall.arguments['sys-language'] = 'en_US'
-	# if not archinstall.arguments.get('sys-encoding', None):
-	# 	archinstall.arguments['sys-encoding'] = 'utf-8'
+	if not archinstall.arguments.get('keyboard-layout', None):
+		archinstall.arguments['keyboard-layout'] = archinstall.select_language()
 
+	# Before continuing, set the preferred keyboard layout/language in the current terminal.
+	# This will just help the user with the next following questions.
+	if len(archinstall.arguments['keyboard-layout']):
+		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
+	# Set which region to download packages from during the installation
+	if not archinstall.arguments.get('mirror-region', None):
+		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
+
+	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
+		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
+		archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
+		archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
+
+	if not archinstall.arguments.get('sys-language', None):
+		archinstall.arguments['sys-language'] = 'en_US'
+	if not archinstall.arguments.get('sys-encoding', None):
+		archinstall.arguments['sys-encoding'] = 'utf-8'
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
