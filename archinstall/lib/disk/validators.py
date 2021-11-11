@@ -43,4 +43,4 @@ def fs_types():
 
 
 def valid_fs_type(fstype :str) -> bool:
-	return fstype.lower() in fs_types
+	return fstype.lower() in fs_types()
