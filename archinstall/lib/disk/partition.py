@@ -145,8 +145,11 @@ class Partition:
 		it doesn't seam to be able to detect md raid partitions.
 		"""
 
-		lsblk = json.loads(SysCommand(f'lsblk -J -o+PARTUUID {self.path}').decode('UTF-8'))
-		for partition in lsblk['blockdevices']:
+		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+		if not partuuid_struct.exit_code == 0:
+			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+
+		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
 		return None
 
