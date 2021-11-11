@@ -21,7 +21,7 @@ class Filesystem:
 
 	def __enter__(self, *args, **kwargs):
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
-		elif self.mode == self.blockdevice.partition_table_type:
+		if self.mode == self.blockdevice.partition_table_type:
 			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
 		else:
 			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
