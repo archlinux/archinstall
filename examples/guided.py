@@ -245,8 +245,8 @@ def perform_filesystem_operations():
 def perform_installation(mountpoint):
 	user_credentials = {
 		"!users" : archinstall.arguments['!users'],
-		"!superusers" : archinstall.arguments['!users'],
-		"!root-password" : archinstall.arguments['!users'],
+		"!superusers" : archinstall.arguments['!superusers'],
+		"!root-password" : archinstall.arguments['!root-password'],
 	}
 	if archinstall.arguments.get('!encryption-password'):
 		user_credentials["!encryption-password"] = archinstall.arguments.get('!encryption-password')
