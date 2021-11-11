@@ -56,7 +56,19 @@ from typing import (
     cast,
 )
 
-import termios
+try:
+    import termios
+except ImportError as e:
+    raise NotImplementedError('"{}" is currently not supported.'.format(platform.system())) from e
+
+
+__author__ = "Ingo Meyer"
+__email__ = "i.meyer@fz-juelich.de"
+__copyright__ = "Copyright © 2021 Forschungszentrum Jülich GmbH. All rights reserved."
+__license__ = "MIT"
+__version_info__ = (1, 4, 1)
+__version__ = ".".join(map(str, __version_info__))
+
 
 DEFAULT_ACCEPT_KEYS = ("enter",)
 DEFAULT_CLEAR_MENU_ON_EXIT = True
