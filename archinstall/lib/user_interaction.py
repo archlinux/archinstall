@@ -195,7 +195,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	root = find_partition_by_mountpoint(block_devices, '/')
 	root['encrypted'] = True
-	root['password'] = password
+	root['!password'] = password
 
 	return block_devices
 
