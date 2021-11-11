@@ -112,8 +112,8 @@ class BlockDevice:
 	@property
 	def partitions(self):
 		from .filesystem import Partition
-		SysCommand(['partprobe', self.path])
 
+		self.partprobe()
 		result = SysCommand(['/usr/bin/lsblk', '-J', self.path])
 
 		if b'not a block device' in result:
@@ -202,6 +202,9 @@ class BlockDevice:
 					info = space_info
 		return info
 
+	def partprobe(self):
+		SysCommand(['partprobe', self.path])
+
 	def has_partitions(self):
 		return len(self.partitions)
 
@@ -217,7 +220,7 @@ class BlockDevice:
 	def get_partition(self, uuid):
 		count = 0
 		while count < 5:
-			for partition in self:
+			for partition_uuid, partition in self.partitions.items():
 				if partition.uuid == uuid:
 					return partition
 			else:
@@ -226,4 +229,7 @@ class BlockDevice:
 				count += 1
 		else:
 			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
+			print(f"Cache: {self.part_cache}")
+			print(f"Partitions: {self.partitions.items()}")
+			print(f"UUID: {[uuid]}")
 			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")

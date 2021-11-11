@@ -32,7 +32,10 @@ class Partition:
 		if mountpoint:
 			self.mount(mountpoint)
 
-		mount_information = get_mount_info(self.path)
+		try:
+			mount_information = get_mount_info(self.path)
+		except DiskError:
+			mount_information = {}
 
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
@@ -145,8 +148,11 @@ class Partition:
 		it doesn't seam to be able to detect md raid partitions.
 		"""
 
-		lsblk = json.loads(SysCommand(f'lsblk -J -o+PARTUUID {self.path}').decode('UTF-8'))
-		for partition in lsblk['blockdevices']:
+		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+		if not partuuid_struct.exit_code == 0:
+			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+
+		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
 		return None
 

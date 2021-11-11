@@ -20,24 +20,8 @@ class Filesystem:
 		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
-		if self.blockdevice.keep_partitions is False:
-			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=logging.DEBUG)
-			if self.mode == GPT:
-				if self.parted_mklabel(self.blockdevice.device, "gpt"):
-					self.blockdevice.flush_cache()
-					return self
-				else:
-					raise DiskError('Problem setting the disk label type to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
-			elif self.mode == MBR:
-				if self.parted_mklabel(self.blockdevice.device, "msdos"):
-					return self
-				else:
-					raise DiskError('Problem setting the disk label type to msdos:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
-			else:
-				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
-
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
-		elif self.mode == self.blockdevice.partition_table_type:
+		if self.mode == self.blockdevice.partition_table_type:
 			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
 		else:
 			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
@@ -73,6 +57,8 @@ class Filesystem:
 			elif self.mode == MBR:
 				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
 					raise KeyError(f"Could not create a MSDOS label on {self}")
+
+			self.blockdevice.flush_cache()
 
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
@@ -132,6 +118,9 @@ class Filesystem:
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
 				return partition
 
+	def partprobe(self):
+		SysCommand(f'bash -c "partprobe"')
+
 	def raw_parted(self, string: str):
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
 			log(f"Parted ended with a bad exit code: {cmd_handle}", level=logging.ERROR, fg="red")
@@ -146,6 +135,7 @@ class Filesystem:
 		:type string: str
 		"""
 		if (parted_handle := self.raw_parted(string)).exit_code == 0:
+			self.partprobe()
 			return True
 		else:
 			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
@@ -176,7 +166,15 @@ class Filesystem:
 				if len(new_uuid_set) > 0:
 					new_uuid = new_uuid_set.pop()
 				if new_uuid:
-					return self.blockdevice.get_partition(new_uuid)
+					try:
+						return self.blockdevice.get_partition(new_uuid)
+					except Exception as err:
+						print('Blockdevice:', self.blockdevice)
+						print('Partitions:', self.blockdevice.partitions)
+						print('Partition set:', new_uuid_set)
+						print('New UUID:', [new_uuid])
+						print('get_partition():', self.blockdevice.get_partition)
+						raise err
 				else:
 					count += 1
 					log(f"Could not get uuid for partition. Waiting for the {count} time",level=logging.DEBUG)
@@ -199,4 +197,5 @@ class Filesystem:
 			SysCommand(f'bash -c "umount {device}?"')
 		except:
 			pass
+		self.partprobe()
 		return self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
