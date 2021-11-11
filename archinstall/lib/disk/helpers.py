@@ -121,7 +121,7 @@ def harddrive(size=None, model=None, fuzzy=False):
 def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_path=False) -> dict:
 	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
 		try:
-			log(f"Getting mount information at location {traversal}", level=logging.INFO)
+			log(f"Getting mount information for device path {traversal}", level=logging.INFO)
 			output = SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')
 			if output:
 				break
@@ -132,6 +132,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_p
 			break
 
 	if not output:
+		log(f"Could not get mount information for device path {path}: {output}", fg="yellow", level=logging.WARNING)
 		if return_real_path:
 			return {}, None
 		else:
