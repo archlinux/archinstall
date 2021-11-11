@@ -61,6 +61,8 @@ class luks2:
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
+		SysCommand(f'bash -c "partprobe"') # Might be redundant
+
 		cryptsetup_args = shlex.join([
 			'/usr/bin/cryptsetup',
 			'--batch-mode',
@@ -86,6 +88,7 @@ class luks2:
 
 				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 				# For instance: /dev/sda
+				SysCommand(f'bash -c "partprobe"')
 				devinfo = json.loads(b''.join(SysCommand(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
 
 				# For each child (sub-partition/sub-device)
