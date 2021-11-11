@@ -422,7 +422,7 @@ def get_default_partition_layout(block_devices):
 def current_partition_layout(partitions, with_idx=False):
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
-		pad_left = int(spaces/2)
+		pad_left = int(spaces / 2)
 		pad_right = spaces - pad_left
 		return f'{pad_right * " "}{name}{pad_left * " "}|'
 
