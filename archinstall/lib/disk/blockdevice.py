@@ -112,8 +112,8 @@ class BlockDevice:
 	@property
 	def partitions(self):
 		from .filesystem import Partition
-		SysCommand(['partprobe', self.path])
 
+		self.partprobe()
 		result = SysCommand(['/usr/bin/lsblk', '-J', self.path])
 
 		if b'not a block device' in result:
@@ -201,6 +201,9 @@ class BlockDevice:
 				if space_info[-1] > info[-1]:
 					info = space_info
 		return info
+
+	def partprobe(self):
+		SysCommand(['partprobe', self.path])
 
 	def has_partitions(self):
 		return len(self.partitions)
