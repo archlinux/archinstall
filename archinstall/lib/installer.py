@@ -176,7 +176,9 @@ class Installer:
 		for mountpoint in sorted(mountpoints.keys()):
 			if mountpoints[mountpoint]['encrypted']:
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
-				password = mountpoints[mountpoint]['password']
+				if not (password := mountpoints[mountpoint].get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 

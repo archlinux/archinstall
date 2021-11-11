@@ -243,15 +243,16 @@ def perform_filesystem_operations():
 				fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
-	user_credentials = json.dumps({
+	user_credentials = {
 		"!users" : archinstall.arguments['!users'],
-		"!superusers" : archinstall.arguments['!users'],
-		"!root-password" : archinstall.arguments['!users'],
-		"!encryption-password" : archinstall.arguments['!encryption-password'],
-	}, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON)
+		"!superusers" : archinstall.arguments['!superusers'],
+		"!root-password" : archinstall.arguments['!root-password'],
+	}
+	if archinstall.arguments.get('!encryption-password'):
+		user_credentials["!encryption-password"] = archinstall.arguments.get('!encryption-password')
 
 	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(user_credentials)
+		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
 
 	"""
 	Performs the installation steps on a block device.
