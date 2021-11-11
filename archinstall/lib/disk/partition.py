@@ -32,7 +32,10 @@ class Partition:
 		if mountpoint:
 			self.mount(mountpoint)
 
-		mount_information = get_mount_info(self.path)
+		try:
+			mount_information = get_mount_info(self.path)
+		except DiskError:
+			mount_information = {}
 
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
