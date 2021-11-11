@@ -77,6 +77,13 @@ def json_dumps(*args, **kwargs):
 
 class JsonEncoder:
 	def _encode(obj):
+		"""
+		This JSON encoder function will try it's best to convert
+		any archinstall data structures, instances or variables into
+		something that's understandable by the json.parse()/json.loads() lib.
+
+		_encode() will skip any dictionary key starting with an exclamation mark (!)
+		"""
 		if isinstance(obj, dict):
 			# We'll need to iterate not just the value that default() usually gets passed
 			# But also iterate manually over each key: value pair in order to trap the keys.
@@ -90,7 +97,7 @@ class JsonEncoder:
 					val = JsonEncoder._encode(val)
 
 				if type(key) == str and key[0] == '!':
-					copy[JsonEncoder._encode(key)] = '******'
+					pass
 				else:
 					copy[JsonEncoder._encode(key)] = val
 			return copy
@@ -105,13 +112,43 @@ class JsonEncoder:
 		else:
 			return obj
 
+	def _unsafe_encode(obj):
+		"""
+		Same as _encode() but it keeps dictionary keys starting with !
+		"""
+		if isinstance(obj, dict):
+			copy = {}
+			for key, val in list(obj.items()):
+				if isinstance(val, dict):
+					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
+					val = json.loads(json.dumps(val, cls=UNSAFE_JSON))
+				else:
+					val = JsonEncoder._unsafe_encode(val)
+
+				copy[JsonEncoder._unsafe_encode(key)] = val
+			return copy
+		else:
+			return JsonEncoder._encode(obj)
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
+	"""
+	A safe JSON encoder that will omit private information in dicts (starting with !)
+	"""
 	def _encode(self, obj):
 		return JsonEncoder._encode(obj)
 
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
+
+class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
+	"""
+	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
+	"""
+	def _encode(self, obj):
+		return JsonEncoder._unsafe_encode(obj)
+
+	def encode(self, obj):
+		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
 class SysCommandWorker:
 	def __init__(self, cmd, callbacks=None, peak_output=False, environment_vars=None, logfile=None, working_directory='./'):

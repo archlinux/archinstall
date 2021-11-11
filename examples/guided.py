@@ -127,11 +127,11 @@ def ask_user_questions():
 		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
 
 	# Ask for additional users (super-user if root pw was not set)
-	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('superusers', None):
-		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
+		archinstall.arguments['!superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
-		archinstall.arguments['users'] = users
-		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
+		archinstall.arguments['!users'] = users
+		archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
@@ -232,6 +232,17 @@ def perform_filesystem_operations():
 				fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
+	user_credentials = {}
+	if archinstall.arguments.get('!users'):
+		user_credentials["!users"] = archinstall.arguments['!users']
+	if archinstall.arguments.get('!superusers'):
+		user_credentials["!superusers"] = archinstall.arguments['!superusers']
+	if archinstall.arguments.get('!encryption-password'):
+		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
+
+	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
+		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
+
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -294,10 +305,10 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			for user, user_info in archinstall.arguments.get('users', {}).items():
+			for user, user_info in archinstall.arguments.get('!users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
 
-			for superuser, user_info in archinstall.arguments.get('superusers', {}).items():
+			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
 				installation.user_create(superuser, user_info["!password"], sudo=True)
 
 			if timezone := archinstall.arguments.get('timezone', None):

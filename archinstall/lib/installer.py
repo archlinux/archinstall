@@ -176,7 +176,9 @@ class Installer:
 		for mountpoint in sorted(mountpoints.keys()):
 			if mountpoints[mountpoint]['encrypted']:
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
-				password = mountpoints[mountpoint]['password']
+				if not (password := mountpoints[mountpoint].get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
@@ -691,6 +693,7 @@ class Installer:
 		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
+		log(f"Setting keyboard language to {language}", level=logging.INFO)
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
 				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
@@ -712,6 +715,7 @@ class Installer:
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
+		log(f"Setting x11 keyboard language to {language}", level=logging.INFO)
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.

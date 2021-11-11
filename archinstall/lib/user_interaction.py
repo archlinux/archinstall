@@ -123,7 +123,7 @@ def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	root = find_partition_by_mountpoint(block_devices, '/')
 	root['encrypted'] = True
-	root['password'] = password
+	root['!password'] = password
 
 	return block_devices
 

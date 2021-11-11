@@ -32,7 +32,10 @@ class Partition:
 		if mountpoint:
 			self.mount(mountpoint)
 
-		mount_information = get_mount_info(self.path)
+		try:
+			mount_information = get_mount_info(self.path)
+		except DiskError:
+			mount_information = {}
 
 		if self.mountpoint != mount_information.get('target', None) and mountpoint:
 			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
@@ -145,8 +148,11 @@ class Partition:
 		it doesn't seam to be able to detect md raid partitions.
 		"""
 
-		lsblk = json.loads(SysCommand(f'lsblk -J -o+PARTUUID {self.path}').decode('UTF-8'))
-		for partition in lsblk['blockdevices']:
+		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+		if not partuuid_struct.exit_code == 0:
+			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+
+		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
 		return None
 
@@ -173,7 +179,7 @@ class Partition:
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
-		from .luks import luks2
+		from ..luks import luks2
 
 		try:
 			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
@@ -206,7 +212,7 @@ class Partition:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
-		from .luks import luks2
+		from ..luks import luks2
 
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
@@ -274,7 +280,7 @@ class Partition:
 			self.filesystem = filesystem
 
 		elif filesystem == 'crypto_LUKS':
-			# 	from .luks import luks2
+			# 	from ..luks import luks2
 			# 	encrypted_partition = luks2(self, None, None)
 			# 	encrypted_partition.format(path)
 			self.filesystem = filesystem

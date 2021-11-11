@@ -1,9 +1,13 @@
 import os
 import json
 import logging
+import time
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
+from ..storage import storage
+
+GIGA = 2 ** 30
 
 class BlockDevice:
 	def __init__(self, path, info=None):
@@ -108,8 +112,8 @@ class BlockDevice:
 	@property
 	def partitions(self):
 		from .filesystem import Partition
-		SysCommand(['partprobe', self.path])
 
+		self.partprobe()
 		result = SysCommand(['/usr/bin/lsblk', '-J', self.path])
 
 		if b'not a block device' in result:
@@ -152,20 +156,11 @@ class BlockDevice:
 			return partition.get('uuid', None)
 
 	def convert_size_to_gb(self, size):
-		units = {
-			'P' : lambda s : float(s) * 2048,
-			'T' : lambda s : float(s) * 1024,
-			'G' : lambda s : float(s),
-			'M' : lambda s : float(s) / 1024,
-			'K' : lambda s : float(s) / 2048,
-			'B' : lambda s : float(s) / 3072,
-		}
-		unit = size[-1]
-		return float(units.get(unit, lambda s : None)(size[:-1]))
+		return round(size / GIGA,1)
 
 	@property
 	def size(self):
-		output = json.loads(SysCommand(f"lsblk --json -o+SIZE {self.path}").decode('UTF-8'))
+		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return self.convert_size_to_gb(device['size'])
@@ -207,6 +202,9 @@ class BlockDevice:
 					info = space_info
 		return info
 
+	def partprobe(self):
+		SysCommand(['partprobe', self.path])
+
 	def has_partitions(self):
 		return len(self.partitions)
 
@@ -220,6 +218,18 @@ class BlockDevice:
 		self.part_cache = {}
 
 	def get_partition(self, uuid):
-		for partition in self:
-			if partition.uuid == uuid:
-				return partition
+		count = 0
+		while count < 5:
+			for partition_uuid, partition in self.partitions.items():
+				if partition.uuid == uuid:
+					return partition
+			else:
+				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)
+				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
+				count += 1
+		else:
+			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
+			print(f"Cache: {self.part_cache}")
+			print(f"Partitions: {self.partitions.items()}")
+			print(f"UUID: {[uuid]}")
+			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")

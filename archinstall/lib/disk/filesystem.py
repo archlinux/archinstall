@@ -20,24 +20,8 @@ class Filesystem:
 		self.mode = mode
 
 	def __enter__(self, *args, **kwargs):
-		if self.blockdevice.keep_partitions is False:
-			log(f'Wiping {self.blockdevice} by using partition format {self.mode}', level=logging.DEBUG)
-			if self.mode == GPT:
-				if self.parted_mklabel(self.blockdevice.device, "gpt"):
-					self.blockdevice.flush_cache()
-					return self
-				else:
-					raise DiskError('Problem setting the disk label type to GPT:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel gpt')
-			elif self.mode == MBR:
-				if self.parted_mklabel(self.blockdevice.device, "msdos"):
-					return self
-				else:
-					raise DiskError('Problem setting the disk label type to msdos:', f'/usr/bin/parted -s {self.blockdevice.device} mklabel msdos')
-			else:
-				raise DiskError(f'Unknown mode selected to format in: {self.mode}')
-
 		# TODO: partition_table_type is hardcoded to GPT at the moment. This has to be changed.
-		elif self.mode == self.blockdevice.partition_table_type:
+		if self.mode == self.blockdevice.partition_table_type:
 			log(f'Kept partition format {self.mode} for {self.blockdevice}', level=logging.DEBUG)
 		else:
 			raise DiskError(f'The selected partition table format {self.mode} does not match that of {self.blockdevice}.')
@@ -74,6 +58,8 @@ class Filesystem:
 				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
 					raise KeyError(f"Could not create a MSDOS label on {self}")
 
+			self.blockdevice.flush_cache()
+
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
@@ -94,15 +80,17 @@ class Filesystem:
 
 			if partition.get('filesystem', {}).get('format', False):
 				if partition.get('encrypted', False):
-					if not partition.get('password'):
+					if not partition.get('!password') and not storage['arguments'].get('!encryption-password'):
 						if storage['arguments'] == 'silent':
 							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
 						else:
-							from .user_interaction import get_password
-							partition['password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+							from ..user_interaction import get_password
+							partition['!password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+					elif not partition.get('!password') and storage['arguments'].get('!encryption-password'):
+						partition['!password'] = storage['arguments']['!encryption-password']
 
-					partition['device_instance'].encrypt(password=partition['password'])
-					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['password']) as unlocked_device:
+					partition['device_instance'].encrypt(password=partition['!password'])
+					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
@@ -130,6 +118,9 @@ class Filesystem:
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
 				return partition
 
+	def partprobe(self):
+		SysCommand(f'bash -c "partprobe"')
+
 	def raw_parted(self, string: str):
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
 			log(f"Parted ended with a bad exit code: {cmd_handle}", level=logging.ERROR, fg="red")
@@ -143,7 +134,11 @@ class Filesystem:
 		:param string: A raw string passed to /usr/bin/parted -s <string>
 		:type string: str
 		"""
-		return self.raw_parted(string).exit_code == 0
+		if (parted_handle := self.raw_parted(string)).exit_code == 0:
+			self.partprobe()
+			return True
+		else:
+			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
 
 	def use_entire_disk(self, root_filesystem_type='ext4') -> Partition:
 		# TODO: Implement this with declarative profiles instead.
@@ -164,17 +159,29 @@ class Filesystem:
 			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {start} {end}'
 
 		if self.parted(parted_string):
-			start_wait = time.time()
-
-			while previous_partition_uuids == {partition.uuid for partition in self.blockdevice.partitions.values()}:
-				if time.time() - start_wait > 10:
-					raise DiskError(f"New partition never showed up after adding new partition on {self} (timeout 10 seconds).")
-				time.sleep(0.025)
-
-			# Todo: Find a better way to detect if the new UUID of the partition has showed up.
-			#       But this will address (among other issues)
-			time.sleep(float(storage['arguments'].get('disk-sleep', 2.0))) # Let the kernel catch up with quick block devices (nvme for instance)
-			return self.blockdevice.get_partition(uuid=(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()}).pop())
+			count = 0
+			while count < 10:
+				new_uuid = None
+				new_uuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
+				if len(new_uuid_set) > 0:
+					new_uuid = new_uuid_set.pop()
+				if new_uuid:
+					try:
+						return self.blockdevice.get_partition(new_uuid)
+					except Exception as err:
+						print('Blockdevice:', self.blockdevice)
+						print('Partitions:', self.blockdevice.partitions)
+						print('Partition set:', new_uuid_set)
+						print('New UUID:', [new_uuid])
+						print('get_partition():', self.blockdevice.get_partition)
+						raise err
+				else:
+					count += 1
+					log(f"Could not get uuid for partition. Waiting for the {count} time",level=logging.DEBUG)
+					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
+			else:
+				log("Add partition exiting due to excesive wait time",level=logging.INFO)
+				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 	def set_name(self, partition: int, name: str):
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
@@ -190,4 +197,5 @@ class Filesystem:
 			SysCommand(f'bash -c "umount {device}?"')
 		except:
 			pass
+		self.partprobe()
 		return self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
