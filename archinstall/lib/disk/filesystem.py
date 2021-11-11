@@ -165,13 +165,16 @@ class Filesystem:
 				new_uuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
 				if len(new_uuid_set) > 0:
 					new_uuid = new_uuid_set.pop()
-				print('Blockdevice:', self.blockdevice)
-				print('Partitions:', self.blockdevice.partitions)
-				print('Partition set:', new_uuid_set)
-				print('New UUID:', [new_uuid])
-				print('get_partition():', self.blockdevice.get_partition)
 				if new_uuid:
-					return self.blockdevice.get_partition(new_uuid)
+					try:
+						return self.blockdevice.get_partition(new_uuid)
+					except Exception as err:
+						print('Blockdevice:', self.blockdevice)
+						print('Partitions:', self.blockdevice.partitions)
+						print('Partition set:', new_uuid_set)
+						print('New UUID:', [new_uuid])
+						print('get_partition():', self.blockdevice.get_partition)
+						raise err
 				else:
 					count += 1
 					log(f"Could not get uuid for partition. Waiting for the {count} time",level=logging.DEBUG)

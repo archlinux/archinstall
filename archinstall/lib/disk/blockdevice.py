@@ -217,7 +217,7 @@ class BlockDevice:
 	def get_partition(self, uuid):
 		count = 0
 		while count < 5:
-			for partition in self:
+			for partition in self.partitions:
 				if partition.uuid == uuid:
 					return partition
 			else:
@@ -226,4 +226,7 @@ class BlockDevice:
 				count += 1
 		else:
 			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
+			print(f"Partitions: {self.partitions}")
+			print(f"UUID parts: {partition.uuid for partition in self.partitions}")
+			print(f"UUID: {[uuid]}")
 			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")
