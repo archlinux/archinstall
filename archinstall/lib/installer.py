@@ -663,9 +663,7 @@ class Installer:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
 					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
 
-				boot_partition = find_partition_by_mountpoint(self.partitions, relative_mountpoint=f"/boot")
-
-				SysCommand(f'efibootmgr --disk {boot_partition[:-1]} --part {boot_partition[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
 			self.helper_flags['bootloader'] = bootloader
 		else:
