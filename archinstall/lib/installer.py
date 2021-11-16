@@ -186,8 +186,10 @@ class Installer:
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
-			if not get_mount_info(f"{self.target}{mountpoint}", traverse=False):
-				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly.")
+			try:
+				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			except DiskError as err:
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
 			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
