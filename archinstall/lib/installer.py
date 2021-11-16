@@ -175,7 +175,7 @@ class Installer:
 
 		for mountpoint in sorted(mountpoints.keys()):
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint}", level=logging.INFO)
-			if mountpoints[mountpoint]['encrypted']:
+			if mountpoints[mountpoint].get('encrypted', False):
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				if not (password := mountpoints[mountpoint].get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
