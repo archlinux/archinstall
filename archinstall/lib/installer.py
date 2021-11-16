@@ -607,14 +607,16 @@ class Installer:
 			self.pacstrap('grub') # no need?
 
 			if real_device := self.detect_encryption(root_partition):
-				_file = "/etc/default/grub"
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
+				_file = "/etc/default/grub"
 				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
+				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 
+			log(f"GRUB uses {boot_partition} as the boot partition.", level=logging.INFO)
 			if has_uefi():
 				self.pacstrap('efibootmgr') # TODO: Do we need?
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
