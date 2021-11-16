@@ -39,7 +39,7 @@ class Filesystem:
 			
 			for device in output['blockdevices']:
 				for index, partition in enumerate(device['children']):
-					if partition.get('partuuid', '').lower() == uuid:
+					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
 						return index
 
 			time.sleep(1)
