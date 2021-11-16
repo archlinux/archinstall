@@ -174,16 +174,17 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
-			log(f"Mounting {mountpoint} to {self.target}{mountpoint}", level=logging.INFO)
 			if mountpoints[mountpoint].get('encrypted', False):
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				if not (password := mountpoints[mountpoint].get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
 
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
 			else:
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {mountpoints[mountpoint]['device_instance']}", level=logging.INFO)
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
