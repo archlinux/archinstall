@@ -323,9 +323,13 @@ class Partition:
 
 			try:
 				if options:
-					SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
 				else:
-					SysCommand(f"/usr/bin/mount {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount {self.path} {target}")
+
+				# TODO: Should be redundant to check for exit_code
+				if mnt_handle.exit_code != 0:
+					raise DiskError(f"Could not mount {self.path} to {target} using options {options}")
 			except SysCallError as err:
 				raise err
 
