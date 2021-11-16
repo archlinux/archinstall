@@ -19,6 +19,9 @@ __packages__ = [
 	'wpa_supplicant',
 	'smartmontools',
 	'xdg-utils',
+	'noto-fonts-cjk',
+	'noto-fonts-emoji',
+	'noto-fonts',
 ]
 
 __supported__ = [
