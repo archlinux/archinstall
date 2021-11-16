@@ -33,12 +33,18 @@ class Filesystem:
 		return True
 
 	def partuuid_to_index(self, uuid):
-		output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+		for i in range(3):
+			self.partprobe()
+			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+			
+			for device in output['blockdevices']:
+				for index, partition in enumerate(device['children']):
+					if partition.get('partuuid', '').lower() == uuid:
+						return index
 
-		for device in output['blockdevices']:
-			for index, partition in enumerate(device['children']):
-				if partition['partuuid'].lower() == uuid:
-					return index
+			time.sleep(1)
+
+		raise DiskError(f"Failed to convert PARTUUID to archinstall partition index on {self.blockdevice.device}")
 
 	def load_layout(self, layout :dict):
 		from ..luks import luks2
