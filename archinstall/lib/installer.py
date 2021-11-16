@@ -7,7 +7,7 @@ import shlex
 import pathlib
 import subprocess
 import glob
-from .disk import get_partitions_in_use, Partition, find_partition_by_mountpoint
+from .disk import get_partitions_in_use, Partition
 from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
@@ -174,6 +174,7 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
+			log(f"Mounting {mountpoint} to {self.target}{mountpoint}", level=logging.INFO)
 			if mountpoints[mountpoint]['encrypted']:
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				if not (password := mountpoints[mountpoint].get('!password', None)):
@@ -186,8 +187,10 @@ class Installer:
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
-			if not get_mount_info(f"{self.target}{mountpoint}", traverse=False):
-				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly.")
+			try:
+				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			except DiskError:
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
 			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
@@ -619,7 +622,6 @@ class Installer:
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				boot_partition = find_partition_by_mountpoint(self.partitions, relative_mountpoint=f"/boot")
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
