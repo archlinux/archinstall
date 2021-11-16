@@ -578,7 +578,7 @@ class Installer:
 				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
 					entry.write('# Created by: archinstall\n')
 					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write('title Arch Linux\n')
+					entry.write(f'title Arch Linux ({kernel})\n')
 					entry.write(f"linux /vmlinuz-{kernel}\n")
 					if not is_vm():
 						vendor = cpu_vendor()
