@@ -189,7 +189,7 @@ class Installer:
 			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
-			except DiskError as err:
+			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
 			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
