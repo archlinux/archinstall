@@ -1,0 +1,4 @@
+grep: lib/__pycache__/disk.cpython-39.pyc: binary file matches
+grep: lib/__pycache__/installer.cpython-39.pyc: binary file matches
+grep: lib/__pycache__/user_interaction.cpython-39.pyc: binary file matches
+grep: lib/disk/__pycache__/helpers.cpython-39.pyc: binary file matches

@@ -622,7 +622,6 @@ class Installer:
 				self.helper_flags['bootloader'] = True
 				return True
 			else:
-				boot_partition = find_partition_by_mountpoint(self.partitions, relative_mountpoint=f"/boot")
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 				self.helper_flags['bootloader'] = True
