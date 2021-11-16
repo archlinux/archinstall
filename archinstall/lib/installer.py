@@ -617,7 +617,7 @@ class Installer:
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 
-			log(f"GRUB uses {boot_partition} as the boot partition.", level=logging.INFO)
+			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
 				self.pacstrap('efibootmgr') # TODO: Do we need?
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
