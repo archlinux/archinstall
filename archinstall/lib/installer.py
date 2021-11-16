@@ -174,6 +174,7 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
+			log(f"Mounting {mountpoint} to {self.target}{mountpoint}", level=logging.INFO)
 			if mountpoints[mountpoint]['encrypted']:
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				if not (password := mountpoints[mountpoint].get('!password', None)):
