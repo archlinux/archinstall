@@ -147,10 +147,15 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
-
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if not partuuid_struct.exit_code == 0:
-			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+		self.partprobe()
+		for i in range(3):
+			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+			if partuuid_struct.exit_code == 0:
+				break
+			elif i == 2:
+				raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+			else:
+				time.sleep(1)
 
 		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
 			return partition.get('partuuid', None)
@@ -176,6 +181,9 @@ class Partition:
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
+
+	def partprobe(self):
+		SysCommand(f'bash -c "partprobe"')
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
