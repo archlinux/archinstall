@@ -648,7 +648,7 @@ class Installer:
 					elif vendor == "GenuineIntel":
 						kernel_parameters.append("initrd=\\intel-ucode.img")
 					else:
-						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
+						self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
 
 				kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
 
