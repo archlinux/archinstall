@@ -174,16 +174,17 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
-			log(f"Mounting {mountpoint} to {self.target}{mountpoint}", level=logging.INFO)
 			if mountpoints[mountpoint].get('encrypted', False):
 				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
 				if not (password := mountpoints[mountpoint].get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
 
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
 			else:
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {mountpoints[mountpoint]['device_instance']}", level=logging.INFO)
 				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
@@ -607,25 +608,28 @@ class Installer:
 			self.pacstrap('grub') # no need?
 
 			if real_device := self.detect_encryption(root_partition):
-				_file = "/etc/default/grub"
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
+				_file = "/etc/default/grub"
 				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
+				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 
+			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
-				self.pacstrap('efibootmgr') # TODO: Do we need?
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
-				return True
+				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
 			else:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {handle}")
 
+			if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')).exit_code == 0:
+				raise DiskError(f"Could not configure GRUB: {handle}")
+
+			self.helper_flags['bootloader'] = True
 		elif bootloader == 'efistub':
 			self.pacstrap('efibootmgr')
 

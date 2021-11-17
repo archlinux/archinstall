@@ -23,7 +23,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	layout[block_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
-		"start" : "1MiB",
+		"start" : "5MiB",
 		"size" : "513MiB",
 		"boot" : True,
 		"encrypted" : False,
@@ -36,7 +36,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "513MiB",
+		"start" : "518MiB",
 		"encrypted" : False,
 		"format" : True,
 		"size" : "100%" if (using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART) else f"{min(block_device.size, 20)*1024}MiB",
@@ -115,7 +115,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	layout[root_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
-		"start" : "1MiB",
+		"start" : "5MiB",
 		"size" : "513MiB",
 		"boot" : True,
 		"encrypted" : False,
@@ -128,7 +128,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "513MiB",
+		"start" : "518MiB",
 		"encrypted" : False,
 		"format" : True,
 		"size" : "100%",
