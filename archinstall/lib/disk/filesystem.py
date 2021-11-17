@@ -42,7 +42,7 @@ class Filesystem:
 					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
 						return index
 
-			time.sleep(1)
+			time.sleep(2)
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 

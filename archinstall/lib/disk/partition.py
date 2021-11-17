@@ -149,12 +149,13 @@ class Partition:
 		"""
 		for i in range(3):
 			self.partprobe()
+
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
 				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
 					return partition_information.get('partuuid', None)
-			else:
-				time.sleep(1)
+
+			time.sleep(2)
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
