@@ -630,6 +630,48 @@ class Installer:
 				raise DiskError(f"Could not configure GRUB: {handle}")
 
 			self.helper_flags['bootloader'] = True
+		elif bootloader == 'efistub':
+			self.pacstrap('efibootmgr')
+
+			if not has_uefi():
+				raise HardwareIncompatibilityError
+			# TODO: Ideally we would want to check if another config
+			# points towards the same disk and/or partition.
+			# And in which case we should do some clean up.
+
+			for kernel in self.kernels:
+				# Setup the firmware entry
+
+				label = f'Arch Linux ({kernel})'
+				loader = f"/vmlinuz-{kernel}"
+
+				kernel_parameters = []
+
+				if not is_vm():
+					vendor = cpu_vendor()
+					if vendor == "AuthenticAMD":
+						kernel_parameters.append("initrd=\\amd-ucode.img")
+					elif vendor == "GenuineIntel":
+						kernel_parameters.append("initrd=\\intel-ucode.img")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
+
+				kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
+
+				# blkid doesn't trigger on loopback devices really well,
+				# so we'll use the old manual method until we get that sorted out.
+				if real_device := self.detect_encryption(root_partition):
+					# TODO: We need to detect if the encrypted device is a whole disk encryption,
+					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+				else:
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+
+				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+
+			self.helper_flags['bootloader'] = bootloader
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
