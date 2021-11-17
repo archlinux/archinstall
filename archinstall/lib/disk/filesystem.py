@@ -111,6 +111,7 @@ class Filesystem:
 					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
 
 			if partition.get('boot', False):
+				log(f"Marking partition {partition['device_instance']} as bootable.")
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
 
 	def find_partition(self, mountpoint):
