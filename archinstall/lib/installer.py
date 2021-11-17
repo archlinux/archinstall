@@ -623,7 +623,7 @@ class Installer:
 				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
 			else:
-				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')).exit_code == 0:
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
 					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {handle}")
 
 			if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')).exit_code == 0:
