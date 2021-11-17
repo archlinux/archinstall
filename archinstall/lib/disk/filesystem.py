@@ -44,7 +44,7 @@ class Filesystem:
 
 			time.sleep(1)
 
-		raise DiskError(f"Failed to convert PARTUUID to archinstall partition index on {self.blockdevice.device}")
+		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
 	def load_layout(self, layout :dict):
 		from ..luks import luks2
