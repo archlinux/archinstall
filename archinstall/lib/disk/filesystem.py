@@ -33,12 +33,18 @@ class Filesystem:
 		return True
 
 	def partuuid_to_index(self, uuid):
-		output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+		for i in range(10):
+			self.partprobe()
+			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+			
+			for device in output['blockdevices']:
+				for index, partition in enumerate(device['children']):
+					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
+						return index
 
-		for device in output['blockdevices']:
-			for index, partition in enumerate(device['children']):
-				if partition['partuuid'].lower() == uuid:
-					return index
+			time.sleep(1)
+
+		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
 	def load_layout(self, layout :dict):
 		from ..luks import luks2
@@ -105,6 +111,7 @@ class Filesystem:
 					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
 
 			if partition.get('boot', False):
+				log(f"Marking partition {partition['device_instance']} as bootable.")
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
 
 	def find_partition(self, mountpoint):

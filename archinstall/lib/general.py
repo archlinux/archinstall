@@ -382,18 +382,14 @@ class SysCommand:
 		if self.session:
 			return True
 
-		try:
-			self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
+		self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
 
-			while self.session.ended is None:
-				self.session.poll()
+		while self.session.ended is None:
+			self.session.poll()
 
-			if self.peak_output:
-				sys.stdout.write('\n')
-				sys.stdout.flush()
-
-		except SysCallError:
-			return False
+		if self.peak_output:
+			sys.stdout.write('\n')
+			sys.stdout.flush()
 
 		return True
 

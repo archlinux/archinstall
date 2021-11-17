@@ -147,14 +147,17 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
+		for i in range(10):
+			self.partprobe()
 
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if not partuuid_struct.exit_code == 0:
-			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+			if partuuid_struct.exit_code == 0:
+				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+					return partition_information.get('partuuid', None)
 
-		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
-			return partition.get('partuuid', None)
-		return None
+			time.sleep(1)
+
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
 	@property
 	def encrypted(self):
@@ -176,6 +179,9 @@ class Partition:
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
+
+	def partprobe(self):
+		SysCommand(f'bash -c "partprobe"')
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
@@ -315,9 +321,13 @@ class Partition:
 
 			try:
 				if options:
-					SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
 				else:
-					SysCommand(f"/usr/bin/mount {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount {self.path} {target}")
+
+				# TODO: Should be redundant to check for exit_code
+				if mnt_handle.exit_code != 0:
+					raise DiskError(f"Could not mount {self.path} to {target} using options {options}")
 			except SysCallError as err:
 				raise err
 
