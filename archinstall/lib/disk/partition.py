@@ -151,15 +151,12 @@ class Partition:
 			self.partprobe()
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
-				break
-			elif i == 2:
-				raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
+				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+					return partition_information.get('partuuid', None)
 			else:
 				time.sleep(1)
 
-		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
-			return partition.get('partuuid', None)
-		return None
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
 	@property
 	def encrypted(self):
