@@ -182,9 +182,16 @@ def get_filesystem_type(path):
 
 def disk_layouts():
 	try:
-		return json.loads(SysCommand("lsblk -f -o+TYPE,SIZE -J").decode('UTF-8'))
+		if (handle := SysCommand("lsblk -f -o+TYPE,SIZE -J")).exit_code == 0:
+			return json.loads(handle.decode('UTF-8'))
+		else:
+			log(f"Could not return disk layouts: {handle}", level=logging.WARNING, fg="yellow")
+			return None
 	except SysCallError as err:
-		log(f"Could not return disk layouts: {err}")
+		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
+		return None
+	except json.decoder.JSONDecodeError as err:
+		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
 		return None
 
 
