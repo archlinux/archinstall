@@ -264,6 +264,12 @@ def perform_installation(mountpoint):
 		# This *can* be done outside of the installation, but the installer can deal with it.
 		installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
+		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
+		for partition in installation.partitions:
+			if partition.mountpoint == installation.target + '/boot':
+				if partition.size <= 0.15: # in GB
+					raise archinstall.DiskError(f"The /boot partition in use is not large enough to install boot loaders on properly. Please resize it using a tool like gparted and re-run the installation.")
+
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist

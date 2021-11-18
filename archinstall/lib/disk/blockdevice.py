@@ -2,12 +2,11 @@ import os
 import json
 import logging
 import time
+from .helpers import convert_size_to_gb
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
-
-GIGA = 2 ** 30
 
 class BlockDevice:
 	def __init__(self, path, info=None):
@@ -155,15 +154,12 @@ class BlockDevice:
 		for partition in json.loads(SysCommand(f'lsblk -J -o+UUID {self.path}').decode('UTF-8'))['blockdevices']:
 			return partition.get('uuid', None)
 
-	def convert_size_to_gb(self, size):
-		return round(size / GIGA,1)
-
 	@property
 	def size(self):
 		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
-			return self.convert_size_to_gb(device['size'])
+			return convert_size_to_gb(device['size'])
 
 	@property
 	def bus_type(self):
