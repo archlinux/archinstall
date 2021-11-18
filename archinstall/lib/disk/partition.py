@@ -160,7 +160,6 @@ class Partition:
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
-	@property
 	def _safe_uuid(self):
 		try:
 			return self.uuid
