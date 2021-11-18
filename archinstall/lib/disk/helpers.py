@@ -190,6 +190,9 @@ def disk_layouts():
 	except SysCallError as err:
 		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
 		return None
+	except json.decoder.JSONDecodeError as err:
+		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
+		return None
 
 
 def encrypted_partitions(blockdevices :dict) -> bool:
