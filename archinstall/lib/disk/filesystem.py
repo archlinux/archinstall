@@ -33,7 +33,7 @@ class Filesystem:
 		return True
 
 	def partuuid_to_index(self, uuid):
-		for i in range(10):
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
 			
@@ -42,7 +42,7 @@ class Filesystem:
 					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
 						return index
 
-			time.sleep(1)
+			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 

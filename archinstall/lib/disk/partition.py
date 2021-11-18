@@ -147,7 +147,7 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
-		for i in range(10):
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
@@ -155,7 +155,7 @@ class Partition:
 				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
 					return partition_information.get('partuuid', None)
 
-			time.sleep(1)
+			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 

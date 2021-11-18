@@ -19,5 +19,7 @@ storage = {
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',
 	'MOUNT_POINT': '/mnt/archinstall',
-	'ENC_IDENTIFIER': 'ainst'
+	'ENC_IDENTIFIER': 'ainst',
+	'DISK_TIMEOUTS' : 1, # seconds
+	'DISK_RETRY_ATTEMPTS' : 20, # RETRY_ATTEMPTS * DISK_TIMEOUTS is used in disk operations
 }
