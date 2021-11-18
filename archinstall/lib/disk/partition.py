@@ -160,11 +160,20 @@ class Partition:
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
-	def _safe_uuid(self):
-		try:
-			return self.uuid
-		except DiskError:
-			return None
+	@property
+	def _safe_uuid(self) -> Optional[str]:
+		"""
+		A near copy of self.uuid but without any delays.
+		This function should only be used where uuid is not crucial.
+		For instance when you want to get a __repr__ of the class.
+		"""
+		self.partprobe()
+
+		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+		if partuuid_struct.exit_code == 0:
+			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+				if (partuuid := partition_information.get('partuuid', None)):
+					return partuuid
 
 	@property
 	def encrypted(self):
