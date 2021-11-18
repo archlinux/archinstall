@@ -64,19 +64,15 @@ class Partition:
 		elif self.target_mountpoint:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
-		try:
-			if self._encrypted:
-				return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
-			else:
-				return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, fs={self.filesystem}{mount_repr})'
-		except DiskError:
-			# DiskErrors occur when we cannot retrieve the UUID of the partition, usually due to encryption or a slow disk.
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID=None, fs={self.filesystem}{mount_repr})'
+		if self._encrypted:
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+		else:
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
 
 	def __dump__(self):
 		return {
 			'type' : 'primary',
-			'PARTUUID' : self.uuid,
+			'PARTUUID' : self._safe_uuid,
 			'wipe' : self.allow_formatting,
 			'boot' : self.boot,
 			'ESP' : self.boot,
@@ -163,6 +159,21 @@ class Partition:
 			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+
+	@property
+	def _safe_uuid(self) -> Optional[str]:
+		"""
+		A near copy of self.uuid but without any delays.
+		This function should only be used where uuid is not crucial.
+		For instance when you want to get a __repr__ of the class.
+		"""
+		self.partprobe()
+
+		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+		if partuuid_struct.exit_code == 0:
+			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+				if (partuuid := partition_information.get('partuuid', None)):
+					return partuuid
 
 	@property
 	def encrypted(self):
