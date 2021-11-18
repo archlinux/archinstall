@@ -50,18 +50,20 @@ def initialize_arguments():
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config = json.loads(response.read())
 		except Exception as e:
-			print(e)
+			raise ValueError(f"Could not load --config because: {e}")
+
 		if args.creds is not None:
 			with open(args.creds) as file:
 				config.update(json.load(file))
+
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
-
 	if args.mount_point:
 		config['mount_point'] = args.mount_point
 	if args.dry_run is not None:
 		config["dry-run"] = args.dry_run
 	config["script"] = args.script
+
 
 	for arg in unknowns:
 		if '--' == arg[:2]:
