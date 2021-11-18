@@ -64,10 +64,14 @@ class Partition:
 		elif self.target_mountpoint:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
-		if self._encrypted:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
-		else:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, fs={self.filesystem}{mount_repr})'
+		try:
+			if self._encrypted:
+				return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+			else:
+				return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, fs={self.filesystem}{mount_repr})'
+		except DiskError:
+			# DiskErrors occur when we cannot retrieve the UUID of the partition, usually due to encryption or a slow disk.
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID=None, fs={self.filesystem}{mount_repr})'
 
 	def __dump__(self):
 		return {
