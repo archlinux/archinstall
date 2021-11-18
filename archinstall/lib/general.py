@@ -308,9 +308,16 @@ class SysCommandWorker:
 
 		if not self.pid:
 			try:
+				try:
+					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+						cmd_log.append(f"{' '.join(self.cmd)}\n")
+				except PermissionError:
+					pass
+
 				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):
 					log(f"Executing: {self.cmd}", level=logging.DEBUG)
+
 			except FileNotFoundError:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
 				self.exit_code = 1
