@@ -153,7 +153,8 @@ class Partition:
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
 				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					return partition_information.get('partuuid', None)
+					if (partuuid := partition_information.get('partuuid', None)):
+						return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
