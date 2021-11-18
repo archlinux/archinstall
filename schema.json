@@ -1,0 +1,215 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Archinstall Config",
+    "description": "A schema for the archinstall command config",
+    "type": "object",
+    "properties": {
+        "audio": {
+            "description": "Audioserver to be installed",
+            "type": "string",
+            "enum": [
+                "pipewire",
+                "pulseaudio"
+            ]
+        },
+        "bootloader": {
+            "description": "Bootloader  to be installed",
+            "type": "string",
+            "enum": [
+                "systemd-bootctl",
+                "grub-install"
+            ]
+        },
+        "custom-commands": {
+            "description": "Custom commands to be run post install",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "!encryption-password": {
+            "description": "Password to encrypt disk, not encrypted if password not provided",
+            "type": "string"
+        },
+        "filesystem": {
+            "description": "Filesystem for root and home partitions",
+            "type": "string",
+            "enum": [
+                "btrfs",
+                "ext4",
+                "xfs",
+                "f2fs"
+            ]
+        },
+        "gfx_driver": {
+            "description": "Graphics Drivers to install",
+            "type": "string",
+            "enum": [
+                "VMware / VirtualBox (open-source)",
+                "Nvidia",
+                "Intel (open-source)",
+                "AMD / ATI (open-source)",
+                "All open-source (default)"
+            ]
+        },
+        "harddrive": {
+            "description": "Path of device to be used",
+            "type": "object",
+            "properties": {
+                "path": {
+                    "description": "<path of device>",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "path"
+            ]
+        },
+        "hostname": {
+            "description": "Hostname of machine after installation",
+            "type": "string"
+        },
+        "kernels": {
+            "description": "List of kernels to install eg: linux, linux-lts, linux-zen etc",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "linux",
+                    "linux-lts",
+                    "linux-zen",
+                    "linux-hardened"
+                ]
+            }
+        },
+        "keyboard-language": {
+            "description": "eg: us, de etc",
+            "type": "string"
+        },
+        "mirror-region": {
+            "description": "List of regions and mirrors to use",
+            "type": "object"
+        },
+        "nic": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "NetworkManager": {
+                    "description": "<boolean>",
+                    "type": "boolean"
+                },
+                "nic": {
+                    "description": "<nic name>",
+                    "type": "string"
+                }
+            }
+        },
+        "ntp": {
+            "description": "Set to true to set-up ntp post install",
+            "type": "boolean"
+        },
+        "packages": {
+            "description": "List of packages to install post-installation",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "profile": {
+            "description": "Profiles are present in profiles/, use the name of a profile to install it",
+            "type": "string",
+            "enum": [
+                "awesome",
+                "budgie",
+                "cinnamon",
+                "cutefish",
+                "deepin",
+                "desktop",
+                "enlightenment",
+                "gnome",
+                "i3",
+                "kde",
+                "lxqt",
+                "mate",
+                "minimal",
+                "server",
+                "sway",
+                "xfce4",
+                "xorg"
+            ]
+        },
+        "!root-password": {
+            "description": "The root account password",
+            "type": "string"
+        },
+        "services": {
+            "description": "Services to enable post-installation",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "sys-encoding": {
+            "description": "Set to change system encoding post-install, ignored if --advanced flag is not passed",
+            "type": "string"
+        },
+        "sys-language": {
+            "description": "Set to change system language post-install, ignored if --advanced flag is not passed",
+            "type": "string"
+        },
+        "superusers": {
+            "description": "List of superuser credentials, see configuration for reference",
+            "patternProperties": {
+                "*": {
+                    "description": "user - key is username",
+                    "properties": {
+                        "!password": {
+                            "description": "<password>",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "timezone": {
+            "description": "Timezone eg: UTC, Asia/Kolkata etc.",
+            "type": "string"
+        },
+        "users": {
+            "description": "List of regular user credentials, see configuration for reference (can be an empty object)",
+            "patternProperties": {
+                "*": {
+                    "description": "user - key is username",
+                    "properties": {
+                        "!password": {
+                            "description": "<password>",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "bootloader",
+        "filesystem",
+        "kernels",
+        "keyboard-language",
+        "mirror-region",
+        "nic",
+        "timezone",
+        "users"
+    ],
+    "anyOf": [
+        {
+            "required": [
+                "!root-password"
+            ]
+        },
+        {
+            "required": [
+                "superusers"
+            ]
+        }
+    ]
+}
