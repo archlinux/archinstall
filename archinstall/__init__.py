@@ -93,10 +93,9 @@ def get_arguments():
 					value = True
 				else:
 					value = unknowns[idx + 1]
-					idx +=1
+					idx += 1
 			config[key] = value
-		idx +=1
-
+		idx += 1
 	# amend the parameters (check internal consistency)
 	# Installation can't be silent if config is not passed
 	if args.config is not None :
@@ -115,7 +114,6 @@ def post_process_arguments(arguments):
 
 	if arguments.get('debug',False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
-
 
 	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 	if arguments.get('plugin', None):
