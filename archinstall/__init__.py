@@ -27,19 +27,40 @@ __version__ = "2.3.0.dev0"
 storage['__version__'] = __version__
 
 
-def initialize_arguments():
-	config = {}
+def define_arguments():
+	"""
+	Define which explicit arguments do we allow.
+	Refer to https://docs.python.org/3/library/argparse.html for documentation and
+	         https://docs.python.org/3/howto/argparse.html for a tutorial
+	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and dashes inside it '-' are changed to '_'
+	"""
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
-	parser.add_argument("--dry-run","--dry_run", action="store_true",
+	parser.add_argument("--dry-run","--dry_run",action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point",nargs="?",type=str,help="Define an alternate mount point for installation")
 	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
 	parser.add_argument("--plugin",nargs="?",type=str)
+
+def get_arguments():
+	"""
+	The handling of parameters is done on following steps:
+	0) we create a dict to store the parameters and their values
+	1) preprocess.
+	We take those parameters which use Json files, and read them into the parameter dict. So each first level entry becomes a parameter un it's own right
+	2) Load.
+	We convert the predefined parameter list directly into the dict vía the vars() función. Non specified parameters are loaded with value None or false if they are booleans (action="store_true". The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
+	We then load all the undefined parameters. Un this case the names are taken as written.
+	Important. This way explicit command line parameters take precedence over configuración files.
+	3) Amend
+	Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but this ougth to be left to changes anywhere else in the code, not in the arguments
+	"""
+	config = {}
 	args, unknowns = parser.parse_known_args()
+	# preprocess the json files
 	if args.config is not None:
 		try:
 			# First, let's check if this is a URL scheme instead of a filename
@@ -47,10 +68,10 @@ def initialize_arguments():
 
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
 				with open(args.config) as file:
-					config = json.load(file)
+					config.update(json.load(file))
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
-					config = json.loads(response.read())
+					config.update(json.loads(response.read()))
 		except Exception as e:
 			raise ValueError(f"Could not load --config because: {e}")
 
@@ -58,38 +79,54 @@ def initialize_arguments():
 			with open(args.creds) as file:
 				config.update(json.load(file))
 
-		# Installation can't be silent if config is not passed
-		config["silent"] = args.silent
-	if args.mount_point:
-		config['mount_point'] = args.mount_point
-	if args.dry_run: # is not None:
-		config["dry-run"] = args.dry_run
-	config["script"] = args.script
-	if args.debug:
-		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
-		config['debug'] = args.debug
-	for arg in unknowns:
-		if '--' == arg[:2]:
-			if '=' in arg:
-				key, val = [x.strip() for x in arg[2:].split('=', 1)]
+	#load the parameters. first the known
+	config.update(vars(args))
+	idx = 0
+	hival = len(unknowns)
+	while idx < hival:
+		if '--' == unknowns[idx][:2]:
+			if '=' in unknowns[idx]:
+				key, value = [x.strip() for x in unknowns[idx][2:].split('=', 1)]
 			else:
-				key, val = arg[2:], True
-			config[key] = val
-	#print(config)
-	#exit()
+				key = unknowns[idx][2:]
+				if idx == hival -1:  #last element
+					value = True
+				elif '--' == unknowns[idx +1][:2]:
+					value = True
+				else:
+					value = unknowns[idx +1]
+					idx +=1
+			config[key] = value
+		idx +=1
+
+	# amend the parameters (check internal consistency)
+	# Installation can't be silent if config is not passed
+	if args.config is not None :
+		config["silent"] = args.silent
+	else:
+		config["silent"] = False
+
+	if config.get('dry-run',False) and not args.dry_run:
+		config['dry_run']=True #to avoid a compatibility issue just introduced
+
 	return config
 
+def post_process_arguments(arguments):
+	storage['arguments'] = arguments
+	if arguments.get('mount_point'):
+		storage['MOUNT_POINT'] = arguments['mount_point']
 
-arguments = initialize_arguments()
-storage['arguments'] = arguments
-if arguments.get('mount_point'):
-	storage['MOUNT_POINT'] = arguments['mount_point']
+	if arguments.get('debug',False):
+		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
-from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
-if arguments.get('plugin', None):
-	load_plugin(arguments['plugin'])
+	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
+	if arguments.get('plugin', None):
+		load_plugin(arguments['plugin'])
 
+define_arguments()
+arguments = get_arguments()
+post_process_arguments(arguments)
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
 
 

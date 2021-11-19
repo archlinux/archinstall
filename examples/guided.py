@@ -215,7 +215,7 @@ def perform_filesystem_operations():
 		disk_layout_file.write(user_disk_layout)
 	print()
 
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
