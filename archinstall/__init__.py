@@ -33,10 +33,12 @@ def initialize_arguments():
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
-	parser.add_argument("--dry-run", action="store_true",
+	parser.add_argument("--dry-run","--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point",nargs="?",type=str,help="Define an alternate mount point for installation")
+	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
+	parser.add_argument("--plugin",nargs="?",type=str)
 	args, unknowns = parser.parse_known_args()
 	if args.config is not None:
 		try:
@@ -60,11 +62,12 @@ def initialize_arguments():
 		config["silent"] = args.silent
 	if args.mount_point:
 		config['mount_point'] = args.mount_point
-	if args.dry_run is not None:
+	if args.dry_run: # is not None:
 		config["dry-run"] = args.dry_run
 	config["script"] = args.script
-
-
+	if args.debug:
+		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
+		config['debug'] = args.debug
 	for arg in unknowns:
 		if '--' == arg[:2]:
 			if '=' in arg:
@@ -72,13 +75,13 @@ def initialize_arguments():
 			else:
 				key, val = arg[2:], True
 			config[key] = val
+	#print(config)
+	#exit()
 	return config
 
 
 arguments = initialize_arguments()
 storage['arguments'] = arguments
-if arguments.get('debug'):
-	log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 if arguments.get('mount_point'):
 	storage['MOUNT_POINT'] = arguments['mount_point']
 
