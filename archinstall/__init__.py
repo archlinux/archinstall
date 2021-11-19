@@ -28,11 +28,12 @@ storage['__version__'] = __version__
 
 
 def define_arguments():
-	""" Define which explicit arguments do we allow.
-	Refer to https://docs.python.org/3/library/argparse.html for documentation and
-	         https://docs.python.org/3/howto/argparse.html for a tutorial
-	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and dashes inside it '-' are changed to '_'
+	"""Define which explicit arguments do we allow.
 	"""
+	# Refer to https://docs.python.org/3/library/argparse.html for documentation and
+	# 		  https://docs.python.org/3/howto/argparse.html for a tutorial
+	# Remember that the property/entry name python assigns to the parameters is the first string defined as argument and dashes inside it '-' are changed to '_'
+
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--silent", action="store_true",
@@ -45,17 +46,19 @@ def define_arguments():
 	parser.add_argument("--plugin",nargs="?",type=str)
 
 def get_arguments():
-	""" The handling of parameters is done on following steps:
-	0) we create a dict to store the parameters and their values
-	1) preprocess.
-	We take those parameters which use Json files, and read them into the parameter dict. So each first level entry becomes a parameter un it's own right
-	2) Load.
-	We convert the predefined parameter list directly into the dict vía the vars() función. Non specified parameters are loaded with value None or false if they are booleans (action="store_true". The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
-	We then load all the undefined parameters. Un this case the names are taken as written.
-	Important. This way explicit command line parameters take precedence over configuración files.
-	3) Amend
-	Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but this ougth to be left to changes anywhere else in the code, not in the arguments
+	""" The handling of parameters from the command line
 	"""
+	# Is done on following steps:
+	# 0) we create a dict to store the parameters and their values
+	# 1) preprocess.
+	# We take those parameters which use Json files, and read them into the parameter dict. So each first level entry becomes a parameter un it's own right
+	# 2) Load.
+	# We convert the predefined parameter list directly into the dict vía the vars() función. Non specified parameters are loaded with value None or false if they are booleans (action="store_true".
+	# The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
+	# We then load all the undefined parameters. Un this case the names are taken as written.
+	# Important. This way explicit command line parameters take precedence over configuración files.
+	# 3) Amend
+	# Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments
 	config = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the json files
