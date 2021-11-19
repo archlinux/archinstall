@@ -10,6 +10,7 @@ __packages__ = [
 	"gnome-tweaks",
 	"gdm",
 	"gnome-software-packagekit-plugin",
+	"xdg-desktop-portal-gnome",
 ]
 
 
