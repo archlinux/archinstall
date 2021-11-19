@@ -28,8 +28,7 @@ storage['__version__'] = __version__
 
 
 def define_arguments():
-	"""
-	Define which explicit arguments do we allow.
+	""" Define which explicit arguments do we allow.
 	Refer to https://docs.python.org/3/library/argparse.html for documentation and
 	         https://docs.python.org/3/howto/argparse.html for a tutorial
 	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and dashes inside it '-' are changed to '_'
@@ -46,8 +45,7 @@ def define_arguments():
 	parser.add_argument("--plugin",nargs="?",type=str)
 
 def get_arguments():
-	"""
-	The handling of parameters is done on following steps:
+	""" The handling of parameters is done on following steps:
 	0) we create a dict to store the parameters and their values
 	1) preprocess.
 	We take those parameters which use Json files, and read them into the parameter dict. So each first level entry becomes a parameter un it's own right
@@ -79,7 +77,7 @@ def get_arguments():
 			with open(args.creds) as file:
 				config.update(json.load(file))
 
-	#load the parameters. first the known
+	# load the parameters. first the known
 	config.update(vars(args))
 	idx = 0
 	hival = len(unknowns)
@@ -89,12 +87,12 @@ def get_arguments():
 				key, value = [x.strip() for x in unknowns[idx][2:].split('=', 1)]
 			else:
 				key = unknowns[idx][2:]
-				if idx == hival -1:  #last element
+				if idx == hival - 1:  # last element
 					value = True
-				elif '--' == unknowns[idx +1][:2]:
+				elif '--' == unknowns[idx + 1][:2]:
 					value = True
 				else:
-					value = unknowns[idx +1]
+					value = unknowns[idx + 1]
 					idx +=1
 			config[key] = value
 		idx +=1
@@ -107,8 +105,7 @@ def get_arguments():
 		config["silent"] = False
 
 	if config.get('dry-run',False) and not args.dry_run:
-		config['dry_run']=True #to avoid a compatibility issue just introduced
-
+		config['dry_run'] = True # to avoid a compatibility issue just introduced
 	return config
 
 def post_process_arguments(arguments):
@@ -123,6 +120,7 @@ def post_process_arguments(arguments):
 	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 	if arguments.get('plugin', None):
 		load_plugin(arguments['plugin'])
+
 
 define_arguments()
 arguments = get_arguments()
