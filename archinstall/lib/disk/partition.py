@@ -136,7 +136,7 @@ class Partition:
 	@property
 	def partition_type(self):
 		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.path}").decode('UTF-8'))
-	
+
 		for device in lsblk['blockdevices']:
 			return device['pttype']
 
@@ -153,7 +153,7 @@ class Partition:
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
 				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if (partuuid := partition_information.get('partuuid', None)):
+					if partuuid := partition_information.get('partuuid', None):
 						return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
@@ -172,7 +172,7 @@ class Partition:
 		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 		if partuuid_struct.exit_code == 0:
 			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-				if (partuuid := partition_information.get('partuuid', None)):
+				if partuuid := partition_information.get('partuuid', None):
 					return partuuid
 
 	@property
@@ -296,7 +296,7 @@ class Partition:
 
 		elif filesystem == 'f2fs':
 			options = ['-f'] + options
-			
+
 			if (handle := SysCommand(f"/usr/bin/mkfs.f2fs {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
@@ -378,7 +378,7 @@ class Partition:
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
 		except (SysCallError, DiskError):
-			pass  # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
+			pass  # We supported it, but /dev/null is not formattable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True

@@ -19,6 +19,7 @@ class LogLevels:
 
 
 class Journald(dict):
+	@staticmethod
 	@abc.abstractmethod
 	def log(message, level=logging.DEBUG):
 		try:
