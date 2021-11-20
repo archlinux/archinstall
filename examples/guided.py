@@ -47,7 +47,7 @@ def load_config():
 	if archinstall.arguments.get('sys-encoding', None) is not None:
 		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.hardware.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
