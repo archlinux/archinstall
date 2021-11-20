@@ -76,6 +76,7 @@ def json_dumps(*args, **kwargs):
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
+	@staticmethod
 	def _encode(obj):
 		"""
 		This JSON encoder function will try it's best to convert
@@ -112,6 +113,7 @@ class JsonEncoder:
 		else:
 			return obj
 
+	@staticmethod
 	def _unsafe_encode(obj):
 		"""
 		Same as _encode() but it keeps dictionary keys starting with !
