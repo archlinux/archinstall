@@ -382,6 +382,9 @@ class TerminalMenu:
                 if selected_index in self._menu_index_to_displayed_index
             ]
 
+        def __bool__(self) -> bool:
+            return self._active_displayed_index is not None
+
         def __iter__(self) -> Iterator[Tuple[int, int, str]]:
             for displayed_index, menu_index in enumerate(self._displayed_index_to_menu_index):
                 if self._viewport.lower_index <= displayed_index <= self._viewport.upper_index:
@@ -1326,10 +1329,13 @@ class TerminalMenu:
                 )
                 return cursor_styled, cursor_with_brackets_only_styled
 
+            if not self._view:
+                return
             checked_multi_select_cursor, unchecked_multi_select_cursor = prepare_multi_select_cursors()
             cursor_width = wcswidth(self._menu_cursor)
             displayed_selected_indices = self._view.displayed_selected_indices
-            for displayed_index in range(self._viewport.lower_index, self._viewport.upper_index + 1):
+            displayed_index = 0
+            for displayed_index, _, _ in self._view:
                 self._tty_out.write("\r" + cursor_width * self._codename_to_terminal_code["cursor_right"])
                 if displayed_index in displayed_selected_indices:
                     self._tty_out.write(checked_multi_select_cursor)
@@ -1338,7 +1344,10 @@ class TerminalMenu:
                 if displayed_index < self._viewport.upper_index:
                     self._tty_out.write(self._codename_to_terminal_code["cursor_down"])
             self._tty_out.write("\r")
-            self._tty_out.write((self._viewport.size - 1) * self._codename_to_terminal_code["cursor_up"])
+            self._tty_out.write(
+                (displayed_index + (1 if displayed_index < self._viewport.upper_index else 0))
+                * self._codename_to_terminal_code["cursor_up"]
+            )
 
         # pylint: disable=unsubscriptable-object
         assert self._codename_to_terminal_code is not None
