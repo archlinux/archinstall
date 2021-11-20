@@ -50,18 +50,6 @@ def load_config():
 		archinstall.storage['gfx_driver_packages'] = archinstall.hardware.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-	if archinstall.arguments.get('disk_layouts', None) is not None:
-		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
 def ask_user_questions():
 	"""

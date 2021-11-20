@@ -36,6 +36,8 @@ def define_arguments():
 
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
+	parser.add_argument("--disk_layouts","--disk_layout","--disk-layouts","--disk-layout",nargs="?",
+					help="JSON disk layout file")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
 	parser.add_argument("--dry-run","--dry_run",action="store_true",
@@ -121,6 +123,19 @@ def post_process_arguments(arguments):
 	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 	if arguments.get('plugin', None):
 		load_plugin(arguments['plugin'])
+
+	if arguments.get('disk_layouts', None) is not None:
+		if (dl_path := pathlib.Path(arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
+			try:
+				with open(dl_path) as fh:
+					storage['disk_layouts'] = json.load(fh)
+			except Exception as e:
+				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
+		else:
+			try:
+				storage['disk_layouts'] = json.loads(arguments['disk_layouts'])
+			except:
+				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
 
 define_arguments()
