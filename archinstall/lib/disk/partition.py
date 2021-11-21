@@ -305,7 +305,7 @@ class Partition:
 		elif filesystem == 'ntfs':
 			options = ['-f'] + options
 
-			if (handle := SysCommand(f"/usr/bin/mkfs.ntfs {' '.join(options)} {path}")).exit_code != 0:
+			if (handle := SysCommand(f"/usr/bin/mkfs.ntfs -Q {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
