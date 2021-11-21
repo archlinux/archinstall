@@ -486,7 +486,8 @@ def ask_for_main_filesystem_format():
 		'btrfs': 'btrfs',
 		'ext4': 'ext4',
 		'xfs': 'xfs',
-		'f2fs': 'f2fs'
+		'f2fs': 'f2fs',
+		'ntfs': 'ntfs'
 	}
 
 	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)

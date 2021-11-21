@@ -40,15 +40,16 @@ class InstallationFile:
 	def __exit__(self, *args):
 		self.fh.close()
 		self.installation.chown(self.owner, self.filename)
-	
-	def write(self, data :Union[str, bytes]):
+
+	def write(self, data: Union[str, bytes]):
 		return self.fh.write(data)
-	
+
 	def read(self, *args):
 		return self.fh.read(*args)
-	
+
 	def poll(self, *args):
 		return self.fh.poll(*args)
+
 
 class Installer:
 	"""
@@ -165,7 +166,7 @@ class Installer:
 
 		return True
 
-	def mount_ordered_layout(self, layouts :dict):
+	def mount_ordered_layout(self, layouts: dict):
 		from .luks import luks2
 
 		mountpoints = {}
@@ -499,7 +500,7 @@ class Installer:
 		if kind == 'zram':
 			self.log(f"Setting up swap on zram")
 			self.pacstrap('zram-generator')
-			
+
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")

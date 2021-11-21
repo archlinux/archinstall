@@ -13,6 +13,7 @@ from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
 
+
 class Partition:
 	def __init__(self, path: str, block_device: BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
@@ -71,17 +72,17 @@ class Partition:
 
 	def __dump__(self):
 		return {
-			'type' : 'primary',
-			'PARTUUID' : self._safe_uuid,
-			'wipe' : self.allow_formatting,
-			'boot' : self.boot,
-			'ESP' : self.boot,
-			'mountpoint' : self.target_mountpoint,
-			'encrypted' : self._encrypted,
-			'start' : self.start,
-			'size' : self.end,
-			'filesystem' : {
-				'format' : get_filesystem_type(self.path)
+			'type': 'primary',
+			'PARTUUID': self._safe_uuid,
+			'wipe': self.allow_formatting,
+			'boot': self.boot,
+			'ESP': self.boot,
+			'mountpoint': self.target_mountpoint,
+			'encrypted': self._encrypted,
+			'start': self.start,
+			'size': self.end,
+			'filesystem': {
+				'format': get_filesystem_type(self.path)
 			}
 		}
 
@@ -98,7 +99,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['start']# * self.sector_size
+				return partition['start']  # * self.sector_size
 
 	@property
 	def end(self):
@@ -107,7 +108,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['size']# * self.sector_size
+				return partition['size']  # * self.sector_size
 
 	@property
 	def boot(self):
@@ -301,6 +302,13 @@ class Partition:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
+		elif filesystem == 'ntfs':
+			options = ['-f'] + options
+
+			if (handle := SysCommand(f"/usr/bin/mkfs.ntfs {' '.join(options)} {path}")).exit_code != 0:
+				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
+			self.filesystem = filesystem
+
 		elif filesystem == 'crypto_LUKS':
 			# 	from ..luks import luks2
 			# 	encrypted_partition = luks2(self, None, None)
@@ -333,13 +341,18 @@ class Partition:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
+			if fs == 'ntfs':
+				fs = 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+			elif fs == 'fat32':
+				fs = 'vfat'  # This is the actual type used for fat32 mounting.
+
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
 			try:
 				if options:
-					mnt_handle = SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs} -o {options} {self.path} {target}")
 				else:
-					mnt_handle = SysCommand(f"/usr/bin/mount {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs} {self.path} {target}")
 
 				# TODO: Should be redundant to check for exit_code
 				if mnt_handle.exit_code != 0:
