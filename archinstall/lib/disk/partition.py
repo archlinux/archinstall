@@ -341,18 +341,15 @@ class Partition:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
-			if fs == 'ntfs':
-				fs = 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
-			elif fs == 'fat32':
-				fs = 'vfat'  # This is the actual type used for fat32 mounting.
+			fs_type = self.get_mount_fs_type(fs)
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
 			try:
 				if options:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs} -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
 				else:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
 
 				# TODO: Should be redundant to check for exit_code
 				if mnt_handle.exit_code != 0:
@@ -362,6 +359,13 @@ class Partition:
 
 			self.mountpoint = target
 			return True
+
+	def get_mount_fs_type(self, fs):
+		if fs == 'ntfs':
+			return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+		elif fs == 'fat32':
+			return 'vfat'  # This is the actual type used for fat32 mounting.
+		return fs
 
 	def unmount(self):
 		try:
