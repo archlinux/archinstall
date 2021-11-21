@@ -91,15 +91,16 @@ def get_arguments():
 	# Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments
 	config = {}
 	args, unknowns = parser.parse_known_args()
-	# preprocess the json files
+	# preprocess the json files.
+	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
 		try:
 			# First, let's check if this is a URL scheme instead of a filename
 			parsed_url = urllib.parse.urlparse(args.config)
 
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
-				with open(args.config) as file:
-					config.update(json.load(file))
+				if not json_stream_to_structure('--config',args.config,config):
+					exit(-1)
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config.update(json.loads(response.read()))
@@ -107,8 +108,8 @@ def get_arguments():
 			raise ValueError(f"Could not load --config because: {e}")
 
 		if args.creds is not None:
-			with open(args.creds) as file:
-				config.update(json.load(file))
+			if not json_stream_to_structure('--creds',args.creds,config):
+				exit(-1)
 
 	# load the parameters. first the known
 	config.update(vars(args))
