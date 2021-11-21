@@ -614,12 +614,16 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
 				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={get_mount_fs_type(root_partition_fs)}\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+			else:
+				_file = "/etc/default/grub"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={get_mount_fs_type(root_partition_fs)}\"/'"
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
