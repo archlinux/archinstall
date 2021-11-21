@@ -341,7 +341,7 @@ class Partition:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
-			fs_type = self.get_mount_fs_type(fs)
+			fs_type = get_mount_fs_type(fs)
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
@@ -359,13 +359,6 @@ class Partition:
 
 			self.mountpoint = target
 			return True
-
-	def get_mount_fs_type(self, fs):
-		if fs == 'ntfs':
-			return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
-		elif fs == 'fat32':
-			return 'vfat'  # This is the actual type used for fat32 mounting.
-		return fs
 
 	def unmount(self):
 		try:
@@ -399,3 +392,11 @@ class Partition:
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True
+
+
+def get_mount_fs_type(fs):
+	if fs == 'ntfs':
+		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+	elif fs == 'fat32':
+		return 'vfat'  # This is the actual type used for fat32 mounting.
+	return fs

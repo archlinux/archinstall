@@ -19,6 +19,7 @@ from .storage import storage
 from .output import log
 from .profiles import Profile
 from .disk.btrfs import create_subvolume, mount_subvolume
+from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -296,7 +297,7 @@ class Installer:
 	def activate_time_syncronization(self):
 		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
-		
+
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
 			fh.write("[Time]\n")
 			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
@@ -522,11 +523,13 @@ class Installer:
 
 		boot_partition = None
 		root_partition = None
+		root_partition_fs = None
 		for partition in self.partitions:
 			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
+				root_partition_fs = partition.filesystem
 
 		if boot_partition is None and root_partition is None:
 			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
@@ -598,10 +601,10 @@ class Installer:
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}\n')
 
 					self.helper_flags['bootloader'] = bootloader
 
@@ -665,10 +668,10 @@ class Installer:
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}')
 
 				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
