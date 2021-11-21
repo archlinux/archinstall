@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import pathlib
 import time
 
 import archinstall
