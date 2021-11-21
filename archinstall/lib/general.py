@@ -14,6 +14,7 @@ except:
 	import select
 	EPOLLIN = 0
 	EPOLLHUP = 0
+
 	class epoll():
 		""" #!if windows
 		Create a epoll() implementation that simulates the epoll() behavior.
@@ -38,7 +39,7 @@ except:
 			except OSError:
 				return []
 
-from .exceptions import *
+from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
@@ -71,9 +72,19 @@ def locate_binary(name):
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
+def json_dumps(*args, **kwargs):
+	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
+	@staticmethod
 	def _encode(obj):
+		"""
+		This JSON encoder function will try it's best to convert
+		any archinstall data structures, instances or variables into
+		something that's understandable by the json.parse()/json.loads() lib.
+
+		_encode() will skip any dictionary key starting with an exclamation mark (!)
+		"""
 		if isinstance(obj, dict):
 			# We'll need to iterate not just the value that default() usually gets passed
 			# But also iterate manually over each key: value pair in order to trap the keys.
@@ -87,7 +98,7 @@ class JsonEncoder:
 					val = JsonEncoder._encode(val)
 
 				if type(key) == str and key[0] == '!':
-					copy[JsonEncoder._encode(key)] = '******'
+					pass
 				else:
 					copy[JsonEncoder._encode(key)] = val
 			return copy
@@ -98,21 +109,48 @@ class JsonEncoder:
 		elif isinstance(obj, (datetime, date)):
 			return obj.isoformat()
 		elif isinstance(obj, (list, set, tuple)):
-			r = []
-			for item in obj:
-				r.append(json.loads(json.dumps(item, cls=JSON)))
-			return r
+			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
 		else:
 			return obj
 
+	@staticmethod
+	def _unsafe_encode(obj):
+		"""
+		Same as _encode() but it keeps dictionary keys starting with !
+		"""
+		if isinstance(obj, dict):
+			copy = {}
+			for key, val in list(obj.items()):
+				if isinstance(val, dict):
+					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
+					val = json.loads(json.dumps(val, cls=UNSAFE_JSON))
+				else:
+					val = JsonEncoder._unsafe_encode(val)
+
+				copy[JsonEncoder._unsafe_encode(key)] = val
+			return copy
+		else:
+			return JsonEncoder._encode(obj)
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
+	"""
+	A safe JSON encoder that will omit private information in dicts (starting with !)
+	"""
 	def _encode(self, obj):
 		return JsonEncoder._encode(obj)
 
 	def encode(self, obj):
 		return super(JSON, self).encode(self._encode(obj))
 
+class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
+	"""
+	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
+	"""
+	def _encode(self, obj):
+		return JsonEncoder._unsafe_encode(obj)
+
+	def encode(self, obj):
+		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
 class SysCommandWorker:
 	def __init__(self, cmd, callbacks=None, peak_output=False, environment_vars=None, logfile=None, working_directory='./'):
@@ -243,7 +281,7 @@ class SysCommandWorker:
 				got_output = True
 				self.peak(output)
 				self._trace_log += output
-			except OSError as err:
+			except OSError:
 				self.ended = time.time()
 				break
 
@@ -272,9 +310,16 @@ class SysCommandWorker:
 
 		if not self.pid:
 			try:
+				try:
+					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+						cmd_log.write(f"{' '.join(self.cmd)}\n")
+				except PermissionError:
+					pass
+
 				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):
 					log(f"Executing: {self.cmd}", level=logging.DEBUG)
+
 			except FileNotFoundError:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
 				self.exit_code = 1
@@ -321,6 +366,15 @@ class SysCommand:
 		for line in self.session:
 			yield line
 
+	def __getitem__(self, key):
+		if type(key) is slice:
+			start = key.start if key.start else 0
+			end = key.stop if key.stop else len(self.session._trace_log)
+
+			return self.session._trace_log[start:end]
+		else:
+			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
+
 	def __repr__(self, *args, **kwargs):
 		return self.session._trace_log.decode('UTF-8')
 
@@ -337,18 +391,14 @@ class SysCommand:
 		if self.session:
 			return True
 
-		try:
-			self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
+		self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
 
-			while self.session.ended is None:
-				self.session.poll()
+		while self.session.ended is None:
+			self.session.poll()
 
-			if self.peak_output:
-				sys.stdout.write('\n')
-				sys.stdout.flush()
-
-		except SysCallError:
-			return False
+		if self.peak_output:
+			sys.stdout.write('\n')
+			sys.stdout.flush()
 
 		return True
 
@@ -372,8 +422,7 @@ def prerequisite_check():
 
 
 def reboot():
-	o = b''.join(SysCommand("/usr/bin/reboot"))
-
+	SysCommand("/usr/bin/reboot")
 
 def pid_exists(pid: int):
 	try:

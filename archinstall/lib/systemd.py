@@ -1,5 +1,6 @@
 import logging
-
+import time
+from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
 from .output import log
@@ -64,9 +65,12 @@ class Boot:
 			self.session = SysCommandWorker([
 				'/usr/bin/systemd-nspawn',
 				'-D', self.instance.target,
+				'--timezone=off',
 				'-b',
+				'--no-pager',
 				'--machine', self.container_name
 			])
+			# '-P' or --console=pipe  could help us not having to do a bunch of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 
 		if not self.ready:
 			while self.session.is_alive():
@@ -85,7 +89,14 @@ class Boot:
 			log(args[1], level=logging.ERROR, fg='red')
 			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
-		SysCommand(f'machinectl shell {self.container_name} /bin/bash -c "shutdown now"')
+		shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty /bin/bash -c "shutdown now"')
+		while self.session.is_alive():
+			time.sleep(0.25)
+
+		if shutdown.exit_code == 0:
+			storage['active_boot'] = None
+		else:
+			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=shutdown.exit_code)
 
 	def __iter__(self):
 		if self.session:
@@ -112,10 +123,10 @@ class Boot:
 
 			cmd[0] = locate_binary(cmd[0])
 
-		return SysCommand(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)
+		return SysCommand(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
 
 	def SysCommandWorker(self, cmd: list, *args, **kwargs):
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			cmd[0] = locate_binary(cmd[0])
 
-		return SysCommandWorker(["machinectl", "shell", self.container_name, *cmd], *args, **kwargs)
+		return SysCommandWorker(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)

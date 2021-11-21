@@ -1,8 +1,9 @@
+import logging
 import urllib.error
 import urllib.request
-from typing import Union
+from typing import Union, Mapping, Iterable
 
-from .general import *
+from .general import SysCommand
 from .output import log
 
 def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
@@ -26,7 +27,7 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	"""
 	comments_and_whitespaces = b""
 
-	categories = {key: [] for key in sort_order+["Unknown"]}
+	categories = {key: [] for key in sort_order + ["Unknown"]}
 	for line in raw_data.split(b"\n"):
 		if line[0:2] in (b'##', b''):
 			comments_and_whitespaces += line + b'\n'
@@ -35,16 +36,15 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 			opening, url = opening.strip(), url.strip()
 			if (category := url.split(b'://',1)[0].decode('UTF-8')) in categories:
 				categories[category].append(comments_and_whitespaces)
-				categories[category].append(opening+b' = '+url+b'\n')
+				categories[category].append(opening + b' = ' + url + b'\n')
 			else:
 				categories["Unknown"].append(comments_and_whitespaces)
-				categories["Unknown"].append(opening+b' = '+url+b'\n')
+				categories["Unknown"].append(opening + b' = ' + url + b'\n')
 
 			comments_and_whitespaces = b""
 
-
 	new_raw_data = b''
-	for category in sort_order+["Unknown"]:
+	for category in sort_order + ["Unknown"]:
 		for line in categories[category]:
 			new_raw_data += line
 
@@ -59,9 +59,7 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', so
 	:param regions: A series of country codes separated by `,`. For instance `SE,US` for sweden and United States.
 	:type regions: str
 	"""
-	region_list = []
-	for region in regions.split(','):
-		region_list.append(f'country={region}')
+	region_list = [f'country={region}' for region in regions.split(',')]
 	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
 	new_list = response.read().replace(b"#Server", b"Server")
 
@@ -115,20 +113,29 @@ def insert_mirrors(mirrors, *args, **kwargs):
 	return True
 
 
-def use_mirrors(regions: dict, destination='/etc/pacman.d/mirrorlist'):
+def use_mirrors(
+	regions: Mapping[str, Iterable[str]],
+	destination: str = '/etc/pacman.d/mirrorlist'
+) -> None:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
-	for region, mirrors in regions.items():
-		with open(destination, 'w') as mirrorlist:
+	with open(destination, 'w') as mirrorlist:
+		for region, mirrors in regions.items():
 			for mirror in mirrors:
 				mirrorlist.write(f'## {region}\n')
 				mirrorlist.write(f'Server = {mirror}\n')
+
+
+def re_rank_mirrors(
+	top: int = 10,
+	src: str = '/etc/pacman.d/mirrorlist',
+	dst: str = '/etc/pacman.d/mirrorlist',
+) -> bool:
+	cmd = SysCommand(f"/usr/bin/rankmirrors -n {top} {src}")
+	if cmd.exit_code != 0:
+		return False
+	with open(dst, 'w') as f:
+		f.write(str(cmd))
 	return True
-
-
-def re_rank_mirrors(top=10, *positionals, **kwargs):
-	if SysCommand(f'/usr/bin/rankmirrors -n {top} /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist').exit_code == 0:
-		return True
-	return False
 
 
 def list_mirrors(sort_order=["https", "http"]):

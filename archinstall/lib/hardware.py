@@ -1,7 +1,7 @@
-import json
 import os
-import subprocess
-from typing import Optional
+from functools import partial
+from pathlib import Path
+from typing import Iterator, Optional, Union
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -57,21 +57,53 @@ AVAILABLE_GFX_DRIVERS = {
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
+CPUINFO = Path("/proc/cpuinfo")
+MEMINFO = Path("/proc/meminfo")
+
+
+def cpuinfo() -> Iterator[dict[str, str]]:
+	"""Yields information about the CPUs of the system."""
+	cpu = {}
+
+	with CPUINFO.open() as file:
+		for line in file:
+			if not (line := line.strip()):
+				yield cpu
+				cpu = {}
+				continue
+
+			key, value = line.split(":", maxsplit=1)
+			cpu[key.strip()] = value.strip()
+
+
+def meminfo(key: Optional[str] = None) -> Union[dict[str, int], Optional[int]]:
+	"""Returns a dict with memory info if called with no args
+	or the value of the given key of said dict.
+	"""
+	with MEMINFO.open() as file:
+		mem_info = {
+			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
+			for line in file
+		}
+
+	if key is None:
+		return mem_info
+
+	return mem_info.get(key)
+
 
 def has_wifi() -> bool:
 	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
 
 
-def has_amd_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep AMD", shell=True).strip().decode():
-		return True
-	return False
+def has_cpu_vendor(vendor_id: str) -> bool:
+	return any(cpu.get("vendor_id") == vendor_id for cpu in cpuinfo())
 
 
-def has_intel_cpu() -> bool:
-	if subprocess.check_output("lscpu | grep Intel", shell=True).strip().decode():
-		return True
-	return False
+has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
+
+
+has_intel_cpu = partial(has_cpu_vendor, "GenuineIntel")
 
 
 def has_uefi() -> bool:
@@ -100,22 +132,16 @@ def has_intel_graphics() -> bool:
 
 
 def cpu_vendor() -> Optional[str]:
-	cpu_info_raw = SysCommand("lscpu -J")
-	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+	for cpu in cpuinfo():
+		return cpu.get("vendor_id")
 
-	for info in cpu_info:
-		if info.get('field', None) == "Vendor ID:":
-			return info.get('data', None)
 	return None
 
 
 def cpu_model() -> Optional[str]:
-	cpu_info_raw = SysCommand("lscpu -J")
-	cpu_info = json.loads(b"".join(cpu_info_raw).decode('UTF-8'))['lscpu']
+	for cpu in cpuinfo():
+		return cpu.get("model name")
 
-	for info in cpu_info:
-		if info.get('field', None) == "Model name:":
-			return info.get('data', None)
 	return None
 
 
@@ -129,21 +155,16 @@ def product_name() -> Optional[str]:
 		return product.read().strip()
 
 
-def mem_info():
-	# This implementation is from https://stackoverflow.com/a/28161352
-	return dict((i.split()[0].rstrip(':'), int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+def mem_available() -> Optional[int]:
+	return meminfo('MemAvailable')
 
 
-def mem_available() -> Optional[str]:
-	return mem_info()['MemAvailable']
+def mem_free() -> Optional[int]:
+	return meminfo('MemFree')
 
 
-def mem_free() -> Optional[str]:
-	return mem_info()['MemFree']
-
-
-def mem_total() -> Optional[str]:
-	return mem_info()['MemTotal']
+def mem_total() -> Optional[int]:
+	return meminfo('MemTotal')
 
 
 def virtualization() -> Optional[str]:
@@ -151,13 +172,6 @@ def virtualization() -> Optional[str]:
 
 
 def is_vm() -> bool:
-	try:
-		# systemd-detect-virt issues a non-zero exit code if it is not on a virtual machine
-		if b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower():
-			return True
-	except:
-		pass
-
-	return False
+	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
 
 # TODO: Add more identifiers

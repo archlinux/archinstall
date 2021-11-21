@@ -11,7 +11,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [discord](https://discord.gg/cqXU88y) server
 * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
 * archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
-* archinstall [documentation](https://python-archinstall.readthedocs.io/en/latest/index.html)
+* archinstall [documentation](https://archinstall.readthedocs.io/en/latest/index.html)
 
 # Installation & Usage
 
@@ -106,7 +106,6 @@ with archinstall.Installer('/mnt') as installation:
 
         installation.user_create('devel', 'devel')
         installation.user_set_pw('root', 'airoot')
-        
 ```
 
 This installer will perform the following:
@@ -139,7 +138,7 @@ you can replace the version of archinstall with a new version and run that with 
 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
-   *At this stage, you can choose to check out a feature branch for instance with `git checkout torxed-v2.2.0`*
+   *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.2.0`*
 6. Build the project and install it using `python setup.py install`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
@@ -149,14 +148,14 @@ After this, running archinstall with `python -m archinstall` will run against wh
 To test this without a live ISO, the simplest approach is to use a local image and create a loop device.<br>
 This can be done by installing `pacman -S arch-install-scripts util-linux` locally and doing the following:
 
-    # dd if=/dev/zero of=./testimage.img bs=1G count=5
+    # truncate -s 20G testimage.img
     # losetup -fP ./testimage.img
     # losetup -a | grep "testimage.img" | awk -F ":" '{print $1}'
     # pip install --upgrade archinstall
     # python -m archinstall --script guided
     # qemu-system-x86_64 -enable-kvm -machine q35,accel=kvm -device intel-iommu -cpu host -m 4096 -boot order=d -drive file=./testimage.img,format=raw -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_CODE.fd -drive if=pflash,format=raw,readonly,file=/usr/share/ovmf/x64/OVMF_VARS.fd
 
-This will create a *5 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
+This will create a *20 GB* `testimage.img` and create a loop device which we can use to format and install to.<br>
 `archinstall` is installed and executed in [guided mode](#docs-todo). Once the installation is complete, ~~you can use qemu/kvm to boot the test media.~~<br>
 *(You'd actually need to do some EFI magic in order to point the EFI vars to the partition 0 in the test medium, so this won't work entirely out of the box, but that gives you a general idea of what we're going for here)*
 

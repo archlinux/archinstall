@@ -49,12 +49,15 @@ def initialize_arguments():
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config = json.loads(response.read())
 		except Exception as e:
-			print(e)
+			raise ValueError(f"Could not load --config because: {e}")
+	
 		if args.creds is not None:
 			with open(args.creds) as file:
 				config.update(json.load(file))
+	
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
+	
 	for arg in unknowns:
 		if '--' == arg[:2]:
 			if '=' in arg:
@@ -62,9 +65,12 @@ def initialize_arguments():
 			else:
 				key, val = arg[2:], True
 			config[key] = val
+	
 	config["script"] = args.script
+	
 	if args.dry_run is not None:
-		config["dry_run"] = args.dry_run
+		config["dry-run"] = args.dry_run
+
 	return config
 
 
@@ -72,6 +78,8 @@ arguments = initialize_arguments()
 storage['arguments'] = arguments
 if arguments.get('debug'):
 	log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
+if arguments.get('mount-point'):
+	storage['MOUNT_POINT'] = arguments['mount-point']
 
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 

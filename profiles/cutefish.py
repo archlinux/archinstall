@@ -7,7 +7,6 @@ is_top_level_profile = False
 __packages__ = [
 	"cutefish",
 	"noto-fonts",
-	"konsole",
 	"sddm"
 ]
 

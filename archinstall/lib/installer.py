@@ -1,14 +1,54 @@
-from .disk import *
-from .hardware import *
+import time
+from typing import Union
+import logging
+import os
+import shutil
+import shlex
+import pathlib
+import subprocess
+import glob
+from .disk import get_partitions_in_use, Partition
+from .general import SysCommand
+from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .mirrors import *
+from .disk.helpers import get_mount_info
+from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
-from .user_interaction import *
+# from .user_interaction import *
+from .output import log
+from .profiles import Profile
+from .disk.btrfs import create_subvolume, mount_subvolume
+from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
+
+class InstallationFile:
+	def __init__(self, installation, filename, owner, mode="w"):
+		self.installation = installation
+		self.filename = filename
+		self.owner = owner
+		self.mode = mode
+		self.fh = None
+
+	def __enter__(self):
+		self.fh = open(self.filename, self.mode)
+		return self
+
+	def __exit__(self, *args):
+		self.fh.close()
+		self.installation.chown(self.owner, self.filename)
+	
+	def write(self, data :Union[str, bytes]):
+		return self.fh.write(data)
+	
+	def read(self, *args):
+		return self.fh.read(*args)
+	
+	def poll(self, *args):
+		return self.fh.poll(*args)
 
 class Installer:
 	"""
@@ -57,7 +97,6 @@ class Installer:
 		self.post_base_install = []
 
 		storage['session'] = self
-		self.partitions = get_partitions_in_use(self.target)
 
 		self.MODULES = []
 		self.BINARIES = []
@@ -108,6 +147,10 @@ class Installer:
 			self.sync_log_to_install_medium()
 			return False
 
+	@property
+	def partitions(self):
+		return get_partitions_in_use(self.target)
+
 	def sync_log_to_install_medium(self):
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
@@ -121,6 +164,39 @@ class Installer:
 				shutil.copy2(absolute_logfile, f"{self.target}/{absolute_logfile}")
 
 		return True
+
+	def mount_ordered_layout(self, layouts :dict):
+		from .luks import luks2
+
+		mountpoints = {}
+		for blockdevice in layouts:
+			for partition in layouts[blockdevice]['partitions']:
+				mountpoints[partition['mountpoint']] = partition
+
+		for mountpoint in sorted(mountpoints.keys()):
+			if mountpoints[mountpoint].get('encrypted', False):
+				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
+				if not (password := mountpoints[mountpoint].get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+
+				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
+					unlocked_device.mount(f"{self.target}{mountpoint}")
+
+			else:
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {mountpoints[mountpoint]['device_instance']}", level=logging.INFO)
+				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+
+			time.sleep(1)
+			try:
+				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			except DiskError:
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
+
+			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
+				for name, location in subvolumes.items():
+					create_subvolume(self, location)
+					mount_subvolume(self, location)
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
@@ -143,10 +219,12 @@ class Installer:
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)}', peak_output=True)).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.INFO)
+				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
+				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.ERROR, fg="red")
+				raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 		else:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 
@@ -162,7 +240,7 @@ class Installer:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
-			fstab_fh.write(SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode())
+			fstab_fh.write((fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).decode())
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
@@ -211,10 +289,21 @@ class Installer:
 			)
 
 	def activate_ntp(self):
-		self.log('Installing and activating NTP.', level=logging.INFO)
-		if self.pacstrap('ntp'):
-			if self.enable_service('ntpd'):
-				return True
+		log(f"activate_ntp() is deprecated, use activate_time_syncronization()", fg="yellow", level=logging.INFO)
+		self.activate_time_syncronization()
+
+	def activate_time_syncronization(self):
+		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
+		self.enable_service('systemd-timesyncd')
+		
+		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
+			fh.write("[Time]\n")
+			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
+			fh.write("FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org\n")
+
+		from .systemd import Boot
+		with Boot(self) as session:
+			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
 	def enable_service(self, *services):
 		for service in services:
@@ -229,9 +318,9 @@ class Installer:
 	def run_command(self, cmd, *args, **kwargs):
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd, *args, **kwargs):
-		if 'runas' in kwargs:
-			cmd = f"su - {kwargs['runas']} -c \"{cmd}\""
+	def arch_chroot(self, cmd, run_as=None):
+		if run_as:
+			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 
 		return self.run_command(cmd)
 
@@ -381,9 +470,6 @@ class Installer:
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		with open(f"{self.target}/etc/fstab", "a") as fstab:
-			fstab.write("\ntmpfs /tmp tmpfs defaults,noatime,mode=1777 0 0\n")  # Redundant \n at the start? who knows?
-
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
@@ -409,6 +495,22 @@ class Installer:
 
 		return True
 
+	def setup_swap(self, kind='zram'):
+		if kind == 'zram':
+			self.log(f"Setting up swap on zram")
+			self.pacstrap('zram-generator')
+			
+			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
+			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
+			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
+			with open(f"{self.target}/etc/systemd/zram-generator.conf", "w") as zram_conf:
+				zram_conf.write("[zram0]\n")
+
+			if self.enable_service('systemd-zram-setup@zram0.service'):
+				return True
+		else:
+			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
+
 	def add_bootloader(self, bootloader='systemd-bootctl'):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_add_bootloader'):
@@ -424,6 +526,9 @@ class Installer:
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
+
+		if boot_partition is None and root_partition is None:
+			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
 
 		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
@@ -474,7 +579,7 @@ class Installer:
 				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
 					entry.write('# Created by: archinstall\n')
 					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write('title Arch Linux\n')
+					entry.write(f'title Arch Linux ({kernel})\n')
 					entry.write(f"linux /vmlinuz-{kernel}\n")
 					if not is_vm():
 						vendor = cpu_vendor()
@@ -500,21 +605,73 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')
+			self.pacstrap('grub') # no need?
 
+			if real_device := self.detect_encryption(root_partition):
+				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
+				_file = "/etc/default/grub"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
+				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
+
+				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+
+			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
-				self.pacstrap('efibootmgr')
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'))
-				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
-				return True
+				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
 			else:
-				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
-				if root_device == "block":
-					root_device = f"{root_partition.path}"
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
-				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {handle}")
+
+			if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')).exit_code == 0:
+				raise DiskError(f"Could not configure GRUB: {handle}")
+
+			self.helper_flags['bootloader'] = True
+		elif bootloader == 'efistub':
+			self.pacstrap('efibootmgr')
+
+			if not has_uefi():
+				raise HardwareIncompatibilityError
+			# TODO: Ideally we would want to check if another config
+			# points towards the same disk and/or partition.
+			# And in which case we should do some clean up.
+
+			for kernel in self.kernels:
+				# Setup the firmware entry
+
+				label = f'Arch Linux ({kernel})'
+				loader = f"/vmlinuz-{kernel}"
+
+				kernel_parameters = []
+
+				if not is_vm():
+					vendor = cpu_vendor()
+					if vendor == "AuthenticAMD":
+						kernel_parameters.append("initrd=\\amd-ucode.img")
+					elif vendor == "GenuineIntel":
+						kernel_parameters.append("initrd=\\intel-ucode.img")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
+
+				kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
+
+				# blkid doesn't trigger on loopback devices really well,
+				# so we'll use the old manual method until we get that sorted out.
+				if real_device := self.detect_encryption(root_partition):
+					# TODO: We need to detect if the encrypted device is a whole disk encryption,
+					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+				else:
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+
+				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+
+			self.helper_flags['bootloader'] = bootloader
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
@@ -552,14 +709,14 @@ class Installer:
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)
-			o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}'))
+			SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
 
 		if password:
 			self.user_set_pw(user, password)
 
 		if groups:
 			for group in groups:
-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}'))
+				SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}')
 
 		if sudo and self.enable_sudo(user):
 			self.helper_flags['user'] = True
@@ -571,16 +728,21 @@ class Installer:
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\""))
-		pass
+		SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\"")
 
 	def user_set_shell(self, user, shell):
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
-		o = b''.join(SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\""))
-		pass
+		SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
+
+	def chown(self, owner, path, options=[]):
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path}")
+
+	def create_file(self, filename, owner=None):
+		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
+		log(f"Setting keyboard language to {language}", level=logging.INFO)
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
 				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
@@ -589,7 +751,6 @@ class Installer:
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
-
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-keymap", '""'])
 
@@ -603,6 +764,7 @@ class Installer:
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
+		log(f"Setting x11 keyboard language to {language}", level=logging.INFO)
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.
@@ -613,7 +775,6 @@ class Installer:
 				return False
 
 			from .systemd import Boot
-
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 

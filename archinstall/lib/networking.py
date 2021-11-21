@@ -4,10 +4,11 @@ import socket
 import struct
 from collections import OrderedDict
 
-from .exceptions import *
+from .exceptions import HardwareIncompatibilityError
 from .general import SysCommand
 from .output import log
 from .storage import storage
+
 
 def get_hw_addr(ifname):
 	import fcntl
@@ -28,6 +29,7 @@ def list_interfaces(skip_loopback=True):
 
 
 def check_mirror_reachable():
+	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
 	if SysCommand("pacman -Sy").exit_code == 0:
 		return True
 	elif os.geteuid() != 0:
