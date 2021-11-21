@@ -47,33 +47,6 @@ def define_arguments():
 	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
 	parser.add_argument("--plugin",nargs="?",type=str)
 
-def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
-	""" Function to load a stream (file (as name) or valid JSON string into an existing dictionary
-	Returns true if it could be done
-	Return  false if operation could not be executed
-	+id is just a parameter to get meaningful, but not so long messages
-	"""
-	from pathlib import Path
-	if Path(stream).exists():
-		try:
-			with open(Path(stream)) as fh:
-				target.update(json.load(fh))
-		except Exception as e:
-			log(f"{id} = {stream} does not contain a valid JSON format: {e}",level=logging.ERROR)
-			return False
-	else:
-		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream",level=logging.DEBUG)
-		if stream.strip().startswith('{') and stream.strip().endswith('}'):
-			try:
-				target.update(json.loads(stream))
-			except Exception as e:
-				log(f" {id} Contains an invalid JSON format : {e}",level=logging.ERROR)
-				return False
-		else:
-			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
-			return False
-	return True
-
 
 def get_arguments():
 	""" The handling of parameters from the command line
@@ -100,7 +73,7 @@ def get_arguments():
 
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
 				if not json_stream_to_structure('--config',args.config,config):
-					exit(-1)
+					exit(1)
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
 					config.update(json.loads(response.read()))
@@ -109,8 +82,7 @@ def get_arguments():
 
 		if args.creds is not None:
 			if not json_stream_to_structure('--creds',args.creds,config):
-				exit(-1)
-
+				exit(1)
 	# load the parameters. first the known
 	config.update(vars(args))
 	idx = 0
@@ -157,7 +129,7 @@ def post_process_arguments(arguments):
 		if 'disk_layouts' not in storage:
 			storage['disk_layouts'] = {}
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],storage['disk_layouts']):
-			exit(-1)
+			exit(1)
 
 
 define_arguments()
