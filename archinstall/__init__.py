@@ -47,6 +47,34 @@ def define_arguments():
 	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
 	parser.add_argument("--plugin",nargs="?",type=str)
 
+def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
+	""" Function to load a stream (file (as name) or valid JSON string into an existing dictionary
+	Returns true if it could be done
+	Return  false if operation could not be executed
+	+id is just a parameter to get meaningful, but not so long messages
+	"""
+	from pathlib import Path
+	if Path(stream).exists():
+		try:
+			with open(Path(stream)) as fh:
+				target.update(json.load(fh))
+		except Exception as e:
+			log(f"{id} = {stream} does not contain a valid JSON format: {e}",level=logging.ERROR)
+			return False
+	else:
+		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream",level=logging.DEBUG)
+		if stream.strip().startswith('{') and stream.strip().endswith('}'):
+			try:
+				target.update(json.loads(stream))
+			except Exception as e:
+				log(f" {id} Contains an invalid JSON format : {e}",level=logging.ERROR)
+				return False
+		else:
+			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
+			return False
+	return True
+
+
 def get_arguments():
 	""" The handling of parameters from the command line
 	"""
@@ -125,17 +153,10 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		if (dl_path := pathlib.Path(arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				storage['disk_layouts'] = json.loads(arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
+		if 'disk_layouts' not in storage:
+			storage['disk_layouts'] = {}
+		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],storage['disk_layouts']):
+			exit(-1)
 
 
 define_arguments()
