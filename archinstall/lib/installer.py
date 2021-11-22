@@ -441,8 +441,6 @@ class Installer:
 				self.base_packages.append('xfsprogs')
 			if partition.filesystem == 'f2fs':
 				self.base_packages.append('f2fs-tools')
-			if partition.filesystem == 'ntfs3':
-				self.base_packages.append('ntfsprogs')
 
 			# Configure mkinitcpio to handle some specific use cases.
 			if partition.filesystem == 'btrfs':
