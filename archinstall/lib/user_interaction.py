@@ -568,11 +568,11 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 	# TODO: Implement sanity check
 	return False
 
-def get_default_partition_layout(block_devices):
+def get_default_partition_layout(block_devices, advanced_options=False):
 	if len(block_devices) == 1:
-		return suggest_single_disk_layout(block_devices[0])
+		return suggest_single_disk_layout(block_devices[0], advanced_options)
 	else:
-		return suggest_multi_disk_layout(block_devices)
+		return suggest_multi_disk_layout(block_devices, advanced_options)
 
 	# TODO: Implement sane generic layout for 2+ drives
 
@@ -768,7 +768,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 	return result
 
 
-def select_disk_layout(block_devices :list):
+def select_disk_layout(block_devices :list, advanced_options=False):
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -777,7 +777,7 @@ def select_disk_layout(block_devices :list):
 	mode = generic_select(modes, input_text=f"Select what you wish to do with the selected block devices: ")
 
 	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
-		return get_default_partition_layout(block_devices)
+		return get_default_partition_layout(block_devices, advanced_options)
 	else:
 		return select_individual_blockdevice_usage(block_devices)
 

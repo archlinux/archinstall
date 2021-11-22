@@ -2,11 +2,11 @@ import logging
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..output import log
 
-def suggest_single_disk_layout(block_device, default_filesystem=None):
+def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_options=False):
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
-		default_filesystem = ask_for_main_filesystem_format()
-		
+		default_filesystem = ask_for_main_filesystem_format(advanced_options)
+
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	using_subvolumes = False
 
@@ -89,10 +89,10 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices, default_filesystem=None):
+def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_options=False):
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
-		default_filesystem = ask_for_main_filesystem_format()
+		default_filesystem = ask_for_main_filesystem_format(advanced_options)
 
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
