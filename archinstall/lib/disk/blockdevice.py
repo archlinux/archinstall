@@ -192,7 +192,7 @@ class BlockDevice:
 
 	@property
 	def largest_free_space(self):
-		info = None
+		info = []
 		for space_info in self.free_space:
 			if not info:
 				info = space_info
@@ -201,6 +201,22 @@ class BlockDevice:
 				if space_info[-1] > info[-1]:
 					info = space_info
 		return info
+
+	@property
+	def first_free_sector(self):
+		if info := self.largest_free_space:
+			start = info[0]
+		else:
+			start = '512MB'
+		return start
+
+	@property
+	def first_end_sector(self):
+		if info := self.largest_free_space:
+			end = info[1]
+		else:
+			end = f"{self.size}GB"
+		return end
 
 	def partprobe(self):
 		SysCommand(['partprobe', self.path])
