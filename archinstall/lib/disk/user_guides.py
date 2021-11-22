@@ -78,7 +78,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 			"type" : "primary",
 			"encrypted" : False,
 			"format" : True,
-			"start" : f"{min(block_device.size+0.5, 20)}GB",
+			"start" : f"{min(block_device.size+0.5, 20.5)}GB",
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
