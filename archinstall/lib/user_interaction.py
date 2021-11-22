@@ -643,10 +643,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 			fstype = input("Enter a desired filesystem type for the partition: ").strip()
 
-			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
+			start = input(f"Enter the start sector (percentage or block number, default: {block_device.first_free_sector}): ").strip()
 			if not start.strip():
-				start = block_device.largest_free_space[0]
-				end_suggested = block_device.largest_free_space[1]
+				start = block_device.first_free_sector
+				end_suggested = block_device.first_end_sector
 			else:
 				end_suggested = '100%'
 			end = input(f"Enter the end sector of the partition (percentage or block number, ex: {end_suggested}): ").strip()
