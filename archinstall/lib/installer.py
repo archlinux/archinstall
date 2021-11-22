@@ -441,7 +441,7 @@ class Installer:
 				self.base_packages.append('xfsprogs')
 			if partition.filesystem == 'f2fs':
 				self.base_packages.append('f2fs-tools')
-			if partition.filesystem == 'ntfs':
+			if partition.filesystem == 'ntfs3':
 				self.base_packages.append('ntfsprogs')
 
 			# Configure mkinitcpio to handle some specific use cases.
@@ -452,7 +452,7 @@ class Installer:
 					self.BINARIES.append('/usr/bin/btrfs')
 					
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-			if partition.filesystem == 'ntfs' and partition.mountpoint == self.target:
+			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
 					self.hooks.remove('fsck')
 
