@@ -192,7 +192,7 @@ class BlockDevice:
 
 	@property
 	def largest_free_space(self):
-		info = None
+		info = []
 		for space_info in self.free_space:
 			if not info:
 				info = space_info
