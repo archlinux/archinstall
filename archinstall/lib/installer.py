@@ -19,6 +19,7 @@ from .storage import storage
 from .output import log
 from .profiles import Profile
 from .disk.btrfs import create_subvolume, mount_subvolume
+from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
 # Any package that the Installer() is responsible for (optional and the default ones)
@@ -40,15 +41,16 @@ class InstallationFile:
 	def __exit__(self, *args):
 		self.fh.close()
 		self.installation.chown(self.owner, self.filename)
-	
-	def write(self, data :Union[str, bytes]):
+
+	def write(self, data: Union[str, bytes]):
 		return self.fh.write(data)
-	
+
 	def read(self, *args):
 		return self.fh.read(*args)
-	
+
 	def poll(self, *args):
 		return self.fh.poll(*args)
+
 
 class Installer:
 	"""
@@ -165,7 +167,7 @@ class Installer:
 
 		return True
 
-	def mount_ordered_layout(self, layouts :dict):
+	def mount_ordered_layout(self, layouts: dict):
 		from .luks import luks2
 
 		mountpoints = {}
@@ -295,7 +297,7 @@ class Installer:
 	def activate_time_syncronization(self):
 		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
-		
+
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
 			fh.write("[Time]\n")
 			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
@@ -446,6 +448,11 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
+					
+			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
+				if 'fsck' in self.HOOKS:
+					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
 				if 'encrypt' not in self.HOOKS:
@@ -499,7 +506,7 @@ class Installer:
 		if kind == 'zram':
 			self.log(f"Setting up swap on zram")
 			self.pacstrap('zram-generator')
-			
+
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
@@ -521,11 +528,14 @@ class Installer:
 
 		boot_partition = None
 		root_partition = None
+		root_partition_fs = None
 		for partition in self.partitions:
 			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
+				root_partition_fs = partition.filesystem
+				root_fs_type = get_mount_fs_type(root_partition_fs)
 
 		if boot_partition is None and root_partition is None:
 			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
@@ -597,10 +607,10 @@ class Installer:
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 
 					self.helper_flags['bootloader'] = bootloader
 
@@ -610,12 +620,16 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
 				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+			else:
+				_file = "/etc/default/grub"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
@@ -664,10 +678,10 @@ class Installer:
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 
 				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 

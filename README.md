@@ -26,6 +26,7 @@ Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
 
     # archinstall
 
+Some additional options that are not needed by most users are hidden behind the `--advanced` flag.
 
 ## Running from a declarative configuration file or URL
 

@@ -481,13 +481,20 @@ def ask_for_disk_layout():
 	return next((key for key, val in options.items() if val == value), None)
 
 
-def ask_for_main_filesystem_format():
+def ask_for_main_filesystem_format(advanced_options=False):
 	options = {
 		'btrfs': 'btrfs',
 		'ext4': 'ext4',
 		'xfs': 'xfs',
 		'f2fs': 'f2fs'
 	}
+
+	advanced = {
+		'ntfs': 'ntfs'
+	}
+
+	if advanced_options:
+		options.update(advanced)
 
 	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
@@ -561,11 +568,11 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 	# TODO: Implement sanity check
 	return False
 
-def get_default_partition_layout(block_devices):
+def get_default_partition_layout(block_devices, advanced_options=False):
 	if len(block_devices) == 1:
-		return suggest_single_disk_layout(block_devices[0])
+		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
 	else:
-		return suggest_multi_disk_layout(block_devices)
+		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 	# TODO: Implement sane generic layout for 2+ drives
 
@@ -643,10 +650,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 
 			fstype = input("Enter a desired filesystem type for the partition: ").strip()
 
-			start = input(f"Enter the start sector (percentage or block number, default: {block_device.largest_free_space[0]}): ").strip()
+			start = input(f"Enter the start sector (percentage or block number, default: {block_device.first_free_sector}): ").strip()
 			if not start.strip():
-				start = block_device.largest_free_space[0]
-				end_suggested = block_device.largest_free_space[1]
+				start = block_device.first_free_sector
+				end_suggested = block_device.first_end_sector
 			else:
 				end_suggested = '100%'
 			end = input(f"Enter the end sector of the partition (percentage or block number, ex: {end_suggested}): ").strip()
@@ -761,7 +768,7 @@ def select_individual_blockdevice_usage(block_devices :list):
 	return result
 
 
-def select_disk_layout(block_devices :list):
+def select_disk_layout(block_devices :list, advanced_options=False):
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -770,7 +777,7 @@ def select_disk_layout(block_devices :list):
 	mode = generic_select(modes, input_text=f"Select what you wish to do with the selected block devices: ")
 
 	if mode == 'Wipe all selected drives and use a best-effort default partition layout':
-		return get_default_partition_layout(block_devices)
+		return get_default_partition_layout(block_devices, advanced_options)
 	else:
 		return select_individual_blockdevice_usage(block_devices)
 

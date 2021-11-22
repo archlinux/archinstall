@@ -2,11 +2,11 @@ import logging
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..output import log
 
-def suggest_single_disk_layout(block_device, default_filesystem=None):
+def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_options=False):
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
-		default_filesystem = ask_for_main_filesystem_format()
-		
+		default_filesystem = ask_for_main_filesystem_format(advanced_options)
+
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	using_subvolumes = False
 
@@ -23,8 +23,8 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	layout[block_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
-		"start" : "5MiB",
-		"size" : "513MiB",
+		"start" : "5MB",
+		"size" : "513MB",
 		"boot" : True,
 		"encrypted" : False,
 		"format" : True,
@@ -36,15 +36,22 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "518MiB",
+		"start" : "518MB",
 		"encrypted" : False,
 		"format" : True,
-		"size" : "100%" if (using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART) else f"{min(block_device.size, 20)*1024}MiB",
 		"mountpoint" : "/",
 		"filesystem" : {
 			"format" : default_filesystem
 		}
 	})
+
+	# Set a size for / (/root)
+	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART:
+		# We'll use subvolumes
+		# Or the disk size is too small to allow for a separate /home
+		layout[block_device.path]['partitions'][-1]['size'] = '100%'
+	else:
+		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GB"
 
 	if default_filesystem == 'btrfs' and using_subvolumes:
 		if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
@@ -71,7 +78,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 			"type" : "primary",
 			"encrypted" : False,
 			"format" : True,
-			"start" : f"{min(block_device.size*0.2, 20)*1024}MiB",
+			"start" : f"{min(block_device.size+0.5, 20.5)}GB",
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
@@ -82,10 +89,10 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices, default_filesystem=None):
+def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_options=False):
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
-		default_filesystem = ask_for_main_filesystem_format()
+		default_filesystem = ask_for_main_filesystem_format(advanced_options)
 
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
@@ -115,8 +122,8 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	layout[root_device.path]['partitions'].append({
 		# Boot
 		"type" : "primary",
-		"start" : "5MiB",
-		"size" : "513MiB",
+		"start" : "5MB",
+		"size" : "513MB",
 		"boot" : True,
 		"encrypted" : False,
 		"format" : True,
@@ -128,7 +135,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "518MiB",
+		"start" : "518MB",
 		"encrypted" : False,
 		"format" : True,
 		"size" : "100%",
@@ -143,7 +150,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None):
 		"type" : "primary",
 		"encrypted" : False,
 		"format" : True,
-		"start" : "4MiB",
+		"start" : "5MB",
 		"size" : "100%",
 		"mountpoint" : "/home",
 		"filesystem" : {

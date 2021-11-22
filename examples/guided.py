@@ -46,7 +46,7 @@ def load_config():
 	if archinstall.arguments.get('sys-encoding', None) is not None:
 		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.hardware.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 
@@ -96,11 +96,11 @@ def ask_user_questions():
 												allow_empty=True)
 
 	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
-		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
+		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
-		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
+		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
 			archinstall.arguments['!encryption-password'] = passwd
 
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
@@ -122,7 +122,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
