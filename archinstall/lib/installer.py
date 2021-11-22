@@ -454,7 +454,7 @@ class Installer:
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
-					self.hooks.remove('fsck')
+					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
 				if 'encrypt' not in self.HOOKS:
