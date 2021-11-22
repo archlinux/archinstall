@@ -537,6 +537,7 @@ class Installer:
 			elif partition.mountpoint == self.target:
 				root_partition = partition
 				root_partition_fs = partition.filesystem
+				root_fs_type = get_mount_fs_type(root_partition_fs)
 
 		if boot_partition is None and root_partition is None:
 			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
@@ -608,10 +609,10 @@ class Installer:
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 
 					self.helper_flags['bootloader'] = bootloader
 
@@ -621,7 +622,7 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
 				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={get_mount_fs_type(root_partition_fs)}\"/'"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
@@ -629,7 +630,7 @@ class Installer:
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 			else:
 				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={get_mount_fs_type(root_partition_fs)}\"/'"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
@@ -679,10 +680,10 @@ class Installer:
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={get_mount_fs_type(root_partition_fs)} {" ".join(self.KERNEL_PARAMS)}')
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 
 				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
