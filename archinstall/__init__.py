@@ -109,8 +109,9 @@ def get_arguments():
 	else:
 		config["silent"] = False
 
-	if config.get('dry-run',False) and not args.dry_run:
-		config['dry_run'] = True # to avoid a compatibility issue just introduced
+	#avoiding a compatibility issue
+	del config['dry-run']
+
 	return config
 
 def post_process_arguments(arguments):
