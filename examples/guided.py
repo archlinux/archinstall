@@ -267,7 +267,7 @@ def perform_installation(mountpoint):
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
 			if partition.mountpoint == installation.target + '/boot':
-				if partition.size <= 0.15: # in GB
+				if partition.size <= 0.25: # in GB
 					raise archinstall.DiskError(f"The /boot partition in use is not large enough to install boot loaders on properly. Please resize it using a tool like gparted and re-run the installation.")
 
 		# if len(mirrors):
