@@ -208,13 +208,15 @@ class BlockDevice:
 			start = info[0]
 		else:
 			start = '512MB'
+		return start
 
 	@property
 	def first_end_sector(self):
 		if info := self.largest_free_space:
-			start = info[1]
+			end = info[1]
 		else:
-			start = f"{self.size}GB"
+			end = f"{self.size}GB"
+		return end
 
 	def partprobe(self):
 		SysCommand(['partprobe', self.path])
