@@ -51,7 +51,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None):
 		# Or the disk size is too small to allow for a separate /home
 		layout[block_device.path]['partitions'][-1]['size'] = '100%'
 	else:
-		layout[block_device.path]['partitions'][-1]['size']f"{min(block_device.size, 20)}GB"
+		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GB"
 
 	if default_filesystem == 'btrfs' and using_subvolumes:
 		if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
