@@ -570,9 +570,9 @@ def partition_overlap(partitions :list, start :str, end :str) -> bool:
 
 def get_default_partition_layout(block_devices, advanced_options=False):
 	if len(block_devices) == 1:
-		return suggest_single_disk_layout(block_devices[0], advanced_options)
+		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
 	else:
-		return suggest_multi_disk_layout(block_devices, advanced_options)
+		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 	# TODO: Implement sane generic layout for 2+ drives
 
