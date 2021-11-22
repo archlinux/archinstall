@@ -135,7 +135,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
