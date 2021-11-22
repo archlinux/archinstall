@@ -481,14 +481,20 @@ def ask_for_disk_layout():
 	return next((key for key, val in options.items() if val == value), None)
 
 
-def ask_for_main_filesystem_format():
+def ask_for_main_filesystem_format(advanced_options=False):
 	options = {
 		'btrfs': 'btrfs',
 		'ext4': 'ext4',
 		'xfs': 'xfs',
-		'f2fs': 'f2fs',
+		'f2fs': 'f2fs'
+	}
+
+	advanced = {
 		'ntfs': 'ntfs'
 	}
+
+	if advanced_options:
+		options.update(advanced)
 
 	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)
 	return next((key for key, val in options.items() if val == value), None)
