@@ -109,7 +109,7 @@ def get_arguments():
 	else:
 		config["silent"] = False
 
-	#avoiding a compatibility issue
+	# avoiding a compatibility issue
 	del config['dry-run']
 
 	return config
