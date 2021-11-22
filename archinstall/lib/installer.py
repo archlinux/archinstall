@@ -450,6 +450,11 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
+					
+			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+			if partition.filesystem == 'ntfs' and partition.mountpoint == self.target:
+				if 'fsck' in self.HOOKS:
+					self.hooks.remove('fsck')
 
 			if self.detect_encryption(partition):
 				if 'encrypt' not in self.HOOKS:
