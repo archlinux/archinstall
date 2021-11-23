@@ -90,9 +90,9 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
-						print(partition['mountpoint'])
-						if partition['mountpoint'] != '/':
-							partition['generate-encryption-key-file'] = True
+
+					if partition['mountpoint'] != '/':
+						partition['generate-encryption-key-file'] = True
 
 					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 
