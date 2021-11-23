@@ -382,14 +382,25 @@ def ask_for_a_timezone():
 			)
 
 
-def ask_for_bootloader() -> str:
-	bootloader = "systemd-bootctl"
-	if not has_uefi():
-		bootloader = "grub-install"
-	else:
-		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
-		if bootloader_choice == "y":
-			bootloader = "grub-install"
+def ask_for_bootloader(advanced_options=False) -> str:
+	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
+	if has_uefi():
+		if not advanced_options:
+			bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
+			if bootloader_choice == "y":
+				bootloader = "grub-install"
+		else:
+			# We use the common names for the bootloader as the selection, and map it back to the expected values.
+			choices = ['systemd-boot', 'grub', 'efistub']
+			selection = generic_select(choices, f'Choose a bootloader or leave blank to use systemd-boot: ', options_output=True)
+			if selection != "":
+				if selection == 'systemd-boot':
+					bootloader = 'systemd-bootctl'
+				elif selection == 'grub':
+					bootloader = 'grub-install'
+				else:
+					bootloader = selection
+
 	return bootloader
 
 

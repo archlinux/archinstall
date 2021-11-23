@@ -124,7 +124,7 @@ def ask_user_questions():
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))
 
 	if not archinstall.arguments.get('swap', None):
 		archinstall.arguments['swap'] = archinstall.ask_for_swap()
