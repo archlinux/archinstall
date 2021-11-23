@@ -26,7 +26,7 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
-__accessibility_packages__ = [" brltty", "espeakup"]
+__accessibility_packages__ = [" brltty", "espeakup", "alsa-utils"]
 
 
 class InstallationFile:
@@ -317,6 +317,10 @@ class Installer:
 		from .systemd import Boot
 		with Boot(self) as session:
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
+
+	def enable_espeakup(self):
+		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		self.enable_service('espeakup')
 
 	def enable_service(self, *services):
 		for service in services:
