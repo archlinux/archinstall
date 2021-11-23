@@ -6,10 +6,10 @@ import re
 import time
 from typing import Union
 from .blockdevice import BlockDevice
-from .storage import storage
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
+from ..storage import storage
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GIGA = 2 ** 30
