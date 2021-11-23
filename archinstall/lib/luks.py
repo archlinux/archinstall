@@ -5,7 +5,7 @@ import pathlib
 import shlex
 import time
 
-from .disk import Partition
+from .disk import Partition, convert_device_to_uuid
 from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
@@ -160,3 +160,9 @@ class luks2:
 
 		if worker.exit_code != 0:
 			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')
+
+	def crypttab(self, installation, key_path :str, options=["luks", "key-slot=1"]):
+		# homeloop UUID=247ad289-dbe5-4419-9965-e3cd30f0b080 /etc/cryptsetup-keys.d/homeloop.key luks,key-slot=1
+		mapper_dev = f"/dev/mapper/{self.mountpoint}"
+		with open(f"{installation.target}/etc/crypttab", "a") as crypttab:
+			crypttab.write(f"{self.mountpoint} UUID={convert_device_to_uuid(mapper_dev)} {key_path} {','.join(options)}\n")
