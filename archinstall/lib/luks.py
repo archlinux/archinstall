@@ -159,4 +159,4 @@ class luks2:
 				pw_injected = True
 
 		if worker.exit_code != 0:
-			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {handle}')
+			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')

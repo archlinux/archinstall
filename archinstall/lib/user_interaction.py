@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
+from .disk import BlockDevice, valid_fs_type, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
