@@ -128,7 +128,7 @@ class BlockDevice:
 				if part_id not in self.part_cache:
 					# TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
-						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
+						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id)
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
@@ -156,7 +156,7 @@ class BlockDevice:
 	@property
 	def size(self):
 		from .helpers import convert_size_to_gb
-		
+
 		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
