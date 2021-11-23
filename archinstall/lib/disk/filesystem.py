@@ -1,6 +1,7 @@
 import time
 import logging
 import json
+import pathlib
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -80,17 +81,22 @@ class Filesystem:
 
 			if partition.get('filesystem', {}).get('format', False):
 				if partition.get('encrypted', False):
-					if not partition.get('!password') and not storage['arguments'].get('!encryption-password'):
-						if storage['arguments'] == 'silent':
-							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
-						else:
+					if not partition.get('!password'):
+						if not storage['arguments'].get('!encryption-password'):
+							if storage['arguments'] == 'silent':
+								raise ValueError(f"Missing encryption password for {partition['device_instance']}")
+
 							from ..user_interaction import get_password
-							partition['!password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
-					elif not partition.get('!password') and storage['arguments'].get('!encryption-password'):
+							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+
 						partition['!password'] = storage['arguments']['!encryption-password']
 
+					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+
 					partition['device_instance'].encrypt(password=partition['!password'])
-					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
+
+					# Immediately unlock the encrypted device to format the inner volume
+					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
