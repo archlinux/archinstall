@@ -205,6 +205,8 @@ class Installer:
 						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
 							keyfile.write(generate_password(length=512))
 
+						os.chmod(encryption_key_path, 0o400)
+
 						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
 						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
 
