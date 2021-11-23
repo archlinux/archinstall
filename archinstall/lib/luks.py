@@ -4,11 +4,11 @@ import os
 import pathlib
 import shlex
 import time
-
 from .disk import Partition, convert_device_to_uuid
 from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
+from .storage import storage
 
 class luks2:
 	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
@@ -78,8 +78,17 @@ class luks2:
 		])
 
 		try:
-			# Try to setup the crypt-device
-			cmd_handle = SysCommand(cryptsetup_args)
+			# Retry formatting the volume because archinstall can some times be too quick
+			# which generates a "Device /dev/sdX does not exist or access denied." between
+			# setting up partitions and us trying to encrypt it.
+			for i in range(storage['DISK_RETRY_ATTEMPTS']):
+				if (cmd_handle := SysCommand(cryptsetup_args)).exit_code != 0:
+					time.sleep(storage['DISK_TIMEOUTS'])
+				else:
+					break
+
+			if cmd_handle.exit_code != 0:
+				raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 		except SysCallError as err:
 			if err.exit_code == 256:
 				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
@@ -107,9 +116,6 @@ class luks2:
 				cmd_handle = SysCommand(cryptsetup_args)
 			else:
 				raise err
-
-		if cmd_handle.exit_code != 0:
-			raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 
 		return key_file
 
