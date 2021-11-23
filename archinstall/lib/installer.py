@@ -56,7 +56,7 @@ class InstallationFile:
 
 
 def accessibility_tools_in_use() -> bool:
-	return True  # TODO: Detect this!
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 class Installer:
