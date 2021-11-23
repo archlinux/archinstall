@@ -26,7 +26,7 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
-__accessibility_packages__ = [" brltty", "espeakup", "alsa-utils"]
+__accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
 class InstallationFile:
