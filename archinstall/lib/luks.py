@@ -147,9 +147,16 @@ class luks2:
 		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
 			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')
 
-	def add_key(self, path :pathlib.Path):
+	def add_key(self, path :pathlib.Path, password :str):
 		if not path.exists():
 			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
 
-		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")).exit_code != 0:
+		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")
+		pw_injected = False
+		while worker.is_alive():
+			if b'Enter any existing passphrase' in worker and pw_injected is False:
+				worker.write(bytes(password, 'UTF-8'))
+				pw_injected = True
+
+		if worker.exit_code != 0:
 			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {handle}')

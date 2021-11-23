@@ -176,12 +176,14 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
-			if mountpoints[mountpoint].get('encrypted', False):
-				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
-				if not (password := mountpoints[mountpoint].get('!password', None)):
-					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+			partition = mountpoints[mountpoint]
 
-				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+			if partition.get('encrypted', False):
+				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
+				if not (password := partition.get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
+
+				with luks2(partition['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
 					if partition.get('create-encryption-key'):
 						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 							cryptkey_dir.mkdir(parents=True, exist_ok=True)
@@ -192,14 +194,14 @@ class Installer:
 						with open(encryption_key_path, "w") as keyfile:
 							keyfile.write(generate_password(length=512))
 
-						unlocked_device.add_key(pathlib.Path(encryption_key_path))
+						unlocked_device.add_key(pathlib.Path(encryption_key_path), password=password)
 
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
 			else:
-				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {mountpoints[mountpoint]['device_instance']}", level=logging.INFO)
-				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
 			try:
@@ -207,7 +209,7 @@ class Installer:
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
+			if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
 					create_subvolume(self, location)
 					mount_subvolume(self, location)
