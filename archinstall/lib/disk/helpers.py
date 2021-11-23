@@ -10,6 +10,10 @@ from ..general import SysCommand
 from ..output import log
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
+GIGA = 2 ** 30
+
+def convert_size_to_gb(size):
+	return round(size / GIGA,1)
 
 def sort_block_devices_based_on_performance(block_devices):
 	result = {device: 0 for device in block_devices}

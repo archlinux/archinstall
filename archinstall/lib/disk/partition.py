@@ -7,7 +7,7 @@ import os
 import hashlib
 from typing import Optional
 from .blockdevice import BlockDevice
-from .helpers import get_mount_info, get_filesystem_type
+from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -111,17 +111,26 @@ class Partition:
 				return partition['size']  # * self.sector_size
 
 	@property
+	def size(self):
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
+			self.partprobe()
+
+			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.path}")).exit_code == 0:
+				lsblk = json.loads(handle.decode('UTF-8'))
+
+				for device in lsblk['blockdevices']:
+					return convert_size_to_gb(device['size'])
+
+			time.sleep(storage['DISK_TIMEOUTS'])
+
+	@property
 	def boot(self):
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
 		# Get the bootable flag from the sfdisk output:
 		# {
 		#    "partitiontable": {
-		#       "label":"dos",
-		#       "id":"0xd202c10a",
 		#       "device":"/dev/loop0",
-		#       "unit":"sectors",
-		#       "sectorsize":512,
 		#       "partitions": [
 		#          {"node":"/dev/loop0p1", "start":2048, "size":10483712, "type":"83", "bootable":true}
 		#       ]
