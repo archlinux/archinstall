@@ -25,6 +25,9 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
+# Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
+__accessibility_packages__ = [" brltty", "espeakup"]
+
 
 class InstallationFile:
 	def __init__(self, installation, filename, owner, mode="w"):
@@ -448,7 +451,7 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
-					
+
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
