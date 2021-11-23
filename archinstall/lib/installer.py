@@ -200,6 +200,13 @@ class Installer:
 					create_subvolume(self, location)
 					mount_subvolume(self, location)
 
+			if partition.get('store-password-on-disk') and partition.get('!password'):
+				if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
+					cryptkey_dir.mkdir(parents=True, exist_ok=True)
+
+				with open(f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key", "w") as keyfile:
+					keyfile.write(partition['!password'])
+
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
 			os.makedirs(f'{self.target}{mountpoint}')

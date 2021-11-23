@@ -4,7 +4,7 @@ import json
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
-from ..general import SysCommand
+from ..general import SysCommand, generate_password
 from ..output import log
 from ..storage import storage
 
@@ -80,14 +80,20 @@ class Filesystem:
 
 			if partition.get('filesystem', {}).get('format', False):
 				if partition.get('encrypted', False):
-					if not partition.get('!password') and not storage['arguments'].get('!encryption-password'):
-						if storage['arguments'] == 'silent':
-							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
+					if not partition.get('!password'):
+						if partition.target_mountpoint == '/' and storage['arguments'].get('!encryption-password'):
+							partition['!password'] = storage['arguments']['!encryption-password']
+
+						elif partition.target_mountpoint == '/' and not storage['arguments'].get('!encryption-password'):
+							if storage['arguments'] == 'silent':
+								raise ValueError(f"Missing encryption password for {partition['device_instance']}")
+							else:
+								from ..user_interaction import get_password
+								partition['!password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+
 						else:
-							from ..user_interaction import get_password
-							partition['!password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
-					elif not partition.get('!password') and storage['arguments'].get('!encryption-password'):
-						partition['!password'] = storage['arguments']['!encryption-password']
+							partition['!password'] = generate_password(length=512)
+							partition['store-password-on-disk'] = True
 
 					partition['device_instance'].encrypt(password=partition['!password'])
 					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
