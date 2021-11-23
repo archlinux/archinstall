@@ -8,7 +8,7 @@ from .lib.disk import *
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
-from .lib.installer import __packages__, Installer
+from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
@@ -50,14 +50,14 @@ def initialize_arguments():
 					config = json.loads(response.read())
 		except Exception as e:
 			raise ValueError(f"Could not load --config because: {e}")
-	
+
 		if args.creds is not None:
 			with open(args.creds) as file:
 				config.update(json.load(file))
-	
+
 		# Installation can't be silent if config is not passed
 		config["silent"] = args.silent
-	
+
 	for arg in unknowns:
 		if '--' == arg[:2]:
 			if '=' in arg:
@@ -65,9 +65,9 @@ def initialize_arguments():
 			else:
 				key, val = arg[2:], True
 			config[key] = val
-	
+
 	config["script"] = args.script
-	
+
 	if args.dry_run is not None:
 		config["dry-run"] = args.dry_run
 

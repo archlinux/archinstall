@@ -25,6 +25,9 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
+# Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
+__accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
+
 
 class InstallationFile:
 	def __init__(self, installation, filename, owner, mode="w"):
@@ -50,6 +53,10 @@ class InstallationFile:
 
 	def poll(self, *args):
 		return self.fh.poll(*args)
+
+
+def accessibility_tools_in_use() -> bool:
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 class Installer:
@@ -95,6 +102,10 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+
+		# If using accessibility tools in the live environment, append those to the packages list
+		if accessibility_tools_in_use():
+			self.base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install = []
 
@@ -321,6 +332,10 @@ class Installer:
 		with Boot(self) as session:
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
+	def enable_espeakup(self):
+		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		self.enable_service('espeakup')
+
 	def enable_service(self, *services):
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
@@ -462,7 +477,7 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
-					
+
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
@@ -629,7 +644,7 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub') # no need?
+			self.pacstrap('grub')  # no need?
 
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()

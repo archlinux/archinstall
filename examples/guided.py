@@ -334,6 +334,9 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('ntp', False):
 				installation.activate_time_syncronization()
 
+			if archinstall.accessibility_tools_in_use():
+				installation.enable_espeakup()
+
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
 
