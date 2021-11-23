@@ -204,6 +204,8 @@ class Installer:
 				if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 					cryptkey_dir.mkdir(parents=True, exist_ok=True)
 
+				# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
+				# if we name the device to "xyzloop".
 				with open(f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key", "w") as keyfile:
 					keyfile.write(partition['!password'])
 

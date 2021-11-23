@@ -146,3 +146,10 @@ class luks2:
 	def format(self, path):
 		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
 			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')
+
+	def add_key(self, path :pathlib.Path):
+		if not path.exists():
+			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
+
+		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")).exit_code != 0:
+			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {handle}')
