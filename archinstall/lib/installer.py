@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from .disk import get_partitions_in_use, Partition
-from .general import SysCommand
+from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
@@ -182,6 +182,18 @@ class Installer:
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
 
 				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					if partition.get('create-encryption-key'):
+						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
+							cryptkey_dir.mkdir(parents=True, exist_ok=True)
+
+						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
+						# if we name the device to "xyzloop".
+						encryption_key_path = f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key"
+						with open(encryption_key_path, "w") as keyfile:
+							keyfile.write(generate_password(length=512))
+
+						unlocked_device.add_key(pathlib.Path(encryption_key_path))
+
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
@@ -199,15 +211,6 @@ class Installer:
 				for name, location in subvolumes.items():
 					create_subvolume(self, location)
 					mount_subvolume(self, location)
-
-			if partition.get('store-password-on-disk') and partition.get('!password'):
-				if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
-					cryptkey_dir.mkdir(parents=True, exist_ok=True)
-
-				# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
-				# if we name the device to "xyzloop".
-				with open(f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key", "w") as keyfile:
-					keyfile.write(partition['!password'])
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
