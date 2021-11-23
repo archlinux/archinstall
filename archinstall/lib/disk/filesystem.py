@@ -90,11 +90,20 @@ class Filesystem:
 
 						partition['!password'] = storage['arguments']['!encryption-password']
 
-						if partition.target_mountpoint != '/':
-							partition['create-encryption-key'] = True
-
 					partition['device_instance'].encrypt(password=partition['!password'])
 					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
+						if partition.target_mountpoint != '/':
+							if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
+								cryptkey_dir.mkdir(parents=True, exist_ok=True)
+
+							# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
+							# if we name the device to "xyzloop".
+							encryption_key_path = f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key"
+							with open(encryption_key_path, "w") as keyfile:
+								keyfile.write(generate_password(length=512))
+
+							unlocked_device.add_key(pathlib.Path(encryption_key_path), password=password)
+
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
