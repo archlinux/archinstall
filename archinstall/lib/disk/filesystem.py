@@ -103,7 +103,7 @@ class Filesystem:
 							with open(encryption_key_path, "w") as keyfile:
 								keyfile.write(generate_password(length=512))
 
-							unlocked_device.add_key(pathlib.Path(encryption_key_path), password=password)
+							unlocked_device.add_key(pathlib.Path(encryption_key_path), password=partition['!password'])
 
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
