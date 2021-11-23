@@ -2,7 +2,6 @@ import os
 import json
 import logging
 import time
-from .helpers import convert_size_to_gb
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
@@ -156,6 +155,8 @@ class BlockDevice:
 
 	@property
 	def size(self):
+		from .helpers import convert_size_to_gb
+		
 		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
