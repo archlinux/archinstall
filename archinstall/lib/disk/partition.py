@@ -25,7 +25,6 @@ class Partition:
 		self.mountpoint = mountpoint
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
-		self.size = size  # TODO: Refresh?
 		self._encrypted = None
 		self.encrypted = encrypted
 		self.allow_formatting = False
