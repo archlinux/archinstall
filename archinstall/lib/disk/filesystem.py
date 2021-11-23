@@ -1,11 +1,10 @@
 import time
 import logging
 import json
-import pathlib
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
-from ..general import SysCommand, generate_password
+from ..general import SysCommand
 from ..output import log
 from ..storage import storage
 
@@ -90,21 +89,11 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
+						if partition['mountpoint'] != '/':
+							partition['generate-encryption-key-file'] = True
 
 					partition['device_instance'].encrypt(password=partition['!password'])
 					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
-						if partition['mountpoint'] != '/':
-							if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
-								cryptkey_dir.mkdir(parents=True, exist_ok=True)
-
-							# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
-							# if we name the device to "xyzloop".
-							encryption_key_path = f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
-							with open(encryption_key_path, "w") as keyfile:
-								keyfile.write(generate_password(length=512))
-
-							unlocked_device.add_key(pathlib.Path(encryption_key_path), password=partition['!password'])
-
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
