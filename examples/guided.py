@@ -268,7 +268,7 @@ def perform_installation(mountpoint):
 		for partition in installation.partitions:
 			if partition.mountpoint == installation.target + '/boot':
 				if partition.size <= 0.25: # in GB
-					raise archinstall.DiskError(f"The /boot partition in use is not large enough to install boot loaders on properly. Please resize it using a tool like gparted and re-run the installation.")
+					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
 
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
