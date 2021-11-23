@@ -152,7 +152,7 @@ class Filesystem:
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
-				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
+				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
 
 		if partition_format:
 			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}'
@@ -178,10 +178,10 @@ class Filesystem:
 						raise err
 				else:
 					count += 1
-					log(f"Could not get uuid for partition. Waiting for the {count} time",level=logging.DEBUG)
+					log(f"Could not get UUID for partition. Waiting for the {count} time",level=logging.DEBUG)
 					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 			else:
-				log("Add partition exiting due to excesive wait time",level=logging.INFO)
+				log("Add partition is exiting due to excessive wait time",level=logging.INFO)
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 	def set_name(self, partition: int, name: str):
@@ -192,7 +192,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):
-		log(f"Creating a new partition labling on {device}", level=logging.INFO, fg="yellow")
+		log(f"Creating a new partition label on {device}", level=logging.INFO, fg="yellow")
 		# Try to unmount devices before attempting to run mklabel
 		try:
 			SysCommand(f'bash -c "umount {device}?"')
