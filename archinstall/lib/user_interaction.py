@@ -201,12 +201,8 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 
 	return block_devices
 
-	# TODO: Next version perhaps we can support multiple encrypted partitions
-	# options = []
-	# for partition in block_devices.values():
-	# 	options.append({key: val for key, val in partition.items() if val})
-
-	# print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
+	# Users might want to single out a partition for non-encryption to share between dualboot etc.
 
 class MiniCurses:
 	def __init__(self, width, height):
