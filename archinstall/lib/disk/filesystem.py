@@ -4,7 +4,7 @@ import json
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
-from ..general import SysCommand
+from ..general import SysCommand, generate_password
 from ..output import log
 from ..storage import storage
 

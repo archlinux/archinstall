@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from .disk import get_partitions_in_use, Partition
-from .general import SysCommand, generate_password
+from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
