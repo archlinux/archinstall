@@ -50,7 +50,7 @@ def gen_uid(entropy_length=256):
 
 def generate_password(length=64):
 	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
-	password = ''.join(secrets.choice(haystack) for i in range(length))
+	return ''.join(secrets.choice(haystack) for i in range(length))
 
 def multisplit(s, splitters):
 	s = [s, ]
