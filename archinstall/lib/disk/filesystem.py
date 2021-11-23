@@ -1,6 +1,7 @@
 import time
 import logging
 import json
+import pathlib
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -92,8 +93,12 @@ class Filesystem:
 						if partition['mountpoint'] != '/':
 							partition['generate-encryption-key-file'] = True
 
+					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+
 					partition['device_instance'].encrypt(password=partition['!password'])
-					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
+
+					# Immediately unlock the encrypted device to format the inner volume
+					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
