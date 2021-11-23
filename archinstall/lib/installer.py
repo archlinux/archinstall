@@ -55,6 +55,10 @@ class InstallationFile:
 		return self.fh.poll(*args)
 
 
+def accessibility_tools_in_use() -> bool:
+	return True  # TODO: Detect this!
+
+
 class Installer:
 	"""
 	`Installer()` is the wrapper for most basic installation steps.
@@ -98,6 +102,10 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+
+		# If using accessibility tools in the live environment, append those to the packages list
+		if accessibility_tools_in_use():
+			self.base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install = []
 
@@ -618,7 +626,7 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub') # no need?
+			self.pacstrap('grub')  # no need?
 
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
