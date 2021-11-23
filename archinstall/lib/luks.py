@@ -151,6 +151,8 @@ class luks2:
 		if not path.exists():
 			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
 
+		log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
+
 		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")
 		pw_injected = False
 		while worker.is_alive():
@@ -162,6 +164,7 @@ class luks2:
 			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')
 
 	def crypttab(self, installation, key_path :str, options=["luks", "key-slot=1"]):
+		log(f'Adding a crypttab entry for key {key_path} in {installation}', level=logging.INFO)
 		# homeloop UUID=247ad289-dbe5-4419-9965-e3cd30f0b080 /etc/cryptsetup-keys.d/homeloop.key luks,key-slot=1
 		mapper_dev = f"/dev/mapper/{self.mountpoint}"
 		with open(f"{installation.target}/etc/crypttab", "a") as crypttab:

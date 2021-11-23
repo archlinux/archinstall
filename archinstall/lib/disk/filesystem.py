@@ -90,6 +90,7 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
+						print(partition['mountpoint'])
 						if partition['mountpoint'] != '/':
 							partition['generate-encryption-key-file'] = True
 

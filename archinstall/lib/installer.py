@@ -195,6 +195,7 @@ class Installer:
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
 
 				with luks2(partition['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+					print(partition)
 					if partition.get('generate-encryption-key-file'):
 						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 							cryptkey_dir.mkdir(parents=True, exist_ok=True)
