@@ -6,7 +6,7 @@ import shlex
 import time
 
 from .disk import Partition
-from .general import SysCommand
+from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 
