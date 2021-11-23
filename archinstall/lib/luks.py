@@ -171,7 +171,5 @@ class luks2:
 
 	def crypttab(self, installation, key_path :str, options=["luks", "key-slot=1"]):
 		log(f'Adding a crypttab entry for key {key_path} in {installation}', level=logging.INFO)
-		# homeloop UUID=247ad289-dbe5-4419-9965-e3cd30f0b080 /etc/cryptsetup-keys.d/homeloop.key luks,key-slot=1
-		mapper_dev = f"/dev/mapper/{self.mountpoint}"
 		with open(f"{installation.target}/etc/crypttab", "a") as crypttab:
-			crypttab.write(f"{self.mountpoint} UUID={convert_device_to_uuid(mapper_dev)} {key_path} {','.join(options)}\n")
+			crypttab.write(f"{self.mountpoint} UUID={convert_device_to_uuid(self.partition.parent)} {key_path} {','.join(options)}\n")
