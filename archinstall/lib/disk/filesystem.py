@@ -93,13 +93,13 @@ class Filesystem:
 
 					partition['device_instance'].encrypt(password=partition['!password'])
 					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
-						if partition.target_mountpoint != '/':
+						if partition['mountpoint'] != '/':
 							if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 								cryptkey_dir.mkdir(parents=True, exist_ok=True)
 
 							# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
 							# if we name the device to "xyzloop".
-							encryption_key_path = f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition.target_mountpoint).name}loop.key"
+							encryption_key_path = f"{self.target}/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
 							with open(encryption_key_path, "w") as keyfile:
 								keyfile.write(generate_password(length=512))
 
