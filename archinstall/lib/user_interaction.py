@@ -199,6 +199,10 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 				partition['encrypted'] = True
 				partition['!password'] = password
 
+				if partition['mountpoint'] != '/':
+					# Tell the upcoming steps to generate a key-file for non root mounts.
+					partition['generate-encryption-key-file'] = True
+
 	return block_devices
 
 	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
