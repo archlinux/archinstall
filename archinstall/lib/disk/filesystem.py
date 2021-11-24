@@ -1,6 +1,7 @@
 import time
 import logging
 import json
+import pathlib
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -80,17 +81,22 @@ class Filesystem:
 
 			if partition.get('filesystem', {}).get('format', False):
 				if partition.get('encrypted', False):
-					if not partition.get('!password') and not storage['arguments'].get('!encryption-password'):
-						if storage['arguments'] == 'silent':
-							raise ValueError(f"Missing encryption password for {partition['device_instance']}")
-						else:
+					if not partition.get('!password'):
+						if not storage['arguments'].get('!encryption-password'):
+							if storage['arguments'] == 'silent':
+								raise ValueError(f"Missing encryption password for {partition['device_instance']}")
+
 							from ..user_interaction import get_password
-							partition['!password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
-					elif not partition.get('!password') and storage['arguments'].get('!encryption-password'):
+							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+
 						partition['!password'] = storage['arguments']['!encryption-password']
 
+					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+
 					partition['device_instance'].encrypt(password=partition['!password'])
-					with luks2(partition['device_instance'], storage.get('ENC_IDENTIFIER', 'ai') + 'loop', partition['!password']) as unlocked_device:
+
+					# Immediately unlock the encrypted device to format the inner volume
+					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
 						if not partition.get('format'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
@@ -152,7 +158,7 @@ class Filesystem:
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
-				DiskError("Too many partitions on disk, MBR disks can only have 3 parimary partitions")
+				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
 
 		if partition_format:
 			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {partition_format} {start} {end}'
@@ -178,10 +184,10 @@ class Filesystem:
 						raise err
 				else:
 					count += 1
-					log(f"Could not get uuid for partition. Waiting for the {count} time",level=logging.DEBUG)
+					log(f"Could not get UUID for partition. Waiting for the {count} time",level=logging.DEBUG)
 					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 			else:
-				log("Add partition exiting due to excesive wait time",level=logging.INFO)
+				log("Add partition is exiting due to excessive wait time",level=logging.INFO)
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 	def set_name(self, partition: int, name: str):
@@ -192,7 +198,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):
-		log(f"Creating a new partition labling on {device}", level=logging.INFO, fg="yellow")
+		log(f"Creating a new partition label on {device}", level=logging.INFO, fg="yellow")
 		# Try to unmount devices before attempting to run mklabel
 		try:
 			SysCommand(f'bash -c "umount {device}?"')

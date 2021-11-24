@@ -9,6 +9,7 @@ __packages__ = [
 	"konsole",
 	"kate",
 	"dolphin",
+	"ark",
 	"sddm",
 	"plasma-wayland-session",
 	"egl-wayland",

@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from .disk import get_partitions_in_use, Partition
-from .general import SysCommand
+from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
@@ -24,6 +24,9 @@ from .exceptions import DiskError, ServiceException, RequirementError, HardwareI
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
+
+# Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
+__accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
 class InstallationFile:
@@ -50,6 +53,10 @@ class InstallationFile:
 
 	def poll(self, *args):
 		return self.fh.poll(*args)
+
+
+def accessibility_tools_in_use() -> bool:
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 class Installer:
@@ -95,6 +102,10 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+
+		# If using accessibility tools in the live environment, append those to the packages list
+		if accessibility_tools_in_use():
+			self.base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install = []
 
@@ -176,18 +187,35 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
-			if mountpoints[mountpoint].get('encrypted', False):
-				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
-				if not (password := mountpoints[mountpoint].get('!password', None)):
-					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+			partition = mountpoints[mountpoint]
 
-				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+			if partition.get('encrypted', False):
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				if not (password := partition.get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
+
+				with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
+					if partition.get('generate-encryption-key-file'):
+						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
+							cryptkey_dir.mkdir(parents=True, exist_ok=True)
+
+						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
+						# if we name the device to "xyzloop".
+						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
+						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
+							keyfile.write(generate_password(length=512))
+
+						os.chmod(encryption_key_path, 0o400)
+
+						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
+						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
+
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
 			else:
-				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {mountpoints[mountpoint]['device_instance']}", level=logging.INFO)
-				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
 			try:
@@ -195,7 +223,7 @@ class Installer:
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
+			if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
 					create_subvolume(self, location)
 					mount_subvolume(self, location)
@@ -306,6 +334,10 @@ class Installer:
 		from .systemd import Boot
 		with Boot(self) as session:
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
+
+	def enable_espeakup(self):
+		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		self.enable_service('espeakup')
 
 	def enable_service(self, *services):
 		for service in services:
@@ -448,7 +480,7 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs-progs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
-					
+
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
@@ -615,7 +647,7 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub') # no need?
+			self.pacstrap('grub')  # no need?
 
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()

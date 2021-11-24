@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-from .disk import BlockDevice, valid_fs_type, find_partition_by_mountpoint, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
+from .disk import BlockDevice, valid_fs_type, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, verify_keyboard_layout, search_keyboard_layout
@@ -193,18 +193,20 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	return selected_options
 
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
-	root = find_partition_by_mountpoint(block_devices, '/')
-	root['encrypted'] = True
-	root['!password'] = password
+	for device in block_devices:
+		for partition in block_devices[device]['partitions']:
+			if partition.get('mountpoint', None) != '/boot':
+				partition['encrypted'] = True
+				partition['!password'] = password
+
+				if partition['mountpoint'] != '/':
+					# Tell the upcoming steps to generate a key-file for non root mounts.
+					partition['generate-encryption-key-file'] = True
 
 	return block_devices
 
-	# TODO: Next version perhaps we can support multiple encrypted partitions
-	# options = []
-	# for partition in block_devices.values():
-	# 	options.append({key: val for key, val in partition.items() if val})
-
-	# print(generic_multi_select(options, f"Choose which partitions to encrypt (leave blank when done): "))
+	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
+	# Users might want to single out a partition for non-encryption to share between dualboot etc.
 
 class MiniCurses:
 	def __init__(self, width, height):
@@ -382,14 +384,25 @@ def ask_for_a_timezone():
 			)
 
 
-def ask_for_bootloader() -> str:
-	bootloader = "systemd-bootctl"
-	if not has_uefi():
-		bootloader = "grub-install"
-	else:
-		bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
-		if bootloader_choice == "y":
-			bootloader = "grub-install"
+def ask_for_bootloader(advanced_options=False) -> str:
+	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
+	if has_uefi():
+		if not advanced_options:
+			bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
+			if bootloader_choice == "y":
+				bootloader = "grub-install"
+		else:
+			# We use the common names for the bootloader as the selection, and map it back to the expected values.
+			choices = ['systemd-boot', 'grub', 'efistub']
+			selection = generic_select(choices, f'Choose a bootloader or leave blank to use systemd-boot: ', options_output=True)
+			if selection != "":
+				if selection == 'systemd-boot':
+					bootloader = 'systemd-bootctl'
+				elif selection == 'grub':
+					bootloader = 'grub-install'
+				else:
+					bootloader = selection
+
 	return bootloader
 
 

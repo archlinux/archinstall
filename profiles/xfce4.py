@@ -12,6 +12,7 @@ __packages__ = [
 	"lightdm-gtk-greeter",
 	"gvfs",
 	"network-manager-applet",
+	"xarchiver"
 ]
 
 

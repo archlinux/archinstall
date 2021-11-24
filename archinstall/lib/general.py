@@ -2,8 +2,10 @@ import hashlib
 import json
 import logging
 import os
+import secrets
 import shlex
 import subprocess
+import string
 import sys
 import time
 from datetime import datetime, date
@@ -46,6 +48,9 @@ from .storage import storage
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
+def generate_password(length=64):
+	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	return ''.join(secrets.choice(haystack) for i in range(length))
 
 def multisplit(s, splitters):
 	s = [s, ]
@@ -60,7 +65,6 @@ def multisplit(s, splitters):
 					ns.append(key)
 		s = ns
 	return s
-
 
 def locate_binary(name):
 	for PATH in os.environ['PATH'].split(':'):

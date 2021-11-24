@@ -1,15 +1,21 @@
-import re
-import os
 import json
 import logging
+import os
 import pathlib
+import re
+import time
 from typing import Union
 from .blockdevice import BlockDevice
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
+from ..storage import storage
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
+GIGA = 2 ** 30
+
+def convert_size_to_gb(size):
+	return round(size / GIGA,1)
 
 def sort_block_devices_based_on_performance(block_devices):
 	result = {device: 0 for device in block_devices}
@@ -205,3 +211,19 @@ def find_partition_by_mountpoint(block_devices, relative_mountpoint :str):
 		for partition in block_devices[device]['partitions']:
 			if partition.get('mountpoint', None) == relative_mountpoint:
 				return partition
+
+def partprobe():
+	SysCommand(f'bash -c "partprobe"')
+
+def convert_device_to_uuid(path :str) -> str:
+	for i in range(storage['DISK_RETRY_ATTEMPTS']):
+		partprobe()
+		output = json.loads(SysCommand(f"lsblk --json -o+UUID {path}").decode('UTF-8'))
+
+		for device in output['blockdevices']:
+			if (dev_uuid := device.get('uuid', None)):
+				return dev_uuid
+
+		time.sleep(storage['DISK_TIMEOUTS'])
+
+	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")

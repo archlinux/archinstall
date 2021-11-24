@@ -4,11 +4,11 @@ import os
 import pathlib
 import shlex
 import time
-
-from .disk import Partition
-from .general import SysCommand
+from .disk import Partition, convert_device_to_uuid
+from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
+from .storage import storage
 
 class luks2:
 	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
@@ -78,8 +78,17 @@ class luks2:
 		])
 
 		try:
-			# Try to setup the crypt-device
-			cmd_handle = SysCommand(cryptsetup_args)
+			# Retry formatting the volume because archinstall can some times be too quick
+			# which generates a "Device /dev/sdX does not exist or access denied." between
+			# setting up partitions and us trying to encrypt it.
+			for i in range(storage['DISK_RETRY_ATTEMPTS']):
+				if (cmd_handle := SysCommand(cryptsetup_args)).exit_code != 0:
+					time.sleep(storage['DISK_TIMEOUTS'])
+				else:
+					break
+
+			if cmd_handle.exit_code != 0:
+				raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 		except SysCallError as err:
 			if err.exit_code == 256:
 				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
@@ -107,9 +116,6 @@ class luks2:
 				cmd_handle = SysCommand(cryptsetup_args)
 			else:
 				raise err
-
-		if cmd_handle.exit_code != 0:
-			raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 
 		return key_file
 
@@ -146,3 +152,24 @@ class luks2:
 	def format(self, path):
 		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
 			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')
+
+	def add_key(self, path :pathlib.Path, password :str):
+		if not path.exists():
+			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
+
+		log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
+
+		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")
+		pw_injected = False
+		while worker.is_alive():
+			if b'Enter any existing passphrase' in worker and pw_injected is False:
+				worker.write(bytes(password, 'UTF-8'))
+				pw_injected = True
+
+		if worker.exit_code != 0:
+			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')
+
+	def crypttab(self, installation, key_path :str, options=["luks", "key-slot=1"]):
+		log(f'Adding a crypttab entry for key {key_path} in {installation}', level=logging.INFO)
+		with open(f"{installation.target}/etc/crypttab", "a") as crypttab:
+			crypttab.write(f"{self.mountpoint} UUID={convert_device_to_uuid(self.partition.path)} {key_path} {','.join(options)}\n")

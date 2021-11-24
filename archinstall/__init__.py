@@ -8,7 +8,7 @@ from .lib.disk import *
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
-from .lib.installer import __packages__, Installer
+from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
@@ -112,7 +112,6 @@ def get_arguments():
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
-
 	return config
 
 def post_process_arguments(arguments):
