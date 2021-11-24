@@ -11,7 +11,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	using_subvolumes = False
 
 	if default_filesystem == 'btrfs':
-		using_subvolumes = input('Would you like to use BTRFS subvolumes? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+		using_subvolumes = input('Would you like to use BTRFS subvolumes with a default structure? (Y/n): ').strip().lower() in ('', 'y', 'yes')
 
 	layout = {
 		block_device.path : {
@@ -54,20 +54,20 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GB"
 
 	if default_filesystem == 'btrfs' and using_subvolumes:
-		if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
-			# https://btrfs.wiki.kernel.org/index.php/FAQ
-			# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
-			# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
-			layout[block_device.path]['partitions'][1]['btrfs'] = {
-				"subvolumes" : {
-					"@home" : "/home",
-					"@log" : "/var/log",
-					"@pkgs" : "/var/cache/pacman/pkg",
-					"@.snapshots" : "/.snapshots"
-				}
+		# if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
+		# https://btrfs.wiki.kernel.org/index.php/FAQ
+		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
+		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+		layout[block_device.path]['partitions'][1]['btrfs'] = {
+			"subvolumes" : {
+				"@home" : "/home",
+				"@log" : "/var/log",
+				"@pkgs" : "/var/cache/pacman/pkg",
+				"@.snapshots" : "/.snapshots"
 			}
-		else:
-			pass # ... implement a guided setup
+		}
+		# else:
+		# 	pass # ... implement a guided setup
 
 	elif block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		# If we don't want to use subvolumes,
