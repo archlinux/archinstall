@@ -478,8 +478,8 @@ class Installer:
 			if partition.filesystem == 'btrfs':
 				if 'btrfs' not in self.MODULES:
 					self.MODULES.append('btrfs')
-				if '/usr/bin/btrfs-progs' not in self.BINARIES:
-					self.BINARIES.append('/usr/bin/btrfs-progs')
+				if '/usr/bin/btrfs' not in self.BINARIES:
+					self.BINARIES.append('/usr/bin/btrfs')
 
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
