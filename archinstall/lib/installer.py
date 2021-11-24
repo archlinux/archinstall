@@ -197,7 +197,7 @@ class Installer:
 				with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
 					if partition.get('generate-encryption-key-file'):
 						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
-							cryptkey_dir.mkdir(parents=True, exist_ok=True)
+							cryptkey_dir.mkdir(parents=True)
 
 						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
 						# if we name the device to "xyzloop".
@@ -205,7 +205,7 @@ class Installer:
 						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
 							keyfile.write(generate_password(length=512))
 
-						os.chmod(encryption_key_path, 0o400)
+						os.chmod(f"{self.target}{encryption_key_path}", 0o400)
 
 						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
 						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
