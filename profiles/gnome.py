@@ -9,6 +9,7 @@ __packages__ = [
 	"gnome",
 	"gnome-tweaks",
 	"gdm",
+	"gnome-software-packagekit-plugin",
 ]
 
 

@@ -2,8 +2,10 @@ import hashlib
 import json
 import logging
 import os
+import secrets
 import shlex
 import subprocess
+import string
 import sys
 import time
 from datetime import datetime, date
@@ -46,6 +48,9 @@ from .storage import storage
 def gen_uid(entropy_length=256):
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
+def generate_password(length=64):
+	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	return ''.join(secrets.choice(haystack) for i in range(length))
 
 def multisplit(s, splitters):
 	s = [s, ]
@@ -61,7 +66,6 @@ def multisplit(s, splitters):
 		s = ns
 	return s
 
-
 def locate_binary(name):
 	for PATH in os.environ['PATH'].split(':'):
 		for root, folders, files in os.walk(PATH):
@@ -76,6 +80,7 @@ def json_dumps(*args, **kwargs):
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
+	@staticmethod
 	def _encode(obj):
 		"""
 		This JSON encoder function will try it's best to convert
@@ -112,6 +117,7 @@ class JsonEncoder:
 		else:
 			return obj
 
+	@staticmethod
 	def _unsafe_encode(obj):
 		"""
 		Same as _encode() but it keeps dictionary keys starting with !
@@ -308,9 +314,16 @@ class SysCommandWorker:
 
 		if not self.pid:
 			try:
+				try:
+					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+						cmd_log.write(f"{' '.join(self.cmd)}\n")
+				except PermissionError:
+					pass
+
 				os.execve(self.cmd[0], self.cmd, {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):
 					log(f"Executing: {self.cmd}", level=logging.DEBUG)
+
 			except FileNotFoundError:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
 				self.exit_code = 1
@@ -382,18 +395,14 @@ class SysCommand:
 		if self.session:
 			return True
 
-		try:
-			self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
+		self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
 
-			while self.session.ended is None:
-				self.session.poll()
+		while self.session.ended is None:
+			self.session.poll()
 
-			if self.peak_output:
-				sys.stdout.write('\n')
-				sys.stdout.flush()
-
-		except SysCallError:
-			return False
+		if self.peak_output:
+			sys.stdout.write('\n')
+			sys.stdout.flush()
 
 		return True
 

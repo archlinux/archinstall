@@ -7,8 +7,6 @@ from ..output import log
 from ..general import SysCommand
 from ..storage import storage
 
-GIGA = 2 ** 30
-
 class BlockDevice:
 	def __init__(self, path, info=None):
 		if not info:
@@ -130,7 +128,7 @@ class BlockDevice:
 				if part_id not in self.part_cache:
 					# TODO: Force over-write even if in cache?
 					if part_id not in self.part_cache or self.part_cache[part_id].size != part['size']:
-						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id, size=part['size'])
+						self.part_cache[part_id] = Partition(root_path + part_id, self, part_id=part_id)
 
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
@@ -155,15 +153,14 @@ class BlockDevice:
 		for partition in json.loads(SysCommand(f'lsblk -J -o+UUID {self.path}').decode('UTF-8'))['blockdevices']:
 			return partition.get('uuid', None)
 
-	def convert_size_to_gb(self, size):
-		return round(size / GIGA,1)
-
 	@property
 	def size(self):
+		from .helpers import convert_size_to_gb
+
 		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
-			return self.convert_size_to_gb(device['size'])
+			return convert_size_to_gb(device['size'])
 
 	@property
 	def bus_type(self):
@@ -192,7 +189,7 @@ class BlockDevice:
 
 	@property
 	def largest_free_space(self):
-		info = None
+		info = []
 		for space_info in self.free_space:
 			if not info:
 				info = space_info
@@ -201,6 +198,22 @@ class BlockDevice:
 				if space_info[-1] > info[-1]:
 					info = space_info
 		return info
+
+	@property
+	def first_free_sector(self):
+		if info := self.largest_free_space:
+			start = info[0]
+		else:
+			start = '512MB'
+		return start
+
+	@property
+	def first_end_sector(self):
+		if info := self.largest_free_space:
+			end = info[1]
+		else:
+			end = f"{self.size}GB"
+		return end
 
 	def partprobe(self):
 		SysCommand(['partprobe', self.path])

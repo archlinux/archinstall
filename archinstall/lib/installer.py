@@ -7,8 +7,8 @@ import shlex
 import pathlib
 import subprocess
 import glob
-from .disk import get_partitions_in_use, Partition, find_partition_by_mountpoint
-from .general import SysCommand
+from .disk import get_partitions_in_use, Partition
+from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
@@ -19,10 +19,14 @@ from .storage import storage
 from .output import log
 from .profiles import Profile
 from .disk.btrfs import create_subvolume, mount_subvolume
+from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
+
+# Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
+__accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
 class InstallationFile:
@@ -40,15 +44,20 @@ class InstallationFile:
 	def __exit__(self, *args):
 		self.fh.close()
 		self.installation.chown(self.owner, self.filename)
-	
-	def write(self, data :Union[str, bytes]):
+
+	def write(self, data: Union[str, bytes]):
 		return self.fh.write(data)
-	
+
 	def read(self, *args):
 		return self.fh.read(*args)
-	
+
 	def poll(self, *args):
 		return self.fh.poll(*args)
+
+
+def accessibility_tools_in_use() -> bool:
+	return os.system('systemctl is-active --quiet espeakup.service') == 0
+
 
 class Installer:
 	"""
@@ -93,6 +102,10 @@ class Installer:
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in kernels:
 			self.base_packages.append(kernel)
+
+		# If using accessibility tools in the live environment, append those to the packages list
+		if accessibility_tools_in_use():
+			self.base_packages.extend(__accessibility_packages__)
 
 		self.post_base_install = []
 
@@ -165,7 +178,7 @@ class Installer:
 
 		return True
 
-	def mount_ordered_layout(self, layouts :dict):
+	def mount_ordered_layout(self, layouts: dict):
 		from .luks import luks2
 
 		mountpoints = {}
@@ -174,22 +187,43 @@ class Installer:
 				mountpoints[partition['mountpoint']] = partition
 
 		for mountpoint in sorted(mountpoints.keys()):
-			if mountpoints[mountpoint]['encrypted']:
-				loopdev = storage.get('ENC_IDENTIFIER', 'ai') + 'loop'
-				if not (password := mountpoints[mountpoint].get('!password', None)):
-					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {mountpoints[mountpoint]}")
+			partition = mountpoints[mountpoint]
 
-				with luks2(mountpoints[mountpoint]['device_instance'], loopdev, password, auto_unmount=False) as unlocked_device:
+			if partition.get('encrypted', False):
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				if not (password := partition.get('!password', None)):
+					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
+
+				with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
+					if partition.get('generate-encryption-key-file'):
+						if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
+							cryptkey_dir.mkdir(parents=True)
+
+						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
+						# if we name the device to "xyzloop".
+						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
+						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
+							keyfile.write(generate_password(length=512))
+
+						os.chmod(f"{self.target}{encryption_key_path}", 0o400)
+
+						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
+						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
+
+					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}")
 
 			else:
-				mountpoints[mountpoint]['device_instance'].mount(f"{self.target}{mountpoint}")
+				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
-			if not get_mount_info(f"{self.target}{mountpoint}", traverse=False):
-				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly.")
+			try:
+				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			except DiskError:
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-			if (subvolumes := mountpoints[mountpoint].get('btrfs', {}).get('subvolumes', {})):
+			if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
 				for name, location in subvolumes.items():
 					create_subvolume(self, location)
 					mount_subvolume(self, location)
@@ -291,7 +325,7 @@ class Installer:
 	def activate_time_syncronization(self):
 		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
-		
+
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
 			fh.write("[Time]\n")
 			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
@@ -300,6 +334,10 @@ class Installer:
 		from .systemd import Boot
 		with Boot(self) as session:
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
+
+	def enable_espeakup(self):
+		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		self.enable_service('espeakup')
 
 	def enable_service(self, *services):
 		for service in services:
@@ -440,8 +478,13 @@ class Installer:
 			if partition.filesystem == 'btrfs':
 				if 'btrfs' not in self.MODULES:
 					self.MODULES.append('btrfs')
-				if '/usr/bin/btrfs-progs' not in self.BINARIES:
+				if '/usr/bin/btrfs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
+
+			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
+				if 'fsck' in self.HOOKS:
+					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
 				if 'encrypt' not in self.HOOKS:
@@ -495,7 +538,7 @@ class Installer:
 		if kind == 'zram':
 			self.log(f"Setting up swap on zram")
 			self.pacstrap('zram-generator')
-			
+
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
 			# shutil.copy2(f"{self.target}{zram_example_location}", f"{self.target}/usr/lib/systemd/zram-generator.conf")
@@ -517,11 +560,14 @@ class Installer:
 
 		boot_partition = None
 		root_partition = None
+		root_partition_fs = None
 		for partition in self.partitions:
 			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
+				root_partition_fs = partition.filesystem
+				root_fs_type = get_mount_fs_type(root_partition_fs)
 
 		if boot_partition is None and root_partition is None:
 			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
@@ -575,7 +621,7 @@ class Installer:
 				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
 					entry.write('# Created by: archinstall\n')
 					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write('title Arch Linux\n')
+					entry.write(f'title Arch Linux ({kernel})\n')
 					entry.write(f"linux /vmlinuz-{kernel}\n")
 					if not is_vm():
 						vendor = cpu_vendor()
@@ -593,36 +639,85 @@ class Installer:
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 					else:
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
 
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub') # no need?
+			self.pacstrap('grub')  # no need?
 
 			if real_device := self.detect_encryption(root_partition):
-				_file = "/etc/default/grub"
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
+				_file = "/etc/default/grub"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
+				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
-
-			if has_uefi():
-				self.pacstrap('efibootmgr') # TODO: Do we need?
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
-				return True
 			else:
-				boot_partition = find_partition_by_mountpoint(self.partitions, relative_mountpoint=f"/boot")
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.path}')
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-				self.helper_flags['bootloader'] = True
+				_file = "/etc/default/grub"
+				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
+				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+
+			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
+			if has_uefi():
+				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
+			else:
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
+					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {handle}")
+
+			if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')).exit_code == 0:
+				raise DiskError(f"Could not configure GRUB: {handle}")
+
+			self.helper_flags['bootloader'] = True
+		elif bootloader == 'efistub':
+			self.pacstrap('efibootmgr')
+
+			if not has_uefi():
+				raise HardwareIncompatibilityError
+			# TODO: Ideally we would want to check if another config
+			# points towards the same disk and/or partition.
+			# And in which case we should do some clean up.
+
+			for kernel in self.kernels:
+				# Setup the firmware entry
+
+				label = f'Arch Linux ({kernel})'
+				loader = f"/vmlinuz-{kernel}"
+
+				kernel_parameters = []
+
+				if not is_vm():
+					vendor = cpu_vendor()
+					if vendor == "AuthenticAMD":
+						kernel_parameters.append("initrd=\\amd-ucode.img")
+					elif vendor == "GenuineIntel":
+						kernel_parameters.append("initrd=\\intel-ucode.img")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
+
+				kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
+
+				# blkid doesn't trigger on loopback devices really well,
+				# so we'll use the old manual method until we get that sorted out.
+				if real_device := self.detect_encryption(root_partition):
+					# TODO: We need to detect if the encrypted device is a whole disk encryption,
+					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				else:
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+
+				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+
+			self.helper_flags['bootloader'] = bootloader
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 

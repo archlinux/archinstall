@@ -7,14 +7,15 @@ import os
 import hashlib
 from typing import Optional
 from .blockdevice import BlockDevice
-from .helpers import get_mount_info, get_filesystem_type
+from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
 
+
 class Partition:
-	def __init__(self, path: str, block_device: BlockDevice, part_id=None, size=-1, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path: str, block_device: BlockDevice, part_id=None, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
 		if not part_id:
 			part_id = os.path.basename(path)
 
@@ -24,7 +25,6 @@ class Partition:
 		self.mountpoint = mountpoint
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
-		self.size = size  # TODO: Refresh?
 		self._encrypted = None
 		self.encrypted = encrypted
 		self.allow_formatting = False
@@ -65,23 +65,23 @@ class Partition:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
 		if self._encrypted:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.uuid}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
 
 	def __dump__(self):
 		return {
-			'type' : 'primary',
-			'PARTUUID' : self.uuid,
-			'wipe' : self.allow_formatting,
-			'boot' : self.boot,
-			'ESP' : self.boot,
-			'mountpoint' : self.target_mountpoint,
-			'encrypted' : self._encrypted,
-			'start' : self.start,
-			'size' : self.end,
-			'filesystem' : {
-				'format' : get_filesystem_type(self.path)
+			'type': 'primary',
+			'PARTUUID': self._safe_uuid,
+			'wipe': self.allow_formatting,
+			'boot': self.boot,
+			'ESP': self.boot,
+			'mountpoint': self.target_mountpoint,
+			'encrypted': self._encrypted,
+			'start': self.start,
+			'size': self.end,
+			'filesystem': {
+				'format': get_filesystem_type(self.path)
 			}
 		}
 
@@ -98,7 +98,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['start']# * self.sector_size
+				return partition['start']  # * self.sector_size
 
 	@property
 	def end(self):
@@ -107,7 +107,20 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['size']# * self.sector_size
+				return partition['size']  # * self.sector_size
+
+	@property
+	def size(self):
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
+			self.partprobe()
+
+			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.path}")).exit_code == 0:
+				lsblk = json.loads(handle.decode('UTF-8'))
+
+				for device in lsblk['blockdevices']:
+					return convert_size_to_gb(device['size'])
+
+			time.sleep(storage['DISK_TIMEOUTS'])
 
 	@property
 	def boot(self):
@@ -116,11 +129,7 @@ class Partition:
 		# Get the bootable flag from the sfdisk output:
 		# {
 		#    "partitiontable": {
-		#       "label":"dos",
-		#       "id":"0xd202c10a",
 		#       "device":"/dev/loop0",
-		#       "unit":"sectors",
-		#       "sectorsize":512,
 		#       "partitions": [
 		#          {"node":"/dev/loop0p1", "start":2048, "size":10483712, "type":"83", "bootable":true}
 		#       ]
@@ -136,7 +145,7 @@ class Partition:
 	@property
 	def partition_type(self):
 		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.path}").decode('UTF-8'))
-	
+
 		for device in lsblk['blockdevices']:
 			return device['pttype']
 
@@ -147,14 +156,33 @@ class Partition:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
+			self.partprobe()
+
+			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
+			if partuuid_struct.exit_code == 0:
+				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+					if partuuid := partition_information.get('partuuid', None):
+						return partuuid
+
+			time.sleep(storage['DISK_TIMEOUTS'])
+
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+
+	@property
+	def _safe_uuid(self) -> Optional[str]:
+		"""
+		A near copy of self.uuid but without any delays.
+		This function should only be used where uuid is not crucial.
+		For instance when you want to get a __repr__ of the class.
+		"""
+		self.partprobe()
 
 		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if not partuuid_struct.exit_code == 0:
-			raise DiskError(f"Could not get PARTUUID for {self.path}: {partuuid_struct}")
-
-		for partition in json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']:
-			return partition.get('partuuid', None)
-		return None
+		if partuuid_struct.exit_code == 0:
+			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
+				if partuuid := partition_information.get('partuuid', None):
+					return partuuid
 
 	@property
 	def encrypted(self):
@@ -176,6 +204,9 @@ class Partition:
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
+
+	def partprobe(self):
+		SysCommand(f'bash -c "partprobe"')
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
@@ -274,8 +305,15 @@ class Partition:
 
 		elif filesystem == 'f2fs':
 			options = ['-f'] + options
-			
+
 			if (handle := SysCommand(f"/usr/bin/mkfs.f2fs {' '.join(options)} {path}")).exit_code != 0:
+				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
+			self.filesystem = filesystem
+
+		elif filesystem == 'ntfs':
+			options = ['-f'] + options
+
+			if (handle := SysCommand(f"/usr/bin/mkfs.ntfs -Q {' '.join(options)} {path}")).exit_code != 0:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
@@ -311,13 +349,19 @@ class Partition:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
+			fs_type = get_mount_fs_type(fs)
+
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
 			try:
 				if options:
-					SysCommand(f"/usr/bin/mount -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
 				else:
-					SysCommand(f"/usr/bin/mount {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
+
+				# TODO: Should be redundant to check for exit_code
+				if mnt_handle.exit_code != 0:
+					raise DiskError(f"Could not mount {self.path} to {target} using options {options}")
 			except SysCallError as err:
 				raise err
 
@@ -352,7 +396,15 @@ class Partition:
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
 		except (SysCallError, DiskError):
-			pass  # We supported it, but /dev/null is not formatable as expected so the mkfs call exited with an error code
+			pass  # We supported it, but /dev/null is not formattable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True
+
+
+def get_mount_fs_type(fs):
+	if fs == 'ntfs':
+		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+	elif fs == 'fat32':
+		return 'vfat'  # This is the actual type used for fat32 mounting.
+	return fs

@@ -47,7 +47,7 @@ def load_config():
 	if archinstall.arguments.get('sys-encoding', None) is not None:
 		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
 	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.hardware.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
+		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
@@ -97,12 +97,12 @@ def ask_user_questions():
 	if archinstall.arguments.get('harddrives', None) is None:
 		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
 
-	if archinstall.arguments['harddrives'] and archinstall.storage.get('disk_layouts', None) is None:
-		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'])
+	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
+		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
 	# Get disk encryption password (or skip if blank)
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
-		if (passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): ')):
+		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
 			archinstall.arguments['!encryption-password'] = passwd
 
 	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
@@ -113,7 +113,7 @@ def ask_user_questions():
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))
 
 	if not archinstall.arguments.get('swap', None):
 		archinstall.arguments['swap'] = archinstall.ask_for_swap()
@@ -124,7 +124,7 @@ def ask_user_questions():
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable disabled & create superuser): ')
+		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): ')
 
 	# Ask for additional users (super-user if root pw was not set)
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
@@ -198,10 +198,11 @@ def perform_filesystem_operations():
 	archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
-	user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_disk_layout, level=logging.INFO)
-	with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-		disk_layout_file.write(user_disk_layout)
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		archinstall.log(user_disk_layout, level=logging.INFO)
+		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+			disk_layout_file.write(user_disk_layout)
 	print()
 
 	if archinstall.arguments.get('dry-run'):
@@ -227,9 +228,10 @@ def perform_filesystem_operations():
 		if archinstall.has_uefi() is False:
 			mode = archinstall.MBR
 
-		for drive in archinstall.arguments['harddrives']:
-			with archinstall.Filesystem(drive, mode) as fs:
-				fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
+		for drive in archinstall.arguments.get('harddrives', []):
+			if archinstall.storage.get('disk_layouts', {}).get(drive.path):
+				with archinstall.Filesystem(drive, mode) as fs:
+					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	user_credentials = {}
@@ -251,7 +253,14 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.storage.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+
+		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
+		for partition in installation.partitions:
+			if partition.mountpoint == installation.target + '/boot':
+				if partition.size <= 0.25: # in GB
+					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
 
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.
@@ -316,6 +325,9 @@ def perform_installation(mountpoint):
 
 			if archinstall.arguments.get('ntp', False):
 				installation.activate_time_syncronization()
+
+			if archinstall.accessibility_tools_in_use():
+				installation.enable_espeakup()
 
 			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 				installation.user_set_pw('root', root_pw)
