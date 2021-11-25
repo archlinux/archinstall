@@ -8,10 +8,8 @@ import signal
 import sys
 import time
 
-import archinstall
-from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
+from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
-
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones
 from .networking import list_interfaces
@@ -19,7 +17,7 @@ from .menu import Menu
 from .output import log
 from .profiles import Profile, list_profiles
 from .storage import storage
-
+from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
@@ -323,7 +321,7 @@ def ask_for_bootloader(advanced_options=False) -> str:
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
-			selection = generic_select(choices, f'Choose a bootloader or leave blank to use systemd-boot: ', options_output=True)
+			selection = Menu('Choose a bootloader or leave blank to use systemd-boot', choices).run()
 			if selection != "":
 				if selection == 'systemd-boot':
 					bootloader = 'systemd-bootctl'
@@ -434,10 +432,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	if advanced_options:
 		options.update(advanced)
 
-	value = generic_select(options, "Select which filesystem your main partition should use (by number or name): ", allow_empty_input=False)
-	return next((key for key, val in options.items() if val == value), None)
-
-	# TODO: Implement sane generic layout for 2+ drives
+	return archinstall.Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
 def current_partition_layout(partitions, with_idx=False):
@@ -804,7 +799,7 @@ def select_mirror_regions():
 
 	# TODO: Support multiple options and country codes, SE,UK for instance.
 
-	mirrors = archinstall.list_mirrors()
+	mirrors = list_mirrors()
 	selected_mirror = Menu('Select one of the regions to download packages from', mirrors.keys()).run()
 
 	if selected_mirror is not None:
@@ -820,7 +815,7 @@ def select_harddrives():
 	:return: List of selected hard drives
 	:rtype: list
 	"""
-	hard_drives = archinstall.all_disks().values()
+	hard_drives = all_disks().values()
 	options = {f'{option}': option for option in hard_drives}
 
 	selected_harddrive = Menu(
