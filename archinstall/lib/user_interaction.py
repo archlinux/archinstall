@@ -432,7 +432,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	if advanced_options:
 		options.update(advanced)
 
-	return archinstall.Menu('Select which filesystem your main partition should use', options, skip=False).run()
+	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
 def current_partition_layout(partitions, with_idx=False):
