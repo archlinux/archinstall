@@ -196,10 +196,11 @@ def perform_filesystem_operations():
 	archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
-	user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_disk_layout, level=logging.INFO)
-	with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-		disk_layout_file.write(user_disk_layout)
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		archinstall.log(user_disk_layout, level=logging.INFO)
+		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+			disk_layout_file.write(user_disk_layout)
 	print()
 
 	if archinstall.arguments.get('dry_run'):
@@ -225,9 +226,10 @@ def perform_filesystem_operations():
 		if archinstall.has_uefi() is False:
 			mode = archinstall.MBR
 
-		for drive in archinstall.arguments['harddrives']:
-			with archinstall.Filesystem(drive, mode) as fs:
-				fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
+		for drive in archinstall.arguments.get('harddrives', []):
+			if archinstall.storage.get('disk_layouts', {}).get(drive.path):
+				with archinstall.Filesystem(drive, mode) as fs:
+					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	user_credentials = {}
@@ -249,7 +251,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.storage.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
