@@ -1,0 +1,38 @@
+{
+    "/dev/loop0": {
+        "partitions": [
+            {
+                "boot": true,
+                "encrypted": false,
+                "filesystem": {
+                    "format": "fat32"
+                },
+                "format": true,
+                "mountpoint": "/boot",
+                "size": "513MB",
+                "start": "5MB",
+                "type": "primary"
+            },
+            {
+                "btrfs": {
+                    "subvolumes": {
+                        "@.snapshots": "/.snapshots",
+                        "@home": "/home",
+                        "@log": "/var/log",
+                        "@pkgs": "/var/cache/pacman/pkg"
+                    }
+                },
+                "encrypted": true,
+                "filesystem": {
+                    "format": "btrfs"
+                },
+                "format": true,
+                "mountpoint": "/",
+                "size": "100%",
+                "start": "518MB",
+                "type": "primary"
+            }
+        ],
+        "wipe": true
+    }
+}
