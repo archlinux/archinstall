@@ -43,4 +43,5 @@ if __name__ == 'xfce4':
 	# Install the XFCE4 packages
 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
+	archinstall.storage['installation_session'].enable_service('NetworkManager') # NetworkManager
 	archinstall.storage['installation_session'].enable_service('lightdm')  # Light Display Manager
