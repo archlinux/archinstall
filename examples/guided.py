@@ -107,20 +107,27 @@ def ask_user_questions():
 		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
 												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
 												allow_empty=True)
+	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least an empty list
+	if not archinstall.arguments['harddrives']:
+		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
+		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="red",level=logging.INFO)
+		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="red",level=logging.INFO)
+		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
+			exit(1)
+	else:
+		if archinstall.storage.get('disk_layouts', None) is None:
+			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
-	if archinstall.arguments.get('harddrives', None) is not None and archinstall.storage.get('disk_layouts', None) is None:
-		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
+		# Get disk encryption password (or skip if blank)
+		if archinstall.arguments.get('!encryption-password', None) is None:
+			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+				archinstall.arguments['!encryption-password'] = passwd
 
-	# Get disk encryption password (or skip if blank)
-	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
-		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-			archinstall.arguments['!encryption-password'] = passwd
-
-	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
-		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+		if archinstall.arguments.get('!encryption-password', None):
+			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+			# Then we need to identify which partitions to encrypt. This will default to / (root).
+			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
