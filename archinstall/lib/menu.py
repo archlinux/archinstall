@@ -49,8 +49,8 @@ class Menu(TerminalMenu):
 			self.menu_options = [default] + [o for o in self.menu_options if default_option != o]
 
 		cursor = "> "
-		main_menu_cursor_style = ("fg_red", "bold")
-		main_menu_style = ("bg_red", "fg_yellow")
+		main_menu_cursor_style = ("fg_cyan", "bold")
+		main_menu_style = ("bg_blue", "fg_gray")
 
 		super().__init__(
 			menu_entries=self.menu_options,
