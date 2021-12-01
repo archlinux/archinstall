@@ -158,7 +158,14 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
 class SysCommandWorker:
-	def __init__(self, cmd :Union[str, List[str]], callbacks :Optional[Dict[str, Any]] = None, peak_output :Optional[bool] = False, environment_vars :Optional[Dict[str, Any]] = None, logfile :Optional[None] = None, working_directory :Optional[str] = './'):
+	def __init__(self,
+		cmd :Union[str, List[str]],
+		callbacks :Optional[Dict[str, Any]] = None,
+		peak_output :Optional[bool] = False,
+		environment_vars :Optional[Dict[str, Any]] = None,
+		logfile :Optional[None] = None,
+		working_directory :Optional[str] = './'):
+
 		if not callbacks:
 			callbacks = {}
 		if not environment_vars:
@@ -212,7 +219,7 @@ class SysCommandWorker:
 		self.make_sure_we_are_executing()
 		return str(self._trace_log)
 
-	def __enter__(self) -> SysCommandWorker:
+	def __enter__(self) -> 'SysCommandWorker':
 		return self
 
 	def __exit__(self, *args :str) -> None:
@@ -347,7 +354,14 @@ class SysCommandWorker:
 
 
 class SysCommand:
-	def __init__(self, cmd :Union[str, List[str]], callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None, start_callback :Optional[Callable[[Any], Any]] = None, peak_output :Optional[bool] = False, environment_vars :Optional[Dict[str, Any]] = None, working_directory :Optional[str] = './'):
+	def __init__(self,
+		cmd :Union[str, List[str]],
+		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
+		start_callback :Optional[Callable[[Any], Any]] = None,
+		peak_output :Optional[bool] = False,
+		environment_vars :Optional[Dict[str, Any]] = None,
+		working_directory :Optional[str] = './'):
+	
 		_callbacks = {}
 		if callbacks:
 			for hook, func in callbacks.items():

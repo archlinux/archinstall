@@ -1,3 +1,5 @@
+from typing import Optional
+
 class RequirementError(BaseException):
 	pass
 
