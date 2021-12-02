@@ -20,6 +20,7 @@ from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
+from .lib.menu import Menu
 
 parser = ArgumentParser()
 
@@ -87,7 +88,6 @@ if arguments.get('plugin', None):
 	load_plugin(arguments['plugin'])
 
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
-
 
 def run_as_a_module():
 	"""

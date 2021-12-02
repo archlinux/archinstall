@@ -47,3 +47,8 @@ def set_keyboard_language(locale):
 		return True
 
 	return False
+
+
+def list_timezones():
+	for line in SysCommand("timedatectl --no-pager list-timezones", environment_vars={'SYSTEMD_COLORS': '0'}):
+		yield line.decode('UTF-8').strip()
