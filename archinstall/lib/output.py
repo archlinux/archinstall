@@ -1,51 +1,19 @@
-import abc
 import logging
 import os
 import sys
 from pathlib import Path
+from typing import Dict, Union
 
 from .storage import storage
 
 
-# TODO: use logging's built in levels instead.
-#       Although logging is threaded and I wish to avoid that.
-#       It's more Pythonistic or w/e you want to call it.
-class LogLevels:
-	Critical = 0b001
-	Error = 0b010
-	Warning = 0b011
-	Info = 0b101
-	Debug = 0b111
-
-
-class Journald(dict):
+class Journald:
 	@staticmethod
-	@abc.abstractmethod
-	def log(message, level=logging.DEBUG):
+	def log(message :str, level :int = logging.DEBUG) -> None:
 		try:
 			import systemd.journal  # type: ignore
 		except ModuleNotFoundError:
-			return False
-
-		# For backwards compatibility, convert old style log-levels
-		# to logging levels (and warn about deprecated usage)
-		# There's some code re-usage here but that should be fine.
-		# TODO: Remove these in a few versions:
-		if level == LogLevels.Critical:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			level = logging.CRITICAL
-		elif level == LogLevels.Error:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			level = logging.ERROR
-		elif level == LogLevels.Warning:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			level = logging.WARNING
-		elif level == LogLevels.Info:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			level = logging.INFO
-		elif level == LogLevels.Debug:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			level = logging.DEBUG
+			return None
 
 		log_adapter = logging.getLogger('archinstall')
 		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
@@ -65,7 +33,7 @@ class SessionLogging:
 
 # Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
 # And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
-def supports_color():
+def supports_color() -> bool:
 	"""
 	Return True if the running system's terminal supports color,
 	and False otherwise.
@@ -79,7 +47,7 @@ def supports_color():
 
 # Heavily influenced by: https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
 # Color options here: https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
-def stylize_output(text: str, *opts, **kwargs):
+def stylize_output(text: str, *opts :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> str:
 	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
 	color_names = ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')
 	foreground = {color_names[x]: '3%s' % x for x in range(8)}
@@ -91,9 +59,9 @@ def stylize_output(text: str, *opts, **kwargs):
 		return '\x1b[%sm' % reset
 	for k, v in kwargs.items():
 		if k == 'fg':
-			code_list.append(foreground[v])
+			code_list.append(foreground[str(v)])
 		elif k == 'bg':
-			code_list.append(background[v])
+			code_list.append(background[str(v)])
 	for o in opts:
 		if o in opt_dict:
 			code_list.append(opt_dict[o])
@@ -102,7 +70,7 @@ def stylize_output(text: str, *opts, **kwargs):
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
 
-def log(*args, **kwargs):
+def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> None:
 	string = orig_string = ' '.join([str(x) for x in args])
 
 	# Attempt to colorize the output if supported
@@ -132,39 +100,7 @@ def log(*args, **kwargs):
 		with open(absolute_logfile, 'a') as log_file:
 			log_file.write(f"{orig_string}\n")
 
-	# If we assigned a level, try to log it to systemd's journald.
-	# Unless the level is higher than we've decided to output interactively.
-	# (Remember, log files still get *ALL* the output despite level restrictions)
-	if 'level' in kwargs:
-		# For backwards compatibility, convert old style log-levels
-		# to logging levels (and warn about deprecated usage)
-		# There's some code re-usage here but that should be fine.
-		# TODO: Remove these in a few versions:
-		if kwargs['level'] == LogLevels.Critical:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			kwargs['level'] = logging.CRITICAL
-		elif kwargs['level'] == LogLevels.Error:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			kwargs['level'] = logging.ERROR
-		elif kwargs['level'] == LogLevels.Warning:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			kwargs['level'] = logging.WARNING
-		elif kwargs['level'] == LogLevels.Info:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			kwargs['level'] = logging.INFO
-		elif kwargs['level'] == LogLevels.Debug:
-			log("Deprecated level detected in log message, please use new logging.<level> instead for the following log message:", fg="red", level=logging.ERROR, force=True)
-			kwargs['level'] = logging.DEBUG
-
-		if kwargs['level'] < storage.get('LOG_LEVEL', logging.INFO) and 'force' not in kwargs:
-			# Level on log message was Debug, but output level is set to Info.
-			# In that case, we'll drop it.
-			return None
-
-	try:
-		Journald.log(string, level=kwargs.get('level', logging.INFO))
-	except ModuleNotFoundError:
-		pass  # Ignore writing to journald
+	Journald.log(string, level=int(str(kwargs.get('level', logging.INFO))))
 
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
