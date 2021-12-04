@@ -63,6 +63,7 @@ def load_config():
 			except:
 				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
+
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -70,12 +71,7 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 	if not archinstall.arguments.get('keyboard-layout', None):
-		while True:
-			try:
-				archinstall.arguments['keyboard-layout'] = archinstall.select_language(archinstall.list_keyboard_languages()).strip()
-				break
-			except archinstall.RequirementError as err:
-				archinstall.log(err, fg="red")
+		archinstall.arguments['keyboard-layout'] = archinstall.select_language()
 
 	# Before continuing, set the preferred keyboard layout/language in the current terminal.
 	# This will just help the user with the next following questions.
@@ -84,12 +80,7 @@ def ask_user_questions():
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
-		while True:
-			try:
-				archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions(archinstall.list_mirrors())
-				break
-			except archinstall.RequirementError as e:
-				archinstall.log(e, fg="red")
+		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
 
 	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
 		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
@@ -157,7 +148,8 @@ def ask_user_questions():
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
-		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+		namespace = f"{archinstall.arguments['profile'].namespace}.py"
+		with archinstall.arguments['profile'].load_instructions(namespace=namespace) as imported:
 			if not imported._prep_function():
 				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 				exit(1)
@@ -169,8 +161,7 @@ def ask_user_questions():
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
-		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+		archinstall.arguments['kernels'] = archinstall.select_kernel()
 
 	# Additional packages (with some light weight error handling for invalid package names)
 	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")

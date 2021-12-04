@@ -1,5 +1,4 @@
 # A desktop environment selector.
-
 import archinstall
 
 is_top_level_profile = True
@@ -44,8 +43,7 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-
-	desktop = archinstall.generic_select(__supported__, 'Select your desired desktop environment: ', allow_empty_input=False, sort=True)
+	desktop = archinstall.Menu('Select your desired desktop environment', __supported__, skip=False).run()
 
 	# Temporarily store the selected desktop profile
 	# in a session-safe location, since this module will get reloaded
