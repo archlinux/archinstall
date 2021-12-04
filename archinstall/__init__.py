@@ -20,6 +20,7 @@ from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
+from .lib.menu import Menu
 
 parser = ArgumentParser()
 
@@ -137,7 +138,6 @@ define_arguments()
 arguments = get_arguments()
 post_process_arguments(arguments)
 # TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
-
 
 def run_as_a_module():
 	"""

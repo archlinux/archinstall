@@ -25,5 +25,6 @@ SAFETY_LOCK
 /guided.py
 /install.log
 venv
+.venv
 .idea/**
 **/install.log
