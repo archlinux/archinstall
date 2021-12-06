@@ -6,6 +6,8 @@ from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
+from .partition import Partition
+
 
 def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
 	"""
@@ -72,3 +74,38 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 	log(f"Creating a subvolume on {target}", level=logging.INFO)
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
+
+def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, subvolumes :dict):
+	""" we do the magic with subvolumes in a centralized place
+	parameters:
+	* the installation object
+	* the partition dictionary entry which represents the physical partition
+	* mountpoinst, the dictionary which contains all the partititon to be mounted
+	* subvolumes is the dictionary with the names of the subvolumes and its location
+	First we mount the partition as root
+	Then we create all the subvolumes inside btrfs as demandd
+	We clone then, both the partition dictionary and the object inside it and adapt it to the subvolume needs
+	Then we add it them to the mountpoints dictionary to be processed as "normal" partitions
+	At the end we unmount the "real" partition to further process
+	"""
+	installation.mount(partition['device_instance'],"/")
+	for name, location in subvolumes.items():
+		try:
+			create_subvolume(installation,name)
+			if not partition['mountpoint'] and location is not None:
+				fake_partition = partition.copy()
+				del fake_partition['btrfs']
+				fake_partition['mountpoint'] = location
+				if name.startswith('/'):
+					name = name[1:]
+				fake_partition['subvolume'] = name
+				# we create a new partition object
+				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				fake_partition['device_instance'].mountpoint = None
+				mountpoints[fake_partition['mountpoint']] = fake_partition
+		except Exception as e:
+			#partition['device_instance'].unmount()
+			raise e
+	if partition['mountpoint']:
+		mountpoints[partition['mountpoint']] = partition
+	partition['device_instance'].unmount()
