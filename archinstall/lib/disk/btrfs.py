@@ -104,7 +104,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				fake_partition['device_instance'].mountpoint = None
 				mountpoints[fake_partition['mountpoint']] = fake_partition
 		except Exception as e:
-			#partition['device_instance'].unmount()
+			partition['device_instance'].unmount()
 			raise e
 	if partition['mountpoint']:
 		mountpoints[partition['mountpoint']] = partition
