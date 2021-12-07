@@ -217,7 +217,11 @@ class Installer:
 
 			else:
 				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
+				if partition.get('options',[]):
+					mount_options = ','.join(partition['options'])
+					partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				else:
+					partition['device_instance'].mount(f"{self.target}{mountpoint}")
 			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)

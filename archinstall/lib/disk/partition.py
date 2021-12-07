@@ -369,7 +369,11 @@ class Partition:
 
 			if self.bind_name:
 				device_path = self.device_path
-				options = options + f"subvol={self.bind_name}"
+				# TODO options should be better be a list than a string
+				if options:
+					options = f"{options},subvol={self.bind_name}"
+				else:
+					options = f"subvol={self.bind_name}"
 			else:
 				device_path = self.path
 			try:

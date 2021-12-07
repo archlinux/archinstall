@@ -91,17 +91,34 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 	# first we mount the basic partition
 	# TODO get rid of the need to use the installation object
 	installation.mount(partition['device_instance'],"/")
-	# We process each of the pairs <subvolume name: mount point | None>
-	# TODO the right hand should include more complex info (mount options above all)
-	for name, location in subvolumes.items():
+	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
+	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
+	# of mount options (or similar used by brtfs)
+	for name, right_hand in subvolumes.items():
 		try:
 			# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load - every subvolume is created from the top of the hierarchy- and simplifies its further use
 			if name.startswith('/'):
 				name = name[1:]
+			# renormalize the right hand.
+			location = None
+			mount_options = None
+			# no contents, so it is not to be mounted
+			if not right_hand:
+				location = None
+			# just a string. per backward compatibility the mount point
+			elif isinstance(right_hand,str):
+				location = right_hand
+			# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
+			elif isinstance(right_hand,dict):
+				print(f"{name} is going the false way")
+				location = right_hand.get('mountpoint',None)
+				mount_options = right_hand.get('options',[])
 			# we create the subvolume
 			create_subvolume(installation,name)
 			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
+				# TODO make the nodatacow processing now, if possible
+
 				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
 				# the primary partition
 				fake_partition = partition.copy()
@@ -113,6 +130,8 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
 				fake_partition['subvolume'] = name
+				# here we add the mount options
+				fake_partition['options'] = mount_options
 				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
 				# We instanciate a new object with following attributes coming / adapted from the instance which was in the primary partition entry (the one we are coping - partition['device_instance']
 				# * path, which will be expanded with the subvolume name to use the bind mount syntax the system uses for naming mounted subvolumes
