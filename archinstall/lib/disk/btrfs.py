@@ -88,24 +88,50 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 	Then we add it them to the mountpoints dictionary to be processed as "normal" partitions
 	At the end we unmount the "real" partition to further process
 	"""
+	# first we mount the basic partition
+	# TODO get rid of the need to use the installation object
 	installation.mount(partition['device_instance'],"/")
+	# We process each of the pairs <subvolume name: mount point | None>
+	# TODO the right hand should include more complex info (mount options above all)
 	for name, location in subvolumes.items():
 		try:
+			# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load - every subvolume is created from the top of the hierarchy- and simplifies its further use
+			if name.startswith('/'):
+				name = name[1:]
+			# we create the subvolume
 			create_subvolume(installation,name)
+			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
+				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
+				# the primary partition
 				fake_partition = partition.copy()
+				# we start to modify entries in the "fake partition" to match the needs of the subvolumes
+				#
+				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
 				del fake_partition['btrfs']
+				# Mount destination. As of now the right hand part
 				fake_partition['mountpoint'] = location
-				if name.startswith('/'):
-					name = name[1:]
+				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
 				fake_partition['subvolume'] = name
-				# we create a new partition object
+				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
+				# We instanciate a new object with following attributes coming / adapted from the instance which was in the primary partition entry (the one we are coping - partition['device_instance']
+				# * path, which will be expanded with the subvolume name to use the bind mount syntax the system uses for naming mounted subvolumes
+				# * size. When the OS queries all the subvolumes share the same size as the full partititon
+				# * uuid. All the subvolumes on a partition share the same uuid
 				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'. If i don't reset it, process will abort as "already mounted' .
+				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
 				fake_partition['device_instance'].mountpoint = None
+				#
+				# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
+				# as "normal" ones
 				mountpoints[fake_partition['mountpoint']] = fake_partition
 		except Exception as e:
+			# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 			partition['device_instance'].unmount()
 			raise e
+	# if the physical partition has been selected to be mounted, we include it at the list. Remmeber, all the above treatement won't happen except the creation of the subvolume
 	if partition['mountpoint']:
 		mountpoints[partition['mountpoint']] = partition
+	# correct end implies the unmounting
 	partition['device_instance'].unmount()
