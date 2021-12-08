@@ -144,7 +144,8 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				# * size. When the OS queries all the subvolumes share the same size as the full partititon
 				# * uuid. All the subvolumes on a partition share the same uuid
 				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
-				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'. If i don't reset it, process will abort as "already mounted' .
+				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
+				# If i don't reset it, process will abort as "already mounted' .
 				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
 				fake_partition['device_instance'].mountpoint = None
 				#
