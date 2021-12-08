@@ -101,7 +101,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				name = name[1:]
 			# renormalize the right hand.
 			location = None
-			mount_options = None
+			mount_options = []
 			# no contents, so it is not to be mounted
 			if not right_hand:
 				location = None
@@ -110,15 +110,21 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				location = right_hand
 			# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
 			elif isinstance(right_hand,dict):
-				print(f"{name} is going the false way")
 				location = right_hand.get('mountpoint',None)
 				mount_options = right_hand.get('options',[])
 			# we create the subvolume
 			create_subvolume(installation,name)
+			# Make the nodatacow processing now
+			# It will be the main cause of creation of subvolumes which are not to be mounted
+			# it is not an options which can be established by subvolume (but for whole file systems), and can be
+			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
+			if 'nodatacow' in mount_options:
+				if (cmd := SysCommand(f"chattr +C {installation.target}/{name}")).exit_code != 0:
+					raise DiskError(f"Could not set  nodatacow attribute at {installation.target}/{name}: {cmd}")
+				# entry is deleted so nodatacow doesn't propagate to the mount options
+				del mount_options[mount_options.index('nodatacow')]
 			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
-				# TODO make the nodatacow processing now, if possible
-
 				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
 				# the primary partition
 				fake_partition = partition.copy()
