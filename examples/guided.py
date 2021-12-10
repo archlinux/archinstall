@@ -96,10 +96,7 @@ def ask_user_questions():
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None) is None:
 		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
-		#archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
-												#text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-												#allow_empty=True)
-	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least an empty list
+	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least none (behaviour has changed from previous version, where it had an empty list. Shouls be compatible with my code
 	if not archinstall.arguments['harddrives']:
 		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
 		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="red",level=logging.INFO)
