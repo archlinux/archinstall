@@ -95,9 +95,10 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None) is None:
-		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
-												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-												allow_empty=True)
+		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
+		#archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
+												#text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
+												#allow_empty=True)
 	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least an empty list
 	if not archinstall.arguments['harddrives']:
 		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
