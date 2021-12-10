@@ -68,7 +68,7 @@ class Menu(TerminalMenu):
 		idx = self.show()
 		if idx is not None:
 			if isinstance(idx, (list, tuple)):
-				return [self.menu_options[i] for i in idx]
+				return [self.default_option if ' (default)' in self.menu_options[i] else self.menu_options[i] for i in idx]
 			else:
 				selected = self.menu_options[idx]
 				if ' (default)' in selected and self.default_option:
