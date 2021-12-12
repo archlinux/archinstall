@@ -207,6 +207,7 @@ class Partition:
 
 	def partprobe(self):
 		SysCommand(f'bash -c "partprobe"')
+		time.sleep(1)
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
