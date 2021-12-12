@@ -127,6 +127,7 @@ class Filesystem:
 
 	def partprobe(self):
 		SysCommand(f'bash -c "partprobe"')
+		time.sleep(1)
 
 	def raw_parted(self, string: str):
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
