@@ -159,15 +159,13 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-			if partuuid_struct.exit_code == 0:
-				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if partuuid := partition_information.get('partuuid', None):
-						return partuuid
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
 
 	@property
 	def _safe_uuid(self) -> Optional[str]:
@@ -178,11 +176,7 @@ class Partition:
 		"""
 		self.partprobe()
 
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if partuuid_struct.exit_code == 0:
-			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-				if partuuid := partition_information.get('partuuid', None):
-					return partuuid
+		return SysCommand(f'blkid -s PARTUUID -o value {self.path}').decode('UTF-8').strip()
 
 	@property
 	def encrypted(self):

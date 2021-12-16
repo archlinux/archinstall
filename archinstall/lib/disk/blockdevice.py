@@ -150,8 +150,7 @@ class BlockDevice:
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
 		"""
-		for partition in json.loads(SysCommand(f'lsblk -J -o+UUID {self.path}').decode('UTF-8'))['blockdevices']:
-			return partition.get('uuid', None)
+		return SysCommand(f'blkid -s PTUUID -o value {self.path}').decode('UTF-8')
 
 	@property
 	def size(self):
