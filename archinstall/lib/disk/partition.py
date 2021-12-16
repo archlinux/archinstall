@@ -159,7 +159,7 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			partuuid = self._safe_uuid()
+			partuuid = self._safe_uuid
 			if partuuid:
 				return partuuid
 
