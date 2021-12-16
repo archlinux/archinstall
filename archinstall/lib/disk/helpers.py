@@ -229,6 +229,7 @@ def find_partition_by_mountpoint(block_devices, relative_mountpoint :str):
 
 def partprobe():
 	SysCommand(f'bash -c "partprobe"')
+	time.sleep(5)
 
 def convert_device_to_uuid(path :str) -> str:
 	device_name, bind_name = split_bind_name(path)

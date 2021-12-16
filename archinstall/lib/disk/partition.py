@@ -161,11 +161,9 @@ class Partition:
 			self.partprobe()
 			time.sleep(storage['DISK_TIMEOUTS'] * i)
 
-			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-			if partuuid_struct.exit_code == 0:
-				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if partuuid := partition_information.get('partuuid', None):
-						return partuuid
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
