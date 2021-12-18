@@ -16,7 +16,7 @@ Patch releases will be done against their own branches, branched from stable tag
 ## Discussions
 
 Currently, questions, bugs and suggestions should be reported through [GitHub issue tracker](https://github.com/archlinux/archinstall/issues).<br>
-For less formal discussions there are also a [archinstall Discord server](https://discord.gg/cqXU88y).
+For less formal discussions there is also an [archinstall Discord server](https://discord.gg/cqXU88y).
 
 ## Coding convention
 
@@ -30,7 +30,7 @@ The exceptions to PEP8 are:
 * [Line length](https://www.python.org/dev/peps/pep-0008/#maximum-line-length) should aim for no more than 100
   characters, but not strictly enforced.
 * [Line breaks before/after binary operator](https://www.python.org/dev/peps/pep-0008/#should-a-line-break-before-or-after-a-binary-operator)
-  is not enforced, as long as the style of line breaks are consistent within the same code block.
+  is not enforced, as long as the style of line breaks is consistent within the same code block.
 * Archinstall should always be saved with **Unix-formatted line endings** and no other platform-specific formats.
 * [String quotes](https://www.python.org/dev/peps/pep-0008/#string-quotes) follow PEP8, the exception being when
   creating formatted strings, double-quoted strings are *preferred* but not required on the outer edges *(
