@@ -39,6 +39,10 @@ The exceptions to PEP8 are:
 Most of these style guidelines have been put into place after the fact *(in an attempt to clean up the code)*.<br>
 There might therefore be older code which does not follow the coding convention and the code is subject to change.
 
+## Documentation
+
+If you'd like to contribute to the documentation, refer to [this guide](docs/README.md) on how to build the documentation locally.
+
 ## Submitting Changes
 
 Archinstall uses GitHub's pull-request workflow and all contributions in terms of code should be done through pull requests.<br>
