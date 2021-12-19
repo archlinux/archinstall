@@ -214,10 +214,14 @@ def find_partition_by_mountpoint(block_devices, relative_mountpoint :str):
 
 def partprobe():
 	SysCommand(f'bash -c "partprobe"')
+	time.sleep(5)
 
 def convert_device_to_uuid(path :str) -> str:
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
 		partprobe()
+		
+		# TODO: Convert lsblk to blkid
+		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
 		output = json.loads(SysCommand(f"lsblk --json -o+UUID {path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:

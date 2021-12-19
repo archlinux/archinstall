@@ -1,7 +1,10 @@
+.. _guided_installation:
+.. autofunction:: guided_installation
+
 Guided installation
 ===================
 
-This is the default scripted installation you'll encounter on the official Arch Linux Archinstall package as well as the unofficial ISO found on `https://archlinux.life <https://archlinux.life>`_. It will guide your through a very basic installation of Arch Linux.
+This is the default scripted installation you'll encounter on the official Arch Linux Archinstall package as well as the unofficial ISO found on `https://archlinux.life <https://archlinux.life>`_. It will guide you through a very basic installation of Arch Linux.
 
 The installer has two pre-requisites:
 
@@ -9,8 +12,8 @@ The installer has two pre-requisites:
  * An active internet connection prior to running archinstall
 
 .. warning::
-    A basic understanding of how machines, ISO-files and command lines are needed.
-    Please read the official Arch Linux Wiki *(`https://wiki.archlinux.org/ <https://wiki.archlinux.org/>`_ to learn more)*
+    A basic understanding of machines, ISO-files and command lines are needed.
+    Please read the official Arch Linux Wiki (`https://wiki.archlinux.org/ <https://wiki.archlinux.org/>`_) to learn more
 
 .. note::
     There are some limitations with the installer, such as that it will not configure WiFi during the installation procedure. And it will not perform a post-installation network configuration either. So you need to read up on `Arch Linux networking <https://wiki.archlinux.org/index.php/Network_configuration>`_ to get that to work.
@@ -37,7 +40,7 @@ And to run it, execute archinstall as a Python module:
     python -m archinstall --script guided
     
 | The ``--script guided`` argument is optional as it's the default behavior.
-| But this will start the process of guiding you through a installation of a quite minimal Arch Linux experience.
+| But this will start the process of guiding you through an installation of a quite minimal Arch Linux experience.
 
 Installing directly from a configuration file
 --------------------------------------
@@ -91,61 +94,66 @@ To run it, execute archinstall as a Python module:
 .. code-block:: sh
 
     python -m archinstall --config <local path or remote URL>
-    
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-|         Key          |                                                          Values/Description                                                          |                                     Description                                      |                   Required                    |
-|                      |                                                                                                                                      |                                                                                      |                                               |
-+======================+======================================================================================================================================+======================================================================================+===============================================+
-| audio                | pipewire/pulseaudio                                                                                                                  | Audioserver to be installed                                                          | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| bootloader           | systemd-bootctl/grub-install                                                                                                         | Bootloader to be installed                                                           | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| custom-commands      | [ <command1>, <command2>, ...]                                                                                                       | Custom commands to be run post install                                               | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| !encryption-password | any                                                                                                                                  | Password to encrypt disk, not encrypted if password not provided                     | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| filesystem           | ext4 / btrfs / fat32 etc.                                                                                                            | Filesystem for root and home partitions                                              | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| gfx_driver           | "VMware / VirtualBox (open-source)" or "Nvidia" or "Intel (open-source)" or "AMD / ATI (open-source)" or "All open-source (default)" | Graphics Drivers to install                                                          | No                                            |
-|                      |                                                                                                                                      |                                                                                      |                                               |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| harddrive            | { "path": <path of device> }                                                                                                         | Path of device to be used                                                            | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| hostname             | any                                                                                                                                  | Hostname of machine after installation                                               | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| kernels              | [ "kernel1", "kernel2"]                                                                                                              | List of kernels to install eg: linux, linux-lts, linux-zen  etc                      | Atleast 1                                     |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| keyboard-language    | 2 letter code for your keyboard language                                                                                             | eg: us, de etc                                                                       | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| mirror-region        | {"<Region Name>": { "Mirror Name": True/False}, ..}                                                                                  | List of regions and mirrors to use                                                   | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| nic                  | { NetworkManager: <boolean>, nic: <nic name> }                                                                                       |                                                                                      | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| ntp                  | <boolean>                                                                                                                            | Set to true to set-up ntp post install                                               | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| packages             | [ "package1", "package2", ..]                                                                                                        | List of packages to install post-installation                                        | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| profile              | Name of the profile to install                                                                                                       | Profiles are present in profiles/, use the name of a profile to install it           | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| !root-password       | any                                                                                                                                  | The root account password                                                            | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| services             | [ "service1", "service2", ..]                                                                                                        | Services to enable post-installation                                                 | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| sys-encoding         | "utf-8"                                                                                                                              | Set to change system encoding post-install, ignored if --advanced flag is not passed | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| sys-language         | "en_US"                                                                                                                              | Set to change system language post-install, ignored if --advanced flag is not passed | No                                            |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| superusers           | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of superuser credentials, see configuration for reference                       | Yes, if root account password is not provided |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| timezone             | Timezone to configure in installation                                                                                                | Timezone eg: UTC, Asia/Kolkata etc.                                                  | Yes                                           |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| users                | { "<username>": { "!password": "<password>"}, ..}                                                                                    | List of regular user credentials, see configuration for reference                    | Yes, can be {}                                |
-+----------------------+--------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-    
+
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+|         Key          |                 Values/Description                  |                                     Description                                      |                   Required                    |
+|                      |                                                     |                                                                                      |                                               |
++======================+=====================================================+======================================================================================+===============================================+
+| audio                | pipewire/pulseaudio                                 | Audioserver to be installed                                                          | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| bootloader           | systemd-bootctl/grub-install                        | Bootloader to be installed                                                           | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| custom-commands      | [ <command1>, <command2>, ...]                      | Custom commands to be run post install                                               | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| !encryption-password | any                                                 | Password to encrypt disk, not encrypted if password not provided                     | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| filesystem           | ext4 / btrfs / fat32 etc.                           | Filesystem for root and home partitions                                              | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| gfx_driver           | - "VMware / VirtualBox (open-source)"               | Graphics Drivers to install                                                          | No                                            |
+|                      | - "Nvidia"                                          |                                                                                      |                                               |
+|                      | - "Intel (open-source)"                             |                                                                                      |                                               |
+|                      | - "AMD / ATI (open-source)"                         |                                                                                      |                                               |
+|                      | - "All open-source (default)"                       |                                                                                      |                                               |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| harddrive            | { "path": <path of device> }                        | Path of device to be used                                                            | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| hostname             | any                                                 | Hostname of machine after installation                                               | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| kernels              | [ "kernel1", "kernel2"]                             | List of kernels to install eg: linux, linux-lts, linux-zen  etc                      | Atleast 1                                     |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| keyboard-language    | 2 letter code for your keyboard language            | eg: us, de etc                                                                       | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| mirror-region        | {"<Region Name>": { "Mirror Name": True/False}, ..} | List of regions and mirrors to use                                                   | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| nic                  | { NetworkManager: <boolean>, nic: <nic name> }      |                                                                                      | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| ntp                  | <boolean>                                           | Set to true to set-up ntp post install                                               | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| packages             | [ "package1", "package2", ..]                       | List of packages to install post-installation                                        | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| profile              | Name of the profile to install                      | Profiles are present in profiles/, use the name of a profile to install it           | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| !root-password       | any                                                 | The root account password                                                            | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| services             | [ "service1", "service2", ..]                       | Services to enable post-installation                                                 | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| sys-encoding         | "utf-8"                                             | Set to change system encoding post-install, ignored if --advanced flag is not passed | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| sys-language         | "en_US"                                             | Set to change system language post-install, ignored if --advanced flag is not passed | No                                            |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| superusers           | { "<username>": { "!password": "<password>"}, ..}   | List of superuser credentials, see configuration for reference                       | Yes, if root account password is not provided |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| timezone             | Timezone to configure in installation               | Timezone eg: UTC, Asia/Kolkata etc.                                                  | Yes                                           |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+| users                | { "<username>": { "!password": "<password>"}, ..}   | List of regular user credentials, see configuration for reference                    | Yes, can be {}                                |
++----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+
+(To see which keys are required, scroll to the right in the above table.)
+
 Description individual steps
 ============================
 
-Below is a description of each individual steps in order.
+Below is a description of each individual step in order.
 
 keyboard languages
 ------------------
@@ -169,7 +177,7 @@ Default is :code:`auto detect best mirror`
 
 As an example:
 
- * :code:`Sweden` *(with a capital :code:`S`)* will only use mirrors from Sweden.
+ * :code:`Sweden` *(with a capital* :code:`S`) will only use mirrors from Sweden.
 
 Selection of drive
 ------------------
@@ -250,27 +258,26 @@ Some additional packages can be installed if need be. This step allows you to li
 Network configuration
 ---------------------
 
-| In this step is optional and allows for some basic configuration of your network.
+| This step is optional and allows for some basic configuration of your network.
 | There are two main options and two sub-options, the two main ones are:
 
  * Copy existing network configuration from the ISO you're working on
  * Select **one** network interface to configure
 
-| If copying existing configuration is chosen, no further configuration is needed.
-| The installer will copy any wireless *(based on :code:`iwd`)* configurations and :code:`systemd-networkd` configuration set up by the user or the default system configuration.
+| If copying the existing configuration is chosen, no further configuration is needed.
+| The installer will copy any wireless *(based on* :code:`iwd`) configurations and :code:`systemd-networkd` configuration set up by the user or the default system configuration.
 
-| If a interface was selected instead, a secondary option will be presented, allowing you to choose between two options:
+| If an interface was selected instead, a secondary option will be presented, allowing you to choose between two options:
 
  * Automatic DHCP configuration of IP, DNS and Gateway
- * Static IP configuration that further will ask some mandatory questions
+ * Static IP configuration that will ask some further mandatory questions
 
 Configuration verification
 --------------------------
 
-| Before the installer continues, and this is only valid for the **guided installation**.
-| The chosen configuration will be printed on the screen and you have the option to verify it.
+| Before the installer continues, and this is only valid for the **guided installation**, the chosen configuration will be printed on the screen and you have the option to verify it.
 
-After which you can press :code:`Enter` can be pressed in order to start the formatting and installation process.
+After which you can press :code:`Enter` in order to start the formatting and installation process.
 
 .. warning::
     After a 5 second countdown, the selected drive will be permanently erased and all data will be lost.
