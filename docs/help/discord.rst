@@ -3,7 +3,7 @@
 Discord
 =======
 
-There's a discord channel which is frequented by some contributors <https://github.com/archlinux/archinstall/graphs/contributors>`_.
+There's a discord channel which is frequented by some `contributors <https://github.com/archlinux/archinstall/graphs/contributors>`_.
 
 To join the server, head over to `https://discord.gg/cqXU88y <https://discord.gg/cqXU88y>`_'s server and join in.
 There's not many rules other than common sense and to treat others with respect.

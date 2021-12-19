@@ -6,7 +6,7 @@ Python module
 Archinstall supports running in `module mode <https://docs.python.org/3/library/__main__.html>`_.
 The way the library is invoked in module mode is limited to executing scripts under the **example** folder.
 
-It's there for important to place any script or profile you wish to invoke in the examples folder prior to building and installing.
+It's therefore important to place any script or profile you wish to invoke in the examples folder prior to building and installing.
 
 Pre-requisites
 --------------
@@ -56,4 +56,4 @@ This should now print all available drives on your system.
 
 .. note::
 
-    This should work on any system, not just Arch Linux based ones. But note that other functions in the library relies heavily on Arch Linux based commands to execute the installation steps. Such as `arch-chroot`.
+    This should work on any system, not just Arch Linux based ones. But note that other functions in the library rely heavily on Arch Linux based commands to execute the installation steps. Such as `arch-chroot`.
