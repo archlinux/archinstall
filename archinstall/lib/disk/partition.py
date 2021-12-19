@@ -160,15 +160,13 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.device_path}')
-			if partuuid_struct.exit_code == 0:
-				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if partuuid := partition_information.get('partuuid', None):
-						return partuuid
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
 
 	@property
 	def _safe_uuid(self) -> Optional[str]:
@@ -178,11 +176,7 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		self.partprobe()
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.device_path}')
-		if partuuid_struct.exit_code == 0:
-			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-				if partuuid := partition_information.get('partuuid', None):
-					return partuuid
+		return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
 
 	@property
 	def encrypted(self):
@@ -221,6 +215,7 @@ class Partition:
 
 	def partprobe(self):
 		SysCommand(f'bash -c "partprobe"')
+		time.sleep(1)
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)

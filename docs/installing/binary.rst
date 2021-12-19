@@ -21,7 +21,7 @@ Archinstall is on the `official repositories <https://wiki.archlinux.org/index.p
 Using PKGBUILD
 --------------
 
-The `source <https://github.com/archlinux/archinstall>`_ contains a binary `PKGBUILD <https://github.com/Torxed/archinstall/tree/master/PKGBUILD/archinstall>`_ which can be either copied straight off the website. Or cloned using `git clone https://github.com/Torxed/archinstall`.
+The `source <https://github.com/archlinux/archinstall>`_ contains a binary `PKGBUILD <https://github.com/Torxed/archinstall/tree/master/PKGBUILD/archinstall>`_ which can be either copied straight off the website or cloned using :code:`git clone https://github.com/Torxed/archinstall`.
 
 Once you've obtained the `PKGBUILD`, building it is pretty straight forward.
 
@@ -29,7 +29,7 @@ Once you've obtained the `PKGBUILD`, building it is pretty straight forward.
 
     makepkg -s
 
-Which should produce a `archinstall-X.x.z-1.pkg.tar.zst` that can be installed using:
+Which should produce an `archinstall-X.x.z-1.pkg.tar.zst` which can be installed using:
 
 .. code-block:: console
 

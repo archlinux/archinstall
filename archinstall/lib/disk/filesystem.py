@@ -36,6 +36,9 @@ class Filesystem:
 	def partuuid_to_index(self, uuid):
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
+			time.sleep(5)
+			
+			# TODO: Convert to blkid (or something similar, but blkid doesn't support traversing to list sub-PARTUUIDs based on blockdevice path?)
 			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
 			
 			for device in output['blockdevices']:
@@ -204,5 +207,9 @@ class Filesystem:
 			SysCommand(f'bash -c "umount {device}?"')
 		except:
 			pass
+		
 		self.partprobe()
-		return self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
+		worked = self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
+		self.partprobe()
+		
+		return worked
