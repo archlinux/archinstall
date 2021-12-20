@@ -98,9 +98,9 @@ def ask_user_questions():
 		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
 	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least none (behaviour has changed from previous version, where it had an empty list. Shouls be compatible with my code
 	if not archinstall.arguments['harddrives']:
-		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
-		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="red",level=logging.INFO)
-		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="red",level=logging.INFO)
+		archinstall.log("You decided to skip harddrive selection",fg="yellow",level=logging.INFO)
+		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="yellow",level=logging.INFO)
+		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="yellow",level=logging.INFO)
 		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
 			exit(1)
 	else:
