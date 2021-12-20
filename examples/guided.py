@@ -126,12 +126,18 @@ def ask_user_questions():
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): ')
 
-	# Ask for additional users (super-user if root pw was not set)
+	# Ask for super-user if root password was not set
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
 		archinstall.arguments['!superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+	
+	# Ask for additional users
+	if not archinstall.arguments.get('!users', None):
 		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
 		archinstall.arguments['!users'] = users
-		archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+		if not archinstall.arguments.get('!superusers', None):
+			archinstall.arguments['!superusers'] = superusers
+		else:
+			archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
