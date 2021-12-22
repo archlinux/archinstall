@@ -901,7 +901,7 @@ def select_kernel():
 
 def select_locale_lang(default):
 	locales = list_locales()
-	locale_lang = set([l.split()[0] for l in locales])
+	locale_lang = set([locale.split()[0] for locale in locales])
 
 	selected_locale = Menu(
 		f'Choose which locale language to use',
@@ -915,7 +915,7 @@ def select_locale_lang(default):
 
 def select_locale_enc(default):
 	locales = list_locales()
-	locale_enc = set([l.split()[1] for l in locales])
+	locale_enc = set([locale.split()[1] for locale in locales])
 
 	selected_locale = Menu(
 		f'Choose which locale encoding to use',

@@ -81,8 +81,7 @@ class SelectionMenu:
 				'Select mirror region',
 				lambda: archinstall.select_mirror_regions(),
 				display_func=lambda x: list(x.keys()) if x else '[]',
-				default={}
-			)
+				default={})
 		self._menu_options['sys-language'] = \
 			Selector('Select locale language', lambda: archinstall.select_locale_lang('en_US'), default='en_US')
 		self._menu_options['sys-encoding'] = \
@@ -91,8 +90,7 @@ class SelectionMenu:
 			Selector(
 				'Select harddrives',
 				lambda: archinstall.select_harddrives(),
-				default=[]
-			)
+				default=[])
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				'Select disk layout',
@@ -100,79 +98,66 @@ class SelectionMenu:
 					archinstall.arguments['harddrives'],
 					archinstall.arguments.get('advanced', False)
 				),
-				dependencies=['harddrives']
-			)
+				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				'Set encryption password',
 				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
 				display_func=lambda x: self._secret(x) if x else 'None',
-				dependencies=['harddrives']
-			)
+				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
 				'Use swap',
 				lambda: archinstall.ask_for_swap(),
-				default=True
-			)
+				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
 				'Select bootloader',
-				lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False)),
-			)
+				lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False)),)
 		self._menu_options['hostname'] = \
 			Selector('Specify hostname', lambda: archinstall.ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
 				'Specify root password',
 				lambda: archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): '),
-				display_func=lambda x: self._secret(x) if x else 'None'
-			)
+				display_func=lambda x: self._secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
 				'Specify superuser account', lambda: self._create_superuser_account(),
 				dependencies_not=['!root-password'],
-				display_func=lambda x: list(x.keys()) if x else ''
-			)
+				display_func=lambda x: list(x.keys()) if x else '')
 		self._menu_options['profile'] = \
 			Selector('Specify profile', lambda: self._select_profile())
 		self._menu_options['audio'] = \
 			Selector(
 				'Select audio',
-				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments.get('profile', None)))
-			)
+				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments.get('profile', None))))
 		self._menu_options['kernels'] = \
 			Selector(
 				'Select kernels',
 				lambda: archinstall.select_kernel(),
-				default='linux'
-			)
+				default='linux')
 		self._menu_options['packages'] = \
 			Selector(
 				'Additional packages to install',
 				lambda: self._additional_packages_to_install(),
-				default=[]
-			)
+				default=[])
 		self._menu_options['nic'] = \
 			Selector(
 				'Configure network',
 				lambda: archinstall.ask_to_configure_network(),
-				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually'
-			)
+				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually')
 		self._menu_options['timezone'] = \
 			Selector('Select timezone', lambda: archinstall.ask_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				'Set automatic time sync (NTP)',
 				lambda: archinstall.ask_ntp(),
-				dependencies=['timezone']
-			)
-
+				dependencies=['timezone'])
 		self._menu_options['install'] = \
 			Selector(
 				f'Install ({self._missing_configs()} config(s) missing)',
-				enabled=True
-			)
+				enabled=True)
 		self._menu_options['abort'] = Selector('Abort', enabled=True)
 
 	def _missing_configs(self):
@@ -314,7 +299,6 @@ class SelectionMenu:
 		result = selector.func()
 		self._menu_options[selector_name].set_current_selection(result)
 		archinstall.arguments[selector_name] = result
-
 
 	def _post_processing(self):
 		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
