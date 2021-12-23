@@ -153,8 +153,15 @@ class GlobalMenu:
 				display_func=lambda x: self._secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
-				'Specify superuser account', lambda: self._create_superuser_account(),
+				'Specify superuser account',
+				lambda: self._create_superuser_account(),
 				dependencies_not=['!root-password'],
+				display_func=lambda x: list(x.keys()) if x else '')
+		self._menu_options['!users'] = \
+			Selector(
+				'Specify user account',
+				lambda: self._create_user_account(),
+				default={},
 				display_func=lambda x: list(x.keys()) if x else '')
 		self._menu_options['profile'] = \
 			Selector(
@@ -323,9 +330,16 @@ class GlobalMenu:
 
 	def _create_superuser_account(self):
 		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
-		archinstall.arguments['!users'] = users
-		return {**superuser, **superusers}
+		return superuser
+
+	def _create_user_account(self):
+		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user: ')
+		if not archinstall.arguments.get('!superusers', None):
+			archinstall.arguments['!superusers'] = superusers
+		else:
+			archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+
+		return users
 
 	def _set_kb_language(self):
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.

@@ -103,6 +103,7 @@ def ask_user_questions():
 	global_menu.enable('!root-password')
 
 	global_menu.enable('!superusers')
+	global_menu.enable('!users')
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	global_menu.enable('profile')
