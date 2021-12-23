@@ -21,7 +21,7 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .. import fs_types
+from .. import fs_types, validate_package_list
 
 
 def get_terminal_height():
@@ -263,7 +263,7 @@ def ask_for_swap(prompt='Would you like to use swap on zram?', forced=False):
 def ask_ntp():
 	prompt = 'Would you like to use automatic time synchronization (NTP) with the default time servers?'
 	prompt += 'Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki'
-	choice = Menu(prompt, ['yes', 'no'], skip=False).run()
+	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 	return False if choice == 'no' else True
 
 
@@ -349,8 +349,39 @@ def ask_for_bootloader(advanced_options=False) -> str:
 def ask_for_audio_selection(desktop=True):
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
+	selected_audio = Menu(
+		f'Choose an audio server',
+		choices,
+		default_option=audio,
+		skip=False
+	).run()
 	return selected_audio
+
+
+def ask_additional_packages_to_install(self, packages=None):
+	# Additional packages (with some light weight error handling for invalid package names)
+	print(
+		"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+	while True:
+		if packages is None:
+			packages = [p for p in input(
+				'Write additional packages to install (space separated, leave blank to skip): '
+			).split(' ') if len(p)]
+
+		if len(packages):
+			# Verify packages that were given
+			try:
+				log("Verifying that additional packages exist (this might take a few seconds)")
+				validate_package_list(packages)
+				break
+			except RequirementError as e:
+				log(e, fg='red')
+		else:
+			# no additional packages were selected, which we'll allow
+			break
+
+	return packages
 
 
 def ask_to_configure_network():

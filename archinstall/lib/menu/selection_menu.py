@@ -15,7 +15,7 @@ class Selector:
 		dependencies=[],
 		dependencies_not=[]
 	):
-		self._name = description
+		self._description = description
 		self.func = func
 		self._display_func = display_func
 		self._current_selection = default
@@ -23,10 +23,6 @@ class Selector:
 		self.text = self.menu_text()
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
-
-	@property
-	def name(self):
-		return self._name
 
 	@property
 	def dependencies(self):
@@ -39,6 +35,10 @@ class Selector:
 	def set_enabled(self):
 		self.enabled = True
 
+	def update_description(self, description):
+		self._description = description
+		self.text = self.menu_text()
+
 	def menu_text(self):
 		current = ''
 
@@ -49,10 +49,10 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(self._name)
+			padding = 35 - len(self._description)
 			current = ' ' * padding + f'SET: {current}'
 
-		return f'{self._name} {current}'
+		return f'{self._description} {current}'
 
 	def set_current_selection(self, current):
 		self._current_selection = current
@@ -89,7 +89,7 @@ class SelectionMenu:
 		self._menu_options['harddrives'] = \
 			Selector(
 				'Select harddrives',
-				lambda: archinstall.select_harddrives(),
+				lambda: self._select_harddrives(),
 				default=[])
 		self._menu_options['disk_layouts'] = \
 			Selector(
@@ -118,8 +118,8 @@ class SelectionMenu:
 			Selector('Specify hostname', lambda: archinstall.ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
-				'Specify root password',
-				lambda: archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): '),
+				'Set root password',
+				lambda: self._set_root_password(),
 				display_func=lambda x: self._secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
@@ -127,7 +127,10 @@ class SelectionMenu:
 				dependencies_not=['!root-password'],
 				display_func=lambda x: list(x.keys()) if x else '')
 		self._menu_options['profile'] = \
-			Selector('Specify profile', lambda: self._select_profile())
+			Selector(
+				'Specify profile',
+				lambda: self._select_profile(),
+				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
 				'Select audio',
@@ -140,63 +143,82 @@ class SelectionMenu:
 		self._menu_options['packages'] = \
 			Selector(
 				'Additional packages to install',
-				lambda: self._additional_packages_to_install(),
+				lambda: archinstall.ask_additional_packages_to_install(archinstall.arguments.get('packages', None)),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
 				'Configure network',
 				lambda: archinstall.ask_to_configure_network(),
-				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually')
+				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
+				default={})
 		self._menu_options['timezone'] = \
 			Selector('Select timezone', lambda: archinstall.ask_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				'Set automatic time sync (NTP)',
 				lambda: archinstall.ask_ntp(),
-				dependencies=['timezone'])
+				default=True)
 		self._menu_options['install'] = \
 			Selector(
-				f'Install ({self._missing_configs()} config(s) missing)',
+				self._install_text(),
 				enabled=True)
 		self._menu_options['abort'] = Selector('Abort', enabled=True)
 
+	def _install_text(self):
+		missing = self._missing_configs()
+		if missing > 0:
+			return f'Install ({missing} config(s) missing)'
+		return 'Install'
+
 	def _missing_configs(self):
+		def check(s):
+			return self._menu_options.get(s).has_selection()
+
 		missing = 0
-		for selector in self._menu_options.values():
-			if not selector.has_selection():
-				missing += 1
+		if not check('bootloader'):
+			missing += 1
+		if not check('hostname'):
+			missing += 1
+		if not check('audio'):
+			missing += 1
+		if not check('timezone'):
+			missing += 1
+		if not check('!root-password') and not check('!superusers'):
+			missing += 1
+		if check('harddrives') and not check('disk_layouts'):
+			missing += 1
 
 		return missing
 
+	# TODO
+	# document arguments
+	# create separate folder for menu
+
+	def _set_root_password(self):
+		prompt = 'Enter root password (leave blank to disable root & create superuser): '
+		password = archinstall.get_password(prompt=prompt)
+
+		if password is not None:
+			self._menu_options.get('!superusers').set_current_selection(None)
+			archinstall.arguments['!users'] = {}
+			archinstall.arguments['!superusers'] = {}
+
+		return password
+
+	def _select_harddrives(self):
+		old_haddrives = archinstall.arguments.get('harddrives')
+		harddrives = archinstall.select_harddrives()
+
+		# in case the harddrives got changed we have to
+		# reset the disk layout as well
+		if old_haddrives != harddrives:
+			self._menu_options.get('disk_layouts').set_current_selection(None)
+			archinstall.arguments['disk_layouts'] = {}
+
+		return harddrives
+
 	def _secret(self, x):
 		return '*' * len(x)
-
-	def _additional_packages_to_install(self):
-		# Additional packages (with some light weight error handling for invalid package names)
-		print(
-			"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
-		print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-		while True:
-			packages = archinstall.arguments.get('packages', None)
-
-			if not packages:
-				packages = [p for p in input(
-					'Write additional packages to install (space separated, leave blank to skip): '
-				).split(' ') if len(p)]
-
-			if len(packages):
-				# Verify packages that were given
-				try:
-					archinstall.log("Verifying that additional packages exist (this might take a few seconds)")
-					archinstall.validate_package_list(packages)
-					break
-				except archinstall.RequirementError as e:
-					archinstall.log(e, fg='red')
-			else:
-				# no additional packages were selected, which we'll allow
-				break
-
-		return packages
 
 	def _select_profile(self):
 		profile = archinstall.select_profile()
@@ -275,13 +297,12 @@ class SelectionMenu:
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
 			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
-
 			if selection:
 				selection = selection.strip()
-				if 'Abort' in selection.strip():
+				if 'Abort' in selection:
 					exit(0)
-				elif 'Install' in selection.strip():
-					if not self._missing_configs():
+				elif 'Install' in selection:
+					if self._missing_configs() == 0:
 						self._post_processing()
 						break
 				else:
@@ -289,7 +310,7 @@ class SelectionMenu:
 
 	def _process_selection(self, selection):
 		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text == selection]
+		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
 
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection}')
@@ -299,6 +320,12 @@ class SelectionMenu:
 		result = selector.func()
 		self._menu_options[selector_name].set_current_selection(result)
 		archinstall.arguments[selector_name] = result
+
+		self._update_install()
+
+	def _update_install(self):
+		text = self._install_text()
+		self._menu_options.get('install').update_description(text)
 
 	def _post_processing(self):
 		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):

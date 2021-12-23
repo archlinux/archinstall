@@ -5,7 +5,7 @@ import pathlib
 import time
 
 import archinstall
-from archinstall.lib.selection_menu import SelectionMenu
+from archinstall.lib.menu.selection_menu import SelectionMenu
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
