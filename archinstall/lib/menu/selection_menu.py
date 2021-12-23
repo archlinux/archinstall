@@ -15,6 +15,36 @@ class Selector:
 		dependencies=[],
 		dependencies_not=[]
 	):
+		"""
+		Create a new menu selection entry
+
+		:param description: Text that will be displayed as the menu entry
+		:type description: str
+
+		:param func: Function that is called when the menu entry is selected
+		:type func: Callable
+
+		:param display_func: After specifying a setting for a menu item it is displayed
+		on the right side of the item as is; with this function one can modify the entry
+		to be displayed; e.g. when specifying a password one can display **** instead
+		:type display_func: Callable
+
+		:param default: Default value for this menu entry
+		:type default: Any
+
+		:param enabled: Specify if this menu entry should be displayed
+		:type enabled: bool
+
+		:param dependencies: Specify dependencies for this menu entry; if the dependencies
+		are not set yet, then this item is not displayed; e.g. disk_layout depends on selectiong
+		harddrive(s) first
+		:type dependencies: list
+
+		:param dependencies_not: These are the exclusive options; the menu item will only be
+		displayed if non of the entries in the list have been specified
+		:type dependencies_not: list
+		"""
+
 		self._description = description
 		self.func = func
 		self._display_func = display_func
@@ -68,7 +98,7 @@ class Selector:
 		return True
 
 
-class SelectionMenu:
+class GlobalMenu:
 	def __init__(self):
 		self._menu_options = {}
 		self._setup_selection_menu_options()
@@ -164,81 +194,6 @@ class SelectionMenu:
 				enabled=True)
 		self._menu_options['abort'] = Selector('Abort', enabled=True)
 
-	def _install_text(self):
-		missing = self._missing_configs()
-		if missing > 0:
-			return f'Install ({missing} config(s) missing)'
-		return 'Install'
-
-	def _missing_configs(self):
-		def check(s):
-			return self._menu_options.get(s).has_selection()
-
-		missing = 0
-		if not check('bootloader'):
-			missing += 1
-		if not check('hostname'):
-			missing += 1
-		if not check('audio'):
-			missing += 1
-		if not check('timezone'):
-			missing += 1
-		if not check('!root-password') and not check('!superusers'):
-			missing += 1
-		if check('harddrives') and not check('disk_layouts'):
-			missing += 1
-
-		return missing
-
-	# TODO
-	# document arguments
-	# create separate folder for menu
-
-	def _set_root_password(self):
-		prompt = 'Enter root password (leave blank to disable root & create superuser): '
-		password = archinstall.get_password(prompt=prompt)
-
-		if password is not None:
-			self._menu_options.get('!superusers').set_current_selection(None)
-			archinstall.arguments['!users'] = {}
-			archinstall.arguments['!superusers'] = {}
-
-		return password
-
-	def _select_harddrives(self):
-		old_haddrives = archinstall.arguments.get('harddrives')
-		harddrives = archinstall.select_harddrives()
-
-		# in case the harddrives got changed we have to
-		# reset the disk layout as well
-		if old_haddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
-			archinstall.arguments['disk_layouts'] = {}
-
-		return harddrives
-
-	def _secret(self, x):
-		return '*' * len(x)
-
-	def _select_profile(self):
-		profile = archinstall.select_profile()
-
-		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-		if profile and profile.has_prep_function():
-			namespace = f'{profile.namespace}.py'
-			with profile.load_instructions(namespace=namespace) as imported:
-				if not imported._prep_function():
-					archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
-					exit(1)
-
-		return profile
-
-	def _create_superuser_account(self):
-		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
-		archinstall.arguments['!users'] = users
-		return {**superuser, **superusers}
-
 	def enable(self, selector_name, omit_if_set=False):
 		arg = archinstall.arguments.get(selector_name, None)
 
@@ -253,40 +208,6 @@ class SelectionMenu:
 		else:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
-
-	def _set_kb_language(self):
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if archinstall.arguments.get('keyboard-layout', None) and len(archinstall.arguments['keyboard-layout']):
-			archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
-
-	def _verify_selection_enabled(self, selection_name):
-		if selection := self._menu_options.get(selection_name, None):
-			if not selection.enabled:
-				return False
-
-			if len(selection.dependencies) > 0:
-				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or not self._menu_options.get(d).has_selection():
-						return False
-
-			if len(selection.dependencies_not) > 0:
-				for d in selection.dependencies_not:
-					if self._menu_options.get(d).has_selection():
-						return False
-
-			return True
-
-		raise ValueError(f'No selection found: {selection_name}')
-
-	def _menus_to_enable(self):
-		enabled_menus = {}
-
-		for name, selection in self._menu_options.items():
-			if self._verify_selection_enabled(name):
-				enabled_menus[name] = selection
-
-		return enabled_menus
 
 	def run(self):
 		while True:
@@ -334,3 +255,109 @@ class SelectionMenu:
 			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
 				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
 					archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+
+
+	def _install_text(self):
+		missing = self._missing_configs()
+		if missing > 0:
+			return f'Install ({missing} config(s) missing)'
+		return 'Install'
+
+	def _missing_configs(self):
+		def check(s):
+			return self._menu_options.get(s).has_selection()
+
+		missing = 0
+		if not check('bootloader'):
+			missing += 1
+		if not check('hostname'):
+			missing += 1
+		if not check('audio'):
+			missing += 1
+		if not check('timezone'):
+			missing += 1
+		if not check('!root-password') and not check('!superusers'):
+			missing += 1
+		if check('harddrives') and not check('disk_layouts'):
+			missing += 1
+
+		return missing
+
+	def _set_root_password(self):
+		prompt = 'Enter root password (leave blank to disable root & create superuser): '
+		password = archinstall.get_password(prompt=prompt)
+
+		if password is not None:
+			self._menu_options.get('!superusers').set_current_selection(None)
+			archinstall.arguments['!users'] = {}
+			archinstall.arguments['!superusers'] = {}
+
+		return password
+
+	def _select_harddrives(self):
+		old_haddrives = archinstall.arguments.get('harddrives')
+		harddrives = archinstall.select_harddrives()
+
+		# in case the harddrives got changed we have to
+		# reset the disk layout as well
+		if old_haddrives != harddrives:
+			self._menu_options.get('disk_layouts').set_current_selection(None)
+			archinstall.arguments['disk_layouts'] = {}
+
+		return harddrives
+
+	def _secret(self, x):
+		return '*' * len(x)
+
+	def _select_profile(self):
+		profile = archinstall.select_profile()
+
+		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
+		if profile and profile.has_prep_function():
+			namespace = f'{profile.namespace}.py'
+			with profile.load_instructions(namespace=namespace) as imported:
+				if not imported._prep_function():
+					archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
+					exit(1)
+
+		return profile
+
+	def _create_superuser_account(self):
+		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
+		archinstall.arguments['!users'] = users
+		return {**superuser, **superusers}
+
+	def _set_kb_language(self):
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# This will just help the user with the next following questions.
+		if archinstall.arguments.get('keyboard-layout', None) and len(archinstall.arguments['keyboard-layout']):
+			archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+
+	def _verify_selection_enabled(self, selection_name):
+		if selection := self._menu_options.get(selection_name, None):
+			if not selection.enabled:
+				return False
+
+			if len(selection.dependencies) > 0:
+				for d in selection.dependencies:
+					if not self._verify_selection_enabled(d) or not self._menu_options.get(d).has_selection():
+						return False
+
+			if len(selection.dependencies_not) > 0:
+				for d in selection.dependencies_not:
+					if self._menu_options.get(d).has_selection():
+						return False
+
+			return True
+
+		raise ValueError(f'No selection found: {selection_name}')
+
+	def _menus_to_enable(self):
+		enabled_menus = {}
+
+		for name, selection in self._menu_options.items():
+			if self._verify_selection_enabled(name):
+				enabled_menus[name] = selection
+
+		return enabled_menus

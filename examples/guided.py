@@ -5,7 +5,7 @@ import pathlib
 import time
 
 import archinstall
-from archinstall.lib.menu.selection_menu import SelectionMenu
+from archinstall.lib.menu.selection_menu import GlobalMenu
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -72,57 +72,57 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
-	selection_menu = SelectionMenu()
-	selection_menu.enable('keyboard-layout')
+	global_menu = GlobalMenu()
+	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation
-	selection_menu.enable('mirror-region')
+	global_menu.enable('mirror-region')
 
 	if archinstall.arguments.get('advanced', False):
-		selection_menu.enable('sys-language', True)
-		selection_menu.enable('sys-encoding', True)
+		global_menu.enable('sys-language', True)
+		global_menu.enable('sys-encoding', True)
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	selection_menu.enable('harddrives')
+	global_menu.enable('harddrives')
 
-	selection_menu.enable('disk_layouts')
+	global_menu.enable('disk_layouts')
 
 	# Get disk encryption password (or skip if blank)
-	selection_menu.enable('!encryption-password')
+	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	selection_menu.enable('bootloader')
+	global_menu.enable('bootloader')
 
-	selection_menu.enable('swap')
+	global_menu.enable('swap')
 
 	# Get the hostname for the machine
-	selection_menu.enable('hostname')
+	global_menu.enable('hostname')
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	selection_menu.enable('!root-password')
+	global_menu.enable('!root-password')
 
-	selection_menu.enable('!superusers')
+	global_menu.enable('!superusers')
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
-	selection_menu.enable('profile')
+	global_menu.enable('profile')
 
 	# Ask about audio server selection if one is not already set
-	selection_menu.enable('audio')
+	global_menu.enable('audio')
 
 	# Ask for preferred kernel:
-	selection_menu.enable('kernels')
+	global_menu.enable('kernels')
 
-	selection_menu.enable('packages')
+	global_menu.enable('packages')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
-	selection_menu.enable('nic')
+	global_menu.enable('nic')
 
-	selection_menu.enable('timezone')
+	global_menu.enable('timezone')
 
-	selection_menu.enable('ntp')
+	global_menu.enable('ntp')
 
-	selection_menu.run()
+	global_menu.run()
 
 
 def perform_filesystem_operations():
