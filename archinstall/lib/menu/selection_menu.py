@@ -256,7 +256,6 @@ class GlobalMenu:
 				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
 					archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
-
 	def _install_text(self):
 		missing = self._missing_configs()
 		if missing > 0:
