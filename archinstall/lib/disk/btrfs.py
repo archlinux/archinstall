@@ -90,6 +90,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 	"""
 	# first we mount the basic partition
 	# TODO get rid of the need to use the installation object
+	# TODO For encrypted devices we need some special processing prior to it
 	installation.mount(partition['device_instance'],"/")
 	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
 	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
@@ -123,6 +124,17 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 					raise DiskError(f"Could not set  nodatacow attribute at {installation.target}/{name}: {cmd}")
 				# entry is deleted so nodatacow doesn't propagate to the mount options
 				del mount_options[mount_options.index('nodatacow')]
+			# Make the compress processing now
+			# it is not an options which can be established by subvolume (but for whole file systems), and can be
+			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
+			# in this way only zstd compression is activaded
+			# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
+			if 'compress' in mount_options:
+				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
+					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
+				# entry is deleted so nodatacow doesn't propagate to the mount options
+				del mount_options[mount_options.index('compress')]
+			# END compress processing.
 			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
 				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
