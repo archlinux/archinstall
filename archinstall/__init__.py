@@ -104,8 +104,6 @@ def run_as_a_module():
 		print(f"Couldn't find file: {err}")
 		sys.exit(1)
 
-	os.chdir(os.path.abspath(os.path.dirname(__file__)))
-
 	# Remove the example directory from the PROFILE_PATH, to avoid guided.py etc shows up in user input questions.
 	storage['PROFILE_PATH'].pop()
 	script.execute()
