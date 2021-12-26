@@ -82,16 +82,12 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 	* the partition dictionary entry which represents the physical partition
 	* mountpoinst, the dictionary which contains all the partititon to be mounted
 	* subvolumes is the dictionary with the names of the subvolumes and its location
-	First we mount the partition as root
-	Then we create all the subvolumes inside btrfs as demandd
+	We expect the partition has been mounted as / , and it to be unmounted after the processing
+	Then we create all the subvolumes inside btrfs as demand
 	We clone then, both the partition dictionary and the object inside it and adapt it to the subvolume needs
 	Then we add it them to the mountpoints dictionary to be processed as "normal" partitions
-	At the end we unmount the "real" partition to further process
-	"""
-	# first we mount the basic partition
-	# TODO get rid of the need to use the installation object
 	# TODO For encrypted devices we need some special processing prior to it
-	installation.mount(partition['device_instance'],"/")
+	"""
 	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
 	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
 	# of mount options (or similar used by brtfs)
@@ -165,11 +161,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				# as "normal" ones
 				mountpoints[fake_partition['mountpoint']] = fake_partition
 		except Exception as e:
-			# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
-			partition['device_instance'].unmount()
 			raise e
 	# if the physical partition has been selected to be mounted, we include it at the list. Remmeber, all the above treatement won't happen except the creation of the subvolume
 	if partition['mountpoint']:
 		mountpoints[partition['mountpoint']] = partition
-	# correct end implies the unmounting
-	partition['device_instance'].unmount()

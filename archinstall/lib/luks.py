@@ -12,6 +12,8 @@ from .storage import storage
 
 class luks2:
 	def __init__(self, partition, mountpoint, password, key_file=None, auto_unmount=False, *args, **kwargs):
+		from pudb import set_trace
+		set_trace()
 		self.password = password
 		self.partition = partition
 		self.mountpoint = mountpoint

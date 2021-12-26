@@ -185,7 +185,14 @@ class Installer:
 		for blockdevice in layouts:
 			for partition in layouts[blockdevice]['partitions']:
 				if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
-					manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+					self.mount(partition['device_instance'],"/")
+					try:
+						manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+					except Exception as e:
+						# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+						partition['device_instance'].unmount()
+						raise e
+					partition['device_instance'].unmount()
 				else:
 					mountpoints[partition['mountpoint']] = partition
 
