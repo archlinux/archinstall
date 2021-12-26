@@ -185,14 +185,27 @@ class Installer:
 		for blockdevice in layouts:
 			for partition in layouts[blockdevice]['partitions']:
 				if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
-					self.mount(partition['device_instance'],"/")
-					try:
-						manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
-					except Exception as e:
-						# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+					if partition.get('encrypted',False):
+						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path('/').name}loop"
+						# Immediately unlock the encrypted device to format the inner volume
+						with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
+							unlocked_device.mount(f"{self.target}/")
+							try:
+								manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+							except Exception as e:
+								# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+								unlocked_device.unmount()
+								raise e
+							unlocked_device.unmount()
+					else:
+						self.mount(partition['device_instance'],"/")
+						try:
+							manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+						except Exception as e:
+							# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+							partition['device_instance'].unmount()
+							raise e
 						partition['device_instance'].unmount()
-						raise e
-					partition['device_instance'].unmount()
 				else:
 					mountpoints[partition['mountpoint']] = partition
 
