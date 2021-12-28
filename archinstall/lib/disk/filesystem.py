@@ -93,10 +93,11 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
+					# to be able to generate an unique name in case the partition will not be mounted
 					if partition.get('mountpoint',None):
 						ppath = partition['mountpoint']
 					else:
-					    ppath = partition['device_instance'].path
+						ppath = partition['device_instance'].path
 					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
 
 					partition['device_instance'].encrypt(password=partition['!password'])

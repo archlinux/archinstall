@@ -201,7 +201,7 @@ class Installer:
 								unlocked_device.unmount()
 								raise e
 							unlocked_device.unmount()
-						#TODO es el sitio de generar la clave
+						# TODO generate key
 					else:
 						self.mount(partition['device_instance'],"/")
 						try:
@@ -666,7 +666,7 @@ class Installer:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 					base_path,bind_path = split_bind_name(str(root_partition.path))
 					if bind_path is not None: # and root_fs_type == 'btrfs':
-							options_entry = f"rootflags=subvol={bind_path} " + options_entry
+						options_entry = f"rootflags=subvol={bind_path} " + options_entry
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)

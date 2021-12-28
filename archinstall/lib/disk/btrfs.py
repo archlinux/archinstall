@@ -139,9 +139,10 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				# we start to modify entries in the "fake partition" to match the needs of the subvolumes
 				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
+				# and reset the encryption parameters
 				del fake_partition['btrfs']
-				fake_partition['encrypted']=False
-				fake_partition['generate-encryption-key-file']=False
+				fake_partition['encrypted'] = False
+				fake_partition['generate-encryption-key-file'] = False
 				# Mount destination. As of now the right hand part
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
@@ -156,10 +157,12 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				if not unlocked_device:
 					fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
 				else:
+					# for subvolumes IN an encrypted partition we make our device instance from unlocked device instead of the raw partition.
+					# This time we make a copy (we should to the same above TODO) and alter the path by hand
 					from copy import copy
-					#KIDS DONT'T DO THIS AT HOME
-					fake_partition['device_instance']=copy(unlocked_device)
-					fake_partition['device_instance'].path=f"{unlocked_device.path}[/{name}]"
+					# KIDS DONT'T DO THIS AT HOME
+					fake_partition['device_instance'] = copy(unlocked_device)
+					fake_partition['device_instance'].path = f"{unlocked_device.path}[/{name}]"
 				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
 				# If i don't reset it, process will abort as "already mounted' .
 				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
