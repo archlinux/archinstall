@@ -75,7 +75,7 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
-def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, subvolumes :dict):
+def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, subvolumes :dict, unlocked_device :dict = None):
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
 	* the installation object
@@ -140,6 +140,8 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
 				del fake_partition['btrfs']
+				fake_partition['encrypted']=False
+				fake_partition['generate-encryption-key-file']=False
 				# Mount destination. As of now the right hand part
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
@@ -151,7 +153,13 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 				# * path, which will be expanded with the subvolume name to use the bind mount syntax the system uses for naming mounted subvolumes
 				# * size. When the OS queries all the subvolumes share the same size as the full partititon
 				# * uuid. All the subvolumes on a partition share the same uuid
-				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				if not unlocked_device:
+					fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				else:
+					from copy import copy
+					#KIDS DONT'T DO THIS AT HOME
+					fake_partition['device_instance']=copy(unlocked_device)
+					fake_partition['device_instance'].path=f"{unlocked_device.path}[/{name}]"
 				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
 				# If i don't reset it, process will abort as "already mounted' .
 				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
