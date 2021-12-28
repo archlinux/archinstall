@@ -664,16 +664,15 @@ class Installer:
 						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 					else:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
+					base_path,bind_path = split_bind_name(str(root_partition.path))
+					if bind_path is not None: # and root_fs_type == 'btrfs':
+							options_entry = f"rootflags=subvol={bind_path} " + options_entry
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
 						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
 					else:
-						# this code might have to be propagated to all boot entries
-						base_path,bind_path = split_bind_name(str(root_partition.path))
-						if bind_path is not None: # and root_fs_type == 'btrfs':
-							options_entry = f"rootflags=subvol={bind_path} " + options_entry
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
 						entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
 
