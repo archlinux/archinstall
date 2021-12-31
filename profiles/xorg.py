@@ -45,6 +45,17 @@ if __name__ == 'xorg':
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
 			else:
 				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', []))}")
+		elif 'amdgpu' in archinstall.storage.get("gfx_driver_packages", []):
+			# The order of these two are important if amdgpu is installed #808
+			if 'amdgpu' in archinstall.storage['installation_session'].MODULES:
+				archinstall.storage['installation_session'].MODULES.remove('amdgpu')
+			archinstall.storage['installation_session'].MODULES.append('amdgpu')
+
+			if 'radeon' in archinstall.storage['installation_session'].MODULES:
+				archinstall.storage['installation_session'].MODULES.remove('radeon')
+			archinstall.storage['installation_session'].MODULES.append('radeon')
+
+			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', []))}")
 		else:
 			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', []))}")
 	except Exception as err:

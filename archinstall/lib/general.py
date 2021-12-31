@@ -284,6 +284,9 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
+			with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+				peak_output_log.write(output)
+
 			sys.stdout.write(str(output))
 			sys.stdout.flush()
 
