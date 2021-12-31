@@ -158,7 +158,7 @@ class Partition:
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
-			time.sleep(storage['DISK_TIMEOUTS'] * storage['DISK_RETRY_ATTEMPTS'])
+			time.sleep(storage['DISK_TIMEOUTS'] * i)
 
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
