@@ -144,7 +144,7 @@ def ask_user_questions():
 	if not archinstall.arguments.get('!users') and not archinstall.arguments.get('!superusers'):
 		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
 		archinstall.arguments['!users'] = users
-		archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+		archinstall.arguments['!superusers'] = {**archinstall.arguments.get('!superusers', {}), **superusers}
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
