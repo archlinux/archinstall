@@ -51,7 +51,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		# Or the disk size is too small to allow for a separate /home
 		layout[block_device.path]['partitions'][-1]['size'] = '100%'
 	else:
-		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GB"
+		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, MIN_SIZE_TO_ALLOW_HOME_PART)}GB"
 
 	if default_filesystem == 'btrfs' and using_subvolumes:
 		# if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
@@ -78,7 +78,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 			"type" : "primary",
 			"encrypted" : False,
 			"format" : True,
-			"start" : f"{min(block_device.size+0.5, 20.5)}GB",
+			"start" : f"{min(block_device.size + 0.5, MIN_SIZE_TO_ALLOW_HOME_PART + 0.5)}GB",
 			"size" : "100%",
 			"mountpoint" : "/home",
 			"filesystem" : {
@@ -98,8 +98,8 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_o
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 
-	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
-	ARCH_LINUX_INSTALLED_SIZE = 20 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
+	MIN_SIZE_TO_ALLOW_HOME_PART = 60 # Gb
+	ARCH_LINUX_INSTALLED_SIZE = 40 # Gb, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 
 	block_devices = sort_block_devices_based_on_performance(block_devices).keys()
 
