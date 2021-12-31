@@ -72,7 +72,7 @@ class Partition:
 	def __dump__(self):
 		return {
 			'type': 'primary',
-			'PARTUUID': self._safe_uuid,
+			'PARTUUID': self.uuid,
 			'wipe': self.allow_formatting,
 			'boot': self.boot,
 			'ESP': self.boot,
@@ -158,14 +158,13 @@ class Partition:
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
+			time.sleep(storage['DISK_TIMEOUTS'] * storage['DISK_RETRY_ATTEMPTS'])
 
 			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 			if partuuid_struct.exit_code == 0:
 				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
 					if partuuid := partition_information.get('partuuid', None):
 						return partuuid
-
-			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
 
@@ -176,7 +175,7 @@ class Partition:
 		This function should only be used where uuid is not crucial.
 		For instance when you want to get a __repr__ of the class.
 		"""
-		self.partprobe()
+		# self.partprobe()
 
 		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
 		if partuuid_struct.exit_code == 0:
