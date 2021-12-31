@@ -213,7 +213,7 @@ class Installer:
 						partition['device_instance'].unmount()
 				else:
 					mountpoints[partition['mountpoint']] = partition
-		for mountpoint in sorted(mountpoints.keys()):
+		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest != None]):
 			partition = mountpoints[mountpoint]
 			if partition.get('encrypted', False) and not partition.get('subvolume',None):
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
