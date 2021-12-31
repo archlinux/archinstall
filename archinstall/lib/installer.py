@@ -11,14 +11,14 @@ from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .disk.helpers import get_mount_info
+from .disk.helpers import get_mount_info, split_bind_name
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
-from .disk.btrfs import create_subvolume, mount_subvolume
+from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError
 
@@ -185,12 +185,38 @@ class Installer:
 		mountpoints = {}
 		for blockdevice in layouts:
 			for partition in layouts[blockdevice]['partitions']:
-				mountpoints[partition['mountpoint']] = partition
-
-		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest is not None]):
+				if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
+					if partition.get('encrypted',False):
+						if partition.get('mountpoint',None):
+							ppath = partition['mountpoint']
+						else:
+							ppath = partition['device_instance'].path
+						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
+						# Immediately unlock the encrypted device to format the inner volume
+						with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=False) as unlocked_device:
+							unlocked_device.mount(f"{self.target}/")
+							try:
+								manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes,unlocked_device)
+							except Exception as e:
+								# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+								unlocked_device.unmount()
+								raise e
+							unlocked_device.unmount()
+						# TODO generate key
+					else:
+						self.mount(partition['device_instance'],"/")
+						try:
+							manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+						except Exception as e:
+							# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
+							partition['device_instance'].unmount()
+							raise e
+						partition['device_instance'].unmount()
+				else:
+					mountpoints[partition['mountpoint']] = partition
+		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest != None]):
 			partition = mountpoints[mountpoint]
-
-			if partition.get('encrypted', False):
+			if partition.get('encrypted', False) and not partition.get('subvolume',None):
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 				if not (password := partition.get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
@@ -216,18 +242,16 @@ class Installer:
 
 			else:
 				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
-
+				if partition.get('options',[]):
+					mount_options = ','.join(partition['options'])
+					partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				else:
+					partition['device_instance'].mount(f"{self.target}{mountpoint}")
 			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
-
-			if (subvolumes := partition.get('btrfs', {}).get('subvolumes', {})):
-				for name, location in subvolumes.items():
-					create_subvolume(self, location)
-					mount_subvolume(self, location)
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
@@ -469,11 +493,14 @@ class Installer:
 		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
 				# if partition.encrypted:
-				self.base_packages.append('btrfs-progs')
+				if 'btrfs-progs' not in self.base_packages:
+					self.base_packages.append('btrfs-progs')
 			if partition.filesystem == 'xfs':
-				self.base_packages.append('xfsprogs')
+				if 'xfs' not in self.base_packages:
+					self.base_packages.append('xfsprogs')
 			if partition.filesystem == 'f2fs':
-				self.base_packages.append('f2fs-tools')
+				if 'f2fs' not in self.base_packages:
+					self.base_packages.append('f2fs-tools')
 
 			# Configure mkinitcpio to handle some specific use cases.
 			if partition.filesystem == 'btrfs':
@@ -481,7 +508,6 @@ class Installer:
 					self.MODULES.append('btrfs')
 				if '/usr/bin/btrfs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
-
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
 			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
@@ -635,15 +661,21 @@ class Installer:
 					entry.write(f"initrd /initramfs-{kernel}.img\n")
 					# blkid doesn't trigger on loopback devices really well,
 					# so we'll use the old manual method until we get that sorted out.
-
+					if root_fs_type is not None:
+						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
+					else:
+						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
+					base_path,bind_path = split_bind_name(str(root_partition.path))
+					if bind_path is not None: # and root_fs_type == 'btrfs':
+						options_entry = f"rootflags=subvol={bind_path} " + options_entry
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
 					else:
 						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n')
+						entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
 
 					self.helper_flags['bootloader'] = bootloader
 
