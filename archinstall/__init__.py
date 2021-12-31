@@ -86,8 +86,10 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 if arguments.get('plugin', None):
 	load_plugin(arguments['plugin'])
 
-# TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
-
+# @plugin decorator hook to programmatically add
+# plutins in runtime using @archinstall.plugin
+def plugin(f, *args, **kwargs):
+	plugins[f.__name__] = f
 
 def run_as_a_module():
 	"""
