@@ -123,9 +123,19 @@ def harddrive(size=None, model=None, fuzzy=False):
 
 		return collection[drive]
 
+def split_bind_name(path :Union[pathlib.Path, str]) -> list:
+	# we check for the bind notation. if exist we'll only use the "true" device path
+	if '[' in str(path) :  # is a bind path (btrfs subvolume path)
+		device_path, bind_path = str(path).split('[')
+		bind_path = bind_path[:-1].strip() # remove the ]
+	else:
+		device_path = path
+		bind_path = None
+	return device_path,bind_path
 
 def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_path=False) -> dict:
-	for traversal in list(map(str, [str(path)] + list(pathlib.Path(str(path)).parents))):
+	device_path,bind_path = split_bind_name(path)
+	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
 		try:
 			log(f"Getting mount information for device path {traversal}", level=logging.INFO)
 			output = SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')
@@ -141,6 +151,10 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_p
 		raise DiskError(f"Could not get mount information for device path {path}")
 
 	output = json.loads(output)
+	# for btrfs partitions we redice the filesystem list to the one with the source equals to the parameter
+	# i.e. the subvolume filesystem we're searching for
+	if 'filesystems' in output and len(output['filesystems']) > 1 and bind_path is not None:
+		output['filesystems'] = [entry for entry in output['filesystems'] if entry['source'] == str(path)]
 	if 'filesystems' in output:
 		if len(output['filesystems']) > 1:
 			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
@@ -180,8 +194,9 @@ def get_partitions_in_use(mountpoint) -> list:
 
 
 def get_filesystem_type(path):
+	device_name, bind_name = split_bind_name(path)
 	try:
-		return SysCommand(f"blkid -o value -s TYPE {path}").decode('UTF-8').strip()
+		return SysCommand(f"blkid -o value -s TYPE {device_name}").decode('UTF-8').strip()
 	except SysCallError:
 		return None
 
@@ -216,9 +231,13 @@ def partprobe():
 	SysCommand(f'bash -c "partprobe"')
 
 def convert_device_to_uuid(path :str) -> str:
+	device_name, bind_name = split_bind_name(path)
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
 		partprobe()
-		output = json.loads(SysCommand(f"lsblk --json -o+UUID {path}").decode('UTF-8'))
+
+		# TODO: Convert lsblk to blkid
+		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
+		output = json.loads(SysCommand(f"lsblk --json -o+UUID {device_name}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			if (dev_uuid := device.get('uuid', None)):
