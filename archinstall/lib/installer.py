@@ -187,7 +187,7 @@ class Installer:
 			for partition in layouts[blockdevice]['partitions']:
 				mountpoints[partition['mountpoint']] = partition
 
-		for mountpoint in sorted(mountpoints.keys()):
+		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest != None]):
 			partition = mountpoints[mountpoint]
 
 			if partition.get('encrypted', False):
