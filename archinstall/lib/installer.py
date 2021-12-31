@@ -143,6 +143,7 @@ class Installer:
 			raise args[1]
 
 		self.genfstab()
+		self.mkinitcpio('-P')
 
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
