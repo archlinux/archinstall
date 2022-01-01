@@ -112,7 +112,6 @@ def ask_user_questions():
 			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
 				archinstall.arguments['!encryption-password'] = passwd
 
-
 		if archinstall.arguments.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
