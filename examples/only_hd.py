@@ -106,7 +106,7 @@ def load_config():
 	load_localization()
 	load_gfxdriver()
 	load_servers()
-	load_disk_layouts()
+	#load_disk_layouts()
 
 def ask_user_questions():
 	"""

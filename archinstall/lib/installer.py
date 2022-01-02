@@ -198,10 +198,25 @@ class Installer:
 			luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
 			luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
 
+	def _has_root(self, partition :dict) -> bool:
+		"""
+		Determine if an encrypted partition contains root in it
+		"""
+		if partition.get("mountpoint") is None:
+			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
+				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list]:
+					if mountpoint == '/':
+						return True
+				return False
+			else:
+				return False
+		elif partition.get("mountpoint") == '/':
+			return True
+		else:
+			return False
+
 	def mount_ordered_layout(self, layouts: dict):
 		from .luks import luks2
-		from pprint import pprint
-		from pudb import set_trace
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
@@ -209,26 +224,24 @@ class Installer:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
 		# we manage the encrypted partititons
-		for partition in [ entry for entry in list_part if entry.get('encrypted',False) ]:
+		for partition in [entry for entry in list_part if entry.get('encrypted',False)]:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
-				raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
+				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
 			# i change a bit the naming conventions for the loop device
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}_{pathlib.Path(partition['device_instance'].path).name}"
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
-				# here we create the cryptkey file, if possible
-				list_luks_handles.append([luks_handle,partition,password])
-				# self._create_keyfile(luks_handle,partition,password)
-				# this way all the requested will be to the dm_crypt device and not the physical partition
+				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
+					list_luks_handles.append([luks_handle,partition,password])
+				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
-		# we manage the btrfs partitions
 
-		for partition in [ entry for entry in list_part if  entry.get('btrfs', {}).get('subvolumes', {}) ]:
+		# we manage the btrfs partitions
+		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
 			self.mount(partition['device_instance'],"/")
-			subvolumes = partition['btrfs']['subvolumes']
 			try:
 				new_mountpoints = manage_btrfs_subvolumes(self,partition)
 			except Exception as e:
@@ -239,8 +252,8 @@ class Installer:
 			if new_mountpoints:
 				list_part.extend(new_mountpoints)
 
-		#we mount. We need to sort by mountpoint to get a good working order
-		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key = lambda part: part['mountpoint']):
+		# we mount. We need to sort by mountpoint to get a good working order
+		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
 			if partition.get('options',[]):
@@ -254,9 +267,9 @@ class Installer:
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-		#once everything is mounted, we generate the key files in the correct place
+		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
-			print('creating key-file for',handle[1])
+			log(f'creating key-file for {handle[1]['device_instance'].path}',level=logging.INFO)
 			self._create_keyfile(handle[0],handle[1],handle[2])
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):

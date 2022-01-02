@@ -6,7 +6,6 @@ from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
-from .partition import Partition
 
 
 def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
@@ -76,7 +75,7 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
 
-def manage_btrfs_subvolumes(installation, partition :dict) ->list:
+def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 	from copy import copy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
@@ -145,8 +144,8 @@ def manage_btrfs_subvolumes(installation, partition :dict) ->list:
 				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
 				del fake_partition['btrfs']
-				fake_partition['encrypted']=False
-				fake_partition['generate-encryption-key-file']=False
+				fake_partition['encrypted'] = False
+				fake_partition['generate-encryption-key-file'] = False
 				# Mount destination. As of now the right hand part
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
