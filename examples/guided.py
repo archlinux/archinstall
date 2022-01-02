@@ -65,6 +65,11 @@ def ask_user_questions():
 	if len(archinstall.arguments['keyboard-layout']):
 		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
+	if not archinstall.arguments.get('ntp', False):
+		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
+		if archinstall.arguments['ntp']:
+			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
 		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
@@ -178,11 +183,6 @@ def ask_user_questions():
 
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
-
-	if not archinstall.arguments.get('ntp', False):
-		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-		if archinstall.arguments['ntp']:
-			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 
 
 def perform_filesystem_operations():
