@@ -1,5 +1,4 @@
 import sys
-import logging
 
 import archinstall
 from archinstall import Menu
