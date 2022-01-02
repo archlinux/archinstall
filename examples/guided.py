@@ -69,6 +69,8 @@ def ask_user_questions():
 		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
 		if archinstall.arguments['ntp']:
 			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+			from archinstall.lib.general import SysCommand
+			SysCommand(f'timedatectl set-ntp true')
 
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
