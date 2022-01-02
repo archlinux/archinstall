@@ -86,8 +86,8 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 if arguments.get('plugin', None):
 	load_plugin(arguments['plugin'])
 
-# @plugin decorator hook to programmatically add
-# plutins in runtime using @archinstall.plugin
+# @archinstall.plugin decorator hook to programmatically add
+# plugins in runtime. Useful in profiles and other things.
 def plugin(f, *args, **kwargs):
 	plugins[f.__name__] = f
 
