@@ -36,8 +36,11 @@ class Filesystem:
 	def partuuid_to_index(self, uuid):
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
+			time.sleep(5)
+
+			# TODO: Convert to blkid (or something similar, but blkid doesn't support traversing to list sub-PARTUUIDs based on blockdevice path?)
 			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
-			
+
 			for device in output['blockdevices']:
 				for index, partition in enumerate(device['children']):
 					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
@@ -90,8 +93,12 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
-
-					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+					# to be able to generate an unique name in case the partition will not be mounted
+					if partition.get('mountpoint',None):
+						ppath = partition['mountpoint']
+					else:
+						ppath = partition['device_instance'].path
+					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
 
 					partition['device_instance'].encrypt(password=partition['!password'])
 
@@ -204,5 +211,9 @@ class Filesystem:
 			SysCommand(f'bash -c "umount {device}?"')
 		except:
 			pass
+
 		self.partprobe()
-		return self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
+		worked = self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
+		self.partprobe()
+
+		return worked

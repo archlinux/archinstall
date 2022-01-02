@@ -28,3 +28,4 @@ venv
 .venv
 .idea/**
 **/install.log
+.DS_Store
