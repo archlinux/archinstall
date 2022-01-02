@@ -284,6 +284,9 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
+			with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+				peak_output_log.write(output)
+
 			sys.stdout.write(str(output))
 			sys.stdout.flush()
 
@@ -478,3 +481,31 @@ def run_custom_user_commands(commands, installation):
 		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
+
+def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
+	""" Function to load a stream (file (as name) or valid JSON string into an existing dictionary
+	Returns true if it could be done
+	Return  false if operation could not be executed
+	+id is just a parameter to get meaningful, but not so long messages
+	"""
+	from pathlib import Path
+	if Path(stream).exists():
+		try:
+			with open(Path(stream)) as fh:
+				target.update(json.load(fh))
+		except Exception as e:
+			log(f"{id} = {stream} does not contain a valid JSON format: {e}",level=logging.ERROR)
+			return False
+	else:
+		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream",level=logging.DEBUG)
+		# NOTE: failure of this check doesn't make stream 'real' invalid JSON, just it first level entry is not an object (i.e. dict), so it is not a format we handle.
+		if stream.strip().startswith('{') and stream.strip().endswith('}'):
+			try:
+				target.update(json.loads(stream))
+			except Exception as e:
+				log(f" {id} Contains an invalid JSON format : {e}",level=logging.ERROR)
+				return False
+		else:
+			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
+			return False
+	return True

@@ -49,14 +49,14 @@ Which will allow you to start using the library.
 Manual installation
 -------------------
 
-You can either download the github repo as a zip archive.
-Or you can clone it, we'll clone it here but both methods work the same.
+You can either download the github repo as a zip archive, or you can clone it.
+We'll clone it here but both methods work the same.
 
 .. code-block:: console
 
     git clone https://github.com/archlinux/archinstall
 
-Either you can move the folder into your project and simply do
+You can either move the folder into your project and simply do
 
 .. code-block:: python
 

@@ -6,6 +6,6 @@ __packages__ = ["postgresql"]
 
 archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
-archinstall.storage['installation_session'].arch_chroot("initdb -D /var/lib/postgres/data", runas='postgres')
+archinstall.storage['installation_session'].arch_chroot("initdb -D /var/lib/postgres/data", run_as='postgres')
 
 archinstall.storage['installation_session'].enable_service('postgresql')

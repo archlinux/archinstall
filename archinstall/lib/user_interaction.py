@@ -841,13 +841,15 @@ def select_mirror_regions():
 	:rtype: dict
 	"""
 
-	# TODO: Support multiple options and country codes, SE,UK for instance.
-
 	mirrors = list_mirrors()
-	selected_mirror = Menu('Select one of the regions to download packages from', mirrors.keys()).run()
+	selected_mirror = Menu(
+		'Select one of the regions to download packages from',
+		mirrors.keys(),
+		multi=True
+	).run()
 
 	if selected_mirror is not None:
-		return {selected_mirror: mirrors[selected_mirror]}
+		return {selected: mirrors[selected] for selected in selected_mirror}
 
 	return {}
 

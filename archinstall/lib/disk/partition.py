@@ -7,7 +7,7 @@ import os
 import hashlib
 from typing import Optional
 from .blockdevice import BlockDevice
-from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb
+from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -87,7 +87,7 @@ class Partition:
 
 	@property
 	def sector_size(self):
-		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.path}").decode('UTF-8'))
+		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.device_path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device.get('log-sec', None)
@@ -114,7 +114,7 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.path}")).exit_code == 0:
+			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}")).exit_code == 0:
 				lsblk = json.loads(handle.decode('UTF-8'))
 
 				for device in lsblk['blockdevices']:
@@ -144,7 +144,7 @@ class Partition:
 
 	@property
 	def partition_type(self):
-		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.path}").decode('UTF-8'))
+		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.device_path}").decode('UTF-8'))
 
 		for device in lsblk['blockdevices']:
 			return device['pttype']
@@ -155,19 +155,18 @@ class Partition:
 		Returns the PARTUUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
+		For bind mounts all the subvolumes share the same uuid
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-			if partuuid_struct.exit_code == 0:
-				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if partuuid := partition_information.get('partuuid', None):
-						return partuuid
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
 
 	@property
 	def _safe_uuid(self) -> Optional[str]:
@@ -177,12 +176,7 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		self.partprobe()
-
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if partuuid_struct.exit_code == 0:
-			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-				if partuuid := partition_information.get('partuuid', None):
-					return partuuid
+		return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
 
 	@property
 	def encrypted(self):
@@ -190,7 +184,6 @@ class Partition:
 
 	@encrypted.setter
 	def encrypted(self, value: bool):
-
 		self._encrypted = value
 
 	@property
@@ -200,13 +193,29 @@ class Partition:
 	@property
 	def real_device(self):
 		for blockdevice in json.loads(SysCommand('lsblk -J').decode('UTF-8'))['blockdevices']:
-			if parent := self.find_parent_of(blockdevice, os.path.basename(self.path)):
+			if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
 
+	@property
+	def device_path(self):
+		""" for bind mounts returns the phisical path of the partition
+		"""
+		device_path, bind_name = split_bind_name(self.path)
+		return device_path
+
+	@property
+	def bind_name(self):
+		""" for bind mounts returns the bind name (subvolume path).
+		Returns none if this property does not exist
+		"""
+		device_path, bind_name = split_bind_name(self.path)
+		return bind_name
+
 	def partprobe(self):
 		SysCommand(f'bash -c "partprobe"')
+		time.sleep(1)
 
 	def detect_inner_filesystem(self, password):
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
@@ -353,11 +362,20 @@ class Partition:
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
+			if self.bind_name:
+				device_path = self.device_path
+				# TODO options should be better be a list than a string
+				if options:
+					options = f"{options},subvol={self.bind_name}"
+				else:
+					options = f"subvol={self.bind_name}"
+			else:
+				device_path = self.path
 			try:
 				if options:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 				else:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {device_path} {target}")
 
 				# TODO: Should be redundant to check for exit_code
 				if mnt_handle.exit_code != 0:
@@ -406,5 +424,5 @@ def get_mount_fs_type(fs):
 	if fs == 'ntfs':
 		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
 	elif fs == 'fat32':
-		return 'vfat'  # This is the actual type used for fat32 mounting.
+		return 'vfat'  # This is the actual type used for fat32 mounting
 	return fs

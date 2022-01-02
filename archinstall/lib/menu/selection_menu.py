@@ -1,4 +1,5 @@
 import sys
+import logging
 
 import archinstall
 from archinstall import Menu
@@ -91,11 +92,15 @@ class Selector:
 	def has_selection(self):
 		if self._current_selection is None:
 			return False
-		elif isinstance(self._current_selection, (str, list, dict)):
-			if len(self._current_selection) == 0:
-				return False
-
 		return True
+
+	def is_empty(self):
+		if self._current_selection is None:
+			return True
+		elif isinstance(self._current_selection, (str, list, dict)) and len(self._current_selection) == 0:
+			return True
+
+		return False
 
 
 class GlobalMenu:
@@ -119,8 +124,7 @@ class GlobalMenu:
 		self._menu_options['harddrives'] = \
 			Selector(
 				'Select harddrives',
-				lambda: self._select_harddrives(),
-				default=[])
+				lambda: self._select_harddrives())
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				'Select disk layout',
@@ -162,7 +166,7 @@ class GlobalMenu:
 				'Specify user account',
 				lambda: self._create_user_account(),
 				default={},
-				display_func=lambda x: list(x.keys()) if x else '')
+				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
 				'Specify profile',
@@ -284,8 +288,11 @@ class GlobalMenu:
 			missing += 1
 		if not check('!root-password') and not check('!superusers'):
 			missing += 1
-		if check('harddrives') and not check('disk_layouts'):
+		if not check('harddrives'):
 			missing += 1
+		if check('harddrives'):
+			if not self._menu_options.get('harddrives').is_empty() and not check('disk_layouts'):
+				missing += 1
 
 		return missing
 
@@ -304,11 +311,21 @@ class GlobalMenu:
 		old_haddrives = archinstall.arguments.get('harddrives')
 		harddrives = archinstall.select_harddrives()
 
-		# in case the harddrives got changed we have to
-		# reset the disk layout as well
+		# in case the harddrives got changed we have to reset the disk layout as well
 		if old_haddrives != harddrives:
 			self._menu_options.get('disk_layouts').set_current_selection(None)
 			archinstall.arguments['disk_layouts'] = {}
+
+		if not harddrives:
+			prompt = 'You decided to skip harddrive selection\n'
+			prompt += f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)\n"
+			prompt += "WARNING: Archinstall won't check the suitability of this setup\n"
+
+			prompt += 'Do you wish to continue?'
+			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+
+			if choice == 'no':
+				return self._select_harddrives()
 
 		return harddrives
 
@@ -354,12 +371,12 @@ class GlobalMenu:
 
 			if len(selection.dependencies) > 0:
 				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or not self._menu_options.get(d).has_selection():
+					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
 						return False
 
 			if len(selection.dependencies_not) > 0:
 				for d in selection.dependencies_not:
-					if self._menu_options.get(d).has_selection():
+					if not self._menu_options.get(d).is_empty():
 						return False
 
 			return True
