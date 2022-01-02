@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import pathlib
 import time
 
 import archinstall
@@ -50,18 +49,6 @@ def load_config():
 		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-	if archinstall.arguments.get('disk_layouts', None) is not None:
-		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
 
 def ask_user_questions():
@@ -96,20 +83,27 @@ def ask_user_questions():
 	# and convert them into archinstall.BlockDevice() objects.
 	if archinstall.arguments.get('harddrives', None) is None:
 		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
+	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least none (behaviour has changed from previous version, where it had an empty list. Shouls be compatible with my code
+	if not archinstall.arguments['harddrives']:
+		archinstall.log("You decided to skip harddrive selection",fg="yellow",level=logging.INFO)
+		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="yellow",level=logging.INFO)
+		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="yellow",level=logging.INFO)
+		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
+			exit(1)
+	else:
+		if archinstall.storage.get('disk_layouts', None) is None:
+			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
-	if archinstall.arguments.get('harddrives', None) and archinstall.storage.get('disk_layouts', None) is None:
-		archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
+		# Get disk encryption password (or skip if blank)
+		if archinstall.arguments.get('!encryption-password', None) is None:
+			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
+				archinstall.arguments['!encryption-password'] = passwd
 
-	# Get disk encryption password (or skip if blank)
-	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None) is None:
-		if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-			archinstall.arguments['!encryption-password'] = passwd
-
-	if archinstall.arguments['harddrives'] and archinstall.arguments.get('!encryption-password', None):
-		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+		if archinstall.arguments.get('!encryption-password', None):
+			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+			# Then we need to identify which partitions to encrypt. This will default to / (root).
+			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
@@ -205,7 +199,7 @@ def perform_filesystem_operations():
 			disk_layout_file.write(user_disk_layout)
 	print()
 
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
