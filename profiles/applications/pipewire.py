@@ -5,6 +5,7 @@ import archinstall
 __packages__ = ["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"]
 
 print('Installing pipewire ...')
+print(archinstall.storage)
 archinstall.storage['installation_session'].add_additional_packages(__packages__)
 
 @archinstall.plugin
