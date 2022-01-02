@@ -184,9 +184,8 @@ class SysCommandWorker:
 		self.cmd = cmd
 		self.callbacks = callbacks
 		self.peak_output = peak_output
-		self.environment_vars = environment_vars
-		# define the standard locale for command outputs. For now the C ascii one"
-		self.environment_vars['LC_ALL'] = "C"
+		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
+		self.environment_vars = { 'LC_ALL':'C' , **environment_vars }
 		self.logfile = logfile
 		self.working_directory = working_directory
 
