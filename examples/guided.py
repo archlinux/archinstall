@@ -52,12 +52,15 @@ def load_config():
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
 		dl_path = pathlib.Path(archinstall.arguments['disk_layouts'])
-		if dl_path.exists():
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
+
+		if not dl_path.exists():
+			raise ValueError(f'File does not exist: {dl_path}')
+
+		try:
+			with open(dl_path, 'r') as fh:
+				archinstall.storage['disk_layouts'] = json.load(fh)
+		except Exception as e:
+			raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
 
 
 def ask_user_questions():
