@@ -312,9 +312,7 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
-					print('Installing pipewire ...')
-
-					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+					archinstall.Application(installation, 'pipewire').install()
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")
