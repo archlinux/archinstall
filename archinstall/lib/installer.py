@@ -109,7 +109,9 @@ class Installer:
 
 		self.post_base_install = []
 
+		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
 		storage['session'] = self
+		storage['installation_session'] = self
 
 		self.MODULES = []
 		self.BINARIES = []
@@ -782,12 +784,17 @@ class Installer:
 		handled_by_plugin = False
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_create'):
-				if result := plugin.on_user_create(user):
+				if result := plugin.on_user_create(self, user):
 					handled_by_plugin = result
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)
 			SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_user_created'):
+				if result := plugin.on_user_created(self, user):
+					handled_by_plugin = result
 
 		if password:
 			self.user_set_pw(user, password)

@@ -172,7 +172,11 @@ define_arguments()
 arguments = get_arguments()
 post_process_arguments(arguments)
 
-# TODO: Learn the dark arts of argparse... (I summon thee dark spawn of cPython)
+# @archinstall.plugin decorator hook to programmatically add
+# plugins in runtime. Useful in profiles and other things.
+def plugin(f, *args, **kwargs):
+	plugins[f.__name__] = f
+
 
 def run_as_a_module():
 	"""
