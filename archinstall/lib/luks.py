@@ -159,7 +159,7 @@ class luks2:
 
 		log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
 
-		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}")
+		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}",environment_vars={"LC_ALL":"C"})
 		pw_injected = False
 		while worker.is_alive():
 			if b'Enter any existing passphrase' in worker and pw_injected is False:

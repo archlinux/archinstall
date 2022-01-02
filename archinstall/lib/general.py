@@ -185,6 +185,8 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		self.environment_vars = environment_vars
+		# define the standard locale for command outputs. For now the C ascii one"
+		self.environment_vars['LC_ALL'] = "C"
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -364,7 +366,7 @@ class SysCommand:
 		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './'):
-	
+
 		_callbacks = {}
 		if callbacks:
 			for hook, func in callbacks.items():
