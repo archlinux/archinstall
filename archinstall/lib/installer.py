@@ -109,7 +109,9 @@ class Installer:
 
 		self.post_base_install = []
 
+		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
 		storage['session'] = self
+		storage['installation_session'] = self
 
 		self.MODULES = []
 		self.BINARIES = []
