@@ -5,7 +5,6 @@ import pathlib
 import time
 
 import archinstall
-from archinstall.lib.menu.selection_menu import GlobalMenu
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -72,7 +71,7 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
-	global_menu = GlobalMenu()
+	global_menu = archinstall.GlobalMenu()
 	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation
