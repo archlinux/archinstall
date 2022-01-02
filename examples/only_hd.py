@@ -27,20 +27,6 @@ def load_harddrives():
 		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 
-def load_disk_layouts():
-	if archinstall.arguments.get('disk_layouts', None) is not None:
-		dl_path = pathlib.Path(archinstall.arguments['disk_layouts'])
-		if dl_path.exists(): # and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
@@ -106,7 +92,6 @@ def load_config():
 	load_localization()
 	load_gfxdriver()
 	load_servers()
-	#load_disk_layouts()
 
 def ask_user_questions():
 	"""

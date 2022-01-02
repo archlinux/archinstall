@@ -269,7 +269,8 @@ class Installer:
 
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
-			log(f'creating key-file for {handle[1]['device_instance'].path}',level=logging.INFO)
+			ppath = handle[1]['device_instance'].path
+			log(f"creating key-file for {ppath}",level=logging.INFO)
 			self._create_keyfile(handle[0],handle[1],handle[2])
 
 	def mount(self, partition, mountpoint, create_mountpoint=True):
