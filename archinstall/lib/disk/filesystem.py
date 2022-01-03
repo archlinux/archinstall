@@ -84,10 +84,7 @@ class Filesystem:
 
 			if partition.get('filesystem', {}).get('format', False):
 				# needed for backward compatibility with the introduction of the new "format_options"
-				format_options = []
-				format_options.extend(partition.get('options',[]))
-				format_options.extend(partition.get('format_options',[])
-				# end compatibility patch
+				format_options = partition.get('options',[]) + partition.get('format_options',[])
 				if partition.get('encrypted', False):
 					if not partition.get('!password'):
 						if not storage['arguments'].get('!encryption-password'):

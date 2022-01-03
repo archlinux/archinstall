@@ -15,8 +15,11 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 	@installation: archinstall.Installer instance
 	@subvolume_location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
 	@force: overrides the check for weither or not the subvolume mountpoint is empty or not
-	"""
 
+	This function is DEPRECATED. you can get the same result creating a partition dict like any other partition, and using the standard mount procedure.
+	Only change partition['device_instance'].path with the apropriate bind name: real_partition_path[/subvolume_name]
+	"""
+	log("function btrfs.mount_subvolume DEPRECATED. See code for alternatives",fg="yellow",level=logging.WARNING)
 	installation_mountpoint = installation.target
 	if type(installation_mountpoint) == str:
 		installation_mountpoint = pathlib.Path(installation_mountpoint)
@@ -76,7 +79,7 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 
 def _has_option(option :str,options :list) -> bool:
 	""" auxiliary routine to check if an option is present in a list.
-	    we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
+	we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
 	"""
 	if not options:
 		return False
@@ -86,7 +89,7 @@ def _has_option(option :str,options :list) -> bool:
 	return False
 
 def manage_btrfs_subvolumes(installation, partition :dict) -> list:
-	from copy import copy, deepcopy
+	from copy import deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
 	* the installation object
@@ -152,7 +155,6 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 				# the primary partition. We make a deepcopy to avoid altering the original content in any case
 				fake_partition = deepcopy(partition)
 				# we start to modify entries in the "fake partition" to match the needs of the subvolumes
-				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
 				del fake_partition['btrfs']
 				fake_partition['encrypted'] = False
@@ -168,9 +170,8 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 				else:
 					fake_partition['mount_options'] = subvol_options
 				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
-				# we clone the original object and change what we need (the path ).
-				# with the deepcopy it could be redundant, but we won't risk it
-				fake_partition['device_instance'] = copy(partition['device_instance'])
+				# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
+				# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
 				fake_partition['device_instance'].path = f"{partition['device_instance'].path}[/{name}]"
 				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
 				# If i don't reset it, process will abort as "already mounted' .
