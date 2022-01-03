@@ -65,6 +65,12 @@ def ask_user_questions():
 	if len(archinstall.arguments['keyboard-layout']):
 		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
+	if not archinstall.arguments.get('ntp', False):
+		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
+		if archinstall.arguments['ntp']:
+			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+			archinstall.SysCommand('timedatectl set-ntp true')
+
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
 		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
@@ -123,9 +129,11 @@ def ask_user_questions():
 	# Ask for additional users (super-user if root pw was not set)
 	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
 		archinstall.arguments['!superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+
+	if not archinstall.arguments.get('!users'):
 		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
 		archinstall.arguments['!users'] = users
-		archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+		archinstall.arguments['!superusers'] = {**archinstall.arguments.get('!superusers', {}), **superusers}
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
@@ -176,12 +184,6 @@ def ask_user_questions():
 
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
-
-	if archinstall.arguments['timezone']:
-		if not archinstall.arguments.get('ntp', False):
-			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-			if archinstall.arguments['ntp']:
-				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 
 
 def perform_filesystem_operations():
@@ -293,9 +295,7 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
 				if archinstall.arguments.get('audio', None) == 'pipewire':
-					print('Installing pipewire ...')
-
-					installation.add_additional_packages(["pipewire", "pipewire-alsa", "pipewire-jack", "pipewire-media-session", "pipewire-pulse", "gst-plugin-pipewire", "libpulse"])
+					archinstall.Application(installation, 'pipewire').install()
 				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
 					print('Installing pulseaudio ...')
 					installation.add_additional_packages("pulseaudio")
