@@ -74,9 +74,19 @@ def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str])
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
+def _has_option(option :str,options :list) -> bool:
+	""" auxiliary routine to check if an option is present in a list.
+	    we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
+	"""
+	if not options:
+		return False
+	for item in options:
+		if option in item:
+			return True
+	return False
 
 def manage_btrfs_subvolumes(installation, partition :dict) -> list:
-	from copy import copy
+	from copy import copy, deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
 	* the installation object
@@ -102,7 +112,7 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 				name = name[1:]
 			# renormalize the right hand.
 			location = None
-			mount_options = []
+			subvol_options = []
 			# no contents, so it is not to be mounted
 			if not right_hand:
 				location = None
@@ -112,34 +122,35 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 			# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
 			elif isinstance(right_hand,dict):
 				location = right_hand.get('mountpoint',None)
-				mount_options = right_hand.get('options',[])
+				subvol_options = right_hand.get('options',[])
 			# we create the subvolume
 			create_subvolume(installation,name)
 			# Make the nodatacow processing now
 			# It will be the main cause of creation of subvolumes which are not to be mounted
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
 			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
-			if 'nodatacow' in mount_options:
+			if 'nodatacow' in subvol_options:
 				if (cmd := SysCommand(f"chattr +C {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set  nodatacow attribute at {installation.target}/{name}: {cmd}")
 				# entry is deleted so nodatacow doesn't propagate to the mount options
-				del mount_options[mount_options.index('nodatacow')]
+				del subvol_options[subvol_options.index('nodatacow')]
 			# Make the compress processing now
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
 			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
 			# in this way only zstd compression is activaded
 			# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
-			if 'compress' in mount_options:
-				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
-					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
-				# entry is deleted so nodatacow doesn't propagate to the mount options
-				del mount_options[mount_options.index('compress')]
+			if 'compress' in subvol_options:
+				if not _has_option('compress',partition.get('mount_options',[])):
+					if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
+						raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
+				# entry is deleted so compress doesn't propagate to the mount options
+				del subvol_options[subvol_options.index('compress')]
 			# END compress processing.
 			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
 				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
-				# the primary partition
-				fake_partition = partition.copy()
+				# the primary partition. We make a deepcopy to avoid altering the original content in any case
+				fake_partition = deepcopy(partition)
 				# we start to modify entries in the "fake partition" to match the needs of the subvolumes
 				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
@@ -150,10 +161,15 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
 				fake_partition['subvolume'] = name
-				# here we add the mount options
-				fake_partition['options'] = mount_options
+				# here we add the special mount options for the subvolume, if any.
+				# if the original partition['options'] is not a list might give trouble
+				if fake_partition.get('mount_options',[]):
+					fake_partition['mount_options'].extend(subvol_options)
+				else:
+					fake_partition['mount_options'] = subvol_options
 				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
-				# we clone the original object and change what we need (the path )
+				# we clone the original object and change what we need (the path ).
+				# with the deepcopy it could be redundant, but we won't risk it
 				fake_partition['device_instance'] = copy(partition['device_instance'])
 				fake_partition['device_instance'].path = f"{partition['device_instance'].path}[/{name}]"
 				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.

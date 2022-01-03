@@ -83,6 +83,11 @@ class Filesystem:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
 
 			if partition.get('filesystem', {}).get('format', False):
+				# needed for backward compatibility with the introduction of the new "format_options"
+				format_options = []
+				format_options.extend(partition.get('options',[]))
+				format_options.extend(partition.get('format_options',[])
+				# end compatibility patch
 				if partition.get('encrypted', False):
 					if not partition.get('!password'):
 						if not storage['arguments'].get('!encryption-password'):
@@ -116,9 +121,9 @@ class Filesystem:
 											continue
 										break
 
-						unlocked_device.format(partition['filesystem']['format'], options=partition.get('options', []))
+						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 				elif partition.get('format', False):
-					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
+					partition['device_instance'].format(partition['filesystem']['format'], options=format_options)
 
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")
