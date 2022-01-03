@@ -97,7 +97,7 @@ class Filesystem:
 					if partition.get('mountpoint',None):
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 					else:
-						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}_{pathlib.Path(partition['device_instance'].path).name}"
+						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 					partition['device_instance'].encrypt(password=partition['!password'])
 					# Immediately unlock the encrypted device to format the inner volume
 					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:

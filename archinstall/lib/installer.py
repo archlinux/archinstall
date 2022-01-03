@@ -191,7 +191,7 @@ class Installer:
 			if partition.get('mountpoint',None):
 				encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
 			else:
-				encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['device_instance'].path).name}loop.key"
+				encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['device_instance'].path).name}.key"
 			with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
 				keyfile.write(generate_password(length=512))
 
@@ -233,7 +233,7 @@ class Installer:
 			# i change a bit the naming conventions for the loop device
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}_{pathlib.Path(partition['device_instance'].path).name}"
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
 				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
