@@ -143,7 +143,7 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 			# in this way only zstd compression is activaded
 			# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
 			if 'compress' in subvol_options:
-				if not _has_option('compress',partition.get('mount_options',[])):
+				if not _has_option('compress',partition.get('filesystem',{}).get('mount_options',[])):
 					if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 						raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 				# entry is deleted so compress doesn't propagate to the mount options
@@ -165,10 +165,10 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 				fake_partition['subvolume'] = name
 				# here we add the special mount options for the subvolume, if any.
 				# if the original partition['options'] is not a list might give trouble
-				if fake_partition.get('mount_options',[]):
-					fake_partition['mount_options'].extend(subvol_options)
+				if fake_partition.get('filesystem',{}).get('mount_options',[]):
+					fake_partition['filesystem']['mount_options'].extend(subvol_options)
 				else:
-					fake_partition['mount_options'] = subvol_options
+					fake_partition['filesystem']['mount_options'] = subvol_options
 				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
 				# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
 				# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless

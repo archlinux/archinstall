@@ -258,8 +258,8 @@ class Installer:
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
-			if partition.get('mount_options',[]):
-				mount_options = ','.join(partition['mount_options'])
+			if partition.get('filesystem',{}).get('mount_options',[]):
+				mount_options = ','.join(partition['filesystem']['mount_options'])
 				partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
 			else:
 				partition['device_instance'].mount(f"{self.target}{mountpoint}")
