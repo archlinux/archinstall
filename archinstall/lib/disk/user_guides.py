@@ -9,6 +9,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # Gb
 	using_subvolumes = False
+	using_home_partition = False
 
 	if default_filesystem == 'btrfs':
 		using_subvolumes = input('Would you like to use BTRFS subvolumes with a default structure? (Y/n): ').strip().lower() in ('', 'y', 'yes')
@@ -45,10 +46,14 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		}
 	})
 
+	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+		using_home_partition = input('Would you like to create a separate partition for /home? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+
 	# Set a size for / (/root)
-	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART:
+	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:
 		# We'll use subvolumes
 		# Or the disk size is too small to allow for a separate /home
+		# Or the user doesn't want to create a separate partition for /home
 		layout[block_device.path]['partitions'][-1]['size'] = '100%'
 	else:
 		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GB"
@@ -69,7 +74,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		# else:
 		# 	pass # ... implement a guided setup
 
-	elif block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
