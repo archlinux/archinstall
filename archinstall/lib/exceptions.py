@@ -23,6 +23,10 @@ class SysCallError(BaseException):
 		self.exit_code = exit_code
 
 
+class PermissionError(BaseException):
+	pass
+
+
 class ProfileNotFound(BaseException):
 	pass
 
