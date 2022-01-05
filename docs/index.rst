@@ -14,6 +14,8 @@ Some of the features of Archinstall are:
 
 * **Full transparancy** Logs and insights can be found at ``/var/log/archinstall`` both in the live ISO and the installed system.
 
+* **Accessibility friendly** Archinstall works with ``espeakup`` and other accessibility tools thanks to the use of a TUI.
+
 .. toctree::
    :maxdepth: 3
    :caption: Running the installer
