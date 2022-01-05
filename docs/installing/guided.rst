@@ -166,10 +166,13 @@ Options for ``--creds``
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | !root-password       | any                                                 | The root account password                                                            | No                                            |
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
-| !superusers          | { "<username>": { "!password": "<password>"}, ..}   | List of superuser credentials, see configuration for reference                       | Yes, if root password was not set             |
+| !superusers          | { "<username>": { "!password": "<password>"}, ..}   | List of superuser credentials, see configuration for reference                       | Yes[1]                                        |
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
 | !users               | { "<username>": { "!password": "<password>"}, ..}   | List of regular user credentials, see configuration for reference                    | No                                            |
 +----------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------+-----------------------------------------------+
+
+.. note::
+    [1] ``!superusers`` is optional only if ``!root-password`` was set. ``!superusers`` will be enforced otherwise and the minimum amount of superusers required will be set to 1.
 
 Options for ``--disk_layouts``
 ------------------------------
