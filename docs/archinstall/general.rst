@@ -12,7 +12,7 @@ Packages
 ========
 
 .. autofunction:: archinstall.find_package
-Be
+
 .. autofunction:: archinstall.find_packages
 
 Locale related
@@ -68,9 +68,19 @@ Luks (Disk encryption)
 Networking
 ==========
 
-.. autofunction:: archinstall.getHwAddr
+.. autofunction:: archinstall.get_hw_addr
 
 .. autofunction:: archinstall.list_interfaces
+
+.. autofunction:: archinstall.check_mirror_reachable
+
+.. autofunction:: archinstall.enrich_iface_types
+
+.. autofunction:: archinstall.get_interface_from_mac
+
+.. autofunction:: archinstall.wireless_scan
+
+.. autofunction:: archinstall.get_wireless_networks
 
 General
 =======
@@ -79,7 +89,9 @@ General
 
 .. autofunction:: archinstall.locate_binary
 
-.. autofunction:: archinstall.sys_command
+.. autofunction:: archinstall.SysCommand
+
+.. autofunction:: archinstall.SysCommandWorker
 
 Exceptions
 ==========

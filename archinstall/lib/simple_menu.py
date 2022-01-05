@@ -59,8 +59,7 @@ from typing import (
 try:
     import termios
 except ImportError as e:
-    raise NotImplementedError('"{}" is currently not supported.'.format(platform.system())) from e
-
+    pass # raise NotImplementedError('"{}" is currently not supported.'.format(platform.system())) from e
 
 __author__ = "Ingo Meyer"
 __email__ = "i.meyer@fz-juelich.de"
