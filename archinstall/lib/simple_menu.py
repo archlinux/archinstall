@@ -1413,7 +1413,7 @@ class TerminalMenu:
     def show(self) -> Optional[Union[int, Tuple[int, ...]]]:
         def init_signal_handling() -> None:
             # `SIGWINCH` is send on terminal resizes
-            def handle_sigwinch(signum: signal.Signals, frame: FrameType) -> None:
+            def handle_sigwinch(signum: int, frame: FrameType) -> None: # signum used to be signal.Signals
                 # pylint: disable=unused-argument
                 if self._reading_next_key:
                     self._paint_menu()

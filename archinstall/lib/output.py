@@ -27,7 +27,7 @@ class Journald:
 
 # TODO: Replace log() for session based logging.
 class SessionLogging:
-	def __init__(self):
+	def __init__(self) -> None:
 		pass
 
 
@@ -82,7 +82,7 @@ def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> No
 	# If a logfile is defined in storage,
 	# we use that one to output everything
 	if filename := storage.get('LOG_FILE', None):
-		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
+		absolute_logfile = os.path.join(str(storage.get('LOG_PATH', './')), str(filename))
 
 		try:
 			Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
@@ -90,8 +90,8 @@ def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> No
 				log_file.write("")
 		except PermissionError:
 			# Fallback to creating the log file in the current folder
-			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute() / filename} instead."
-			absolute_logfile = Path('./').absolute() / filename
+			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute() / str(filename)} instead."
+			absolute_logfile = Path('./').absolute() / str(filename)
 			absolute_logfile.parents[0].mkdir(exist_ok=True)
 			absolute_logfile = str(absolute_logfile)
 			storage['LOG_PATH'] = './'

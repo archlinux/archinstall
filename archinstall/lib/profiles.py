@@ -196,7 +196,7 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer :Installer, path :str):
+	def __init__(self, installer :Optional[Installer], path :str):
 		super(Profile, self).__init__(path, installer)
 
 	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:

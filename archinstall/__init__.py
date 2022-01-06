@@ -1,8 +1,13 @@
 """Arch Linux installer - guided, templates etc."""
+import json
+import logging
+import os
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 from argparse import ArgumentParser
+from typing import Callable, Any, Dict, Union, List
 
 from .lib.disk import *
 from .lib.exceptions import *
@@ -21,6 +26,7 @@ from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
+from .lib.plugins import plugins, load_plugin
 
 parser = ArgumentParser()
 
@@ -28,7 +34,7 @@ __version__ = "2.3.1.dev0"
 storage['__version__'] = __version__
 
 
-def define_arguments():
+def define_arguments() -> None:
 	"""
 	Define which explicit arguments do we allow.
 	Refer to https://docs.python.org/3/library/argparse.html for documentation and
@@ -49,7 +55,7 @@ def define_arguments():
 	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
 	parser.add_argument("--plugin",nargs="?",type=str)
 
-def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
+def parse_unspecified_argument_list(unknowns :List[str], multiple :bool = False, error :bool = False) -> Dict[str, Any]:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
 	Internally argparse return to us a list of words so we have to parse its contents, manually.
 	We accept following individual syntax for each argument
@@ -66,7 +72,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 	which isn't am error if multiple is specified
 	"""
 	tmp_list = unknowns[:]   # wastes a few bytes, but avoids any collateral effect of the destructive nature of the pop method()
-	config = {}
+	config :Dict[str, Any] = {}
 	key = None
 	last_key = None
 	while tmp_list:
@@ -99,7 +105,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 					print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
-def get_arguments():
+def get_arguments() -> Dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
@@ -113,7 +119,7 @@ def get_arguments():
 	3) Amend
 		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
-	config = {}
+	config :Dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the json files.
 	# TODO Expand the url access to the other JSON file arguments ?
@@ -147,9 +153,10 @@ def get_arguments():
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
+
 	return config
 
-def post_process_arguments(arguments):
+def post_process_arguments(arguments :Dict[str, Any]) -> None:
 	storage['arguments'] = arguments
 	if arguments.get('mount_point'):
 		storage['MOUNT_POINT'] = arguments['mount_point']
@@ -157,7 +164,6 @@ def post_process_arguments(arguments):
 	if arguments.get('debug',False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
-	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 	if arguments.get('plugin', None):
 		load_plugin(arguments['plugin'])
 
@@ -174,11 +180,11 @@ post_process_arguments(arguments)
 
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles and other things.
-def plugin(f, *args, **kwargs):
+def plugin(f :Callable[..., Any], *args :Any, **kwargs :Any) -> None:
 	plugins[f.__name__] = f
 
 
-def run_as_a_module():
+def run_as_a_module() -> None:
 	"""
 	Since we're running this as a 'python -m archinstall' module OR
 	a nuitka3 compiled version of the project.
@@ -186,7 +192,9 @@ def run_as_a_module():
 	"""
 
 	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
-	storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
+	if type(storage['PROFILE_PATH']) is list:
+		storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
+
 	try:
 		script = Script(arguments.get('script', None))
 	except ProfileNotFound as err:
@@ -196,5 +204,7 @@ def run_as_a_module():
 	os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 	# Remove the example directory from the PROFILE_PATH, to avoid guided.py etc shows up in user input questions.
-	storage['PROFILE_PATH'].pop()
+	if type(storage['PROFILE_PATH']) is list:
+		storage['PROFILE_PATH'].pop()
+
 	script.execute()

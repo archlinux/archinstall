@@ -444,8 +444,8 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
-def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
-	def do_padding(name, max_len):
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> str:
+	def do_padding(name :str, max_len :float) -> str:
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
 		pad_right = spaces - pad_left
@@ -488,7 +488,7 @@ def current_partition_layout(partitions :List[Partition], with_idx :bool = False
 	return f'\n\nCurrent partition layout:\n\n{current_layout}'
 
 
-def select_partition(title :str, partitions :List[Partition], multiple :bool = False) -> Union[int, List[int], None]:
+def select_partitions(title :str, partitions :List[Partition], multiple :bool = False) -> List[int]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 
@@ -496,9 +496,9 @@ def select_partition(title :str, partitions :List[Partition], multiple :bool = F
 		if isinstance(partition, list):
 			return [int(p) for p in partition]
 		else:
-			return int(partition)
+			return [int(partition)]
 
-	return None
+	return []
 
 def get_default_partition_layout(
 	block_devices :Union[BlockDevice, List[BlockDevice]],
@@ -597,7 +597,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 			if task == "Delete a partition":
 				title = f'{current_layout}\n\nSelect by index which partitions to delete'
-				to_delete = select_partition(title, block_device_struct["partitions"], multiple=True)
+				to_delete = select_partitions(title, block_device_struct["partitions"], multiple=True)
 
 				if to_delete:
 					block_device_struct['partitions'] = [p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete]
@@ -605,11 +605,9 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 				block_device_struct["partitions"] = []
 			elif task == "Assign mount-point for a partition":
 				title = f'{current_layout}\n\nSelect by index which partition to mount where'
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
+				for partition in select_partitions(title, block_device_struct["partitions"]):
 					print(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')
-					mountpoint = input('Select where to mount partition (leave blank to remove mountpoint): ').strip()
+					mountpoint = input(f"Select where to mount partition {partition} (leave blank to remove mountpoint): ").strip()
 
 					if len(mountpoint):
 						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
@@ -621,9 +619,8 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
 				title = f'{current_layout}\n\nSelect which partition to mask for formatting'
-				partition = select_partition(title, block_device_struct["partitions"])
 
-				if partition is not None:
+				for partition in select_partitions(title, block_device_struct["partitions"]):
 					# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 					# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 					# it's safe to change the filesystem for this partition.
@@ -631,7 +628,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu('Enter a desired filesystem type for the partition', fs_types(), skip=False).run()
+						fstype = Menu(f"Enter a desired filesystem type for partition {partition}", fs_types(), skip=False).run()
 
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
@@ -640,24 +637,18 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 			elif task == "Mark/Unmark a partition as encrypted":
 				title = f'{current_layout}\n\nSelect which partition to mark as encrypted'
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
+				for partition in select_partitions(title, block_device_struct["partitions"]):
 					# Negate the current encryption marking
 					block_device_struct["partitions"][partition]['encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
 
 			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
 				title = f'{current_layout}\n\nSelect which partition to mark as bootable'
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
+				for partition in select_partitions(title, block_device_struct["partitions"]):
 					block_device_struct["partitions"][partition]['boot'] = not block_device_struct["partitions"][partition].get('boot', False)
 
 			elif task == "Set desired filesystem for a partition":
 				title = f'{current_layout}\n\nSelect which partition to set a filesystem on'
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
+				for partition in select_partitions(title, block_device_struct["partitions"]):
 					if not block_device_struct["partitions"][partition].get('filesystem', None):
 						block_device_struct["partitions"][partition]['filesystem'] = {}
 
@@ -669,7 +660,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 	return block_device_struct
 
 
-def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
+def select_individual_blockdevice_usage(block_devices: List[BlockDevice]) -> Dict[str, Any]:
 	result = {}
 
 	for device in block_devices:
@@ -680,7 +671,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
+def select_disk_layout(block_devices :List[BlockDevice], advanced_options :bool = False) -> Dict[str, Any]:
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -722,7 +713,7 @@ def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 
-def select_profile() -> Optional[str]:
+def select_profile() -> Optional[Profile]:
 	"""
 	# Asks the user to select a profile from the available profiles.
 	#
@@ -733,11 +724,11 @@ def select_profile() -> Optional[str]:
 	options = {}
 
 	for profile in top_level_profiles:
-		profile = Profile(None, profile)
-		description = profile.get_profile_description()
+		profile_obj = Profile(None, profile)
+		description = profile_obj.get_profile_description()
 
-		option = f'{profile.profile}: {description}'
-		options[option] = profile
+		option = f'{profile_obj.profile}: {description}'
+		options[option] = profile_obj
 
 	title = 'This is a list of pre-programmed profiles, ' \
 		'they might make it easier to install things like desktop environments'
@@ -764,8 +755,7 @@ def select_language() -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
-	return selected_lang
+	return str(Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run())
 
 
 def select_mirror_regions() -> Dict[str, Any]:
@@ -790,7 +780,7 @@ def select_mirror_regions() -> Dict[str, Any]:
 	return {}
 
 
-def select_harddrives() -> Optional[str]:
+def select_harddrives() -> Optional[List[str]]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -841,7 +831,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = "All open-source (default)"
 
-		return options.get(arguments.get('gfx_driver'))
+		return str(options.get(arguments.get('gfx_driver')))
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
@@ -865,4 +855,4 @@ def select_kernel() -> List[str]:
 		default_option=default_kernel
 	).run()
 
-	return selected_kernels
+	return [str(x) for x in selected_kernels if x in kernels]

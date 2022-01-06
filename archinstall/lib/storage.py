@@ -1,3 +1,4 @@
+from typing import List, Dict, List, Union
 import os
 
 # There's a few scenarios of execution:
@@ -7,13 +8,15 @@ import os
 #   (4. Added the ~/.config directory as an additional option for future reasons)
 #
 # And Keeping this in dict ensures that variables are shared across imports.
-storage = {
-	'PROFILE_PATH': [
-		'./profiles',
-		'~/.config/archinstall/profiles',
-		os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'profiles'),
-		# os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
-	],
+_PROFILE_PATHS :List[str] = [
+	'./profiles',
+	'~/.config/archinstall/profiles',
+	os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'profiles'),
+	# os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
+]
+
+storage :Dict[str, Any] = {
+	'PROFILE_PATH': _PROFILE_PATHS,
 	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
 	'PROFILE_DB': None,  # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
 	'LOG_PATH': '/var/log/archinstall',
