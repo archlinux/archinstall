@@ -1,8 +1,13 @@
 import logging
+from typing import Optional, Dict, Any, List
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..output import log
 
-def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_options=False):
+def suggest_single_disk_layout(block_device :'BlockDevice',
+	default_filesystem :Optional[str] = None,
+	advanced_options :bool = False
+) -> Dict[str, Any]:
+
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format(advanced_options)
@@ -94,7 +99,11 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_options=False):
+def suggest_multi_disk_layout(block_devices :List['BlockDevice'],
+	default_filesystem :Optional[str] = None,
+	advanced_options :bool = False
+) -> Dict[str, Any]:
+
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format(advanced_options)
