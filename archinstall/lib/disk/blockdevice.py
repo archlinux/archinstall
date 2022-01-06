@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import time
-from typing import Optional, Dict, Any, Iterator, Tuple
+from typing import Optional, Dict, Any, Iterator, Tuple, List
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
@@ -28,7 +28,7 @@ class BlockDevice:
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return f"BlockDevice({self.device_or_backfile}, size={self.size}GB, free_space={'+'.join(part[2] for part in self.free_space)}, bus_type={self.bus_type})"
 
-	def __iter__(self) -> Iterator['.partition.Partition']:
+	def __iter__(self) -> Iterator['Partition']:
 		for partition in self.partitions:
 			yield self.partitions[partition]
 

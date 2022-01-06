@@ -1,7 +1,7 @@
 import logging
 import urllib.error
 import urllib.request
-from typing import Union, Mapping, Iterable, Dict, Any
+from typing import Union, Mapping, Iterable, Dict, Any, List
 
 from .general import SysCommand
 from .output import log

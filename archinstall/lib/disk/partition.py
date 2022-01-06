@@ -5,7 +5,7 @@ import logging
 import json
 import os
 import hashlib
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union
 from .blockdevice import BlockDevice
 from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
@@ -23,7 +23,8 @@ class Partition:
 		mountpoint :Optional[str] = None,
 		encrypted :bool = False,
 		autodetect_filesystem :bool = True
-	):
+		):
+
 		if not part_id:
 			part_id = os.path.basename(path)
 

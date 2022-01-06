@@ -2,7 +2,7 @@ import logging
 import os
 import socket
 import struct
-from typing import Unnion, Dict, Any, List
+from typing import Union, Dict, Any, List
 
 from .exceptions import HardwareIncompatibilityError
 from .general import SysCommand

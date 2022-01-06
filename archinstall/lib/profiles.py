@@ -8,7 +8,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional, ModuleType
+from typing import Optional, ModuleType, Dict, Union
 
 from .general import multisplit
 from .networking import list_interfaces
@@ -106,13 +106,13 @@ def list_profiles(
 
 
 class Script:
-	def __init__(self, profile :str, installer :Optional['.installer.Installer'] = None):
+	def __init__(self, profile :str, installer :Optional['Installer'] = None):
 		"""
 		:param profile: A string representing either a boundled profile, a local python file
-		    or a remote path (URL) to a python script-profile. Three examples:
-		    * profile: https://archlinux.org/some_profile.py
-		    * profile: desktop
-		    * profile: /path/to/profile.py
+			or a remote path (URL) to a python script-profile. Three examples:
+			* profile: https://archlinux.org/some_profile.py
+			* profile: desktop
+			* profile: /path/to/profile.py
 		"""
 		self.profile = profile
 		self.installer = installer # TODO: Appears not to be used anymore?
@@ -192,7 +192,7 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer :'.installer.Installer', path :str):
+	def __init__(self, installer :'Installer', path :str):
 		super(Profile, self).__init__(path, installer)
 
 	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:

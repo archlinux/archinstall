@@ -6,7 +6,7 @@ from ..output import log
 def suggest_single_disk_layout(block_device :'BlockDevice',
 	default_filesystem :Optional[str] = None,
 	advanced_options :bool = False
-) -> Dict[str, Any]:
+	) -> Dict[str, Any]:
 
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format

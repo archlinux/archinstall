@@ -7,7 +7,7 @@ import pathlib
 import urllib.parse
 import urllib.request
 from importlib import metadata
-from typing import ModuleType, Optional
+from typing import ModuleType, Optional, List
 
 from .output import log
 from .storage import storage

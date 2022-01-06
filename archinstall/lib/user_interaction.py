@@ -263,7 +263,7 @@ def ask_for_swap(prompt :str = 'Would you like to use swap on zram? (Y/n): ', fo
 	return True if input(prompt).strip(' ').lower() not in ('n', 'no') else False
 
 
-def ask_for_superuser_account(prompt :str = 'Username for required superuser with sudo privileges: ', forced :boolt = False) -> Dict[str, Dict[str, str]]:
+def ask_for_superuser_account(prompt :str = 'Username for required superuser with sudo privileges: ', forced :bool = False) -> Dict[str, Dict[str, str]]:
 	while 1:
 		new_user = input(prompt).strip(' ')
 
@@ -439,7 +439,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
-def current_partition_layout(partitions :List['.disk.partition.Partition'], with_idx :bool = False) -> Dict[str, Any]:
+def current_partition_layout(partitions :List['Partition'], with_idx :bool = False) -> Dict[str, Any]:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -483,7 +483,7 @@ def current_partition_layout(partitions :List['.disk.partition.Partition'], with
 	return f'\n\nCurrent partition layout:\n\n{current_layout}'
 
 
-def select_partition(title :str, partitions :List['.disk.partition.Partition'], multiple :bool = False) -> Union[int, List[int], None]:
+def select_partition(title :str, partitions :List['Partition'], multiple :bool = False) -> Union[int, List[int], None]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 

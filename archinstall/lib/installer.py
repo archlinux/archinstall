@@ -1,5 +1,5 @@
 import time
-from typing import Union, Dict, Any, List, ModuleType
+from typing import Union, Dict, Any, List, ModuleType, Optional
 import logging
 import os
 import shutil
@@ -30,7 +30,7 @@ __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
 class InstallationFile:
-	def __init__(self, installation :Installer, filename :str, owner :str, mode :str = "w"):
+	def __init__(self, installation :'Installer', filename :str, owner :str, mode :str = "w"):
 		self.installation = installation
 		self.filename = filename
 		self.owner = owner
@@ -594,13 +594,14 @@ class Installer:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:
-		 * systemd-bootctl
-		 * grub
-		 * efistub (beta)
+		* systemd-bootctl
+		* grub
+		* efistub (beta)
 
 		:param bootloader: Can be one of the three strings
 			'systemd-bootctl', 'grub' or 'efistub' (beta)
 		"""
+
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_add_bootloader'):
 				# Allow plugins to override the boot-loader handling.
@@ -789,7 +790,7 @@ class Installer:
 
 		:param profile: Can be a local path or a remote path (URL)
 		:return: Returns the imported script as a module, this way
-		    you can access any remaining functions exposed by the profile.
+			you can access any remaining functions exposed by the profile.
 		:rtype: module
 		"""
 		storage['installation_session'] = self
