@@ -1,7 +1,12 @@
 import pathlib
 import glob
 import logging
-from typing import Union, Dict
+from __future__ import annotations
+from typing import Union, Dict, TYPE_CHECKING
+
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from ..installer import Installer
 from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
@@ -9,7 +14,7 @@ from ..output import log
 from .partition import Partition
 
 
-def mount_subvolume(installation :'Installer', subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
+def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
 	"""
 	This function uses mount to mount a subvolume on a given device, at a given location with a given subvolume name.
 
@@ -42,7 +47,7 @@ def mount_subvolume(installation :'Installer', subvolume_location :Union[pathlib
 
 	return SysCommand(f"mount {mount_information['source']} {target} -o subvol=@{subvolume_location}").exit_code == 0
 
-def create_subvolume(installation :'Installer', subvolume_location :Union[pathlib.Path, str]) -> bool:
+def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
 	"""
 	This function uses btrfs to create a subvolume.
 
@@ -75,7 +80,7 @@ def create_subvolume(installation :'Installer', subvolume_location :Union[pathli
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
-def manage_btrfs_subvolumes(installation :'Installer',
+def manage_btrfs_subvolumes(installation :Installer,
 	partition :Dict[str, str],
 	mountpoints :Dict[str, str],
 	subvolumes :Dict[str, str],

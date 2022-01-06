@@ -1,12 +1,16 @@
 import logging
-from typing import Optional, Dict, Any, List
+from __future__ import annotations
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .blockdevice import BlockDevice
+	
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..output import log
 
-def suggest_single_disk_layout(block_device :'BlockDevice',
+def suggest_single_disk_layout(block_device :BlockDevice,
 	default_filesystem :Optional[str] = None,
-	advanced_options :bool = False
-	) -> Dict[str, Any]:
+	advanced_options :bool = False) -> Dict[str, Any]:
 
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
@@ -99,7 +103,7 @@ def suggest_single_disk_layout(block_device :'BlockDevice',
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices :List['BlockDevice'],
+def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 	default_filesystem :Optional[str] = None,
 	advanced_options :bool = False
 ) -> Dict[str, Any]:

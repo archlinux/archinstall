@@ -9,7 +9,11 @@ import string
 import sys
 import time
 from datetime import datetime, date
-from typing import Callable, Optional, Dict, Any, List, Union, Iterator
+from __future__ import annotations
+from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .installer import Installer
 
 if sys.platform == 'linux':
 	from select import epoll, EPOLLIN, EPOLLHUP
@@ -477,7 +481,7 @@ def pid_exists(pid: int) -> bool:
 		return False
 
 
-def run_custom_user_commands(commands :List[str], installation :'Installer') -> None:
+def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
 		log(f'Executing custom command "{command}" ...', level=logging.INFO)
 		

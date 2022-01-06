@@ -4,7 +4,12 @@ import os
 import pathlib
 import re
 import time
-from typing import Union, List, Iterator, Dict, Optional, Any
+from __future__ import annotations
+from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .partition import Partition
+	
 from .blockdevice import BlockDevice
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
@@ -170,7 +175,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, retur
 		return {}
 
 
-def get_partitions_in_use(mountpoint :str) -> List['Partition']:
+def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 	from .partition import Partition
 
 	try:
@@ -221,7 +226,7 @@ def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
 		if partition.get('encrypted', False):
 			yield partition
 
-def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> 'Partition':
+def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
 			if partition.get('mountpoint', None) == relative_mountpoint:

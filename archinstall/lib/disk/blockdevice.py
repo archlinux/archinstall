@@ -2,7 +2,12 @@ import os
 import json
 import logging
 import time
-from typing import Optional, Dict, Any, Iterator, Tuple, List
+from __future__ import annotations
+from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .partition import Partition
+	
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
@@ -28,7 +33,7 @@ class BlockDevice:
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return f"BlockDevice({self.device_or_backfile}, size={self.size}GB, free_space={'+'.join(part[2] for part in self.free_space)}, bus_type={self.bus_type})"
 
-	def __iter__(self) -> Iterator['Partition']:
+	def __iter__(self) -> Iterator[Partition]:
 		for partition in self.partitions:
 			yield self.partitions[partition]
 
@@ -109,7 +114,7 @@ class BlockDevice:
 	# 		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
 
 	@property
-	def partitions(self) -> Dict[str, 'Partition']:
+	def partitions(self) -> Dict[str, Partition]:
 		from .filesystem import Partition
 
 		self.partprobe()
@@ -134,7 +139,7 @@ class BlockDevice:
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
 	@property
-	def partition(self) -> 'Partition':
+	def partition(self) -> Partition:
 		all_partitions = self.partitions
 		return [all_partitions[k] for k in all_partitions]
 
@@ -232,7 +237,7 @@ class BlockDevice:
 	def flush_cache(self) -> None:
 		self.part_cache = {}
 
-	def get_partition(self, uuid :str) -> 'Partition':
+	def get_partition(self, uuid :str) -> Partition:
 		count = 0
 		while count < 5:
 			for partition_uuid, partition in self.partitions.items():

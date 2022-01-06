@@ -7,7 +7,12 @@ import shutil
 import signal
 import sys
 import time
-from typing import List, Any, Optional, Dict, Union
+from __future__ import annotations
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
+
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .disk.partition import Partition
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
@@ -439,7 +444,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
-def current_partition_layout(partitions :List['Partition'], with_idx :bool = False) -> Dict[str, Any]:
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -483,7 +488,7 @@ def current_partition_layout(partitions :List['Partition'], with_idx :bool = Fal
 	return f'\n\nCurrent partition layout:\n\n{current_layout}'
 
 
-def select_partition(title :str, partitions :List['Partition'], multiple :bool = False) -> Union[int, List[int], None]:
+def select_partition(title :str, partitions :List[Partition], multiple :bool = False) -> Union[int, List[int], None]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 

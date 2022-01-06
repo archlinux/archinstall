@@ -2,7 +2,12 @@ import time
 import logging
 import json
 import pathlib
-from typing import Optional, Dict, Any
+from __future__ import annotations
+from typing import Optional, Dict, Any, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .blockdevice import BlockDevice
+	
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -17,7 +22,7 @@ class Filesystem:
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice :'BlockDevice', mode :int):
+	def __init__(self, blockdevice :BlockDevice, mode :int):
 		self.blockdevice = blockdevice
 		self.mode = mode
 

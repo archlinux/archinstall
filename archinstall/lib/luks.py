@@ -4,7 +4,12 @@ import os
 import pathlib
 import shlex
 import time
-from typing import Optional, List
+from __future__ import annotations
+from typing import Optional, List,TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .installer import Installer
+
 from .disk import Partition, convert_device_to_uuid
 from .general import SysCommand, SysCommandWorker
 from .output import log
@@ -19,8 +24,7 @@ class luks2:
 		key_file :Optional[str] = None,
 		auto_unmount :bool = False,
 		*args :str,
-		**kwargs :str
-		):
+		**kwargs :str):
 
 		self.password = password
 		self.partition = partition
@@ -59,8 +63,7 @@ class luks2:
 		key_size :int = 512,
 		hash_type :str = 'sha512',
 		iter_time :int = 10000,
-		key_file :Optional[str] = None
-		) -> str:
+		key_file :Optional[str] = None) -> str:
 
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
@@ -189,7 +192,7 @@ class luks2:
 
 		return True
 
-	def crypttab(self, installation :'Installer', key_path :str, options :List[str] = ["luks", "key-slot=1"]) -> None:
+	def crypttab(self, installation :Installer, key_path :str, options :List[str] = ["luks", "key-slot=1"]) -> None:
 		log(f'Adding a crypttab entry for key {key_path} in {installation}', level=logging.INFO)
 		with open(f"{installation.target}/etc/crypttab", "a") as crypttab:
 			crypttab.write(f"{self.mountpoint} UUID={convert_device_to_uuid(self.partition.path)} {key_path} {','.join(options)}\n")

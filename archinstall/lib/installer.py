@@ -1,5 +1,4 @@
 import time
-from typing import Union, Dict, Any, List, ModuleType, Optional
 import logging
 import os
 import shutil
@@ -7,6 +6,7 @@ import shlex
 import pathlib
 import subprocess
 import glob
+from typing import Union, Dict, Any, List, ModuleType, Optional, Iterator, Mapping
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -284,7 +284,7 @@ class Installer:
 		else:
 			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
 
-	def set_mirrors(self, mirrors :Mapping[str, Iterable[str]]) -> None:
+	def set_mirrors(self, mirrors :Mapping[str, Iterator[str]]) -> None:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
 				if result := plugin.on_mirrors(mirrors):
