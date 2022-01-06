@@ -23,8 +23,7 @@ class Partition:
 		filesystem :Optional[str] = None,
 		mountpoint :Optional[str] = None,
 		encrypted :bool = False,
-		autodetect_filesystem :bool = True
-		):
+		autodetect_filesystem :bool = True):
 
 		if not part_id:
 			part_id = os.path.basename(path)
