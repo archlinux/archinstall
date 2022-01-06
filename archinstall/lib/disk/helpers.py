@@ -56,7 +56,7 @@ def select_largest_device(devices :List[BlockDevice], gigabytes :int, filter_out
 
 	return max(copy_devices, key=(lambda device : device.size))
 
-def select_disk_larger_than_or_close_to( :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
+def select_disk_larger_than_or_close_to(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
 		filter_out = []
 
