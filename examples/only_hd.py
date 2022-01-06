@@ -4,7 +4,6 @@ import os
 import pathlib
 
 import archinstall
-import glob
 
 def load_mirror():
 	if archinstall.arguments.get('mirror-region', None) is not None:
@@ -27,20 +26,6 @@ def load_harddrives():
 		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 
-def load_disk_layouts():
-	if archinstall.arguments.get('disk_layouts', None) is not None:
-		dl_path = pathlib.Path(archinstall.arguments['disk_layouts'])
-		if dl_path.exists(): # and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
 
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
@@ -106,7 +91,6 @@ def load_config():
 	load_localization()
 	load_gfxdriver()
 	load_servers()
-	load_disk_layouts()
 
 def ask_user_questions():
 	"""
@@ -169,40 +153,6 @@ def perform_disk_operations():
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(dl_disk)
 
-
-def create_subvolume(installation_mountpoint, subvolume_location):
-	"""
-	This function uses btrfs to create a subvolume.
-
-	@installation: archinstall.Installer instance
-	@subvolume_location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
-	"""
-	if type(installation_mountpoint) == str:
-		installation_mountpoint_path = pathlib.Path(installation_mountpoint)
-	else:
-		installation_mountpoint_path = installation_mountpoint
-	# Set up the required physical structure
-	if type(subvolume_location) == str:
-		subvolume_location = pathlib.Path(subvolume_location)
-
-	target = installation_mountpoint_path / subvolume_location.relative_to(subvolume_location.anchor)
-
-	# Difference from mount_subvolume:
-	#  We only check if the parent exists, since we'll run in to "target path already exists" otherwise
-	if not target.parent.exists():
-		target.parent.mkdir(parents=True)
-
-	if glob.glob(str(target / '*')):
-		raise archinstall.DiskError(f"Cannot create subvolume at {target} because it contains data (non-empty folder target)")
-
-	# Remove the target if it exists. It is nor incompatible to the previous
-	if target.exists():
-		target.rmdir()
-
-	archinstall.log(f"Creating a subvolume on {target}", level=logging.INFO)
-	if (cmd := archinstall.SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
-		raise archinstall.DiskError(f"Could not create a subvolume at {target}: {cmd}")
-
 def perform_installation(mountpoint):
 	"""
 	Performs the installation steps on a block device.
@@ -220,6 +170,10 @@ def perform_installation(mountpoint):
 			if partition.mountpoint == installation.target + '/boot':
 				if partition.size <= 0.25: # in GB
 					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
+		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
+		target = pathlib.Path(f"{mountpoint}/etc/fstab")
+		if not target.parent.exists():
+			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
