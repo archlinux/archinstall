@@ -1,3 +1,4 @@
+from __future__ import annotations
 import getpass
 import ipaddress
 import logging
@@ -7,6 +8,11 @@ import shutil
 import signal
 import sys
 import time
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
+
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .disk.partition import Partition
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
@@ -23,20 +29,20 @@ from .mirrors import list_mirrors
 #       Some return the keys from the options, some the values?
 from .. import fs_types
 
-
-def get_terminal_height():
+# TODO: These can be removed after the move to simple_menu.py
+def get_terminal_height() -> int:
 	return shutil.get_terminal_size().lines
 
 
-def get_terminal_width():
+def get_terminal_width() -> int:
 	return shutil.get_terminal_size().columns
 
 
-def get_longest_option(options):
+def get_longest_option(options :List[Any]) -> int:
 	return max([len(x) for x in options])
 
 
-def check_for_correct_username(username):
+def check_for_correct_username(username :str) -> bool:
 	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 		return True
 	log(
@@ -47,14 +53,14 @@ def check_for_correct_username(username):
 	return False
 
 
-def do_countdown():
+def do_countdown() -> bool:
 	SIG_TRIGGER = False
 
-	def kill_handler(sig, frame):
+	def kill_handler(sig :int, frame :Any) -> None:
 		print()
 		exit(0)
 
-	def sig_handler(sig, frame):
+	def sig_handler(sig :int, frame :Any) -> None:
 		global SIG_TRIGGER
 		SIG_TRIGGER = True
 		signal.signal(signal.SIGINT, kill_handler)
@@ -79,12 +85,14 @@ def do_countdown():
 				sys.stdin.read()
 			SIG_TRIGGER = False
 			signal.signal(signal.SIGINT, sig_handler)
+
 	print()
 	signal.signal(signal.SIGINT, original_sigint_handler)
+
 	return True
 
 
-def get_password(prompt="Enter a password: "):
+def get_password(prompt :str = "Enter a password: ") -> Optional[str]:
 	while passwd := getpass.getpass(prompt):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
@@ -98,7 +106,7 @@ def get_password(prompt="Enter a password: "):
 	return None
 
 
-def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
+def print_large_list(options :List[str], padding :int = 5, margin_bottom :int = 0, separator :str = ': ') -> List[int]:
 	highest_index_number_length = len(str(len(options)))
 	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
 	spaces_without_option = longest_line - (len(separator) + highest_index_number_length)
@@ -136,6 +144,7 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	# Users might want to single out a partition for non-encryption to share between dualboot etc.
 
 
+# TODO: This can be removed once we have simple_menu everywhere
 class MiniCurses:
 	def __init__(self, width, height):
 		self.width = width
@@ -255,11 +264,11 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap(prompt='Would you like to use swap on zram? (Y/n): ', forced=False):
+def ask_for_swap(prompt :str = 'Would you like to use swap on zram? (Y/n): ', forced :bool = False) -> bool:
 	return True if input(prompt).strip(' ').lower() not in ('n', 'no') else False
 
 
-def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
+def ask_for_superuser_account(prompt :str = 'Username for required superuser with sudo privileges: ', forced :bool = False) -> Dict[str, Dict[str, str]]:
 	while 1:
 		new_user = input(prompt).strip(' ')
 
@@ -277,7 +286,7 @@ def ask_for_superuser_account(prompt='Username for required superuser with sudo 
 		return {new_user: {"!password": password}}
 
 
-def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
+def ask_for_additional_users(prompt :str = 'Any additional users to install (leave blank for no users): ') -> List[Dict[str, Dict[str, str]]]:
 	users = {}
 	superusers = {}
 
@@ -297,7 +306,7 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, superusers
 
 
-def ask_for_a_timezone():
+def ask_for_a_timezone() -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
@@ -311,7 +320,7 @@ def ask_for_a_timezone():
 	return selected_tz
 
 
-def ask_for_bootloader(advanced_options=False) -> str:
+def ask_for_bootloader(advanced_options :bool = False) -> str:
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
@@ -333,14 +342,14 @@ def ask_for_bootloader(advanced_options=False) -> str:
 	return bootloader
 
 
-def ask_for_audio_selection(desktop=True):
+def ask_for_audio_selection(desktop :bool = True) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
 	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
 	return selected_audio
 
 
-def ask_to_configure_network():
+def ask_to_configure_network() -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
@@ -435,7 +444,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
-def current_partition_layout(partitions, with_idx=False):
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -479,7 +488,7 @@ def current_partition_layout(partitions, with_idx=False):
 	return f'\n\nCurrent partition layout:\n\n{current_layout}'
 
 
-def select_partition(title, partitions, multiple=False):
+def select_partition(title :str, partitions :List[Partition], multiple :bool = False) -> Union[int, List[int], None]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 
@@ -491,47 +500,18 @@ def select_partition(title, partitions, multiple=False):
 
 	return None
 
-def get_default_partition_layout(block_devices, advanced_options=False):
+def get_default_partition_layout(
+	block_devices :Union[BlockDevice, List[BlockDevice]],
+	advanced_options :bool = False
+) -> Dict[str, Any]:
+
 	if len(block_devices) == 1:
 		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
 	else:
 		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 
-def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
-	# if has_uefi():
-	# 	partition_type = 'gpt'
-	# else:
-	# 	partition_type = 'msdos'
-
-	# log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
-	# partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
-	# partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
-
-	# mountpoints = {}
-	# struct = {
-	# 	"partitions" : []
-	# }
-	# for partition in partitions:
-	# 	mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
-
-	# 	part_struct = {}
-	# 	if mountpoint:
-	# 		part_struct['mountpoint'] = mountpoint
-	# 		if mountpoint == '/boot':
-	# 			part_struct['boot'] = True
-	# 			if has_uefi():
-	# 				part_struct['ESP'] = True
-	# 		elif mountpoint == '/' and
-	# 	if partition.uuid:
-	# 		part_struct['PARTUUID'] = partition.uuid
-	# 	if partition in partitions_to_wipe:
-	# 		part_struct['wipe'] = True
-
-	# 	struct['partitions'].append(part_struct)
-
-	# return struct
-
+def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, Any]:
 	block_device_struct = {
 		"partitions": [partition.__dump__() for partition in block_device.partitions.values()]
 	}
@@ -689,7 +669,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	return block_device_struct
 
 
-def select_individual_blockdevice_usage(block_devices: list):
+def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	result = {}
 
 	for device in block_devices:
@@ -700,7 +680,7 @@ def select_individual_blockdevice_usage(block_devices: list):
 	return result
 
 
-def select_disk_layout(block_devices :list, advanced_options=False):
+def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -714,7 +694,7 @@ def select_disk_layout(block_devices :list, advanced_options=False):
 		return select_individual_blockdevice_usage(block_devices)
 
 
-def select_disk(dict_o_disks):
+def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.
 	Usually this is combined with :ref:`archinstall.list_drives`.
@@ -742,7 +722,7 @@ def select_disk(dict_o_disks):
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 
-def select_profile():
+def select_profile() -> Optional[str]:
 	"""
 	# Asks the user to select a profile from the available profiles.
 	#
@@ -770,7 +750,7 @@ def select_profile():
 	return None
 
 
-def select_language():
+def select_language() -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -788,7 +768,7 @@ def select_language():
 	return selected_lang
 
 
-def select_mirror_regions():
+def select_mirror_regions() -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
@@ -810,7 +790,7 @@ def select_mirror_regions():
 	return {}
 
 
-def select_harddrives():
+def select_harddrives() -> Optional[str]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -832,7 +812,7 @@ def select_harddrives():
 	return None
 
 
-def select_driver(options=AVAILABLE_GFX_DRIVERS):
+def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -866,7 +846,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def select_kernel():
+def select_kernel() -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 

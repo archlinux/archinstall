@@ -3,7 +3,7 @@
 
 <!-- </div> -->
 # Arch Installer
-[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml)
+[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
