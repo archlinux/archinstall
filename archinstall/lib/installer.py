@@ -394,8 +394,8 @@ class Installer:
 		nic :str,
 		dhcp :bool = True,
 		ip :Optional[str] = None,
-		gateway= :Optional[str] = None,
-		dns= :Optional[str] = None,
+		gateway :Optional[str] = None,
+		dns :Optional[str] = None,
 		*args :str,
 		**kwargs :str
 	) -> None:

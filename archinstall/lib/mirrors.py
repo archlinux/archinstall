@@ -1,7 +1,7 @@
 import logging
 import urllib.error
 import urllib.request
-from typing import Union, Mapping, Iterable
+from typing import Union, Mapping, Iterable, Dict, Any
 
 from .general import SysCommand
 from .output import log
@@ -51,7 +51,12 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	return new_raw_data
 
 
-def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', sort_order=["https", "http"], *args, **kwargs) -> Union[bool, bytes]:
+def filter_mirrors_by_region(regions :str,
+	destination :str = '/etc/pacman.d/mirrorlist',
+	sort_order :List[str] = ["https", "http"],
+	*args :str,
+	**kwargs :str
+) -> Union[bool, bytes]:
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -75,7 +80,7 @@ def filter_mirrors_by_region(regions, destination='/etc/pacman.d/mirrorlist', so
 		return new_list.decode('UTF-8')
 
 
-def add_custom_mirrors(mirrors: list, *args, **kwargs):
+def add_custom_mirrors(mirrors: List[str], *args :str, **kwargs :str) -> bool:
 	"""
 	This will append custom mirror definitions in pacman.conf
 
@@ -91,7 +96,7 @@ def add_custom_mirrors(mirrors: list, *args, **kwargs):
 	return True
 
 
-def insert_mirrors(mirrors, *args, **kwargs):
+def insert_mirrors(mirrors :Dict[str, Any], *args :str, **kwargs :str) -> bool:
 	"""
 	This function will insert a given mirror-list at the top of `/etc/pacman.d/mirrorlist`.
 	It will not flush any other mirrors, just insert new ones.
@@ -138,7 +143,7 @@ def re_rank_mirrors(
 	return True
 
 
-def list_mirrors(sort_order=["https", "http"]):
+def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 	url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
 	regions = {}
 

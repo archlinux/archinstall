@@ -16,16 +16,16 @@ from .storage import storage
 from .exceptions import ProfileNotFound
 
 
-def grab_url_data(path):
+def grab_url_data(path :str) -> str:
 	safe_path = path[: path.find(':') + 1] + ''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
-	return response.read()
+	return response.read() # bytes?
 
 
-def is_desktop_profile(profile) -> bool:
+def is_desktop_profile(profile :str) -> bool:
 	if str(profile) == 'Profile(desktop)':
 		return True
 
@@ -42,8 +42,13 @@ def is_desktop_profile(profile) -> bool:
 	return False
 
 
-def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_profiles=False):
+def list_profiles(
+	filter_irrelevant_macs :bool = True,
+	subpath :str = '',
+	filter_top_level_profiles :bool = False
+) -> Dict[str, Dict[str, Union[str, bool]]]:
 	# TODO: Grab from github page as well, not just local static files
+
 	if filter_irrelevant_macs:
 		local_macs = list_interfaces()
 
@@ -101,23 +106,27 @@ def list_profiles(filter_irrelevant_macs=True, subpath='', filter_top_level_prof
 
 
 class Script:
-	def __init__(self, profile, installer=None):
-		# profile: https://hvornum.se/something.py
-		# profile: desktop
-		# profile: /path/to/profile.py
+	def __init__(self, profile :str, installer :Optional['.installer.Installer'] = None):
+		"""
+		:param profile: A string representing either a boundled profile, a local python file
+		    or a remote path (URL) to a python script-profile. Three examples:
+		    * profile: https://archlinux.org/some_profile.py
+		    * profile: desktop
+		    * profile: /path/to/profile.py
+		"""
 		self.profile = profile
-		self.installer = installer
+		self.installer = installer # TODO: Appears not to be used anymore?
 		self.converted_path = None
 		self.spec = None
 		self.examples = None
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
 
-	def __enter__(self, *args, **kwargs):
+	def __enter__(self, *args :str, **kwargs :str) -> ModuleType:
 		self.execute()
 		return sys.modules[self.namespace]
 
-	def __exit__(self, *args, **kwargs):
+	def __exit__(self, *args :str, **kwargs :str) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
@@ -125,7 +134,7 @@ class Script:
 		if self.original_namespace:
 			self.namespace = self.original_namespace
 
-	def localize_path(self, profile_path):
+	def localize_path(self, profile_path :str) -> str:
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
 				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
@@ -138,7 +147,7 @@ class Script:
 			return profile_path
 
 	@property
-	def path(self):
+	def path(self) -> str:
 		parsed_url = urllib.parse.urlparse(self.profile)
 
 		# The Profile was not a direct match on a remote URL
@@ -163,7 +172,7 @@ class Script:
 		else:
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
-	def load_instructions(self, namespace=None) -> 'Script':
+	def load_instructions(self, namespace :Optional[str] = None) -> 'Script':
 		if namespace:
 			self.namespace = namespace
 
@@ -183,25 +192,23 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer, path, args=None):
+	def __init__(self, installer :'.installer.Installer', path :str):
 		super(Profile, self).__init__(path, installer)
-		if args is None:
-			args = {}
 
-	def __dump__(self, *args, **kwargs):
+	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:
 		return {'path': self.path}
 
-	def __repr__(self, *args, **kwargs):
+	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return f'Profile({os.path.basename(self.profile)})'
 
-	def install(self):
+	def install(self) -> ModuleType:
 		# Before installing, revert any temporary changes to the namespace.
 		# This ensures that the namespace during installation is the original initiation namespace.
 		# (For instance awesome instead of aweosme.py or app-awesome.py)
 		self.namespace = self.original_namespace
 		return self.execute()
 
-	def has_prep_function(self):
+	def has_prep_function(self) -> bool:
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
@@ -218,7 +225,7 @@ class Profile(Script):
 						return True
 		return False
 
-	def has_post_install(self):
+	def has_post_install(self) -> bool:
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
@@ -234,7 +241,7 @@ class Profile(Script):
 					if hasattr(imported, '_post_install'):
 						return True
 
-	def is_top_level_profile(self):
+	def is_top_level_profile(self) -> bool:
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
@@ -247,7 +254,7 @@ class Profile(Script):
 		# since developers like less code - omitting it should assume they want to present it.
 		return True
 
-	def get_profile_description(self):
+	def get_profile_description(self) -> str:
 		with open(self.path, 'r') as source:
 			source_data = source.read()
 
@@ -282,11 +289,11 @@ class Profile(Script):
 
 
 class Application(Profile):
-	def __repr__(self, *args, **kwargs):
+	def __repr__(self, *args :str, **kwargs :str):
 		return f'Application({os.path.basename(self.profile)})'
 
 	@property
-	def path(self):
+	def path(self) -> str:
 		parsed_url = urllib.parse.urlparse(self.profile)
 
 		# The Profile was not a direct match on a remote URL
@@ -311,7 +318,7 @@ class Application(Profile):
 		else:
 			raise ProfileNotFound(f"Application cannot handle scheme {parsed_url.scheme}")
 
-	def install(self):
+	def install(self) -> ModuleType:
 		# Before installing, revert any temporary changes to the namespace.
 		# This ensures that the namespace during installation is the original initiation namespace.
 		# (For instance awesome instead of aweosme.py or app-awesome.py)

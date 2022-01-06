@@ -478,6 +478,8 @@ def pid_exists(pid: int) -> bool:
 
 
 def run_custom_user_commands(commands :List[str], installation :'.installer.Installer') -> None:
+	from .installer import Installer # Not sure this is needed to solve the type annotation above
+
 	for index, command in enumerate(commands):
 		log(f'Executing custom command "{command}" ...', level=logging.INFO)
 		
