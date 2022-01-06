@@ -170,7 +170,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_p
 		return {}
 
 
-def get_partitions_in_use(mountpoint) -> list:
+def get_partitions_in_use(mountpoint) -> List['Partition']:
 	from .partition import Partition
 
 	try:

@@ -8,7 +8,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional
+from typing import Optional, ModuleType
 
 from .general import multisplit
 from .networking import list_interfaces
@@ -163,7 +163,7 @@ class Script:
 		else:
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
-	def load_instructions(self, namespace=None):
+	def load_instructions(self, namespace=None) -> 'Script':
 		if namespace:
 			self.namespace = namespace
 
@@ -173,7 +173,7 @@ class Script:
 
 		return self
 
-	def execute(self):
+	def execute(self) -> ModuleType:
 		if self.namespace not in sys.modules or self.spec is None:
 			self.load_instructions()
 
