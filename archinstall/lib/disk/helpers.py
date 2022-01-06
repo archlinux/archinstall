@@ -14,7 +14,7 @@ from ..storage import storage
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GIGA = 2 ** 30
 
-def convert_size_to_gb(size):
+def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
 
 def sort_block_devices_based_on_performance(block_devices):
