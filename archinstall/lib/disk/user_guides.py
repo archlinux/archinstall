@@ -1,5 +1,5 @@
-import logging
 from __future__ import annotations
+import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

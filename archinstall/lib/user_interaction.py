@@ -1,3 +1,4 @@
+from __future__ import annotations
 import getpass
 import ipaddress
 import logging
@@ -7,7 +8,6 @@ import shutil
 import signal
 import sys
 import time
-from __future__ import annotations
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999

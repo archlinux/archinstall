@@ -1,10 +1,10 @@
+from __future__ import annotations
 import json
 import logging
 import os
 import pathlib
 import shlex
 import time
-from __future__ import annotations
 from typing import Optional, List,TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

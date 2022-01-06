@@ -1,8 +1,8 @@
+from __future__ import annotations
 import os
 import json
 import logging
 import time
-from __future__ import annotations
 from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

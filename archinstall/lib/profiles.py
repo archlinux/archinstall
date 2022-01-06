@@ -1,3 +1,4 @@
+from __future__ import annotations
 import hashlib
 import importlib.util
 import json
@@ -8,7 +9,6 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from __future__ import annotations
 from typing import Optional, ModuleType, Dict, Union, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

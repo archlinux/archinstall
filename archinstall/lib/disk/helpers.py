@@ -1,10 +1,10 @@
+from __future__ import annotations
 import json
 import logging
 import os
 import pathlib
 import re
 import time
-from __future__ import annotations
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

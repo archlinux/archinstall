@@ -1,8 +1,8 @@
+from __future__ import annotations
 import time
 import logging
 import json
 import pathlib
-from __future__ import annotations
 from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:

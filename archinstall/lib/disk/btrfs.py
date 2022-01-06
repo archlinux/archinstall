@@ -1,7 +1,7 @@
+from __future__ import annotations
 import pathlib
 import glob
 import logging
-from __future__ import annotations
 from typing import Union, Dict, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
