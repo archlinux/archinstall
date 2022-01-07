@@ -1,14 +1,20 @@
+from __future__ import annotations
 import os
 import json
 import logging
 import time
+from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .partition import Partition
+	
 from ..exceptions import DiskError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
 
 class BlockDevice:
-	def __init__(self, path, info=None):
+	def __init__(self, path :str, info :Optional[Dict[str, Any]] = None):
 		if not info:
 			from .helpers import all_disks
 			# If we don't give any information, we need to auto-fill it.
@@ -24,32 +30,32 @@ class BlockDevice:
 		#       It's actually partition-encryption, but for future-proofing this
 		#       I'm placing the encryption password on a BlockDevice level.
 
-	def __repr__(self, *args, **kwargs):
+	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return f"BlockDevice({self.device_or_backfile}, size={self.size}GB, free_space={'+'.join(part[2] for part in self.free_space)}, bus_type={self.bus_type})"
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[Partition]:
 		for partition in self.partitions:
 			yield self.partitions[partition]
 
-	def __getitem__(self, key, *args, **kwargs):
+	def __getitem__(self, key :str, *args :str, **kwargs :str) -> Any:
 		if key not in self.info:
 			raise KeyError(f'{self} does not contain information: "{key}"')
 		return self.info[key]
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return len(self.partitions)
 
-	def __lt__(self, left_comparitor):
+	def __lt__(self, left_comparitor :'BlockDevice') -> bool:
 		return self.path < left_comparitor.path
 
-	def json(self):
+	def json(self) -> str:
 		"""
 		json() has precedence over __dump__, so this is a way
 		to give less/partial information for user readability.
 		"""
 		return self.path
 
-	def __dump__(self):
+	def __dump__(self) -> Dict[str, Dict[str, Any]]:
 		return {
 			self.path : {
 				'partuuid' : self.uuid,
@@ -59,14 +65,14 @@ class BlockDevice:
 		}
 
 	@property
-	def partition_type(self):
+	def partition_type(self) -> str:
 		output = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device['pttype']
 
 	@property
-	def device_or_backfile(self):
+	def device_or_backfile(self) -> str:
 		"""
 		Returns the actual device-endpoint of the BlockDevice.
 		If it's a loop-back-device it returns the back-file,
@@ -82,7 +88,7 @@ class BlockDevice:
 			return self.device
 
 	@property
-	def device(self):
+	def device(self) -> str:
 		"""
 		Returns the device file of the BlockDevice.
 		If it's a loop-back-device it returns the /dev/X device,
@@ -108,7 +114,7 @@ class BlockDevice:
 	# 		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
 
 	@property
-	def partitions(self):
+	def partitions(self) -> Dict[str, Partition]:
 		from .filesystem import Partition
 
 		self.partprobe()
@@ -133,17 +139,19 @@ class BlockDevice:
 		return {k: self.part_cache[k] for k in sorted(self.part_cache)}
 
 	@property
-	def partition(self):
+	def partition(self) -> Partition:
 		all_partitions = self.partitions
 		return [all_partitions[k] for k in all_partitions]
 
 	@property
-	def partition_table_type(self):
+	def partition_table_type(self) -> int:
+		# TODO: Don't hardcode :)
+		# Remove if we don't use this function anywhere
 		from .filesystem import GPT
 		return GPT
 
 	@property
-	def uuid(self):
+	def uuid(self) -> str:
 		log('BlockDevice().uuid is untested!', level=logging.WARNING, fg='yellow')
 		"""
 		Returns the disk UUID as returned by lsblk.
@@ -153,7 +161,7 @@ class BlockDevice:
 		return SysCommand(f'blkid -s PTUUID -o value {self.path}').decode('UTF-8')
 
 	@property
-	def size(self):
+	def size(self) -> float:
 		from .helpers import convert_size_to_gb
 
 		output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
@@ -162,21 +170,21 @@ class BlockDevice:
 			return convert_size_to_gb(device['size'])
 
 	@property
-	def bus_type(self):
+	def bus_type(self) -> str:
 		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device['tran']
 
 	@property
-	def spinning(self):
+	def spinning(self) -> bool:
 		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device['rota'] is True
 
 	@property
-	def free_space(self):
+	def free_space(self) -> Tuple[str, str, str]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
 		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
 		# so the free will ignore the ESP partition and just give the "free" space.
@@ -187,7 +195,7 @@ class BlockDevice:
 				yield (start, end, size)
 
 	@property
-	def largest_free_space(self):
+	def largest_free_space(self) -> List[str]:
 		info = []
 		for space_info in self.free_space:
 			if not info:
@@ -199,7 +207,7 @@ class BlockDevice:
 		return info
 
 	@property
-	def first_free_sector(self):
+	def first_free_sector(self) -> str:
 		if info := self.largest_free_space:
 			start = info[0]
 		else:
@@ -207,29 +215,29 @@ class BlockDevice:
 		return start
 
 	@property
-	def first_end_sector(self):
+	def first_end_sector(self) -> str:
 		if info := self.largest_free_space:
 			end = info[1]
 		else:
 			end = f"{self.size}GB"
 		return end
 
-	def partprobe(self):
-		SysCommand(['partprobe', self.path])
+	def partprobe(self) -> bool:
+		return SysCommand(['partprobe', self.path]).exit_code == 0
 
-	def has_partitions(self):
+	def has_partitions(self) -> int:
 		return len(self.partitions)
 
-	def has_mount_point(self, mountpoint):
+	def has_mount_point(self, mountpoint :str) -> bool:
 		for partition in self.partitions:
 			if self.partitions[partition].mountpoint == mountpoint:
 				return True
 		return False
 
-	def flush_cache(self):
+	def flush_cache(self) -> None:
 		self.part_cache = {}
 
-	def get_partition(self, uuid):
+	def get_partition(self, uuid :str) -> Partition:
 		count = 0
 		while count < 5:
 			for partition_uuid, partition in self.partitions.items():

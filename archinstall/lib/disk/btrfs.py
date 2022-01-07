@@ -1,14 +1,19 @@
+from __future__ import annotations
 import pathlib
 import glob
 import logging
-from typing import Union
+from typing import Union, Dict, TYPE_CHECKING
+
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from ..installer import Installer
 from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
 
 
-def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
+def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
 	"""
 	This function uses mount to mount a subvolume on a given device, at a given location with a given subvolume name.
 
@@ -44,7 +49,7 @@ def mount_subvolume(installation, subvolume_location :Union[pathlib.Path, str], 
 
 	return SysCommand(f"mount {mount_information['source']} {target} -o subvol=@{subvolume_location}").exit_code == 0
 
-def create_subvolume(installation, subvolume_location :Union[pathlib.Path, str]) -> bool:
+def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
 	"""
 	This function uses btrfs to create a subvolume.
 
@@ -88,7 +93,8 @@ def _has_option(option :str,options :list) -> bool:
 			return True
 	return False
 
-def manage_btrfs_subvolumes(installation, partition :dict) -> list:
+def manage_btrfs_subvolumes(installation :Installer,
+	partition :Dict[str, str],) -> list:
 	from copy import deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
@@ -106,7 +112,7 @@ def manage_btrfs_subvolumes(installation, partition :dict) -> list:
 	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
 	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
 	# of mount options (or similar used by brtfs)
-	mountpoints = []
+	#mountpoints = []
 	subvolumes = partition['btrfs']['subvolumes']
 	for name, right_hand in subvolumes.items():
 		try:

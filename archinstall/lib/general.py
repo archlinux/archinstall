@@ -1,3 +1,4 @@
+from __future__ import annotations
 import hashlib
 import json
 import logging
@@ -9,7 +10,10 @@ import string
 import sys
 import time
 from datetime import datetime, date
-from typing import Callable, Optional, Dict, Any, List, Union, Iterator
+from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .installer import Installer
 
 if sys.platform == 'linux':
 	from select import epoll, EPOLLIN, EPOLLHUP
@@ -46,14 +50,14 @@ from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
-def gen_uid(entropy_length=256):
+def gen_uid(entropy_length :int = 256) -> str:
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
-def generate_password(length=64):
+def generate_password(length :int = 64) -> str:
 	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
-def multisplit(s, splitters):
+def multisplit(s :str, splitters :List[str]) -> str:
 	s = [s, ]
 	for key in splitters:
 		ns = []
@@ -77,12 +81,12 @@ def locate_binary(name :str) -> str:
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
-def json_dumps(*args, **kwargs):
+def json_dumps(*args :str, **kwargs :str) -> str:
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
 	@staticmethod
-	def _encode(obj):
+	def _encode(obj :Any) -> Any:
 		"""
 		This JSON encoder function will try it's best to convert
 		any archinstall data structures, instances or variables into
@@ -119,7 +123,7 @@ class JsonEncoder:
 			return obj
 
 	@staticmethod
-	def _unsafe_encode(obj):
+	def _unsafe_encode(obj :Any) -> Any:
 		"""
 		Same as _encode() but it keeps dictionary keys starting with !
 		"""
@@ -141,20 +145,20 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
-	def _encode(self, obj):
+	def _encode(self, obj :Any) -> Any:
 		return JsonEncoder._encode(obj)
 
-	def encode(self, obj):
+	def encode(self, obj :Any) -> Any:
 		return super(JSON, self).encode(self._encode(obj))
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
-	def _encode(self, obj):
+	def _encode(self, obj :Any) -> Any:
 		return JsonEncoder._unsafe_encode(obj)
 
-	def encode(self, obj):
+	def encode(self, obj :Any) -> Any:
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
 class SysCommandWorker:
@@ -185,8 +189,7 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
-		# self.environment_vars = {'LC_ALL':'C' , **environment_vars}
-		self.environment_vars = environment_vars
+		self.environment_vars = {'LC_ALL':'C' , **environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -457,12 +460,16 @@ class SysCommand:
 		return None
 
 
-def prerequisite_check():
-	if not os.path.isdir("/sys/firmware/efi"):
-		raise RequirementError("Archinstall only supports machines in UEFI mode.")
+def prerequisite_check() -> bool:
+	"""
+	This function is used as a safety check before
+	continuing with an installation.
+
+	Could be anything from checking that /boot is big enough
+	to check if nvidia hardware exists when nvidia driver was chosen.
+	"""
 
 	return True
-
 
 def reboot():
 	SysCommand("/usr/bin/reboot")
@@ -475,12 +482,15 @@ def pid_exists(pid: int) -> bool:
 		return False
 
 
-def run_custom_user_commands(commands, installation):
+def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
-		log(f'Executing custom command "{command}" ...', fg='yellow')
+		log(f'Executing custom command "{command}" ...', level=logging.INFO)
+
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
+
 		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
+
 		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 

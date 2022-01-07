@@ -7,6 +7,7 @@ import pathlib
 import urllib.parse
 import urllib.request
 from importlib import metadata
+from typing import ModuleType, Optional, List
 
 from .output import log
 from .storage import storage
@@ -38,7 +39,7 @@ def localize_path(profile_path :str) -> str:
 		return profile_path
 
 
-def import_via_path(path :str, namespace=None): # -> module (not sure how to write that in type definitions)
+def import_via_path(path :str, namespace :Optional[str] = None) -> ModuleType:
 	if not namespace:
 		namespace = os.path.basename(path)
 
@@ -62,14 +63,14 @@ def import_via_path(path :str, namespace=None): # -> module (not sure how to wri
 		except:
 			pass
 
-def find_nth(haystack, needle, n):
+def find_nth(haystack :List[str], needle :str, n :int) -> int:
 	start = haystack.find(needle)
 	while start >= 0 and n > 1:
 		start = haystack.find(needle, start + len(needle))
 		n -= 1
 	return start
 
-def load_plugin(path :str): # -> module (not sure how to write that in type definitions)
+def load_plugin(path :str) -> ModuleType:
 	parsed_url = urllib.parse.urlparse(path)
 
 	# The Profile was not a direct match on a remote URL

@@ -1,4 +1,6 @@
-def valid_parted_position(pos :str):
+from typing import List
+
+def valid_parted_position(pos :str) -> bool:
 	if not len(pos):
 		return False
 
@@ -17,7 +19,7 @@ def valid_parted_position(pos :str):
 	return False
 
 
-def fs_types():
+def fs_types() -> List[str]:
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 	# Above link doesn't agree with `man parted` /mkpart documentation:
 	"""
