@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
-from .locale_helpers import list_keyboard_languages, list_timezones
+from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
 from .networking import list_interfaces
 from .menu import Menu
 from .output import log
@@ -27,7 +27,7 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .. import fs_types
+from .. import fs_types, validate_package_list
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
@@ -264,8 +264,21 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap(prompt :str = 'Would you like to use swap on zram? (Y/n): ', forced :bool = False) -> bool:
-	return True if input(prompt).strip(' ').lower() not in ('n', 'no') else False
+def ask_for_swap(prompt='Would you like to use swap on zram?', forced=False):
+	choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+	return False if choice == 'no' else True
+
+
+def ask_ntp():
+	prompt = 'Would you like to use automatic time synchronization (NTP) with the default time servers?'
+	prompt += 'Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki'
+	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+	return False if choice == 'no' else True
+
+
+def ask_hostname():
+	hostname = input('Desired hostname for the installation: ').strip(' ')
+	return hostname
 
 
 def ask_for_superuser_account(prompt :str = 'Username for required superuser with sudo privileges: ', forced :bool = False) -> Dict[str, Dict[str, str]]:
@@ -324,8 +337,8 @@ def ask_for_bootloader(advanced_options :bool = False) -> str:
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
-			bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
-			if bootloader_choice == "y":
+			bootloader_choice = Menu('Would you like to use GRUB as a bootloader instead of systemd-boot?', ['yes', 'no'], default_option='no').run()
+			if bootloader_choice == "yes":
 				bootloader = "grub-install"
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
@@ -345,8 +358,40 @@ def ask_for_bootloader(advanced_options :bool = False) -> str:
 def ask_for_audio_selection(desktop :bool = True) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
+	selected_audio = Menu(
+		f'Choose an audio server',
+		choices,
+		default_option=audio,
+		skip=False
+	).run()
 	return selected_audio
+
+
+# TODO: Remove? Moved?
+def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
+	# Additional packages (with some light weight error handling for invalid package names)
+	print(
+		"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+	while True:
+		if packages is None:
+			packages = [p for p in input(
+				'Write additional packages to install (space separated, leave blank to skip): '
+			).split(' ') if len(p)]
+
+		if len(packages):
+			# Verify packages that were given
+			try:
+				log("Verifying that additional packages exist (this might take a few seconds)")
+				validate_package_list(packages)
+				break
+			except RequirementError as e:
+				log(e, fg='red')
+		else:
+			# no additional packages were selected, which we'll allow
+			break
+
+	return packages
 
 
 def ask_to_configure_network() -> Dict[str, Any]:
@@ -750,7 +795,7 @@ def select_profile() -> Optional[str]:
 	return None
 
 
-def select_language() -> str:
+def select_language(default_value :str) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -764,7 +809,7 @@ def select_language() -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
+	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option=default_value, sort=False).run()
 	return selected_lang
 
 
@@ -809,7 +854,7 @@ def select_harddrives() -> Optional[str]:
 	if selected_harddrive and len(selected_harddrive) > 0:
 		return [options[i] for i in selected_harddrive]
 
-	return None
+	return []
 
 
 def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
@@ -866,3 +911,31 @@ def select_kernel() -> List[str]:
 	).run()
 
 	return selected_kernels
+
+
+def select_locale_lang(default):
+	locales = list_locales()
+	locale_lang = set([locale.split()[0] for locale in locales])
+
+	selected_locale = Menu(
+		f'Choose which locale language to use',
+		locale_lang,
+		sort=True,
+		default_option=default
+	).run()
+
+	return selected_locale
+
+
+def select_locale_enc(default):
+	locales = list_locales()
+	locale_enc = set([locale.split()[1] for locale in locales])
+
+	selected_locale = Menu(
+		f'Choose which locale encoding to use',
+		locale_enc,
+		sort=True,
+		default_option=default
+	).run()
+
+	return selected_locale

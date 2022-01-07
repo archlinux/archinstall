@@ -1,4 +1,4 @@
-from .simple_menu import TerminalMenu
+from archinstall.lib.menu.simple_menu import TerminalMenu
 
 
 class Menu(TerminalMenu):
