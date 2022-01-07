@@ -6,7 +6,8 @@ import shlex
 import pathlib
 import subprocess
 import glob
-from typing import Union, Dict, Any, List, ModuleType, Optional, Iterator, Mapping
+from types import ModuleType
+from typing import Union, Dict, Any, List, Optional, Iterator, Mapping
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
