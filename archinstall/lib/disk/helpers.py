@@ -1,10 +1,15 @@
+from __future__ import annotations
 import json
 import logging
 import os
 import pathlib
 import re
 import time
-from typing import Union
+from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .partition import Partition
+	
 from .blockdevice import BlockDevice
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
@@ -14,10 +19,10 @@ from ..storage import storage
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GIGA = 2 ** 30
 
-def convert_size_to_gb(size):
+def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
 
-def sort_block_devices_based_on_performance(block_devices):
+def sort_block_devices_based_on_performance(block_devices :List[BlockDevice]) -> Dict[BlockDevice, int]:
 	result = {device: 0 for device in block_devices}
 
 	for device, weight in result.items():
@@ -35,12 +40,12 @@ def sort_block_devices_based_on_performance(block_devices):
 
 	return result
 
-def filter_disks_below_size_in_gb(devices, gigabytes):
+def filter_disks_below_size_in_gb(devices :List[BlockDevice], gigabytes :int) -> Iterator[BlockDevice]:
 	for disk in devices:
 		if disk.size >= gigabytes:
 			yield disk
 
-def select_largest_device(devices, gigabytes, filter_out=None):
+def select_largest_device(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
 		filter_out = []
 
@@ -56,7 +61,7 @@ def select_largest_device(devices, gigabytes, filter_out=None):
 
 	return max(copy_devices, key=(lambda device : device.size))
 
-def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
+def select_disk_larger_than_or_close_to(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
 		filter_out = []
 
@@ -70,7 +75,7 @@ def select_disk_larger_than_or_close_to(devices, gigabytes, filter_out=None):
 
 	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
 
-def convert_to_gigabytes(string):
+def convert_to_gigabytes(string :str) -> float:
 	unit = string.strip()[-1]
 	size = float(string.strip()[:-1])
 
@@ -81,7 +86,7 @@ def convert_to_gigabytes(string):
 
 	return size
 
-def device_state(name, *args, **kwargs):
+def device_state(name :str, *args :str, **kwargs :str) -> Optional[bool]:
 	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
 	if os.path.isfile('/sys/block/{}/device/block/{}/removable'.format(name, name)):
 		with open('/sys/block/{}/device/block/{}/removable'.format(name, name)) as f:
@@ -99,7 +104,7 @@ def device_state(name, *args, **kwargs):
 	return True
 
 # lsblk --json -l -n -o path
-def all_disks(*args, **kwargs):
+def all_disks(*args :str, **kwargs :str) -> List[BlockDevice]:
 	kwargs.setdefault("partitions", False)
 	drives = {}
 
@@ -113,7 +118,7 @@ def all_disks(*args, **kwargs):
 	return drives
 
 
-def harddrive(size=None, model=None, fuzzy=False):
+def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :bool = False) -> Optional[BlockDevice]:
 	collection = all_disks()
 	for drive in collection:
 		if size and convert_to_gigabytes(collection[drive]['size']) != size:
@@ -133,7 +138,7 @@ def split_bind_name(path :Union[pathlib.Path, str]) -> list:
 		bind_path = None
 	return device_path,bind_path
 
-def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_path=False) -> dict:
+def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False) -> Dict[str, Any]:
 	device_path,bind_path = split_bind_name(path)
 	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
 		try:
@@ -170,7 +175,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse=False, return_real_p
 		return {}
 
 
-def get_partitions_in_use(mountpoint) -> list:
+def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 	from .partition import Partition
 
 	try:
@@ -193,7 +198,7 @@ def get_partitions_in_use(mountpoint) -> list:
 	return mounts
 
 
-def get_filesystem_type(path):
+def get_filesystem_type(path :str) -> Optional[str]:
 	device_name, bind_name = split_bind_name(path)
 	try:
 		return SysCommand(f"blkid -o value -s TYPE {device_name}").decode('UTF-8').strip()
@@ -201,10 +206,10 @@ def get_filesystem_type(path):
 		return None
 
 
-def disk_layouts():
+def disk_layouts() -> Optional[Dict[str, Any]]:
 	try:
 		if (handle := SysCommand("lsblk -f -o+TYPE,SIZE -J")).exit_code == 0:
-			return json.loads(handle.decode('UTF-8'))
+			return {str(key): val for key, val in json.loads(handle.decode('UTF-8')).items()}
 		else:
 			log(f"Could not return disk layouts: {handle}", level=logging.WARNING, fg="yellow")
 			return None
@@ -216,20 +221,22 @@ def disk_layouts():
 		return None
 
 
-def encrypted_partitions(blockdevices :dict) -> bool:
+def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
 	for partition in blockdevices.values():
 		if partition.get('encrypted', False):
 			yield partition
 
-def find_partition_by_mountpoint(block_devices, relative_mountpoint :str):
+def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
 			if partition.get('mountpoint', None) == relative_mountpoint:
 				return partition
 
-def partprobe():
-	SysCommand(f'bash -c "partprobe"')
-	time.sleep(5)
+def partprobe() -> bool:
+	if SysCommand(f'bash -c "partprobe"').exit_code == 0:
+		time.sleep(5) # TODO: Remove, we should be relying on blkid instead of lsblk
+		return True
+	return False
 
 def convert_device_to_uuid(path :str) -> str:
 	device_name, bind_name = split_bind_name(path)

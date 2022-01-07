@@ -3,6 +3,7 @@ import ssl
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Dict, Any
 
 from .exceptions import RequirementError
 
@@ -10,7 +11,7 @@ BASE_URL = 'https://archlinux.org/packages/search/json/?name={package}'
 BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
 
 
-def find_group(name):
+def find_group(name :str) -> bool:
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -27,7 +28,7 @@ def find_group(name):
 		return True
 
 
-def find_package(name):
+def find_package(name :str) -> Any:
 	"""
 	Finds a specific package via the package database.
 	It makes a simple web-request, which might be a bit slow.
@@ -40,7 +41,7 @@ def find_package(name):
 	return json.loads(data)
 
 
-def find_packages(*names):
+def find_packages(*names :str) -> Dict[str, Any]:
 	"""
 	This function returns the search results for many packages.
 	The function itself is rather slow, so consider not sending to
@@ -49,7 +50,7 @@ def find_packages(*names):
 	return {package: find_package(package) for package in names}
 
 
-def validate_package_list(packages: list):
+def validate_package_list(packages: list) -> bool:
 	"""
 	Validates a list of given packages.
 	Raises `RequirementError` if one or more packages are not found.

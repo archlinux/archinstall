@@ -3,7 +3,7 @@
 
 <!-- </div> -->
 # Arch Installer
-[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml)
+[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
@@ -11,7 +11,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [discord](https://discord.gg/cqXU88y) server
 * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
 * archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
-* archinstall [documentation](https://archinstall.readthedocs.io/en/latest/index.html)
+* archinstall [documentation](https://archinstall.readthedocs.io/)
 
 # Installation & Usage
 

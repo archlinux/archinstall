@@ -1,0 +1,164 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Archinstall Config",
+    "description": "A schema for the archinstall command config, more info over at https://archinstall.readthedocs.io/installing/guided.html#options-for-config",
+    "type": "object",
+    "properties": {
+        "audio": {
+            "description": "Audioserver to be installed",
+            "type": "string",
+            "enum": [
+                "pipewire",
+                "pulseaudio",
+                "none"
+            ]
+        },
+        "bootloader": {
+            "description": "Bootloader  to be installed",
+            "type": "string",
+            "enum": [
+                "systemd-bootctl",
+                "grub-install",
+                "efistub"
+            ]
+        },
+        "custom-commands": {
+            "description": "Custom commands to be run post install",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "gfx_driver": {
+            "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
+            "type": "string",
+            "enum": [
+                "VMware / VirtualBox (open-source)",
+                "Nvidia",
+                "Intel (open-source)",
+                "AMD / ATI (open-source)",
+                "All open-source (default)"
+            ]
+        },
+        "harddrives": {
+            "description": "Path of device to be used",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "hostname": {
+            "description": "Hostname of machine after installation",
+            "type": "string"
+        },
+        "kernels": {
+            "description": "List of kernels to install eg: linux, linux-lts, linux-zen etc",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "linux",
+                    "linux-lts",
+                    "linux-zen",
+                    "linux-hardened"
+                ]
+            }
+        },
+        "keyboard-language": {
+            "description": "eg: us, de, de-latin1 etc",
+            "type": "string"
+        },
+        "mirror-region": {
+            "description": "By default, it will autodetect the best region. Enter a region or a dictionary of regions and mirrors to use specific ones",
+            "type": "object"
+        },
+        "nic": {
+            "description": "Choose between NetworkManager, manual configuration, use systemd-networkd from the ISO or no configuration",
+            "type": "object",
+            "properties": {
+                "NetworkManager": {
+                    "description": "<boolean>",
+                    "type": "boolean"
+                },
+                "interface-name": {
+                    "address": "ip address",
+                    "subnet": "255.255.255.0",
+                    "gateway": "ip address",
+                    "dns": "ip address"
+                },
+                "nic": "Copy ISO network configuration to installation",
+                "nic": {}
+            }
+        },
+        "ntp": {
+            "description": "Set to true to set-up ntp post install",
+            "type": "boolean"
+        },
+        "packages": {
+            "description": "List of packages to install post-installation",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "profile": {
+            "description": "Profiles are present in profiles/, use the name of a profile to install it",
+            "type": "string",
+            "enum": [
+                "awesome",
+                "budgie",
+                "cinnamon",
+                "cutefish",
+                "deepin",
+                "desktop",
+                "enlightenment",
+                "gnome",
+                "i3",
+                "kde",
+                "lxqt",
+                "mate",
+                "minimal",
+                "server",
+                "sway",
+                "xfce4",
+                "xorg"
+            ]
+        },
+        "services": {
+            "description": "Services to enable post-installation",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "sys-encoding": {
+            "description": "Set to change system encoding post-install, ignored if --advanced flag is not passed",
+            "type": "string"
+        },
+        "sys-language": {
+            "description": "Set to change system language post-install, ignored if --advanced flag is not passed",
+            "type": "string"
+        },
+        "timezone": {
+            "description": "Timezone eg: UTC, Asia/Kolkata etc.",
+            "type": "string"
+        }
+    },
+    "required": [
+        "bootloader",
+        "kernels",
+        "mirror-region",
+    ],
+    "anyOf": [
+        {
+            "required": [
+                "!root-password"
+            ]
+        },
+        {
+            "required": [
+                "!superusers"
+            ]
+        }
+    ]
+}
