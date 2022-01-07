@@ -112,7 +112,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
 	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
 	# of mount options (or similar used by brtfs)
-	#mountpoints = []
+	mountpoints = []
 	subvolumes = partition['btrfs']['subvolumes']
 	for name, right_hand in subvolumes.items():
 		try:
