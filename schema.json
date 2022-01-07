@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Archinstall Config",
-    "description": "A schema for the archinstall command config",
+    "description": "A schema for the archinstall command config, more info over at https://archinstall.readthedocs.io/installing/guided.html#options-for-config",
     "type": "object",
     "properties": {
         "audio": {
@@ -9,7 +9,8 @@
             "type": "string",
             "enum": [
                 "pipewire",
-                "pulseaudio"
+                "pulseaudio",
+                "none"
             ]
         },
         "bootloader": {
@@ -17,7 +18,8 @@
             "type": "string",
             "enum": [
                 "systemd-bootctl",
-                "grub-install"
+                "grub-install",
+                "efistub"
             ]
         },
         "custom-commands": {
@@ -27,22 +29,8 @@
                 "type": "string"
             }
         },
-        "!encryption-password": {
-            "description": "Password to encrypt disk, not encrypted if password not provided",
-            "type": "string"
-        },
-        "filesystem": {
-            "description": "Filesystem for root and home partitions",
-            "type": "string",
-            "enum": [
-                "btrfs",
-                "ext4",
-                "xfs",
-                "f2fs"
-            ]
-        },
         "gfx_driver": {
-            "description": "Graphics Drivers to install",
+            "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
             "type": "string",
             "enum": [
                 "VMware / VirtualBox (open-source)",
@@ -52,18 +40,12 @@
                 "All open-source (default)"
             ]
         },
-        "harddrive": {
+        "harddrives": {
             "description": "Path of device to be used",
-            "type": "object",
-            "properties": {
-                "path": {
-                    "description": "<path of device>",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "path"
-            ]
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "hostname": {
             "description": "Hostname of machine after installation",
@@ -83,25 +65,29 @@
             }
         },
         "keyboard-language": {
-            "description": "eg: us, de etc",
+            "description": "eg: us, de, de-latin1 etc",
             "type": "string"
         },
         "mirror-region": {
-            "description": "List of regions and mirrors to use",
+            "description": "By default, it will autodetect the best region. Enter a region or a dictionary of regions and mirrors to use specific ones",
             "type": "object"
         },
         "nic": {
-            "description": "",
+            "description": "Choose between NetworkManager, manual configuration, use systemd-networkd from the ISO or no configuration",
             "type": "object",
             "properties": {
                 "NetworkManager": {
                     "description": "<boolean>",
                     "type": "boolean"
                 },
-                "nic": {
-                    "description": "<nic name>",
-                    "type": "string"
-                }
+                "interface-name": {
+                    "address": "ip address",
+                    "subnet": "255.255.255.0",
+                    "gateway": "ip address",
+                    "dns": "ip address"
+                },
+                "nic": "Copy ISO network configuration to installation",
+                "nic": {}
             }
         },
         "ntp": {
@@ -138,10 +124,6 @@
                 "xorg"
             ]
         },
-        "!root-password": {
-            "description": "The root account password",
-            "type": "string"
-        },
         "services": {
             "description": "Services to enable post-installation",
             "type": "array",
@@ -157,48 +139,15 @@
             "description": "Set to change system language post-install, ignored if --advanced flag is not passed",
             "type": "string"
         },
-        "superusers": {
-            "description": "List of superuser credentials, see configuration for reference",
-            "patternProperties": {
-                "*": {
-                    "description": "user - key is username",
-                    "properties": {
-                        "!password": {
-                            "description": "<password>",
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "timezone": {
             "description": "Timezone eg: UTC, Asia/Kolkata etc.",
             "type": "string"
-        },
-        "users": {
-            "description": "List of regular user credentials, see configuration for reference (can be an empty object)",
-            "patternProperties": {
-                "*": {
-                    "description": "user - key is username",
-                    "properties": {
-                        "!password": {
-                            "description": "<password>",
-                            "type": "string"
-                        }
-                    }
-                }
-            }
         }
     },
     "required": [
         "bootloader",
-        "filesystem",
         "kernels",
-        "keyboard-language",
         "mirror-region",
-        "nic",
-        "timezone",
-        "users"
     ],
     "anyOf": [
         {
@@ -208,7 +157,7 @@
         },
         {
             "required": [
-                "superusers"
+                "!superusers"
             ]
         }
     ]
