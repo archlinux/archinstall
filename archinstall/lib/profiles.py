@@ -9,7 +9,8 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional, ModuleType, Dict, Union, TYPE_CHECKING
+from typing import Optional, Dict, Union, TYPE_CHECKING
+from types import ModuleType
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .installer import Installer
