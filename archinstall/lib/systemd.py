@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Interator
+from typing import Iterator
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
@@ -99,7 +99,7 @@ class Boot:
 		else:
 			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=shutdown.exit_code)
 
-	def __iter__(self) -> Interator[str]:
+	def __iter__(self) -> Iterator[str]:
 		if self.session:
 			for value in self.session:
 				yield value
