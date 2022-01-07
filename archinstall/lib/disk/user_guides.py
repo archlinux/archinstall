@@ -52,13 +52,18 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			"format" : "fat32"
 		}
 	})
+
+	# Increase the UEFI partition if UEFI is detected.
+	# Also re-align the start to 1MiB since we don't need the first sectors
+	# like we do in MBR layouts where the boot loader is installed traditionally.
 	if has_uefi():
 		layout[block_device.path]['partitions'][-1]['start'] = '1MiB'
-		layout[block_device.path]['partitions'][-1]['size'] = '513MiB'
+		layout[block_device.path]['partitions'][-1]['size'] = '512MiB'
+
 	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "203MiB",
+		"start" : "206MiB",
 		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/",
@@ -66,6 +71,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			"format" : default_filesystem
 		}
 	})
+
 	if has_uefi():
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
 
@@ -165,13 +171,15 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 			"format" : "fat32"
 		}
 	})
+
 	if has_uefi():
 		layout[root_device.path]['partitions'][-1]['start'] = '1MiB'
-		layout[root_device.path]['partitions'][-1]['size'] = '513MiB'
+		layout[root_device.path]['partitions'][-1]['size'] = '512MiB'
+
 	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "203MiB",
+		"start" : "206MiB",
 		"size" : "100%",
 		"encrypted" : False,
 		"format" : True,
