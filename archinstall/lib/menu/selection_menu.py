@@ -192,7 +192,7 @@ class GlobalMenu:
 				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
 				default={})
 		self._menu_options['timezone'] = \
-			Selector('Select timezone', lambda: archinstall.ask_timezone())
+			Selector('Select timezone', lambda: archinstall.ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				'Set automatic time sync (NTP)',
