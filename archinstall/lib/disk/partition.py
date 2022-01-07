@@ -5,9 +5,10 @@ import logging
 import json
 import os
 import hashlib
-from typing import Optional
+from typing import Optional, Dict, Any, List, Union
+
 from .blockdevice import BlockDevice
-from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb
+from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -15,7 +16,15 @@ from ..general import SysCommand
 
 
 class Partition:
-	def __init__(self, path: str, block_device: BlockDevice, part_id=None, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self,
+		path: str,
+		block_device: BlockDevice,
+		part_id :Optional[str] = None,
+		filesystem :Optional[str] = None,
+		mountpoint :Optional[str] = None,
+		encrypted :bool = False,
+		autodetect_filesystem :bool = True):
+
 		if not part_id:
 			part_id = os.path.basename(path)
 
@@ -50,14 +59,16 @@ class Partition:
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
 
-	def __lt__(self, left_comparitor):
+	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
 		else:
 			left_comparitor = str(left_comparitor)
-		return self.path < left_comparitor  # Not quite sure the order here is correct. But /dev/nvme0n1p1 comes before /dev/nvme0n1p5 so seems correct.
 
-	def __repr__(self, *args, **kwargs):
+		# The goal is to check if /dev/nvme0n1p1 comes before /dev/nvme0n1p5
+		return self.path < left_comparitor
+
+	def __repr__(self, *args :str, **kwargs :str) -> str:
 		mount_repr = ''
 		if self.mountpoint:
 			mount_repr = f", mounted={self.mountpoint}"
@@ -69,7 +80,7 @@ class Partition:
 		else:
 			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
 
-	def __dump__(self):
+	def __dump__(self) -> Dict[str, Any]:
 		return {
 			'type': 'primary',
 			'PARTUUID': self._safe_uuid,
@@ -86,14 +97,14 @@ class Partition:
 		}
 
 	@property
-	def sector_size(self):
-		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.path}").decode('UTF-8'))
+	def sector_size(self) -> Optional[int]:
+		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.device_path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device.get('log-sec', None)
 
 	@property
-	def start(self):
+	def start(self) -> Optional[str]:
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
@@ -101,7 +112,7 @@ class Partition:
 				return partition['start']  # * self.sector_size
 
 	@property
-	def end(self):
+	def end(self) -> Optional[str]:
 		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
@@ -110,11 +121,11 @@ class Partition:
 				return partition['size']  # * self.sector_size
 
 	@property
-	def size(self):
+	def size(self) -> Optional[float]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.path}")).exit_code == 0:
+			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}")).exit_code == 0:
 				lsblk = json.loads(handle.decode('UTF-8'))
 
 				for device in lsblk['blockdevices']:
@@ -123,7 +134,7 @@ class Partition:
 			time.sleep(storage['DISK_TIMEOUTS'])
 
 	@property
-	def boot(self):
+	def boot(self) -> bool:
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
 		# Get the bootable flag from the sfdisk output:
@@ -143,8 +154,8 @@ class Partition:
 		return False
 
 	@property
-	def partition_type(self):
-		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.path}").decode('UTF-8'))
+	def partition_type(self) -> Optional[str]:
+		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.device_path}").decode('UTF-8'))
 
 		for device in lsblk['blockdevices']:
 			return device['pttype']
@@ -155,19 +166,18 @@ class Partition:
 		Returns the PARTUUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
 		it doesn't seam to be able to detect md raid partitions.
+		For bind mounts all the subvolumes share the same uuid
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-			if partuuid_struct.exit_code == 0:
-				if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-					if partuuid := partition_information.get('partuuid', None):
-						return partuuid
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'lsblk -J -o+PARTUUID {self.path}'")
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
 
 	@property
 	def _safe_uuid(self) -> Optional[str]:
@@ -177,38 +187,50 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		self.partprobe()
-
-		partuuid_struct = SysCommand(f'lsblk -J -o+PARTUUID {self.path}')
-		if partuuid_struct.exit_code == 0:
-			if partition_information := next(iter(json.loads(partuuid_struct.decode('UTF-8'))['blockdevices']), None):
-				if partuuid := partition_information.get('partuuid', None):
-					return partuuid
+		return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
 
 	@property
-	def encrypted(self):
+	def encrypted(self) -> Union[bool, None]:
 		return self._encrypted
 
 	@encrypted.setter
-	def encrypted(self, value: bool):
-
+	def encrypted(self, value: bool) -> None:
 		self._encrypted = value
 
 	@property
-	def parent(self):
+	def parent(self) -> str:
 		return self.real_device
 
 	@property
-	def real_device(self):
+	def real_device(self) -> str:
 		for blockdevice in json.loads(SysCommand('lsblk -J').decode('UTF-8'))['blockdevices']:
-			if parent := self.find_parent_of(blockdevice, os.path.basename(self.path)):
+			if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
 		return self.path
 
-	def partprobe(self):
-		SysCommand(f'bash -c "partprobe"')
+	@property
+	def device_path(self) -> str:
+		""" for bind mounts returns the phisical path of the partition
+		"""
+		device_path, bind_name = split_bind_name(self.path)
+		return device_path
 
-	def detect_inner_filesystem(self, password):
+	@property
+	def bind_name(self) -> str:
+		""" for bind mounts returns the bind name (subvolume path).
+		Returns none if this property does not exist
+		"""
+		device_path, bind_name = split_bind_name(self.path)
+		return bind_name
+
+	def partprobe(self) -> bool:
+		if SysCommand(f'bash -c "partprobe"').exit_code == 0:
+			time.sleep(1)
+			return True
+		return False
+
+	def detect_inner_filesystem(self, password :str) -> Optional[str]:
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
 		from ..luks import luks2
 
@@ -218,7 +240,7 @@ class Partition:
 		except SysCallError:
 			return None
 
-	def has_content(self):
+	def has_content(self) -> bool:
 		fs_type = get_filesystem_type(self.path)
 		if not fs_type or "swap" in fs_type:
 			return False
@@ -239,7 +261,7 @@ class Partition:
 
 		return True if files > 0 else False
 
-	def encrypt(self, *args, **kwargs):
+	def encrypt(self, *args :str, **kwargs :str) -> str:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
@@ -248,7 +270,7 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem=None, path=None, log_formatting=True, options=[]):
+	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = []) -> bool:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -333,7 +355,7 @@ class Partition:
 
 		return True
 
-	def find_parent_of(self, data, name, parent=None):
+	def find_parent_of(self, data :Dict[str, Any], name :str, parent :Optional[str] = None) -> Optional[str]:
 		if data['name'] == name:
 			return parent
 		elif 'children' in data:
@@ -341,7 +363,7 @@ class Partition:
 				if parent := self.find_parent_of(child, name, parent=data['name']):
 					return parent
 
-	def mount(self, target, fs=None, options=''):
+	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
 			if not fs:
@@ -353,11 +375,20 @@ class Partition:
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
+			if self.bind_name:
+				device_path = self.device_path
+				# TODO options should be better be a list than a string
+				if options:
+					options = f"{options},subvol={self.bind_name}"
+				else:
+					options = f"subvol={self.bind_name}"
+			else:
+				device_path = self.path
 			try:
 				if options:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 				else:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
+					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {device_path} {target}")
 
 				# TODO: Should be redundant to check for exit_code
 				if mnt_handle.exit_code != 0:
@@ -368,25 +399,24 @@ class Partition:
 			self.mountpoint = target
 			return True
 
-	def unmount(self):
-		try:
-			SysCommand(f"/usr/bin/umount {self.path}")
-		except SysCallError as err:
-			exit_code = err.exit_code
+		return False
 
-			# Without to much research, it seams that low error codes are errors.
-			# And above 8k is indicators such as "/dev/x not mounted.".
-			# So anything in between 0 and 8k are errors (?).
-			if 0 < exit_code < 8000:
-				raise err
+	def unmount(self) -> bool:
+		worker = SysCommand(f"/usr/bin/umount {self.path}")
+			
+		# Without to much research, it seams that low error codes are errors.
+		# And above 8k is indicators such as "/dev/x not mounted.".
+		# So anything in between 0 and 8k are errors (?).
+		if 0 < worker.exit_code < 8000:
+			raise SysCallError(f"Could not unmount {self.path} properly: {worker}", exit_code=worker.exit_code)
 
 		self.mountpoint = None
 		return True
 
-	def umount(self):
+	def umount(self) -> bool:
 		return self.unmount()
 
-	def filesystem_supported(self):
+	def filesystem_supported(self) -> bool:
 		"""
 		The support for a filesystem (this partition) is tested by calling
 		partition.format() with a path set to '/dev/null' which returns two exceptions:
@@ -402,9 +432,9 @@ class Partition:
 		return True
 
 
-def get_mount_fs_type(fs):
+def get_mount_fs_type(fs :str) -> str:
 	if fs == 'ntfs':
 		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
 	elif fs == 'fat32':
-		return 'vfat'  # This is the actual type used for fat32 mounting.
+		return 'vfat'  # This is the actual type used for fat32 mounting
 	return fs

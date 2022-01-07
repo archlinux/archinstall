@@ -1,15 +1,25 @@
+from __future__ import annotations
 import logging
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .blockdevice import BlockDevice
+
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..hardware import has_uefi
 from ..output import log
 
-def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_options=False):
+def suggest_single_disk_layout(block_device :BlockDevice,
+	default_filesystem :Optional[str] = None,
+	advanced_options :bool = False) -> Dict[str, Any]:
+
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format(advanced_options)
 
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # GiB
 	using_subvolumes = False
+	using_home_partition = False
 
 	if default_filesystem == 'btrfs':
 		using_subvolumes = input('Would you like to use BTRFS subvolumes with a default structure? (Y/n): ').strip().lower() in ('', 'y', 'yes')
@@ -59,10 +69,14 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	if has_uefi():
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
 
+	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+		using_home_partition = input('Would you like to create a separate partition for /home? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+
 	# Set a size for / (/root)
-	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART:
+	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:
 		# We'll use subvolumes
 		# Or the disk size is too small to allow for a separate /home
+		# Or the user doesn't want to create a separate partition for /home
 		layout[block_device.path]['partitions'][-1]['size'] = '100%'
 	else:
 		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GiB"
@@ -83,7 +97,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		# else:
 		# 	pass # ... implement a guided setup
 
-	elif block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
+	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
@@ -103,7 +117,10 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_options=False):
+def suggest_multi_disk_layout(block_devices :List[BlockDevice],
+	default_filesystem :Optional[str] = None,
+	advanced_options :bool = False) -> Dict[str, Any]:
+
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format(advanced_options)

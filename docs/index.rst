@@ -1,18 +1,20 @@
-python-archinstall Documentation
-================================
+archinstall Documentation
+=========================
 
-| **python-archinstall** *(or, archinstall for short)* is a helper library to install Arch Linux and manage services, packages and other things.
-| It comes packaged with different pre-configured installers, such as the `Guided installation`_ installer.
+| **archinstall** is library which can be used to install Arch Linux.
+| The library comes packaged with different pre-configured installers, such as the default :ref:`guided` installer.
 | 
-| A demo can be viewed here: `https://www.youtube.com/watch?v=9Xt7X_Iqg6E <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_ which uses the default guided installer.
+| A demo of the :ref:`guided` installer can be seen here: `https://www.youtube.com/watch?v=9Xt7X_Iqg6E <https://www.youtube.com/watch?v=9Xt7X_Iqg6E>`_.
 
 Some of the features of Archinstall are:
 
 * **No external dependencies or installation requirements.** Runs without any external requirements or installation processes.
 
-* **Single threaded and context friendly.** The library always executed calls in sequential order to ensure installation-steps don't overlap or executes in the wrong order. It also supports *(and uses)* context wrappers to ensure things such as `sync` are called so data and configurations aren't lost.
+* **Context friendly.** The library always executes calls in sequential order to ensure installation-steps don't overlap or execute in the wrong order. It also supports *(and uses)* context wrappers to ensure cleanup and final tasks such as ``mkinitcpio`` are called when needed.
 
-* **Supports standalone executable** The library can be compiled into a single executable and run on any system with or without Python. This is ideal for live mediums that don't want to ship Python as a big dependency.
+* **Full transparancy** Logs and insights can be found at ``/var/log/archinstall`` both in the live ISO and the installed system.
+
+* **Accessibility friendly** Archinstall works with ``espeakup`` and other accessibility tools thanks to the use of a TUI.
 
 .. toctree::
    :maxdepth: 3
@@ -29,16 +31,16 @@ Some of the features of Archinstall are:
 
 .. toctree::
    :maxdepth: 3
-   :caption: Installing the library
+   :caption: Archinstall as a library
 
    installing/python
-   installing/binary
+   examples/python
 
 .. toctree::
    :maxdepth: 3
-   :caption: Using the library
+   :caption: Archinstall as a binary
 
-   examples/python
+   installing/binary
    examples/binary
 ..
    examples/scripting

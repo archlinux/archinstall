@@ -3,7 +3,7 @@
 
 <!-- </div> -->
 # Arch Installer
-[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/lint-python.yaml)
+[![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
 The installer also doubles as a python library to install Arch Linux and manage services, packages and other things inside the installed system *(Usually from a live medium)*.
@@ -11,7 +11,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
 * archinstall [discord](https://discord.gg/cqXU88y) server
 * archinstall [matrix.org](https://app.element.io/#/room/#archinstall:matrix.org) channel
 * archinstall [#archinstall@irc.libera.chat](irc://#archinstall@irc.libera.chat:6697)
-* archinstall [documentation](https://archinstall.readthedocs.io/en/latest/index.html)
+* archinstall [documentation](https://archinstall.readthedocs.io/)
 
 # Installation & Usage
 
@@ -61,7 +61,7 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 You could just copy [guided.py](examples/guided.py) as a starting point.
 
-However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines on to local disk images, here is a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library:<br>
+However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines onto local disk images, here is a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library:<br>
 
 ```python
 import archinstall, getpass
@@ -122,9 +122,9 @@ This installer will perform the following:
 
 ## Unattended installation based on MAC address
 
-Archinstall comes with a [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
+Archinstall comes with an [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
 For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py).
-If it's found, the unattended installation will commence and source that profile as it's installation procedure.
+If it's found, the unattended installation will commence and source that profile as its installation procedure.
 
 # Testing
 
@@ -139,7 +139,7 @@ you can replace the version of archinstall with a new version and run that with 
 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
-   *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.2.0`*
+   *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
 6. Build the project and install it using `python setup.py install`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.

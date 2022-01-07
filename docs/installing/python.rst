@@ -7,56 +7,44 @@ Archinstall ships on `PyPi <https://pypi.org/>`_ as `archinstall <pypi.org/proje
 But the library can be installed manually as well.
 
 .. warning::
-    This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
+    These steps are not required if you want to use archinstall on the official Arch Linux ISO.
 
-Using pacman
-------------
+Installing with pacman
+----------------------
 
 Archinstall is on the `official repositories <https://wiki.archlinux.org/index.php/Official_repositories>`_.
+And it will also install archinstall as a python library.
 
 To install both the library and the archinstall script:
 
 .. code-block:: console
 
-    sudo pacman -S archinstall
+    pacman -S archinstall
 
-Or, to install just the library:
+Alternatively, you can install only the library and not the helper executable using the ``python-archinstall`` package.
 
-.. code-block:: console
-
-    sudo pacman -S python-archinstall
-
-Using PyPi
-----------
+Installing with PyPi
+--------------------
 
 The basic concept of PyPi applies using `pip`.
-Either as a global library:
 
 .. code-block:: console
 
-    sudo pip install archinstall
-
-Or as a user module:
-
-.. code-block:: console
-
-    pip --user install archinstall
-
-Which will allow you to start using the library.
+    pip install archinstall
 
 .. _installing.python.manual:
 
-Manual installation
--------------------
+Install using source code
+-------------------------
 
-You can either download the github repo as a zip archive.
-Or you can clone it, we'll clone it here but both methods work the same.
+| You can also install using the source code.
+| For sake of simplicity we will use ``git clone`` in this example.
 
 .. code-block:: console
 
     git clone https://github.com/archlinux/archinstall
 
-Either you can move the folder into your project and simply do
+You can either move the folder into your project and simply do
 
 .. code-block:: python
 
