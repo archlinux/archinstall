@@ -485,10 +485,10 @@ def pid_exists(pid: int) -> bool:
 def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
 		log(f'Executing custom command "{command}" ...', level=logging.INFO)
-		
+
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
-		
+
 		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
 		log(execution_output)

@@ -90,6 +90,8 @@ class Filesystem:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
 
 			if partition.get('filesystem', {}).get('format', False):
+				# needed for backward compatibility with the introduction of the new "format_options"
+				format_options = partition.get('options',[]) + partition.get('filesystem',{}).get('format_options',[])
 				if partition.get('encrypted', False):
 					if not partition.get('!password'):
 						if not storage['arguments'].get('!encryption-password'):
@@ -100,15 +102,12 @@ class Filesystem:
 							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
 
 						partition['!password'] = storage['arguments']['!encryption-password']
-					# to be able to generate an unique name in case the partition will not be mounted
+
 					if partition.get('mountpoint',None):
-						ppath = partition['mountpoint']
+						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 					else:
-						ppath = partition['device_instance'].path
-					loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
-
+						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 					partition['device_instance'].encrypt(password=partition['!password'])
-
 					# Immediately unlock the encrypted device to format the inner volume
 					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
 						if not partition.get('format'):
@@ -126,9 +125,9 @@ class Filesystem:
 											continue
 										break
 
-						unlocked_device.format(partition['filesystem']['format'], options=partition.get('options', []))
+						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 				elif partition.get('format', False):
-					partition['device_instance'].format(partition['filesystem']['format'], options=partition.get('options', []))
+					partition['device_instance'].format(partition['filesystem']['format'], options=format_options)
 
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")

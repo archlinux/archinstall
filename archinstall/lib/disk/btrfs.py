@@ -11,7 +11,6 @@ from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
-from .partition import Partition
 
 
 def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
@@ -21,8 +20,11 @@ def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.P
 	@installation: archinstall.Installer instance
 	@subvolume_location: a localized string or path inside the installation / or /boot for instance without specifying /mnt/boot
 	@force: overrides the check for weither or not the subvolume mountpoint is empty or not
-	"""
 
+	This function is DEPRECATED. you can get the same result creating a partition dict like any other partition, and using the standard mount procedure.
+	Only change partition['device_instance'].path with the apropriate bind name: real_partition_path[/subvolume_name]
+	"""
+	log("function btrfs.mount_subvolume DEPRECATED. See code for alternatives",fg="yellow",level=logging.WARNING)
 	installation_mountpoint = installation.target
 	if type(installation_mountpoint) == str:
 		installation_mountpoint = pathlib.Path(installation_mountpoint)
@@ -80,27 +82,38 @@ def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
+def _has_option(option :str,options :list) -> bool:
+	""" auxiliary routine to check if an option is present in a list.
+	we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
+	"""
+	if not options:
+		return False
+	for item in options:
+		if option in item:
+			return True
+	return False
+
 def manage_btrfs_subvolumes(installation :Installer,
-	partition :Dict[str, str],
-	mountpoints :Dict[str, str],
-	subvolumes :Dict[str, str],
-	unlocked_device :Dict[str, str] = None
-) -> None:
+	partition :Dict[str, str],) -> list:
+	from copy import deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
 	* the installation object
 	* the partition dictionary entry which represents the physical partition
-	* mountpoinst, the dictionary which contains all the partititon to be mounted
-	* subvolumes is the dictionary with the names of the subvolumes and its location
+	returns
+	* mountpoinst, the list which contains all the "new" partititon to be mounted
+
 	We expect the partition has been mounted as / , and it to be unmounted after the processing
 	Then we create all the subvolumes inside btrfs as demand
 	We clone then, both the partition dictionary and the object inside it and adapt it to the subvolume needs
-	Then we add it them to the mountpoints dictionary to be processed as "normal" partitions
+	Then we return a list of "new" partitions to be processed as "normal" partitions
 	# TODO For encrypted devices we need some special processing prior to it
 	"""
 	# We process each of the pairs <subvolume name: mount point | None | mount info dict>
 	# th mount info dict has an entry for the path of the mountpoint (named 'mountpoint') and 'options' which is a list
 	# of mount options (or similar used by brtfs)
+	mountpoints = []
+	subvolumes = partition['btrfs']['subvolumes']
 	for name, right_hand in subvolumes.items():
 		try:
 			# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load - every subvolume is created from the top of the hierarchy- and simplifies its further use
@@ -108,7 +121,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 				name = name[1:]
 			# renormalize the right hand.
 			location = None
-			mount_options = []
+			subvol_options = []
 			# no contents, so it is not to be mounted
 			if not right_hand:
 				location = None
@@ -118,38 +131,37 @@ def manage_btrfs_subvolumes(installation :Installer,
 			# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
 			elif isinstance(right_hand,dict):
 				location = right_hand.get('mountpoint',None)
-				mount_options = right_hand.get('options',[])
+				subvol_options = right_hand.get('options',[])
 			# we create the subvolume
 			create_subvolume(installation,name)
 			# Make the nodatacow processing now
 			# It will be the main cause of creation of subvolumes which are not to be mounted
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
 			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
-			if 'nodatacow' in mount_options:
+			if 'nodatacow' in subvol_options:
 				if (cmd := SysCommand(f"chattr +C {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set  nodatacow attribute at {installation.target}/{name}: {cmd}")
 				# entry is deleted so nodatacow doesn't propagate to the mount options
-				del mount_options[mount_options.index('nodatacow')]
+				del subvol_options[subvol_options.index('nodatacow')]
 			# Make the compress processing now
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
 			# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
 			# in this way only zstd compression is activaded
 			# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
-			if 'compress' in mount_options:
-				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
-					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
-				# entry is deleted so nodatacow doesn't propagate to the mount options
-				del mount_options[mount_options.index('compress')]
+			if 'compress' in subvol_options:
+				if not _has_option('compress',partition.get('filesystem',{}).get('mount_options',[])):
+					if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
+						raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
+				# entry is deleted so compress doesn't propagate to the mount options
+				del subvol_options[subvol_options.index('compress')]
 			# END compress processing.
 			# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
 			if not partition['mountpoint'] and location is not None:
 				# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
-				# the primary partition
-				fake_partition = partition.copy()
+				# the primary partition. We make a deepcopy to avoid altering the original content in any case
+				fake_partition = deepcopy(partition)
 				# we start to modify entries in the "fake partition" to match the needs of the subvolumes
-				#
 				# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
-				# and reset the encryption parameters
 				del fake_partition['btrfs']
 				fake_partition['encrypted'] = False
 				fake_partition['generate-encryption-key-file'] = False
@@ -157,22 +169,16 @@ def manage_btrfs_subvolumes(installation :Installer,
 				fake_partition['mountpoint'] = location
 				# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
 				fake_partition['subvolume'] = name
-				# here we add the mount options
-				fake_partition['options'] = mount_options
-				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
-				# We instanciate a new object with following attributes coming / adapted from the instance which was in the primary partition entry (the one we are coping - partition['device_instance']
-				# * path, which will be expanded with the subvolume name to use the bind mount syntax the system uses for naming mounted subvolumes
-				# * size. When the OS queries all the subvolumes share the same size as the full partititon
-				# * uuid. All the subvolumes on a partition share the same uuid
-				if not unlocked_device:
-					fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				# here we add the special mount options for the subvolume, if any.
+				# if the original partition['options'] is not a list might give trouble
+				if fake_partition.get('filesystem',{}).get('mount_options',[]):
+					fake_partition['filesystem']['mount_options'].extend(subvol_options)
 				else:
-					# for subvolumes IN an encrypted partition we make our device instance from unlocked device instead of the raw partition.
-					# This time we make a copy (we should to the same above TODO) and alter the path by hand
-					from copy import copy
-					# KIDS DONT'T DO THIS AT HOME
-					fake_partition['device_instance'] = copy(unlocked_device)
-					fake_partition['device_instance'].path = f"{unlocked_device.path}[/{name}]"
+					fake_partition['filesystem']['mount_options'] = subvol_options
+				# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
+				# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
+				# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
+				fake_partition['device_instance'].path = f"{partition['device_instance'].path}[/{name}]"
 				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
 				# If i don't reset it, process will abort as "already mounted' .
 				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
@@ -180,9 +186,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 				#
 				# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 				# as "normal" ones
-				mountpoints[fake_partition['mountpoint']] = fake_partition
+				mountpoints.append(fake_partition)
 		except Exception as e:
 			raise e
-	# if the physical partition has been selected to be mounted, we include it at the list. Remmeber, all the above treatement won't happen except the creation of the subvolume
-	if partition['mountpoint']:
-		mountpoints[partition['mountpoint']] = partition
+	return mountpoints
