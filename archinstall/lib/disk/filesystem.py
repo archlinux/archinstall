@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
-	
+
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -78,7 +78,7 @@ class Filesystem:
 				print("Adding partition....")
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
-																	end=partition.get('size', '100%'),
+																	end=partition.get('end', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 				# TODO: device_instance some times become None
 				# print('Device instance:', partition['device_instance'])

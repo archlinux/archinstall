@@ -43,7 +43,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		# Boot
 		"type" : "primary",
 		"start" : "3MiB",
-		"size" : "203MiB",
+		"end" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
 		"format" : True,
@@ -58,12 +58,12 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	# like we do in MBR layouts where the boot loader is installed traditionally.
 	if has_uefi():
 		layout[block_device.path]['partitions'][-1]['start'] = '1MiB'
-		layout[block_device.path]['partitions'][-1]['size'] = '512MiB'
+		layout[block_device.path]['partitions'][-1]['end'] = '513MiB'
 
 	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "206MiB",
+		"start" : "203MiB",
 		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/",
@@ -83,9 +83,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		# We'll use subvolumes
 		# Or the disk size is too small to allow for a separate /home
 		# Or the user doesn't want to create a separate partition for /home
-		layout[block_device.path]['partitions'][-1]['size'] = '100%'
+		layout[block_device.path]['partitions'][-1]['end'] = '100%'
 	else:
-		layout[block_device.path]['partitions'][-1]['size'] = f"{min(block_device.size, 20)}GiB"
+		layout[block_device.path]['partitions'][-1]['end'] = f"{min(block_device.size, 20)}GiB"
 
 	if default_filesystem == 'btrfs' and using_subvolumes:
 		# if input('Do you want to use a recommended structure? (Y/n): ').strip().lower() in ('', 'y', 'yes'):
@@ -111,7 +111,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			# Home
 			"type" : "primary",
 			"start" : f"{min(block_device.size, 20)}GiB",
-			"size" : "100%",
+			"end" : "100%",
 			"encrypted" : False,
 			"format" : True,
 			"mountpoint" : "/home",
@@ -162,7 +162,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		# Boot
 		"type" : "primary",
 		"start" : "3MiB",
-		"size" : "203MiB",
+		"end" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
 		"format" : True,
@@ -174,13 +174,13 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 
 	if has_uefi():
 		layout[root_device.path]['partitions'][-1]['start'] = '1MiB'
-		layout[root_device.path]['partitions'][-1]['size'] = '512MiB'
+		layout[root_device.path]['partitions'][-1]['end'] = '513MiB'
 
 	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "206MiB",
-		"size" : "100%",
+		"start" : "203MiB",
+		"end" : "100%",
 		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/",
@@ -195,7 +195,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		# Home
 		"type" : "primary",
 		"start" : "1MiB",
-		"size" : "100%",
+		"end" : "100%",
 		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/home",

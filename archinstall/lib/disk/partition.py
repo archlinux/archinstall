@@ -90,7 +90,7 @@ class Partition:
 			'mountpoint': self.target_mountpoint,
 			'encrypted': self._encrypted,
 			'start': self.start,
-			'size': self.end,
+			'end': self.end,
 			'filesystem': {
 				'format': get_filesystem_type(self.path)
 			}
@@ -402,7 +402,7 @@ class Partition:
 
 	def unmount(self) -> bool:
 		worker = SysCommand(f"/usr/bin/umount {self.path}")
-			
+
 		# Without to much research, it seams that low error codes are errors.
 		# And above 8k is indicators such as "/dev/x not mounted.".
 		# So anything in between 0 and 8k are errors (?).
