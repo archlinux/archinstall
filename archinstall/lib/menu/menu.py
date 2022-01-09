@@ -1,15 +1,19 @@
 from archinstall.lib.menu.simple_menu import TerminalMenu
+from ..exceptions import RequirementError
+from ..output import log
+
+from copy import copy
 
 
 class Menu(TerminalMenu):
-	def __init__(self, title, options, skip=True, multi=False, default_option=None, sort=True):
+	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True):
 		"""
 		Creates a new menu
 
 		:param title: Text that will be displayed above the menu
 		:type title: str
 
-		:param options: Options to be displayed in the menu to chose from;
+		:param p_options: Options to be displayed in the menu to chose from;
 		if dict is specified then the keys of such will be used as options
 		:type options: list, dict
 
@@ -25,6 +29,18 @@ class Menu(TerminalMenu):
 		:param sort: Indicate if the options should be sorted alphabetically before displaying
 		:type sort: bool
 		"""
+		# we guarantee the inmutability of the options outside the class
+		options = copy(p_options)
+
+		# Checking if the options are different from `list` or `dict` or if they are empty
+		if not isinstance(options, (list,tuple, dict)):
+			log(f" * Menu doesn't support ({type(options)}) as type of options * ", fg='red')
+			log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+			raise RequirementError("Menu.__init__() requires list or dictionary as options.")
+		if not options:
+			log(" * Menu didn't find any options to choose from * ", fg='red')
+			log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
 
 		if isinstance(options, dict):
 			options = list(options)

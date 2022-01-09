@@ -941,7 +941,7 @@ def select_locale_enc(default):
 	return selected_locale
 
 def generic_select(p_options :Union[list,dict],
-				input_text :str = "Select one of the above by index or absolute value: ",
+				input_text :str = "Select one of the values shown below: ",
 				allow_empty_input :bool = True,
 				options_output :bool = True,   # function not available
 				sort :bool = False,
@@ -960,18 +960,16 @@ def generic_select(p_options :Union[list,dict],
 	this function returns an item from list, a string, or None
 
 	Default value must be in the list of options
+	sort will be handled by Menu()
 	"""
 	# I (shallow) copy the options object. This is an input only parameter
 	options = copy(p_options)
 	# Checking if the options are different from `list` or `dict` or if they are empty
-	if type(options) not in [list, dict]:
+	# duplicate of menu, but i need to check it prior as i do some type dependent processing
+	if not isinstance(options, (list,tuple, dict)):
 		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError("generic_select() requires list or dictionary as options.")
-	if not options:
-		log(" * Generic select didn't find any options to choose from * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError('generic_select() requires at least one option to proceed.')
 
 	# After passing the checks, function continues to work
 	if type(options) == dict:
@@ -984,12 +982,10 @@ def generic_select(p_options :Union[list,dict],
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires the default to be on the list.')
 
-	if sort:
-		# As we pass only list and dict (converted to list), we can skip converting to list
-		options = sorted(options)
-	# one of the drawbacks of the new interface is that in only allows string like options
+	# one of the drawbacks of the new interface is that in only allows string like options, so we do a conversion
+	# also for the default value if it exists
 	soptions = list(map(str,options))
-	default_value = str(default)
+	default_value = str(default) if default else None
 
 	selected_option = Menu(
 		input_text,
@@ -999,23 +995,24 @@ def generic_select(p_options :Union[list,dict],
 		default_option=default_value,
 		sort=sort
 	).run()
-	# we return the original objects, not the strings
-	if not selected_option:     # empty
+	# we return the original objects, not the strings.
+	# options is the list with the original objects and soptions the list with the string values
+	# thru the map, we get from the value selected in soptions it index, and thu it the original object
+	if not selected_option:
 		return selected_option
 	elif isinstance(selected_option,list):  # for multi True
 		selected_option = list(map(lambda x: options[soptions.index(x)],selected_option))
 	else:                                 # for multi False
 		selected_option = options[soptions.index(selected_option)]
-	print(selected_option)
-	exit()
 	return selected_option
 
 
 def generic_multi_select(p_options :Union[list,dict],
-					text :str = "Select one or more of the options above (leave blank to continue): ",
+					text :str = "Select one or more of the options below: ",
 					sort :bool = False,
 					default :Any = None,
 					allow_empty :bool = False) -> Any:
+
 	return generic_select(p_options,
 						input_text=text,
 						allow_empty_input=allow_empty,
