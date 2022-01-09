@@ -941,21 +941,21 @@ def select_locale_enc(default):
 	return selected_locale
 
 def generic_select(p_options :Union[list,dict],
-				   input_text :str="Select one of the above by index or absolute value: ",
-				   allow_empty_input :bool =True,
-				   options_output :bool=True,   #function not available
-				   sort :bool=False,
-				   multi :bool=False,
-				   default :Any=None) -> Any:
+				input_text :str = "Select one of the above by index or absolute value: ",
+				allow_empty_input :bool = True,
+				options_output :bool = True,   # function not available
+				sort :bool = False,
+				multi :bool = False,
+				default :Any = None) -> Any:
 	from copy import copy
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
-	 first
-	 second
-	 third option
+		first
+		second
+		third option
 	When the user has entered the option correctly,
 	this function returns an item from list, a string, or None
 
@@ -979,7 +979,7 @@ def generic_select(p_options :Union[list,dict],
 		# Therefore, now we can only provide the dictionary itself
 		options = list(options.values())
 	# check that the default value is in the list
-	if default and defaults not in options:
+	if default and default not in options:
 		log(f" * Default option {default} not in the list of options ", fg='red')
 		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
 		raise RequirementError('generic_select() requires the default to be on the list.')
@@ -994,12 +994,12 @@ def generic_select(p_options :Union[list,dict],
 	selected_option = Menu(
 		input_text,
 		soptions,
-		skip = allow_empty_input,
+		skip=allow_empty_input,
 		multi=multi,
-		default_option = default_value,
-		sort = sort
+		default_option=default_value,
+		sort=sort
 	).run()
-	#we return the original objects, not the strings
+	# we return the original objects, not the strings
 	if not selected_option:     # empty
 		return selected_option
 	elif isinstance(selected_option,list):  # for multi True
@@ -1012,14 +1012,13 @@ def generic_select(p_options :Union[list,dict],
 
 
 def generic_multi_select(p_options :Union[list,dict],
-				   text :str="Select one or more of the options above (leave blank to continue): ",
-				   sort :bool=False,
-				   default :Any=None,
-				   allow_empty=False) -> Any:
-	print(p_options)
+					text :str = "Select one or more of the options above (leave blank to continue): ",
+					sort :bool = False,
+					default :Any = None,
+					allow_empty :bool = False) -> Any:
 	return generic_select(p_options,
-					   input_text=text,
-					   allow_empty_input=allow_empty,
-					   sort=sort,
-					   multi=True,
-					   default=default)
+						input_text=text,
+						allow_empty_input=allow_empty,
+						sort=sort,
+						multi=True,
+						default=default)
