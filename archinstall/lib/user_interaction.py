@@ -939,3 +939,87 @@ def select_locale_enc(default):
 	).run()
 
 	return selected_locale
+
+def generic_select(p_options :Union[list,dict],
+				   input_text :str="Select one of the above by index or absolute value: ",
+				   allow_empty_input :bool =True,
+				   options_output :bool=True,   #function not available
+				   sort :bool=False,
+				   multi :bool=False,
+				   default :Any=None) -> Any:
+	from copy import copy
+	"""
+	A generic select function that does not output anything
+	other than the options and their indexes. As an example:
+
+	generic_select(["first", "second", "third option"])
+	 first
+	 second
+	 third option
+	When the user has entered the option correctly,
+	this function returns an item from list, a string, or None
+
+	Default value must be in the list of options
+	"""
+	# I (shallow) copy the options object. This is an input only parameter
+	options = copy(p_options)
+	# Checking if the options are different from `list` or `dict` or if they are empty
+	if type(options) not in [list, dict]:
+		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError("generic_select() requires list or dictionary as options.")
+	if not options:
+		log(" * Generic select didn't find any options to choose from * ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_select() requires at least one option to proceed.')
+
+	# After passing the checks, function continues to work
+	if type(options) == dict:
+		# To allow only `list` and `dict`, converting values of options here.
+		# Therefore, now we can only provide the dictionary itself
+		options = list(options.values())
+	# check that the default value is in the list
+	if default and defaults not in options:
+		log(f" * Default option {default} not in the list of options ", fg='red')
+		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+		raise RequirementError('generic_select() requires the default to be on the list.')
+
+	if sort:
+		# As we pass only list and dict (converted to list), we can skip converting to list
+		options = sorted(options)
+	# one of the drawbacks of the new interface is that in only allows string like options
+	soptions = list(map(str,options))
+	default_value = str(default)
+
+	selected_option = Menu(
+		input_text,
+		soptions,
+		skip = allow_empty_input,
+		multi=multi,
+		default_option = default_value,
+		sort = sort
+	).run()
+	#we return the original objects, not the strings
+	if not selected_option:     # empty
+		return selected_option
+	elif isinstance(selected_option,list):  # for multi True
+		selected_option = list(map(lambda x: options[soptions.index(x)],selected_option))
+	else:                                 # for multi False
+		selected_option = options[soptions.index(selected_option)]
+	print(selected_option)
+	exit()
+	return selected_option
+
+
+def generic_multi_select(p_options :Union[list,dict],
+				   text :str="Select one or more of the options above (leave blank to continue): ",
+				   sort :bool=False,
+				   default :Any=None,
+				   allow_empty=False) -> Any:
+	print(p_options)
+	return generic_select(p_options,
+					   input_text=text,
+					   allow_empty_input=allow_empty,
+					   sort=sort,
+					   multi=True,
+					   default=default)
