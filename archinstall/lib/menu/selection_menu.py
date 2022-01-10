@@ -102,12 +102,113 @@ class Selector:
 		return False
 
 
-class GlobalMenu:
+
+class BaseMenu:
 	def __init__(self):
+		self._data_store = archinstall.arguments
 		self._menu_options = {}
 		self._setup_selection_menu_options()
 
 	def _setup_selection_menu_options(self):
+		""" Define the menu options"""
+		raise NotImplementedError(f"Please implement {sys._getframe().f_code.co_name}")
+
+	def enable(self, selector_name, omit_if_set=False):
+		""" activates menu options """
+		arg = self._data_store.get(selector_name, None)
+
+		# don't display the menu option if it was defined already
+		if arg is not None and omit_if_set:
+			return
+
+		if self._menu_options.get(selector_name, None):
+			self._menu_options[selector_name].set_enabled()
+			if arg is not None:
+				self._menu_options[selector_name].set_current_selection(arg)
+		else:
+			print(f'No selector found: {selector_name}')
+			sys.exit(1)
+
+	def run(self):
+		""" TODO partially general. calls the Menu framework"""
+		# # Before continuing, set the preferred keyboard layout/language in the current terminal.
+			# # This will just help the user with the next following questions.
+		self._set_kb_language()
+		while True:
+			enabled_menus = self._menus_to_enable()
+			menu_text = [m.text for m in enabled_menus.values()]
+			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
+			if selection:
+				selection = selection.strip()
+				if not self._process_selection(selection):
+					break
+
+
+	def _process_selection(self, selection):
+		"""  execute what happens to the selected option.
+			Can / Should be extended to handle specific selection issues
+			Returns true if the menu shall continue, False if it has ended
+		"""
+		# find the selected option in our option list
+		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
+
+		if len(option) != 1:
+			raise ValueError(f'Selection not found: {selection}')
+
+		selector_name = option[0][0]
+		selector = option[0][1]
+		result = selector.func()
+		self._menu_options[selector_name].set_current_selection(result)
+		self._data_store[selector_name] = result
+		return True
+
+	def _secret(self, x):
+		""" general """
+		return '*' * len(x)
+
+
+	def _set_kb_language(self):
+		""" general for ArchInstall"""
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# This will just help the user with the next following questions.
+		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
+			archinstall.set_keyboard_language(self._data_store['keyboard-layout'])
+
+	def _verify_selection_enabled(self, selection_name):
+		""" general """
+		if selection := self._menu_options.get(selection_name, None):
+			if not selection.enabled:
+				return False
+
+			if len(selection.dependencies) > 0:
+				for d in selection.dependencies:
+					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
+						return False
+
+			if len(selection.dependencies_not) > 0:
+				for d in selection.dependencies_not:
+					if not self._menu_options.get(d).is_empty():
+						return False
+
+			return True
+
+		raise ValueError(f'No selection found: {selection_name}')
+
+	def _menus_to_enable(self):
+		""" general """
+		enabled_menus = {}
+
+		for name, selection in self._menu_options.items():
+			if self._verify_selection_enabled(name):
+				enabled_menus[name] = selection
+
+		return enabled_menus
+
+class GlobalMenu(BaseMenu):
+	def _setup_selection_menu_options(self):
+		"""
+		Uso particular. Define las distintas opcions que van en el diccionario
+		"""
 		self._menu_options['keyboard-layout'] = \
 			Selector('Select keyboard layout', lambda: archinstall.select_language('us'), default='us')
 		self._menu_options['mirror-region'] = \
@@ -128,8 +229,8 @@ class GlobalMenu:
 			Selector(
 				'Select disk layout',
 				lambda: archinstall.select_disk_layout(
-					archinstall.arguments['harddrives'],
-					archinstall.arguments.get('advanced', False)
+					self._data_store['harddrives'],
+					self._data_store.get('advanced', False)
 				),
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
@@ -146,7 +247,7 @@ class GlobalMenu:
 		self._menu_options['bootloader'] = \
 			Selector(
 				'Select bootloader',
-				lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False)),)
+				lambda: archinstall.ask_for_bootloader(self._data_store.get('advanced', False)),)
 		self._menu_options['hostname'] = \
 			Selector('Specify hostname', lambda: archinstall.ask_hostname())
 		self._menu_options['!root-password'] = \
@@ -174,7 +275,7 @@ class GlobalMenu:
 		self._menu_options['audio'] = \
 			Selector(
 				'Select audio',
-				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments.get('profile', None))))
+				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(self._data_store.get('profile', None))))
 		self._menu_options['kernels'] = \
 			Selector(
 				'Select kernels',
@@ -183,7 +284,7 @@ class GlobalMenu:
 		self._menu_options['packages'] = \
 			Selector(
 				'Additional packages to install',
-				lambda: archinstall.ask_additional_packages_to_install(archinstall.arguments.get('packages', None)),
+				lambda: archinstall.ask_additional_packages_to_install(self._data_store.get('packages', None)),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
@@ -204,75 +305,41 @@ class GlobalMenu:
 				enabled=True)
 		self._menu_options['abort'] = Selector('Abort', enabled=True)
 
-	def enable(self, selector_name, omit_if_set=False):
-		arg = archinstall.arguments.get(selector_name, None)
-
-		# don't display the menu option if it was defined already
-		if arg is not None and omit_if_set:
-			return
-
-		if self._menu_options.get(selector_name, None):
-			self._menu_options[selector_name].set_enabled()
-			if arg is not None:
-				self._menu_options[selector_name].set_current_selection(arg)
+	def _process_selection(self,selection):
+		if 'Abort' in selection:
+			exit(0)
+		elif 'Install' in selection:
+			if self._missing_configs() == 0:
+				self._post_processing()
+				return False
 		else:
-			print(f'No selector found: {selector_name}')
-			sys.exit(1)
-
-	def run(self):
-		while True:
-			# # Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# # This will just help the user with the next following questions.
-			self._set_kb_language()
-
-			enabled_menus = self._menus_to_enable()
-			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
-			if selection:
-				selection = selection.strip()
-				if 'Abort' in selection:
-					exit(0)
-				elif 'Install' in selection:
-					if self._missing_configs() == 0:
-						self._post_processing()
-						break
-				else:
-					self._process_selection(selection)
-
-	def _process_selection(self, selection):
-		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
-
-		if len(option) != 1:
-			raise ValueError(f'Selection not found: {selection}')
-
-		selector_name = option[0][0]
-		selector = option[0][1]
-		result = selector.func()
-		self._menu_options[selector_name].set_current_selection(result)
-		archinstall.arguments[selector_name] = result
-
-		self._update_install()
+			super()._process_selection(selection)
+			self._update_install()
+		return True
 
 	def _update_install(self):
+		"""" particular"""
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
 	def _post_processing(self):
-		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
+		""" particular """
+		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
 			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
 				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
-					archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+					archinstall.storage['disk_layouts'], self._data_store['!encryption-password'])
 
 	def _install_text(self):
+		""" particular """
 		missing = self._missing_configs()
 		if missing > 0:
 			return f'Install ({missing} config(s) missing)'
 		return 'Install'
 
 	def _missing_configs(self):
+		""" particular """
 		def check(s):
 			return self._menu_options.get(s).has_selection()
 
@@ -296,24 +363,26 @@ class GlobalMenu:
 		return missing
 
 	def _set_root_password(self):
+		""" particular """
 		prompt = 'Enter root password (leave blank to disable root & create superuser): '
 		password = archinstall.get_password(prompt=prompt)
 
 		if password is not None:
 			self._menu_options.get('!superusers').set_current_selection(None)
-			archinstall.arguments['!users'] = {}
-			archinstall.arguments['!superusers'] = {}
+			self._data_store['!users'] = {}
+			self._data_store['!superusers'] = {}
 
 		return password
 
 	def _select_harddrives(self):
-		old_haddrives = archinstall.arguments.get('harddrives')
+		""" particular """
+		old_haddrives = self._data_store.get('harddrives')
 		harddrives = archinstall.select_harddrives()
 
 		# in case the harddrives got changed we have to reset the disk layout as well
 		if old_haddrives != harddrives:
 			self._menu_options.get('disk_layouts').set_current_selection(None)
-			archinstall.arguments['disk_layouts'] = {}
+			self._data_store['disk_layouts'] = {}
 
 		if not harddrives:
 			prompt = 'You decided to skip harddrive selection\n'
@@ -328,10 +397,8 @@ class GlobalMenu:
 
 		return harddrives
 
-	def _secret(self, x):
-		return '*' * len(x)
-
 	def _select_profile(self):
+		""" particular """
 		profile = archinstall.select_profile()
 
 		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
@@ -345,48 +412,16 @@ class GlobalMenu:
 		return profile
 
 	def _create_superuser_account(self):
+		""" particular """
 		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 		return superuser
 
 	def _create_user_account(self):
+		""" particular """
 		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user: ')
-		if not archinstall.arguments.get('!superusers', None):
-			archinstall.arguments['!superusers'] = superusers
+		if not self._data_store.get('!superusers', None):
+			self._data_store['!superusers'] = superusers
 		else:
-			archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+			self._data_store['!superusers'] = {**self._data_store['!superusers'], **superusers}
 
 		return users
-
-	def _set_kb_language(self):
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if archinstall.arguments.get('keyboard-layout', None) and len(archinstall.arguments['keyboard-layout']):
-			archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
-
-	def _verify_selection_enabled(self, selection_name):
-		if selection := self._menu_options.get(selection_name, None):
-			if not selection.enabled:
-				return False
-
-			if len(selection.dependencies) > 0:
-				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
-						return False
-
-			if len(selection.dependencies_not) > 0:
-				for d in selection.dependencies_not:
-					if not self._menu_options.get(d).is_empty():
-						return False
-
-			return True
-
-		raise ValueError(f'No selection found: {selection_name}')
-
-	def _menus_to_enable(self):
-		enabled_menus = {}
-
-		for name, selection in self._menu_options.items():
-			if self._verify_selection_enabled(name):
-				enabled_menus[name] = selection
-
-		return enabled_menus
