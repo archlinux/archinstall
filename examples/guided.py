@@ -51,7 +51,7 @@ def load_config():
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 	if archinstall.arguments.get('disk_layouts', None) is not None:
-		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists() and str(dl_path).endswith('.json'):
+		if (dl_path := pathlib.Path(archinstall.arguments['disk_layouts'])).exists():
 			try:
 				with open(dl_path) as fh:
 					archinstall.storage['disk_layouts'] = json.load(fh)
