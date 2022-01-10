@@ -299,9 +299,8 @@ class Partition:
 		elif filesystem == 'fat32':
 			options = ['-F32'] + options
 
-			mkfs = SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}").decode('UTF-8')
-			if ('mkfs.fat' not in mkfs and 'mkfs.vfat' not in mkfs) or 'command not found' in mkfs:
-				raise DiskError(f"Could not format {path} with {filesystem} because: {mkfs}")
+			if (handle := SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")).exit_code != 0:
+				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
 		elif filesystem == 'ext4':
