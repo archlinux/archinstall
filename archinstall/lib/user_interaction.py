@@ -320,7 +320,7 @@ def ask_for_additional_users(prompt :str = 'Any additional users to install (lea
 
 
 def ask_for_a_timezone() -> str:
-	timezones = list_timezones()
+	timezones = list(list_timezones())
 	default = 'UTC'
 
 	selected_tz = Menu(
