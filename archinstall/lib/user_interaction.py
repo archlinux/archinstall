@@ -404,7 +404,7 @@ def ask_to_configure_network() -> Dict[str, Any]:
 		**list_interfaces()
 	}
 
-	nic = Menu('Select one network interface to configure', interfaces.values()).run()
+	nic = Menu('Select one network interface to configure', list(interfaces.values())).run()
 
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)':
@@ -787,7 +787,7 @@ def select_profile() -> Optional[str]:
 	title = 'This is a list of pre-programmed profiles, ' \
 		'they might make it easier to install things like desktop environments'
 
-	selection = Menu(title=title, options=options.keys()).run()
+	selection = Menu(title=title, p_options=list(options.keys())).run()
 
 	if selection is not None:
 		return options[selection]
@@ -825,7 +825,7 @@ def select_mirror_regions() -> Dict[str, Any]:
 	mirrors = list_mirrors()
 	selected_mirror = Menu(
 		'Select one of the regions to download packages from',
-		mirrors.keys(),
+		list(mirrors.keys()),
 		multi=True
 	).run()
 
@@ -847,7 +847,7 @@ def select_harddrives() -> Optional[str]:
 
 	selected_harddrive = Menu(
 		'Select one or more hard drives to use and configure',
-		options.keys(),
+		list(options.keys()),
 		multi=True
 	).run()
 
