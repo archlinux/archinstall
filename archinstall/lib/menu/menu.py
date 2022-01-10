@@ -3,7 +3,8 @@ from ..exceptions import RequirementError
 from ..output import log
 
 from copy import copy
-
+import sys
+import logging
 
 class Menu(TerminalMenu):
 	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True):
@@ -36,7 +37,8 @@ class Menu(TerminalMenu):
 		# options = copy(list(p_options) if isinstance(p_options,(type({}.keys()),type({}.values()))) else p_options)
 		try:
 			options = copy(p_options)
-		except TypeError:
+		except TypeError as e:
+			log(f" Menu options gave a error <{e}> at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			options = copy(list(p_options))
 		# Checking if the options are different from `list` or `dict` or if they are empty
 		if not isinstance(options, (list,tuple, dict)):
