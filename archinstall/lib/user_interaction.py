@@ -8,6 +8,7 @@ import shutil
 import signal
 import sys
 import time
+from collections.abc import Iterable
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
@@ -947,45 +948,43 @@ def generic_select(p_options :Union[list,dict],
 				sort :bool = False,
 				multi :bool = False,
 				default :Any = None) -> Any:
-	from copy import copy
 	"""
 	A generic select function that does not output anything
 	other than the options and their indexes. As an example:
 
 	generic_select(["first", "second", "third option"])
-		first
+		> first
 		second
 		third option
 	When the user has entered the option correctly,
 	this function returns an item from list, a string, or None
 
-	Default value must be in the list of options
+	Options can be any iterable.
+	Duplicate entries are not checked, but the results with them are unreliable. Which element to choose from the duplicates depends on the return of the index()
+	Default value if not on the list of options will be added as the first element
 	sort will be handled by Menu()
 	"""
-	# I (shallow) copy the options object. This is an input only parameter
-	options = copy(p_options)
-	# Checking if the options are different from `list` or `dict` or if they are empty
-	# duplicate of menu, but i need to check it prior as i do some type dependent processing
-	if not isinstance(options, (list,tuple, dict)):
-		log(f" * Generic select doesn't support ({type(options)}) as type of options * ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError("generic_select() requires list or dictionary as options.")
+	# We check that the options are iterable. If not we abort. Else we copy them to lists
+	# it options is a dictionary we use the values as entries of the list
+	# if options is a string object, each character becomes an entry
+	# if options is a list, we implictily build a copy to mantain immutability
+	if not isinstance(p_options,Iterable):
+		log(f"Objects of type {type(p_options)} is not iterable, and are not supported at generic_select",fg="red")
+		log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+		raise RequirementError("generic_select() requires an iterable as option.")
 
-	# After passing the checks, function continues to work
-	if type(options) == dict:
-		# To allow only `list` and `dict`, converting values of options here.
-		# Therefore, now we can only provide the dictionary itself
-		options = list(options.values())
-	# check that the default value is in the list
+	if isinstance(p_options,dict):
+		options = list(p_options.values())
+	else:
+		options = list(p_options)
+	# check that the default value is in the list. If not it will become the first entry
 	if default and default not in options:
-		log(f" * Default option {default} not in the list of options ", fg='red')
-		log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-		raise RequirementError('generic_select() requires the default to be on the list.')
+		options.insert(0,default)
 
 	# one of the drawbacks of the new interface is that in only allows string like options, so we do a conversion
 	# also for the default value if it exists
 	soptions = list(map(str,options))
-	default_value = str(default) if default else None
+	default_value = options[options.index(default)] if default else None
 
 	selected_option = Menu(
 		input_text,
