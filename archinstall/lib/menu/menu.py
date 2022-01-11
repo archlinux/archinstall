@@ -2,8 +2,9 @@ from archinstall.lib.menu.simple_menu import TerminalMenu
 from ..exceptions import RequirementError
 from ..output import log
 
-from copy import copy
-
+from collections.abc import Iterable
+import sys
+import logging
 
 class Menu(TerminalMenu):
 	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True):
@@ -30,22 +31,28 @@ class Menu(TerminalMenu):
 		:type sort: bool
 		"""
 		# we guarantee the inmutability of the options outside the class.
-		# but if somebody sends a dictionary.keys() or dictionary.values(), without putting it inside a list stmt, like
-		# list(dictionary.keys) the copy will fail, so we have to check the types (the syntax type({}.keys()) is the only
-		# way to denote a dicts_keys object (as the value part) and do the conversion ourselves
-		options = copy(list(p_options) if isinstance(p_options,(type({}.keys()),type({}.values()))) else p_options)
-		# Checking if the options are different from `list` or `dict` or if they are empty
-		if not isinstance(options, (list,tuple, dict)):
-			log(f" * Menu doesn't support ({type(options)}) as type of options * ", fg='red')
-			log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
-			raise RequirementError("Menu.__init__() requires list or dictionary as options.")
+		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
+		# we recourse to make them lists before, but thru an exceptions
+		# this is the old code, which is not maintenable with more types
+		# options = copy(list(p_options) if isinstance(p_options,(type({}.keys()),type({}.values()))) else p_options)
+		# We check that the options are iterable. If not we abort. Else we copy them to lists
+		# it options is a dictionary we use the values as entries of the list
+		# if options is a string object, each character becomes an entry
+		# if options is a list, we implictily build a copy to mantain immutability
+		if not isinstance(p_options,Iterable):
+			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu",fg="red")
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+			raise RequirementError("Menu() requires an iterable as option.")
+
+		if isinstance(p_options,dict):
+			options = list(p_options.keys())
+		else:
+			options = list(p_options)
+
 		if not options:
 			log(" * Menu didn't find any options to choose from * ", fg='red')
-			log(" * If problem persists, please create an issue on https://github.com/archlinux/archinstall/issues * ", fg='yellow')
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
-
-		if isinstance(options, dict):
-			options = list(options)
 
 		if sort:
 			options = sorted(options)
