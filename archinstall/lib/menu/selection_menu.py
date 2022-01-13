@@ -13,7 +13,10 @@ class Selector:
 		default=None,
 		enabled=False,
 		dependencies=[],
-		dependencies_not=[]
+		dependencies_not=[],
+		exit_func=None,
+		preview_func=None,
+		mandatory=False
 	):
 		"""
 		Create a new menu selection entry
@@ -43,6 +46,15 @@ class Selector:
 		:param dependencies_not: These are the exclusive options; the menu item will only be
 		displayed if non of the entries in the list have been specified
 		:type dependencies_not: list
+
+		:param exit_func: A boolean function which determines if the option allows exiting from the menu. If does not exist asumes False
+		:type exit_func: Callable
+
+		:param preview_func: A callable which invokws a preview screen (not implemented)
+		:type preview_func: Callable
+
+		:param mandatory: A boolean which determines that the field is mandatory, i.e. menu can not be exited if it is not set
+		:type mandatory: bool
 		"""
 
 		self._description = description
@@ -53,6 +65,9 @@ class Selector:
 		self.text = self.menu_text()
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
+		self.exit_func = exit_func
+		self.preview_func = preview_func
+		self.mandatory = mandatory
 
 	@property
 	def dependencies(self):
@@ -98,20 +113,32 @@ class Selector:
 			return True
 		elif isinstance(self._current_selection, (str, list, dict)) and len(self._current_selection) == 0:
 			return True
-
 		return False
 
+	def is_mandatory(self):
+		return self.mandatory
 
+	def set_mandatory(self, status):
+		self.mandatory = status
+		if status:
+			self.set_enabled()
 
-class BaseMenu:
-	def __init__(self):
+class GlobalMenu:
+	def __init__(self,pre_callback=None,pos_callback=None,exit_callback=None):
 		self._data_store = archinstall.arguments
+		self.pre_process_callback=pre_callback
+		self.post_process_callback=pos_callback
+		self.exit_callback=exit_callback
+
 		self._menu_options = {}
 		self._setup_selection_menu_options()
 
+
 	def _setup_selection_menu_options(self):
-		""" Define the menu options"""
-		raise NotImplementedError(f"Please implement {sys._getframe().f_code.co_name}")
+		""" Define the menu options.
+			Menu options can be defined here in a subclass or done per progam calling self.set_option()
+		"""
+		return
 
 	def enable(self, selector_name, omit_if_set=False):
 		""" activates menu options """
@@ -130,9 +157,9 @@ class BaseMenu:
 			sys.exit(1)
 
 	def run(self):
-		""" TODO partially general. calls the Menu framework"""
-		# # Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# # This will just help the user with the next following questions.
+		""" Calls the Menu framework"""
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# 	This will just help the user with the next following questions.
 		self._set_kb_language()
 		while True:
 			enabled_menus = self._menus_to_enable()
@@ -140,9 +167,11 @@ class BaseMenu:
 			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
 			if selection:
 				selection = selection.strip()
+				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
 				if not self._process_selection(selection):
+					if self.exit_callback:
+						self.exit_callback(self)
 					break
-
 
 	def _process_selection(self, selection):
 		"""  execute what happens to the selected option.
@@ -151,21 +180,32 @@ class BaseMenu:
 		"""
 		# find the selected option in our option list
 		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
-
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection}')
 
 		selector_name = option[0][0]
 		selector = option[0][1]
-		result = selector.func()
-		self._menu_options[selector_name].set_current_selection(result)
-		self._data_store[selector_name] = result
+		# we allow for an callback to make something before the selector function is invoked
+		if self.pre_process_callback:
+			self.pre_process_calback(self,selector_name)
+		result = None
+		if selector.func:
+			result = selector.func()
+			self._menu_options[selector_name].set_current_selection(result)
+			self._data_store[selector_name] = result
+		# we allow for a callback after we get the result
+		if self.post_process_callback:
+			self.post_process_callback(self,selector_name,result if result else None)
+		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
+		if selector.exit_func:
+			if selector.exit_func() and self._check_mandatory_status():
+				return False
+
 		return True
 
 	def _secret(self, x):
 		""" general """
 		return '*' * len(x)
-
 
 	def _set_kb_language(self):
 		""" general for ArchInstall"""
@@ -189,7 +229,6 @@ class BaseMenu:
 				for d in selection.dependencies_not:
 					if not self._menu_options.get(d).is_empty():
 						return False
-
 			return True
 
 		raise ValueError(f'No selection found: {selection_name}')
@@ -204,224 +243,32 @@ class BaseMenu:
 
 		return enabled_menus
 
-class GlobalMenu(BaseMenu):
-	def _setup_selection_menu_options(self):
-		"""
-		Uso particular. Define las distintas opcions que van en el diccionario
-		"""
-		self._menu_options['keyboard-layout'] = \
-			Selector('Select keyboard layout', lambda: archinstall.select_language('us'), default='us')
-		self._menu_options['mirror-region'] = \
-			Selector(
-				'Select mirror region',
-				lambda: archinstall.select_mirror_regions(),
-				display_func=lambda x: list(x.keys()) if x else '[]',
-				default={})
-		self._menu_options['sys-language'] = \
-			Selector('Select locale language', lambda: archinstall.select_locale_lang('en_US'), default='en_US')
-		self._menu_options['sys-encoding'] = \
-			Selector('Select locale encoding', lambda: archinstall.select_locale_enc('utf-8'), default='utf-8')
-		self._menu_options['harddrives'] = \
-			Selector(
-				'Select harddrives',
-				lambda: self._select_harddrives())
-		self._menu_options['disk_layouts'] = \
-			Selector(
-				'Select disk layout',
-				lambda: archinstall.select_disk_layout(
-					self._data_store['harddrives'],
-					self._data_store.get('advanced', False)
-				),
-				dependencies=['harddrives'])
-		self._menu_options['!encryption-password'] = \
-			Selector(
-				'Set encryption password',
-				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
-				display_func=lambda x: self._secret(x) if x else 'None',
-				dependencies=['harddrives'])
-		self._menu_options['swap'] = \
-			Selector(
-				'Use swap',
-				lambda: archinstall.ask_for_swap(),
-				default=True)
-		self._menu_options['bootloader'] = \
-			Selector(
-				'Select bootloader',
-				lambda: archinstall.ask_for_bootloader(self._data_store.get('advanced', False)),)
-		self._menu_options['hostname'] = \
-			Selector('Specify hostname', lambda: archinstall.ask_hostname())
-		self._menu_options['!root-password'] = \
-			Selector(
-				'Set root password',
-				lambda: self._set_root_password(),
-				display_func=lambda x: self._secret(x) if x else 'None')
-		self._menu_options['!superusers'] = \
-			Selector(
-				'Specify superuser account',
-				lambda: self._create_superuser_account(),
-				dependencies_not=['!root-password'],
-				display_func=lambda x: list(x.keys()) if x else '')
-		self._menu_options['!users'] = \
-			Selector(
-				'Specify user account',
-				lambda: self._create_user_account(),
-				default={},
-				display_func=lambda x: list(x.keys()) if x else '[]')
-		self._menu_options['profile'] = \
-			Selector(
-				'Specify profile',
-				lambda: self._select_profile(),
-				display_func=lambda x: x if x else 'None')
-		self._menu_options['audio'] = \
-			Selector(
-				'Select audio',
-				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(self._data_store.get('profile', None))))
-		self._menu_options['kernels'] = \
-			Selector(
-				'Select kernels',
-				lambda: archinstall.select_kernel(),
-				default='linux')
-		self._menu_options['packages'] = \
-			Selector(
-				'Additional packages to install',
-				lambda: archinstall.ask_additional_packages_to_install(self._data_store.get('packages', None)),
-				default=[])
-		self._menu_options['nic'] = \
-			Selector(
-				'Configure network',
-				lambda: archinstall.ask_to_configure_network(),
-				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
-				default={})
-		self._menu_options['timezone'] = \
-			Selector('Select timezone', lambda: archinstall.ask_for_a_timezone())
-		self._menu_options['ntp'] = \
-			Selector(
-				'Set automatic time sync (NTP)',
-				lambda: archinstall.ask_ntp(),
-				default=True)
-		self._menu_options['install'] = \
-			Selector(
-				self._install_text(),
-				enabled=True)
-		self._menu_options['abort'] = Selector('Abort', enabled=True)
+	def option(self,name):
+		# TODO check inexistent name
+		return self._menu_options[name]
 
-	def _process_selection(self,selection):
-		if 'Abort' in selection:
-			exit(0)
-		elif 'Install' in selection:
-			if self._missing_configs() == 0:
-				self._post_processing()
+	def set_option(self, name, selector):
+		self._menu_options[name] = selector
+
+	def _check_mandatory_status(self):
+		for field in self._menu_options:
+			option = self._menu_options[field]
+			if option.is_mandatory() and not option.has_selection():
 				return False
-		else:
-			super()._process_selection(selection)
-			self._update_install()
 		return True
 
-	def _update_install(self):
-		"""" particular"""
-		text = self._install_text()
-		self._menu_options.get('install').update_description(text)
+	def set_mandatory(self, field, status):
+		self.option(field).set_mandatory(status)
 
-	def _post_processing(self):
-		""" particular """
-		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
-					archinstall.storage['disk_layouts'], self._data_store['!encryption-password'])
+	def _mandatory_overview(self):
+		mandatory_fields = 0
+		mandatory_waiting = 0
+		for field in self._menu_options:
+			option = self._menu_options[field]
+			if option.is_mandatory():
+				mandatory_fields += 1
+				if not option.has_selection():
+					mandatory_waiting +=1
+		return mandatory_fields, mandatory_waiting
 
-	def _install_text(self):
-		""" particular """
-		missing = self._missing_configs()
-		if missing > 0:
-			return f'Install ({missing} config(s) missing)'
-		return 'Install'
 
-	def _missing_configs(self):
-		""" particular """
-		def check(s):
-			return self._menu_options.get(s).has_selection()
-
-		missing = 0
-		if not check('bootloader'):
-			missing += 1
-		if not check('hostname'):
-			missing += 1
-		if not check('audio'):
-			missing += 1
-		if not check('timezone'):
-			missing += 1
-		if not check('!root-password') and not check('!superusers'):
-			missing += 1
-		if not check('harddrives'):
-			missing += 1
-		if check('harddrives'):
-			if not self._menu_options.get('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
-
-		return missing
-
-	def _set_root_password(self):
-		""" particular """
-		prompt = 'Enter root password (leave blank to disable root & create superuser): '
-		password = archinstall.get_password(prompt=prompt)
-
-		if password is not None:
-			self._menu_options.get('!superusers').set_current_selection(None)
-			self._data_store['!users'] = {}
-			self._data_store['!superusers'] = {}
-
-		return password
-
-	def _select_harddrives(self):
-		""" particular """
-		old_haddrives = self._data_store.get('harddrives')
-		harddrives = archinstall.select_harddrives()
-
-		# in case the harddrives got changed we have to reset the disk layout as well
-		if old_haddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
-			self._data_store['disk_layouts'] = {}
-
-		if not harddrives:
-			prompt = 'You decided to skip harddrive selection\n'
-			prompt += f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)\n"
-			prompt += "WARNING: Archinstall won't check the suitability of this setup\n"
-
-			prompt += 'Do you wish to continue?'
-			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
-
-			if choice == 'no':
-				return self._select_harddrives()
-
-		return harddrives
-
-	def _select_profile(self):
-		""" particular """
-		profile = archinstall.select_profile()
-
-		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-		if profile and profile.has_prep_function():
-			namespace = f'{profile.namespace}.py'
-			with profile.load_instructions(namespace=namespace) as imported:
-				if not imported._prep_function():
-					archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
-					exit(1)
-
-		return profile
-
-	def _create_superuser_account(self):
-		""" particular """
-		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-		return superuser
-
-	def _create_user_account(self):
-		""" particular """
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user: ')
-		if not self._data_store.get('!superusers', None):
-			self._data_store['!superusers'] = superusers
-		else:
-			self._data_store['!superusers'] = {**self._data_store['!superusers'], **superusers}
-
-		return users
