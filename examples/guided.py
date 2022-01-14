@@ -135,7 +135,7 @@ def save_user_configurations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 	
-	if archinstall.storage.get('disk_layouts'):
+	if archinstall.storage['arguments'].get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 			disk_layout_file.write(user_disk_layout)
