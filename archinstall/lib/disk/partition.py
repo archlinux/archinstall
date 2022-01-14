@@ -268,6 +268,9 @@ class Partition:
 		if path is None:
 			path = self.path
 
+		# This converts from fat32 -> vfat to unify filesystem names
+		filesystem = get_mount_fs_type(filesystem)
+
 		# To avoid "unable to open /dev/x: No such file or directory"
 		start_wait = time.time()
 		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
@@ -283,7 +286,7 @@ class Partition:
 				raise DiskError(f'Could not format {path} with {filesystem} because: {mkfs}')
 			self.filesystem = filesystem
 
-		elif filesystem == 'fat32':
+		elif filesystem == 'vfat':
 			options = ['-F32'] + options
 
 			mkfs = SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}").decode('UTF-8')
@@ -319,7 +322,7 @@ class Partition:
 				raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 			self.filesystem = filesystem
 
-		elif filesystem == 'ntfs':
+		elif filesystem == 'ntfs3':
 			options = ['-f'] + options
 
 			if (handle := SysCommand(f"/usr/bin/mkfs.ntfs -Q {' '.join(options)} {path}")).exit_code != 0:
