@@ -140,19 +140,44 @@ def ask_user_questions():
 	global_menu.run()
 
 
+def save_user_configurations():
+	user_credentials = {}
+	if archinstall.arguments.get('!users'):
+		user_credentials["!users"] = archinstall.arguments['!users']
+	if archinstall.arguments.get('!superusers'):
+		user_credentials["!superusers"] = archinstall.arguments['!superusers']
+	if archinstall.arguments.get('!encryption-password'):
+		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
+
+	user_configuration = json.dumps({
+		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
+		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
+		'version': archinstall.__version__
+	} , indent=4, sort_keys=True, cls=archinstall.JSON)
+
+	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
+		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
+
+	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
+		config_file.write(user_configuration)
+	
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+			disk_layout_file.write(user_disk_layout)
+
 def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
+	
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
+
 	print()
 
 	if archinstall.arguments.get('dry_run'):
@@ -179,22 +204,11 @@ def perform_filesystem_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if archinstall.storage.get('disk_layouts', {}).get(drive.path):
+			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
+					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
-	user_credentials = {}
-	if archinstall.arguments.get('!users'):
-		user_credentials["!users"] = archinstall.arguments['!users']
-	if archinstall.arguments.get('!superusers'):
-		user_credentials["!superusers"] = archinstall.arguments['!superusers']
-	if archinstall.arguments.get('!encryption-password'):
-		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -203,8 +217,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.storage.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.arguments.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
@@ -321,5 +335,6 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
+save_user_configurations()
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

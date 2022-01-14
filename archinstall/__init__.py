@@ -22,7 +22,7 @@ from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.selection_menu import GlobalMenu, Selector
-
+from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
 parser = ArgumentParser()
 
@@ -159,7 +159,6 @@ def post_process_arguments(arguments):
 	if arguments.get('debug',False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
-	from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 	if arguments.get('plugin', None):
 		load_plugin(arguments['plugin'])
 
