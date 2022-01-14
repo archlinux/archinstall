@@ -203,19 +203,40 @@ def ask_user_questions():
 				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 
 
+def save_user_configurations():
+	user_credentials = {}
+	if archinstall.arguments.get('!users'):
+		user_credentials["!users"] = archinstall.arguments['!users']
+	if archinstall.arguments.get('!superusers'):
+		user_credentials["!superusers"] = archinstall.arguments['!superusers']
+	if archinstall.arguments.get('!encryption-password'):
+		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
+
+	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
+
+	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
+		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
+
+	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
+		config_file.write(user_configuration)
+	
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+			disk_layout_file.write(user_disk_layout)
+
 def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
+	
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-	if archinstall.storage.get('disk_layouts'):
+	
+	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
+
 	print()
 
 	if archinstall.arguments.get('dry-run'):
@@ -247,17 +268,6 @@ def perform_filesystem_operations():
 					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
-	user_credentials = {}
-	if archinstall.arguments.get('!users'):
-		user_credentials["!users"] = archinstall.arguments['!users']
-	if archinstall.arguments.get('!superusers'):
-		user_credentials["!superusers"] = archinstall.arguments['!superusers']
-	if archinstall.arguments.get('!encryption-password'):
-		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -384,5 +394,6 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
+save_user_configurations()
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
