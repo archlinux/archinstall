@@ -60,10 +60,11 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		layout[block_device.path]['partitions'][1]['btrfs'] = {
 			"subvolumes" : {
-				"@home" : "/home",
-				"@log" : "/var/log",
-				"@pkgs" : "/var/cache/pacman/pkg",
-				"@.snapshots" : "/.snapshots"
+				"@":"/",
+				"@home": "/home",
+				"@log": "/var/log",
+				"@pkg": "/var/cache/pacman/pkg",
+				"@.snapshots": "/.snapshots"
 			}
 		}
 		# else:
