@@ -1,3 +1,4 @@
+from __future__ import annotations
 import getpass
 import ipaddress
 import logging
@@ -7,11 +8,17 @@ import shutil
 import signal
 import sys
 import time
+from collections.abc import Iterable
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
+
+# https://stackoverflow.com/a/39757388/929999
+if TYPE_CHECKING:
+	from .disk.partition import Partition
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
-from .locale_helpers import list_keyboard_languages, list_timezones
+from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
 from .networking import list_interfaces
 from .menu import Menu
 from .output import log
@@ -21,22 +28,22 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .. import fs_types
+from .. import fs_types, validate_package_list
 
-
-def get_terminal_height():
+# TODO: These can be removed after the move to simple_menu.py
+def get_terminal_height() -> int:
 	return shutil.get_terminal_size().lines
 
 
-def get_terminal_width():
+def get_terminal_width() -> int:
 	return shutil.get_terminal_size().columns
 
 
-def get_longest_option(options):
+def get_longest_option(options :List[Any]) -> int:
 	return max([len(x) for x in options])
 
 
-def check_for_correct_username(username):
+def check_for_correct_username(username :str) -> bool:
 	if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 		return True
 	log(
@@ -47,14 +54,14 @@ def check_for_correct_username(username):
 	return False
 
 
-def do_countdown():
+def do_countdown() -> bool:
 	SIG_TRIGGER = False
 
-	def kill_handler(sig, frame):
+	def kill_handler(sig :int, frame :Any) -> None:
 		print()
 		exit(0)
 
-	def sig_handler(sig, frame):
+	def sig_handler(sig :int, frame :Any) -> None:
 		global SIG_TRIGGER
 		SIG_TRIGGER = True
 		signal.signal(signal.SIGINT, kill_handler)
@@ -79,12 +86,14 @@ def do_countdown():
 				sys.stdin.read()
 			SIG_TRIGGER = False
 			signal.signal(signal.SIGINT, sig_handler)
+
 	print()
 	signal.signal(signal.SIGINT, original_sigint_handler)
+
 	return True
 
 
-def get_password(prompt="Enter a password: "):
+def get_password(prompt :str = "Enter a password: ") -> Optional[str]:
 	while passwd := getpass.getpass(prompt):
 		passwd_verification = getpass.getpass(prompt='And one more time for verification: ')
 		if passwd != passwd_verification:
@@ -98,7 +107,7 @@ def get_password(prompt="Enter a password: "):
 	return None
 
 
-def print_large_list(options, padding=5, margin_bottom=0, separator=': '):
+def print_large_list(options :List[str], padding :int = 5, margin_bottom :int = 0, separator :str = ': ') -> List[int]:
 	highest_index_number_length = len(str(len(options)))
 	longest_line = highest_index_number_length + len(separator) + get_longest_option(options) + padding
 	spaces_without_option = longest_line - (len(separator) + highest_index_number_length)
@@ -136,6 +145,7 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	# Users might want to single out a partition for non-encryption to share between dualboot etc.
 
 
+# TODO: This can be removed once we have simple_menu everywhere
 class MiniCurses:
 	def __init__(self, width, height):
 		self.width = width
@@ -255,11 +265,24 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap(prompt='Would you like to use swap on zram? (Y/n): ', forced=False):
-	return True if input(prompt).strip(' ').lower() not in ('n', 'no') else False
+def ask_for_swap(prompt='Would you like to use swap on zram?', forced=False):
+	choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+	return False if choice == 'no' else True
 
 
-def ask_for_superuser_account(prompt='Username for required superuser with sudo privileges: ', forced=False):
+def ask_ntp():
+	prompt = 'Would you like to use automatic time synchronization (NTP) with the default time servers?'
+	prompt += 'Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki'
+	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+	return False if choice == 'no' else True
+
+
+def ask_hostname():
+	hostname = input('Desired hostname for the installation: ').strip(' ')
+	return hostname
+
+
+def ask_for_superuser_account(prompt :str = 'Username for required superuser with sudo privileges: ', forced :bool = False) -> Dict[str, Dict[str, str]]:
 	while 1:
 		new_user = input(prompt).strip(' ')
 
@@ -277,7 +300,7 @@ def ask_for_superuser_account(prompt='Username for required superuser with sudo 
 		return {new_user: {"!password": password}}
 
 
-def ask_for_additional_users(prompt='Any additional users to install (leave blank for no users): '):
+def ask_for_additional_users(prompt :str = 'Any additional users to install (leave blank for no users): ') -> List[Dict[str, Dict[str, str]]]:
 	users = {}
 	superusers = {}
 
@@ -297,13 +320,13 @@ def ask_for_additional_users(prompt='Any additional users to install (leave blan
 	return users, superusers
 
 
-def ask_for_a_timezone():
+def ask_for_a_timezone() -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
 	selected_tz = Menu(
 		f'Select a timezone or leave blank to use default "{default}"',
-		timezones,
+		list(timezones),
 		skip=False,
 		default_option=default
 	).run()
@@ -311,12 +334,12 @@ def ask_for_a_timezone():
 	return selected_tz
 
 
-def ask_for_bootloader(advanced_options=False) -> str:
+def ask_for_bootloader(advanced_options :bool = False) -> str:
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
-			bootloader_choice = input("Would you like to use GRUB as a bootloader instead of systemd-boot? [y/N] ").lower()
-			if bootloader_choice == "y":
+			bootloader_choice = Menu('Would you like to use GRUB as a bootloader instead of systemd-boot?', ['yes', 'no'], default_option='no').run()
+			if bootloader_choice == "yes":
 				bootloader = "grub-install"
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
@@ -333,14 +356,46 @@ def ask_for_bootloader(advanced_options=False) -> str:
 	return bootloader
 
 
-def ask_for_audio_selection(desktop=True):
+def ask_for_audio_selection(desktop :bool = True) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(f'Choose an audio server or leave blank to use "{audio}"', choices, default_option=audio).run()
+	selected_audio = Menu(
+		f'Choose an audio server',
+		choices,
+		default_option=audio,
+		skip=False
+	).run()
 	return selected_audio
 
 
-def ask_to_configure_network():
+# TODO: Remove? Moved?
+def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
+	# Additional packages (with some light weight error handling for invalid package names)
+	print(
+		"Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
+	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
+	while True:
+		if packages is None:
+			packages = [p for p in input(
+				'Write additional packages to install (space separated, leave blank to skip): '
+			).split(' ') if len(p)]
+
+		if len(packages):
+			# Verify packages that were given
+			try:
+				log("Verifying that additional packages exist (this might take a few seconds)")
+				validate_package_list(packages)
+				break
+			except RequirementError as e:
+				log(e, fg='red')
+		else:
+			# no additional packages were selected, which we'll allow
+			break
+
+	return packages
+
+
+def ask_to_configure_network() -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
@@ -350,7 +405,7 @@ def ask_to_configure_network():
 		**list_interfaces()
 	}
 
-	nic = Menu('Select one network interface to configure', interfaces.values()).run()
+	nic = Menu('Select one network interface to configure', list(interfaces.values())).run()
 
 	if nic and nic != 'Copy ISO network configuration to installation':
 		if nic == 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)':
@@ -435,7 +490,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return Menu('Select which filesystem your main partition should use', options, skip=False).run()
 
 
-def current_partition_layout(partitions, with_idx=False):
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -479,7 +534,7 @@ def current_partition_layout(partitions, with_idx=False):
 	return f'\n\nCurrent partition layout:\n\n{current_layout}'
 
 
-def select_partition(title, partitions, multiple=False):
+def select_partition(title :str, partitions :List[Partition], multiple :bool = False) -> Union[int, List[int], None]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 
@@ -491,47 +546,18 @@ def select_partition(title, partitions, multiple=False):
 
 	return None
 
-def get_default_partition_layout(block_devices, advanced_options=False):
+def get_default_partition_layout(
+	block_devices :Union[BlockDevice, List[BlockDevice]],
+	advanced_options :bool = False
+) -> Dict[str, Any]:
+
 	if len(block_devices) == 1:
 		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
 	else:
 		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 
-def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
-	# if has_uefi():
-	# 	partition_type = 'gpt'
-	# else:
-	# 	partition_type = 'msdos'
-
-	# log(f"Selecting which partitions to re-use on {block_device}...", fg="yellow", level=logging.INFO)
-	# partitions = generic_multi_select(block_device.partitions.values(), "Select which partitions to re-use (the rest will be left alone): ", sort=True)
-	# partitions_to_wipe = generic_multi_select(partitions, "Which partitions do you wish to wipe (multiple can be selected): ", sort=True)
-
-	# mountpoints = {}
-	# struct = {
-	# 	"partitions" : []
-	# }
-	# for partition in partitions:
-	# 	mountpoint = input(f"Select a mountpoint (or skip) for {partition}: ").strip()
-
-	# 	part_struct = {}
-	# 	if mountpoint:
-	# 		part_struct['mountpoint'] = mountpoint
-	# 		if mountpoint == '/boot':
-	# 			part_struct['boot'] = True
-	# 			if has_uefi():
-	# 				part_struct['ESP'] = True
-	# 		elif mountpoint == '/' and
-	# 	if partition.uuid:
-	# 		part_struct['PARTUUID'] = partition.uuid
-	# 	if partition in partitions_to_wipe:
-	# 		part_struct['wipe'] = True
-
-	# 	struct['partitions'].append(part_struct)
-
-	# return struct
-
+def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, Any]:
 	block_device_struct = {
 		"partitions": [partition.__dump__() for partition in block_device.partitions.values()]
 	}
@@ -689,7 +715,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> dict:
 	return block_device_struct
 
 
-def select_individual_blockdevice_usage(block_devices: list):
+def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	result = {}
 
 	for device in block_devices:
@@ -700,7 +726,7 @@ def select_individual_blockdevice_usage(block_devices: list):
 	return result
 
 
-def select_disk_layout(block_devices :list, advanced_options=False):
+def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
 	modes = [
 		"Wipe all selected drives and use a best-effort default partition layout",
 		"Select what to do with each individual drive (followed by partition usage)"
@@ -714,7 +740,7 @@ def select_disk_layout(block_devices :list, advanced_options=False):
 		return select_individual_blockdevice_usage(block_devices)
 
 
-def select_disk(dict_o_disks):
+def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.
 	Usually this is combined with :ref:`archinstall.list_drives`.
@@ -742,7 +768,7 @@ def select_disk(dict_o_disks):
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 
-def select_profile():
+def select_profile() -> Optional[str]:
 	"""
 	# Asks the user to select a profile from the available profiles.
 	#
@@ -762,7 +788,7 @@ def select_profile():
 	title = 'This is a list of pre-programmed profiles, ' \
 		'they might make it easier to install things like desktop environments'
 
-	selection = Menu(title=title, options=options.keys()).run()
+	selection = Menu(title=title, p_options=list(options.keys())).run()
 
 	if selection is not None:
 		return options[selection]
@@ -770,7 +796,7 @@ def select_profile():
 	return None
 
 
-def select_language():
+def select_language(default_value :str) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -784,11 +810,11 @@ def select_language():
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option='us', sort=False).run()
+	selected_lang = Menu('Select Keyboard layout', sorted_kb_lang, default_option=default_value, sort=False).run()
 	return selected_lang
 
 
-def select_mirror_regions():
+def select_mirror_regions() -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
@@ -800,7 +826,7 @@ def select_mirror_regions():
 	mirrors = list_mirrors()
 	selected_mirror = Menu(
 		'Select one of the regions to download packages from',
-		mirrors.keys(),
+		list(mirrors.keys()),
 		multi=True
 	).run()
 
@@ -810,7 +836,7 @@ def select_mirror_regions():
 	return {}
 
 
-def select_harddrives():
+def select_harddrives() -> Optional[str]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -822,17 +848,17 @@ def select_harddrives():
 
 	selected_harddrive = Menu(
 		'Select one or more hard drives to use and configure',
-		options.keys(),
+		list(options.keys()),
 		multi=True
 	).run()
 
 	if selected_harddrive and len(selected_harddrive) > 0:
 		return [options[i] for i in selected_harddrive]
 
-	return None
+	return []
 
 
-def select_driver(options=AVAILABLE_GFX_DRIVERS):
+def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -866,7 +892,7 @@ def select_driver(options=AVAILABLE_GFX_DRIVERS):
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def select_kernel():
+def select_kernel() -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -886,3 +912,109 @@ def select_kernel():
 	).run()
 
 	return selected_kernels
+
+
+def select_locale_lang(default):
+	locales = list_locales()
+	locale_lang = set([locale.split()[0] for locale in locales])
+
+	selected_locale = Menu(
+		f'Choose which locale language to use',
+		locale_lang,
+		sort=True,
+		default_option=default
+	).run()
+
+	return selected_locale
+
+
+def select_locale_enc(default):
+	locales = list_locales()
+	locale_enc = set([locale.split()[1] for locale in locales])
+
+	selected_locale = Menu(
+		f'Choose which locale encoding to use',
+		locale_enc,
+		sort=True,
+		default_option=default
+	).run()
+
+	return selected_locale
+
+def generic_select(p_options :Union[list,dict],
+				input_text :str = "Select one of the values shown below: ",
+				allow_empty_input :bool = True,
+				options_output :bool = True,   # function not available
+				sort :bool = False,
+				multi :bool = False,
+				default :Any = None) -> Any:
+	"""
+	A generic select function that does not output anything
+	other than the options and their indexes. As an example:
+
+	generic_select(["first", "second", "third option"])
+		> first
+		second
+		third option
+	When the user has entered the option correctly,
+	this function returns an item from list, a string, or None
+
+	Options can be any iterable.
+	Duplicate entries are not checked, but the results with them are unreliable. Which element to choose from the duplicates depends on the return of the index()
+	Default value if not on the list of options will be added as the first element
+	sort will be handled by Menu()
+	"""
+	# We check that the options are iterable. If not we abort. Else we copy them to lists
+	# it options is a dictionary we use the values as entries of the list
+	# if options is a string object, each character becomes an entry
+	# if options is a list, we implictily build a copy to mantain immutability
+	if not isinstance(p_options,Iterable):
+		log(f"Objects of type {type(p_options)} is not iterable, and are not supported at generic_select",fg="red")
+		log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+		raise RequirementError("generic_select() requires an iterable as option.")
+
+	if isinstance(p_options,dict):
+		options = list(p_options.values())
+	else:
+		options = list(p_options)
+	# check that the default value is in the list. If not it will become the first entry
+	if default and default not in options:
+		options.insert(0,default)
+
+	# one of the drawbacks of the new interface is that in only allows string like options, so we do a conversion
+	# also for the default value if it exists
+	soptions = list(map(str,options))
+	default_value = options[options.index(default)] if default else None
+
+	selected_option = Menu(
+		input_text,
+		soptions,
+		skip=allow_empty_input,
+		multi=multi,
+		default_option=default_value,
+		sort=sort
+	).run()
+	# we return the original objects, not the strings.
+	# options is the list with the original objects and soptions the list with the string values
+	# thru the map, we get from the value selected in soptions it index, and thu it the original object
+	if not selected_option:
+		return selected_option
+	elif isinstance(selected_option,list):  # for multi True
+		selected_option = list(map(lambda x: options[soptions.index(x)],selected_option))
+	else:                                 # for multi False
+		selected_option = options[soptions.index(selected_option)]
+	return selected_option
+
+
+def generic_multi_select(p_options :Union[list,dict],
+					text :str = "Select one or more of the options below: ",
+					sort :bool = False,
+					default :Any = None,
+					allow_empty :bool = False) -> Any:
+
+	return generic_select(p_options,
+						input_text=text,
+						allow_empty_input=allow_empty,
+						sort=sort,
+						multi=True,
+						default=default)

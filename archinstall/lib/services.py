@@ -2,7 +2,7 @@ import os
 from .general import SysCommand
 
 
-def service_state(service_name: str):
+def service_state(service_name: str) -> str:
 	if os.path.splitext(service_name)[1] != '.service':
 		service_name += '.service'  # Just to be safe
 

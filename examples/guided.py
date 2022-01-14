@@ -57,133 +57,65 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	if not archinstall.arguments.get('keyboard-layout', None):
-		archinstall.arguments['keyboard-layout'] = archinstall.select_language()
 
-	# Before continuing, set the preferred keyboard layout/language in the current terminal.
-	# This will just help the user with the next following questions.
-	if len(archinstall.arguments['keyboard-layout']):
-		archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+	global_menu = archinstall.GlobalMenu()
+	global_menu.enable('keyboard-layout')
+
+	if not archinstall.arguments.get('ntp', False):
+		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
+		if archinstall.arguments['ntp']:
+			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+			archinstall.SysCommand('timedatectl set-ntp true')
 
 	# Set which region to download packages from during the installation
-	if not archinstall.arguments.get('mirror-region', None):
-		archinstall.arguments['mirror-region'] = archinstall.select_mirror_regions()
+	global_menu.enable('mirror-region')
 
-	if not archinstall.arguments.get('sys-language', None) and archinstall.arguments.get('advanced', False):
-		archinstall.arguments['sys-language'] = input("Enter a valid locale (language) for your OS, (Default: en_US): ").strip()
-		archinstall.arguments['sys-encoding'] = input("Enter a valid system default encoding for your OS, (Default: utf-8): ").strip()
-		archinstall.log("Keep in mind that if you want multiple locales, post configuration is required.", fg="yellow")
-
-	if not archinstall.arguments.get('sys-language', None):
-		archinstall.arguments['sys-language'] = 'en_US'
-	if not archinstall.arguments.get('sys-encoding', None):
-		archinstall.arguments['sys-encoding'] = 'utf-8'
+	if archinstall.arguments.get('advanced', False):
+		global_menu.enable('sys-language', True)
+		global_menu.enable('sys-encoding', True)
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	if archinstall.arguments.get('harddrives', None) is None:
-		archinstall.arguments['harddrives'] = archinstall.select_harddrives()
-	# we skip the customary .get('harddrives',None) 'cause we are pretty certain that at this point it contains at least none (behaviour has changed from previous version, where it had an empty list. Shouls be compatible with my code
-	if not archinstall.arguments['harddrives']:
-		archinstall.log("You decided to skip harddrive selection",fg="yellow",level=logging.INFO)
-		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="yellow",level=logging.INFO)
-		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="yellow",level=logging.INFO)
-		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
-			exit(1)
-	else:
-		if archinstall.storage.get('disk_layouts', None) is None:
-			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
+	global_menu.enable('harddrives')
 
-		# Get disk encryption password (or skip if blank)
-		if archinstall.arguments.get('!encryption-password', None) is None:
-			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-				archinstall.arguments['!encryption-password'] = passwd
+	global_menu.enable('disk_layouts')
 
-		if archinstall.arguments.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+	# Get disk encryption password (or skip if blank)
+	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	if not archinstall.arguments.get("bootloader", None):
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))
+	global_menu.enable('bootloader')
 
-	if not archinstall.arguments.get('swap', None):
-		archinstall.arguments['swap'] = archinstall.ask_for_swap()
+	global_menu.enable('swap')
 
 	# Get the hostname for the machine
-	if not archinstall.arguments.get('hostname', None):
-		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
+	global_menu.enable('hostname')
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (leave blank to disable root & create superuser): ')
+	global_menu.enable('!root-password')
 
-	# Ask for additional users (super-user if root pw was not set)
-	if not archinstall.arguments.get('!root-password', None) and not archinstall.arguments.get('!superusers', None):
-		archinstall.arguments['!superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
-
-	if not archinstall.arguments.get('!users'):
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user (leave blank to skip & continue): ')
-		archinstall.arguments['!users'] = users
-		archinstall.arguments['!superusers'] = {**archinstall.arguments.get('!superusers', {}), **superusers}
+	global_menu.enable('!superusers')
+	global_menu.enable('!users')
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
-	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile()
-
-	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
-		namespace = f"{archinstall.arguments['profile'].namespace}.py"
-		with archinstall.arguments['profile'].load_instructions(namespace=namespace) as imported:
-			if not imported._prep_function():
-				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
-				exit(1)
+	global_menu.enable('profile')
 
 	# Ask about audio server selection if one is not already set
-	if not archinstall.arguments.get('audio', None):
-		# The argument to ask_for_audio_selection lets the library know if it's a desktop profile
-		archinstall.arguments['audio'] = archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments['profile']))
+	global_menu.enable('audio')
 
 	# Ask for preferred kernel:
-	if not archinstall.arguments.get("kernels", None):
-		archinstall.arguments['kernels'] = archinstall.select_kernel()
+	global_menu.enable('kernels')
 
-	# Additional packages (with some light weight error handling for invalid package names)
-	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
-	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-	while True:
-		if not archinstall.arguments.get('packages', None):
-			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
-
-		if len(archinstall.arguments['packages']):
-			# Verify packages that were given
-			try:
-				archinstall.log("Verifying that additional packages exist (this might take a few seconds)")
-				archinstall.validate_package_list(archinstall.arguments['packages'])
-				break
-			except archinstall.RequirementError as e:
-				archinstall.log(e, fg='red')
-				archinstall.arguments['packages'] = None  # Clear the packages to trigger a new input question
-		else:
-			# no additional packages were selected, which we'll allow
-			break
+	global_menu.enable('packages')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
-	if not archinstall.arguments.get('nic', None):
-		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
-		if not archinstall.arguments['nic']:
-			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
+	global_menu.enable('nic')
 
-	if not archinstall.arguments.get('timezone', None):
-		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
+	global_menu.enable('timezone')
 
-	if archinstall.arguments['timezone']:
-		if not archinstall.arguments.get('ntp', False):
-			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-			if archinstall.arguments['ntp']:
-				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
+	global_menu.enable('ntp')
+
+	global_menu.run()
 
 
 def perform_filesystem_operations():
@@ -255,8 +187,8 @@ def perform_installation(mountpoint):
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
 			if partition.mountpoint == installation.target + '/boot':
-				if partition.size <= 0.25: # in GB
-					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
+				if partition.size < 0.19: # ~200 MiB in GiB
+					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
 
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.

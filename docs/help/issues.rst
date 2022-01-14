@@ -8,15 +8,17 @@ Issues and bugs should be reported over at `https://github.com/archlinux/archins
 General questions, enhancements and security issues can be reported over there too.
 For quick issues or if you need help, head over to the Discord server which has a help channel.
 
-Submitting a help ticket
-========================
+Log files
+---------
 
 | When submitting a help ticket, please include the :code:`/var/log/archinstall/install.log`.
 | It can be found both on the live ISO but also in the installed filesystem if the base packages were strapped in.
 
-| There are additional worker files, these worker files contain individual command input and output.
-| These worker files are located in :code:`~/.cache/archinstall/` and do not need to be submitted by default when submitting issues.
+| There are additional log files under ``/var/log/archinstall/`` that can be useful.
+| For instance the ``cmd_history.txt`` which contains a fully transparent list of all commands executed.
+| Or ``cmd_output.txt`` which is a transcript and contains any output seen on the screen.
 
 .. warning::
 
-    Worker log-files *may* contain sensitive information such as **passwords** and **private information**. Never submit these logs without going through them manually making sure they're good for submission. Or submit only parts of them which are relevant to the issue itself.
+    We only try to guarantee that ``/var/log/archinstall/install.log`` is free from sensitive information.
+    Any other log should be pasted with **utmost care**!
