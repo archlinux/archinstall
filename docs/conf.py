@@ -35,11 +35,11 @@ def setup(app):
 # -- Project information -----------------------------------------------------
 
 project = 'python-archinstall'
-copyright = '2020, Anton Hvornum'
+copyright = '2022, Anton Hvornum'
 author = 'Anton Hvornum'
 
 # The full version, including alpha/beta/rc tags
-release = 'v2.3.0.dev0'
+release = 'v2.3.1'
 
 # -- General configuration ---------------------------------------------------
 
