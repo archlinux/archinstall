@@ -4,6 +4,39 @@ import os
 import pathlib
 
 import archinstall
+from archinstall.lib.menu.default_options import define_base_option_set, define_base_action_set
+
+def _post_callback(menu,option,value=None):
+	_update_install(menu)
+
+def _missing_configs(menu):
+	def check(s):
+		return menu.option(s).has_selection()
+	_, missing = menu._mandatory_overview()
+	if check('harddrives'):
+		if not menu.option('harddrives').is_empty() and not check('disk_layouts'):
+			missing += 1
+
+	return missing
+
+def _install_text(menu):
+	missing = _missing_configs(menu)
+	if missing > 0:
+		return f'Instalacion ({missing} config(s) missing)'
+	return 'Install'
+
+def _update_install(menu):
+	text = _install_text(menu)
+	menu.option('install').update_description(text)
+
+def _post_processing(global_menu):
+	""" particular """
+	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
+		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+		# Then we need to identify which partitions to encrypt. This will default to / (root).
+		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
+				archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 def load_mirror():
 	if archinstall.arguments.get('mirror-region', None) is not None:
@@ -30,38 +63,32 @@ def load_harddrives():
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	if archinstall.arguments.get('harddrives', None) is None:
-		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
-												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-												allow_empty=True)
+	global_menu = archinstall.GlobalMenu(pos_callback=_post_callback,exit_callback=_post_processing)
+	# We define all the standard menu option (but not enable them)
+	define_base_option_set(global_menu)
+	define_base_action_set(global_menu)
+	# we change an option
+	global_menu.set_option('install',
+			archinstall.Selector(
+				_install_text(global_menu),
+				exit_func=lambda: True if _missing_configs(global_menu) == 0 else False,
+				enabled=True))
 
-	if not archinstall.arguments['harddrives']:
-		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
-		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="red",level=logging.INFO)
-		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="red",level=logging.INFO)
-		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
-			exit(1)
-	else:
-		if archinstall.storage.get('disk_layouts', None) is None:
-			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
-
-		# Get disk encryption password (or skip if blank)
-		if archinstall.arguments.get('!encryption-password', None) is None:
-			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-				archinstall.arguments['!encryption-password'] = passwd
-
-		if archinstall.arguments.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+	# Ask which harddrives/block-devices we will install to
+	# and convert them into archinstall.BlockDevice() objects.
+	# global_menu.enable('harddrives')
+	global_menu.set_mandatory('harddrives', True)
+	global_menu.enable('disk_layouts')
+	# Get disk encryption password (or skip if blank)
+	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	if not archinstall.arguments.get("bootloader", None):
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))
+	global_menu.enable('bootloader')
+	global_menu.set_mandatory('bootloader', True)
 
-	if not archinstall.arguments.get('swap', None):
-		archinstall.arguments['swap'] = archinstall.ask_for_swap()
+	global_menu.enable('swap')
+
+	global_menu.run()
 
 def load_profiles():
 	if archinstall.arguments.get('profile', None) is not None:

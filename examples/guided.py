@@ -3,7 +3,9 @@ import logging
 import os
 import time
 
+
 import archinstall
+from archinstall.lib.menu.default_options import mnu_post_callback, define_base_option_set, define_base_action_set, mnu_update_install
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -21,6 +23,16 @@ archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().key
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+
+
+def _post_processing(global_menu):
+	""" particular """
+	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
+		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+		# Then we need to identify which partitions to encrypt. This will default to / (root).
+		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
+			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
+				archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 def load_config():
 	if archinstall.arguments.get('harddrives', None) is not None:
@@ -58,38 +70,44 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
-	global_menu = archinstall.GlobalMenu()
-	global_menu.enable('keyboard-layout')
-
+	# #
 	if not archinstall.arguments.get('ntp', False):
 		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
 		if archinstall.arguments['ntp']:
 			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 			archinstall.SysCommand('timedatectl set-ntp true')
 
-	# Set which region to download packages from during the installation
-	global_menu.enable('mirror-region')
+	global_menu = archinstall.GlobalMenu(pos_callback=mnu_post_callback,exit_callback=_post_processing)
+	# We define all the standard menu option (but not enable them)
+	define_base_option_set(global_menu)
+	define_base_action_set(global_menu)
 
+	global_menu.enable('keyboard-layout')
+	#
 	if archinstall.arguments.get('advanced', False):
 		global_menu.enable('sys-language', True)
 		global_menu.enable('sys-encoding', True)
 
+	# # Set which region to download packages from during the installation
+	global_menu.enable('mirror-region')
+
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	global_menu.enable('harddrives')
-
+	# global_menu.enable('harddrives')
+	global_menu.set_mandatory('harddrives', True)
 	global_menu.enable('disk_layouts')
-
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	global_menu.enable('bootloader')
+	global_menu.set_mandatory('bootloader', True)
 
 	global_menu.enable('swap')
 
 	# Get the hostname for the machine
 	global_menu.enable('hostname')
+	global_menu.set_mandatory('hostname', True)
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	global_menu.enable('!root-password')
@@ -102,6 +120,7 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	global_menu.enable('audio')
+	global_menu.set_mandatory('audio', True)
 
 	# Ask for preferred kernel:
 	global_menu.enable('kernels')
@@ -112,8 +131,11 @@ def ask_user_questions():
 	global_menu.enable('nic')
 
 	global_menu.enable('timezone')
+	global_menu.set_mandatory('timezone', True)
 
 	global_menu.enable('ntp')
+	# as the install option shows an account of missing mandatory options, and other thing, we refresh after creating all
+	mnu_update_install(global_menu)
 
 	global_menu.run()
 

@@ -3,20 +3,22 @@ import sys
 import archinstall
 from archinstall import Menu
 
+from typing import Callable, Any, List
+# from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 
 class Selector:
 	def __init__(
 		self,
-		description,
-		func=None,
-		display_func=None,
-		default=None,
-		enabled=False,
-		dependencies=[],
-		dependencies_not=[],
-		exit_func=None,
-		preview_func=None,
-		mandatory=False
+		description :str,
+		func :Callable = None,
+		display_func :Callable = None,
+		default :Any = None,
+		enabled :bool = False,
+		dependencies :List = [],
+		dependencies_not :List = [],
+		exit_func :Callable = None,
+		preview_func :Callable = None,
+		mandatory :bool = False
 	):
 		"""
 		Create a new menu selection entry
@@ -70,21 +72,21 @@ class Selector:
 		self.mandatory = mandatory
 
 	@property
-	def dependencies(self):
+	def dependencies(self) -> dict:
 		return self._dependencies
 
 	@property
-	def dependencies_not(self):
+	def dependencies_not(self) -> dict:
 		return self._dependencies_not
 
 	def set_enabled(self):
 		self.enabled = True
 
-	def update_description(self, description):
+	def update_description(self, description :str):
 		self._description = description
 		self.text = self.menu_text()
 
-	def menu_text(self):
+	def menu_text(self) -> str:
 		current = ''
 
 		if self._display_func:
@@ -99,23 +101,23 @@ class Selector:
 
 		return f'{self._description} {current}'
 
-	def set_current_selection(self, current):
+	def set_current_selection(self, current :str):
 		self._current_selection = current
 		self.text = self.menu_text()
 
-	def has_selection(self):
+	def has_selection(self) -> bool:
 		if self._current_selection is None:
 			return False
 		return True
 
-	def is_empty(self):
+	def is_empty(self) -> bool:
 		if self._current_selection is None:
 			return True
 		elif isinstance(self._current_selection, (str, list, dict)) and len(self._current_selection) == 0:
 			return True
 		return False
 
-	def is_mandatory(self):
+	def is_mandatory(self) -> bool:
 		return self.mandatory
 
 	def set_mandatory(self, status):
@@ -124,9 +126,16 @@ class Selector:
 			self.set_enabled()
 
 class GlobalMenu:
-	def __init__(self, pre_callback=None, pos_callback=None, exit_callback=None):
+	def __init__(self,
+			data_store :dict = None,
+			pre_callback :Callable = None,
+			pos_callback :Callable = None,
+			exit_callback :Callable = None):
 		"""
 		Create a new selection menu.
+
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:type  data_store:  Dict
 
 		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
 		:type pre_callback: Callable
@@ -136,8 +145,9 @@ class GlobalMenu:
 
 		:param exit_callback: common function exectued prior to exiting the menu loop. Accepts the class as parameter
 		:type pos_callback: Callable
+
 		"""
-		self._data_store = archinstall.arguments
+		self._data_store = data_store if data_store else archinstall.arguments
 		self.pre_process_callback = pre_callback
 		self.post_process_callback = pos_callback
 		self.exit_callback = exit_callback
@@ -151,7 +161,7 @@ class GlobalMenu:
 		"""
 		return
 
-	def enable(self, selector_name, omit_if_set=False):
+	def enable(self, selector_name :str, omit_if_set :bool = False):
 		""" activates menu options """
 		arg = self._data_store.get(selector_name, None)
 
@@ -184,7 +194,7 @@ class GlobalMenu:
 						self.exit_callback(self)
 					break
 
-	def _process_selection(self, selection):
+	def _process_selection(self, selection :str) -> bool:
 		"""  execute what happens to the selected option.
 			Can / Should be extended to handle specific selection issues
 			Returns true if the menu shall continue, False if it has ended
@@ -214,7 +224,7 @@ class GlobalMenu:
 
 		return True
 
-	def _secret(self, x):
+	def _secret(self, x :str) -> str:
 		""" general """
 		return '*' * len(x)
 
@@ -225,7 +235,7 @@ class GlobalMenu:
 		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
 			archinstall.set_keyboard_language(self._data_store['keyboard-layout'])
 
-	def _verify_selection_enabled(self, selection_name):
+	def _verify_selection_enabled(self, selection_name :str) -> bool:
 		""" general """
 		if selection := self._menu_options.get(selection_name, None):
 			if not selection.enabled:
@@ -244,7 +254,7 @@ class GlobalMenu:
 
 		raise ValueError(f'No selection found: {selection_name}')
 
-	def _menus_to_enable(self):
+	def _menus_to_enable(self) -> dict:
 		""" general """
 		enabled_menus = {}
 
@@ -254,24 +264,24 @@ class GlobalMenu:
 
 		return enabled_menus
 
-	def option(self,name):
+	def option(self,name :str) -> Selector:
 		# TODO check inexistent name
 		return self._menu_options[name]
 
-	def set_option(self, name, selector):
+	def set_option(self, name :str, selector :Selector):
 		self._menu_options[name] = selector
 
-	def _check_mandatory_status(self):
+	def _check_mandatory_status(self) -> bool:
 		for field in self._menu_options:
 			option = self._menu_options[field]
 			if option.is_mandatory() and not option.has_selection():
 				return False
 		return True
 
-	def set_mandatory(self, field, status):
+	def set_mandatory(self, field :str, status :bool):
 		self.option(field).set_mandatory(status)
 
-	def _mandatory_overview(self):
+	def _mandatory_overview(self) -> [int,int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
 		for field in self._menu_options:
