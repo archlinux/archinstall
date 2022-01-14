@@ -14,11 +14,16 @@ Log files
 | When submitting a help ticket, please include the :code:`/var/log/archinstall/install.log`.
 | It can be found both on the live ISO but also in the installed filesystem if the base packages were strapped in.
 
-| There are additional log files under ``/var/log/archinstall/`` that can be useful.
-| For instance the ``cmd_history.txt`` which contains a fully transparent list of all commands executed.
-| Or ``cmd_output.txt`` which is a transcript and contains any output seen on the screen.
+| There are additional log files under ``/var/log/archinstall/`` that can be useful:
+
+ - ``/var/log/archinstall/user_configuration.json`` - Stores most of the guided answers in the installer
+ - ``/var/log/archinstall/user_credentials.json`` - Stores any usernames or passwords, can be passed to ``--creds``
+ - ``/var/log/archinstall/user_disk_layouts.json`` - Stores the chosen disks and their layouts
+ - ``/var/log/archinstall/install.log`` - A log file over what steps were taken by archinstall
+ - ``/var/log/archinstall/cmd_history.txt`` - A complete command history, command by command in order
+ - ``/var/log/archinstall/cmd_output.txt`` - A raw output from all the commands that were executed by archinstall
 
 .. warning::
 
     We only try to guarantee that ``/var/log/archinstall/install.log`` is free from sensitive information.
-    Any other log should be pasted with **utmost care**!
+    Any other log file should be pasted with **utmost care**!
