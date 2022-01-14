@@ -263,7 +263,7 @@ def perform_filesystem_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
+			if archinstall.storage.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
@@ -276,7 +276,7 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.arguments.get('disk_layouts'):
+		if archinstall.storage.get('disk_layouts'):
 			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
