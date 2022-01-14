@@ -124,15 +124,26 @@ class Selector:
 			self.set_enabled()
 
 class GlobalMenu:
-	def __init__(self,pre_callback=None,pos_callback=None,exit_callback=None):
+	def __init__(self, pre_callback=None, pos_callback=None, exit_callback=None):
+		"""
+		Create a new selection menu.
+
+		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
+		:type pre_callback: Callable
+
+		:param pos_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
+		:type pos_callback: Callable
+
+		:param exit_callback: common function exectued prior to exiting the menu loop. Accepts the class as parameter
+		:type pos_callback: Callable
+		"""
 		self._data_store = archinstall.arguments
-		self.pre_process_callback=pre_callback
-		self.post_process_callback=pos_callback
-		self.exit_callback=exit_callback
+		self.pre_process_callback = pre_callback
+		self.post_process_callback = pos_callback
+		self.exit_callback = exit_callback
 
 		self._menu_options = {}
 		self._setup_selection_menu_options()
-
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
@@ -268,7 +279,5 @@ class GlobalMenu:
 			if option.is_mandatory():
 				mandatory_fields += 1
 				if not option.has_selection():
-					mandatory_waiting +=1
+					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
-
-
