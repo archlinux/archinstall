@@ -38,6 +38,8 @@ Installing directly from a configuration file
 
 | The guided installation also supports installing with pre-configured answers to all the guided steps.
 | This can be a quick and convenient way to re-run one or several installations.
+|
+| After each successful installation a pre-configured configuration will be found at ``/var/log/archinstall`` both on the live media and the installed system.
 
 There are three different configuration files, all of which are optional.
  * ``--config`` that deals with the general configuration of language and which profiles to use.
