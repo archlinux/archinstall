@@ -220,8 +220,8 @@ def save_user_configurations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 	
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 			disk_layout_file.write(user_disk_layout)
 
@@ -234,7 +234,7 @@ def perform_filesystem_operations():
 	archinstall.log(user_configuration, level=logging.INFO)
 	
 	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
 
 	print()
@@ -265,7 +265,7 @@ def perform_filesystem_operations():
 		for drive in archinstall.arguments.get('harddrives', []):
 			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
+					fs.load_layout(archinstall.storage['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	"""
@@ -277,7 +277,7 @@ def perform_installation(mountpoint):
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
 		if archinstall.arguments.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
+			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
