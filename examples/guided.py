@@ -127,7 +127,11 @@ def save_user_configurations():
 	if archinstall.arguments.get('!encryption-password'):
 		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
 
-	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
+	user_configuration = json.dumps({
+		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
+		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
+		'version': archinstall.__version__
+	} , indent=4, sort_keys=True, cls=archinstall.JSON)
 
 	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
 		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
