@@ -910,7 +910,6 @@ def select_kernel() -> List[str]:
 		multi=True,
 		default_option=default_kernel
 	).run()
-
 	return selected_kernels
 
 
