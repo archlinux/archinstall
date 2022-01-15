@@ -100,26 +100,7 @@ def ask_user_questions():
 	"""
 	ask_harddrives()
 
-
-def write_config_files():
-	print()
-	print('This is your chosen configuration:')
-	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-	user_configuration = json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_configuration, level=logging.INFO)
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		archinstall.log(user_disk_layout, level=logging.INFO)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
-	print()
-
-	if archinstall.arguments.get('dry-run'):
-		exit(0)
-
-	# it is here so a dry run execution will not save the credentials file ¿?
+def save_user_configurations():
 	user_credentials = {}
 	if archinstall.arguments.get('!users'):
 		user_credentials["!users"] = archinstall.arguments['!users']
@@ -128,8 +109,42 @@ def write_config_files():
 	if archinstall.arguments.get('!encryption-password'):
 		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
 
+	user_configuration = json.dumps({
+		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
+		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
+		'version': archinstall.__version__
+	} , indent=4, sort_keys=True, cls=archinstall.JSON)
+
 	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
 		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
+
+	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
+		config_file.write(user_configuration)
+
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
+			disk_layout_file.write(user_disk_layout)
+
+
+def write_config_files():
+	print()
+	print('This is your chosen configuration:')
+	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
+
+	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
+	archinstall.log(user_configuration, level=logging.INFO)
+
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+		archinstall.log(user_disk_layout, level=logging.INFO)
+
+	print()
+
+	save_user_configurations()
+	if archinstall.arguments.get('dry-run'):
+		exit(0)
+
 
 def perform_disk_operations():
 	"""
@@ -209,9 +224,8 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-# YEP write_config_files()
-
 if not archinstall.arguments.get('silent'):
+	write_config_files()
 	input('Press Enter to continue.')
 
 perform_disk_operations()
