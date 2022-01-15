@@ -138,7 +138,7 @@ def save_user_configurations():
 
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
-	
+
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
@@ -148,10 +148,10 @@ def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-	
+
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-	
+
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
@@ -192,7 +192,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
+	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
 		if archinstall.arguments.get('disk_layouts'):
