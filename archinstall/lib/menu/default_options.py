@@ -164,7 +164,7 @@ def define_base_option_set(menu :archinstall.GlobalMenu):
 			archinstall.Selector(
 				'Select kernels',
 				lambda: archinstall.select_kernel(),
-				default='linux'))
+				default=['linux']))
 	menu.set_option('packages',
 			archinstall.Selector(
 				'Additional packages to install',
