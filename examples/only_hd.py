@@ -34,9 +34,9 @@ def _post_processing(global_menu):
 	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
-				archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+		if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
+			archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
+				archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 def load_mirror():
 	if archinstall.arguments.get('mirror-region', None) is not None:
@@ -148,8 +148,8 @@ def save_user_configurations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 			disk_layout_file.write(user_disk_layout)
 
@@ -162,8 +162,8 @@ def write_config_files():
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
 
 	print()
@@ -191,7 +191,7 @@ def perform_disk_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if dl_disk := archinstall.storage.get('disk_layouts', {}).get(drive.path):
+			if dl_disk := archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(dl_disk)
 
@@ -204,8 +204,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', 'linux')) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.storage.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.arguments.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
@@ -250,7 +250,8 @@ load_config()
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
-
+	print(archinstall.arguments.get('disk_layouts',{}))
+	print(archinstall.arguments.get('disk_layouts',{}))
 if not archinstall.arguments.get('silent'):
 	write_config_files()
 	input('Press Enter to continue.')

@@ -30,9 +30,9 @@ def _post_processing(global_menu):
 	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-			archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
-				archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+		if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
+			archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
+				archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 def load_config():
 	if archinstall.arguments.get('harddrives', None) is not None:
@@ -160,7 +160,7 @@ def save_user_configurations():
 
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
-	
+
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
@@ -170,10 +170,10 @@ def perform_filesystem_operations():
 	print()
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-	
+
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-	
+
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
