@@ -179,7 +179,7 @@ class GlobalMenu:
 			Selector(
 				'Select kernels',
 				lambda: archinstall.select_kernel(),
-				default='linux')
+				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
 				'Additional packages to install',

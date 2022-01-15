@@ -89,9 +89,11 @@ class Installer:
 		if base_packages is None:
 			base_packages = __packages__[:3]
 		if kernels is None:
-			kernels = ['linux']
-
-		self.kernels = kernels
+			self.kernels = ['linux']
+		elif isinstance(kernels,str):
+			self.kernels = [kernels]
+		else:
+			self.kernels = kernels
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
@@ -102,7 +104,7 @@ class Installer:
 		}
 
 		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
-		for kernel in kernels:
+		for kernel in self.kernels:
 			self.base_packages.append(kernel)
 
 		# If using accessibility tools in the live environment, append those to the packages list
