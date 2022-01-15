@@ -162,8 +162,13 @@ def write_config_files():
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
 
+<<<<<<< HEAD
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+=======
+	if archinstall.storage.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+>>>>>>> master
 		archinstall.log(user_disk_layout, level=logging.INFO)
 
 	print()
@@ -250,8 +255,7 @@ load_config()
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
-	print(archinstall.arguments.get('disk_layouts',{}))
-	print(archinstall.arguments.get('disk_layouts',{}))
+
 if not archinstall.arguments.get('silent'):
 	write_config_files()
 	input('Press Enter to continue.')
