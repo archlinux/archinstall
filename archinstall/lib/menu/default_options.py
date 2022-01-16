@@ -5,7 +5,7 @@ Ancilliary functions to the menu
 import archinstall
 from typing import Optional, Dict, Any, List
 
-def mnu_set_root_password(menu :archinstall.GlobalMenu) -> str:
+def menu_set_root_password(menu :archinstall.GlobalMenu) -> str:
 	prompt = 'Enter root password (leave blank to disable root & create superuser): '
 	password = archinstall.get_password(prompt=prompt)
 
@@ -16,7 +16,7 @@ def mnu_set_root_password(menu :archinstall.GlobalMenu) -> str:
 
 	return password
 
-def mnu_select_harddrives(menu :archinstall.GlobalMenu) -> Optional[str]:
+def menu_select_harddrives(menu :archinstall.GlobalMenu) -> Optional[str]:
 	old_haddrives = archinstall.arguments.get('harddrives')
 	harddrives = archinstall.select_harddrives()
 
@@ -34,11 +34,11 @@ def mnu_select_harddrives(menu :archinstall.GlobalMenu) -> Optional[str]:
 		choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 		if choice == 'no':
-			return mnu_select_harddrives(menu)
+			return menu_select_harddrives(menu)
 
 	return harddrives
 
-def mnu_select_profile(menu :archinstall.GlobalMenu) -> Optional[str] :
+def menu_select_profile(menu :archinstall.GlobalMenu) -> Optional[str] :
 	profile = archinstall.select_profile()
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
@@ -51,11 +51,11 @@ def mnu_select_profile(menu :archinstall.GlobalMenu) -> Optional[str] :
 
 	return profile
 
-def mnu_create_superuser_account(menu :archinstall.GlobalMenu) -> str:
+def menu_create_superuser_account(menu :archinstall.GlobalMenu) -> str:
 	superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 	return superuser
 
-def mnu_create_user_account(menu :archinstall.GlobalMenu) -> List[Dict[str, Dict[str, str]]]:
+def menu_create_user_account(menu :archinstall.GlobalMenu) -> List[Dict[str, Dict[str, str]]]:
 	users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user: ')
 	if not archinstall.arguments.get('!superusers', None):
 		archinstall.arguments['!superusers'] = superusers
@@ -64,10 +64,10 @@ def mnu_create_user_account(menu :archinstall.GlobalMenu) -> List[Dict[str, Dict
 
 	return users
 
-def mnu_missing_configs(menu :archinstall.GlobalMenu) -> int:
+def menu_missing_configs(menu :archinstall.GlobalMenu) -> int:
 	def check(s):
 		return menu.option(s).has_selection()
-	_, missing = menu._mandatory_overview()
+	_, missing = menu.mandatory_overview()
 	if not check('!root-password') and not check('!superusers'):
 		missing += 1
 	if check('harddrives'):
@@ -76,18 +76,18 @@ def mnu_missing_configs(menu :archinstall.GlobalMenu) -> int:
 
 	return missing
 
-def mnu_install_text(menu :archinstall.GlobalMenu) -> str:
-	missing = mnu_missing_configs(menu)
+def menu_install_text(menu :archinstall.GlobalMenu) -> str:
+	missing = menu_missing_configs(menu)
 	if missing > 0:
 		return f'Install ({missing} config(s) missing)'
 	return 'Install'
 
-def mnu_update_install(menu :archinstall.GlobalMenu):
-	text = mnu_install_text(menu)
+def menu_update_install(menu :archinstall.GlobalMenu):
+	text = menu_install_text(menu)
 	menu.option('install').update_description(text)
 
-def mnu_post_callback(menu :archinstall.GlobalMenu,option,value :Any = None):
-	mnu_update_install(menu)
+def menu_post_callback(menu :archinstall.GlobalMenu, option, value :Any = None):
+	menu_update_install(menu)
 
 
 """ Define an standard set of menu options"""
@@ -107,7 +107,7 @@ def define_base_option_set(menu :archinstall.GlobalMenu):
 	menu.set_option('harddrives',
 			archinstall.Selector(
 				'Select harddrives',
-				lambda: mnu_select_harddrives(menu)))
+				lambda: menu_select_harddrives(menu)))
 	menu.set_option('disk_layouts',
 			archinstall.Selector(
 				'Select disk layout',
@@ -128,32 +128,32 @@ def define_base_option_set(menu :archinstall.GlobalMenu):
 				lambda: archinstall.ask_for_swap(),
 				default=True))
 	menu.set_option('bootloader',
-			archinstall.Selector(
-				'Select bootloader',
-				lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))))
+		archinstall.Selector(
+			'Select bootloader',
+			lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))))
 	menu.set_option('hostname',
 			archinstall.Selector('Specify hostname', lambda: archinstall.ask_hostname()))
 	menu.set_option('!root-password',
 			archinstall.Selector(
 				'Set root password',
-				lambda: mnu_set_root_password(menu),
+				lambda: menu_set_root_password(menu),
 				display_func=lambda x: archinstall.secret(x) if x else 'None'))
 	menu.set_option('!superusers',
 			archinstall.Selector(
 				'Specify superuser account',
-				lambda: mnu_create_superuser_account(menu),
+				lambda: menu_create_superuser_account(menu),
 				dependencies_not=['!root-password'],
 				display_func=lambda x: list(x.keys()) if x else ''))
 	menu.set_option('!users',
 			archinstall.Selector(
 				'Specify user account',
-				lambda: mnu_create_user_account(menu),
+				lambda: menu_create_user_account(menu),
 				default={},
 				display_func=lambda x: list(x.keys()) if x else '[]'))
 	menu.set_option('profile',
 			archinstall.Selector(
 				'Specify profile',
-				lambda: mnu_select_profile(menu),
+				lambda: menu_select_profile(menu),
 				display_func=lambda x: x if x else 'None'))
 	menu.set_option('audio',
 			archinstall.Selector(
@@ -188,7 +188,7 @@ def define_base_action_set(menu :archinstall.GlobalMenu):
 	menu.set_option('', archinstall.Selector('', enabled=True))
 	menu.set_option('install',
 			archinstall.Selector(
-				mnu_install_text(menu),
-				exit_func=lambda: True if mnu_missing_configs(menu) == 0 else False,
+				menu_install_text(menu),
+				exit_func=lambda: True if menu_missing_configs(menu) == 0 else False,
 				enabled=True))
 	menu.set_option('abort', archinstall.Selector('Abort', exit_func=lambda: exit(1), enabled=True))

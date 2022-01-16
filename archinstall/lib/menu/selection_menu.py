@@ -129,7 +129,7 @@ class GlobalMenu:
 	def __init__(self,
 			data_store :dict = None,
 			pre_callback :Callable = None,
-			pos_callback :Callable = None,
+			post_callback :Callable = None,
 			exit_callback :Callable = None):
 		"""
 		Create a new selection menu.
@@ -140,16 +140,16 @@ class GlobalMenu:
 		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
 		:type pre_callback: Callable
 
-		:param pos_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
-		:type pos_callback: Callable
+		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
+		:type post_callback: Callable
 
-		:param exit_callback: common function exectued prior to exiting the menu loop. Accepts the class as parameter
+		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
 		:type pos_callback: Callable
 
 		"""
 		self._data_store = data_store if data_store else archinstall.arguments
 		self.pre_process_callback = pre_callback
-		self.post_process_callback = pos_callback
+		self.post_process_callback = post_callback
 		self.exit_callback = exit_callback
 
 		self._menu_options = {}
@@ -228,10 +228,6 @@ class GlobalMenu:
 
 		return True
 
-	def _secret(self, x :str) -> str:
-		""" general """
-		return '*' * len(x)
-
 	def _set_kb_language(self):
 		""" general for ArchInstall"""
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
@@ -285,7 +281,7 @@ class GlobalMenu:
 	def set_mandatory(self, field :str, status :bool):
 		self.option(field).set_mandatory(status)
 
-	def _mandatory_overview(self) -> [int,int]:
+	def mandatory_overview(self) -> [int, int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
 		for field in self._menu_options:

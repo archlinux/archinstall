@@ -5,7 +5,7 @@ import time
 
 
 import archinstall
-from archinstall.lib.menu.default_options import mnu_post_callback, define_base_option_set, define_base_action_set, mnu_update_install
+from archinstall.lib.menu.default_options import menu_post_callback, define_base_option_set, define_base_action_set, menu_update_install
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -77,7 +77,7 @@ def ask_user_questions():
 			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 			archinstall.SysCommand('timedatectl set-ntp true')
 
-	global_menu = archinstall.GlobalMenu(pos_callback=mnu_post_callback,exit_callback=_post_processing)
+	global_menu = archinstall.GlobalMenu(post_callback=menu_post_callback, exit_callback=_post_processing)
 	# We define all the standard menu option (but not enable them)
 	define_base_option_set(global_menu)
 	define_base_action_set(global_menu)
@@ -135,7 +135,7 @@ def ask_user_questions():
 
 	global_menu.enable('ntp')
 	# as the install option shows an account of missing mandatory options, and other thing, we refresh after creating all
-	mnu_update_install(global_menu)
+	menu_update_install(global_menu)
 
 	global_menu.run()
 

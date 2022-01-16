@@ -12,7 +12,7 @@ def _post_callback(menu,option,value=None):
 def _missing_configs(menu):
 	def check(s):
 		return menu.option(s).has_selection()
-	_, missing = menu._mandatory_overview()
+	_, missing = menu.mandatory_overview()
 	if check('harddrives'):
 		if not menu.option('harddrives').is_empty() and not check('disk_layouts'):
 			missing += 1
@@ -63,7 +63,7 @@ def load_harddrives():
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	global_menu = archinstall.GlobalMenu(pos_callback=_post_callback,exit_callback=_post_processing)
+	global_menu = archinstall.GlobalMenu(post_callback=_post_callback, exit_callback=_post_processing)
 	# We define all the standard menu option (but not enable them)
 	define_base_option_set(global_menu)
 	define_base_action_set(global_menu)
@@ -161,7 +161,6 @@ def write_config_files():
 
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
-
 
 	if archinstall.arguments.get('disk_layouts'):
 		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
