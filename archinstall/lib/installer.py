@@ -90,8 +90,6 @@ class Installer:
 			base_packages = __packages__[:3]
 		if kernels is None:
 			self.kernels = ['linux']
-		elif isinstance(kernels,str):
-			self.kernels = [kernels]
 		else:
 			self.kernels = kernels
 		self.target = target

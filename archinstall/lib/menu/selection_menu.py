@@ -193,6 +193,10 @@ class GlobalMenu:
 					if self.exit_callback:
 						self.exit_callback(self)
 					break
+		for key in self._menu_options:
+			sel = self._menu_options[key]
+			if sel.enabled and sel.has_selection() and key not in self._data_store:
+				self._data_store[key] = sel._current_selection
 
 	def _process_selection(self, selection :str) -> bool:
 		"""  execute what happens to the selected option.
