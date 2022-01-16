@@ -29,7 +29,7 @@ def _update_install(menu):
 	text = _install_text(menu)
 	menu.option('install').update_description(text)
 
-def _post_processing(global_menu):
+def propagate_encryption_key(global_menu):
 	""" particular """
 	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
@@ -63,7 +63,7 @@ def load_harddrives():
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	global_menu = archinstall.GlobalMenu(post_callback=_post_callback, exit_callback=_post_processing)
+	global_menu = archinstall.GlobalMenu(post_callback=_post_callback, exit_callback=propagate_encryption_key)
 	# We define all the standard menu option (but not enable them)
 	define_base_option_set(global_menu)
 	define_base_action_set(global_menu)

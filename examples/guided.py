@@ -25,7 +25,7 @@ archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().key
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
-def _post_processing(global_menu):
+def propagate_encrytion_key(global_menu):
 	""" particular """
 	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
@@ -77,7 +77,7 @@ def ask_user_questions():
 			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 			archinstall.SysCommand('timedatectl set-ntp true')
 
-	global_menu = archinstall.GlobalMenu(post_callback=menu_post_callback, exit_callback=_post_processing)
+	global_menu = archinstall.GlobalMenu(post_callback=menu_post_callback, exit_callback=propagate_encrytion_key)
 	# We define all the standard menu option (but not enable them)
 	define_base_option_set(global_menu)
 	define_base_action_set(global_menu)
