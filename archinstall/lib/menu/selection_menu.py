@@ -196,7 +196,7 @@ class GlobalMenu:
 		self._menu_options['ntp'] = \
 			Selector(
 				'Set automatic time sync (NTP)',
-				lambda: archinstall.ask_ntp(),
+				lambda: self._select_ntp(),
 				default=True)
 		self._menu_options['install'] = \
 			Selector(
@@ -309,6 +309,14 @@ class GlobalMenu:
 			archinstall.arguments['!superusers'] = {}
 
 		return password
+
+	def _select_ntp(self) -> bool:
+		ntp = archinstall.ask_ntp()
+
+		value = str(ntp).lower()
+		archinstall.SysCommand(f'timedatectl set-ntp {value}')
+
+		return ntp
 
 	def _select_harddrives(self):
 		old_haddrives = archinstall.arguments.get('harddrives')

@@ -2,6 +2,8 @@ from __future__ import annotations
 import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from build.lib.archinstall import Menu
+
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
 
@@ -22,7 +24,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	using_home_partition = False
 
 	if default_filesystem == 'btrfs':
-		using_subvolumes = input('Would you like to use BTRFS subvolumes with a default structure? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+		prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		using_subvolumes = choice == 'yes'
 
 	layout = {
 		block_device.path : {
@@ -76,7 +80,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
 
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
-		using_home_partition = input('Would you like to create a separate partition for /home? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+		prompt = 'Would you like to create a separate partition for /home?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		using_home_partition = choice == 'yes'
 
 	# Set a size for / (/root)
 	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:

@@ -4,6 +4,7 @@ import os
 import time
 
 import archinstall
+from build.lib.archinstall import Menu
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -58,14 +59,15 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
+	# ref: https://github.com/archlinux/archinstall/pull/831
+	# we'll set NTP to true by default since this is also
+	# the default value specified in the menu options; in
+	# case it will be changed by the user we'll also update
+	# the system immediately
+	archinstall.SysCommand('timedatectl set-ntp true')
+
 	global_menu = archinstall.GlobalMenu()
 	global_menu.enable('keyboard-layout')
-
-	if not archinstall.arguments.get('ntp', False):
-		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-		if archinstall.arguments['ntp']:
-			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
-			archinstall.SysCommand('timedatectl set-ntp true')
 
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
@@ -293,8 +295,9 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-			if choice.lower() in ("y", ""):
+			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
+			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+			if choice == 'yes':
 				try:
 					installation.drop_to_shell()
 				except:
