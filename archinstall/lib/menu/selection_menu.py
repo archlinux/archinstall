@@ -181,8 +181,8 @@ class GlobalMenu:
 		""" Calls the Menu framework"""
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
 		# 	This will just help the user with the next following questions.
-		self._set_kb_language()
 		while True:
+			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
 			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
@@ -216,7 +216,7 @@ class GlobalMenu:
 			self._data_store[selector_name] = result
 		# we allow for a callback after we get the result
 		if self.post_process_callback:
-			self.post_process_callback(self,selector_name,result if result else None)
+			self.post_process_callback(self,selector_name,result)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
 		if selector.exit_func:
 			if selector.exit_func() and self._check_mandatory_status():

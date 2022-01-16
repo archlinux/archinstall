@@ -120,7 +120,7 @@ def define_base_option_set(menu :archinstall.GlobalMenu):
 			archinstall.Selector(
 				'Set encryption password',
 				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
-				display_func=lambda x: menu._secret(x) if x else 'None',
+				display_func=lambda x: archinstall.secret(x) if x else 'None',
 				dependencies=['harddrives']))
 	menu.set_option('swap',
 			archinstall.Selector(
@@ -137,7 +137,7 @@ def define_base_option_set(menu :archinstall.GlobalMenu):
 			archinstall.Selector(
 				'Set root password',
 				lambda: mnu_set_root_password(menu),
-				display_func=lambda x: menu._secret(x) if x else 'None'))
+				display_func=lambda x: archinstall.secret(x) if x else 'None'))
 	menu.set_option('!superusers',
 			archinstall.Selector(
 				'Specify superuser account',

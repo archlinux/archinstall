@@ -521,3 +521,7 @@ def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
 			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
 			return False
 	return True
+
+def secret(x :str) -> str:
+	""" Returns a chain of * the length of the incoming string  """
+	return '*' * len(x)
