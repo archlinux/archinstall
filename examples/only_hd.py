@@ -77,14 +77,13 @@ def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	# global_menu.enable('harddrives')
-	global_menu.set_mandatory('harddrives', True)
+	global_menu.enable('harddrives', mandatory=True)
 	global_menu.enable('disk_layouts')
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	global_menu.enable('bootloader')
-	global_menu.set_mandatory('bootloader', True)
+	global_menu.enable('bootloader',mandatory=True)
 
 	global_menu.enable('swap')
 

@@ -94,20 +94,17 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	# global_menu.enable('harddrives')
-	global_menu.set_mandatory('harddrives', True)
+	global_menu.enable('harddrives', mandatory=True)
 	global_menu.enable('disk_layouts')
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	global_menu.enable('bootloader')
-	global_menu.set_mandatory('bootloader', True)
-
+	global_menu.enable('bootloader', mandatory=True)
 	global_menu.enable('swap')
 
 	# Get the hostname for the machine
-	global_menu.enable('hostname')
-	global_menu.set_mandatory('hostname', True)
+	global_menu.enable('hostname', mandatory=True)
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	global_menu.enable('!root-password')
@@ -119,8 +116,7 @@ def ask_user_questions():
 	global_menu.enable('profile')
 
 	# Ask about audio server selection if one is not already set
-	global_menu.enable('audio')
-	global_menu.set_mandatory('audio', True)
+	global_menu.enable('audio', mandatory=True)
 
 	# Ask for preferred kernel:
 	global_menu.enable('kernels')
@@ -130,8 +126,7 @@ def ask_user_questions():
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	global_menu.enable('nic')
 
-	global_menu.enable('timezone')
-	global_menu.set_mandatory('timezone', True)
+	global_menu.enable('timezone', mandatory=True)
 
 	global_menu.enable('ntp')
 	# as the install option shows an account of missing mandatory options, and other thing, we refresh after creating all

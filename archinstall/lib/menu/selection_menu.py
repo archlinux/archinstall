@@ -79,8 +79,8 @@ class Selector:
 	def dependencies_not(self) -> dict:
 		return self._dependencies_not
 
-	def set_enabled(self):
-		self.enabled = True
+	def set_enabled(self, status :bool = True):
+		self.enabled = status
 
 	def update_description(self, description :str):
 		self._description = description
@@ -117,13 +117,16 @@ class Selector:
 			return True
 		return False
 
+	def is_enabled(self) -> bool:
+		return self.enabled
+
 	def is_mandatory(self) -> bool:
 		return self.mandatory
 
-	def set_mandatory(self, status):
+	def set_mandatory(self, status :bool = True):
 		self.mandatory = status
-		if status:
-			self.set_enabled()
+		if status and not self.is_enabled():
+			self.set_enabled(True)
 
 class GlobalMenu:
 	def __init__(self,
@@ -161,7 +164,7 @@ class GlobalMenu:
 		"""
 		return
 
-	def enable(self, selector_name :str, omit_if_set :bool = False):
+	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
 		""" activates menu options """
 		arg = self._data_store.get(selector_name, None)
 
@@ -170,7 +173,10 @@ class GlobalMenu:
 			return
 
 		if self._menu_options.get(selector_name, None):
-			self._menu_options[selector_name].set_enabled()
+			self._menu_options[selector_name].set_enabled(True)
+			if mandatory:
+				self._menu_options[selector_name].set_mandatory(True)
+
 			if arg is not None:
 				self._menu_options[selector_name].set_current_selection(arg)
 		else:
