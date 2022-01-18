@@ -16,7 +16,7 @@ class Selector:
 		enabled :bool = False,
 		dependencies :List = [],
 		dependencies_not :List = [],
-		exit_func :Callable = None,
+		exec_func :Callable = None,
 		preview_func :Callable = None,
 		mandatory :bool = False
 	):
@@ -49,8 +49,8 @@ class Selector:
 		displayed if non of the entries in the list have been specified
 		:type dependencies_not: list
 
-		:param exit_func: A boolean function which determines if the option allows exiting from the menu. If does not exist asumes False
-		:type exit_func: Callable
+		:param exec_func: A boolean function which determines if the option allows exiting from the menu. If does not exist asumes False
+		:type exec_func: Callable
 
 		:param preview_func: A callable which invokws a preview screen (not implemented)
 		:type preview_func: Callable
@@ -67,7 +67,7 @@ class Selector:
 		self.text = self.menu_text()
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
-		self.exit_func = exit_func
+		self.exec_func = exec_func
 		self.preview_func = preview_func
 		self.mandatory = mandatory
 
@@ -228,8 +228,8 @@ class GlobalMenu:
 		if self.post_process_callback:
 			self.post_process_callback(self,selector_name,result)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
-		if selector.exit_func:
-			if selector.exit_func() and self._check_mandatory_status():
+		if selector.exec_func:
+			if selector.exec_func() and self._check_mandatory_status():
 				return False
 
 		return True
