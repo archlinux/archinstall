@@ -240,7 +240,7 @@ class GlobalMenu:
 					self._process_selection(selection)
 		for key in self._menu_options:
 			sel = self._menu_options[key]
-			if sel.enabled and sel.has_selection() and key not in archinstall.arguments:
+			if key not in archinstall.arguments:
 				archinstall.arguments[key] = sel._current_selection
 
 	def _process_selection(self, selection):
