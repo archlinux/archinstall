@@ -201,7 +201,7 @@ class GlobalMenu:
 					break
 		for key in self._menu_options:
 			sel = self._menu_options[key]
-			if sel.enabled and sel.has_selection() and key not in self._data_store:
+			if key not in archinstall.arguments:
 				self._data_store[key] = sel._current_selection
 
 	def _process_selection(self, selection :str) -> bool:

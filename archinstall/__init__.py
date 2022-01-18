@@ -163,10 +163,13 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		if 'disk_layouts' not in storage:
-			storage['disk_layouts'] = {}
-		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],storage['disk_layouts']):
+		# if 'disk_layouts' not in storage:
+		# 	storage['disk_layouts'] = {}
+		layout_storage = {}
+		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
+		else:
+			arguments['disk_layouts'] = layout_storage
 
 
 define_arguments()
