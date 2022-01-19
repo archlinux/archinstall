@@ -49,7 +49,9 @@ class Selector:
 		displayed if non of the entries in the list have been specified
 		:type dependencies_not: list
 
-		:param exec_func: A boolean function which determines if the option allows exiting from the menu. If does not exist asumes False
+		:param exec_func: A function with the result of the selection as input parameter and which returns boolean.
+		Can be used for any action deemed necessary after selection. If it returns True, exits the menu loop, if False,
+		menu returns to the selection screen. If not specified it is assumed the return is False
 		:type exec_func: Callable
 
 		:param preview_func: A callable which invokws a preview screen (not implemented)
@@ -150,7 +152,7 @@ class GlobalMenu:
 		:type pos_callback: Callable
 
 		"""
-		self._data_store = data_store if data_store else archinstall.arguments
+		self._data_store = data_store if data_store is not None else archinstall.arguments
 		self.pre_process_callback = pre_callback
 		self.post_process_callback = post_callback
 		self.exit_callback = exit_callback
@@ -196,13 +198,13 @@ class GlobalMenu:
 				selection = selection.strip()
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
 				if not self._process_selection(selection):
-					if self.exit_callback:
-						self.exit_callback(self)
 					break
 		for key in self._menu_options:
 			sel = self._menu_options[key]
-			if key not in archinstall.arguments:
+			if key and key not in self._data_store:
 				self._data_store[key] = sel._current_selection
+		if self.exit_callback:
+			self.exit_callback(self)
 
 	def _process_selection(self, selection :str) -> bool:
 		"""  execute what happens to the selected option.
@@ -229,7 +231,7 @@ class GlobalMenu:
 			self.post_process_callback(self,selector_name,result)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
 		if selector.exec_func:
-			if selector.exec_func() and self._check_mandatory_status():
+			if selector.exec_func(result) and self._check_mandatory_status():
 				return False
 
 		return True

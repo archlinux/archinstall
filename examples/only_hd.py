@@ -71,7 +71,7 @@ def ask_harddrives():
 	global_menu.set_option('install',
 			archinstall.Selector(
 				_install_text(global_menu),
-				exec_func=lambda: True if _missing_configs(global_menu) == 0 else False,
+				exec_func=lambda x: True if _missing_configs(global_menu) == 0 else False,
 				enabled=True))
 
 	# Ask which harddrives/block-devices we will install to

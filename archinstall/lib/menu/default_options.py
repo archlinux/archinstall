@@ -189,6 +189,6 @@ def define_base_action_set(menu :archinstall.GlobalMenu):
 	menu.set_option('install',
 			archinstall.Selector(
 				menu_install_text(menu),
-				exec_func=lambda: True if menu_missing_configs(menu) == 0 else False,
+				exec_func=lambda x: True if menu_missing_configs(menu) == 0 else False,
 				enabled=True))
-	menu.set_option('abort', archinstall.Selector('Abort', exec_func=lambda: exit(1), enabled=True))
+	menu.set_option('abort', archinstall.Selector('Abort', exec_func=lambda x: exit(1), enabled=True))
