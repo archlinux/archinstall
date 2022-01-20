@@ -607,8 +607,11 @@ class Installer:
 			with open(f"{self.target}/etc/systemd/zram-generator.conf", "w") as zram_conf:
 				zram_conf.write("[zram0]\n")
 
-			if self.enable_service('systemd-zram-setup@zram0.service'):
-				return True
+			self.enable_service('systemd-zram-setup@zram0.service')
+
+			self.zram_enabled = True
+
+			return True
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
@@ -714,6 +717,12 @@ class Installer:
 					base_path,bind_path = split_bind_name(str(root_partition.path))
 					if bind_path is not None: # and root_fs_type == 'btrfs':
 						options_entry = f"rootflags=subvol={bind_path} " + options_entry
+
+					# Zswap should be disabled when using zram.
+					#
+					# https://github.com/archlinux/archinstall/issues/881
+					if self.zram_enabled:
+						options_entry = "zswap.enabled=0 " + options_entry
 
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
