@@ -93,7 +93,7 @@ def menu_post_callback(menu :archinstall.GlobalMenu, option, value :Any = None):
 """ Define an standard set of menu options"""
 
 def define_base_option_set(menu :archinstall.GlobalMenu):
-	menu.set_option('keyboard-layout', archinstall.Selector('Select keyboard layout', lambda: archinstall.select_language('es'), default='es'))
+	menu.set_option('keyboard-layout', archinstall.Selector('Select keyboard layout', lambda: archinstall.select_language('en'), default='en'))
 	menu.set_option('mirror-region',
 			archinstall.Selector(
 				'Select mirror region',
