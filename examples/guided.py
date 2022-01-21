@@ -3,8 +3,9 @@ import logging
 import os
 import time
 
+from archinstall import Menu
+
 import archinstall
-from build.lib.archinstall import Menu
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

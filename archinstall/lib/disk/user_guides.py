@@ -1,9 +1,9 @@
 from __future__ import annotations
 import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
-# https://stackoverflow.com/a/39757388/929999
-from build.lib.archinstall import Menu
+from archinstall import Menu
 
+# https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
 

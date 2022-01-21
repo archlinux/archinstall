@@ -1,7 +1,7 @@
 # A desktop environment using "Sway"
+from archinstall import Menu
 
 import archinstall
-from build.lib.archinstall import Menu
 
 is_top_level_profile = False
 
