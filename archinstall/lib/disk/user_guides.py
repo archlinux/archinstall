@@ -1,7 +1,8 @@
 from __future__ import annotations
 import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
-from archinstall import Menu
+
+import archinstall
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 
 	if default_filesystem == 'btrfs':
 		prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		choice = archinstall.Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 		using_subvolumes = choice == 'yes'
 
 	layout = {

@@ -1,6 +1,4 @@
 # A desktop environment using "Sway"
-from archinstall import Menu
-
 import archinstall
 
 is_top_level_profile = False
@@ -22,7 +20,7 @@ __packages__ = [
 def _check_driver() -> bool:
 	if "nvidia" in archinstall.storage.get("gfx_driver_packages", None):
 		prompt = 'The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'
-		choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
+		choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='no').run()
 		if choice == 'no':
 			return False
 

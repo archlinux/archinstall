@@ -3,8 +3,6 @@ import logging
 import os
 import time
 
-from archinstall import Menu
-
 import archinstall
 
 if archinstall.arguments.get('help'):
@@ -297,7 +295,7 @@ def perform_installation(mountpoint):
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
 			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
-			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+			choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
 			if choice == 'yes':
 				try:
 					installation.drop_to_shell()
