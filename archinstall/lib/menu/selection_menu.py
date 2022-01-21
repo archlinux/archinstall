@@ -3,7 +3,7 @@ import sys
 import archinstall
 from archinstall import Menu
 
-from typing import Callable, Any, List
+from typing import Callable, Any, List, Iterator
 # from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 
 class Selector:
@@ -112,6 +112,9 @@ class Selector:
 			return False
 		return True
 
+	def get_selection(self) -> Any:
+		return self._current_selection
+
 	def is_empty(self) -> bool:
 		if self._current_selection is None:
 			return True
@@ -207,7 +210,7 @@ class GlobalMenu:
 			self.exit_callback(self)
 
 	def _process_selection(self, selection :str) -> bool:
-		"""  execute what happens to the selected option.
+		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
 			Returns true if the menu shall continue, False if it has ended
 		"""
@@ -215,12 +218,27 @@ class GlobalMenu:
 		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection}')
-
 		selector_name = option[0][0]
 		selector = option[0][1]
-		# we allow for an callback to make something before the selector function is invoked
+
+		return self.exec_option(selector_name,selector)
+
+	def exec_option(self,selector_name :str, p_selector :Selector = None) -> bool:
+		""" processes the exection of a given menu entry
+		- pre process callback
+		- selection function
+		- post process callback
+		- exec action
+		returns True if the loop has to continue, false if the loop can be closed
+		"""
+		if not p_selector:
+			selector = self.option(selector_name)
+		else:
+			selector = p_selector
+
 		if self.pre_process_callback:
 			self.pre_process_calback(self,selector_name)
+
 		result = None
 		if selector.func:
 			result = selector.func()
@@ -233,7 +251,6 @@ class GlobalMenu:
 		if selector.exec_func:
 			if selector.exec_func(result) and self._check_mandatory_status():
 				return False
-
 		return True
 
 	def _set_kb_language(self):
@@ -275,6 +292,14 @@ class GlobalMenu:
 	def option(self,name :str) -> Selector:
 		# TODO check inexistent name
 		return self._menu_options[name]
+
+	def list_enabled_options(self) -> Iterator:
+		""" Iterator to retrieve the enabled menu options at a given time.
+		The results are dynamic (if between calls to the iterator some elements -still not retrieved- are (de)activated
+		"""
+		for item in self._menu_options:
+			if item in self._menus_to_enable():
+				yield item
 
 	def set_option(self, name :str, selector :Selector):
 		self._menu_options[name] = selector
