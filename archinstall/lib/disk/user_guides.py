@@ -82,7 +82,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		prompt = 'Would you like to create a separate partition for /home?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		choice = archinstall.Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 		using_home_partition = choice == 'yes'
 
 	# Set a size for / (/root)
