@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import time
@@ -117,7 +116,6 @@ def ask_user_questions():
 	global_menu.enable('ntp')
 
 	global_menu.run()
-
 
 
 def perform_filesystem_operations():

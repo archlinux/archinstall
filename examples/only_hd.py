@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import pathlib
@@ -100,7 +99,6 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 	ask_harddrives()
-
 
 
 def perform_disk_operations():

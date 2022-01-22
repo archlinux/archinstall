@@ -6,9 +6,8 @@ Here can be located all the routines which are deemed reusable for the scripts.
 The only allowable import from the library is archinstall
 """
 import archinstall
-from archinstall.examples.commons import output_configs
 
-def output_configs(show :bool=True, save :bool=True):
+def output_configs(show :bool = True, save :bool = True):
 	""" Show on the screen the configuration data (except credentials) and/or save them on a json file
 	:param show:Determines if the config data will be displayed on screen in Json format
 	:type show: bool
