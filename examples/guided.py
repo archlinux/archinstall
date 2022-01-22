@@ -4,6 +4,7 @@ import os
 import time
 
 import archinstall
+from archinstall.examples.commons import output_configs
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -118,52 +119,8 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def save_user_configurations():
-	user_credentials = {}
-	if archinstall.arguments.get('!users'):
-		user_credentials["!users"] = archinstall.arguments['!users']
-	if archinstall.arguments.get('!superusers'):
-		user_credentials["!superusers"] = archinstall.arguments['!superusers']
-	if archinstall.arguments.get('!encryption-password'):
-		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
-
-	user_configuration = json.dumps({
-		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
-		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
-		'version': archinstall.__version__
-	} , indent=4, sort_keys=True, cls=archinstall.JSON)
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
 
 def perform_filesystem_operations():
-	print()
-	print('This is your chosen configuration:')
-	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-
-	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_configuration, level=logging.INFO)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		archinstall.log(user_disk_layout, level=logging.INFO)
-
-	print()
-
-	if archinstall.arguments.get('dry_run'):
-		exit(0)
-
-	if not archinstall.arguments.get('silent'):
-		input('Press Enter to continue.')
-
 	"""
 		Issue a final warning before we continue with something un-revertable.
 		We mention the drive one last time, and count from 5 to 0.
@@ -313,6 +270,13 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-save_user_configurations()
+output_configs(show=False if archinstall.arguments.get('silent') else True)
+
+if archinstall.arguments.get('dry_run'):
+	exit(0)
+
+if not archinstall.arguments.get('silent'):
+	input('Press Enter to continue.')
+
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
