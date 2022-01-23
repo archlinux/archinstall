@@ -100,10 +100,19 @@ def set_cmd_locale(general :str = None,
 			log(f"{get_locale_mode_text('LC_MESSAGES')} {messages} is not installed. Defaulting to installation language",fg="yellow",level=logging.WARNING)
 	storage['CMD_LOCALE'] = result
 
-def local_environ(func :Callable):
+def host_locale_environ(func :Callable):
 	""" decorator when we want a function executing in the host's locale environment """
 	def wrapper(*args, **kwargs):
 		unset_cmd_locale()
+		result = func(*args,**kwargs)
+		reset_cmd_locale()
+		return result
+	return wrapper
+
+def c_locale_environ(func :Callable):
+	""" decorator when we want a function executing in the C locale environment """
+	def wrapper(*args, **kwargs):
+		set_cmd_locale(general='C')
 		result = func(*args,**kwargs)
 		reset_cmd_locale()
 		return result
