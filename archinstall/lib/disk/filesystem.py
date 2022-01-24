@@ -18,6 +18,8 @@ from ..storage import storage
 GPT = 0b00000001
 MBR = 0b00000010
 
+DEFAULT_PARTITION_START = '1MiB' # TODO: Revisit sane block starts (4MB for memorycards for instance)
+
 class Filesystem:
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
@@ -71,13 +73,16 @@ class Filesystem:
 
 			self.blockdevice.flush_cache()
 
+        prev_partition = None
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('format', False) and not partition.get('PARTUUID', None):
 				print("Adding partition....")
+                start = partition.get('start') or (
+                    prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
-																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
+																	start=start,
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 				# TODO: device_instance some times become None
@@ -132,6 +137,8 @@ class Filesystem:
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
+
+            prev_partition = partition
 
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:

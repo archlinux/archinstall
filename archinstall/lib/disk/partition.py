@@ -113,12 +113,21 @@ class Partition:
 
 	@property
 	def end(self) -> Optional[str]:
+        # TODO: rename it to size_sectors
 		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition['size']  # * self.sector_size
+
+	@property
+	def end_sectors(self) -> Optional[str]:
+		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
+
+		for partition in output.get('partitiontable', {}).get('partitions', []):
+			if partition['node'] == self.path:
+				return partition['start'] + partition['size']
 
 	@property
 	def size(self) -> Optional[float]:
