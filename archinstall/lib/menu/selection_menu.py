@@ -165,6 +165,38 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
+class GeneralMenu():
+	def __init__(self,
+			data_store :dict = None,
+			pre_callback :Callable = None,
+			post_callback :Callable = None,
+			exit_callback :Callable = None):
+		"""
+		Create a new selection menu.
+
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:type  data_store:  Dict
+
+		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
+		:type pre_callback: Callable
+
+		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
+		:type post_callback: Callable
+
+		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
+		:type pos_callback: Callable
+
+		"""
+		self._data_store = data_store if data_store is not None else {}
+		self.pre_process_callback = pre_callback
+		self.post_process_callback = post_callback
+		self.exit_callback = exit_callback
+
+	def set_mandatory(self, status :bool = True):
+		self.mandatory = status
+		if status and not self.is_enabled():
+			self.set_enabled(True)
+
 
 class GeneralMenu:
 	def __init__(self, data_store :dict = None):
