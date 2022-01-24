@@ -390,6 +390,11 @@ class Installer:
 		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
 		self.enable_service('espeakup')
 
+	def enable_periodic_trim(self) -> None:
+		self.log("Enabling periodic TRIM")
+		# fstrim is owned by util-linux, a dependency of both base and systemd.
+		self.enable_service("fstrim.timer")
+
 	def enable_service(self, *services :str) -> None:
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
@@ -571,6 +576,13 @@ class Installer:
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
+		# Periodic TRIM may improve the performance and longevity of SSDs whilst
+		# having no adverse effect on other devices. Most distributions enable
+		# periodic TRIM by default.
+		#
+		# https://github.com/archlinux/archinstall/issues/880
+		self.enable_periodic_trim()
+
 		# TODO: Support locale and timezone
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
@@ -607,8 +619,11 @@ class Installer:
 			with open(f"{self.target}/etc/systemd/zram-generator.conf", "w") as zram_conf:
 				zram_conf.write("[zram0]\n")
 
-			if self.enable_service('systemd-zram-setup@zram0.service'):
-				return True
+			self.enable_service('systemd-zram-setup@zram0.service')
+
+			self.zram_enabled = True
+
+			return True
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
@@ -714,6 +729,12 @@ class Installer:
 					base_path,bind_path = split_bind_name(str(root_partition.path))
 					if bind_path is not None: # and root_fs_type == 'btrfs':
 						options_entry = f"rootflags=subvol={bind_path} " + options_entry
+
+					# Zswap should be disabled when using zram.
+					#
+					# https://github.com/archlinux/archinstall/issues/881
+					if self.zram_enabled:
+						options_entry = "zswap.enabled=0 " + options_entry
 
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,

@@ -220,7 +220,6 @@ class GlobalMenu:
 			raise ValueError(f'Selection not found: {selection}')
 		selector_name = option[0][0]
 		selector = option[0][1]
-
 		return self.exec_option(selector_name,selector)
 
 	def exec_option(self,selector_name :str, p_selector :Selector = None) -> bool:
