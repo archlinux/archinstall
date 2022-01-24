@@ -1,4 +1,5 @@
 import sys
+from typing import Callable, Any, List, Iterator
 
 import archinstall
 from archinstall import Menu
@@ -7,13 +8,16 @@ from archinstall import Menu
 class Selector:
 	def __init__(
 		self,
-		description,
-		func=None,
-		display_func=None,
-		default=None,
-		enabled=False,
-		dependencies=[],
-		dependencies_not=[]
+		description :str,
+		func :Callable = None,
+		display_func :Callable = None,
+		default :Any = None,
+		enabled :bool = False,
+		dependencies :List = [],
+		dependencies_not :List = [],
+		exec_func :Callable = None,
+		preview_func :Callable = None,
+		mandatory :bool = False
 	):
 		"""
 		Create a new menu selection entry
@@ -43,6 +47,17 @@ class Selector:
 		:param dependencies_not: These are the exclusive options; the menu item will only be
 		displayed if non of the entries in the list have been specified
 		:type dependencies_not: list
+
+		:param exec_func: A function with the result of the selection as input parameter and which returns boolean.
+		Can be used for any action deemed necessary after selection. If it returns True, exits the menu loop, if False,
+		menu returns to the selection screen. If not specified it is assumed the return is False
+		:type exec_func: Callable
+
+		:param preview_func: A callable which invokws a preview screen (not implemented)
+		:type preview_func: Callable
+
+		:param mandatory: A boolean which determines that the field is mandatory, i.e. menu can not be exited if it is not set
+		:type mandatory: bool
 		"""
 
 		self._description = description
@@ -53,23 +68,26 @@ class Selector:
 		self.text = self.menu_text()
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
+		self.exec_func = exec_func
+		self.preview_func = preview_func
+		self.mandatory = mandatory
 
 	@property
-	def dependencies(self):
+	def dependencies(self) -> dict:
 		return self._dependencies
 
 	@property
-	def dependencies_not(self):
+	def dependencies_not(self) -> dict:
 		return self._dependencies_not
 
-	def set_enabled(self):
-		self.enabled = True
+	def set_enabled(self, status :bool = True):
+		self.enabled = status
 
-	def update_description(self, description):
+	def update_description(self, description :str):
 		self._description = description
 		self.text = self.menu_text()
 
-	def menu_text(self):
+	def menu_text(self) -> str:
 		current = ''
 
 		if self._display_func:
@@ -84,28 +102,251 @@ class Selector:
 
 		return f'{self._description} {current}'
 
-	def set_current_selection(self, current):
+	def set_current_selection(self, current :str):
 		self._current_selection = current
 		self.text = self.menu_text()
 
-	def has_selection(self):
+	def has_selection(self) -> bool:
 		if self._current_selection is None:
 			return False
 		return True
 
-	def is_empty(self):
+	def get_selection(self) -> Any:
+		return self._current_selection
+
+	def is_empty(self) -> bool:
 		if self._current_selection is None:
 			return True
 		elif isinstance(self._current_selection, (str, list, dict)) and len(self._current_selection) == 0:
 			return True
-
 		return False
 
+	def is_enabled(self) -> bool:
+		return self.enabled
 
-class GlobalMenu:
-	def __init__(self):
+	def is_mandatory(self) -> bool:
+		return self.mandatory
+
+	def set_mandatory(self, status :bool = True):
+		self.mandatory = status
+		if status and not self.is_enabled():
+			self.set_enabled(True)
+
+class GeneralMenu():
+	def __init__(self,
+			data_store :dict = None,
+			pre_callback :Callable = None,
+			post_callback :Callable = None,
+			exit_callback :Callable = None):
+		"""
+		Create a new selection menu.
+
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:type  data_store:  Dict
+
+		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
+		:type pre_callback: Callable
+
+		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
+		:type post_callback: Callable
+
+		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
+		:type pos_callback: Callable
+
+		"""
+		self._data_store = data_store if data_store is not None else {}
+		self.pre_process_callback = pre_callback
+		self.post_process_callback = post_callback
+		self.exit_callback = exit_callback
+
 		self._menu_options = {}
 		self._setup_selection_menu_options()
+
+	def __enter__(self, *args :str, **kwargs :str) -> 'SetupMenu':
+		return self
+
+	def __exit__(self, *args :str, **kwargs :str) -> None:
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+		if len(args) >= 2 and args[1]:
+			archinstall.log(args[1], level=logging.ERROR, fg='red')
+			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
+			raise args[1]
+
+		for key in self._menu_options:
+			sel = self._menu_options[key]
+			if key and key not in self._data_store:
+				self._data_store[key] = sel._current_selection
+		if self.exit_callback:
+			self.exit_callback(self)
+
+	def _setup_selection_menu_options(self):
+		""" Define the menu options.
+			Menu options can be defined here in a subclass or done per progam calling self.set_option()
+		"""
+		return
+
+	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
+		""" activates menu options """
+		arg = self._data_store.get(selector_name, None)
+
+		# don't display the menu option if it was defined already
+		if arg is not None and omit_if_set:
+			return
+
+		if self._menu_options.get(selector_name, None):
+			self._menu_options[selector_name].set_enabled(True)
+			if mandatory:
+				self._menu_options[selector_name].set_mandatory(True)
+
+			if arg is not None:
+				self._menu_options[selector_name].set_current_selection(arg)
+		else:
+			print(f'No selector found: {selector_name}')
+			sys.exit(1)
+
+	def run(self):
+		""" Calls the Menu framework"""
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# 	This will just help the user with the next following questions.
+		while True:
+			self._set_kb_language()
+			enabled_menus = self._menus_to_enable()
+			menu_text = [m.text for m in enabled_menus.values()]
+			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
+			if selection:
+				selection = selection.strip()
+				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
+				if not self._process_selection(selection):
+					break
+
+	def _process_selection(self, selection :str) -> bool:
+		"""  determines and executes the selection y
+			Can / Should be extended to handle specific selection issues
+			Returns true if the menu shall continue, False if it has ended
+		"""
+		# find the selected option in our option list
+		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
+		if len(option) != 1:
+			raise ValueError(f'Selection not found: {selection}')
+		selector_name = option[0][0]
+		selector = option[0][1]
+
+		return self.exec_option(selector_name,selector)
+
+	def exec_option(self,selector_name :str, p_selector :Selector = None) -> bool:
+		""" processes the exection of a given menu entry
+		- pre process callback
+		- selection function
+		- post process callback
+		- exec action
+		returns True if the loop has to continue, false if the loop can be closed
+		"""
+		if not p_selector:
+			selector = self.option(selector_name)
+		else:
+			selector = p_selector
+
+		if self.pre_process_callback:
+			self.pre_process_calback(self,selector_name)
+
+		result = None
+		if selector.func:
+			result = selector.func()
+			self._menu_options[selector_name].set_current_selection(result)
+			self._data_store[selector_name] = result
+		# we allow for a callback after we get the result
+		if self.post_process_callback:
+			self.post_process_callback(self,selector_name,result)
+		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
+		if selector.exec_func:
+			if selector.exec_func(result) and self._check_mandatory_status():
+				return False
+		return True
+
+	def _set_kb_language(self):
+		""" general for ArchInstall"""
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# This will just help the user with the next following questions.
+		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
+			archinstall.set_keyboard_language(self._data_store['keyboard-layout'])
+
+	def _verify_selection_enabled(self, selection_name :str) -> bool:
+		""" general """
+		if selection := self._menu_options.get(selection_name, None):
+			if not selection.enabled:
+				return False
+
+			if len(selection.dependencies) > 0:
+				for d in selection.dependencies:
+					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
+						return False
+
+			if len(selection.dependencies_not) > 0:
+				for d in selection.dependencies_not:
+					if not self._menu_options.get(d).is_empty():
+						return False
+			return True
+
+		raise ValueError(f'No selection found: {selection_name}')
+
+	def _menus_to_enable(self) -> dict:
+		""" general """
+		enabled_menus = {}
+
+		for name, selection in self._menu_options.items():
+			if self._verify_selection_enabled(name):
+				enabled_menus[name] = selection
+
+		return enabled_menus
+
+	def option(self,name :str) -> Selector:
+		# TODO check inexistent name
+		return self._menu_options[name]
+
+	def list_enabled_options(self) -> Iterator:
+		""" Iterator to retrieve the enabled menu options at a given time.
+		The results are dynamic (if between calls to the iterator some elements -still not retrieved- are (de)activated
+		"""
+		for item in self._menu_options:
+			if item in self._menus_to_enable():
+				yield item
+
+	def set_option(self, name :str, selector :Selector):
+		self._menu_options[name] = selector
+
+	def _check_mandatory_status(self) -> bool:
+		for field in self._menu_options:
+			option = self._menu_options[field]
+			if option.is_mandatory() and not option.has_selection():
+				return False
+		return True
+
+	def set_mandatory(self, field :str, status :bool):
+		self.option(field).set_mandatory(status)
+
+	def mandatory_overview(self) -> [int, int]:
+		mandatory_fields = 0
+		mandatory_waiting = 0
+		for field in self._menu_options:
+			option = self._menu_options[field]
+			if option.is_mandatory():
+				mandatory_fields += 1
+				if not option.has_selection():
+					mandatory_waiting += 1
+		return mandatory_fields, mandatory_waiting
+
+class GlobalMenu(GeneralMenu):
+	def __init__(self,
+			pre_callback :Callable = None,
+			post_callback :Callable = None,
+			exit_callback :Callable = None):
+		# the lambda in the callbacks is needed bc. the callbacks are methods of the
+		# class, thus implicitly have the self (menu) parameter. The lambda consumes the explict reference
+		# to the menu in the code
+		super().__init__(data_store=archinstall.arguments,
+				pre_callback=pre_callback,
+				post_callback=post_callback if post_callback else lambda m,n,v:self._update_install(n,v),
+				exit_callback=exit_callback if exit_callback else lambda m:self._post_processing)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['keyboard-layout'] = \
@@ -201,64 +442,16 @@ class GlobalMenu:
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
+				exec_func=lambda x: True if self._missing_configs() == 0 else False,
 				enabled=True)
-		self._menu_options['abort'] = Selector('Abort', enabled=True)
-
-	def enable(self, selector_name, omit_if_set=False):
-		arg = archinstall.arguments.get(selector_name, None)
-
-		# don't display the menu option if it was defined already
-		if arg is not None and omit_if_set:
-			return
-
-		if self._menu_options.get(selector_name, None):
-			self._menu_options[selector_name].set_enabled()
-			if arg is not None:
-				self._menu_options[selector_name].set_current_selection(arg)
-		else:
-			print(f'No selector found: {selector_name}')
-			sys.exit(1)
+		self._menu_options['abort'] = Selector('Abort',exec_func=lambda x: exit(1), enabled=True)
 
 	def run(self):
-		while True:
-			# # Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# # This will just help the user with the next following questions.
-			self._set_kb_language()
+		# TODO Adapt to the context manager infraestructure
+		super().run()
+		super().__exit__()
 
-			enabled_menus = self._menus_to_enable()
-			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
-			if selection:
-				selection = selection.strip()
-				if 'Abort' in selection:
-					exit(0)
-				elif 'Install' in selection:
-					if self._missing_configs() == 0:
-						break
-				else:
-					self._process_selection(selection)
-		for key in self._menu_options:
-			sel = self._menu_options[key]
-			if key not in archinstall.arguments:
-				archinstall.arguments[key] = sel._current_selection
-		self._post_processing()
-
-	def _process_selection(self, selection):
-		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
-
-		if len(option) != 1:
-			raise ValueError(f'Selection not found: {selection}')
-
-		selector_name = option[0][0]
-		selector = option[0][1]
-		result = selector.func()
-		self._menu_options[selector_name].set_current_selection(result)
-		archinstall.arguments[selector_name] = result
-
-		self._update_install()
-
-	def _update_install(self):
+	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
@@ -332,7 +525,7 @@ class GlobalMenu:
 
 		return harddrives
 
-	def _secret(self, x):
+	def _secret(self, x :str):
 		return '*' * len(x)
 
 	def _select_profile(self):
@@ -360,37 +553,3 @@ class GlobalMenu:
 			archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
 
 		return users
-
-	def _set_kb_language(self):
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if archinstall.arguments.get('keyboard-layout', None) and len(archinstall.arguments['keyboard-layout']):
-			archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
-
-	def _verify_selection_enabled(self, selection_name):
-		if selection := self._menu_options.get(selection_name, None):
-			if not selection.enabled:
-				return False
-
-			if len(selection.dependencies) > 0:
-				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
-						return False
-
-			if len(selection.dependencies_not) > 0:
-				for d in selection.dependencies_not:
-					if not self._menu_options.get(d).is_empty():
-						return False
-
-			return True
-
-		raise ValueError(f'No selection found: {selection_name}')
-
-	def _menus_to_enable(self):
-		enabled_menus = {}
-
-		for name, selection in self._menu_options.items():
-			if self._verify_selection_enabled(name):
-				enabled_menus[name] = selection
-
-		return enabled_menus

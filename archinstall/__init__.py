@@ -21,7 +21,7 @@ from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
-from .lib.menu.selection_menu import GlobalMenu
+from .lib.menu.selection_menu import *
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
 parser = ArgumentParser()
