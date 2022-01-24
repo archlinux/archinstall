@@ -225,7 +225,7 @@ class Partition:
 		return bind_name
 
 	def partprobe(self) -> bool:
-		if SysCommand(f'bash -c "partprobe {self.block_device.device}"').exit_code == 0:
+		if SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
 			time.sleep(1)
 			return True
 		return False
