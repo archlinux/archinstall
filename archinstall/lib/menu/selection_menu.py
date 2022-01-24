@@ -242,7 +242,7 @@ class GlobalMenu:
 			if key not in archinstall.arguments:
 				archinstall.arguments[key] = sel._current_selection
 		self._post_processing()
-		exit()
+
 	def _process_selection(self, selection):
 		# find the selected option in our option list
 		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
