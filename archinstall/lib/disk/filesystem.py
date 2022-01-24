@@ -73,14 +73,14 @@ class Filesystem:
 
 			self.blockdevice.flush_cache()
 
-        prev_partition = None
+		prev_partition = None
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('format', False) and not partition.get('PARTUUID', None):
 				print("Adding partition....")
-                start = partition.get('start') or (
-                    prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
+				start = partition.get('start') or (
+					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=start,
 																	end=partition.get('size', '100%'),
@@ -138,7 +138,7 @@ class Filesystem:
 				log(f"Marking partition {partition['device_instance']} as bootable.")
 				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
 
-            prev_partition = partition
+			prev_partition = partition
 
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:

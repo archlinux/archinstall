@@ -113,7 +113,7 @@ class Partition:
 
 	@property
 	def end(self) -> Optional[str]:
-        # TODO: rename it to size_sectors
+		# TODO: actually this is size in sectors unit
 		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
