@@ -1,7 +1,10 @@
 import sys
+<<<<<<< HEAD
 from collections import OrderedDict
 import logging
 
+=======
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 from typing import Callable, Any, List, Iterator
 
 import archinstall
@@ -126,6 +129,7 @@ class Selector:
 
 	def is_enabled(self) -> bool:
 		return self.enabled
+<<<<<<< HEAD
 
 	def is_mandatory(self) -> bool:
 		return self.mandatory
@@ -159,6 +163,54 @@ class GeneralMenu():
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
+=======
+
+	def is_mandatory(self) -> bool:
+		return self.mandatory
+
+	def set_mandatory(self, status :bool = True):
+		self.mandatory = status
+		if status and not self.is_enabled():
+			self.set_enabled(True)
+
+class GeneralMenu():
+	def __init__(self,
+			data_store :dict = None,
+			pre_callback :Callable = None,
+			post_callback :Callable = None,
+			exit_callback :Callable = None):
+		"""
+		Create a new selection menu.
+
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:type  data_store:  Dict
+
+		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
+		:type pre_callback: Callable
+
+		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
+		:type post_callback: Callable
+
+		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
+		:type pos_callback: Callable
+
+		"""
+		self._data_store = data_store if data_store is not None else {}
+		self.pre_process_callback = pre_callback
+		self.post_process_callback = post_callback
+		self.exit_callback = exit_callback
+
+		self._menu_options = {}
+		self._setup_selection_menu_options()
+
+	def __enter__(self, *args :str, **kwargs :str) -> 'SetupMenu':
+		return self
+
+	def __exit__(self, *args :str, **kwargs :str) -> None:
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+		if len(args) >= 2 and args[1]:
+			archinstall.log(args[1], level=logging.ERROR, fg='red')
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
@@ -166,7 +218,12 @@ class GeneralMenu():
 			sel = self._menu_options[key]
 			if key and key not in self._data_store:
 				self._data_store[key] = sel._current_selection
+<<<<<<< HEAD
 		self.exit_callback()
+=======
+		if self.exit_callback:
+			self.exit_callback(self)
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
@@ -174,6 +231,7 @@ class GeneralMenu():
 		"""
 		return
 
+<<<<<<< HEAD
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
 		return
@@ -189,10 +247,17 @@ class GeneralMenu():
 	def synch(self, selector_name :str, omit_if_set :bool = False,omit_if_disabled :bool = False):
 		""" loads menu options with data_store value """
 		arg = self._data_store.get(selector_name, None)
+=======
+	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
+		""" activates menu options """
+		arg = self._data_store.get(selector_name, None)
+
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 		# don't display the menu option if it was defined already
 		if arg is not None and omit_if_set:
 			return
 
+<<<<<<< HEAD
 		if not self.option(selector_name).is_enabled() and omit_if_disabled:
 			return
 
@@ -201,23 +266,37 @@ class GeneralMenu():
 
 	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
 		""" activates menu options """
+=======
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
+<<<<<<< HEAD
 			self.synch(selector_name,omit_if_set)
+=======
+
+			if arg is not None:
+				self._menu_options[selector_name].set_current_selection(arg)
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 		else:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
 
 	def run(self):
 		""" Calls the Menu framework"""
+<<<<<<< HEAD
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
+=======
+		# Before continuing, set the preferred keyboard layout/language in the current terminal.
+		# 	This will just help the user with the next following questions.
+		while True:
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
@@ -227,8 +306,11 @@ class GeneralMenu():
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
 				if not self._process_selection(selection):
 					break
+<<<<<<< HEAD
 		if not self.is_context_mgr:
 			self.__exit__()
+=======
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 
 	def _process_selection(self, selection :str) -> bool:
 		"""  determines and executes the selection y
@@ -257,7 +339,12 @@ class GeneralMenu():
 		else:
 			selector = p_selector
 
+<<<<<<< HEAD
 		self.pre_callback(selector_name)
+=======
+		if self.pre_process_callback:
+			self.pre_process_calback(self,selector_name)
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 
 		result = None
 		if selector.func:
@@ -265,7 +352,12 @@ class GeneralMenu():
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
 		# we allow for a callback after we get the result
+<<<<<<< HEAD
 		self.post_callback(selector_name,result)
+=======
+		if self.post_process_callback:
+			self.post_process_callback(self,selector_name,result)
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
 		if selector.exec_func:
 			if selector.exec_func(result) and self._check_mandatory_status():
@@ -312,12 +404,15 @@ class GeneralMenu():
 		# TODO check inexistent name
 		return self._menu_options[name]
 
+<<<<<<< HEAD
 	def list_options(self) -> Iterator:
 		""" Iterator to retrieve the enabled menu option names
 		"""
 		for item in self._menu_options:
 			yield item
 
+=======
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 	def list_enabled_options(self) -> Iterator:
 		""" Iterator to retrieve the enabled menu options at a given time.
 		The results are dynamic (if between calls to the iterator some elements -still not retrieved- are (de)activated
@@ -351,8 +446,22 @@ class GeneralMenu():
 		return mandatory_fields, mandatory_waiting
 
 class GlobalMenu(GeneralMenu):
+<<<<<<< HEAD
 	def __init__(self):
 		super().__init__(data_store=archinstall.arguments)
+=======
+	def __init__(self,
+			pre_callback :Callable = None,
+			post_callback :Callable = None,
+			exit_callback :Callable = None):
+		# the lambda in the callbacks is needed bc. the callbacks are methods of the
+		# class, thus implicitly have the self (menu) parameter. The lambda consumes the explict reference
+		# to the menu in the code
+		super().__init__(data_store=archinstall.arguments,
+				pre_callback=pre_callback,
+				post_callback=post_callback if post_callback else lambda m,n,v:self._update_install(n,v),
+				exit_callback=exit_callback if exit_callback else lambda m:self._post_processing)
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['keyboard-layout'] = \
@@ -452,6 +561,14 @@ class GlobalMenu(GeneralMenu):
 				enabled=True)
 		self._menu_options['abort'] = Selector('Abort',exec_func=lambda x: exit(1), enabled=True)
 
+<<<<<<< HEAD
+=======
+	def run(self):
+		# TODO Adapt to the context manager infraestructure
+		super().run()
+		super().__exit__()
+
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
@@ -529,6 +646,12 @@ class GlobalMenu(GeneralMenu):
 
 		return harddrives
 
+<<<<<<< HEAD
+=======
+	def _secret(self, x :str):
+		return '*' * len(x)
+
+>>>>>>> 121d03a (New version of the FlexibleMenu)
 	def _select_profile(self):
 		profile = archinstall.select_profile()
 
