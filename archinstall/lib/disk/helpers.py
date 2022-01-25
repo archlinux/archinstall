@@ -202,7 +202,7 @@ def get_partitions_in_use(mountpoint) -> list:
 				raise ValueError(f"Could not locate blockdevice for partition: {block_device_class_link}")
 			block_device_class_path = block_device_class_link.readlink()
 
-			partition = Partition(target['source'], BlockDevice(block_device_class_path.parent.stem), filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
+			partition = Partition(target['source'], BlockDevice(f"/dev/{block_device_class_path.parent.stem}"), filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 			print(partition)
 
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
