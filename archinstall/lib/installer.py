@@ -240,7 +240,7 @@ class Installer:
 
 						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
 						# if we name the device to "xyzloop".
-						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
+						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(ppath).name}loop.key"
 						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
 							keyfile.write(generate_password(length=512))
 
