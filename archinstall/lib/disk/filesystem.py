@@ -38,12 +38,14 @@ class Filesystem:
 			self.partprobe()
 			time.sleep(storage['DISK_TIMEOUTS'] * i)
 
-			# TODO: Convert to blkid (or something similar, but blkid doesn't support traversing to list sub-PARTUUIDs based on blockdevice path?)
-			output = json.loads(SysCommand(f"lsblk --json -o+PARTUUID {self.blockdevice.device}").decode('UTF-8'))
+			# We'll use unreliable lbslk to grab children under the /dev/<device>
+			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
 
 			for device in output['blockdevices']:
 				for index, partition in enumerate(device['children']):
-					if (partuuid := partition.get('partuuid', None)) and partuuid.lower() == uuid:
+					# But we'll use blkid to reliably grab the PARTUUID for that child device (partition)
+					partition_uuid = SysCommand(f"blkid -s PARTUUID -o value /dev/{partition.get('name')}").decode().strip()
+					if partition_uuid.lower() == uuid.lower():
 						return index
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
