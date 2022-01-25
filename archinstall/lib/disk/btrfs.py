@@ -112,7 +112,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 			mount_options = right_hand.get('options', [])
 
 		if not mount_options or any(['subvol=' in x for x in mount_options]) is False:
-			mount_options = [f'subvol=@{location}']
+			mount_options = [f'subvol={name}']
 
 		mountpoints[location] = {'partition': partition, 'mount_options' : mount_options}
 
@@ -166,7 +166,8 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 			# * size. When the OS queries all the subvolumes share the same size as the full partititon
 			# * uuid. All the subvolumes on a partition share the same uuid
 			if not unlocked_device:
-				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]",partition['device_instance'].size,partition['device_instance'].uuid)
+				# Create fake instance with '[/@]' could probably be implemented with a Partition().subvolume_id = @/ instead and have it print in __repr__
+				fake_partition['device_instance'] = Partition(f"{partition['device_instance'].path}[/{name}]", partition['device_instance'].size, partition['device_instance'].uuid)
 			else:
 				# for subvolumes IN an encrypted partition we make our device instance from unlocked device instead of the raw partition.
 				# This time we make a copy (we should to the same above TODO) and alter the path by hand
@@ -183,7 +184,7 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 			# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 			# as "normal" ones
 
-	if partition['mountpoint'] and partition.get('subvolumes', False) is False:
+	if partition['mountpoint'] and partition.get('btrfs', {}).get('subvolumes', False) is False:
 		mountpoints[partition['mountpoint']] = {'partition': partition}
 
 	return mountpoints

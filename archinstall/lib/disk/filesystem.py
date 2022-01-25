@@ -69,7 +69,6 @@ class Filesystem:
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('format', False) and not partition.get('PARTUUID', None):
-				print("Adding partition....")
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 																	end=partition.get('size', '100%'),
@@ -78,7 +77,7 @@ class Filesystem:
 				# print('Device instance:', partition['device_instance'])
 
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
-				print("Re-using partition_instance:", partition_instance)
+				log(f"[BETA] Re-using partition_instance: {partition_instance}", level=logging.WARNING, fg="yellow")
 				partition['device_instance'] = partition_instance
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
@@ -227,7 +226,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
 
 	def set(self, partition: int, string: str):
-		log(f"Setting {string} on (parted) partition index {partition+1}", level=logging.INFO)
+		log(f"Setting '{string}'' on (parted) partition index {partition+1}", level=logging.INFO)
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):

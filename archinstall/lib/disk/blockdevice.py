@@ -241,7 +241,7 @@ class BlockDevice:
 				count += 1
 		else:
 			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
-			print(f"Cache: {self.part_cache}")
-			print(f"Partitions: {self.partitions.items()}")
-			print(f"UUID: {[uuid]}")
+			log(f"Cache: {self.part_cache}", level=logging.DEBUG)
+			log(f"Partitions: {self.partitions.items()}", level=logging.DEBUG)
+			log(f"UUID: {[uuid]}", level=logging.DEBUG)
 			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")

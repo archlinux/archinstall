@@ -217,7 +217,7 @@ class Installer:
 							raise e
 						partition['device_instance'].unmount()
 				else:
-					mountpoints[partition['mountpoint']] = {'partition' : partition['device_instance']}
+					mountpoints[partition['mountpoint']] = {'partition' : partition}
 
 		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest is not None]):
 			partition = mountpoints[mountpoint]['partition']
@@ -255,6 +255,7 @@ class Installer:
 				log(f"Mounting {partition['device_instance']} as {mountpoint} to {self.target}{mountpoint} using options {mount_options}", level=logging.INFO)
 				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
 				
+			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
