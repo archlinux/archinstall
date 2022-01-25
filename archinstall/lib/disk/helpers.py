@@ -206,6 +206,7 @@ def get_partitions_in_use(mountpoint) -> list:
 			print(partition)
 
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
+		print(partition.real_device)
 		result = min(SysCommand(f'lsblk -no pkname {partition.real_device}').decode().rstrip('\r\n').split('\r\n'), key=len)
 		block_device = BlockDevice(f"/dev/{result}")
 
