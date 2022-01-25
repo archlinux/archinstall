@@ -102,16 +102,22 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 		# no contents, so it is not to be mounted
 		if not right_hand:
 			location = None
+
 		# just a string. per backward compatibility the mount point
-		elif isinstance(right_hand,str):
+		elif isinstance(right_hand, str):
 			location = right_hand
 		# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
-		elif isinstance(right_hand,dict):
+		elif isinstance(right_hand, dict):
 			location = right_hand.get('mountpoint',None)
-			mount_options = right_hand.get('options',[])
+			mount_options = right_hand.get('options', [])
+
+		if not mount_options or any(['subvol=' in x for x in mount_options]) is False:
+			mount_options = [f'subvol=@{location}']
+
+		mountpoints[location] = {'partition': partition, 'mount_options' : mount_options}
 
 		# we create the subvolume
-		create_subvolume(installation,name)
+		create_subvolume(installation, name)
 		# Make the nodatacow processing now
 		# It will be the main cause of creation of subvolumes which are not to be mounted
 		# it is not an options which can be established by subvolume (but for whole file systems), and can be
@@ -176,10 +182,8 @@ def manage_btrfs_subvolumes(installation, partition :dict, mountpoints :dict, su
 			
 			# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 			# as "normal" ones
-			mountpoints[fake_partition['mountpoint']] = {'partition': partition, 'mount_options' : [f"subvol=@{fake_partition['mountpoint']}"]}
 
-	# if the physical partition has been selected to be mounted, we include it at the list. Remmeber, all the above treatement won't happen except the creation of the subvolume
-	if partition['mountpoint']:
-		mountpoints[partition['mountpoint']] = {'partition': partition, 'mount_options' : [f"subvol=@{partition['mountpoint']}"]}
+	if partition['mountpoint'] and partition.get('subvolumes', False) is False:
+		mountpoints[partition['mountpoint']] = {'partition': partition}
 
 	return mountpoints

@@ -381,8 +381,10 @@ class Partition:
 				device_path = self.path
 			try:
 				if options:
+					print(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 				else:
+					print(f"/usr/bin/mount -t {fs_type} {device_path} {target}")
 					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {device_path} {target}")
 
 				# TODO: Should be redundant to check for exit_code

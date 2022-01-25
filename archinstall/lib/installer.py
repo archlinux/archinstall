@@ -199,7 +199,7 @@ class Installer:
 							unlocked_device.mount(f"{self.target}/")
 
 							try:
-								mountpoints.update(manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes,unlocked_device))
+								mountpoints.update(manage_btrfs_subvolumes(self, partition, mountpoints, subvolumes, unlocked_device))
 							except Exception as e:
 								# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 								unlocked_device.unmount()
@@ -217,7 +217,7 @@ class Installer:
 							raise e
 						partition['device_instance'].unmount()
 				else:
-					mountpoints[partition['mountpoint']] = {'partition' : partition}
+					mountpoints[partition['mountpoint']] = {'partition' : partition['device_instance']}
 
 		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest is not None]):
 			partition = mountpoints[mountpoint]['partition']
@@ -252,10 +252,9 @@ class Installer:
 				else:
 					mount_options = None
 
-				log(f"Mounting {partition['device_instance']} as {mountpoint} to {self.target}{mountpoint} using options {mountpoint}", level=logging.INFO)
+				log(f"Mounting {partition['device_instance']} as {mountpoint} to {self.target}{mountpoint} using options {mount_options}", level=logging.INFO)
 				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
 				
-			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
