@@ -192,9 +192,12 @@ def get_partitions_in_use(mountpoint) -> list:
 		# Note: doing print(partition) here will break because the above mentioned issue.
 		print(target['source'])
 		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
-		print(partition.real_device, partition.encrypted, target.get('fstype', None))
 		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
-		print(partition.real_device, partition.encrypted, target.get('fstype', None))
+
+		if partition.path not in all_disks():
+			print(partition.path not in all_disks())
+			print('Trying again:', partition.real_device)
+			partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
 		# (lsblk pkname lists both the partition and blockdevice, BD being the last entry)
