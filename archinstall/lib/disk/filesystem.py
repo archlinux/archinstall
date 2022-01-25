@@ -204,12 +204,14 @@ class Filesystem:
 
 	def parted_mklabel(self, device: str, disk_label: str):
 		log(f"Creating a new partition label on {device}", level=logging.INFO, fg="yellow")
-		# Try to unmount devices before attempting to run mklabel
-		try:
-			SysCommand(f'bash -c "umount {device}?"')
-		except:
-			pass
-
+		# If the partition tables are non-empty, then unmount defined partitions first
+		for p in self.blockdevice.partitions.values():
+			try:
+				p.unmount()
+			except Exception as err:
+				# Not mounted errors are ignored. Parted will probably fail if umount failed.
+				print(f'"umount {p.path}" had an unhandled exit code')
+				raise err
 		self.partprobe()
 		worked = self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
 		self.partprobe()
