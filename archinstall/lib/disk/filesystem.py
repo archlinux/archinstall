@@ -2,6 +2,7 @@ import time
 import logging
 import json
 import pathlib
+from typing import Optional
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
