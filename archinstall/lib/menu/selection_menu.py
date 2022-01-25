@@ -1,6 +1,7 @@
 from __future__ import annotations
 import sys
 import logging
+
 from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
@@ -191,7 +192,7 @@ class GeneralMenu():
 		self.pre_process_callback = pre_callback
 		self.post_process_callback = post_callback
 		self.exit_callback = exit_callback
-
+		self.is_context_mgr = False
 	def set_mandatory(self, status :bool = True):
 		self.mandatory = status
 		if status and not self.is_enabled():
@@ -210,7 +211,6 @@ class GeneralMenu:
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
-		self._menu_options = {}
 		self._setup_selection_menu_options()
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
@@ -236,7 +236,8 @@ class GeneralMenu:
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per progam calling self.set_option()
 		"""
-		return
+		archinstall.log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
+		raise archinstall.RequirementError("Method _setup_selection_menu_options needs to be personalized")
 
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
@@ -294,7 +295,6 @@ class GeneralMenu:
 					break
 		if not self.is_context_mgr:
 			self.__exit__()
-
 	def _process_selection(self, selection :str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
@@ -537,7 +537,6 @@ class GlobalMenu(GeneralMenu):
 				enabled=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
-
 	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
@@ -631,7 +630,6 @@ class GlobalMenu(GeneralMenu):
 				return self._select_harddrives()
 
 		return harddrives
-
 	def _select_profile(self):
 		profile = select_profile()
 
