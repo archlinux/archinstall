@@ -223,7 +223,12 @@ class Installer:
 			partition = mountpoints[mountpoint]['partition']
 
 			if partition.get('encrypted', False) and not partition.get('subvolume',None):
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				if partition.get('mountpoint',None):
+					ppath = partition['mountpoint']
+				else:
+					ppath = partition['device_instance'].path
+
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
 				if not (password := partition.get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
 
