@@ -216,7 +216,7 @@ class Filesystem:
 						raise err
 				else:
 					count += 1
-					log(f"Could not get UUID for partition. Waiting for the {count} time",level=logging.WARNING, fg="yellow")
+					log(f"Could not get UUID for partition. Waiting before retry attempt {count} of 10 ...",level=logging.DEBUG)
 					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 			else:
 				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
