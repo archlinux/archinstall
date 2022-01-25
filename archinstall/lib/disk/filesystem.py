@@ -149,7 +149,12 @@ class Filesystem:
 				return partition
 
 	def partprobe(self) -> bool:
-		return SysCommand(f'bash -c "partprobe"').exit_code == 0
+		result = SysCommand(f'partprobe')
+		
+		if result.exit_code != 0:
+			log(f"Could not execute partprobe: {result!r}", level=logging.WARNING, fg="yellow")
+
+		return result.exit_code == 0
 
 	def raw_parted(self, string: str) -> SysCommand:
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
