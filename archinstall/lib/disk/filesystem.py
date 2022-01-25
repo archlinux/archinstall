@@ -89,12 +89,17 @@ class Filesystem:
 				print("Re-using partition_instance:", partition_instance)
 				partition['device_instance'] = partition_instance
 			else:
-				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition_uuid)}).")
+				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
+
 
 			if partition.get('filesystem', {}).get('format', False):
+
 				# needed for backward compatibility with the introduction of the new "format_options"
 				format_options = partition.get('options',[]) + partition.get('filesystem',{}).get('format_options',[])
 				if partition.get('encrypted', False):
+					if not partition['device_instance']:
+						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
+
 					if not partition.get('!password'):
 						if not storage['arguments'].get('!encryption-password'):
 							if storage['arguments'] == 'silent':
@@ -109,6 +114,7 @@ class Filesystem:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 					else:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+					
 					partition['device_instance'].encrypt(password=partition['!password'])
 					# Immediately unlock the encrypted device to format the inner volume
 					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
@@ -129,6 +135,9 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 				elif partition.get('format', False):
+					if not partition['device_instance']:
+						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
+
 					partition['device_instance'].format(partition['filesystem']['format'], options=format_options)
 
 			if partition.get('boot', False):
@@ -181,6 +190,8 @@ class Filesystem:
 		else:
 			parted_string = f'{self.blockdevice.device} mkpart {partition_type} {start} {end}'
 
+		log(f"Adding partition using the following parted command: {parted_string}", level=logging.DEBUG)
+
 		if self.parted(parted_string):
 			count = 0
 			while count < 10:
@@ -194,21 +205,24 @@ class Filesystem:
 					try:
 						return self.blockdevice.get_partition(new_uuid)
 					except Exception as err:
-						print('Blockdevice:', self.blockdevice)
-						print('Partitions:', self.blockdevice.partitions)
-						print('Partition set:', new_uuid_set)
-						print('New UUID:', [new_uuid])
-						print('get_partition():', self.blockdevice.get_partition)
+						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
+						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
+						log(f'Partition set: {new_uuid_set}', level=logging.ERROR, fg="red")
+						log(f'New UUID: {[new_uuid]}', level=logging.ERROR, fg="red")
+						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
 					count += 1
-					log(f"Could not get UUID for partition. Waiting for the {count} time",level=logging.DEBUG)
+					log(f"Could not get UUID for partition. Waiting for the {count} time",level=logging.WARNING, fg="yellow")
 					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 			else:
-				log("Add partition is exiting due to excessive wait time",level=logging.INFO)
+				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 		# TODO: This should never be able to happen
+		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
+		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {new_uuid_set}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
