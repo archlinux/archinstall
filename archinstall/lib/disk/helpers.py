@@ -190,8 +190,11 @@ def get_partitions_in_use(mountpoint) -> list:
 
 		# So first, we create the partition without a BlockDevice and carefully only use it to get .real_device
 		# Note: doing print(partition) here will break because the above mentioned issue.
+		print(target['source'])
 		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
+		print(partition.real_device, partition.encrypted)
 		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
+		print(partition.real_device, partition.encrypted)
 
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
 		# (lsblk pkname lists both the partition and blockdevice, BD being the last entry)
