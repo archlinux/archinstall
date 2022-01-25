@@ -167,7 +167,7 @@ class Filesystem:
 		# TODO: Implement this with declarative profiles instead.
 		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
-	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> None:
+	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
 		previous_partition_uuids = {partition.uuid for partition in self.blockdevice.partitions.values()}
@@ -186,8 +186,10 @@ class Filesystem:
 			while count < 10:
 				new_uuid = None
 				new_uuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
+
 				if len(new_uuid_set) > 0:
 					new_uuid = new_uuid_set.pop()
+
 				if new_uuid:
 					try:
 						return self.blockdevice.get_partition(new_uuid)
@@ -205,6 +207,9 @@ class Filesystem:
 			else:
 				log("Add partition is exiting due to excessive wait time",level=logging.INFO)
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
+
+		# TODO: This should never be able to happen
+		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
