@@ -66,7 +66,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"start" : "206MiB",
 		"encrypted" : False,
 		"format" : True,
-		"mountpoint" : "/",
+		"mountpoint" : "/" if not using_subvolumes else None,
 		"filesystem" : {
 			"format" : default_filesystem
 		}
