@@ -27,3 +27,5 @@ SAFETY_LOCK
 venv
 .idea/**
 **/install.log
+.DS_Store
+**/cmd_history.txt
