@@ -91,7 +91,6 @@ class Filesystem:
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
-
 			if partition.get('filesystem', {}).get('format', False):
 
 				# needed for backward compatibility with the introduction of the new "format_options"
