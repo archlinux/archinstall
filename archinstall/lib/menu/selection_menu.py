@@ -1,4 +1,6 @@
 import sys
+from collections import OrderedDict
+
 from typing import Callable, Any, List, Iterator
 
 import archinstall
@@ -158,14 +160,15 @@ class GeneralMenu():
 		self.pre_process_callback = pre_callback
 		self.post_process_callback = post_callback
 		self.exit_callback = exit_callback
-
-		self._menu_options = {}
+		self.is_context_mgr = False
+		self._menu_options = OrderedDict()
 		self._setup_selection_menu_options()
 
-	def __enter__(self, *args :str, **kwargs :str) -> 'SetupMenu':
+	def __enter__(self, *args :Any, **kwargs :Any) -> 'SetupMenu':
+		self.is_context_mgr: True
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
+	def __exit__(self, *args :Any, **kwargs :Any) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			archinstall.log(args[1], level=logging.ERROR, fg='red')
@@ -183,7 +186,8 @@ class GeneralMenu():
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per progam calling self.set_option()
 		"""
-		return
+		archinstall.log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
+		raise archinstall.RequirementError("Method _setup_selection_menu_options needs to be personalized")
 
 	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
 		""" activates menu options """
@@ -218,7 +222,8 @@ class GeneralMenu():
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
 				if not self._process_selection(selection):
 					break
-
+		if not self.is_context_mgr:
+			self.__exit__()
 	def _process_selection(self, selection :str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
@@ -303,6 +308,12 @@ class GeneralMenu():
 		# TODO check inexistent name
 		return self._menu_options[name]
 
+	def list_options(self) -> Iterator:
+		""" Iterator to retrieve the enabled menu option names
+		"""
+		for item in self._menu_options:
+			yield item
+
 	def list_enabled_options(self) -> Iterator:
 		""" Iterator to retrieve the enabled menu options at a given time.
 		The results are dynamic (if between calls to the iterator some elements -still not retrieved- are (de)activated
@@ -377,7 +388,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				'Set encryption password',
 				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
-				display_func=lambda x: self._secret(x) if x else 'None',
+				display_func=lambda x: archinstall.secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
@@ -394,7 +405,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				'Set root password',
 				lambda: self._set_root_password(),
-				display_func=lambda x: self._secret(x) if x else 'None')
+				display_func=lambda x: archinstall.secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
 				'Specify superuser account',
@@ -445,11 +456,6 @@ class GlobalMenu(GeneralMenu):
 				exec_func=lambda x: True if self._missing_configs() == 0 else False,
 				enabled=True)
 		self._menu_options['abort'] = Selector('Abort',exec_func=lambda x: exit(1), enabled=True)
-
-	def run(self):
-		# TODO Adapt to the context manager infraestructure
-		super().run()
-		super().__exit__()
 
 	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
@@ -524,9 +530,6 @@ class GlobalMenu(GeneralMenu):
 				return self._select_harddrives()
 
 		return harddrives
-
-	def _secret(self, x :str):
-		return '*' * len(x)
 
 	def _select_profile(self):
 		profile = archinstall.select_profile()
