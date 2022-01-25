@@ -224,6 +224,7 @@ class Installer:
 
 			if partition.get('encrypted', False) and not partition.get('subvolume',None):
 				if partition.get('mountpoint',None):
+					log(f"Encryption a partition that has no mountpoint target: {partition}", level=logging.WARNING, fg="yellow")
 					ppath = partition['mountpoint']
 				else:
 					ppath = partition['device_instance'].path
