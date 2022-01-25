@@ -241,13 +241,14 @@ class Installer:
 						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
 						# if we name the device to "xyzloop".
 						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(ppath).name}loop.key"
-						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
-							keyfile.write(generate_password(length=512))
+						if not pathlib.Path(f"{self.target}{encryption_key_path}").exists():
+							with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
+								keyfile.write(generate_password(length=512))
 
-						os.chmod(f"{self.target}{encryption_key_path}", 0o400)
+							os.chmod(f"{self.target}{encryption_key_path}", 0o400)
 
-						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
-						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
+							luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
+							luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
 
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
 					unlocked_device.mount(f"{self.target}{mountpoint}", options=mountpoints[mountpoint].get('mount_options'))
