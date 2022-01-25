@@ -149,12 +149,13 @@ class Filesystem:
 				return partition
 
 	def partprobe(self) -> bool:
-		result = SysCommand(f'partprobe')
+		result = SysCommand(f'partprobe {self.blockdevice.device}')
 		
 		if result.exit_code != 0:
-			log(f"Could not execute partprobe: {result!r}", level=logging.WARNING, fg="yellow")
+			log(f"Could not execute partprobe: {result!r}", level=logging.ERROR, fg="red")
+			raise DiskError(f"Could not run partprobe: {result!r}")
 
-		return result.exit_code == 0
+		return True
 
 	def raw_parted(self, string: str) -> SysCommand:
 		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
@@ -170,9 +171,7 @@ class Filesystem:
 		:type string: str
 		"""
 		if (parted_handle := self.raw_parted(string)).exit_code == 0:
-			if self.partprobe():
-				return True
-			return False
+			return self.partprobe()
 		else:
 			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
 
