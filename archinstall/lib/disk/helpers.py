@@ -194,7 +194,7 @@ def get_partitions_in_use(mountpoint) -> list:
 		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 
-		if partition.path not in all_disks():
+		if partition.real_device.path not in all_disks():
 			# Trying to resolve partition -> blockdevice (This is a bit of a hack)
 			block_device_name = pathlib.Path(partition.real_device).stem
 			block_device_class_link = pathlib.Path(f"/sys/class/block/{block_device_name}")
