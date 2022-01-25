@@ -190,6 +190,8 @@ def get_partitions_in_use(mountpoint) -> list:
 
 		# So first, we create the partition without a BlockDevice and carefully only use it to get .real_device
 		# Note: doing print(partition) here will break because the above mentioned issue.
+		# Note: depending if the partition is encrypted, different ammount of steps is required.
+		# hence the multiple stages to this monster.
 		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 
