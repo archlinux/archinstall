@@ -197,27 +197,31 @@ class Installer:
 						# Immediately unlock the encrypted device to format the inner volume
 						with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=False) as unlocked_device:
 							unlocked_device.mount(f"{self.target}/")
+
 							try:
-								manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes,unlocked_device)
+								mountpoints.update(manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes,unlocked_device))
 							except Exception as e:
 								# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 								unlocked_device.unmount()
 								raise e
+
 							unlocked_device.unmount()
 						# TODO generate key
 					else:
 						self.mount(partition['device_instance'],"/")
 						try:
-							manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+							mountpoints.update(manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes))
 						except Exception as e:
 							# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 							partition['device_instance'].unmount()
 							raise e
 						partition['device_instance'].unmount()
 				else:
-					mountpoints[partition['mountpoint']] = partition
+					mountpoints[partition['mountpoint']] = {'partition' : partition}
+
 		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest is not None]):
-			partition = mountpoints[mountpoint]
+			partition = mountpoints[mountpoint]['partition']
+
 			if partition.get('encrypted', False) and not partition.get('subvolume',None):
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 				if not (password := partition.get('!password', None)):
@@ -240,15 +244,17 @@ class Installer:
 						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
 
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
-					unlocked_device.mount(f"{self.target}{mountpoint}")
+					unlocked_device.mount(f"{self.target}{mountpoint}", options=mountpoints[mountpoint].get('mount_options'))
 
 			else:
-				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
-				if partition.get('options',[]):
-					mount_options = ','.join(partition['options'])
-					partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				if partition.get('options',[]) or mountpoints[mountpoint].get('mount_options', []):
+					mount_options = ','.join(partition.get('options', []) + mountpoints[mountpoint].get('mount_options', []))
 				else:
-					partition['device_instance'].mount(f"{self.target}{mountpoint}")
+					mount_options = None
+
+				log(f"Mounting {partition['device_instance']} as {mountpoint} to {self.target}{mountpoint} using options {mountpoint}", level=logging.INFO)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				
 			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
