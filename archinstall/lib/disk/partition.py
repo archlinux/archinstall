@@ -29,8 +29,6 @@ class Partition:
 		self.encrypted = encrypted
 		self.allow_formatting = False
 
-		print(get_filesystem_type(path))
-
 		if mountpoint and auto_mount is True:
 			self.mount(mountpoint)
 

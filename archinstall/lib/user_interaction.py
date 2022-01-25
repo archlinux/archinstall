@@ -199,8 +199,9 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 				partition['encrypted'] = True
 				partition['!password'] = password
 
-				if partition['mountpoint'] != '/':
+				if partition['mountpoint'] and partition['mountpoint'] != '/':
 					# Tell the upcoming steps to generate a key-file for non root mounts.
+					log(f"Marking partition for use with encryption-key: {partition}", level=logging.WARNING, fg="yellow")
 					partition['generate-encryption-key-file'] = True
 
 	return block_devices

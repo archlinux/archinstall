@@ -13,7 +13,10 @@ class BlockDevice:
 			from .helpers import all_disks
 			# If we don't give any information, we need to auto-fill it.
 			# Otherwise any subsequent usage will break.
-			info = all_disks()[path].info
+			try:
+				info = all_disks()[path].info
+			except KeyError:
+				raise KeyError(f"Could not find {path} in {all_disks()} for some reason.")
 
 		self.path = path
 		self.info = info
