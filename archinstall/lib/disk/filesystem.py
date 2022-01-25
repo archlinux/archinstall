@@ -221,7 +221,7 @@ class Filesystem:
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
 		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {new_uuid_set}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
