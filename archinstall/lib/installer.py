@@ -119,6 +119,8 @@ class Installer:
 		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
+		self.installed_packages = []
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -292,6 +294,7 @@ class Installer:
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
 			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
+				self.installed_packages += packages
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
@@ -682,9 +685,11 @@ class Installer:
 						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 					else:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
-					base_path,bind_path = split_bind_name(str(root_partition.path))
+
+					base_path, bind_path = split_bind_name(str(root_partition.path))
 					if bind_path is not None: # and root_fs_type == 'btrfs':
 						options_entry = f"rootflags=subvol={bind_path} " + options_entry
+
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
@@ -697,21 +702,34 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')  # no need?
+			if not 'grub' in self.installed_packages:
+				self.pacstrap('grub')
 
+			_file = "/etc/default/grub"
+			
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
+				options_entry = f"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}"
+				
+				# Extend the kernel options to support btrfs subvolumes if used
+				base_path, bind_path = split_bind_name(str(root_partition.path))
+				if bind_path is not None: # and root_fs_type == 'btrfs':
+					options_entry = f"rootflags=subvol={bind_path} {options_entry}"
+
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 			else:
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+				options_entry = f"rootfstype={root_fs_type}"
+
+				# Extend the kernel options to support btrfs subvolumes if used
+				base_path, bind_path = split_bind_name(str(root_partition.path))
+				if bind_path is not None: # and root_fs_type == 'btrfs':
+					options_entry = f"rootflags=subvol={bind_path} {options_entry}"
+
+			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"{options_entry}\"/'"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
