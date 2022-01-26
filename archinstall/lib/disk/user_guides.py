@@ -39,7 +39,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 		"start" : "518MB",
 		"encrypted" : False,
 		"format" : True,
-		"mountpoint" : "/",
+		"mountpoint" : '/' if not using_subvolumes else None,
 		"filesystem" : {
 			"format" : default_filesystem
 		}
@@ -81,7 +81,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 			"format" : True,
 			"start" : f"{min(block_device.size, MIN_SIZE_TO_ALLOW_HOME_PART)}GB",
 			"size" : "100%",
-			"mountpoint" : "/home",
+			"mountpoint" : "/home" if not using_subvolumes else None,
 			"filesystem" : {
 				"format" : default_filesystem
 			}

@@ -190,21 +190,32 @@ def get_partitions_in_use(mountpoint) -> list:
 
 		# So first, we create the partition without a BlockDevice and carefully only use it to get .real_device
 		# Note: doing print(partition) here will break because the above mentioned issue.
-		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'])
-		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'])
+		# Note: depending if the partition is encrypted, different ammount of steps is required.
+		# hence the multiple stages to this monster.
+		partition = Partition(target['source'], None, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
+		partition = Partition(target['source'], partition.real_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
+
+		if partition.real_device not in all_disks():
+			# Trying to resolve partition -> blockdevice (This is a bit of a hack)
+			block_device_name = pathlib.Path(partition.real_device).stem
+			block_device_class_link = pathlib.Path(f"/sys/class/block/{block_device_name}")
+			if not block_device_class_link.is_symlink():
+				raise ValueError(f"Could not locate blockdevice for partition: {block_device_class_link}")
+			block_device_class_path = block_device_class_link.readlink()
+
+			partition = Partition(target['source'], BlockDevice(f"/dev/{block_device_class_path.parent.stem}"), filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
-		# (lsblk pkname lists both the partition and blockdevice, BD being the last entry)
-		result = SysCommand(f'lsblk -no pkname {partition.real_device}').decode().rstrip('\r\n').split('\r\n')[-1]
+		result = min([x for x in SysCommand(f'lsblk -no pkname {partition.real_device}').decode().rstrip('\r\n').split('\r\n') if len(x)], key=len)
 		block_device = BlockDevice(f"/dev/{result}")
 
 		# Once we figured the block device out, we can properly create the partition object
-		partition = Partition(target['source'], block_device, filesystem=target.get('fstype', None), mountpoint=target['target'])
+		partition = Partition(target['source'], block_device, filesystem=target.get('fstype', None), mountpoint=target['target'], auto_mount=False)
 
 		mounts.append(partition)
 
 		for child in target.get('children', []):
-			mounts.append(Partition(child['source'], block_device, filesystem=child.get('fstype', None), mountpoint=child['target']))
+			mounts.append(Partition(child['source'], block_device, filesystem=child.get('fstype', None), mountpoint=child['target'], auto_mount=False))
 
 	return mounts
 

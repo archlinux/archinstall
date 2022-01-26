@@ -93,10 +93,11 @@ class Boot:
 		while self.session.is_alive():
 			time.sleep(0.25)
 
-		if shutdown.exit_code == 0:
+		# Just one of them has to exit properly
+		if shutdown.exit_code == 0 or self.session.exit_code == 0:
 			storage['active_boot'] = None
 		else:
-			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=shutdown.exit_code)
+			raise SysCallError(f"Could not shut down temporary boot of {self.instance} [{self.session.exit_code}/{shutdown.exit_code}]: {self.session.decode()[-200:]}", exit_code=shutdown.exit_code)
 
 	def __iter__(self):
 		if self.session:

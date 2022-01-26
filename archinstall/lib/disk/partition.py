@@ -15,7 +15,7 @@ from ..general import SysCommand
 
 
 class Partition:
-	def __init__(self, path: str, block_device: BlockDevice, part_id=None, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True):
+	def __init__(self, path: str, block_device: BlockDevice, part_id=None, filesystem=None, mountpoint=None, encrypted=False, autodetect_filesystem=True, auto_mount=True):
 		if not part_id:
 			part_id = os.path.basename(path)
 
@@ -29,7 +29,7 @@ class Partition:
 		self.encrypted = encrypted
 		self.allow_formatting = False
 
-		if mountpoint:
+		if mountpoint and auto_mount is True:
 			self.mount(mountpoint)
 
 		try:
@@ -358,9 +358,18 @@ class Partition:
 				if parent := self.find_parent_of(child, name, parent=data['name']):
 					return parent
 
-	def mount(self, target, fs=None, options=''):
-		if not self.mountpoint:
-			log(f'Mounting {self} to {target}', level=logging.INFO)
+	def mount_options_has_subvolume(self, options):
+		return any(['subvol=' in x for x in options])
+
+	def mount(self, target, fs=None, options=[]):
+		if type(options) == str:
+			options = options.split(' ')
+
+		log(f"Attempting to mount {self} to {target} using options {options}", level=logging.INFO)
+
+		# Do not mount a partition that is already mounted, unless we're using subvolumes:
+		# TODO: This can be removed in favor of the new code in `master` at some point.
+		if not self.mountpoint or self.mount_options_has_subvolume(options):
 			if not fs:
 				if not self.filesystem:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
@@ -370,29 +379,30 @@ class Partition:
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
+			# If we're using bind_name (?) then append to the options if needed.
 			if self.bind_name:
 				device_path = self.device_path
-				# TODO options should be better be a list than a string
-				if options:
-					options = f"{options},subvol={self.bind_name}"
-				else:
-					options = f"subvol={self.bind_name}"
+				if not self.mount_options_has_subvolume(options):
+					options.append(f"subvol={self.bind_name}")
 			else:
 				device_path = self.path
-			try:
-				if options:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
-				else:
-					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {device_path} {target}")
 
-				# TODO: Should be redundant to check for exit_code
-				if mnt_handle.exit_code != 0:
-					raise DiskError(f"Could not mount {self.path} to {target} using options {options}")
-			except SysCallError as err:
-				raise err
+			if options:
+				mount_options = f"-o {','.join(options)}"
+			else:
+				mount_options = ''
+
+			log(f"Mount command: /usr/bin/mount -t {fs_type} {mount_options} {device_path} {target}", fg="yellow")
+			mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {mount_options} {device_path} {target}")
+
+			# TODO: Should be redundant to check for exit_code
+			if mnt_handle.exit_code != 0:
+				raise DiskError(f"Could not mount {self.path} to {target} using options {options}: {mnt_handle}")
 
 			self.mountpoint = target
 			return True
+		else:
+			raise DiskError(f"Partition is already mounted to {self.mountpoint} but also with {self.bind_name}")
 
 	def unmount(self):
 		try:

@@ -119,6 +119,8 @@ class Installer:
 		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
+		self.installed_packages = []
+
 	def log(self, *args, level=logging.DEBUG, **kwargs):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -197,29 +199,39 @@ class Installer:
 						# Immediately unlock the encrypted device to format the inner volume
 						with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=False) as unlocked_device:
 							unlocked_device.mount(f"{self.target}/")
+
 							try:
-								manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes,unlocked_device)
+								mountpoints.update(manage_btrfs_subvolumes(self, partition, mountpoints, subvolumes, unlocked_device))
 							except Exception as e:
 								# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 								unlocked_device.unmount()
 								raise e
+
 							unlocked_device.unmount()
 						# TODO generate key
 					else:
 						self.mount(partition['device_instance'],"/")
 						try:
-							manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes)
+							mountpoints.update(manage_btrfs_subvolumes(self,partition,mountpoints,subvolumes))
 						except Exception as e:
 							# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
 							partition['device_instance'].unmount()
 							raise e
 						partition['device_instance'].unmount()
 				else:
-					mountpoints[partition['mountpoint']] = partition
+					mountpoints[partition['mountpoint']] = {'partition' : partition}
+
 		for mountpoint in sorted([mnt_dest for mnt_dest in mountpoints.keys() if mnt_dest is not None]):
-			partition = mountpoints[mountpoint]
+			partition = mountpoints[mountpoint]['partition']
+
 			if partition.get('encrypted', False) and not partition.get('subvolume',None):
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				if partition.get('mountpoint',None):
+					log(f"Encryption a partition that has no mountpoint target: {partition}", level=logging.WARNING, fg="yellow")
+					ppath = partition['mountpoint']
+				else:
+					ppath = partition['device_instance'].path
+
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(ppath).name}loop"
 				if not (password := partition.get('!password', None)):
 					raise RequirementError(f"Missing mountpoint {mountpoint} encryption password in layout: {partition}")
 
@@ -230,25 +242,30 @@ class Installer:
 
 						# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
 						# if we name the device to "xyzloop".
-						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
-						with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
-							keyfile.write(generate_password(length=512))
+						encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(ppath).name}loop.key"
 
-						os.chmod(f"{self.target}{encryption_key_path}", 0o400)
+						# Avoid creating the same encryption key file over and over when using subvolumes:
+						if not pathlib.Path(f"{self.target}{encryption_key_path}").exists():
+							with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
+								keyfile.write(generate_password(length=512))
 
-						luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
-						luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
+							os.chmod(f"{self.target}{encryption_key_path}", 0o400)
+
+							luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
+							luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
 
 					log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {unlocked_device}", level=logging.INFO)
-					unlocked_device.mount(f"{self.target}{mountpoint}")
+					unlocked_device.mount(f"{self.target}{mountpoint}", options=mountpoints[mountpoint].get('mount_options'))
 
 			else:
-				log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
-				if partition.get('options',[]):
-					mount_options = ','.join(partition['options'])
-					partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				if partition.get('options',[]) or mountpoints[mountpoint].get('mount_options', []):
+					mount_options = ','.join(partition.get('options', []) + mountpoints[mountpoint].get('mount_options', []))
 				else:
-					partition['device_instance'].mount(f"{self.target}{mountpoint}")
+					mount_options = None
+
+				log(f"Mounting {partition['device_instance']} as {mountpoint} to {self.target}{mountpoint} using options {mount_options}", level=logging.INFO)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				
 			time.sleep(1)
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
@@ -277,6 +294,7 @@ class Installer:
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
 			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
+				self.installed_packages += packages
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
@@ -628,14 +646,14 @@ class Installer:
 			else:
 				loader_data = [
 					f"default {self.init_time}",
-					"timeout 5"
+					"timeout 15"
 				]
 
 			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 				for line in loader_data:
 					if line[:8] == 'default ':
 						loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+					elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
 						# We add in the default timeout to support dual-boot
 						loader.write(f"{line[1:]}\n")
 					else:
@@ -667,9 +685,11 @@ class Installer:
 						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 					else:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
-					base_path,bind_path = split_bind_name(str(root_partition.path))
+
+					base_path, bind_path = split_bind_name(str(root_partition.path))
 					if bind_path is not None: # and root_fs_type == 'btrfs':
 						options_entry = f"rootflags=subvol={bind_path} " + options_entry
+
 					if real_device := self.detect_encryption(root_partition):
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
@@ -682,26 +702,40 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')  # no need?
+			if 'grub' not in self.installed_packages:
+				self.pacstrap('grub')
 
+			_file = "/etc/default/grub"
+			
 			if real_device := self.detect_encryption(root_partition):
 				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
+				options_entry = f"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}"
+				
+				# Extend the kernel options to support btrfs subvolumes if used
+				base_path, bind_path = split_bind_name(str(root_partition.path))
+				if bind_path is not None: # and root_fs_type == 'btrfs':
+					options_entry = f"rootflags=subvol={bind_path} {options_entry}"
+
 				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
 			else:
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+				options_entry = f"rootfstype={root_fs_type}"
+
+				# Extend the kernel options to support btrfs subvolumes if used
+				base_path, bind_path = split_bind_name(str(root_partition.path))
+				if bind_path is not None: # and root_fs_type == 'btrfs':
+					options_entry = f"rootflags=subvol={bind_path} {options_entry}"
+
+			# TODO: Replace 'sed' with just file manipulation
+			add_to_CMDLINE_LINUX = f"sed -i 's%GRUB_CMDLINE_LINUX=\"\"%GRUB_CMDLINE_LINUX=\"{options_entry}\"%'"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
 				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
-				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')).exit_code == 0:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
 			else:
 				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
