@@ -166,7 +166,7 @@ class GeneralMenu():
 		self._setup_selection_menu_options()
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> 'SetupMenu':
-		self.is_context_mgr: True
+		self.is_context_mgr = True
 		return self
 
 	def __exit__(self, *args :Any, **kwargs :Any) -> None:
