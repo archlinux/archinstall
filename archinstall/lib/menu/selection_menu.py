@@ -1,11 +1,12 @@
 import sys
 from collections import OrderedDict
+import logging
 
 from typing import Callable, Any, List, Iterator
 
 import archinstall
 from archinstall import Menu
-
+from ..output import *
 
 class Selector:
 	def __init__(
@@ -170,8 +171,9 @@ class GeneralMenu():
 
 	def __exit__(self, *args :Any, **kwargs :Any) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
-			archinstall.log(args[1], level=logging.ERROR, fg='red')
+			log(args[1], level=logging.ERROR, fg='red')
 			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
@@ -186,7 +188,7 @@ class GeneralMenu():
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per progam calling self.set_option()
 		"""
-		archinstall.log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
+		log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
 		raise archinstall.RequirementError("Method _setup_selection_menu_options needs to be personalized")
 
 	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
