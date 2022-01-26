@@ -728,7 +728,8 @@ class Installer:
 				if bind_path is not None: # and root_fs_type == 'btrfs':
 					options_entry = f"rootflags=subvol={bind_path} {options_entry}"
 
-			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"{options_entry}\"/'"
+			# TODO: Replace 'sed' with just file manipulation
+			add_to_CMDLINE_LINUX = f"sed -i 's%GRUB_CMDLINE_LINUX=\"\"%GRUB_CMDLINE_LINUX=\"{options_entry}\"%'"
 			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
