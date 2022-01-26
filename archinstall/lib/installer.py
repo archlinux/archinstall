@@ -702,7 +702,7 @@ class Installer:
 					self.helper_flags['bootloader'] = bootloader
 
 		elif bootloader == "grub-install":
-			if not 'grub' in self.installed_packages:
+			if 'grub' not in self.installed_packages:
 				self.pacstrap('grub')
 
 			_file = "/etc/default/grub"
