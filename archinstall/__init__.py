@@ -23,7 +23,7 @@ from .lib.user_interaction import *
 
 parser = ArgumentParser()
 
-__version__ = "2.3.1-RC1"
+__version__ = "2.3.1"
 storage['__version__'] = __version__
 
 
