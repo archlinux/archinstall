@@ -206,7 +206,6 @@ class MyMenu(archinstall.GlobalMenu):
 	def __init__(self,data_store=archinstall.arguments,mode='full'):
 		self._execution_mode = mode
 		super().__init__(data_store)
-
 	def _setup_selection_menu_options(self):
 		super()._setup_selection_menu_options()
 		options_list = []
@@ -490,6 +489,7 @@ def perform_installation(mountpoint, mode):
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+
 
 
 if not archinstall.check_mirror_reachable():

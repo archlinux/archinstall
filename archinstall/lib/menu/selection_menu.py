@@ -262,7 +262,6 @@ class GeneralMenu:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
 
-
 	def run(self):
 		""" Calls the Menu framework"""
 		# we synch all the options just in case
@@ -283,6 +282,7 @@ class GeneralMenu:
 					break
 		if not self.is_context_mgr:
 			self.__exit__()
+
 	def _process_selection(self, selection :str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues

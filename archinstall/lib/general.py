@@ -554,4 +554,3 @@ def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
 def secret(x :str):
 	""" return * with len equal to to the input string """
 	return '*' * len(x)
-
