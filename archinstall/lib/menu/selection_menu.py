@@ -137,30 +137,15 @@ class Selector:
 
 class GeneralMenu():
 	def __init__(self,
-			data_store :dict = None,
-			pre_callback :Callable = None,
-			post_callback :Callable = None,
-			exit_callback :Callable = None):
+			data_store :dict = None):
 		"""
 		Create a new selection menu.
 
 		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
-		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
-		:type pre_callback: Callable
-
-		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
-		:type post_callback: Callable
-
-		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
-		:type pos_callback: Callable
-
 		"""
 		self._data_store = data_store if data_store is not None else {}
-		self.pre_process_callback = pre_callback
-		self.post_process_callback = post_callback
-		self.exit_callback = exit_callback
 		self.is_context_mgr = False
 		self._menu_options = OrderedDict()
 		self._setup_selection_menu_options()
@@ -181,8 +166,7 @@ class GeneralMenu():
 			sel = self._menu_options[key]
 			if key and key not in self._data_store:
 				self._data_store[key] = sel._current_selection
-		if self.exit_callback:
-			self.exit_callback(self)
+		self.exit_callback()
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
@@ -190,30 +174,52 @@ class GeneralMenu():
 		"""
 		return
 
-	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
-		""" activates menu options """
-		arg = self._data_store.get(selector_name, None)
+	def pre_callback(self, selector_name):
+		""" will be called before each action in the menu """
+		return
 
+	def post_callback(self, selector_name :str, value :Any):
+		""" will be called after each action in the menu """
+		return True
+
+	def exit_callback(self):
+		""" will be called at the end of the processing of the menu """
+		return
+
+
+	def synch(self, selector_name :str, omit_if_set :bool = False,omit_if_disabled :bool = False):
+		""" loads menu options with data_store value """
+		arg = self._data_store.get(selector_name, None)
 		# don't display the menu option if it was defined already
 		if arg is not None and omit_if_set:
 			return
 
+		if not self.option(selector_name).is_enabled() and omit_if_disabled:
+			return
+
+		if arg is not None:
+			self._menu_options[selector_name].set_current_selection(arg)
+
+	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
+		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
-
-			if arg is not None:
-				self._menu_options[selector_name].set_current_selection(arg)
+			self.synch(selector_name,omit_if_set)
 		else:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
 
+
 	def run(self):
 		""" Calls the Menu framework"""
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# 	This will just help the user with the next following questions.
+		# we synch all the options just in case
+		for item in self.list_options():
+			self.synch(item)
 		while True:
+			# Before continuing, set the preferred keyboard layout/language in the current terminal.
+			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
@@ -252,8 +258,7 @@ class GeneralMenu():
 		else:
 			selector = p_selector
 
-		if self.pre_process_callback:
-			self.pre_process_calback(self,selector_name)
+		self.pre_callback(selector_name)
 
 		result = None
 		if selector.func:
@@ -261,8 +266,7 @@ class GeneralMenu():
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
 		# we allow for a callback after we get the result
-		if self.post_process_callback:
-			self.post_process_callback(self,selector_name,result)
+		self.post_callback(selector_name,result)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
 		if selector.exec_func:
 			if selector.exec_func(result) and self._check_mandatory_status():
@@ -348,17 +352,8 @@ class GeneralMenu():
 		return mandatory_fields, mandatory_waiting
 
 class GlobalMenu(GeneralMenu):
-	def __init__(self,
-			pre_callback :Callable = None,
-			post_callback :Callable = None,
-			exit_callback :Callable = None):
-		# the lambda in the callbacks is needed bc. the callbacks are methods of the
-		# class, thus implicitly have the self (menu) parameter. The lambda consumes the explict reference
-		# to the menu in the code
-		super().__init__(data_store=archinstall.arguments,
-				pre_callback=pre_callback,
-				post_callback=post_callback if post_callback else lambda m,n,v:self._update_install(n,v),
-				exit_callback=exit_callback if exit_callback else lambda m:self._post_processing)
+	def __init__(self):
+		super().__init__(data_store=archinstall.arguments)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['keyboard-layout'] = \
@@ -462,7 +457,10 @@ class GlobalMenu(GeneralMenu):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
-	def _post_processing(self):
+	def post_callback(self,name :str = None ,result :Any = None):
+		self._update_install(name,result)
+
+	def exit_callback(self):
 		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
