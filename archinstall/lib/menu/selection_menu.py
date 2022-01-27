@@ -168,30 +168,15 @@ class Selector:
 
 class GeneralMenu():
 	def __init__(self,
-			data_store :dict = None,
-			pre_callback :Callable = None,
-			post_callback :Callable = None,
-			exit_callback :Callable = None):
+			data_store :dict = None):
 		"""
 		Create a new selection menu.
 
 		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
-		:param pre_callback: common function which is invoked prior the invocation of a selector function. Accept menu oj. and selectr-name as parameter
-		:type pre_callback: Callable
-
-		:param post_callback: common function which is invoked AFTER the invocation of a selector function. AAccept menu oj. selectr-name and new value as parameter
-		:type post_callback: Callable
-
-		:param exit_callback: common fmandatory_gti shunction exectued prior to exiting the menu loop. Accepts the class as parameter
-		:type pos_callback: Callable
-
 		"""
 		self._data_store = data_store if data_store is not None else {}
-		self.pre_process_callback = pre_callback
-		self.post_process_callback = post_callback
-		self.exit_callback = exit_callback
 		self.is_context_mgr = False
 	def set_mandatory(self, status :bool = True):
 		self.mandatory = status
@@ -229,7 +214,6 @@ class GeneralMenu:
 			sel = self._menu_options[key]
 			if key and key not in self._data_store:
 				self._data_store[key] = sel._current_selection
-
 		self.exit_callback()
 
 	def _setup_selection_menu_options(self):
@@ -241,6 +225,10 @@ class GeneralMenu:
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
 		return
+
+	def post_callback(self, selector_name :str, value :Any):
+		""" will be called after each action in the menu """
+		return True
 
 	def post_callback(self, selector_name :str, value :Any):
 		""" will be called after each action in the menu """
@@ -273,6 +261,7 @@ class GeneralMenu:
 		else:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
+
 
 	def run(self):
 		""" Calls the Menu framework"""
