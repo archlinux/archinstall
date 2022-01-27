@@ -1,3 +1,18 @@
+"""
+
+Script swiss (army knife)
+Designed to make different workflows for the installation process. Which is controled by  the argument --mode
+mode full  guides the full process of installation
+mode only_hd only proceeds to the creation of the disk infraestructure (partition, mount points, encryption)
+mode only_os processes only the installation of Archlinux and software at --mountpoint (or /mnt/archinstall)
+mode minimal (still not implemented)
+mode lineal. Instead of a menu, shows a sequence of selection screens (eq. to the old mode for guided.py)
+
+When using the argument --advanced. an aditional menu for several special parameters needed during installation appears
+
+This script respects the --dry_run argument
+
+"""
 import json
 import logging
 import os
