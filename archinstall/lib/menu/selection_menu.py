@@ -236,8 +236,7 @@ class GeneralMenu:
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per progam calling self.set_option()
 		"""
-		log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
-		raise archinstall.RequirementError("Method _setup_selection_menu_options needs to be personalized")
+		return
 
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
