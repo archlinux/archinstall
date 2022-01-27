@@ -6,7 +6,7 @@ from typing import Callable, Any, List, Iterator
 
 import archinstall
 from archinstall import Menu
-from ..output import *
+from ..output import log
 
 class Selector:
 	def __init__(
@@ -150,7 +150,7 @@ class GeneralMenu():
 		self._menu_options = OrderedDict()
 		self._setup_selection_menu_options()
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> 'SetupMenu':
+	def __enter__(self, *args :Any, **kwargs :Any) -> 'GeneralMenu':
 		self.is_context_mgr = True
 		return self
 
@@ -186,7 +186,6 @@ class GeneralMenu():
 		""" will be called at the end of the processing of the menu """
 		return
 
-
 	def synch(self, selector_name :str, omit_if_set :bool = False,omit_if_disabled :bool = False):
 		""" loads menu options with data_store value """
 		arg = self._data_store.get(selector_name, None)
@@ -211,7 +210,6 @@ class GeneralMenu():
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
 
-
 	def run(self):
 		""" Calls the Menu framework"""
 		# we synch all the options just in case
@@ -231,6 +229,7 @@ class GeneralMenu():
 					break
 		if not self.is_context_mgr:
 			self.__exit__()
+
 	def _process_selection(self, selection :str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues

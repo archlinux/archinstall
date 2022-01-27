@@ -5,6 +5,38 @@ import pathlib
 
 import archinstall
 
+class OnlyHDMenu(archinstall.GlobalMenu):
+	def _setup_selection_menu_options(self):
+		super()._setup_selection_menu_options()
+		options_list = []
+		mandatory_list = []
+		options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
+		mandatory_list = ['harddrives']
+		options_list.extend(['install','abort'])
+
+		for entry in self._menu_options:
+			if entry in options_list:
+				# for not lineal executions, only self.option(entry).set_enabled and set_mandatory are necessary
+				if entry in mandatory_list:
+					self.enable(entry,mandatory=True)
+				else:
+					self.enable(entry)
+			else:
+				self.option(entry).set_enabled(False)
+		self._update_install()
+
+	def _missing_configs(self):
+		""" overloaded method """
+		def check(s):
+			return self.option(s).has_selection()
+
+		_, missing = self.mandatory_overview()
+		if check('harddrives'):
+			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
+				missing += 1
+		return missing
+
+
 def load_mirror():
 	if archinstall.arguments.get('mirror-region', None) is not None:
 		if type(archinstall.arguments.get('mirror-region', None)) is dict:
@@ -25,43 +57,6 @@ def load_harddrives():
 			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
 		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
-
-
-def ask_harddrives():
-	# Ask which harddrives/block-devices we will install to
-	# and convert them into archinstall.BlockDevice() objects.
-	if archinstall.arguments.get('harddrives', None) is None:
-		archinstall.arguments['harddrives'] = archinstall.generic_multi_select(archinstall.all_disks(),
-												text="Select one or more harddrives to use and configure (leave blank to skip this step): ",
-												allow_empty=True)
-
-	if not archinstall.arguments['harddrives']:
-		archinstall.log("You decided to skip harddrive selection",fg="red",level=logging.INFO)
-		archinstall.log(f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)",fg="red",level=logging.INFO)
-		archinstall.log("WARNING: Archinstall won't check the suitability of this setup",fg="red",level=logging.INFO)
-		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
-			exit(1)
-	else:
-		if archinstall.storage.get('disk_layouts', None) is None:
-			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
-
-		# Get disk encryption password (or skip if blank)
-		if archinstall.arguments.get('!encryption-password', None) is None:
-			if passwd := archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '):
-				archinstall.arguments['!encryption-password'] = passwd
-
-		if archinstall.arguments.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
-
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
-	if not archinstall.arguments.get("bootloader", None):
-		archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False))
-
-	if not archinstall.arguments.get('swap', None):
-		archinstall.arguments['swap'] = archinstall.ask_for_swap()
 
 def load_profiles():
 	if archinstall.arguments.get('profile', None) is not None:
@@ -98,7 +93,8 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	ask_harddrives()
+	with OnlyHDMenu() as menu:
+		menu.run()
 
 def save_user_configurations():
 	user_credentials = {}
@@ -142,7 +138,7 @@ def write_config_files():
 	print()
 
 	save_user_configurations()
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 

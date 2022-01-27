@@ -30,6 +30,8 @@ def select_mode():
 	return archinstall.generic_select(['full','only_hd','only_os','minimal','lineal'],
 								'Select one execution mode',
 								default=archinstall.arguments.get('mode','full'))
+
+
 """
 following functions will be at locale_helpers, so they will have to be called prefixed by archinstall
 """
@@ -110,9 +112,12 @@ def list_installed_locales() -> list[str]:
 	for line in archinstall.SysCommand('locale -a'):
 		lista.append(line.decode('UTF-8').strip())
 	return lista
+
+
 """
 end of locale helpers
 """
+
 def select_installed_locale(mode):
 	mode_text = get_locale_mode_text(mode)
 	if mode == 'LC_ALL':
@@ -123,25 +128,12 @@ def select_installed_locale(mode):
 								texto,
 								allow_empty_input=True,
 								default=archinstall.storage.get('CMD_LOCALE',{}).get(mode,'C'))
-import inspect
-
-
-"""
-particular routines to MyMenu
-"""
-def propagate_encryption_key(global_menu):
-	""" particular """
-	if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
-		# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-		# Then we need to identify which partitions to encrypt. This will default to / (root).
-		if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
-			archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
-				archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 
 """
 	_menus
 """
+
 class SetupMenu(archinstall.GeneralMenu):
 	def __init__(self,storage_area):
 		super().__init__(data_store=storage_area)
@@ -186,17 +178,14 @@ class SetupMenu(archinstall.GeneralMenu):
 			exec_locale = {}
 			for item in ['LC_COLLATE','LC_CTYPE','LC_MESSAGES','LC_NUMERIC','LC_TIME']:
 				if self._data_store.get(item,None):
-					exec_locale[item]=self._data_store[item]
+					exec_locale[item] = self._data_store[item]
 			archinstall.storage['CMD_LOCALE'] = exec_locale
 		archinstall.log(f"Archinstall will execute with {archinstall.storage.get('CMD_LOCALE',None)} locale")
-
-
 
 class MyMenu(archinstall.GlobalMenu):
 	def __init__(self,mode='full'):
 		self._execution_mode = mode
 		super().__init__()
-
 
 	def _setup_selection_menu_options(self):
 		super()._setup_selection_menu_options()
@@ -307,9 +296,6 @@ def load_config():
 		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
 	if archinstall.arguments.get('servers', None) is not None:
 		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-
-
-
 
 def ask_user_questions(mode):
 	"""
@@ -544,6 +530,7 @@ def output_configs():
 
 	if archinstall.arguments.get('disk_layouts'):
 		archinstall.log(user_disk_layout, level=logging.INFO)
+
 
 if not archinstall.check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
