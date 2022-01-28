@@ -1,9 +1,7 @@
 import sys
 
-from archinstall import Translation
-
 import archinstall
-from archinstall import Menu
+from archinstall import Menu, Translation
 
 
 class Selector:
@@ -116,8 +114,7 @@ class GlobalMenu:
 				_('Select Archinstall language'),
 				lambda: self._select_archinstall_language('English'),
 				default='English',
-				enabled=True
-			)
+				enabled=True)
 		self._menu_options['keyboard-layout'] = \
 			Selector(_('Select keyboard layout'), lambda: archinstall.select_language('us'), default='us')
 		self._menu_options['mirror-region'] = \

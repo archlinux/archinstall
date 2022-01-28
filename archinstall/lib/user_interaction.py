@@ -818,8 +818,7 @@ def select_profile() -> Optional[str]:
 		option = f'{profile.profile}: {description}'
 		options[option] = profile
 
-	title = _('This is a list of pre-programmed profiles, '
-			  'they might make it easier to install things like desktop environments')
+	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
 
 	selection = Menu(title=title, p_options=list(options.keys())).run()
 
