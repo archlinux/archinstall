@@ -11,6 +11,11 @@ if archinstall.arguments.get('help'):
 if os.getuid() != 0:
 	print("Archinstall requires root privileges to run. See --help for more.")
 	exit(1)
+	
+# update the arch linux keyring to ensure package integrity
+archinstall.log(f"Updating achlinux-keyring.")
+os.system("pacman -Syy")
+os.system("pacman -S archlinux-keyring")
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
 archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
