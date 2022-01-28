@@ -11,10 +11,6 @@ if archinstall.arguments.get('help'):
 if os.getuid() != 0:
 	print("Archinstall requires root privileges to run. See --help for more.")
 	exit(1)
-	
-# update the arch linux keyring to ensure package integrity
-archinstall.log(f"Updating achlinux-keyring.")
-os.system("pacman -Sy archlinux-keyring")
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
 archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
@@ -311,6 +307,12 @@ def perform_installation(mountpoint):
 if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	exit(1)
+	
+# update the arch linux keyring to ensure package integrity
+if not os.system('pacman -Sy archlinux-keyring') != 0:
+	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
+	archinstall.log("Failed to install archlinux-keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
 load_config()
