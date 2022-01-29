@@ -51,7 +51,7 @@ class Selector:
 		displayed if non of the entries in the list have been specified
 		:type dependencies_not: list
 
-		:param exec_func: A function with the result of the selection as input parameter and which returns boolean.
+		:param exec_func: A function with the name and the result of the selection as input parameter and which returns boolean.
 		Can be used for any action deemed necessary after selection. If it returns True, exits the menu loop, if False,
 		menu returns to the selection screen. If not specified it is assumed the return is False
 		:type exec_func: Callable
@@ -225,6 +225,7 @@ class GeneralMenu():
 			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
 			if selection:
 				selection = selection.strip()
+			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
 				if not self._process_selection(selection):
 					break
@@ -265,12 +266,19 @@ class GeneralMenu():
 			result = selector.func()
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
+		exec_ret_val = selector.exec_func(selector_name,result) if selector.exec_func else False
+		self.post_callback(selector_name,result)
+		if exec_ret_val and self._check_mandatory_status():
+			return False
+		return True
+		""" old behaviour
 		# we allow for a callback after we get the result
 		self.post_callback(selector_name,result)
 		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
 		if selector.exec_func:
 			if selector.exec_func(result) and self._check_mandatory_status():
 				return False
+		"""
 		return True
 
 	def _set_kb_language(self):
@@ -329,6 +337,7 @@ class GeneralMenu():
 
 	def set_option(self, name :str, selector :Selector):
 		self._menu_options[name] = selector
+		self.synch(name)
 
 	def _check_mandatory_status(self) -> bool:
 		for field in self._menu_options:
@@ -449,9 +458,9 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
-				exec_func=lambda x: True if self._missing_configs() == 0 else False,
+				exec_func=lambda n,v: True if self._missing_configs() == 0 else False,
 				enabled=True)
-		self._menu_options['abort'] = Selector('Abort',exec_func=lambda x: exit(1), enabled=True)
+		self._menu_options['abort'] = Selector('Abort',exec_func=lambda n,v: exit(1), enabled=True)
 
 	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()

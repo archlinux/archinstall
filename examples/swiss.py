@@ -177,7 +177,7 @@ class SetupMenu(archinstall.GeneralMenu):
 		self.set_option('continue',
 		archinstall.Selector(
 			'Continue',
-			exec_func=lambda x: True,
+			exec_func=lambda n,v: True,
 			enabled=True))
 
 	def exit_callback(self):
@@ -349,7 +349,7 @@ def ask_user_questions(mode):
 			global_menu.set_option('install',
 							archinstall.Selector(
 								global_menu._install_text(mode),
-								exec_func=lambda x: True if global_menu._missing_configs(mode) == 0 else False,
+								exec_func=lambda n,v: True if global_menu._missing_configs(mode) == 0 else False,
 								enabled=True))
 
 			global_menu.run()
