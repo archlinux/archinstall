@@ -17,7 +17,7 @@ import json
 import logging
 import os
 import time
-
+import pathlib
 
 import archinstall
 
@@ -492,6 +492,11 @@ def perform_installation(mountpoint, mode):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		if mode in ('full','only_hd'):
 			disk_setup(installation)
+			if mode == 'only_hd':
+				target = pathlib.Path(f"{mountpoint}/etc/fstab")
+				if not target.parent.exists():
+					target.parent.mkdir(parents=True)
+
 		if mode in ('full','only_os'):
 			os_setup(installation)
 			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")

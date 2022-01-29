@@ -150,7 +150,6 @@ def perform_disk_operations():
 	if archinstall.arguments.get('harddrives', None):
 		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
 		archinstall.do_countdown()
-
 		"""
 			Setup the blockdevice, filesystem (and optionally encryption).
 			Once that's done, we'll hand over to perform_installation()
@@ -160,9 +159,9 @@ def perform_disk_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if dl_disk := archinstall.storage.get('disk_layouts', {}).get(drive.path):
+			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(dl_disk)
+					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	"""
@@ -173,8 +172,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=None) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.storage.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.arguments.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
