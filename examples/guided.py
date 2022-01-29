@@ -308,11 +308,10 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
-	
-# update the arch linux keyring to ensure package integrity
-if os.system('pacman -Sy archlinux-keyring') != 0:
+
+if not (archinstall.update_keyring() or archinstall.arguments.get('skip-keyring-update', False)):
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Failed to update archlinux-keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
 load_config()
