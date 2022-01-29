@@ -312,7 +312,7 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 # update the arch linux keyring to ensure package integrity
 if os.system('pacman -Sy archlinux-keyring') != 0:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log("Failed to install archlinux-keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	archinstall.log(f"Failed to update archlinux-keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
 load_config()
