@@ -42,7 +42,7 @@ def check_mirror_reachable() -> bool:
 
 def update_keyring() -> bool:
 	log("Updating archlinux-keyring ...", level=logging.INFO)
-	if SysCommand("pacman -Sy archlinux-keyring").exit_code == 0:
+	if SysCommand("pacman -Sy --noconfirm archlinux-keyring").exit_code == 0:
 		return True
 	
 	elif os.geteuid() != 0:
