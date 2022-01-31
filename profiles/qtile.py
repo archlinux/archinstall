@@ -11,11 +11,7 @@ __packages__ = [
 	'alacritty',
 	'lightdm-gtk-greeter',
 	'lightdm',
-	'dmenu',
-	'pcmanfm',
-	'vim',
-	'nano',
-	'nitrogen',
+	'dmenu'
 	
 	
 ]
