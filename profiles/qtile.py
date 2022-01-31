@@ -14,7 +14,6 @@ __packages__ = [
 	'dmenu'
 ]
 
-
 def _prep_function(*args, **kwargs):
 	"""
 	Magic function called by the importing installer
@@ -25,7 +24,6 @@ def _prep_function(*args, **kwargs):
 
 if __name__ == 'qtile':
 
-
 	# Install dependency profiles
 	archinstall.storage['installation_session'].install_profile('xorg')
 
@@ -34,5 +32,3 @@ if __name__ == 'qtile':
 
 	# Auto start lightdm for all users
 	archinstall.storage['installation_session'].enable_service('lightdm') # Light Display Manager
-
-
