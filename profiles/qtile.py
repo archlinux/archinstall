@@ -22,8 +22,8 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-if __name__ == 'qtile':
 
+if __name__ == 'qtile':
 	# Install dependency profiles
 	archinstall.storage['installation_session'].install_profile('xorg')
 
