@@ -74,6 +74,8 @@ Networking
 
 .. autofunction:: archinstall.check_mirror_reachable
 
+.. autofunction:: archinstall.update_keyring
+
 .. autofunction:: archinstall.enrich_iface_types
 
 .. autofunction:: archinstall.get_interface_from_mac

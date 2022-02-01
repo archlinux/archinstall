@@ -42,8 +42,8 @@ def ask_harddrives():
 		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
 			exit(1)
 	else:
-		if archinstall.storage.get('disk_layouts', None) is None:
-			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
+		if archinstall.arguments.get('disk_layouts', None) is None:
+			archinstall.arguments['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
 		# Get disk encryption password (or skip if blank)
 		if archinstall.arguments.get('!encryption-password', None) is None:
@@ -53,8 +53,8 @@ def ask_harddrives():
 		if archinstall.arguments.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+			if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
+				archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
@@ -121,8 +121,8 @@ def save_user_configurations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 			disk_layout_file.write(user_disk_layout)
 
@@ -135,14 +135,14 @@ def write_config_files():
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
 
 	print()
 
 	save_user_configurations()
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 
@@ -164,7 +164,7 @@ def perform_disk_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if dl_disk := archinstall.storage.get('disk_layouts', {}).get(drive.path):
+			if dl_disk := archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(dl_disk)
 
@@ -177,8 +177,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=None) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.storage.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.arguments.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:

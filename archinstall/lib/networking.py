@@ -40,6 +40,16 @@ def check_mirror_reachable() -> bool:
 
 	return False
 
+def update_keyring() -> bool:
+	log("Updating archlinux-keyring ...", level=logging.INFO)
+	if SysCommand("pacman -Sy --noconfirm archlinux-keyring").exit_code == 0:
+		return True
+	
+	elif os.geteuid() != 0:
+		log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
+
+	return False
+
 
 def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str, str]:
 	result = {}
