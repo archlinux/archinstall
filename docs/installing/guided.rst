@@ -194,7 +194,7 @@ Options for ``--disk_layouts``
                     "filesystem": {
                         "format": "fat32"
                     },
-                    "format": true,
+                    "wipe": true,
                     "mountpoint": "/boot",
                     "size": "513MB",
                     "start": "5MB",
@@ -213,7 +213,7 @@ Options for ``--disk_layouts``
                     "filesystem": {
                         "format": "btrfs"
                     },
-                    "format": true,
+                    "wipe": true,
                     "mountpoint": "/",
                     "size": "100%",
                     "start": "518MB",

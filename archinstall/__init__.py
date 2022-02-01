@@ -169,6 +169,12 @@ def post_process_arguments(arguments):
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
 		else:
+			# backward compatibility. Change partition.format for partition.wipe
+			for disk in layout_storage:
+				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):
+					if 'format' in partition:
+						partition['wipe'] = partition['format']
+						del partition['format']
 			arguments['disk_layouts'] = layout_storage
 
 
