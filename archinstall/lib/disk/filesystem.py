@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
-	
+
 from .partition import Partition
 from .validators import valid_fs_type
 from ..exceptions import DiskError
@@ -76,7 +76,7 @@ class Filesystem:
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
-			if partition.get('format', False) and not partition.get('PARTUUID', None):
+			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
 				print("Adding partition....")
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
@@ -113,11 +113,11 @@ class Filesystem:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 					else:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
-					
+
 					partition['device_instance'].encrypt(password=partition['!password'])
 					# Immediately unlock the encrypted device to format the inner volume
 					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
-						if not partition.get('format'):
+						if not partition.get('wipe'):
 							if storage['arguments'] == 'silent':
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
 							else:
@@ -133,7 +133,7 @@ class Filesystem:
 										break
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
-				elif partition.get('format', False):
+				elif partition.get('wipe', False):
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
 
@@ -150,7 +150,7 @@ class Filesystem:
 
 	def partprobe(self) -> bool:
 		result = SysCommand(f'partprobe {self.blockdevice.device}')
-		
+
 		if result.exit_code != 0:
 			log(f"Could not execute partprobe: {result!r}", level=logging.ERROR, fg="red")
 			raise DiskError(f"Could not run partprobe: {result!r}")
