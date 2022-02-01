@@ -427,13 +427,20 @@ class SysCommand:
 		}
 
 	def create_session(self) -> bool:
+		"""
+		Initiates a :ref:`SysCommandWorker` session in this class ``.session``.
+		It then proceeds to poll the process until it ends, after which it also
+		clears any printed output if ``.peak_output=True``.
+		"""
 		if self.session:
-			return True
+			return self.session
 
-		self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
+		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars) as session:
+			if not self.session:
+				self.session = session
 
-		while self.session.ended is None:
-			self.session.poll()
+			while self.session.ended is None:
+				self.session.poll()
 
 		if self.peak_output:
 			sys.stdout.write('\n')
