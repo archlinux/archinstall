@@ -661,7 +661,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
 						if mountpoint == '/boot':
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
-							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = True
+							block_device_struct["partitions"][partition]['boot'] = True
 					else:
 						del(block_device_struct["partitions"][partition]['mountpoint'])
 
@@ -682,7 +682,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 					# Negate the current wipe marking
-					block_device_struct["partitions"][partition]['format'] = not block_device_struct["partitions"][partition].get('format', False)
+					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
 			elif task == "Mark/Unmark a partition as encrypted":
 				title = f'{current_layout}\n\nSelect which partition to mark as encrypted'

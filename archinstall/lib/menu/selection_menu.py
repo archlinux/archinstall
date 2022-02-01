@@ -234,7 +234,6 @@ class GlobalMenu:
 					exit(0)
 				elif 'Install' in selection:
 					if self._missing_configs() == 0:
-						self._post_processing()
 						break
 				else:
 					self._process_selection(selection)
@@ -242,6 +241,7 @@ class GlobalMenu:
 			sel = self._menu_options[key]
 			if key not in archinstall.arguments:
 				archinstall.arguments[key] = sel._current_selection
+		self._post_processing()
 
 	def _process_selection(self, selection):
 		# find the selected option in our option list
@@ -266,9 +266,9 @@ class GlobalMenu:
 		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(
-					archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+			if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
+				archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
+					archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	def _install_text(self):
 		missing = self._missing_configs()
