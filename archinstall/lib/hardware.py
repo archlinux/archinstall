@@ -6,6 +6,7 @@ from typing import Iterator, Optional, Union
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
+from .exceptions import SysCallError
 from .output import log
 
 __packages__ = [
@@ -170,10 +171,19 @@ def mem_total() -> Optional[int]:
 
 
 def virtualization() -> Optional[str]:
-	return str(SysCommand("systemd-detect-virt")).strip('\r\n')
+	try:
+		return str(SysCommand("systemd-detect-virt")).strip('\r\n')
+	except SysCallError as error:
+		log(f"Could not detect virtual system: {error}", level=logging.DEBUG)
+
+	return None
 
 
 def is_vm() -> bool:
-	return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
+	try:
+		return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
+	except SysCallError as error:
+		log(f"System is not running in a VM: {error}", level=logging.DEBUG)
+	return None
 
 # TODO: Add more identifiers
