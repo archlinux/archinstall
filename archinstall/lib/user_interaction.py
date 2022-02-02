@@ -28,7 +28,8 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .. import fs_types, validate_package_list
+from .disk.validators import fs_types
+from .packages.packages import validate_package_list
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
