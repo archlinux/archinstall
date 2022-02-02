@@ -914,7 +914,6 @@ class Installer:
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
 			with Boot(self) as session:
-				input('Please run: systemd-run --machine=archinstall --pty /usr/bin/localectl set-keymap ""')
 				session.SysCommand(["localectl", "set-keymap", '""'])
 
 				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
