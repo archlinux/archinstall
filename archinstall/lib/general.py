@@ -262,10 +262,10 @@ class SysCommandWorker:
 			sys.stdout.flush()
 
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
+			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code: {self.exit_code}", self.exit_code)
+			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[:500]}", self.exit_code)
 
 	def is_alive(self) -> bool:
 		self.poll()
