@@ -65,7 +65,7 @@ def ask_user_questions():
 	# the system immediately
 	archinstall.SysCommand('timedatectl set-ntp true')
 
-	global_menu = archinstall.GlobalMenu()
+	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
 	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation

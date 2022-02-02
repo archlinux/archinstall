@@ -198,9 +198,9 @@ class SetupMenu(archinstall.GeneralMenu):
 		archinstall.log(f"Archinstall will execute with {archinstall.storage.get('CMD_LOCALE',None)} locale")
 
 class MyMenu(archinstall.GlobalMenu):
-	def __init__(self,mode='full'):
+	def __init__(self,data_store=archinstall.arguments,mode='full'):
 		self._execution_mode = mode
-		super().__init__()
+		super().__init__(data_store)
 
 	def _setup_selection_menu_options(self):
 		super()._setup_selection_menu_options()

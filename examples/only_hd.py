@@ -93,7 +93,7 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	with OnlyHDMenu() as menu:
+	with OnlyHDMenu(data_store=archinstall.arguments) as menu:
 		menu.run()
 
 def save_user_configurations():

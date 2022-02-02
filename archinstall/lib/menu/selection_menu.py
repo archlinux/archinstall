@@ -165,7 +165,7 @@ class GeneralMenu():
 		"""
 		Create a new selection menu.
 
-		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is self._data_store (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
 		"""
@@ -310,7 +310,7 @@ class GeneralMenu():
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
 		# This will just help the user with the next following questions.
 		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
-			archinstall.set_keyboard_language(self._data_store['keyboard-layout'])
+			set_keyboard_language(self._data_store['keyboard-layout'])
 
 	def _verify_selection_enabled(self, selection_name :str) -> bool:
 		""" general """
@@ -385,8 +385,8 @@ class GeneralMenu():
 		return mandatory_fields, mandatory_waiting
 
 class GlobalMenu(GeneralMenu):
-	def __init__(self):
-		super().__init__(data_store=archinstall.arguments)
+	def __init__(self,data_store):
+		super().__init__(data_store=data_store)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['keyboard-layout'] = \
@@ -416,7 +416,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				'Set encryption password',
-				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
+				lambda: get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
@@ -434,7 +434,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				'Set root password',
 				lambda: self._set_root_password(),
-				display_func=lambda x: archinstall.secret(x) if x else 'None')
+				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
 				'Specify superuser account',
@@ -494,7 +494,7 @@ class GlobalMenu(GeneralMenu):
 		self._update_install(name,result)
 
 	def exit_callback(self):
-		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
+		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
 			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
