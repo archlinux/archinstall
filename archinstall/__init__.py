@@ -26,7 +26,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 
 parser = ArgumentParser()
 
-__version__ = "2.3.1.dev0"
+__version__ = "2.4.0-dev0"
 storage['__version__'] = __version__
 
 
