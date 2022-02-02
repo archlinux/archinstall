@@ -79,8 +79,9 @@ def do_countdown() -> bool:
 			print(".", end='')
 
 		if SIG_TRIGGER:
-			abort = input('\nDo you really want to abort (y/n)? ')
-			if abort.strip() != 'n':
+			prompt = 'Do you really want to abort'
+			choice = Menu(prompt, ['yes', 'no'], skip=False).run()
+			if choice == 'yes':
 				exit(0)
 
 			if SIG_TRIGGER is False:
@@ -271,7 +272,7 @@ def ask_for_swap(prompt='Would you like to use swap on zram?', forced=False):
 	return False if choice == 'no' else True
 
 
-def ask_ntp():
+def ask_ntp() -> bool:
 	prompt = 'Would you like to use automatic time synchronization (NTP) with the default time servers?'
 	prompt += 'Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki'
 	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
@@ -859,7 +860,7 @@ def select_harddrives() -> Optional[str]:
 	return []
 
 
-def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
+def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bool = False) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -881,7 +882,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 		if has_nvidia_graphics():
 			title += 'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
 
-		if not arguments.get('gfx_driver', None):
+		if not arguments.get('gfx_driver', None) or force_ask:
 			title += '\n\nSelect a graphics driver or leave blank to install all open-source drivers'
 			arguments['gfx_driver'] = Menu(title, drivers).run()
 
