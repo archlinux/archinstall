@@ -354,7 +354,7 @@ class SysCommandWorker:
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-		sys.stdout.write(f"--Executing: {self.cmd}")
+		sys.stdout.write(f"--Executing: {self.cmd}\r\n")
 		print(f"--PrintCuting: {self.cmd}")
 
 		if not self.pid:
