@@ -58,14 +58,15 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
+	# ref: https://github.com/archlinux/archinstall/pull/831
+	# we'll set NTP to true by default since this is also
+	# the default value specified in the menu options; in
+	# case it will be changed by the user we'll also update
+	# the system immediately
+	archinstall.SysCommand('timedatectl set-ntp true')
+
 	global_menu = archinstall.GlobalMenu()
 	global_menu.enable('keyboard-layout')
-
-	if not archinstall.arguments.get('ntp', False):
-		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-		if archinstall.arguments['ntp']:
-			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
-			archinstall.SysCommand('timedatectl set-ntp true')
 
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
@@ -293,8 +294,9 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-			if choice.lower() in ("y", ""):
+			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
+			choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
+			if choice == 'yes':
 				try:
 					installation.drop_to_shell()
 				except:
@@ -309,10 +311,17 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not (archinstall.update_keyring() or archinstall.arguments.get('skip-keyring-update', False)):
-	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
-	exit(1)
+if not archinstall.arguments.get('offline', False):
+	# If we want to check for keyring updates
+	# and the installed package version is lower than the upstream version
+	if archinstall.arguments.get('skip-keyring-update', False) is False and \
+		archinstall.installed_package('archlinux-keyring') < archinstall.find_package('archlinux-keyring'):
+
+		# Then we update the keyring in the ISO environment
+		if not archinstall.update_keyring():
+			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
+			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+			exit(1)
 
 load_config()
 if not archinstall.arguments.get('silent'):

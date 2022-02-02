@@ -33,6 +33,7 @@ __supported__ = [
 	'mate',
 	'deepin',
 	'enlightenment',
+	'qtile'
 ]
 
 
