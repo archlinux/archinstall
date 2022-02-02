@@ -99,7 +99,7 @@ def validate_package_list(packages: list) -> bool:
 def installed_package(package :str) -> LocalPackage:
 	package_info = {}
 	try:
-		for line in SysCommand(f"pacman -Q --info {package}").decode().split('\n'):
+		for line in SysCommand(f"pacman -Q --info {package}"):
 			print(line)
 			if b':' in line:
 				key, value = line.decode().split(':', 1)

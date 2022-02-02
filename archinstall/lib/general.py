@@ -322,6 +322,7 @@ class SysCommandWorker:
 			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
+					print(f'!!! Reading from: {self.child_fd}')
 					output = os.read(self.child_fd, 8192)
 					got_output = True
 					self.peak(output)
@@ -354,7 +355,7 @@ class SysCommandWorker:
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-		print(f"--Executing: {self.cmd}")
+		print(f"--Executing {sys.stdout.fileno()}: {self.cmd}")
 
 		if not self.pid:
 			try:
