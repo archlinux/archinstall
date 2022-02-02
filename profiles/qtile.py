@@ -23,6 +23,15 @@ def _prep_function(*args, **kwargs):
 	"""
 
 
+	# qtile requires a functioning Xorg installation.
+	profile = archinstall.Profile(None, 'xorg')
+	with profile.load_instructions(namespace='xorg.py') as imported:
+		if hasattr(imported, '_prep_function'):
+			return imported._prep_function()
+		else:
+			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+
+
 if __name__ == 'qtile':
 	# Install dependency profiles
 	archinstall.storage['installation_session'].install_profile('xorg')
