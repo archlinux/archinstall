@@ -203,7 +203,7 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
-		self.environment_vars = {**environment_vars}
+		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -322,7 +322,6 @@ class SysCommandWorker:
 			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
-					print(f'Reading from fd {self.child_fd}')
 					output = os.read(self.child_fd, 8192)
 					got_output = True
 					self.peak(output)
@@ -352,31 +351,32 @@ class SysCommandWorker:
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
 
-		self.pid, self.child_fd = pty.fork()
-		print(f'Spawned {self.pid} fork to fd {self.child_fd}')
-		os.chdir(old_dir)
+		with open('debug.txt', 'a') as logfile_tmp:
+			self.pid, self.child_fd = pty.fork()
+			logfile_tmp.write(f'Spawned {self.pid} fork to fd {self.child_fd}\n')
+			os.chdir(old_dir)
 
-		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
-		if not self.pid:
-			try:
+			# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
+			if not self.pid:
 				try:
-					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
-						cmd_log.write(f"{' '.join(self.cmd)}\n")
-				except PermissionError:
-					pass
+					try:
+						with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+							cmd_log.write(f"{' '.join(self.cmd)}\n")
+					except PermissionError:
+						pass
 
-				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
-				if storage['arguments'].get('debug'):
-					log(f"Executing: {self.cmd}", level=logging.DEBUG)
+					os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
+					if storage['arguments'].get('debug'):
+						log(f"Executing: {self.cmd}", level=logging.DEBUG)
 
-			except FileNotFoundError:
-				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
-				self.exit_code = 1
-				return False
+				except FileNotFoundError:
+					log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
+					self.exit_code = 1
+					return False
 
-		print(f"--Executing from {os.getpid()} to {self.child_fd} cmd -> {self.cmd}")
-		self.started = time.time()
-		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
+			logfile_tmp.write(f"--Executing from {os.getpid()} to {self.child_fd} cmd {self.cmd}\n")
+			self.started = time.time()
+			self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
 		return True
 
