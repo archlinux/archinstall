@@ -53,7 +53,7 @@ def package_search(package :str) -> PackageSearch:
 	data = response.read().decode('UTF-8')
 
 	return PackageSearch(**json.loads(data))
-	
+
 class IsGroup(BaseException):
 	pass
 
