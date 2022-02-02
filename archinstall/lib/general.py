@@ -352,7 +352,7 @@ class SysCommandWorker:
 		#   only way to get the traceback without loosing it.
 
 		parent_pid = os.getpid()
-		print(f'Parent file pid/descriptor: {parent_pid}{sys.stdout.fileno()}')
+		print(f'Parent file pid/descriptor: {parent_pid}/{sys.stdout.fileno()}')
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
