@@ -2,33 +2,33 @@ from typing import Optional, List
 from pydantic import BaseModel, validator
 
 class VersionDef(BaseModel):
-	major: float
-	minor: Optional[float] = None
-	patch: Optional[str] = None
+	version_string: str
 
-	@validator('major', pre=True)
-	def construct(cls, value):
-		setattr(self, 'version_raw', version_string)
-		setattr(self, 'major', version_string)
-
-	def __init__(self, version_string :str):
-		setattr(self, 'version_raw', version_string)
-
+	@classmethod
+	def parse_version(cls) -> List[str]:
 		if '.' in version_string:
-			self.versions = version_string.split('.')
+			versions = version_string.split('.')
 		else:
-			self.versions = [version_string]
+			versions = [version_string]
 
-		if '-' in self.versions[-1]:
-			version, patch_version = self.versions[-1].split('-', 1)
-			self.verions = self.versions[:-1] + [version]
-			self.patch = patch_version
+		return versions
 
-		self.major = self.versions[0]
-		if len(self.versions) >= 2:
-			self.minor = self.versions[1]
-		if len(self.versions) >= 3:
-			self.patch = self.versions[2]
+	@classmethod
+	def major(self) -> str:
+		return self.parse_version()[0]
+
+	@classmethod
+	def minor(self) -> str:
+		versions = self.parse_version()
+		if len(versions) >= 2:
+			return versions[1]
+
+	@classmethod
+	def patch(self) -> str:
+		versions = self.parse_version()
+		if '-' in versions[-1]:
+			_, patch_version = versions[-1].split('-', 1)
+			return patch_version
 
 	def __eq__(self, other :'VersionDef') -> bool:
 		if other.major == self.major and \
@@ -39,7 +39,6 @@ class VersionDef(BaseModel):
 		return False
 		
 	def __lt__(self, other :'VersionDef') -> bool:
-		print(f"Comparing {self} against {other}")
 		if self.major > other.major:
 			return False
 		elif self.minor and other.minor and self.minor > other.minor:
@@ -48,7 +47,7 @@ class VersionDef(BaseModel):
 			return False
 
 	def __str__(self) -> str:
-		return self.version_raw
+		return self.version_string
 
 
 class PackageSearchResult(BaseModel):
@@ -79,9 +78,15 @@ class PackageSearchResult(BaseModel):
 	makedepends: List[str]
 	checkdepends: List[str]
 
-	@validator('pkgver')
-	def pkg_version(cls, pkgver):
-		return VersionDef(pkgver)
+	@property
+	def pkg_version(self) -> str:
+		return self.pkgver
+
+	def __eq__(self, other :'VersionDef') -> bool:
+		return self.pkg_version == other.pkg_version
+
+	def __lt__(self, other :'VersionDef') -> bool:
+		return self.pkg_version < other.pkg_version
 
 
 class PackageSearch(BaseModel):
@@ -113,6 +118,12 @@ class LocalPackage(BaseModel):
 	install_script: str
 	validated_by: str
 
-	@validator('version')
-	def pkg_version(cls, version):
-		return VersionDef(version)
+	@property
+	def pkg_version(self) -> str:
+		return self.version
+
+	def __eq__(self, other :'VersionDef') -> bool:
+		return self.pkg_version == other.pkg_version
+
+	def __lt__(self, other :'VersionDef') -> bool:
+		return self.pkg_version < other.pkg_version
