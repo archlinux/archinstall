@@ -5,11 +5,11 @@ class VersionDef(BaseModel):
 	version_string: str
 
 	@classmethod
-	def parse_version(cls) -> List[str]:
-		if '.' in version_string:
-			versions = version_string.split('.')
+	def parse_version(self) -> List[str]:
+		if '.' in self.version_string:
+			versions = self.version_string.split('.')
 		else:
-			versions = [version_string]
+			versions = [self.version_string]
 
 		return versions
 

@@ -1,15 +1,10 @@
-import pathlib
 import ssl
 import urllib.request
 import json
-import logging
-import glob
-from typing import List, Dict, Any
-from ..output import log
+from typing import Dict, Any
 from ..general import SysCommand
 from ..models import PackageSearch, PackageSearchResult, LocalPackage
-from ..exceptions import PackageError, SysCallError
-from ..storage import storage
+from ..exceptions import PackageError, SysCallError, RequirementError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
@@ -62,7 +57,7 @@ def find_package(package :str) -> PackageSearchResult:
 
 	if not data.results:
 		# Check if the package is actually a group
-		if (is_group := find_group(package)):
+		if find_group(package):
 			# TODO: Until upstream adds a JSON result for group searches
 			# there is no way we're going to parse HTML reliably.
 			raise IsGroup("Implement group search")
@@ -76,31 +71,6 @@ def find_package(package :str) -> PackageSearchResult:
 			return result
 
 	raise PackageError(f"Could not locate {package} in result while looking for repository category")
-
-def download_package(package :str, repo :str, url :str, destination :pathlib.Path, filename :str, include_signature=True) -> bool:
-
-	if (url := urllib.parse.urlparse(url)).scheme and url.scheme in ('https', 'http'):
-		destination.mkdir(parents=True, exist_ok=True)
-
-		# If it's a repository we haven't configured yet:
-		database_path = destination/f"{repo}.db.tar.gz"
-
-		try:
-			SysCommand(f"repo-add {database_path} __init__")
-		except SysCallError as error:
-			if error.exit_code not in (0, 256):
-				raise RepositoryError(f"Could not initiate repository {database_path}: [{error.exit_code}] {error}")
-
-		with (destination/filename).open('wb') as output:
-			output.write(urllib.request.urlopen(url.geturl()).read())
-
-		if include_signature:
-			with (destination/f"{filename}.sig").open('wb') as output:
-				output.write(urllib.request.urlopen(f"{url.geturl()}.sig").read())
-
-		return True
-
-	raise PackageError(f"Unknown or unsupported URL scheme when downloading package: {[url.scheme]}")
 
 def find_packages(*names :str) -> Dict[str, Any]:
 	"""
