@@ -353,8 +353,6 @@ class SysCommandWorker:
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-		print(f"--Executing: {self.cmd}")
-
 		if not self.pid:
 			try:
 				try:
