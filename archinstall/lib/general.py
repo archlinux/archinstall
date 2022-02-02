@@ -9,6 +9,7 @@ import subprocess
 import string
 import sys
 import time
+import re
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
@@ -80,6 +81,18 @@ def locate_binary(name :str) -> str:
 			break # Don't recurse
 
 	raise RequirementError(f"Binary {name} does not exist.")
+
+def clear_vt100_escape_codes(data :Union[bytes, str]):
+	# https://stackoverflow.com/a/43627833/929999
+	if type(data) == bytes:
+		vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
+	else:
+		vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
+
+	for match in re.findall(vt100_escape_regex, data, re.IGNORECASE):
+		data = data.replace(match, '' if type(data) == str else b'')
+
+	return data
 
 def json_dumps(*args :str, **kwargs :str) -> str:
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
@@ -168,7 +181,8 @@ class SysCommandWorker:
 		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
-		working_directory :Optional[str] = './'):
+		working_directory :Optional[str] = './',
+		remove_vt100_escape_codes_from_lines :bool = True):
 
 		if not callbacks:
 			callbacks = {}
@@ -200,6 +214,7 @@ class SysCommandWorker:
 		self.child_fd :Optional[int] = None
 		self.started :Optional[float] = None
 		self.ended :Optional[float] = None
+		self.remove_vt100_escape_codes_from_lines :bool = remove_vt100_escape_codes_from_lines
 
 	def __contains__(self, key: bytes) -> bool:
 		"""
@@ -216,6 +231,9 @@ class SysCommandWorker:
 	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
 			if line:
+				if self.remove_vt100_escape_codes_from_lines:
+					line = clear_vt100_escape_codes(line)
+
 				yield line + b'\n'
 
 		self._trace_log_pos = self._trace_log.rfind(b'\n')
@@ -368,7 +386,8 @@ class SysCommand:
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
-		working_directory :Optional[str] = './'):
+		working_directory :Optional[str] = './',
+		remove_vt100_escape_codes_from_lines :bool = True):
 
 		_callbacks = {}
 		if callbacks:
@@ -382,6 +401,7 @@ class SysCommand:
 		self.peak_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
+		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
 
 		self.session :Optional[SysCommandWorker] = None
 		self.create_session()
@@ -435,7 +455,7 @@ class SysCommand:
 		if self.session:
 			return self.session
 
-		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars) as session:
+		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars, remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines) as session:
 			if not self.session:
 				self.session = session
 
