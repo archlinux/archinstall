@@ -3,7 +3,7 @@ import urllib.request
 import json
 from typing import Dict, Any
 from ..general import SysCommand
-from ..models import PackageSearch, PackageSearchResult, LocalPackage
+from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError, RequirementError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
