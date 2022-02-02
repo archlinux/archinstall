@@ -7,56 +7,13 @@ import glob
 from typing import List, Dict, Any
 from ..output import log
 from ..general import SysCommand
-from ..models import PackageSearch, PackageSearchResult
+from ..models import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError
 from ..storage import storage
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
 BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
-
-class VersionDef:
-	major = None
-	minor = None
-	patch = None
-
-	def __init__(self, version_string :str):
-		self.version_raw = version_string
-		if '.' in version_string:
-			self.versions = version_string.split('.')
-		else:
-			self.versions = [version_string]
-
-		if '-' in self.versions[-1]:
-			version, patch_version = self.versions[-1].split('-', 1)
-			self.verions = self.versions[:-1] + [version]
-			self.patch = patch_version
-
-		self.major = self.versions[0]
-		if len(self.versions) >= 2:
-			self.minor = self.versions[1]
-		if len(self.versions) >= 3:
-			self.patch = self.versions[2]
-
-	def __eq__(self, other :'VersionDef') -> bool:
-		if other.major == self.major and \
-			other.minor == self.minor and \
-			other.patch == self.patch:
-
-			return True
-		return False
-		
-	def __lt__(self, other :'VersionDef') -> bool:
-		print(f"Comparing {self} against {other}")
-		if self.major > other.major:
-			return False
-		elif self.minor and other.minor and self.minor > other.minor:
-			return False
-		elif self.patch and other.patch and self.patch > other.patch:
-			return False
-
-	def __str__(self) -> str:
-		return self.version_raw
 
 
 def find_group(name :str) -> bool:
@@ -93,8 +50,9 @@ def package_search(package :str) -> PackageSearch:
 		raise PackageError(f"Could not locate package: [{response.code}] {response}")
 
 	data = response.read().decode('UTF-8')
-	return PackageSearch(**json.loads(data))
 
+	print(json.loads(data))
+	return PackageSearch(**json.loads(data))
 class IsGroup(BaseException):
 	pass
 
@@ -167,16 +125,14 @@ def validate_package_list(packages: list) -> bool:
 
 	return True
 
-def installed_package(package :str) -> Dict[str, str]:
+def installed_package(package :str) -> LocalPackage:
 	package_info = {}
 	try:
 		for line in SysCommand(f"pacman -Q --info {package}"):
 			if b':' in line:
 				key, value = line.decode().split(':', 1)
-				package_info[key.strip()] = value.strip()
+				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
 		pass
-
-	print(package_info)
-
-	return package_info
+	
+	return LocalPackage(**package_info)

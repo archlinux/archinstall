@@ -14,8 +14,13 @@ from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
 from .lib.output import *
-from .lib.packages.packages import (
+from .lib.models import (
 	VersionDef,
+	PackageSearchResult,
+	PackageSearch,
+	LocalPackage
+)
+from .lib.packages.packages import (
 	find_group,
 	package_search,
 	IsGroup,
