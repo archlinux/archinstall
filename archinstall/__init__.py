@@ -14,7 +14,7 @@ from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
 from .lib.output import *
-from .lib.models import (
+from .lib.models.dataclasses import (
 	VersionDef,
 	PackageSearchResult,
 	PackageSearch,
