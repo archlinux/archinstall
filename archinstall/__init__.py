@@ -14,7 +14,21 @@ from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
 from .lib.output import *
-from .lib.packages import *
+from .lib.models.dataclasses import (
+	VersionDef,
+	PackageSearchResult,
+	PackageSearch,
+	LocalPackage
+)
+from .lib.packages.packages import (
+	find_group,
+	package_search,
+	IsGroup,
+	find_package,
+	find_packages,
+	installed_package,
+	validate_package_list
+)
 from .lib.profiles import *
 from .lib.services import *
 from .lib.storage import *
@@ -26,7 +40,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 
 parser = ArgumentParser()
 
-__version__ = "2.3.1.dev0"
+__version__ = "2.4.0-dev0"
 storage['__version__'] = __version__
 
 
