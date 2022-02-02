@@ -351,12 +351,11 @@ class SysCommandWorker:
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
 
-		parent_pid = os.getpid()
-		print(f'Parent file pid/descriptor: {parent_pid}/{sys.stdout.fileno()}')
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-		print(f"--Executing: '{self.cmd}' with child pid/file descriptor {self.pid}/{self.child_fd}")
+		sys.stdout.write(f"--Executing: {self.cmd}")
+		print(f"--Executing: {self.cmd}")
 
 		if not self.pid:
 			try:
