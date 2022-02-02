@@ -322,7 +322,6 @@ class SysCommandWorker:
 			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
-					print(f'!!! Reading from: {self.child_fd}')
 					output = os.read(self.child_fd, 8192)
 					got_output = True
 					self.peak(output)
@@ -355,7 +354,7 @@ class SysCommandWorker:
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-
+		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
 			try:
 				try:

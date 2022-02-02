@@ -100,12 +100,10 @@ def installed_package(package :str) -> LocalPackage:
 	package_info = {}
 	try:
 		for line in SysCommand(f"pacman -Q --info {package}"):
-			print(line)
 			if b':' in line:
 				key, value = line.decode().split(':', 1)
 				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
 		pass
 	
-	print(package_info)
 	return LocalPackage(**package_info)
