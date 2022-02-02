@@ -2,7 +2,7 @@
 
 import archinstall
 import logging
-
+from archinstall.lib.hardware import __packages__ as __hwd__packages__
 is_top_level_profile = True
 
 __description__ = 'Installs a minimal system as well as xorg and graphics drivers.'
@@ -12,7 +12,7 @@ __packages__ = [
 	'xorg-server',
 	'xorg-xinit',
 	'nvidia-dkms',
-	*archinstall.lib.hardware.__packages__,
+	*__hwd__packages__,
 ]
 
 
