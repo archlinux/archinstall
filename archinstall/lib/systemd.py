@@ -93,7 +93,7 @@ class Boot:
 		shutdown = None
 
 		try:
-			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty /bin/bash -c "shutdown now"')
+			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')
 		except SysCallError as error:
 			if error.exit_code == 256:
 				pass
@@ -131,6 +131,7 @@ class Boot:
 
 			cmd[0] = locate_binary(cmd[0])
 
+		print(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd])
 		return SysCommand(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
 
 	def SysCommandWorker(self, cmd: list, *args, **kwargs) -> SysCommandWorker:
