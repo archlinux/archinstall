@@ -322,6 +322,7 @@ class SysCommandWorker:
 			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
+					print(f'Reading from fd {self.child_fd}')
 					output = os.read(self.child_fd, 8192)
 					got_output = True
 					self.peak(output)
@@ -352,6 +353,7 @@ class SysCommandWorker:
 		#   only way to get the traceback without loosing it.
 
 		self.pid, self.child_fd = pty.fork()
+		print(f'Spawned {self.pid} fork to fd {self.child_fd}')
 		os.chdir(old_dir)
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
@@ -372,7 +374,7 @@ class SysCommandWorker:
 				self.exit_code = 1
 				return False
 
-		print(f"--Executing {sys.stdout.fileno()}: {self.cmd}")
+		print(f"--Executing from {os.getpid()} to {self.child_fd} cmd -> {self.cmd}")
 		self.started = time.time()
 		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
