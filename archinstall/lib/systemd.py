@@ -131,7 +131,6 @@ class Boot:
 
 			cmd[0] = locate_binary(cmd[0])
 
-		print(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd])
 		return SysCommand(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
 
 	def SysCommandWorker(self, cmd: list, *args, **kwargs) -> SysCommandWorker:
