@@ -51,8 +51,6 @@ from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
-dev_null = open(os.devnull, 'w')
-
 def gen_uid(entropy_length :int = 256) -> str:
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
@@ -352,8 +350,6 @@ class SysCommandWorker:
 		#   and until os.close(), the traceback will get locked inside
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
-
-		sys.stdout = dev_null
 
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
