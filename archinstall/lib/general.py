@@ -355,7 +355,6 @@ class SysCommandWorker:
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
-		print(f"--Executing {sys.stdout.fileno()}: {self.cmd}")
 
 		if not self.pid:
 			try:
@@ -374,6 +373,7 @@ class SysCommandWorker:
 				self.exit_code = 1
 				return False
 
+		print(f"--Executing {sys.stdout.fileno()}: {self.cmd}")
 		self.started = time.time()
 		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
