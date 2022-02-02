@@ -355,7 +355,7 @@ class SysCommandWorker:
 		os.chdir(old_dir)
 
 		sys.stdout.write(f"--Executing: {self.cmd}")
-		print(f"--Executing: {self.cmd}")
+		print(f"--PrintCuting: {self.cmd}")
 
 		if not self.pid:
 			try:
