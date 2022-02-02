@@ -41,6 +41,7 @@ def package_search(package :str) -> PackageSearch:
 	It makes a simple web-request, which might be a bit slow.
 	"""
 	# TODO UPSTREAM: Implement bulk search, either support name=X&name=Y or split on space (%20 or ' ')
+	# TODO: utilize pacman cache first, upstream second.
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
@@ -51,8 +52,8 @@ def package_search(package :str) -> PackageSearch:
 
 	data = response.read().decode('UTF-8')
 
-	print(json.loads(data))
 	return PackageSearch(**json.loads(data))
+	
 class IsGroup(BaseException):
 	pass
 
