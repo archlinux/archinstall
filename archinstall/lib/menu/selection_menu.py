@@ -171,7 +171,7 @@ class GeneralMenu():
 		"""
 		Create a new selection menu.
 
-		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is archinstall.arguments (not preset in the call, due to circular references
+		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is self._data_store (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
 		"""
