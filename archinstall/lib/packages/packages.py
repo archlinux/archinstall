@@ -106,4 +106,5 @@ def installed_package(package :str) -> LocalPackage:
 	except SysCallError:
 		pass
 	
+	print(package_info)
 	return LocalPackage(**package_info)
