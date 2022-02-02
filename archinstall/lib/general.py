@@ -51,6 +51,8 @@ from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
+dev_null = open(os.devnull, 'w')
+
 def gen_uid(entropy_length :int = 256) -> str:
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
@@ -351,32 +353,31 @@ class SysCommandWorker:
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
 
-		with open('debug.txt', 'a') as logfile_tmp:
-			self.pid, self.child_fd = pty.fork()
-			logfile_tmp.write(f'Spawned {self.pid} fork to fd {self.child_fd}\n')
-			os.chdir(old_dir)
+		sys.stdout = dev_null
 
-			# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
-			if not self.pid:
+		self.pid, self.child_fd = pty.fork()
+		os.chdir(old_dir)
+
+		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
+		if not self.pid:
+			try:
 				try:
-					try:
-						with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
-							cmd_log.write(f"{' '.join(self.cmd)}\n")
-					except PermissionError:
-						pass
+					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+						cmd_log.write(f"{' '.join(self.cmd)}\n")
+				except PermissionError:
+					pass
 
-					os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
-					if storage['arguments'].get('debug'):
-						log(f"Executing: {self.cmd}", level=logging.DEBUG)
+				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
+				if storage['arguments'].get('debug'):
+					log(f"Executing: {self.cmd}", level=logging.DEBUG)
 
-				except FileNotFoundError:
-					log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
-					self.exit_code = 1
-					return False
+			except FileNotFoundError:
+				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
+				self.exit_code = 1
+				return False
 
-			logfile_tmp.write(f"--Executing from {os.getpid()} to {self.child_fd} cmd {self.cmd}\n")
-			self.started = time.time()
-			self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
+		self.started = time.time()
+		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
 		return True
 
