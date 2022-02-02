@@ -25,7 +25,6 @@ from .lib.packages.packages import (
 	package_search,
 	IsGroup,
 	find_package,
-	download_package,
 	find_packages,
 	installed_package,
 	validate_package_list
