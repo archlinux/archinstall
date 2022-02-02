@@ -22,7 +22,6 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-
 	# qtile requires a functioning Xorg installation.
 	profile = archinstall.Profile(None, 'xorg')
 	with profile.load_instructions(namespace='xorg.py') as imported:
