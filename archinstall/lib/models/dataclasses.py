@@ -2,6 +2,55 @@ from dataclasses import dataclass
 from typing import Optional, List, Any
 
 @dataclass
+class VersionDef:
+	version_string: str
+
+	@classmethod
+	def parse_version(self) -> List[str]:
+		if '.' in self.version_string:
+			versions = self.version_string.split('.')
+		else:
+			versions = [self.version_string]
+
+		return versions
+
+	@classmethod
+	def major(self) -> str:
+		return self.parse_version()[0]
+
+	@classmethod
+	def minor(self) -> str:
+		versions = self.parse_version()
+		if len(versions) >= 2:
+			return versions[1]
+
+	@classmethod
+	def patch(self) -> str:
+		versions = self.parse_version()
+		if '-' in versions[-1]:
+			_, patch_version = versions[-1].split('-', 1)
+			return patch_version
+
+	def __eq__(self, other :'VersionDef') -> bool:
+		if other.major == self.major and \
+			other.minor == self.minor and \
+			other.patch == self.patch:
+
+			return True
+		return False
+		
+	def __lt__(self, other :'VersionDef') -> bool:
+		if self.major > other.major:
+			return False
+		elif self.minor and other.minor and self.minor > other.minor:
+			return False
+		elif self.patch and other.patch and self.patch > other.patch:
+			return False
+
+	def __str__(self) -> str:
+		return self.version_string
+
+@dataclass
 class PackageSearchResult:
 	pkgname: str
 	pkgbase: str
@@ -39,9 +88,6 @@ class PackageSearchResult:
 
 	def __lt__(self, other :'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version
-
-	def __get__(self, key :str) -> Any:
-		print('----------------- KEEEE:', key)
 
 @dataclass
 class PackageSearch:
