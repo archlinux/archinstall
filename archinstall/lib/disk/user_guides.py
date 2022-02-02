@@ -51,7 +51,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"size" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
 			"format" : "fat32"
@@ -70,8 +70,8 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"type" : "primary",
 		"start" : "206MiB",
 		"encrypted" : False,
-		"format" : True,
-		"mountpoint" : "/",
+		"wipe" : True,
+		"mountpoint" : "/" if not using_subvolumes else None,
 		"filesystem" : {
 			"format" : default_filesystem
 		}
@@ -121,7 +121,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			"start" : f"{min(block_device.size, 20)}GiB",
 			"size" : "100%",
 			"encrypted" : False,
-			"format" : True,
+			"wipe" : True,
 			"mountpoint" : "/home",
 			"filesystem" : {
 				"format" : default_filesystem
@@ -173,7 +173,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"size" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
 			"format" : "fat32"
@@ -190,7 +190,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"start" : "206MiB",
 		"size" : "100%",
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/",
 		"filesystem" : {
 			"format" : default_filesystem
@@ -205,7 +205,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"start" : "1MiB",
 		"size" : "100%",
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/home",
 		"filesystem" : {
 			"format" : default_filesystem

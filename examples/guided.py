@@ -220,11 +220,11 @@ def perform_installation(mountpoint):
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+			if archinstall.arguments['swap']:
+				installation.setup_swap('zram')
 			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
-			if archinstall.arguments['swap']:
-				installation.setup_swap('zram')
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -306,9 +306,14 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
-if not archinstall.check_mirror_reachable():
+if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	exit(1)
+
+if not (archinstall.update_keyring() or archinstall.arguments.get('skip-keyring-update', False)):
+	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
+	archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
 load_config()

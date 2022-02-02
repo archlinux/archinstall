@@ -26,7 +26,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 
 parser = ArgumentParser()
 
-__version__ = "2.3.1.dev0"
+__version__ = "2.4.0-dev0"
 storage['__version__'] = __version__
 
 
@@ -163,10 +163,19 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		if 'disk_layouts' not in storage:
-			storage['disk_layouts'] = {}
-		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],storage['disk_layouts']):
+		# if 'disk_layouts' not in storage:
+		# 	storage['disk_layouts'] = {}
+		layout_storage = {}
+		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
+		else:
+			# backward compatibility. Change partition.format for partition.wipe
+			for disk in layout_storage:
+				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):
+					if 'format' in partition:
+						partition['wipe'] = partition['format']
+						del partition['format']
+			arguments['disk_layouts'] = layout_storage
 
 
 define_arguments()
