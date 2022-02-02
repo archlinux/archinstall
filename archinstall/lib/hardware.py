@@ -6,6 +6,7 @@ from typing import Iterator, Optional, Union
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .exceptions import SysCallError
+from .output import log
 
 __packages__ = [
 	"mesa",
