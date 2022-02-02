@@ -1,5 +1,10 @@
 from typing import Optional, List
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
+
+"""
+This python file is not in use.
+Pydantic is not a builtin, and we use the dataclasses.py instead!
+"""
 
 class VersionDef(BaseModel):
 	version_string: str

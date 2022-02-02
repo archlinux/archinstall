@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List, Any
+from typing import Optional, List
 
 @dataclass
 class VersionDef:
