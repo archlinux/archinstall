@@ -8,7 +8,7 @@ from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
 if TYPE_CHECKING:
 	from .partition import Partition
 	
-from ..exceptions import DiskError
+from ..exceptions import DiskError, SysCallError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
@@ -189,10 +189,13 @@ class BlockDevice:
 		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
 		# so the free will ignore the ESP partition and just give the "free" space.
 		# Doesn't harm us, but worth noting in case something weird happens.
-		for line in SysCommand(f"parted -s --machine {self.path} print free"):
-			if 'free' in (free_space := line.decode('UTF-8')):
-				_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
-				yield (start, end, size)
+		try:
+			for line in SysCommand(f"parted -s --machine {self.path} print free"):
+				if 'free' in (free_space := line.decode('UTF-8')):
+					_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
+					yield (start, end, size)
+		except SysCallError as error:
+			log(f"Could not get free space on {self.path}: {error}", level=logging.INFO)
 
 	@property
 	def largest_free_space(self) -> List[str]:
@@ -241,7 +244,7 @@ class BlockDevice:
 		count = 0
 		while count < 5:
 			for partition_uuid, partition in self.partitions.items():
-				if partition.uuid == uuid:
+				if partition.uuid.lower() == uuid.lower():
 					return partition
 			else:
 				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)

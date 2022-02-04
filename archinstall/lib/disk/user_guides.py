@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
+
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
@@ -8,6 +9,7 @@ if TYPE_CHECKING:
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..hardware import has_uefi
 from ..output import log
+from ..menu import Menu
 
 def suggest_single_disk_layout(block_device :BlockDevice,
 	default_filesystem :Optional[str] = None,
@@ -22,7 +24,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	using_home_partition = False
 
 	if default_filesystem == 'btrfs':
-		using_subvolumes = input('Would you like to use BTRFS subvolumes with a default structure? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+		prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		using_subvolumes = choice == 'yes'
 
 	layout = {
 		block_device.path : {
@@ -46,7 +50,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"size" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
 			"format" : "fat32"
@@ -65,8 +69,8 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"type" : "primary",
 		"start" : "206MiB",
 		"encrypted" : False,
-		"format" : True,
-		"mountpoint" : "/",
+		"wipe" : True,
+		"mountpoint" : "/" if not using_subvolumes else None,
 		"filesystem" : {
 			"format" : default_filesystem
 		}
@@ -76,7 +80,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
 
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
-		using_home_partition = input('Would you like to create a separate partition for /home? (Y/n): ').strip().lower() in ('', 'y', 'yes')
+		prompt = 'Would you like to create a separate partition for /home?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		using_home_partition = choice == 'yes'
 
 	# Set a size for / (/root)
 	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:
@@ -114,7 +120,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			"start" : f"{min(block_device.size, 20)}GiB",
 			"size" : "100%",
 			"encrypted" : False,
-			"format" : True,
+			"wipe" : True,
 			"mountpoint" : "/home",
 			"filesystem" : {
 				"format" : default_filesystem
@@ -166,7 +172,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"size" : "203MiB",
 		"boot" : True,
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/boot",
 		"filesystem" : {
 			"format" : "fat32"
@@ -183,7 +189,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"start" : "206MiB",
 		"size" : "100%",
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/",
 		"filesystem" : {
 			"format" : default_filesystem
@@ -198,7 +204,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"start" : "1MiB",
 		"size" : "100%",
 		"encrypted" : False,
-		"format" : True,
+		"wipe" : True,
 		"mountpoint" : "/home",
 		"filesystem" : {
 			"format" : default_filesystem

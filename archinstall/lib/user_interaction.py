@@ -29,7 +29,9 @@ from .mirrors import list_mirrors
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
 from .translation import Translation
-from .. import fs_types, validate_package_list
+from .disk.validators import fs_types
+from .packages.packages import validate_package_list
+>>>>>>> 68c2988358426e8d0074479cef539ddadc2a31e6
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
@@ -273,7 +275,7 @@ def ask_for_swap():
 	return False if choice == 'no' else True
 
 
-def ask_ntp():
+def ask_ntp() -> bool:
 	prompt = _('Would you like to use automatic time synchronization (NTP) with the default time servers?')
 	prompt += _('Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki')
 	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
@@ -689,7 +691,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
 						if mountpoint == '/boot':
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
-							block_device_struct["partitions"][block_device_struct["partitions"].index(partition)]['boot'] = True
+							block_device_struct["partitions"][partition]['boot'] = True
 					else:
 						del(block_device_struct["partitions"][partition]['mountpoint'])
 
@@ -710,7 +712,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 					# Negate the current wipe marking
-					block_device_struct["partitions"][partition]['format'] = not block_device_struct["partitions"][partition].get('format', False)
+					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
 			elif task == "Mark/Unmark a partition as encrypted":
 				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
@@ -890,7 +892,7 @@ def select_harddrives() -> Optional[str]:
 	return []
 
 
-def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
+def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bool = False) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -912,7 +914,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 		if has_nvidia_graphics():
 			title += _('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
 
-		if not arguments.get('gfx_driver', None):
+		if not arguments.get('gfx_driver', None) or force_ask:
 			title += _('\n\nSelect a graphics driver or leave blank to install all open-source drivers')
 			arguments['gfx_driver'] = Menu(title, drivers).run()
 

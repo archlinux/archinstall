@@ -5,28 +5,6 @@ import pathlib
 
 import archinstall
 
-def load_mirror():
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-
-def load_localization():
-	if archinstall.arguments.get('sys-language', None) is not None:
-		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	if archinstall.arguments.get('sys-encoding', None) is not None:
-		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-
-def load_harddrives():
-	if archinstall.arguments.get('harddrives', None) is not None:
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
-		# Temporarily disabling keep_partitions if config file is loaded
-
-
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
@@ -42,8 +20,8 @@ def ask_harddrives():
 		if input("Do you wish to continue ? [Y/n]").strip().lower() == 'n':
 			exit(1)
 	else:
-		if archinstall.storage.get('disk_layouts', None) is None:
-			archinstall.storage['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
+		if archinstall.arguments.get('disk_layouts', None) is None:
+			archinstall.arguments['disk_layouts'] = archinstall.select_disk_layout(archinstall.arguments['harddrives'], archinstall.arguments.get('advanced', False))
 
 		# Get disk encryption password (or skip if blank)
 		if archinstall.arguments.get('!encryption-password', None) is None:
@@ -53,8 +31,8 @@ def ask_harddrives():
 		if archinstall.arguments.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.storage['disk_layouts']))) == 0:
-				archinstall.storage['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.storage['disk_layouts'], archinstall.arguments['!encryption-password'])
+			if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
+				archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
 	if not archinstall.arguments.get("bootloader", None):
@@ -62,35 +40,6 @@ def ask_harddrives():
 
 	if not archinstall.arguments.get('swap', None):
 		archinstall.arguments['swap'] = archinstall.ask_for_swap()
-
-def load_profiles():
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-
-def load_desktop_profiles():
-	# Temporary workaround to make Desktop Environments work
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
-
-def load_gfxdriver():
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-
-def load_servers():
-	if archinstall.arguments.get('servers', None) is not None:
-		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-
-
-def load_config():
-	load_harddrives()
-	load_profiles()
-	load_desktop_profiles()
-	load_mirror()
-	load_localization()
-	load_gfxdriver()
-	load_servers()
 
 def ask_user_questions():
 	"""
@@ -121,8 +70,8 @@ def save_user_configurations():
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
 			disk_layout_file.write(user_disk_layout)
 
@@ -135,14 +84,14 @@ def write_config_files():
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
 	archinstall.log(user_configuration, level=logging.INFO)
 
-	if archinstall.storage.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.storage['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
+	if archinstall.arguments.get('disk_layouts'):
+		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
 		archinstall.log(user_disk_layout, level=logging.INFO)
 
 	print()
 
 	save_user_configurations()
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 
@@ -164,7 +113,7 @@ def perform_disk_operations():
 			mode = archinstall.MBR
 
 		for drive in archinstall.arguments.get('harddrives', []):
-			if dl_disk := archinstall.storage.get('disk_layouts', {}).get(drive.path):
+			if dl_disk := archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(dl_disk)
 
@@ -177,8 +126,8 @@ def perform_installation(mountpoint):
 	with archinstall.Installer(mountpoint, kernels=None) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.storage.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.storage['disk_layouts'])
+		if archinstall.arguments.get('disk_layouts'):
+			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
@@ -218,8 +167,6 @@ if not archinstall.check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
-
-load_config()
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()

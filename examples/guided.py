@@ -22,34 +22,6 @@ archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().key
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
-def load_config():
-	if archinstall.arguments.get('harddrives', None) is not None:
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
-		# Temporarily disabling keep_partitions if config file is loaded
-		# Temporary workaround to make Desktop Environments work
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-	if archinstall.arguments.get('sys-language', None) is not None:
-		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	if archinstall.arguments.get('sys-encoding', None) is not None:
-		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-	if archinstall.arguments.get('servers', None) is not None:
-		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-
 
 def ask_user_questions():
 	"""
@@ -58,14 +30,15 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 
+	# ref: https://github.com/archlinux/archinstall/pull/831
+	# we'll set NTP to true by default since this is also
+	# the default value specified in the menu options; in
+	# case it will be changed by the user we'll also update
+	# the system immediately
+	archinstall.SysCommand('timedatectl set-ntp true')
+
 	global_menu = archinstall.GlobalMenu()
 	global_menu.enable('keyboard-layout')
-
-	if not archinstall.arguments.get('ntp', False):
-		archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
-		if archinstall.arguments['ntp']:
-			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
-			archinstall.SysCommand('timedatectl set-ntp true')
 
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
@@ -211,19 +184,21 @@ def perform_installation(mountpoint):
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
+		
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+		
 		if installation.minimal_installation():
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+			if archinstall.arguments['swap']:
+				installation.setup_swap('zram')
 			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
-			if archinstall.arguments['swap']:
-				installation.setup_swap('zram')
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
@@ -293,8 +268,9 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-			if choice.lower() in ("y", ""):
+			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
+			choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
+			if choice == 'yes':
 				try:
 					installation.drop_to_shell()
 				except:
@@ -304,12 +280,23 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
-if not archinstall.check_mirror_reachable():
+if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-load_config()
+if not archinstall.arguments.get('offline', False):
+	# If we want to check for keyring updates
+	# and the installed package version is lower than the upstream version
+	if archinstall.arguments.get('skip-keyring-update', False) is False and \
+		archinstall.installed_package('archlinux-keyring') < archinstall.find_package('archlinux-keyring'):
+
+		# Then we update the keyring in the ISO environment
+		if not archinstall.update_keyring():
+			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
+			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+			exit(1)
+
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 

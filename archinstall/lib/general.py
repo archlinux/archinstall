@@ -9,6 +9,7 @@ import subprocess
 import string
 import sys
 import time
+import re
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
@@ -80,6 +81,18 @@ def locate_binary(name :str) -> str:
 			break # Don't recurse
 
 	raise RequirementError(f"Binary {name} does not exist.")
+
+def clear_vt100_escape_codes(data :Union[bytes, str]):
+	# https://stackoverflow.com/a/43627833/929999
+	if type(data) == bytes:
+		vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
+	else:
+		vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
+
+	for match in re.findall(vt100_escape_regex, data, re.IGNORECASE):
+		data = data.replace(match, '' if type(data) == str else b'')
+
+	return data
 
 def json_dumps(*args :str, **kwargs :str) -> str:
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
@@ -168,7 +181,8 @@ class SysCommandWorker:
 		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
-		working_directory :Optional[str] = './'):
+		working_directory :Optional[str] = './',
+		remove_vt100_escape_codes_from_lines :bool = True):
 
 		if not callbacks:
 			callbacks = {}
@@ -189,7 +203,7 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
-		self.environment_vars = {'LC_ALL':'C' , **environment_vars}
+		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -200,6 +214,7 @@ class SysCommandWorker:
 		self.child_fd :Optional[int] = None
 		self.started :Optional[float] = None
 		self.ended :Optional[float] = None
+		self.remove_vt100_escape_codes_from_lines :bool = remove_vt100_escape_codes_from_lines
 
 	def __contains__(self, key: bytes) -> bool:
 		"""
@@ -216,6 +231,9 @@ class SysCommandWorker:
 	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
 			if line:
+				if self.remove_vt100_escape_codes_from_lines:
+					line = clear_vt100_escape_codes(line)
+
 				yield line + b'\n'
 
 		self._trace_log_pos = self._trace_log.rfind(b'\n')
@@ -244,10 +262,10 @@ class SysCommandWorker:
 			sys.stdout.flush()
 
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
+			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code: {self.exit_code}", self.exit_code)
+			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[:500]}", self.exit_code)
 
 	def is_alive(self) -> bool:
 		self.poll()
@@ -332,9 +350,11 @@ class SysCommandWorker:
 		#   and until os.close(), the traceback will get locked inside
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
+
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
+		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
 			try:
 				try:
@@ -368,7 +388,8 @@ class SysCommand:
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
-		working_directory :Optional[str] = './'):
+		working_directory :Optional[str] = './',
+		remove_vt100_escape_codes_from_lines :bool = True):
 
 		_callbacks = {}
 		if callbacks:
@@ -382,6 +403,7 @@ class SysCommand:
 		self.peak_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
+		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
 
 		self.session :Optional[SysCommandWorker] = None
 		self.create_session()
@@ -427,13 +449,20 @@ class SysCommand:
 		}
 
 	def create_session(self) -> bool:
+		"""
+		Initiates a :ref:`SysCommandWorker` session in this class ``.session``.
+		It then proceeds to poll the process until it ends, after which it also
+		clears any printed output if ``.peak_output=True``.
+		"""
 		if self.session:
-			return True
+			return self.session
 
-		self.session = SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars)
+		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars, remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines) as session:
+			if not self.session:
+				self.session = session
 
-		while self.session.ended is None:
-			self.session.poll()
+			while self.session.ended is None:
+				self.session.poll()
 
 		if self.peak_output:
 			sys.stdout.write('\n')

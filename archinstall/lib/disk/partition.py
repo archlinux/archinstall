@@ -46,11 +46,12 @@ class Partition:
 		except DiskError:
 			mount_information = {}
 
-		if self.mountpoint != mount_information.get('target', None) and mountpoint:
-			raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
+		if mount_information.get('target', None):
+			if self.mountpoint != mount_information.get('target', None) and mountpoint:
+				raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
 
-		if target := mount_information.get('target', None):
-			self.mountpoint = target
+			if target := mount_information.get('target', None):
+				self.mountpoint = target
 
 		if not self.filesystem and autodetect_filesystem:
 			if fstype := mount_information.get('fstype', get_filesystem_type(path)):
@@ -113,12 +114,21 @@ class Partition:
 
 	@property
 	def end(self) -> Optional[str]:
+		# TODO: actually this is size in sectors unit
 		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				return partition['size']  # * self.sector_size
+
+	@property
+	def end_sectors(self) -> Optional[str]:
+		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
+
+		for partition in output.get('partitiontable', {}).get('partitions', []):
+			if partition['node'] == self.path:
+				return partition['start'] + partition['size']
 
 	@property
 	def size(self) -> Optional[float]:
@@ -130,6 +140,9 @@ class Partition:
 
 				for device in lsblk['blockdevices']:
 					return convert_size_to_gb(device['size'])
+			elif handle.exit_code == 8192:
+				# Device is not a block device
+				return None
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
@@ -225,7 +238,7 @@ class Partition:
 		return bind_name
 
 	def partprobe(self) -> bool:
-		if SysCommand(f'bash -c "partprobe"').exit_code == 0:
+		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
 			time.sleep(1)
 			return True
 		return False
