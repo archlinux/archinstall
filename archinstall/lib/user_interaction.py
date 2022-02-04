@@ -31,7 +31,6 @@ from .mirrors import list_mirrors
 from .translation import Translation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
->>>>>>> 68c2988358426e8d0074479cef539ddadc2a31e6
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
