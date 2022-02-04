@@ -27,6 +27,7 @@ from ..user_interaction import select_kernel
 from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
+from ..user_interaction import select_archinstall_language
 from ..translation import Translation
 
 class Selector:
@@ -332,7 +333,7 @@ class GlobalMenu:
 		return missing
 
 	def _select_archinstall_language(self, default_lang):
-		language = archinstall.select_archinstall_language(default_lang)
+		language = select_archinstall_language(default_lang)
 		self._translation.activate(language)
 		return language
 
