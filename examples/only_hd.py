@@ -3,7 +3,6 @@ import os
 import pathlib
 
 import archinstall
-from archinstall.examples.commons import output_configs
 
 def load_mirror():
 	if archinstall.arguments.get('mirror-region', None) is not None:
@@ -177,7 +176,7 @@ load_config()
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
-output_configs(show=False if archinstall.arguments.get('silent') else True)
+archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)

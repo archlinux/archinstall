@@ -3,7 +3,6 @@ import os
 import time
 
 import archinstall
-from archinstall.examples.commons import output_configs
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -273,7 +272,7 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-output_configs(show=False if archinstall.arguments.get('silent') else True)
+archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
