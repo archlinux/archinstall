@@ -18,7 +18,10 @@ from ..storage import storage
 GPT = 0b00000001
 MBR = 0b00000010
 
-DEFAULT_PARTITION_START = '1MiB' # TODO: Revisit sane block starts (4MB for memorycards for instance)
+# A sane default is 5MiB, that allows for plenty of buffer for GRUB on MBR
+# but also 4MiB for memory cards for instance. And another 1MiB to avoid issues.
+# (we've been pestered by disk issues since the start, so please let this be here for a few versions)
+DEFAULT_PARTITION_START = '5MiB'
 
 class Filesystem:
 	# TODO:
