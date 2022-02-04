@@ -14,7 +14,21 @@ from .lib.luks import *
 from .lib.mirrors import *
 from .lib.networking import *
 from .lib.output import *
-from .lib.packages import *
+from .lib.models.dataclasses import (
+	VersionDef,
+	PackageSearchResult,
+	PackageSearch,
+	LocalPackage
+)
+from .lib.packages.packages import (
+	find_group,
+	package_search,
+	IsGroup,
+	find_package,
+	find_packages,
+	installed_package,
+	validate_package_list
+)
 from .lib.profiles import *
 from .lib.services import *
 from .lib.storage import *
@@ -26,7 +40,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 
 parser = ArgumentParser()
 
-__version__ = "2.3.1.dev0"
+__version__ = "2.4.0-dev0"
 storage['__version__'] = __version__
 
 
@@ -44,12 +58,12 @@ def define_arguments():
 					help="JSON disk layout file")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
-	parser.add_argument("--dry-run","--dry_run",action="store_true",
+	parser.add_argument("--dry-run", "--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	parser.add_argument("--mount-point","--mount_point",nargs="?",type=str,help="Define an alternate mount point for installation")
-	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
-	parser.add_argument("--plugin",nargs="?",type=str)
+	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
+	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
@@ -188,7 +202,7 @@ def post_process_arguments(arguments):
 	if arguments.get('mount_point'):
 		storage['MOUNT_POINT'] = arguments['mount_point']
 
-	if arguments.get('debug',False):
+	if arguments.get('debug', False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
 	if arguments.get('plugin', None):

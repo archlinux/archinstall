@@ -1,8 +1,32 @@
 import sys
 
-import archinstall
-from archinstall import Menu
-
+from .menu import Menu
+from ..general import SysCommand
+from ..storage import storage
+from ..output import log
+from ..profiles import is_desktop_profile
+from ..disk import encrypted_partitions
+from ..locale_helpers import set_keyboard_language
+from ..user_interaction import get_password
+from ..user_interaction import ask_ntp
+from ..user_interaction import ask_for_swap
+from ..user_interaction import ask_for_bootloader
+from ..user_interaction import ask_hostname
+from ..user_interaction import ask_for_audio_selection
+from ..user_interaction import ask_additional_packages_to_install
+from ..user_interaction import ask_to_configure_network
+from ..user_interaction import ask_for_a_timezone
+from ..user_interaction import ask_for_superuser_account
+from ..user_interaction import ask_for_additional_users
+from ..user_interaction import select_language
+from ..user_interaction import select_mirror_regions
+from ..user_interaction import select_locale_lang
+from ..user_interaction import select_locale_enc
+from ..user_interaction import select_disk_layout
+from ..user_interaction import select_kernel
+from ..user_interaction import select_encrypted_partitions
+from ..user_interaction import select_harddrives
+from ..user_interaction import select_profile
 
 class Selector:
 	def __init__(
@@ -109,17 +133,17 @@ class GlobalMenu:
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['keyboard-layout'] = \
-			Selector('Select keyboard layout', lambda: archinstall.select_language('us'), default='us')
+			Selector('Select keyboard layout', lambda: select_language('us'), default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
 				'Select mirror region',
-				lambda: archinstall.select_mirror_regions(),
+				lambda: select_mirror_regions(),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector('Select locale language', lambda: archinstall.select_locale_lang('en_US'), default='en_US')
+			Selector('Select locale language', lambda: select_locale_lang('en_US'), default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector('Select locale encoding', lambda: archinstall.select_locale_enc('utf-8'), default='utf-8')
+			Selector('Select locale encoding', lambda: select_locale_enc('utf-8'), default='utf-8')
 		self._menu_options['harddrives'] = \
 			Selector(
 				'Select harddrives',
@@ -127,28 +151,28 @@ class GlobalMenu:
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				'Select disk layout',
-				lambda: archinstall.select_disk_layout(
-					archinstall.arguments['harddrives'],
-					archinstall.arguments.get('advanced', False)
+				lambda: select_disk_layout(
+					storage['arguments'].get('harddrives', []),
+					storage['arguments'].get('advanced', False)
 				),
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				'Set encryption password',
-				lambda: archinstall.get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
+				lambda: get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
 				display_func=lambda x: self._secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
 				'Use swap',
-				lambda: archinstall.ask_for_swap(),
+				lambda: ask_for_swap(),
 				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
 				'Select bootloader',
-				lambda: archinstall.ask_for_bootloader(archinstall.arguments.get('advanced', False)),)
+				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
 		self._menu_options['hostname'] = \
-			Selector('Specify hostname', lambda: archinstall.ask_hostname())
+			Selector('Specify hostname', lambda: ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
 				'Set root password',
@@ -174,29 +198,29 @@ class GlobalMenu:
 		self._menu_options['audio'] = \
 			Selector(
 				'Select audio',
-				lambda: archinstall.ask_for_audio_selection(archinstall.is_desktop_profile(archinstall.arguments.get('profile', None))))
+				lambda: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None))))
 		self._menu_options['kernels'] = \
 			Selector(
 				'Select kernels',
-				lambda: archinstall.select_kernel(),
+				lambda: select_kernel(),
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
 				'Additional packages to install',
-				lambda: archinstall.ask_additional_packages_to_install(archinstall.arguments.get('packages', None)),
+				lambda: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
 				'Configure network',
-				lambda: archinstall.ask_to_configure_network(),
+				lambda: ask_to_configure_network(),
 				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
 				default={})
 		self._menu_options['timezone'] = \
-			Selector('Select timezone', lambda: archinstall.ask_for_a_timezone())
+			Selector('Select timezone', lambda: ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				'Set automatic time sync (NTP)',
-				lambda: archinstall.ask_ntp(),
+				lambda: self._select_ntp(),
 				default=True)
 		self._menu_options['install'] = \
 			Selector(
@@ -205,7 +229,7 @@ class GlobalMenu:
 		self._menu_options['abort'] = Selector('Abort', enabled=True)
 
 	def enable(self, selector_name, omit_if_set=False):
-		arg = archinstall.arguments.get(selector_name, None)
+		arg = storage['arguments'].get(selector_name, None)
 
 		# don't display the menu option if it was defined already
 		if arg is not None and omit_if_set:
@@ -239,8 +263,8 @@ class GlobalMenu:
 					self._process_selection(selection)
 		for key in self._menu_options:
 			sel = self._menu_options[key]
-			if key not in archinstall.arguments:
-				archinstall.arguments[key] = sel._current_selection
+			if key not in storage['arguments']:
+				storage['arguments'][key] = sel._current_selection
 		self._post_processing()
 
 	def _process_selection(self, selection):
@@ -254,7 +278,7 @@ class GlobalMenu:
 		selector = option[0][1]
 		result = selector.func()
 		self._menu_options[selector_name].set_current_selection(result)
-		archinstall.arguments[selector_name] = result
+		storage['arguments'][selector_name] = result
 
 		self._update_install()
 
@@ -263,12 +287,12 @@ class GlobalMenu:
 		self._menu_options.get('install').update_description(text)
 
 	def _post_processing(self):
-		if archinstall.arguments.get('harddrives', None) and archinstall.arguments.get('!encryption-password', None):
+		if storage['arguments'].get('harddrives', None) and storage['arguments'].get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(archinstall.encrypted_partitions(archinstall.arguments['disk_layouts']))) == 0:
-				archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
-					archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
+			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
+				storage['arguments']['disk_layouts'] = select_encrypted_partitions(
+					storage['arguments']['disk_layouts'], storage['arguments']['!encryption-password'])
 
 	def _install_text(self):
 		missing = self._missing_configs()
@@ -301,27 +325,37 @@ class GlobalMenu:
 
 	def _set_root_password(self):
 		prompt = 'Enter root password (leave blank to disable root & create superuser): '
-		password = archinstall.get_password(prompt=prompt)
+		password = get_password(prompt=prompt)
 
+		# TODO: Do we really wanna wipe the !superusers and !users if root password is set?
+		# What if they set a superuser first, but then decides to set a root password?
 		if password is not None:
 			self._menu_options.get('!superusers').set_current_selection(None)
-			archinstall.arguments['!users'] = {}
-			archinstall.arguments['!superusers'] = {}
+			storage['arguments']['!users'] = {}
+			storage['arguments']['!superusers'] = {}
 
 		return password
 
+	def _select_ntp(self) -> bool:
+		ntp = ask_ntp()
+
+		value = str(ntp).lower()
+		SysCommand(f'timedatectl set-ntp {value}')
+
+		return ntp
+
 	def _select_harddrives(self):
-		old_haddrives = archinstall.arguments.get('harddrives')
-		harddrives = archinstall.select_harddrives()
+		old_haddrives = storage['arguments'].get('harddrives', [])
+		harddrives = select_harddrives()
 
 		# in case the harddrives got changed we have to reset the disk layout as well
 		if old_haddrives != harddrives:
 			self._menu_options.get('disk_layouts').set_current_selection(None)
-			archinstall.arguments['disk_layouts'] = {}
+			storage['arguments']['disk_layouts'] = {}
 
 		if not harddrives:
 			prompt = 'You decided to skip harddrive selection\n'
-			prompt += f"and will use whatever drive-setup is mounted at {archinstall.storage['MOUNT_POINT']} (experimental)\n"
+			prompt += f"and will use whatever drive-setup is mounted at {storage['MOUNT_POINT']} (experimental)\n"
 			prompt += "WARNING: Archinstall won't check the suitability of this setup\n"
 
 			prompt += 'Do you wish to continue?'
@@ -336,36 +370,33 @@ class GlobalMenu:
 		return '*' * len(x)
 
 	def _select_profile(self):
-		profile = archinstall.select_profile()
+		profile = select_profile()
 
 		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 		if profile and profile.has_prep_function():
 			namespace = f'{profile.namespace}.py'
 			with profile.load_instructions(namespace=namespace) as imported:
 				if not imported._prep_function():
-					archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
+					log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
 					exit(1)
 
 		return profile
 
 	def _create_superuser_account(self):
-		superuser = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+		superuser = ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
 		return superuser
 
 	def _create_user_account(self):
-		users, superusers = archinstall.ask_for_additional_users('Enter a username to create an additional user: ')
-		if not archinstall.arguments.get('!superusers', None):
-			archinstall.arguments['!superusers'] = superusers
-		else:
-			archinstall.arguments['!superusers'] = {**archinstall.arguments['!superusers'], **superusers}
+		users, superusers = ask_for_additional_users('Enter a username to create an additional user: ')
+		storage['arguments']['!superusers'] = {**storage['arguments'].get('!superusers', {}), **superusers}
 
 		return users
 
 	def _set_kb_language(self):
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
 		# This will just help the user with the next following questions.
-		if archinstall.arguments.get('keyboard-layout', None) and len(archinstall.arguments['keyboard-layout']):
-			archinstall.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+		if len(storage['arguments'].get('keyboard-layout', [])):
+			set_keyboard_language(storage['arguments']['keyboard-layout'])
 
 	def _verify_selection_enabled(self, selection_name):
 		if selection := self._menu_options.get(selection_name, None):
