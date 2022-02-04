@@ -36,6 +36,7 @@ from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.selection_menu import GlobalMenu
+from .lib.translation import Translation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
 parser = ArgumentParser()
@@ -165,6 +166,38 @@ def get_arguments():
 		del config['dry-run']
 	return config
 
+def load_config():
+	"""
+	refine and set some arguments. Formerly at the scripts
+	"""
+	if arguments.get('harddrives', None) is not None:
+		if type(arguments['harddrives']) is str:
+			arguments['harddrives'] = arguments['harddrives'].split(',')
+		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
+		# Temporarily disabling keep_partitions if config file is loaded
+		# Temporary workaround to make Desktop Environments work
+	if arguments.get('profile', None) is not None:
+		if type(arguments.get('profile', None)) is dict:
+			arguments['profile'] = Profile(None, arguments.get('profile', None)['path'])
+		else:
+			arguments['profile'] = Profile(None, arguments.get('profile', None))
+	storage['_desktop_profile'] = arguments.get('desktop-environment', None)
+	if arguments.get('mirror-region', None) is not None:
+		if type(arguments.get('mirror-region', None)) is dict:
+			arguments['mirror-region'] = arguments.get('mirror-region', None)
+		else:
+			selected_region = arguments.get('mirror-region', None)
+			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
+	if arguments.get('sys-language', None) is not None:
+		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
+	if arguments.get('sys-encoding', None) is not None:
+		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+	if arguments.get('gfx_driver', None) is not None:
+		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
+	if arguments.get('servers', None) is not None:
+		storage['_selected_servers'] = arguments.get('servers', None)
+
+
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
 	if arguments.get('mount_point'):
@@ -190,6 +223,8 @@ def post_process_arguments(arguments):
 						partition['wipe'] = partition['format']
 						del partition['format']
 			arguments['disk_layouts'] = layout_storage
+
+	load_config()
 
 
 define_arguments()
