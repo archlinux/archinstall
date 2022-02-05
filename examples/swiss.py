@@ -13,7 +13,6 @@ When using the argument --advanced. an aditional menu for several special parame
 This script respects the --dry_run argument
 
 """
-import json
 import logging
 import os
 import time
