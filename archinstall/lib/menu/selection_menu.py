@@ -175,6 +175,7 @@ class GeneralMenu():
 		:type  data_store:  Dict
 
 		"""
+		self._translation = Translation.load_nationalization()
 		self._data_store = data_store if data_store is not None else {}
 		self.is_context_mgr = False
 	def set_mandatory(self, status :bool = True):
