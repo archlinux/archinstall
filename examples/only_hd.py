@@ -43,6 +43,9 @@ def ask_user_questions():
 		will we continue with the actual installation steps.
 	"""
 	with OnlyHDMenu(data_store=archinstall.arguments) as menu:
+		# We select the execution language separated
+		menu.exec_option('archinstall-language')
+		menu.option('archinstall-language').set_enabled(False)
 		menu.run()
 
 def save_user_configurations():

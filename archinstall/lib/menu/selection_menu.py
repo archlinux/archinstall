@@ -171,6 +171,7 @@ class GeneralMenu():
 		:type  data_store:  Dict
 
 		"""
+		self._translation = Translation.load_nationalization()
 		self._data_store = data_store if data_store is not None else {}
 		self.is_context_mgr = False
 		self._menu_options = OrderedDict()
@@ -386,6 +387,12 @@ class GeneralMenu():
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
+	def _select_archinstall_language(self, default_lang):
+		language = select_archinstall_language(default_lang)
+		self._translation.activate(language)
+		return language
+
+
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
 		super().__init__(data_store=data_store)
@@ -537,11 +544,6 @@ class GlobalMenu(GeneralMenu):
 				missing += 1
 
 		return missing
-
-	def _select_archinstall_language(self, default_lang):
-		language = select_archinstall_language(default_lang)
-		self._translation.activate(language)
-		return language
 
 	def _set_root_password(self):
 		prompt = 'Enter root password (leave blank to disable root & create superuser): '

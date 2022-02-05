@@ -154,6 +154,12 @@ class SetupMenu(archinstall.GeneralMenu):
 		super().__init__(data_store=storage_area)
 
 	def _setup_selection_menu_options(self):
+		self.set_option('archinstall-language',
+			archinstall.Selector(
+				_('Select Archinstall language'),
+				lambda: self._select_archinstall_language('English'),
+				default='English',
+				enabled=True))
 		self.set_option('ntp',
 		archinstall.Selector(
 			'Activate NTP',
@@ -231,6 +237,8 @@ class MyMenu(archinstall.GlobalMenu):
 			exit(1)
 		if self._execution_mode != 'lineal':
 			options_list.extend(['install','abort'])
+			if not archinstall.arguments.get('advanced'):
+				options_list.append('archinstall-language')
 
 		for entry in self._menu_options:
 			if entry in options_list:
@@ -284,34 +292,6 @@ def get_current_status():
 	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 	archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
-def load_config():
-	if archinstall.arguments.get('harddrives', None) is not None:
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
-		# Temporarily disabling keep_partitions if config file is loaded
-		# Temporary workaround to make Desktop Environments work
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-	if archinstall.arguments.get('sys-language', None) is not None:
-		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	if archinstall.arguments.get('sys-encoding', None) is not None:
-		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-	if archinstall.arguments.get('servers', None) is not None:
-		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-
 def ask_user_questions(mode):
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -322,7 +302,6 @@ def ask_user_questions(mode):
 		# 3.9 syntax. former x = {**y,**z} or x.update(y)
 		set_cmd_locale(charset='es_ES.utf8',collate='es_ES.utf8')
 		setup_area = archinstall.storage.get('CMD_LOCALE',{}) | {}
-		archinstall.log(setup_area)
 		with SetupMenu(setup_area) as setup:
 			if mode == 'lineal':
 				for entry in setup.list_enabled_options():
@@ -333,11 +312,12 @@ def ask_user_questions(mode):
 					setup.exec_option(entry)
 			else:
 				setup.run()
+		archinstall.arguments['archinstall-language'] = setup_area.get('archinstall-language')
 	else:
 		archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 		archinstall.SysCommand('timedatectl set-ntp true')
 
-	with MyMenu(mode) as global_menu:
+	with MyMenu(data_store=archinstall.arguments,mode=mode) as global_menu:
 
 		if mode == 'lineal':
 			for entry in global_menu.list_enabled_options():
@@ -557,7 +537,6 @@ if not archinstall.check_mirror_reachable():
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-load_config()
 mode = archinstall.arguments.get('mode', 'full').lower()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
