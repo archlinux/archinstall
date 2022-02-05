@@ -36,8 +36,9 @@ from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.selection_menu import *
+from .lib.translation import Translation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
-
+from .lib.configuration import *
 parser = ArgumentParser()
 
 __version__ = "2.4.0-dev0"
@@ -58,12 +59,12 @@ def define_arguments():
 					help="JSON disk layout file")
 	parser.add_argument("--silent", action="store_true",
 						help="WARNING: Disables all prompts for input and confirmation. If no configuration is provided, this is ignored")
-	parser.add_argument("--dry-run","--dry_run",action="store_true",
+	parser.add_argument("--dry-run", "--dry_run", action="store_true",
 						help="Generates a configuration file and then exits instead of performing an installation")
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
-	parser.add_argument("--mount-point","--mount_point",nargs="?",type=str,help="Define an alternate mount point for installation")
-	parser.add_argument("--debug",action="store_true",help="Adds debug info into the log")
-	parser.add_argument("--plugin",nargs="?",type=str)
+	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
+	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
@@ -165,12 +166,44 @@ def get_arguments():
 		del config['dry-run']
 	return config
 
+def load_config():
+	"""
+	refine and set some arguments. Formerly at the scripts
+	"""
+	if arguments.get('harddrives', None) is not None:
+		if type(arguments['harddrives']) is str:
+			arguments['harddrives'] = arguments['harddrives'].split(',')
+		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
+		# Temporarily disabling keep_partitions if config file is loaded
+		# Temporary workaround to make Desktop Environments work
+	if arguments.get('profile', None) is not None:
+		if type(arguments.get('profile', None)) is dict:
+			arguments['profile'] = Profile(None, arguments.get('profile', None)['path'])
+		else:
+			arguments['profile'] = Profile(None, arguments.get('profile', None))
+	storage['_desktop_profile'] = arguments.get('desktop-environment', None)
+	if arguments.get('mirror-region', None) is not None:
+		if type(arguments.get('mirror-region', None)) is dict:
+			arguments['mirror-region'] = arguments.get('mirror-region', None)
+		else:
+			selected_region = arguments.get('mirror-region', None)
+			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
+	if arguments.get('sys-language', None) is not None:
+		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
+	if arguments.get('sys-encoding', None) is not None:
+		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+	if arguments.get('gfx_driver', None) is not None:
+		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
+	if arguments.get('servers', None) is not None:
+		storage['_selected_servers'] = arguments.get('servers', None)
+
+
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
 	if arguments.get('mount_point'):
 		storage['MOUNT_POINT'] = arguments['mount_point']
 
-	if arguments.get('debug',False):
+	if arguments.get('debug', False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
 	if arguments.get('plugin', None):
@@ -190,6 +223,8 @@ def post_process_arguments(arguments):
 						partition['wipe'] = partition['format']
 						del partition['format']
 			arguments['disk_layouts'] = layout_storage
+
+	load_config()
 
 
 define_arguments()

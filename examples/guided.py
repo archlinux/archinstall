@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import time
@@ -21,34 +20,6 @@ archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().key
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
-def load_config():
-	if archinstall.arguments.get('harddrives', None) is not None:
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
-		# Temporarily disabling keep_partitions if config file is loaded
-		# Temporary workaround to make Desktop Environments work
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-	if archinstall.arguments.get('sys-language', None) is not None:
-		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	if archinstall.arguments.get('sys-encoding', None) is not None:
-		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-	if archinstall.arguments.get('servers', None) is not None:
-		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
 
 
 def ask_user_questions():
@@ -119,52 +90,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def save_user_configurations():
-	user_credentials = {}
-	if archinstall.arguments.get('!users'):
-		user_credentials["!users"] = archinstall.arguments['!users']
-	if archinstall.arguments.get('!superusers'):
-		user_credentials["!superusers"] = archinstall.arguments['!superusers']
-	if archinstall.arguments.get('!encryption-password'):
-		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
-
-	user_configuration = json.dumps({
-		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
-		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
-		'version': archinstall.__version__
-	} , indent=4, sort_keys=True, cls=archinstall.JSON)
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
-
 def perform_filesystem_operations():
-	print()
-	print('This is your chosen configuration:')
-	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-
-	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_configuration, level=logging.INFO)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		archinstall.log(user_disk_layout, level=logging.INFO)
-
-	print()
-
-	if archinstall.arguments.get('dry_run'):
-		exit(0)
-
-	if not archinstall.arguments.get('silent'):
-		input('Press Enter to continue.')
-
 	"""
 		Issue a final warning before we continue with something un-revertable.
 		We mention the drive one last time, and count from 5 to 0.
@@ -212,9 +138,11 @@ def perform_installation(mountpoint):
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
+		
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+		
 		if installation.minimal_installation():
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
@@ -323,10 +251,16 @@ if not archinstall.arguments.get('offline', False):
 			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 			exit(1)
 
-load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-save_user_configurations()
+archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+
+if archinstall.arguments.get('dry_run'):
+	exit(0)
+
+if not archinstall.arguments.get('silent'):
+	input('Press Enter to continue.')
+
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

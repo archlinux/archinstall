@@ -1,5 +1,4 @@
 import sys
-from collections import OrderedDict
 import logging
 
 from typing import Callable, Any, List, Iterator
@@ -31,6 +30,8 @@ from ..user_interaction import select_kernel
 from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
+from ..user_interaction import select_archinstall_language
+from ..translation import Translation
 
 class Selector:
 	def __init__(
@@ -159,9 +160,8 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
-class GeneralMenu():
-	def __init__(self,
-			data_store :dict = None):
+class GlobalMenu:
+	def __init__(self, data_store :dict = None):
 		"""
 		Create a new selection menu.
 
@@ -169,9 +169,10 @@ class GeneralMenu():
 		:type  data_store:  Dict
 
 		"""
-		self._data_store = data_store if data_store is not None else {}
 		self.is_context_mgr = False
-		self._menu_options = OrderedDict()
+		self._data_store = data_store if data_store is not None else {}
+		self._translation = Translation.load_nationalization()
+		self._menu_options = {}
 		self._setup_selection_menu_options()
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> 'GeneralMenu':
@@ -389,25 +390,31 @@ class GlobalMenu(GeneralMenu):
 		super().__init__(data_store=data_store)
 
 	def _setup_selection_menu_options(self):
+		self._menu_options['archinstall-language'] = \
+			Selector(
+				_('Select Archinstall language'),
+				lambda: self._select_archinstall_language('English'),
+				default='English',
+				enabled=True)
 		self._menu_options['keyboard-layout'] = \
-			Selector('Select keyboard layout', lambda: select_language('us'), default='us')
+			Selector(_('Select keyboard layout'), lambda: select_language('us'), default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
-				'Select mirror region',
+				_('Select mirror region'),
 				lambda: select_mirror_regions(),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector('Select locale language', lambda: select_locale_lang('en_US'), default='en_US')
+			Selector(_('Select locale language'), lambda: select_locale_lang('en_US'), default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector('Select locale encoding', lambda: select_locale_enc('utf-8'), default='utf-8')
+			Selector(_('Select locale encoding'), lambda: select_locale_enc('utf-8'), default='utf-8')
 		self._menu_options['harddrives'] = \
 			Selector(
-				'Select harddrives',
+				_('Select harddrives'),
 				lambda: self._select_harddrives())
 		self._menu_options['disk_layouts'] = \
 			Selector(
-				'Select disk layout',
+				_('Select disk layout'),
 				lambda: select_disk_layout(
 					storage['arguments'].get('harddrives', []),
 					storage['arguments'].get('advanced', False)
@@ -415,60 +422,60 @@ class GlobalMenu(GeneralMenu):
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
-				'Set encryption password',
+				_('Set encryption password'),
 				lambda: get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
-				'Use swap',
+				_('Use swap'),
 				lambda: ask_for_swap(),
 				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
-				'Select bootloader',
+				_('Select bootloader'),
 				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
 		self._menu_options['hostname'] = \
 			Selector('Specify hostname', lambda: ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
-				'Set root password',
+				_('Set root password'),
 				lambda: self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
-				'Specify superuser account',
+				_('Specify superuser account'),
 				lambda: self._create_superuser_account(),
 				dependencies_not=['!root-password'],
 				display_func=lambda x: list(x.keys()) if x else '')
 		self._menu_options['!users'] = \
 			Selector(
-				'Specify user account',
+				_('Specify user account'),
 				lambda: self._create_user_account(),
 				default={},
 				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
-				'Specify profile',
+				_('Specify profile'),
 				lambda: self._select_profile(),
 				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
-				'Select audio',
+				_('Select audio'),
 				lambda: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None))))
 		self._menu_options['kernels'] = \
 			Selector(
-				'Select kernels',
+				_('Select kernels'),
 				lambda: select_kernel(),
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
-				'Additional packages to install',
+				_('Additional packages to install'),
 				lambda: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
-				'Configure network',
+				_('Configure network'),
 				lambda: ask_to_configure_network(),
 				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
 				default={})
@@ -476,7 +483,7 @@ class GlobalMenu(GeneralMenu):
 			Selector('Select timezone', lambda: ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
-				'Set automatic time sync (NTP)',
+				_('Set automatic time sync (NTP)'),
 				lambda: self._select_ntp(),
 				default=True)
 		self._menu_options['install'] = \
@@ -529,6 +536,11 @@ class GlobalMenu(GeneralMenu):
 				missing += 1
 
 		return missing
+
+	def _select_archinstall_language(self, default_lang):
+		language = select_archinstall_language(default_lang)
+		self._translation.activate(language)
+		return language
 
 	def _set_root_password(self):
 		prompt = 'Enter root password (leave blank to disable root & create superuser): '
