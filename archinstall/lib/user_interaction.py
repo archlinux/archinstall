@@ -332,7 +332,7 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 	return users, superusers
 
 
-def ask_timezone() -> str:
+def ask_for_a_timezone() -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
