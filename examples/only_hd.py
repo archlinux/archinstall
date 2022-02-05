@@ -36,57 +36,6 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 				missing += 1
 		return missing
 
-
-def load_mirror():
-	if archinstall.arguments.get('mirror-region', None) is not None:
-		if type(archinstall.arguments.get('mirror-region', None)) is dict:
-			archinstall.arguments['mirror-region'] = archinstall.arguments.get('mirror-region', None)
-		else:
-			selected_region = archinstall.arguments.get('mirror-region', None)
-			archinstall.arguments['mirror-region'] = {selected_region: archinstall.list_mirrors()[selected_region]}
-
-def load_localization():
-	if archinstall.arguments.get('sys-language', None) is not None:
-		archinstall.arguments['sys-language'] = archinstall.arguments.get('sys-language', 'en_US')
-	if archinstall.arguments.get('sys-encoding', None) is not None:
-		archinstall.arguments['sys-encoding'] = archinstall.arguments.get('sys-encoding', 'utf-8')
-
-def load_harddrives():
-	if archinstall.arguments.get('harddrives', None) is not None:
-		if type(archinstall.arguments['harddrives']) is str:
-			archinstall.arguments['harddrives'] = archinstall.arguments['harddrives'].split(',')
-		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
-		# Temporarily disabling keep_partitions if config file is loaded
-
-def load_profiles():
-	if archinstall.arguments.get('profile', None) is not None:
-		if type(archinstall.arguments.get('profile', None)) is dict:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None)['path'])
-		else:
-			archinstall.arguments['profile'] = archinstall.Profile(None, archinstall.arguments.get('profile', None))
-
-def load_desktop_profiles():
-	# Temporary workaround to make Desktop Environments work
-	archinstall.storage['_desktop_profile'] = archinstall.arguments.get('desktop-environment', None)
-
-def load_gfxdriver():
-	if archinstall.arguments.get('gfx_driver', None) is not None:
-		archinstall.storage['gfx_driver_packages'] = archinstall.AVAILABLE_GFX_DRIVERS.get(archinstall.arguments.get('gfx_driver', None), None)
-
-def load_servers():
-	if archinstall.arguments.get('servers', None) is not None:
-		archinstall.storage['_selected_servers'] = archinstall.arguments.get('servers', None)
-
-
-def load_config():
-	load_harddrives()
-	load_profiles()
-	load_desktop_profiles()
-	load_mirror()
-	load_localization()
-	load_gfxdriver()
-	load_servers()
-
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -213,8 +162,6 @@ if not archinstall.check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
-
-load_config()
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()

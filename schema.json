@@ -121,7 +121,8 @@
                 "server",
                 "sway",
                 "xfce4",
-                "xorg"
+                "xorg",
+                "qtile"
             ]
         },
         "services": {
