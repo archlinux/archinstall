@@ -492,46 +492,6 @@ def perform_installation(mountpoint, mode):
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
-def output_configs():
-	user_credentials = {}
-	disk_layout = {}
-	user_config = {}
-	for key in archinstall.arguments:
-		if key in ['!users','!superusers','!encryption-password']:
-			user_credentials[key] = archinstall.arguments[key]
-		elif key == 'disk_layouts':
-			disk_layout = archinstall.arguments[key]
-		elif key in ['abort','install','config','creds','dry_run']:
-			pass
-		else:
-			user_config[key] = archinstall.arguments[key]
-
-	user_configuration = json.dumps({
-		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
-		**user_config, # __version__ will be overwritten by old version definition found in config
-		'version': archinstall.__version__
-	} , indent=4, sort_keys=True, cls=archinstall.JSON)
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(disk_layout, indent=4, sort_keys=True, cls=archinstall.JSON)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
-
-	print()
-	print('This is your chosen configuration:')
-	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-	archinstall.log(user_configuration, level=logging.INFO)
-
-	if archinstall.arguments.get('disk_layouts'):
-		archinstall.log(user_disk_layout, level=logging.INFO)
-
-
 if not archinstall.check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
@@ -541,7 +501,7 @@ mode = archinstall.arguments.get('mode', 'full').lower()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
 
-output_configs()
+archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 if not archinstall.arguments.get('silent'):
