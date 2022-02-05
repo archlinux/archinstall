@@ -15,7 +15,7 @@ from ..user_interaction import ask_hostname
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_to_configure_network
-from ..user_interaction import ask_for_a_timezone
+from ..user_interaction import ask_timezone
 from ..user_interaction import ask_for_superuser_account
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import select_language
@@ -29,6 +29,7 @@ from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_archinstall_language
 from ..translation import Translation
+
 
 class Selector:
 	def __init__(
@@ -225,7 +226,7 @@ class GlobalMenu:
 				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
 				default={})
 		self._menu_options['timezone'] = \
-			Selector('Select timezone', lambda: ask_for_a_timezone())
+			Selector('Select timezone', lambda: ask_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
@@ -306,7 +307,7 @@ class GlobalMenu:
 	def _install_text(self):
 		missing = self._missing_configs()
 		if missing > 0:
-			return f'Install ({missing} config(s) missing)'
+			return _('Install ({} config(s) missing)').format(missing)
 		return 'Install'
 
 	def _missing_configs(self):
@@ -368,11 +369,12 @@ class GlobalMenu:
 			storage['arguments']['disk_layouts'] = {}
 
 		if not harddrives:
-			prompt = 'You decided to skip harddrive selection\n'
-			prompt += f"and will use whatever drive-setup is mounted at {storage['MOUNT_POINT']} (experimental)\n"
-			prompt += "WARNING: Archinstall won't check the suitability of this setup\n"
+			prompt = _(
+				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
+				"WARNING: Archinstall won't check the suitability of this setup\n"
+				"Do you wish to continue?"
+			).format(archinstall.storage['MOUNT_POINT'])
 
-			prompt += 'Do you wish to continue?'
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 			if choice == 'no':

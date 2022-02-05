@@ -36,13 +36,17 @@ from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.selection_menu import GlobalMenu
-from .lib.translation import Translation
+from .lib.translation import Translation, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 
 parser = ArgumentParser()
 
 __version__ = "2.4.0-dev0"
 storage['__version__'] = __version__
+
+# add the custome _ as a builtin, it can now be used anywhere in the
+# project to mark strings as translatable with _('translate me')
+DeferredTranslation.install()
 
 
 def define_arguments():

@@ -83,7 +83,7 @@ class Filesystem:
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-				print("Adding partition....")
+				print(_("Adding partition...."))
 				start = partition.get('start') or (
 					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
@@ -94,7 +94,7 @@ class Filesystem:
 				# print('Device instance:', partition['device_instance'])
 
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
-				print("Re-using partition_instance:", partition_instance)
+				print(_("Re-using partition_instance:", partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
@@ -136,7 +136,7 @@ class Filesystem:
 									while True:
 										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
 										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-											print("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's.")
+											print(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
 											continue
 										break
 

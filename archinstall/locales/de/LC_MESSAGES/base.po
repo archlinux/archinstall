@@ -1,3 +1,121 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/installer.py:144
+msgid "[!] A log file has been created here: {} {}"
+msgstr ""
+
+#: lib/installer.py:145
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr ""
+
+#: lib/user_interaction.py:82
+msgid "Do you really want to abort?"
+msgstr "Wollen Sie wirklich abbrechen?"
+
+#: lib/user_interaction.py:100
+msgid "And one more time for verification: "
+msgstr "Und nocheinmal zur Besätigung: "
+
+#: lib/user_interaction.py:271
+msgid "Would you like to use swap on zram?"
+msgstr "Möchten Sie swap mit zram verwenden?"
+
+#: lib/user_interaction.py:277
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?"
+msgstr "Möchten Sie automatische Zeitsynchronisierung mit dem default Server einschalten?"
+
+#: lib/user_interaction.py:278
+msgid "Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki"
+msgstr "Hardware Zeit und andere Einstellungsschritte könnten notwendig sein um NTP zu benutzen. Für weitere Informationen wenden sie sich bitte an das Arch wiki"
+
+#: lib/user_interaction.py:284
+msgid "Desired hostname for the installation: "
+msgstr "Gewnüschter Hostname für die Installation: "
+
+#: lib/user_interaction.py:289
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Benutzername für den erforderlichen superuser mit sudo Rechten: "
+
+#: lib/user_interaction.py:303 lib/user_interaction.py:320
+msgid "Password for user \"{}\""
+msgstr "Passwort für Benutzer \"{}\""
+
+#: lib/user_interaction.py:309
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Geben Sie weitere Benutzernamen ein die installiert werden sollen (leer lassen für keine weiteren Benutzer): "
+
+#: lib/user_interaction.py:323
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Soll dieser Benutzer ein superuser sein (sudoer)?"
+
+#: lib/user_interaction.py:339
+msgid "Select a timezone"
+msgstr "Bitte wählen Sie eine Zeitzone aus"
+
+#: lib/user_interaction.py:353
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Möchten Sie GRUB als bootloader anstelle von system-boot verwenden?"
+
+#: lib/user_interaction.py:363
+msgid "Choose a bootloader"
+msgstr "Bitte wählen Sie einen bootloader aus"
+
+#: lib/user_interaction.py:379
+msgid "Choose an audio server"
+msgstr "Bitte wählen Sie einen Audio server aus"
+
+#: lib/user_interaction.py:390
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Nur die Packete base, base-devel, linux, linux-firmware, efibootmgr und optionale Profilpackete werden installiert"
+
+#: lib/user_interaction.py:391
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Wenn Sie einen Webbrowser, z.B. Firefox oder Chromium, installieren möchten, können Sie diese nun eingeben."
+
+#: lib/user_interaction.py:395
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Schreiben Sie zusätzliche Packete die installiert werden sollen mit einem Leerzeichen getrennt (zum Überspringen leer lassen): "
+
+#: lib/user_interaction.py:418
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO netzwerk Einstellungen in die Installation kopieren"
+
+#: lib/user_interaction.py:419
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager benutzen (notwendig um Internet auf graphische Weise in GNOME und KDE einzustellen)"
+
+#: lib/user_interaction.py:427
+msgid "Select one network interface to configure"
+msgstr "Bitte wählen Sie ein netzwerk zur Konfiguration aus"
+
+#: lib/user_interaction.py:440
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Bitte wählen Sie einen Modus zur Konfiguration von \"{}\" aus oder Überspringen um mit dem voreingestellten Modus \"{}\" fortzufahren"
+
+#: lib/user_interaction.py:445
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Bitte geben Sie eine IP Adresse und ein Subnet für {} ein (z.B. 192.168.0.5/24)"
+
+#: lib/user_interaction.py:460
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Bitte geben Sie eine gateway (router) IP Adresse ein (leer lassen für kein Adresse): "
+
+#: lib/user_interaction.py:475
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Bitte geben Sie die DNS server ein (mit Leerzeichen getrennt oder leer lassen für keinen server): "
+
+#: lib/user_interaction.py:509
+msgid "Select which filesystem your main partition should use"
+msgstr "Bitte wählen Sie ein Filesystem aus, welches für die Hauptpartition verwendet werden soll"
+
+#: lib/user_interaction.py:555
+msgid "Current partition layout"
+msgstr "Momentanes Partitionslayout"
+=======
 #: lib/user_interaction.py:82
 msgid "Do you really want to abort?"
 msgstr ""
@@ -113,11 +231,26 @@ msgstr ""
 #: lib/user_interaction.py:555
 msgid "Current partition layout"
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:606
 msgid ""
 "Select what to do with\n"
 "{}"
+<<<<<<< HEAD
+msgstr "Bitte wählen Sie eine Aktion aus für\n{}"
+
+#: lib/user_interaction.py:623 lib/user_interaction.py:708
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Bitte wählen Sie einen filesystem Typ für die Partition aus"
+
+#: lib/user_interaction.py:625
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "Bitte geben Sie den start Sektor ein (in Prozent oder Blocknummer, default: {}): "
+
+#: lib/user_interaction.py:634
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+=======
 msgstr ""
 
 #: lib/user_interaction.py:623 lib/user_interaction.py:708
@@ -132,24 +265,44 @@ msgstr ""
 msgid ""
 "Enter the end sector of the partition (percentage or block number, ex: {}): "
 "\""
+>>>>>>> origin/master
 msgstr ""
 
 #: lib/user_interaction.py:660
 msgid "{} contains queued partitions, this will remove those, are you sure?"
+<<<<<<< HEAD
+msgstr "{} enthält Partitionen in der Warteschlange, dies werden damit entfernt, sind sie sicher?"
+=======
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:673
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partitions to delete"
+<<<<<<< HEAD
+msgstr "{}\n\nWählen sie anhand vom index welche Partitionen gelöscht werden sollen"
+=======
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:681
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partition to mount where"
+<<<<<<< HEAD
+msgstr "{}\n\nWählen sie anhand vom index welche Partitionen zu mounten"
+
+#: lib/user_interaction.py:685
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Die Mountorte sind relativ zur Installation, zum Beispiel boot würde gemountet auf /boot"
+
+#: lib/user_interaction.py:686
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Bitte geben sie an wo die Partition gemounted werden soll (leer lassen um den Mountort zu entfernen): "
+=======
 msgstr ""
 
 #: lib/user_interaction.py:685
@@ -161,33 +314,58 @@ msgstr ""
 #: lib/user_interaction.py:686
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:697
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mask for formatting"
+<<<<<<< HEAD
+msgstr "{}\n\nBitte wählen sie welche Partition formatiert werden soll"
+=======
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:716
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as encrypted"
+<<<<<<< HEAD
+msgstr "{}\n\nBitte wählen sie welche Partition verschlüsselt werden soll"
+=======
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:724
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as bootable"
+<<<<<<< HEAD
+msgstr "{}\n\nBitte wählen sie welche Partition bootbar ist"
+=======
 msgstr ""
+>>>>>>> origin/master
 
 #: lib/user_interaction.py:731
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set a filesystem on"
+<<<<<<< HEAD
+msgstr "{}\n\nBitte wählen sie auf welche Partition ein Filesystem eingerichtet werden soll"
+
+#: lib/user_interaction.py:738
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Bitte geben sie einen gewünschten Filesystemtyp für die Partition ein: "
+
+#: lib/user_interaction.py:759 lib/menu/selection_menu.py:114
+msgid "Select Archinstall language"
+msgstr ""
+
+=======
 msgstr ""
 
 #: lib/user_interaction.py:738
@@ -198,13 +376,18 @@ msgstr ""
 msgid "Select Archinstall language"
 msgstr "Sprache fuer Archinstall"
 
+>>>>>>> origin/master
 #: lib/user_interaction.py:764
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr ""
 
 #: lib/user_interaction.py:765
+<<<<<<< HEAD
+msgid "Select what to do with each individual drive (followed by partition usage)"
+=======
 msgid ""
 "Select what to do with each individual drive (followed by partition usage)"
+>>>>>>> origin/master
 msgstr ""
 
 #: lib/user_interaction.py:768
@@ -212,6 +395,36 @@ msgid "Select what you wish to do with the selected block devices"
 msgstr ""
 
 #: lib/user_interaction.py:821
+<<<<<<< HEAD
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr ""
+
+#: lib/user_interaction.py:845
+msgid "Select Keyboard layout"
+msgstr ""
+
+#: lib/user_interaction.py:860
+msgid "Select one of the regions to download packages from"
+msgstr ""
+
+#: lib/user_interaction.py:882
+msgid "Select one or more hard drives to use and configure"
+msgstr ""
+
+#: lib/user_interaction.py:909
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr ""
+
+#: lib/user_interaction.py:911
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr ""
+
+#: lib/user_interaction.py:913
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr ""
+
+#: lib/user_interaction.py:916
+=======
 msgid ""
 "This is a list of pre-programmed profiles, they might make it easier to "
 "install things like desktop environments"
@@ -248,12 +461,142 @@ msgid ""
 msgstr ""
 
 #: lib/user_interaction.py:917
+>>>>>>> origin/master
 msgid ""
 "\n"
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:920
+msgid "All open-source (default)"
+msgstr ""
+
+#: lib/user_interaction.py:939
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr ""
+
+#: lib/user_interaction.py:953
+msgid "Choose which locale language to use"
+msgstr ""
+
+#: lib/user_interaction.py:967
+msgid "Choose which locale encoding to use"
+msgstr ""
+
+#: lib/user_interaction.py:1008
+msgid "Select one of the values shown below: "
+msgstr ""
+
+#: lib/user_interaction.py:1049
+msgid "Select one or more of the options below: "
+msgstr ""
+
+#: lib/disk/filesystem.py:80
+msgid "Adding partition...."
+msgstr ""
+
+#: lib/disk/filesystem.py:89
+msgid "Re-using partition_instance:"
+msgstr ""
+
+#: lib/disk/filesystem.py:131
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr ""
+
+#: lib/profiles.py:89
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr ""
+
+#: lib/profiles.py:92
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr ""
+
+#: lib/menu/selection_menu.py:119
+msgid "Select keyboard layout"
+msgstr ""
+
+#: lib/menu/selection_menu.py:122
+msgid "Select mirror region"
+msgstr ""
+
+#: lib/menu/selection_menu.py:127
+msgid "Select locale language"
+msgstr ""
+
+#: lib/menu/selection_menu.py:129
+msgid "Select locale encoding"
+msgstr ""
+
+#: lib/menu/selection_menu.py:132
+msgid "Select harddrives"
+msgstr ""
+
+#: lib/menu/selection_menu.py:136
+msgid "Select disk layout"
+msgstr ""
+
+#: lib/menu/selection_menu.py:144
+msgid "Set encryption password"
+msgstr ""
+
+#: lib/menu/selection_menu.py:150
+msgid "Use swap"
+msgstr ""
+
+#: lib/menu/selection_menu.py:155
+msgid "Select bootloader"
+msgstr ""
+
+#: lib/menu/selection_menu.py:161
+msgid "Set root password"
+msgstr ""
+
+#: lib/menu/selection_menu.py:166
+msgid "Specify superuser account"
+msgstr ""
+
+#: lib/menu/selection_menu.py:172
+msgid "Specify user account"
+msgstr ""
+
+#: lib/menu/selection_menu.py:178
+msgid "Specify profile"
+msgstr ""
+
+#: lib/menu/selection_menu.py:183
+msgid "Select audio"
+msgstr ""
+
+#: lib/menu/selection_menu.py:187
+msgid "Select kernels"
+msgstr ""
+
+#: lib/menu/selection_menu.py:192
+msgid "Additional packages to install"
+msgstr ""
+
+#: lib/menu/selection_menu.py:197
+msgid "Configure network"
+msgstr ""
+
+#: lib/menu/selection_menu.py:205
+msgid "Set automatic time sync (NTP)"
+msgstr ""
+
+#: lib/menu/selection_menu.py:283
+msgid "Install ({} config(s) missing)"
+msgstr ""
+
+#: lib/menu/selection_menu.py:336
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+=======
 #: lib/user_interaction.py:921
 msgid "All open-source (default)"
 msgstr ""
@@ -349,3 +692,4 @@ msgstr ""
 #: lib/menu/selection_menu.py:208
 msgid "Set automatic time sync (NTP)"
 msgstr ""
+>>>>>>> origin/master

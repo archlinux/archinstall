@@ -40,6 +40,9 @@ class DeferredTranslation:
 			return self.message
 		return translate(self.message)
 
+	def format(self, *args) -> str:
+		return self.message.format(*args)
+
 	@classmethod
 	def install(cls):
 		import builtins
@@ -48,8 +51,6 @@ class DeferredTranslation:
 
 class Translation:
 	def __init__(self, locales_dir):
-		DeferredTranslation.install()
-
 		self._languages = {}
 
 		for name in self.get_all_names():

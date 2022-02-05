@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/installer.py:144 lib/installer.py:144
+msgid "[!] A log file has been created here: {} {}"
+msgstr ""
+
+#: lib/installer.py:145 lib/installer.py:145
+msgid ""
+"    Please submit this issue (and file) to https://github.com/archlinux/"
+"archinstall/issues"
+msgstr ""
+
 #: lib/user_interaction.py:82 lib/user_interaction.py:82
 msgid "Do you really want to abort?"
 msgstr ""
@@ -133,7 +149,10 @@ msgstr ""
 #: lib/user_interaction.py:634 lib/user_interaction.py:634
 msgid ""
 "Enter the end sector of the partition (percentage or block number, ex: {}): "
+<<<<<<< HEAD
+=======
 "\""
+>>>>>>> origin/master
 msgstr ""
 
 #: lib/user_interaction.py:660 lib/user_interaction.py:660
@@ -196,8 +215,13 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:759 lib/menu/selection_menu.py:114
+#: lib/user_interaction.py:759 lib/menu/selection_menu.py:114
+=======
 #: lib/user_interaction.py:759 lib/menu/selection_menu.py:116
 #: lib/user_interaction.py:759 lib/menu/selection_menu.py:116
+>>>>>>> origin/master
 msgid "Select Archinstall language"
 msgstr ""
 
@@ -220,6 +244,21 @@ msgid ""
 "install things like desktop environments"
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:845 lib/user_interaction.py:845
+msgid "Select Keyboard layout"
+msgstr ""
+
+#: lib/user_interaction.py:860 lib/user_interaction.py:860
+msgid "Select one of the regions to download packages from"
+msgstr ""
+
+#: lib/user_interaction.py:882 lib/user_interaction.py:882
+msgid "Select one or more hard drives to use and configure"
+msgstr ""
+
+#: lib/user_interaction.py:909 lib/user_interaction.py:909
+=======
 #: lib/user_interaction.py:846 lib/user_interaction.py:846
 msgid "Select Keyboard layout"
 msgstr ""
@@ -233,30 +272,174 @@ msgid "Select one or more hard drives to use and configure"
 msgstr ""
 
 #: lib/user_interaction.py:910 lib/user_interaction.py:910
+>>>>>>> origin/master
 msgid ""
 "For the best compatibility with your AMD hardware, you may want to use "
 "either the all open-source or AMD / ATI options."
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:911 lib/user_interaction.py:911
+=======
 #: lib/user_interaction.py:912 lib/user_interaction.py:912
+>>>>>>> origin/master
 msgid ""
 "For the best compatibility with your Intel hardware, you may want to use "
 "either the all open-source or Intel options.\n"
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:913 lib/user_interaction.py:913
+=======
 #: lib/user_interaction.py:914 lib/user_interaction.py:914
+>>>>>>> origin/master
 msgid ""
 "For the best compatibility with your Nvidia hardware, you may want to use "
 "the Nvidia proprietary driver.\n"
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:916 lib/user_interaction.py:916
+=======
 #: lib/user_interaction.py:917 lib/user_interaction.py:917
+>>>>>>> origin/master
 msgid ""
 "\n"
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 
+<<<<<<< HEAD
+#: lib/user_interaction.py:920 lib/user_interaction.py:920
+msgid "All open-source (default)"
+msgstr ""
+
+#: lib/user_interaction.py:939 lib/user_interaction.py:939
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr ""
+
+#: lib/user_interaction.py:953 lib/user_interaction.py:953
+msgid "Choose which locale language to use"
+msgstr ""
+
+#: lib/user_interaction.py:967 lib/user_interaction.py:967
+msgid "Choose which locale encoding to use"
+msgstr ""
+
+#: lib/user_interaction.py:1008 lib/user_interaction.py:1008
+msgid "Select one of the values shown below: "
+msgstr ""
+
+#: lib/user_interaction.py:1049 lib/user_interaction.py:1049
+msgid "Select one or more of the options below: "
+msgstr ""
+
+#: lib/disk/filesystem.py:80 lib/disk/filesystem.py:80
+msgid "Adding partition...."
+msgstr ""
+
+#: lib/disk/filesystem.py:89 lib/disk/filesystem.py:89
+msgid "Re-using partition_instance:"
+msgstr ""
+
+#: lib/disk/filesystem.py:131 lib/disk/filesystem.py:131
+msgid ""
+"You need to enter a valid fs-type in order to continue. See `man parted` for "
+"valid fs-type's."
+msgstr ""
+
+#: lib/profiles.py:89 lib/profiles.py:89
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr ""
+
+#: lib/profiles.py:92 lib/profiles.py:92
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr ""
+
+#: lib/menu/selection_menu.py:119 lib/menu/selection_menu.py:119
+msgid "Select keyboard layout"
+msgstr ""
+
+#: lib/menu/selection_menu.py:122 lib/menu/selection_menu.py:122
+msgid "Select mirror region"
+msgstr ""
+
+#: lib/menu/selection_menu.py:127 lib/menu/selection_menu.py:127
+msgid "Select locale language"
+msgstr ""
+
+#: lib/menu/selection_menu.py:129 lib/menu/selection_menu.py:129
+msgid "Select locale encoding"
+msgstr ""
+
+#: lib/menu/selection_menu.py:132 lib/menu/selection_menu.py:132
+msgid "Select harddrives"
+msgstr ""
+
+#: lib/menu/selection_menu.py:136 lib/menu/selection_menu.py:136
+msgid "Select disk layout"
+msgstr ""
+
+#: lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:144
+msgid "Set encryption password"
+msgstr ""
+
+#: lib/menu/selection_menu.py:150 lib/menu/selection_menu.py:150
+msgid "Use swap"
+msgstr ""
+
+#: lib/menu/selection_menu.py:155 lib/menu/selection_menu.py:155
+msgid "Select bootloader"
+msgstr ""
+
+#: lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:161
+msgid "Set root password"
+msgstr ""
+
+#: lib/menu/selection_menu.py:166 lib/menu/selection_menu.py:166
+msgid "Specify superuser account"
+msgstr ""
+
+#: lib/menu/selection_menu.py:172 lib/menu/selection_menu.py:172
+msgid "Specify user account"
+msgstr ""
+
+#: lib/menu/selection_menu.py:178 lib/menu/selection_menu.py:178
+msgid "Specify profile"
+msgstr ""
+
+#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:183
+msgid "Select audio"
+msgstr ""
+
+#: lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:187
+msgid "Select kernels"
+msgstr ""
+
+#: lib/menu/selection_menu.py:192 lib/menu/selection_menu.py:192
+msgid "Additional packages to install"
+msgstr ""
+
+#: lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:197
+msgid "Configure network"
+msgstr ""
+
+#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:205
+msgid "Set automatic time sync (NTP)"
+msgstr ""
+
+#: lib/menu/selection_menu.py:283 lib/menu/selection_menu.py:283
+msgid "Install ({} config(s) missing)"
+msgstr ""
+
+#: lib/menu/selection_menu.py:336 lib/menu/selection_menu.py:336
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+=======
 #: lib/user_interaction.py:921 lib/user_interaction.py:921
 msgid "All open-source (default)"
 msgstr ""
@@ -352,3 +535,4 @@ msgstr ""
 #: lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:208
 msgid "Set automatic time sync (NTP)"
 msgstr ""
+>>>>>>> origin/master

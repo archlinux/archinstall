@@ -9,7 +9,7 @@ if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
 if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
+	print(_("Archinstall requires root privileges to run. See --help for more."))
 	exit(1)
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
@@ -119,7 +119,7 @@ def save_user_configurations():
 
 def perform_filesystem_operations():
 	print()
-	print('This is your chosen configuration:')
+	print(_('This is your chosen configuration:'))
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
 
 	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
@@ -135,7 +135,7 @@ def perform_filesystem_operations():
 		exit(0)
 
 	if not archinstall.arguments.get('silent'):
-		input('Press Enter to continue.')
+		input(_('Press Enter to continue.'))
 
 	"""
 		Issue a final warning before we continue with something un-revertable.
@@ -143,7 +143,7 @@ def perform_filesystem_operations():
 	"""
 
 	if archinstall.arguments.get('harddrives', None):
-		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
+		print(_(f" ! Formatting {archinstall.arguments['harddrives']} in "), end='')
 		archinstall.do_countdown()
 
 		"""

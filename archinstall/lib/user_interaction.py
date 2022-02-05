@@ -632,7 +632,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 			else:
 				end_suggested = '100%'
 
-			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): "').format(end_suggested)
+			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): ').format(end_suggested)
 			end = input(prompt).strip()
 
 			if not end.strip():
