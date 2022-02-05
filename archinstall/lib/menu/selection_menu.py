@@ -173,6 +173,7 @@ class GeneralMenu:
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
+		self._menu_options = {}
 		self._setup_selection_menu_options()
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
