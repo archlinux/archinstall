@@ -1,3 +1,4 @@
+from __future__ import annotations
 import sys
 from collections import OrderedDict
 import logging
@@ -161,7 +162,7 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
-class GeneralMenu():
+class GeneralMenu:
 	def __init__(self,
 			data_store :dict = None):
 		"""
@@ -177,7 +178,7 @@ class GeneralMenu():
 		self._menu_options = OrderedDict()
 		self._setup_selection_menu_options()
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> 'GeneralMenu':
+	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
 		self.is_context_mgr = True
 		return self
 
