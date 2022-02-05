@@ -1,6 +1,5 @@
 from __future__ import annotations
 import sys
-from collections import OrderedDict
 import logging
 
 from typing import Callable, Any, List, Iterator
@@ -163,8 +162,7 @@ class Selector:
 			self.set_enabled(True)
 
 class GeneralMenu:
-	def __init__(self,
-			data_store :dict = None):
+	def __init__(self, data_store :dict = None):
 		"""
 		Create a new selection menu.
 
@@ -173,9 +171,8 @@ class GeneralMenu:
 
 		"""
 		self._translation = Translation.load_nationalization()
-		self._data_store = data_store if data_store is not None else {}
 		self.is_context_mgr = False
-		self._menu_options = OrderedDict()
+		self._data_store = data_store if data_store is not None else {}
 		self._setup_selection_menu_options()
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
