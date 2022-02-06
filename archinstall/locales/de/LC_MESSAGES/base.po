@@ -31,18 +31,6 @@ msgstr "Und nocheinmal zur Besätigung: "
 msgid "Would you like to use swap on zram?"
 msgstr "Möchten Sie swap mit zram verwenden?"
 
-#: lib/user_interaction.py:278 lib/user_interaction.py:281
-#, fuzzy
-msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?"
-msgstr "Möchten sie automatische Zeitsynchronisierung mit dem default Server einschalten?\n"
-
-#: lib/user_interaction.py:279 lib/user_interaction.py:282
-#, fuzzy
-msgid "Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki"
-msgstr ""
-"Hardware Zeit und andere Einstellungsschritte könnten notwendig sein um NTP zu benutzen.\n"
-"Für weitere Informationen wenden sie sich bitte an das Arch wiki"
-
 #: lib/user_interaction.py:285 lib/user_interaction.py:288
 msgid "Desired hostname for the installation: "
 msgstr "Gewnüschter Hostname für die Installation: "
@@ -50,11 +38,6 @@ msgstr "Gewnüschter Hostname für die Installation: "
 #: lib/user_interaction.py:290 lib/user_interaction.py:293
 msgid "Username for required superuser with sudo privileges: "
 msgstr "Benutzername für den erforderlichen superuser mit sudo Rechten: "
-
-#: lib/user_interaction.py:304 lib/user_interaction.py:321 lib/user_interaction.py:307 lib/user_interaction.py:324
-#, fuzzy
-msgid "Password for user \"{}\""
-msgstr "Passwort für Benutzer \"{}\": "
 
 #: lib/user_interaction.py:310 lib/user_interaction.py:313
 msgid "Any additional users to install (leave blank for no users): "
@@ -490,19 +473,9 @@ msgstr "Verschlüsselungspasswort angeben für {}"
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Geben sie ein Verschlüsselungspasswort ein (leer lassen um zu Überspringen): "
 
-#: lib/menu/selection_menu.py:347
-#, fuzzy
-msgid "Enter root password (leave blank to disable root & create superuser): "
-msgstr "Geben sie ein Root passwort ein (leer lassen um Root zu deaktivieren): "
-
 #: lib/menu/selection_menu.py:407
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Geben sie einen super-user mit sudo Privilegien an: "
-
-#: lib/menu/selection_menu.py:411
-#, fuzzy
-msgid "Enter a username to create an additional user: "
-msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
 
 #: lib/menu/selection_menu.py:347
 msgid "Enter root password (leave blank to disable root): "

@@ -28,18 +28,6 @@ msgstr ""
 msgid "Would you like to use swap on zram?"
 msgstr ""
 
-#: lib/user_interaction.py:278 lib/user_interaction.py:281
-msgid ""
-"Would you like to use automatic time synchronization (NTP) with the default "
-"time servers?"
-msgstr ""
-
-#: lib/user_interaction.py:279 lib/user_interaction.py:282
-msgid ""
-"Hardware time and other post-configuration steps might be required in order "
-"for NTP to work. For more information, please check the Arch wiki"
-msgstr ""
-
 #: lib/user_interaction.py:285 lib/user_interaction.py:288
 #: lib/user_interaction.py:288
 msgid "Desired hostname for the installation: "
@@ -48,11 +36,6 @@ msgstr ""
 #: lib/user_interaction.py:290 lib/user_interaction.py:293
 #: lib/user_interaction.py:293
 msgid "Username for required superuser with sudo privileges: "
-msgstr ""
-
-#: lib/user_interaction.py:304 lib/user_interaction.py:321
-#: lib/user_interaction.py:307 lib/user_interaction.py:324
-msgid "Password for user \"{}\""
 msgstr ""
 
 #: lib/user_interaction.py:310 lib/user_interaction.py:313
@@ -601,16 +584,8 @@ msgstr ""
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr ""
 
-#: lib/menu/selection_menu.py:347
-msgid "Enter root password (leave blank to disable root & create superuser): "
-msgstr ""
-
 #: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:407
 msgid "Create a required super-user with sudo privileges: "
-msgstr ""
-
-#: lib/menu/selection_menu.py:411
-msgid "Enter a username to create an additional user: "
 msgstr ""
 
 #: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:347

@@ -28,7 +28,7 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .translation import Translation, DeferredTranslation
+from .translation import Translation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
 
