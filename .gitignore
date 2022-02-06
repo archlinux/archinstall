@@ -6,7 +6,6 @@ SAFETY_LOCK
 **/**build
 **/**dist
 **/**.egg*
-**/**.sh
 **/**.egg-info/
 **/**build/
 **/**src/
