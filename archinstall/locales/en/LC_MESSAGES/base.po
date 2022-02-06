@@ -271,10 +271,6 @@ msgstr ""
 msgid "Adding partition...."
 msgstr ""
 
-#: lib/disk/filesystem.py:97
-msgid "Re-using partition_instance:"
-msgstr ""
-
 #: lib/disk/filesystem.py:139
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
 msgstr ""
@@ -369,4 +365,8 @@ msgid ""
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
+msgstr ""
+
+#: lib/disk/filesystem.py:97
+msgid "Re-using partition instance: {}"
 msgstr ""

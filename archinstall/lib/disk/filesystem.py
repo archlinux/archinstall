@@ -94,7 +94,7 @@ class Filesystem:
 				# print('Device instance:', partition['device_instance'])
 
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
-				print(_("Re-using partition_instance:", partition_instance))
+				print(_("Re-using partition instance: {}").format(partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
 				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
