@@ -65,7 +65,7 @@ class Menu(TerminalMenu):
 		menu_title = f'\n{title}\n\n'
 
 		if skip:
-			menu_title += "Use ESC to skip\n\n"
+			menu_title += str(_("Use ESC to skip\n\n"))
 
 		if default_option:
 			# if a default value was specified we move that one

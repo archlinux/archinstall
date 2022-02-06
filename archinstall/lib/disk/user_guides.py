@@ -11,6 +11,7 @@ from ..hardware import has_uefi
 from ..output import log
 from ..menu import Menu
 
+
 def suggest_single_disk_layout(block_device :BlockDevice,
 	default_filesystem :Optional[str] = None,
 	advanced_options :bool = False) -> Dict[str, Any]:

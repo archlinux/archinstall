@@ -20,7 +20,8 @@ msgstr ""
 The `msgid` is the identifier of the string in the code as well as the default text to be displayed, meaning that if no
 translation is provided for a language then this is the text that is going to be shown. 
 
-To provide a translation for the language, simply write the translation in the `msgstr` part
+To perform translations for a language this file can be edited manually or the neat `poedit` can be used (https://poedit.net/).
+If editing the file manually, write the translation in the `msgstr` part
 
 ```
 #: lib/user_interaction.py:82
@@ -28,6 +29,5 @@ msgid "Do you really want to abort?"
 msgstr "Wollen sie wirklich abbrechen?"
 ```
 
-After that run the script once more `./locales_generator.sh` and it will auto-generate the `base.mo` file with the included translations.
+After the translations have been written, run the script once more `./locales_generator.sh` and it will auto-generate the `base.mo` file with the included translations.
 After that you're all ready to go and enjoy Archinstall in the new language :)
-

@@ -86,10 +86,10 @@ def list_profiles(
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
-			print(f'Error: Listing profiles on URL "{profiles_url}" resulted in:', err)
+			print(_('Error: Listing profiles on URL "{}" resulted in:').format(profiles_url), err)
 			return cache
 		except json.decoder.JSONDecodeError as err:
-			print(f'Error: Could not decode "{profiles_url}" result as JSON:', err)
+			print(_('Error: Could not decode "{}" result as JSON:').format(profiles_url), err)
 			return cache
 
 		for profile in profile_list:
