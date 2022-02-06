@@ -8,7 +8,7 @@ from ..output import log
 from ..profiles import is_desktop_profile
 from ..disk import encrypted_partitions
 from ..locale_helpers import set_keyboard_language
-from ..user_interaction import get_password
+from ..user_interaction import get_password, ask_for_a_timezone
 from ..user_interaction import ask_ntp
 from ..user_interaction import ask_for_swap
 from ..user_interaction import ask_for_bootloader
@@ -16,7 +16,6 @@ from ..user_interaction import ask_hostname
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_to_configure_network
-from ..user_interaction import ask_timezone
 from ..user_interaction import ask_for_superuser_account
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import select_language
@@ -228,7 +227,7 @@ class GlobalMenu:
 				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
 				default={})
 		self._menu_options['timezone'] = \
-			Selector(_('Select timezone'), lambda: ask_timezone())
+			Selector(_('Select timezone'), lambda: ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
