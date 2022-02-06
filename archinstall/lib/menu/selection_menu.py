@@ -435,6 +435,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
+				lambda: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
@@ -561,6 +562,12 @@ class GlobalMenu(GeneralMenu):
 			storage['arguments']['!superusers'] = {}
 
 		return password
+
+	def _select_encrypted_password(self):
+		if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
+			return passwd
+		else:
+			return None
 
 	def _select_ntp(self) -> bool:
 		ntp = ask_ntp()
