@@ -6,6 +6,8 @@ SAFETY_LOCK
 **/**build
 **/**dist
 **/**.egg*
+**/**.sh
+!archinstall/locales/locales_generator.sh
 **/**.egg-info/
 **/**build/
 **/**src/
