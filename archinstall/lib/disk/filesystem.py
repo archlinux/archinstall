@@ -113,7 +113,9 @@ class Filesystem:
 								raise ValueError(f"Missing encryption password for {partition['device_instance']}")
 
 							from ..user_interaction import get_password
-							storage['arguments']['!encryption-password'] = get_password(f"Enter a encryption password for {partition['device_instance']}")
+
+							prompt = str(_('Enter a encryption password for {}').format(partition['device_instance']))
+							storage['arguments']['!encryption-password'] = get_password(prompt)
 
 						partition['!password'] = storage['arguments']['!encryption-password']
 

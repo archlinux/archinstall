@@ -7,6 +7,8 @@ import gettext
 from pathlib import Path
 from typing import List, Dict
 
+import archinstall
+
 
 class Languages:
 	def __init__(self):
@@ -28,7 +30,7 @@ class Languages:
 
 
 class DeferredTranslation:
-	def __init__(self, message):
+	def __init__(self, message: str):
 		self.message = message
 
 	def __len__(self) -> int:
@@ -40,10 +42,10 @@ class DeferredTranslation:
 			return self.message
 		return translate(self.message)
 
-	def __lt__(self, other):
+	def __lt__(self, other) -> bool:
 		return self.message < other
 
-	def __gt__(self, other):
+	def __gt__(self, other) -> bool:
 		return self.message > other
 
 	def format(self, *args) -> str:
