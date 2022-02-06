@@ -8,7 +8,7 @@ if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
 if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
+	print(_("Archinstall requires root privileges to run. See --help for more."))
 	exit(1)
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
@@ -97,7 +97,7 @@ def perform_filesystem_operations():
 	"""
 
 	if archinstall.arguments.get('harddrives', None):
-		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
+		print(_(f" ! Formatting {archinstall.arguments['harddrives']} in "), end='')
 		archinstall.do_countdown()
 
 		"""
@@ -112,6 +112,7 @@ def perform_filesystem_operations():
 			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
+
 
 def perform_installation(mountpoint):
 	"""
@@ -138,11 +139,11 @@ def perform_installation(mountpoint):
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
-		
+
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-		
+
 		if installation.minimal_installation():
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])

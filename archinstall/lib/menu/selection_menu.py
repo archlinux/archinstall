@@ -1,4 +1,5 @@
 import sys
+from typing import Dict
 
 from .menu import Menu
 from ..general import SysCommand
@@ -7,7 +8,7 @@ from ..output import log
 from ..profiles import is_desktop_profile
 from ..disk import encrypted_partitions
 from ..locale_helpers import set_keyboard_language
-from ..user_interaction import get_password
+from ..user_interaction import get_password, ask_for_a_timezone
 from ..user_interaction import ask_ntp
 from ..user_interaction import ask_for_swap
 from ..user_interaction import ask_for_bootloader
@@ -15,7 +16,6 @@ from ..user_interaction import ask_hostname
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_to_configure_network
-from ..user_interaction import ask_for_a_timezone
 from ..user_interaction import ask_for_superuser_account
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import select_language
@@ -29,6 +29,7 @@ from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_archinstall_language
 from ..translation import Translation
+
 
 class Selector:
 	def __init__(
@@ -76,7 +77,6 @@ class Selector:
 		self._display_func = display_func
 		self._current_selection = default
 		self.enabled = enabled
-		self.text = self.menu_text()
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
 
@@ -88,12 +88,15 @@ class Selector:
 	def dependencies_not(self):
 		return self._dependencies_not
 
+	@property
+	def current_selection(self):
+		return self._current_selection
+
 	def set_enabled(self):
 		self.enabled = True
 
 	def update_description(self, description):
 		self._description = description
-		self.text = self.menu_text()
 
 	def menu_text(self):
 		current = ''
@@ -105,14 +108,13 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(self._description)
+			padding = 35 - len(str(self._description))
 			current = ' ' * padding + f'SET: {current}'
 
 		return f'{self._description} {current}'
 
 	def set_current_selection(self, current):
 		self._current_selection = current
-		self.text = self.menu_text()
 
 	def has_selection(self):
 		if self._current_selection is None:
@@ -168,7 +170,7 @@ class GlobalMenu:
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
-				lambda: get_password(prompt='Enter disk encryption password (leave blank for no encryption): '),
+				lambda: get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))),
 				display_func=lambda x: self._secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
@@ -181,7 +183,7 @@ class GlobalMenu:
 				_('Select bootloader'),
 				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
 		self._menu_options['hostname'] = \
-			Selector('Specify hostname', lambda: ask_hostname())
+			Selector(_('Specify hostname'), lambda: ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
@@ -222,10 +224,10 @@ class GlobalMenu:
 			Selector(
 				_('Configure network'),
 				lambda: ask_to_configure_network(),
-				display_func=lambda x: x if x else 'Not configured, unavailable unless setup manually',
+				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
 				default={})
 		self._menu_options['timezone'] = \
-			Selector('Select timezone', lambda: ask_for_a_timezone())
+			Selector(_('Select timezone'), lambda: ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
@@ -235,7 +237,7 @@ class GlobalMenu:
 			Selector(
 				self._install_text(),
 				enabled=True)
-		self._menu_options['abort'] = Selector('Abort', enabled=True)
+		self._menu_options['abort'] = Selector(_('Abort'), enabled=True)
 
 	def enable(self, selector_name, omit_if_set=False):
 		arg = storage['arguments'].get(selector_name, None)
@@ -259,26 +261,29 @@ class GlobalMenu:
 			self._set_kb_language()
 
 			enabled_menus = self._menus_to_enable()
-			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
+			menu_text = [m.menu_text() for m in enabled_menus.values()]
+			selection = Menu(_('Set/Modify the below options'), menu_text, sort=False).run()
+
 			if selection:
 				selection = selection.strip()
-				if 'Abort' in selection:
+				if str(_('Abort')) in selection:
 					exit(0)
-				elif 'Install' in selection:
+				elif str(_('Install')) in selection:
 					if self._missing_configs() == 0:
 						break
 				else:
 					self._process_selection(selection)
+
 		for key in self._menu_options:
 			sel = self._menu_options[key]
 			if key not in storage['arguments']:
-				storage['arguments'][key] = sel._current_selection
+				storage['arguments'][key] = sel.current_selection
+
 		self._post_processing()
 
 	def _process_selection(self, selection):
 		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
+		option = [[k, v] for k, v in self._menu_options.items() if v.menu_text().strip() == selection]
 
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection}')
@@ -306,7 +311,7 @@ class GlobalMenu:
 	def _install_text(self):
 		missing = self._missing_configs()
 		if missing > 0:
-			return f'Install ({missing} config(s) missing)'
+			return _('Install ({} config(s) missing)').format(missing)
 		return 'Install'
 
 	def _missing_configs(self):
@@ -338,7 +343,7 @@ class GlobalMenu:
 		return language
 
 	def _set_root_password(self):
-		prompt = 'Enter root password (leave blank to disable root & create superuser): '
+		prompt = str(_('Enter root password (leave blank to disable root): '))
 		password = get_password(prompt=prompt)
 
 		# TODO: Do we really wanna wipe the !superusers and !users if root password is set?
@@ -368,11 +373,12 @@ class GlobalMenu:
 			storage['arguments']['disk_layouts'] = {}
 
 		if not harddrives:
-			prompt = 'You decided to skip harddrive selection\n'
-			prompt += f"and will use whatever drive-setup is mounted at {storage['MOUNT_POINT']} (experimental)\n"
-			prompt += "WARNING: Archinstall won't check the suitability of this setup\n"
+			prompt = _(
+				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
+				"WARNING: Archinstall won't check the suitability of this setup\n"
+				"Do you wish to continue?"
+			).format(storage['MOUNT_POINT'])
 
-			prompt += 'Do you wish to continue?'
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 			if choice == 'no':
@@ -397,11 +403,11 @@ class GlobalMenu:
 		return profile
 
 	def _create_superuser_account(self):
-		superuser = ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+		superuser = ask_for_superuser_account(str(_('Create a required super-user with sudo privileges: ')), forced=True)
 		return superuser
 
 	def _create_user_account(self):
-		users, superusers = ask_for_additional_users('Enter a username to create an additional user: ')
+		users, superusers = ask_for_additional_users(str(_('Enter a username to create an additional user (leave blank to skip): ')))
 		storage['arguments']['!superusers'] = {**storage['arguments'].get('!superusers', {}), **superusers}
 
 		return users
@@ -431,7 +437,7 @@ class GlobalMenu:
 
 		raise ValueError(f'No selection found: {selection_name}')
 
-	def _menus_to_enable(self):
+	def _menus_to_enable(self) -> Dict[str, Selector]:
 		enabled_menus = {}
 
 		for name, selection in self._menu_options.items():
