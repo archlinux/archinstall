@@ -109,7 +109,7 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(self._description)
+			padding = 35 - len(str(self._description))
 			current = ' ' * padding + f'SET: {current}'
 
 		return f'{self._description} {current}'
