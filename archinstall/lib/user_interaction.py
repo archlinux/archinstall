@@ -351,7 +351,6 @@ def ask_for_a_timezone() -> str:
 
 	return selected_tz
 
-
 def ask_for_bootloader(advanced_options :bool = False) -> str:
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
