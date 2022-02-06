@@ -7,8 +7,6 @@ import gettext
 from pathlib import Path
 from typing import List, Dict
 
-import archinstall
-
 
 class Languages:
 	def __init__(self):

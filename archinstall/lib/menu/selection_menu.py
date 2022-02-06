@@ -378,7 +378,7 @@ class GlobalMenu:
 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
 				"WARNING: Archinstall won't check the suitability of this setup\n"
 				"Do you wish to continue?"
-			).format(archinstall.storage['MOUNT_POINT'])
+			).format(storage['MOUNT_POINT'])
 
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
