@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import time
@@ -91,52 +90,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def save_user_configurations():
-	user_credentials = {}
-	if archinstall.arguments.get('!users'):
-		user_credentials["!users"] = archinstall.arguments['!users']
-	if archinstall.arguments.get('!superusers'):
-		user_credentials["!superusers"] = archinstall.arguments['!superusers']
-	if archinstall.arguments.get('!encryption-password'):
-		user_credentials["!encryption-password"] = archinstall.arguments['!encryption-password']
-
-	user_configuration = json.dumps({
-		'config_version': archinstall.__version__, # Tells us what version was used to generate the config
-		**archinstall.arguments, # __version__ will be overwritten by old version definition found in config
-		'version': archinstall.__version__
-	} , indent=4, sort_keys=True, cls=archinstall.JSON)
-
-	with open("/var/log/archinstall/user_credentials.json", "w") as config_file:
-		config_file.write(json.dumps(user_credentials, indent=4, sort_keys=True, cls=archinstall.UNSAFE_JSON))
-
-	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
-		config_file.write(user_configuration)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		with open("/var/log/archinstall/user_disk_layout.json", "w") as disk_layout_file:
-			disk_layout_file.write(user_disk_layout)
-
 def perform_filesystem_operations():
-	print()
-	print(_('This is your chosen configuration:'))
-	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-
-	user_configuration = json.dumps({**archinstall.arguments, 'version' : archinstall.__version__} , indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_configuration, level=logging.INFO)
-
-	if archinstall.arguments.get('disk_layouts'):
-		user_disk_layout = json.dumps(archinstall.arguments['disk_layouts'], indent=4, sort_keys=True, cls=archinstall.JSON)
-		archinstall.log(user_disk_layout, level=logging.INFO)
-
-	print()
-
-	if archinstall.arguments.get('dry_run'):
-		exit(0)
-
-	if not archinstall.arguments.get('silent'):
-		input(_('Press Enter to continue.'))
-
 	"""
 		Issue a final warning before we continue with something un-revertable.
 		We mention the drive one last time, and count from 5 to 0.
@@ -158,6 +112,7 @@ def perform_filesystem_operations():
 			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
+
 
 def perform_installation(mountpoint):
 	"""
@@ -184,11 +139,11 @@ def perform_installation(mountpoint):
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
-		
+
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-		
+
 		if installation.minimal_installation():
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
@@ -300,6 +255,13 @@ if not archinstall.arguments.get('offline', False):
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-save_user_configurations()
+archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+
+if archinstall.arguments.get('dry_run'):
+	exit(0)
+
+if not archinstall.arguments.get('silent'):
+	input('Press Enter to continue.')
+
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
