@@ -762,10 +762,11 @@ def select_archinstall_language(default='English'):
 
 
 def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
-	wipe_mode = _('Wipe all selected drives and use a best-effort default partition layout')
-	custome_mode = _('Select what to do with each individual drive (followed by partition usage)')
+	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
+	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
 
+	print(modes)
 	mode = Menu(_('Select what you wish to do with the selected block devices'), modes, skip=False).run()
 
 	if mode == wipe_mode:

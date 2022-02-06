@@ -40,6 +40,12 @@ class DeferredTranslation:
 			return self.message
 		return translate(self.message)
 
+	def __lt__(self, other):
+		return self.message < other
+
+	def __gt__(self, other):
+		return self.message > other
+
 	def format(self, *args) -> str:
 		return self.message.format(*args)
 

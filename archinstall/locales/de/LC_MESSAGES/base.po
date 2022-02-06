@@ -128,7 +128,7 @@ msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Bitte wählen Sie eine Aktion ein für\n"
+"Bitte wählen Sie eine Aktion aus für\n"
 "{}"
 
 #: lib/user_interaction.py:624 lib/user_interaction.py:709
@@ -231,39 +231,39 @@ msgstr "Alle Laufwerke löschen und ein vorgegebenes Partitionenlayout verwenden
 msgid "Select what to do with each individual drive (followed by partition usage)"
 msgstr "Bitte geben sie an was mit jedem individuellem Laufwerk geschehen soll"
 
-#: lib/user_interaction.py:769
+#: lib/user_interaction.py:769 lib/user_interaction.py:770
 msgid "Select what you wish to do with the selected block devices"
 msgstr "Bitte wählen sie was mit dem ausgewählten Gerät geschehen soll"
 
-#: lib/user_interaction.py:822
+#: lib/user_interaction.py:822 lib/user_interaction.py:823
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dies ist eine Liste von bereits programmierten Profilen, diese ermöglichen es einfacher Desktop Umgebungen einzustellen"
 
-#: lib/user_interaction.py:846
+#: lib/user_interaction.py:846 lib/user_interaction.py:847
 msgid "Select Keyboard layout"
 msgstr "Bitte wählen sie ein Tastaturlayout aus"
 
-#: lib/user_interaction.py:861
+#: lib/user_interaction.py:861 lib/user_interaction.py:862
 msgid "Select one of the regions to download packages from"
 msgstr "Bitte wählen sie eine Region zum downloaden von Packeten aus"
 
-#: lib/user_interaction.py:883
+#: lib/user_interaction.py:883 lib/user_interaction.py:884
 msgid "Select one or more hard drives to use and configure"
 msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen"
 
-#: lib/user_interaction.py:910
+#: lib/user_interaction.py:910 lib/user_interaction.py:911
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
 msgstr "Für die beste kompabilität mit ihrer AMD hardware, sollten sie womöglich die open-source oder AMD / ATI optionen verwenden"
 
-#: lib/user_interaction.py:912
+#: lib/user_interaction.py:912 lib/user_interaction.py:913
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
 msgstr "Für die beste kompabilität mit ihrer Intel hardware, sollten sie womöglich die open-source oder Intel optionen verwenden.\n"
 
-#: lib/user_interaction.py:914
+#: lib/user_interaction.py:914 lib/user_interaction.py:915
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
 msgstr "Für die beste kompabilität mit ihrer Nvidia hardware, sollten sie womöglich die Nvidia proprietary driver option verwenden.\n"
 
-#: lib/user_interaction.py:917
+#: lib/user_interaction.py:917 lib/user_interaction.py:918
 msgid ""
 "\n"
 "\n"
@@ -273,27 +273,27 @@ msgstr ""
 "\n"
 "Bitte wählen sie einen Grafiktreiber aus oder leer lassen um alle open-source Treiber zu installieren"
 
-#: lib/user_interaction.py:921
+#: lib/user_interaction.py:921 lib/user_interaction.py:922
 msgid "All open-source (default)"
 msgstr "Alle open-source (default)"
 
-#: lib/user_interaction.py:940
+#: lib/user_interaction.py:940 lib/user_interaction.py:941
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Bitte wählen sie welche Kernel benutzt werden sollen oder leer lassen für default \"{}\""
 
-#: lib/user_interaction.py:954
+#: lib/user_interaction.py:954 lib/user_interaction.py:955
 msgid "Choose which locale language to use"
 msgstr "Bitte wählen sie eine lokale Sprache aus"
 
-#: lib/user_interaction.py:968
+#: lib/user_interaction.py:968 lib/user_interaction.py:969
 msgid "Choose which locale encoding to use"
 msgstr "Bitte wählen sie eine lokale Kodierung aus"
 
-#: lib/user_interaction.py:1009
+#: lib/user_interaction.py:1009 lib/user_interaction.py:1010
 msgid "Select one of the values shown below: "
 msgstr "Bitte wählen sie einen der folgenden Werte aus:"
 
-#: lib/user_interaction.py:1050
+#: lib/user_interaction.py:1050 lib/user_interaction.py:1051
 msgid "Select one or more of the options below: "
 msgstr "Bitte wählen sie eine oder mehrere Optionen aus: "
 
@@ -331,11 +331,11 @@ msgstr "Lokale Kodierung auswählen"
 
 #: lib/menu/selection_menu.py:159
 msgid "Select harddrives"
-msgstr "Harddrives auswählen"
+msgstr "Laufwerke auswählen"
 
 #: lib/menu/selection_menu.py:163
 msgid "Select disk layout"
-msgstr "Harddrivelayout auswählen"
+msgstr "Laufwerke-layout auswählen"
 
 #: lib/menu/selection_menu.py:171
 msgid "Set encryption password"
