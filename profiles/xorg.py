@@ -3,6 +3,7 @@
 import archinstall
 import logging
 from archinstall.lib.hardware import __packages__ as __hwd__packages__
+
 is_top_level_profile = True
 
 __description__ = 'Installs a minimal system as well as xorg and graphics drivers.'

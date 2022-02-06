@@ -141,8 +141,8 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(f"[!] A log file has been created here: {os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])}")
-			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
+			print(_("[!] A log file has been created here: {} {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise args[1]
 
 		self.genfstab()
@@ -282,7 +282,7 @@ class Installer:
 
 		partition.mount(f'{self.target}{mountpoint}')
 
-	def post_install_check(self, *args :str, **kwargs :str) -> List[bool]:
+	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
@@ -914,7 +914,7 @@ class Installer:
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
 			from .systemd import Boot
 			with Boot(self) as session:
-				session.SysCommand(["localectl", "set-keymap", '""'])
+				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
 				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
 					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")

@@ -203,7 +203,7 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
-		self.environment_vars = {'LC_ALL':'C' , **environment_vars}
+		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
 
@@ -262,10 +262,10 @@ class SysCommandWorker:
 			sys.stdout.flush()
 
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
+			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code: {self.exit_code}", self.exit_code)
+			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[:500]}", self.exit_code)
 
 	def is_alive(self) -> bool:
 		self.poll()
@@ -350,9 +350,11 @@ class SysCommandWorker:
 		#   and until os.close(), the traceback will get locked inside
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
+
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
+		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
 			try:
 				try:
@@ -548,3 +550,7 @@ def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
 			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
 			return False
 	return True
+
+def secret(x :str):
+	""" return * with len equal to to the input string """
+	return '*' * len(x)
