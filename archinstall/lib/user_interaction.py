@@ -96,7 +96,10 @@ def do_countdown() -> bool:
 	return True
 
 
-def get_password(prompt :str = "Enter a password: ") -> Optional[str]:
+def get_password(prompt :str = '') -> Optional[str]:
+	if not prompt:
+		prompt = _("Enter a password: ")
+
 	while passwd := getpass.getpass(prompt):
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
 		if passwd != passwd_verification:
@@ -275,8 +278,8 @@ def ask_for_swap():
 
 
 def ask_ntp() -> bool:
-	prompt = _('Would you like to use automatic time synchronization (NTP) with the default time servers?')
-	prompt += _('Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki')
+	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
+	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
 	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 	return False if choice == 'no' else True
 
@@ -286,7 +289,7 @@ def ask_hostname():
 	return hostname
 
 
-def ask_for_superuser_account(prompt :str = '', forced :bool = False) -> Dict[str, Dict[str, str]]:
+def ask_for_superuser_account(prompt: str = '', forced :bool = False) -> Dict[str, Dict[str, str]]:
 	prompt = prompt if prompt else _('Username for required superuser with sudo privileges: ')
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -301,7 +304,7 @@ def ask_for_superuser_account(prompt :str = '', forced :bool = False) -> Dict[st
 		elif not check_for_correct_username(new_user):
 			continue
 
-		prompt = _('Password for user "{}"').format(new_user)
+		prompt = str(_('Password for user "{}": ').format(new_user))
 		password = get_password(prompt=prompt)
 		return {new_user: {"!password": password}}
 
@@ -318,11 +321,14 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 		if not check_for_correct_username(new_user):
 			continue
 
-		prompt = _('Password for user "{}"').format(new_user)
-		password = get_password(prompt=prompt)
+		password = get_password(prompt=str(_('Password for user "{}": ').format(new_user)))
 
-		prompt = _('Should this user be a superuser (sudoer)?')
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='no').run()
+		choice = Menu(
+			str(_('Should this user be a superuser (sudoer)?')),
+			['yes', 'no'],
+			skip=False,
+			default_option='no'
+		).run()
 
 		if choice == 'yes':
 			superusers[new_user] = {"!password": password}
@@ -332,7 +338,7 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 	return users, superusers
 
 
-def ask_timezone() -> str:
+def ask_for_a_timezone() -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
@@ -344,7 +350,6 @@ def ask_timezone() -> str:
 	).run()
 
 	return selected_tz
-
 
 def ask_for_bootloader(advanced_options :bool = False) -> str:
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
@@ -399,7 +404,7 @@ def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
 		if len(packages):
 			# Verify packages that were given
 			try:
-				log("Verifying that additional packages exist (this might take a few seconds)")
+				print(_("Verifying that additional packages exist (this might take a few seconds)"))
 				validate_package_list(packages)
 				break
 			except RequirementError as e:
@@ -587,21 +592,28 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
+	new_partition = _('Create a new partition')
+	suggest_partition_layout = _('Suggest partition layout')
+	delete_partition = _('Delete a partition')
+	delete_all_partitions = _('Clear/Delete all partitions')
+	assign_mount_point = _('Assign mount-point for a partition')
+	mark_formatted = _('Mark/Unmark a partition to be formatted (wipes data)')
+	mark_encrypted = _('Mark/Unmark a partition as encrypted')
+	mark_bootable = _('Mark/Unmark a partition as bootable (automatic for /boot)')
+	set_filesystem_partition = _('Set desired filesystem for a partition')
+
 	while True:
-		modes = [
-			"Create a new partition",
-			f"Suggest partition layout for {block_device}"
-		]
+		modes = [new_partition, suggest_partition_layout]
 
 		if len(block_device_struct['partitions']):
 			modes += [
-				"Delete a partition",
-				"Clear/Delete all partitions",
-				"Assign mount-point for a partition",
-				"Mark/Unmark a partition to be formatted (wipes data)",
-				"Mark/Unmark a partition as encrypted",
-				"Mark/Unmark a partition as bootable (automatic for /boot)",
-				"Set desired filesystem for a partition",
+				delete_partition,
+				delete_all_partitions,
+				assign_mount_point,
+				mark_formatted,
+				mark_encrypted,
+				mark_bootable,
+				set_filesystem_partition,
 			]
 
 		title = _('Select what to do with\n{}').format(block_device)
@@ -615,7 +627,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 		if not task:
 			break
 
-		if task == 'Create a new partition':
+		if task == new_partition:
 			# if partition_type == 'gpt':
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
@@ -632,7 +644,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 			else:
 				end_suggested = '100%'
 
-			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): "').format(end_suggested)
+			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): ').format(end_suggested)
 			end = input(prompt).strip()
 
 			if not end.strip():
@@ -656,7 +668,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 			else:
 				log(f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.", fg="red")
 				continue
-		elif task[:len("Suggest partition layout")] == "Suggest partition layout":
+		elif task == suggest_partition_layout:
 			if len(block_device_struct["partitions"]):
 				prompt = _('{} contains queued partitions, this will remove those, are you sure?').format(block_device)
 				choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
@@ -670,15 +682,15 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 		else:
 			current_layout = current_partition_layout(block_device_struct['partitions'], with_idx=True)
 
-			if task == "Delete a partition":
+			if task == delete_partition:
 				title = _('{}\n\nSelect by index which partitions to delete').format(current_layout)
 				to_delete = select_partition(title, block_device_struct["partitions"], multiple=True)
 
 				if to_delete:
 					block_device_struct['partitions'] = [p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete]
-			elif task == "Clear/Delete all partitions":
+			elif task == delete_all_partitions:
 				block_device_struct["partitions"] = []
-			elif task == "Assign mount-point for a partition":
+			elif task == assign_mount_point:
 				title = _('{}\n\nSelect by index which partition to mount where').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
@@ -694,7 +706,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 					else:
 						del(block_device_struct["partitions"][partition]['mountpoint'])
 
-			elif task == "Mark/Unmark a partition to be formatted (wipes data)":
+			elif task == mark_formatted:
 				title = _('{}\n\nSelect which partition to mask for formatting').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
@@ -713,7 +725,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 					# Negate the current wipe marking
 					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
-			elif task == "Mark/Unmark a partition as encrypted":
+			elif task == mark_encrypted:
 				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
@@ -721,14 +733,14 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 					# Negate the current encryption marking
 					block_device_struct["partitions"][partition]['encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
 
-			elif task == "Mark/Unmark a partition as bootable (automatic for /boot)":
+			elif task == mark_bootable:
 				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
 					block_device_struct["partitions"][partition]['boot'] = not block_device_struct["partitions"][partition].get('boot', False)
 
-			elif task == "Set desired filesystem for a partition":
+			elif task == set_filesystem_partition:
 				title = _('{}\n\nSelect which partition to set a filesystem on').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
@@ -762,10 +774,11 @@ def select_archinstall_language(default='English'):
 
 
 def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
-	wipe_mode = _('Wipe all selected drives and use a best-effort default partition layout')
-	custome_mode = _('Select what to do with each individual drive (followed by partition usage)')
+	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
+	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
 
+	print(modes)
 	mode = Menu(_('Select what you wish to do with the selected block devices'), modes, skip=False).run()
 
 	if mode == wipe_mode:
@@ -802,7 +815,7 @@ def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
 
 
-def select_profile() -> Optional[str]:
+def select_profile() -> Optional[Profile]:
 	"""
 	# Asks the user to select a profile from the available profiles.
 	#
