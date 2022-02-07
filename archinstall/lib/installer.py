@@ -504,11 +504,16 @@ class Installer:
 		return True
 
 	def detect_encryption(self, partition :Partition) -> bool:
-		part = Partition(partition.parent, None, autodetect_filesystem=True)
-		if partition.encrypted:
+		from .disk.mapperdev import MapperDev
+		from .disk.dmcryptdev import DMCryptDev
+
+		if type(partition) is MapperDev:
+			# Returns MapperDev.partition
+			return partition.partition
+		elif type(partition) is DMCryptDev:
+			return partition.MapperDev.partition
+		elif get_filesystem_type(partition.path) == 'crypto_LUKS':
 			return partition
-		elif partition.parent not in partition.path and part.filesystem == 'crypto_LUKS':
-			return part
 
 		return False
 
