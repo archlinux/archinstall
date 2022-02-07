@@ -67,7 +67,7 @@ However, assuming you're building your own ISO and want to create an automated i
 import archinstall, getpass
 
 # Select a harddrive and a disk password
-harddrive = archinstall.select_disk(archinstall.all_disks())
+harddrive = archinstall.select_disk(archinstall.all_blockdevices(partitions=False))
 disk_password = getpass.getpass(prompt='Disk password (won\'t echo): ')
 
 # We disable safety precautions in the library that protects the partitions

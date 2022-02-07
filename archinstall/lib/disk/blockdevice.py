@@ -16,10 +16,10 @@ from ..storage import storage
 class BlockDevice:
 	def __init__(self, path :str, info :Optional[Dict[str, Any]] = None):
 		if not info:
-			from .helpers import all_disks
+			from .helpers import all_blockdevices
 			# If we don't give any information, we need to auto-fill it.
 			# Otherwise any subsequent usage will break.
-			info = all_disks()[path].info
+			info = all_blockdevices(partitions=False)[path].info
 
 		self.path = path
 		self.info = info

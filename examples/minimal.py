@@ -9,7 +9,7 @@ if archinstall.arguments.get('help', None):
 	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
 	archinstall.log(" - Optional systemd network via --network")
 
-archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_disks())
+archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_blockdevices())
 
 
 def install_on(mountpoint):

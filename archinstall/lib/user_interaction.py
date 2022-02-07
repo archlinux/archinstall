@@ -15,7 +15,7 @@ from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 if TYPE_CHECKING:
 	from .disk.partition import Partition
 
-from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
+from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_blockdevices
 from .exceptions import RequirementError, UserError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
@@ -889,7 +889,7 @@ def select_harddrives() -> Optional[str]:
 	:return: List of selected hard drives
 	:rtype: list
 	"""
-	hard_drives = all_disks().values()
+	hard_drives = all_blockdevices(partitions=False).values()
 	options = {f'{option}': option for option in hard_drives}
 
 	selected_harddrive = Menu(

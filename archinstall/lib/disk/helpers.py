@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import time
+import glob
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -103,23 +104,86 @@ def device_state(name :str, *args :str, **kwargs :str) -> Optional[bool]:
 					return
 	return True
 
-# lsblk --json -l -n -o path
-def all_disks(*args :str, **kwargs :str) -> List[BlockDevice]:
-	kwargs.setdefault("partitions", False)
-	drives = {}
 
-	lsblk = json.loads(SysCommand('lsblk --json -l -n -o path,size,type,mountpoint,label,pkname,model').decode('UTF_8'))
-	for drive in lsblk['blockdevices']:
-		if not kwargs['partitions'] and drive['type'] == 'part':
+def cleanup_bash_escapes(data :str) -> str:
+	return data.replace(r'\ ', ' ')
+
+def blkid(cmd :str) -> Dict[str, Any]:
+	if '-o' in cmd and '-o export' not in cmd:
+		raise ValueError(f"blkid() requires '-o export' to be used and can therefor not continue reliably.")
+	elif '-o' not in cmd:
+		cmd += ' -o export'
+
+	try:
+		raw_data = SysCommand(cmd).decode()
+	except SysCallError as error:
+		log(f"Could not get block device information using blkid() using command {cmd}", level=logging.ERROR, fg="red")
+		raise error
+
+	result = {}
+	# Process the raw result
+	devname = None
+	for line in raw_data.split('\r\n'):
+		if not len(line):
+			devname = None
 			continue
 
-		drives[drive['path']] = BlockDevice(drive['path'], drive)
+		key, val = line.split('=', 1)
+		if key.lower() == 'devname':
+			devname = val
+			# Lowercase for backwards compatability with all_disks() previous use cases
+			result[devname] = {
+				"path": devname,
+				"PATH": devname
+			}
+			continue
 
-	return drives
+		result[devname][key] = cleanup_bash_escapes(val)
+
+	return result
+
+
+def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
+	"""
+	Returns BlockDevice() and Partition() objects for all available devices.
+	"""
+	from .partition import Partition
+
+	kwargs.setdefault("partitions", False)
+	instances = {}
+
+	# Due to lsblk being highly unreliable for this use case,
+	# we'll iterate the /sys/class definitions and find the information
+	# from there.
+	for block_device in glob.glob("/sys/class/block/*"):
+		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
+		try:
+			information = blkid(f'blkid -p -o export {device_path}')
+		except SysCallError as error:
+			if error.exit_code == 512:
+				information = {}
+			else:
+				raise error
+
+		for path, path_info in information.items():
+			if path_info.get('UUID_SUB'):
+				# dmcrypt /dev/dm-0 will be setup with a 
+				# UUID_SUB and a UUID referring to the "real" device
+				continue
+
+			if path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
+				if kwargs.get('partitions'):
+					instances[path] = Partition(path, path_info)
+			elif path_info.get('PTTYPE'):
+				instances[path] = BlockDevice(path, path_info)
+			else:
+				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
+
+	return instances
 
 
 def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :bool = False) -> Optional[BlockDevice]:
-	collection = all_disks()
+	collection = all_blockdevices(partitions=False)
 	for drive in collection:
 		if size and convert_to_gigabytes(collection[drive]['size']) != size:
 			continue
