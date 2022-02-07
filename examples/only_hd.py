@@ -28,11 +28,6 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 		""" overloaded method """
 		def check(s):
 			return self.option(s).has_selection()
-			
-		# Get disk encryption password (or skip if blank)
-		if archinstall.arguments.get('!encryption-password', None) is None:
-			if passwd := archinstall.get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
-				archinstall.arguments['!encryption-password'] = passwd
 
 		_, missing = self.mandatory_overview()
 		if check('harddrives'):
