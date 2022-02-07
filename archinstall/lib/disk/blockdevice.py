@@ -78,8 +78,8 @@ class BlockDevice:
 		If it's a loop-back-device it returns the back-file,
 		For other types it return self.device
 		"""
-		print(self.info)
 		if self.info.get('type') == 'loop':
+			print(self.info)
 			# TODO: Debugging, I think the relevant info is already there, no need for another losetup
 			print('Found loop device:', self.info)
 			for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
@@ -98,7 +98,6 @@ class BlockDevice:
 		If it's a ATA-drive it returns the /dev/X device
 		And if it's a crypto-device it returns the parent device
 		"""
-		print(self.info)
 		if "DEVTYPE" not in self.info:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
