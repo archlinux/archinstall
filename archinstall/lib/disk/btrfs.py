@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 import glob
 import logging
-from typing import Union, Dict, TYPE_CHECKING
+from typing import Union, Dict, TYPE_CHECKING, Any
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -11,7 +11,22 @@ from .helpers import get_mount_info
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
+from ..exceptions import SysCallError
 
+
+def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
+	try:
+		output = SysCommand(f"btrfs subvol show {path}").decode()
+	except SysCallError as error:
+		print('Error:', error)
+
+	result = {}
+	for line in output.replace('\r\n', '\n').split('\n'):
+		if ':' in line:
+			key, val = line.replace('\t', '').split(':', 1)
+			result[key.strip().lower().replace(' ', '_')] = val.strip()
+
+	return result
 
 def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
 	"""
