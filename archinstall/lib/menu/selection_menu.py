@@ -1,6 +1,8 @@
 from __future__ import annotations
 import sys
 import logging
+from collections import OrderedDict
+
 from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
@@ -204,7 +206,8 @@ class GeneralMenu:
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per progam calling self.set_option()
 		"""
-		return
+		archinstall.log(f"Method _setup_selection_menu_options has not been coded for {type(self).__name__}",fg="red")
+		raise archinstall.RequirementError("Method _setup_selection_menu_options needs to be personalized")
 
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
@@ -503,7 +506,6 @@ class GlobalMenu(GeneralMenu):
 				self._install_text(),
 				exec_func=lambda n,v: True if self._missing_configs() == 0 else False,
 				enabled=True)
-
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
 
 	def _update_install(self,name :str = None ,result :Any = None):
