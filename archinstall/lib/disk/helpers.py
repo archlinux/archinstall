@@ -193,9 +193,11 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 	with open(f"/sys/class/block/{dev_name}/uevent") as fh:
 		device_information.update(uevent(fh.read()))
 	return {
-		**device_information,
-		'path' : f'/dev/{dev_name}',
-		'PATH' : f'/dev/{dev_name}'
+		f"/dev/{dev_name}" : {
+			**device_information,
+			'path' : f'/dev/{dev_name}',
+			'PATH' : f'/dev/{dev_name}'
+		}
 	}
 
 def all_disks() -> List[BlockDevice]:
