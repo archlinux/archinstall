@@ -29,7 +29,7 @@ class MapperDev:
 		for mapper in glob.glob('/dev/mapper/*'):
 			path_obj = pathlib.Path(mapper)
 			if path_obj.name == self.mappername and pathlib.Path(mapper).is_symlink():
-				dm_device = (pathlib.Path("/dev/mapper/")/path_obj.readlink()).resolve()
+				dm_device = (pathlib.Path("/dev/mapper/") / path_obj.readlink()).resolve()
 
 				for slave in glob.glob(f"/sys/class/block/{dm_device.name}/slaves/*"):
 					partition_belonging_to_dmcrypt_device = pathlib.Path(slave).name
@@ -40,7 +40,7 @@ class MapperDev:
 						log(f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}", level=logging.ERROR, fg="red")
 					
 					information = uevent(uevent_data)
-					block_device = BlockDevice(get_parent_of_partition('/dev/'/pathlib.Path(information['DEVNAME'])))
+					block_device = BlockDevice(get_parent_of_partition('/dev/' / pathlib.Path(information['DEVNAME'])))
 
 					return Partition(information['DEVNAME'], block_device)
 

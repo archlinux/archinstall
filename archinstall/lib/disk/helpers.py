@@ -221,9 +221,8 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 
 def get_parent_of_partition(path :pathlib.Path) -> pathlib.Path:
 	partition_name = path.name
-	pci_device = (pathlib.Path("/sys/class/block")/partition_name).resolve()
+	pci_device = (pathlib.Path("/sys/class/block") / partition_name).resolve()
 	return f"/dev/{pci_device.parent.name}"
-
 
 def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :bool = False) -> Optional[BlockDevice]:
 	collection = all_blockdevices(partitions=False)
@@ -292,7 +291,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, retur
 		return {}, traversal
 	else:
 		return {}
-		
+
 
 def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict[str, None]:
 	for info in data:
@@ -304,8 +303,6 @@ def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict
 	return filters
 
 def get_partitions_in_use(mountpoint :str) -> List[Partition]:
-	from .partition import Partition
-
 	try:
 		output = SysCommand(f"/usr/bin/findmnt --json -R {mountpoint}").decode('UTF-8')
 	except SysCallError:

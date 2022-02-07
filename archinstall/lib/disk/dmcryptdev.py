@@ -6,6 +6,7 @@ from typing import Optional
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
+from .mapperdev import MapperDev
 
 @dataclass
 class DMCryptDev:
