@@ -197,7 +197,8 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 		f"/dev/{dev_name}" : {
 			**device_information,
 			'path' : f'/dev/{dev_name}',
-			'PATH' : f'/dev/{dev_name}'
+			'PATH' : f'/dev/{dev_name}',
+			'PTTYPE' : None
 		}
 	}
 
@@ -244,7 +245,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if kwargs.get('partitions'):
 					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
-			elif path_info.get('PTTYPE') or path_info.get('TYPE') == 'loop':
+			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
 			else:
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
