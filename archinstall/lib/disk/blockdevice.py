@@ -78,6 +78,7 @@ class BlockDevice:
 		If it's a loop-back-device it returns the back-file,
 		For other types it return self.device
 		"""
+		print(self.info)
 		if self.info['type'] == 'loop':
 			for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path:
