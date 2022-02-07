@@ -151,6 +151,38 @@ def get_loop_info(path :str) -> Dict[str, Any]:
 
 	return {}
 
+def enrich_blockdevice(information :Dict[str, Any]) -> Dict[str, Any]:
+	"""
+	if "type" not in self.info:
+		raise DiskError(f'Could not locate backplane info for "{self.path}"')
+
+	if self.info['type'] in ['disk','loop']:
+		return self.path
+	elif self.info['type'][:4] == 'raid':
+		# This should catch /dev/md## raid devices
+		return self.path
+	elif self.info['type'] == 'crypt':
+		if 'pkname' not in self.info:
+			raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
+		return f"/dev/{self.info['pkname']}"
+	else:
+		log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=logging.DEBUG)
+	"""
+
+	device_path, device_information = list(information.items())[0]
+	result = {}
+	for device_path, device_information in information.items()
+		if not device_information.get('TYPE'):
+			with open(f"/sys/class/block/{pathlib.Path(device_information['PATH']).name}/uevent") as fh:
+				for line in fh:
+					if len((line := line.strip())):
+						key, val = line.split('=', 1)
+						device_information[key] = val
+
+		result[device] = device_information
+
+	return result
+
 def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
@@ -173,6 +205,8 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 				information = get_loop_info(device_path)
 			else:
 				raise error
+
+		information = enrich_blockdevice(information)
 
 		for path, path_info in information.items():
 			if path_info.get('UUID_SUB'):
