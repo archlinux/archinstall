@@ -142,6 +142,14 @@ def blkid(cmd :str) -> Dict[str, Any]:
 
 	return result
 
+def get_loop_info(path :str) -> Dict[str, Any]:
+	for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
+		if not drive['name'] == path:
+			continue
+
+		return {path: {**drive, 'type' : 'loop', 'TYPE' : 'loop'}}
+
+	return {}
 
 def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 	"""
@@ -161,20 +169,21 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
 			if error.exit_code == 512:
-				information = {}
+				# Assume that it's a loop device, and try to get info on it
+				information = get_loop_info(device_path)
 			else:
 				raise error
 
 		for path, path_info in information.items():
 			if path_info.get('UUID_SUB'):
-				# dmcrypt /dev/dm-0 will be setup with a 
+				# dmcrypt /dev/dm-0 will be setup with a
 				# UUID_SUB and a UUID referring to the "real" device
 				continue
 
 			if path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if kwargs.get('partitions'):
 					instances[path] = Partition(path, path_info)
-			elif path_info.get('PTTYPE'):
+			elif path_info.get('PTTYPE') or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
 			else:
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
