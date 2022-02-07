@@ -79,7 +79,9 @@ class BlockDevice:
 		For other types it return self.device
 		"""
 		print(self.info)
-		if self.info['type'] == 'loop':
+		if self.info.get('type') == 'loop':
+			# TODO: Debugging, I think the relevant info is already there, no need for another losetup
+			print('Found loop device:', self.info)
 			for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
 				if not drive['name'] == self.path:
 					continue
