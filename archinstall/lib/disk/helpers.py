@@ -236,7 +236,6 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			else:
 				raise error
 
-		print(f'Got information on {block_device}: {information}')
 		information = enrich_blockdevice_information(information)
 
 		for path, path_info in information.items():
@@ -274,6 +273,7 @@ def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :
 		return collection[drive]
 
 def split_bind_name(path :Union[pathlib.Path, str]) -> list:
+	log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
 	# we check for the bind notation. if exist we'll only use the "true" device path
 	if '[' in str(path) :  # is a bind path (btrfs subvolume path)
 		device_path, bind_path = str(path).split('[')
@@ -370,6 +370,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 			# mountpoint is a MapperDev, it has precedence and replaces the old mountpoint definition.
 			elif type(mounts[mountpoint]) == DMCryptDev and type(block_devices_mountpoints[mountpoint]) == MapperDev:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
+
+	log(f"Available partitions: {mounts}", level=logging.INFO)
 
 	return mounts
 

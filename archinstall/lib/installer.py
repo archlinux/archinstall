@@ -12,7 +12,7 @@ from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .disk.helpers import get_mount_info, split_bind_name
+from .disk.helpers import get_mount_info
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
