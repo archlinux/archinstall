@@ -223,6 +223,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			print(f"Could not get info on {device_path}: {error}")
 			if error.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
+				print("moo")
 				try:
 					information = get_loop_info(device_path)
 				except SysCallError as error:
