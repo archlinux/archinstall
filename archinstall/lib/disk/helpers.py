@@ -291,6 +291,7 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		# Once we have the real device (for instance /dev/nvme0n1p5) we can find the parent block device using
 		# (lsblk pkname lists both the partition and blockdevice, BD being the last entry)
 		result = SysCommand(f'lsblk -no pkname {partition.real_device}').decode().rstrip('\r\n').split('\r\n')[-1]
+		print(result)
 		block_device = BlockDevice(f"/dev/{result}")
 
 		# Once we figured the block device out, we can properly create the partition object
