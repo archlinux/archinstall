@@ -165,7 +165,7 @@ class Installer:
 
 	@property
 	def partitions(self) -> List[Partition]:
-		return get_partitions_in_use(self.target)
+		return get_partitions_in_use(self.target).values()
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
@@ -533,7 +533,7 @@ class Installer:
 		# TODO: Perhaps this should be living in the function which dictates
 		#       the partitioning. Leaving here for now.
 
-		for mountpoint, partition in self.partitions.items():
+		for partition in self.partitions:
 			if partition.filesystem == 'btrfs':
 				# if partition.encrypted:
 				if 'btrfs-progs' not in self.base_packages:
@@ -552,7 +552,7 @@ class Installer:
 				if '/usr/bin/btrfs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-			if partition.filesystem == 'ntfs3' and mountpoint == self.target:
+			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
 					self.HOOKS.remove('fsck')
 
@@ -652,10 +652,10 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		root_partition_fs = None
-		for mountpoint, partition in self.partitions.items():
-			if mountpoint == self.target + '/boot':
+		for partition in self.partitions:
+			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
-			elif mountpoint == self.target:
+			elif partition.mountpoint == self.target:
 				root_partition = partition
 				root_partition_fs = partition.filesystem
 				root_fs_type = get_mount_fs_type(root_partition_fs)
