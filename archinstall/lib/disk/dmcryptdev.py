@@ -42,3 +42,7 @@ class DMCryptDev:
 			pass
 
 		return None
+
+	@property
+	def filesystem(self) -> Optional[str]:
+		return self.MapperDev.filesystem
