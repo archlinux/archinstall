@@ -22,9 +22,9 @@ class MapperDev:
 
 	@property
 	def partition(self):
-		from ..disk.helpers import uevent, get_parent_of_partition
-		from ..disk.partition import Partition
-		from ..disk.blockdevice import BlockDevice
+		from .helpers import uevent, get_parent_of_partition
+		from .partition import Partition
+		from .blockdevice import BlockDevice
 
 		for mapper in glob.glob('/dev/mapper/*'):
 			path_obj = pathlib.Path(mapper)
@@ -59,3 +59,8 @@ class MapperDev:
 			pass
 
 		return None
+
+	@property
+	def filesystem(self) -> Optional[str]:
+		from .helpers import get_filesystem_type
+		return get_filesystem_type(self.path)
