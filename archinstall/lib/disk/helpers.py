@@ -162,7 +162,7 @@ def enrich_blockdevice(information :Dict[str, Any]) -> Dict[str, Any]:
 						key, val = line.split('=', 1)
 						device_information[key] = val
 
-		result[device] = device_information
+		result[device_path] = device_information
 
 	return result
 
