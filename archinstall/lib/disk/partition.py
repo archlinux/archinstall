@@ -5,7 +5,7 @@ import logging
 import json
 import os
 import hashlib
-from typing import Optional, Dict, Any, List, Union
+from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
 from .helpers import find_mountpoint, get_filesystem_type, convert_size_to_gb, split_bind_name
@@ -13,8 +13,7 @@ from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
-from .btrfs import get_subvolumes_from_findmnt
-
+from .btrfs import get_subvolumes_from_findmnt, BtrfsSubvolume
 
 class Partition:
 	def __init__(self,
@@ -243,7 +242,7 @@ class Partition:
 		return bind_name
 
 	@property
-	def subvolumes(self):
+	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
 		# https://stackoverflow.com/a/32865333/929999
 		# return os.lstat(self.path).st_ino in (256, 2)
 		for mountpoint in self.mount_information:

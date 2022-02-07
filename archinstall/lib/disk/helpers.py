@@ -231,7 +231,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 					if not information:
 						raise SysCallError("Could not get loop information", exit_code=1)
 
-				except SysCallError as error:
+				except SysCallError:
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
 				raise error

@@ -3,7 +3,7 @@ import pathlib
 import glob
 import logging
 import re
-from typing import Union, Dict, TYPE_CHECKING, Any
+from typing import Union, Dict, TYPE_CHECKING, Any, Iterator
 from dataclasses import dataclass
 
 # https://stackoverflow.com/a/39757388/929999
@@ -24,9 +24,9 @@ class BtrfsSubvolume:
 	options :str
 	root :bool = False
 
-def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> List[BtrfsSubvolume]:
+def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
 	if '@' in struct['source']:
-		subvolume = re.findall('\[.*?\]', struct['source'])[0][1:-1]
+		subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
 		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
 		yield BtrfsSubvolume(
 			target=struct['target'],
