@@ -99,20 +99,20 @@ class BlockDevice:
 		And if it's a crypto-device it returns the parent device
 		"""
 		print(self.info)
-		if "type" not in self.info:
+		if "DEVTYPE" not in self.info:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
-		if self.info['type'] in ['disk','loop']:
+		if self.info['DEVTYPE'] in ['disk','loop']:
 			return self.path
-		elif self.info['type'][:4] == 'raid':
+		elif self.info['DEVTYPE'][:4] == 'raid':
 			# This should catch /dev/md## raid devices
 			return self.path
-		elif self.info['type'] == 'crypt':
+		elif self.info['DEVTYPE'] == 'crypt':
 			if 'pkname' not in self.info:
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
 		else:
-			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=logging.DEBUG)
+			log(f"Unknown blockdevice type for {self.path}: {self.info['DEVTYPE']}", level=logging.DEBUG)
 
 	# 	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	# 		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
