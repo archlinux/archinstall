@@ -342,6 +342,8 @@ def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict
 	return filters
 
 def get_partitions_in_use(mountpoint :str) -> List[Partition]:
+	from .partition import Partition
+
 	try:
 		output = SysCommand(f"/usr/bin/findmnt --json -R {mountpoint}").decode('UTF-8')
 	except SysCallError:
@@ -351,14 +353,18 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		return {}
 
 	output = json.loads(output)
+	# print(output)
 
 	mounts = {}
 
 	block_devices_available = all_blockdevices(mappers=True, partitions=True)
 	block_devices_mountpoints = {}
 	for blockdev in block_devices_available.values():
-		if mntpoint := blockdev.mountpoint:
-			block_devices_mountpoints[mntpoint] = blockdev
+		if not type(blockdev) is Partition:
+			continue
+
+		for mountpoint in blockdev.mount_information:
+			block_devices_mountpoints[mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.INFO)
 

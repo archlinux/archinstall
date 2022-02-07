@@ -659,7 +659,6 @@ class Installer:
 		root_partition = None
 		root_partition_fs = None
 		for partition in self.partitions:
-			print(partition, partition.mountpoint)
 			if partition.mountpoint == self.target + '/boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
@@ -667,8 +666,6 @@ class Installer:
 				root_partition_fs = partition.filesystem
 				root_fs_type = get_mount_fs_type(root_partition_fs)
 
-		print(root_partition, boot_partition)
-		exit(0)
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
 
