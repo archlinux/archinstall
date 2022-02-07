@@ -259,12 +259,15 @@ class Installer:
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
 				partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
 			else:
 				partition['device_instance'].mount(f"{self.target}{mountpoint}")
+
 			time.sleep(1)
+
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
@@ -530,7 +533,7 @@ class Installer:
 		# TODO: Perhaps this should be living in the function which dictates
 		#       the partitioning. Leaving here for now.
 
-		for partition in self.partitions:
+		for mountpoint, partition in self.partitions.items():
 			if partition.filesystem == 'btrfs':
 				# if partition.encrypted:
 				if 'btrfs-progs' not in self.base_packages:
@@ -549,7 +552,7 @@ class Installer:
 				if '/usr/bin/btrfs' not in self.BINARIES:
 					self.BINARIES.append('/usr/bin/btrfs')
 			# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-			if partition.filesystem == 'ntfs3' and partition.mountpoint == self.target:
+			if partition.filesystem == 'ntfs3' and mountpoint == self.target:
 				if 'fsck' in self.HOOKS:
 					self.HOOKS.remove('fsck')
 
@@ -649,10 +652,10 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		root_partition_fs = None
-		for partition in self.partitions:
-			if partition.mountpoint == self.target + '/boot':
+		for mountpoint, partition in self.partitions.items():
+			if mountpoint == self.target + '/boot':
 				boot_partition = partition
-			elif partition.mountpoint == self.target:
+			elif mountpoint == self.target:
 				root_partition = partition
 				root_partition_fs = partition.filesystem
 				root_fs_type = get_mount_fs_type(root_partition_fs)

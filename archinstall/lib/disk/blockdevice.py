@@ -79,16 +79,17 @@ class BlockDevice:
 		For other types it return self.device
 		"""
 		if self.info.get('type') == 'loop':
-			print(self.info)
-			# TODO: Debugging, I think the relevant info is already there, no need for another losetup
-			print('Found loop device:', self.info)
-			for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
-				if not drive['name'] == self.path:
-					continue
-
-				return drive['back-file']
+			return self.info['back-file']
 		else:
 			return self.device
+
+	@property
+	def mountpoint(self) -> None:
+		"""
+		A dummy function to enable transparent comparisons of mountpoints.
+		As blockdevices can't be mounted directly, this will always be None
+		"""
+		return None
 
 	@property
 	def device(self) -> str:

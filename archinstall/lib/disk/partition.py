@@ -8,7 +8,7 @@ import hashlib
 from typing import Optional, Dict, Any, List, Union
 
 from .blockdevice import BlockDevice
-from .helpers import get_mount_info, get_filesystem_type, convert_size_to_gb, split_bind_name
+from .helpers import find_mountpoint, get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -29,6 +29,9 @@ class Partition:
 			part_id = os.path.basename(path)
 
 		self.block_device = block_device
+		if type(self.block_device) is str:
+			raise ValueError(f"Partition()'s 'block_device' parameter has to be a archinstall.BlockDevice() instance!")
+
 		self.path = path
 		self.part_id = part_id
 		self.mountpoint = mountpoint
@@ -42,7 +45,7 @@ class Partition:
 			self.mount(mountpoint)
 
 		try:
-			mount_information = get_mount_info(self.path)
+			mount_information = find_mountpoint(self.path)
 		except DiskError:
 			mount_information = {}
 
@@ -135,14 +138,16 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
 
-			if (handle := SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}")).exit_code == 0:
-				lsblk = json.loads(handle.decode('UTF-8'))
+			try:
+				lsblk = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}").decode())
 
 				for device in lsblk['blockdevices']:
 					return convert_size_to_gb(device['size'])
-			elif handle.exit_code == 8192:
-				# Device is not a block device
-				return None
+			except SysCallError as error:
+				if error.exit_code == 8192:
+					return None
+				else:
+					raise error
 
 			time.sleep(storage['DISK_TIMEOUTS'])
 
@@ -200,7 +205,14 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		self.partprobe()
-		return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
+		try:
+			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
+		except SysCallError as error:
+			if self.block_device.info.get('TYPE') == 'iso9660':
+				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
+				return None
+
+			raise DiskError(f"Could not get PARTUUID of partition {self}: {error}")
 
 	@property
 	def encrypted(self) -> Union[bool, None]:
