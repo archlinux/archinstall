@@ -192,6 +192,7 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 	device_information = {}
 	with open(f"/sys/class/block/{dev_name}/uevent") as fh:
 		device_information.update(uevent(fh.read()))
+
 	return {
 		f"/dev/{dev_name}" : {
 			**device_information,
@@ -234,6 +235,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			else:
 				raise error
 
+		print(f'Got information on {block_device}: {information}')
 		information = enrich_blockdevice_information(information)
 
 		for path, path_info in information.items():
