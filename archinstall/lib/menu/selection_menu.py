@@ -1,7 +1,7 @@
 from __future__ import annotations
 import sys
 import logging
-from typing import Callable, Any, List, Iterator, Dict
+from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
 from ..general import SysCommand, secret
@@ -131,6 +131,10 @@ class Selector:
 			current = ' ' * padding + f'SET: {current}'
 
 		return f'{self._description} {current}'
+
+	@property
+	def text(self):
+		return self.menu_text()
 
 	def set_current_selection(self, current :str):
 		self._current_selection = current
@@ -431,6 +435,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
+				lambda: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
@@ -499,66 +504,9 @@ class GlobalMenu(GeneralMenu):
 				exec_func=lambda n,v: True if self._missing_configs() == 0 else False,
 				enabled=True)
 
-		self._menu_options['abort'] = Selector(_('Abort'), enabled=True)
+		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
 
-	def enable(self, selector_name, omit_if_set=False):
-		arg = storage['arguments'].get(selector_name, None)
-
-		# don't display the menu option if it was defined already
-		if arg is not None and omit_if_set:
-			return
-
-		if self._menu_options.get(selector_name, None):
-			self._menu_options[selector_name].set_enabled()
-			if arg is not None:
-				self._menu_options[selector_name].set_current_selection(arg)
-		else:
-			print(f'No selector found: {selector_name}')
-			sys.exit(1)
-
-	def run(self):
-		while True:
-			# # Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# # This will just help the user with the next following questions.
-			self._set_kb_language()
-
-			enabled_menus = self._menus_to_enable()
-			menu_text = [m.menu_text() for m in enabled_menus.values()]
-			selection = Menu(_('Set/Modify the below options'), menu_text, sort=False).run()
-
-			if selection:
-				selection = selection.strip()
-				if str(_('Abort')) in selection:
-					exit(0)
-				elif str(_('Install')) in selection:
-					if self._missing_configs() == 0:
-						break
-				else:
-					self._process_selection(selection)
-
-		for key in self._menu_options:
-			sel = self._menu_options[key]
-			if key not in storage['arguments']:
-				storage['arguments'][key] = sel.current_selection
-
-		self._post_processing()
-
-	def _process_selection(self, selection):
-		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.menu_text().strip() == selection]
-
-		if len(option) != 1:
-			raise ValueError(f'Selection not found: {selection}')
-
-		selector_name = option[0][0]
-		selector = option[0][1]
-		result = selector.func()
-		self._menu_options[selector_name].set_current_selection(result)
-		storage['arguments'][selector_name] = result
-
-		self._update_install()
-
-	def _update_install(self):
+	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
@@ -615,6 +563,12 @@ class GlobalMenu(GeneralMenu):
 
 		return password
 
+	def _select_encrypted_password(self):
+		if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
+			return passwd
+		else:
+			return None
+
 	def _select_ntp(self) -> bool:
 		ntp = ask_ntp()
 
@@ -668,37 +622,3 @@ class GlobalMenu(GeneralMenu):
 		storage['arguments']['!superusers'] = {**storage['arguments'].get('!superusers', {}), **superusers}
 
 		return users
-
-	def _set_kb_language(self):
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if len(storage['arguments'].get('keyboard-layout', [])):
-			set_keyboard_language(storage['arguments']['keyboard-layout'])
-
-	def _verify_selection_enabled(self, selection_name):
-		if selection := self._menu_options.get(selection_name, None):
-			if not selection.enabled:
-				return False
-
-			if len(selection.dependencies) > 0:
-				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
-						return False
-
-			if len(selection.dependencies_not) > 0:
-				for d in selection.dependencies_not:
-					if not self._menu_options.get(d).is_empty():
-						return False
-
-			return True
-
-		raise ValueError(f'No selection found: {selection_name}')
-
-	def _menus_to_enable(self) -> Dict[str, Selector]:
-		enabled_menus = {}
-
-		for name, selection in self._menu_options.items():
-			if self._verify_selection_enabled(name):
-				enabled_menus[name] = selection
-
-		return enabled_menus
