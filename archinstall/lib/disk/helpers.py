@@ -149,7 +149,16 @@ def get_loop_info(path :str) -> Dict[str, Any]:
 		if not drive['name'] == path:
 			continue
 
-		return {path: {**drive, 'type' : 'loop', 'TYPE' : 'loop', 'DEVTYPE' : 'loop'}}
+		return {
+			path: {
+				**drive,
+				'type' : 'loop',
+				'TYPE' : 'loop',
+				'DEVTYPE' : 'loop',
+				'PATH' : drive['name'],
+				'path' : drive['name']
+			}
+		}
 
 	return {}
 

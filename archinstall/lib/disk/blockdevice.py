@@ -199,7 +199,7 @@ class BlockDevice:
 					_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
 					yield (start, end, size)
 		except SysCallError as error:
-			log(f"Could not get free space on {self.path}: {error}", level=logging.INFO)
+			log(f"Could not get free space on {self.path}: {error}", level=logging.DEBUG)
 
 	@property
 	def largest_free_space(self) -> List[str]:
