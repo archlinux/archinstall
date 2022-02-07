@@ -285,7 +285,7 @@ def ask_ntp() -> bool:
 
 
 def ask_hostname():
-	hostname = input(_('Desired hostname for the installation: ').strip(' '))
+	hostname = input(_('Desired hostname for the installation: ')).strip(' ')
 	return hostname
 
 
