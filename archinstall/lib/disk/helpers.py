@@ -192,7 +192,11 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 	device_information = {}
 	with open(f"/sys/class/block/{dev_name}/uevent") as fh:
 		device_information.update(uevent(fh.read()))
-	return device_information
+	return {
+		**device_information,
+		'path' : f'/dev/{dev_name}',
+		'PATH' : f'/dev/{dev_name}'
+	}
 
 def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
@@ -216,13 +220,12 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
-			print(f'Could not get blkid information on {block_device}: {error}')
-			if error.exit_code == 512:
+			if error.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
-				information = get_loop_info(device_path)
-			elif error.exit_code == 2:
-				# Unitiated device, but most likely a traditional blockdevice:
-				information = get_blockdevice_uevent(device_path)
+				try:
+					information = get_loop_info(device_path)
+				except SysCallError as error:
+					information = get_blockdevice_uevent(device_path)
 			else:
 				raise error
 
