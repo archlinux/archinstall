@@ -154,7 +154,7 @@ def get_loop_info(path :str) -> Dict[str, Any]:
 def enrich_blockdevice(information :Dict[str, Any]) -> Dict[str, Any]:
 	device_path, device_information = list(information.items())[0]
 	result = {}
-	for device_path, device_information in information.items()
+	for device_path, device_information in information.items():
 		if not device_information.get('TYPE'):
 			with open(f"/sys/class/block/{pathlib.Path(device_information['PATH']).name}/uevent") as fh:
 				for line in fh:
