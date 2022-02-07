@@ -175,6 +175,7 @@ def uevent(data :str) -> Dict[str, Any]:
 	return information
 
 def all_disks() -> List[BlockDevice]:
+	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
 def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
