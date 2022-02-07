@@ -156,9 +156,14 @@ def get_loop_info(path :str) -> Dict[str, Any]:
 def enrich_blockdevice_information(information :Dict[str, Any]) -> Dict[str, Any]:
 	result = {}
 	for device_path, device_information in information.items():
+		dev_name = pathlib.Path(device_information['PATH']).name
 		if not device_information.get('TYPE') or not device_information.get('DEVTYPE'):
-			with open(f"/sys/class/block/{pathlib.Path(device_information['PATH']).name}/uevent") as fh:
+			with open(f"/sys/class/block/{dev_name}/uevent") as fh:
 				device_information.update(uevent(fh.read()))
+
+		if (dmcrypt_name := pathlib.Path(f"/sys/class/block/{dev_name}/dm/name")).exists():
+			with dmcrypt_name.open('r') as fh:
+				device_information['DMCRYPT_NAME'] = fh.read().strip()
 
 		result[device_path] = device_information
 
@@ -205,7 +210,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 		information = enrich_blockdevice_information(information)
 
 		for path, path_info in information.items():
-			if path_info.get('UUID_SUB'):
+			if path_info.get('DMCRYPT_NAME'):
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if kwargs.get('partitions'):
@@ -331,6 +336,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
+			# If the already defined mountpoint is a DMCryptDev, and the newly found
+			# mountpoint is a MapperDev, it has precedence and replaces the old mountpoint definition.
 			elif type(mounts[mountpoint]) == DMCryptDev and type(block_devices_mountpoints[mountpoint]) == MapperDev:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
 

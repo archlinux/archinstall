@@ -14,12 +14,12 @@ class DMCryptDev:
 
 	@property
 	def name(self):
-		with open(f"/sys/devices/virtual/block/{self.path.name}/dm/name", "r") as fh:
+		with open(f"/sys/devices/virtual/block/{pathlib.Path(self.path).name}/dm/name", "r") as fh:
 			return fh.read().strip()
 
 	@property
 	def path(self):
-		return f"/dev/mapper/{self.mappername}"
+		return f"/dev/mapper/{self.dev_path}"
 
 	@property
 	def blockdev(self):

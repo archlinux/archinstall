@@ -249,6 +249,12 @@ class Partition:
 		device_path, bind_name = split_bind_name(self.path)
 		return bind_name
 
+	# TODO: This should be triggered on self.mountpoint
+	# @property
+	# def subvolume(self):
+	# 	# https://stackoverflow.com/a/32865333/929999
+	# 	return os.lstat(self.path).st_ino in (256, 2)
+
 	def partprobe(self) -> bool:
 		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
 			time.sleep(1)
