@@ -13,6 +13,7 @@ from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
+from .btrfs import get_subvolumes_from_findmnt
 
 
 class Partition:
@@ -45,20 +46,12 @@ class Partition:
 			self.mount(mountpoint)
 
 		try:
-			mount_information = find_mountpoint(self.path)
+			self.mount_information = list(find_mountpoint(self.path))
 		except DiskError:
-			mount_information = {}
-
-		if mount_information.get('target', None):
-			if self.mountpoint != mount_information.get('target', None) and mountpoint:
-				raise DiskError(f"{self} was given a mountpoint but the actual mountpoint differs: {mount_information.get('target', None)}")
-
-			if target := mount_information.get('target', None):
-				self.mountpoint = target
+			self.mount_information = [{}]
 
 		if not self.filesystem and autodetect_filesystem:
-			if fstype := mount_information.get('fstype', get_filesystem_type(path)):
-				self.filesystem = fstype
+			self.filesystem = get_filesystem_type(path)
 
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
@@ -249,11 +242,13 @@ class Partition:
 		device_path, bind_name = split_bind_name(self.path)
 		return bind_name
 
-	# TODO: This should be triggered on self.mountpoint
-	# @property
-	# def subvolume(self):
-	# 	# https://stackoverflow.com/a/32865333/929999
-	# 	return os.lstat(self.path).st_ino in (256, 2)
+	@property
+	def subvolumes(self):
+		# https://stackoverflow.com/a/32865333/929999
+		# return os.lstat(self.path).st_ino in (256, 2)
+		for mountpoint in self.mount_information:
+			for result in get_subvolumes_from_findmnt(mountpoint):
+				yield result
 
 	def partprobe(self) -> bool:
 		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:

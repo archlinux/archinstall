@@ -2,7 +2,9 @@ from __future__ import annotations
 import pathlib
 import glob
 import logging
+import re
 from typing import Union, Dict, TYPE_CHECKING, Any
+from dataclasses import dataclass
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -13,6 +15,33 @@ from ..general import SysCommand
 from ..output import log
 from ..exceptions import SysCallError
 
+@dataclass
+class BtrfsSubvolume:
+	target :str
+	source :str
+	fstype :str
+	name :str
+	options :str
+	root :bool = False
+
+def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> List[BtrfsSubvolume]:
+	if '@' in struct['source']:
+		subvolume = re.findall('\[.*?\]', struct['source'])[0][1:-1]
+		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
+		yield BtrfsSubvolume(
+			target=struct['target'],
+			source=struct['source'],
+			fstype=struct['fstype'],
+			name=subvolume,
+			options=struct['options'],
+			root=index == 0
+		)
+		index += 1
+
+		for child in struct.get('children', []):
+			for item in get_subvolumes_from_findmnt(child, index=index):
+				yield item
+				index += 1
 
 def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
 	try:

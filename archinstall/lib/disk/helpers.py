@@ -255,8 +255,8 @@ def split_bind_name(path :Union[pathlib.Path, str]) -> list:
 
 def find_mountpoint(device_path :str) -> Dict[str, Any]:
 	try:
-		for filesystem in json.loads(SysCommand(f'/usr/bin/findmnt --json {device_path}').decode())['filesystems']:
-			return filesystem
+		for filesystem in json.loads(SysCommand(f'/usr/bin/findmnt -R --json {device_path}').decode())['filesystems']:
+			yield filesystem
 	except SysCallError:
 		return {}
 

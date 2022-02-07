@@ -735,9 +735,10 @@ class Installer:
 						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 					else:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
-					base_path,bind_path = split_bind_name(str(root_partition.path))
-					if bind_path is not None: # and root_fs_type == 'btrfs':
-						options_entry = f"rootflags=subvol={bind_path} " + options_entry
+
+					for subvolume in root_partition.subvolumes:
+						if subvolume.root is True:
+							options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
 					# Zswap should be disabled when using zram.
 					#
