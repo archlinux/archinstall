@@ -506,6 +506,7 @@ class Installer:
 	def detect_encryption(self, partition :Partition) -> bool:
 		from .disk.mapperdev import MapperDev
 		from .disk.dmcryptdev import DMCryptDev
+		from .disk.helpers import get_filesystem_type
 
 		if type(partition) is MapperDev:
 			# Returns MapperDev.partition
