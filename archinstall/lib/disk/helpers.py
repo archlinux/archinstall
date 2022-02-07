@@ -174,6 +174,9 @@ def uevent(data :str) -> Dict[str, Any]:
 
 	return information
 
+def all_disks() -> List[BlockDevice]:
+	return all_blockdevices(partitions=False, mappers=False)
+
 def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
