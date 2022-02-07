@@ -98,6 +98,7 @@ class BlockDevice:
 		If it's a ATA-drive it returns the /dev/X device
 		And if it's a crypto-device it returns the parent device
 		"""
+		print(self.info)
 		if "type" not in self.info:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
