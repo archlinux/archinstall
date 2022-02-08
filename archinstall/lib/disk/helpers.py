@@ -219,27 +219,17 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> List[Block
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
-		if device_path.startswith('/dev/sdb') and error:
-			print(device_path)
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
-			if device_path.startswith('/dev/sdb') and error:
-				print(f'Error during blkid: {error}')
 			if error.exit_code in (512, 2):
-				if device_path.startswith('/dev/sdb') and error:
-					log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
-					if device_path.startswith('/dev/sdb') and error:
-						print('Got loop info')
 					if not information:
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
-					if device_path.startswith('/dev/sdb') and error:
-						print('Getting uevent() data as backup')
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
 				raise error
@@ -248,26 +238,16 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> List[Block
 		
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
-				if path.startswith('/dev/sdb') and error:
-					print(f"DMCryptDev: {path_info}")
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
-				if path.startswith('/dev/sdb') and error:
-					print(f"Partition {partitions}: {path_info}")
 				if partitions:
 					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
-				if path.startswith('/dev/sdb') and error:
-					print(f"BlockDevice: {path_info}")
 				instances[path] = BlockDevice(path, path_info)
 			elif path_info.get('TYPE') == 'squashfs':
-				if path.startswith('/dev/sdb') and error:
-					print(f"Squashfs: {path_info}")
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
-				if path.startswith('/dev/sdb') and error:
-					print(f"Nothing: {path_info}")
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
 
 	if mappers:
@@ -378,12 +358,12 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 
 	mounts = {}
 
-	print('---- partitions=True !!!')
 	block_devices_available = all_blockdevices(mappers=True, partitions=True, error=True)
 	print(block_devices_available)
-	exit(0)
+	
 	block_devices_mountpoints = {}
 	for blockdev in block_devices_available.values():
+		print(type(blockdev), blockdev)
 		if not type(blockdev) is Partition:
 			continue
 
@@ -391,6 +371,7 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.INFO)
+	exit(0)
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
 		if mountpoint in block_devices_mountpoints:
