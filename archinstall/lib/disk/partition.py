@@ -34,7 +34,6 @@ class Partition:
 
 		self.path = path
 		self.part_id = part_id
-		self.mountpoint = mountpoint
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self._encrypted = None
@@ -91,6 +90,20 @@ class Partition:
 				'format': get_filesystem_type(self.path)
 			}
 		}
+
+	@property
+	def mountpoint(self) -> Optional[str]:
+		try:
+			data = json.loads(SysCommand(f"findmnt --json -R {self.path}").decode())
+			for filesystem in data['filesystems']:
+				return filesystem.get('target')
+
+		except SysCallError as error:
+			# Not mounted anywhere most likely
+			log(f"Could not locate mount information for {self.path}: {error}", level=logging.WARNING, fg="yellow")
+			pass
+
+		return None
 
 	@property
 	def sector_size(self) -> Optional[int]:
