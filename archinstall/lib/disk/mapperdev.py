@@ -35,8 +35,6 @@ class MapperDev:
 			if path_obj.name == self.mappername and pathlib.Path(mapper).is_symlink():
 				dm_device = (pathlib.Path("/dev/mapper/") / path_obj.readlink()).resolve()
 
-				print(f'Found dm-device: {dm_device}')
-
 				for slave in glob.glob(f"/sys/class/block/{dm_device.name}/slaves/*"):
 					partition_belonging_to_dmcrypt_device = pathlib.Path(slave).name
 					
