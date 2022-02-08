@@ -221,19 +221,23 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
+		print(device_path)
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
+			print('Got info on it')
 		except SysCallError as error:
+			print(f'Error during blkid: {error}')
 			if error.exit_code in (512, 2):
-				if device_path.startswith('/dev/sdb'):
-					log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
+				log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
+					print('Got loop info')
 					if not information:
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
+					print('Getting uevent() data as backup')
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
 				raise error
