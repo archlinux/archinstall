@@ -226,7 +226,6 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 			if device_path.startswith('/dev/sdb'):
-				print('Got info on it')
 		except SysCallError as error:
 			if device_path.startswith('/dev/sdb'):
 				print(f'Error during blkid: {error}')
@@ -249,21 +248,29 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 				raise error
 
 		information = enrich_blockdevice_information(information)
-		if device_path.startswith('/dev/sdb'):
-			print(f"Enriched information: {information}")
-
+		
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
+				if path.startswith('/dev/sdb'):
+					print(f"DMCryptDev: {path_info}")
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
+				if path.startswith('/dev/sdb'):
+					print(f"Partition {kwargs.get('partitions')}: {path_info}")
 				if kwargs.get('partitions'):
 					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
+				if path.startswith('/dev/sdb'):
+					print(f"BlockDevice: {path_info}")
 				instances[path] = BlockDevice(path, path_info)
 			elif path_info.get('TYPE') == 'squashfs':
+				if path.startswith('/dev/sdb'):
+					print(f"Squashfs: {path_info}")
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
+				if path.startswith('/dev/sdb'):
+					print(f"Nothing: {path_info}")
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
 
 	if kwargs.get('mappers'):
