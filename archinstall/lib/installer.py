@@ -779,18 +779,18 @@ class Installer:
 				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 				try:
 					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
-				except SysCallError:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
+				except SysCallError as error:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
 			else:
 				try:
 					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')
-				except SysCallError:
-					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {handle}")
+				except SysCallError as error:
+					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
 
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-			except SysCallError:
-				raise DiskError(f"Could not configure GRUB: {handle}")
+			except SysCallError as error:
+				raise DiskError(f"Could not configure GRUB: {error}")
 
 			self.helper_flags['bootloader'] = True
 		elif bootloader == 'efistub':
