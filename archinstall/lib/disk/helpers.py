@@ -225,7 +225,6 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			print(device_path)
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
-			if device_path.startswith('/dev/sdb'):
 		except SysCallError as error:
 			if device_path.startswith('/dev/sdb'):
 				print(f'Error during blkid: {error}')
