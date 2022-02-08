@@ -7,6 +7,7 @@ from typing import Optional, List, Dict, Any, Iterator
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
+from .btrfs import BtrfsSubvolume
 
 @dataclass
 class MapperDev:
