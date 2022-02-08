@@ -62,6 +62,7 @@ class MapperDev:
 
 	@property
 	def mount_information(self) -> List[Dict[str, Any]]:
+		from .helpers import find_mountpoint
 		return list(find_mountpoint(self.path))
 
 	@property
