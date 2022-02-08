@@ -71,6 +71,8 @@ class MapperDev:
 		return get_filesystem_type(self.path)
 
 	@property
-	def subvolumes(self) -> Iterator['.btrfs.BtrfsSubvolume']:
+	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
+		from .btrfs import BtrfsSubvolume
+		
 		for subvolume in self.partition.subvolumes:
 			yield subvolume
