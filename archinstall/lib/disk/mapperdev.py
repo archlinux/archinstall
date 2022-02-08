@@ -3,10 +3,12 @@ import pathlib
 import logging
 import json
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any, Iterator
+from typing import Optional, List, Dict, Any, Iterator, TYPE_CHECKING
+
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
+
 if TYPE_CHECKING:
 	from .btrfs import BtrfsSubvolume
 
