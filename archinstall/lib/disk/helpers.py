@@ -359,12 +359,10 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 	mounts = {}
 
 	block_devices_available = all_blockdevices(mappers=True, partitions=True, error=True)
-	print(block_devices_available)
-	
+
 	block_devices_mountpoints = {}
 	for blockdev in block_devices_available.values():
-		print(type(blockdev), blockdev)
-		if not type(blockdev) is Partition:
+		if not type(blockdev) in (Partition, MapperDev):
 			continue
 
 		for blockdev_mountpoint in blockdev.mount_information:
