@@ -661,7 +661,8 @@ class Installer:
 		root_partition = None
 		root_partition_fs = None
 		for partition in self.partitions:
-			if partition.mountpoint == self.target + '/boot':
+			print(partition, partition.mountpoint)
+			if partition.mountpoint == os.path.join(self.target, 'boot'):
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
