@@ -76,5 +76,6 @@ class MapperDev:
 
 	@property
 	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
+		print(self.partition)
 		for subvolume in self.partition.subvolumes:
 			yield subvolume
