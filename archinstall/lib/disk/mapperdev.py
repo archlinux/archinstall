@@ -3,7 +3,7 @@ import pathlib
 import logging
 import json
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Iterator
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
