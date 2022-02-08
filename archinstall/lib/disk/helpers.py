@@ -253,8 +253,8 @@ def all_blockdevices(mappers=False, partitions=False) -> List[BlockDevice, Parti
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if path.startswith('/dev/sdb'):
-					print(f"Partition {kwargs.get('partitions')}: {path_info}")
-				if kwargs.get('partitions'):
+					print(f"Partition {partitions}: {path_info}")
+				if partitions:
 					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				if path.startswith('/dev/sdb'):
@@ -270,7 +270,7 @@ def all_blockdevices(mappers=False, partitions=False) -> List[BlockDevice, Parti
 					print(f"Nothing: {path_info}")
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
 
-	if kwargs.get('mappers'):
+	if mappers:
 		for block_device in glob.glob("/dev/mapper/*"):
 			if (pathobj := pathlib.Path(block_device)).is_symlink():
 				instances[f"/dev/mapper/{pathobj.name}"] = MapperDev(mappername=pathobj.name)
