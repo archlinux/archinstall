@@ -7,7 +7,6 @@ from typing import Optional, List, Dict, Any, Iterator
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
-from .btrfs import BtrfsSubvolume
 
 @dataclass
 class MapperDev:
@@ -72,6 +71,6 @@ class MapperDev:
 		return get_filesystem_type(self.path)
 
 	@property
-	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
+	def subvolumes(self) -> Iterator['.btrfs.BtrfsSubvolume']:
 		for subvolume in self.partition.subvolumes:
 			yield subvolume
