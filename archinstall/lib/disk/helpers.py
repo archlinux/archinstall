@@ -311,7 +311,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, retur
 			break
 
 	if not output:
-		raise DiskError(f"Could not get mount information for device path {path}")
+		raise DiskError(f"Could not get mount information for device path {device_path}")
 
 	output = json.loads(output)
 
@@ -322,7 +322,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, retur
 
 	if 'filesystems' in output:
 		if len(output['filesystems']) > 1:
-			raise DiskError(f"Path '{path}' contains multiple mountpoints: {output['filesystems']}")
+			raise DiskError(f"Path '{device_path}' contains multiple mountpoints: {output['filesystems']}")
 
 		if return_real_path:
 			return output['filesystems'][0], traversal
