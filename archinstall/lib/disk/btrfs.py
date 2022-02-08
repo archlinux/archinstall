@@ -68,7 +68,7 @@ def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.P
 	This function is DEPRECATED. you can get the same result creating a partition dict like any other partition, and using the standard mount procedure.
 	Only change partition['device_instance'].path with the apropriate bind name: real_partition_path[/subvolume_name]
 	"""
-	log("function btrfs.mount_subvolume DEPRECATED. See code for alternatives",fg="yellow",level=logging.WARNING)
+	log("[Deprecated] function btrfs.mount_subvolume is deprecated. See code for alternatives",fg="yellow",level=logging.WARNING)
 	installation_mountpoint = installation.target
 	if type(installation_mountpoint) == str:
 		installation_mountpoint = pathlib.Path(installation_mountpoint)

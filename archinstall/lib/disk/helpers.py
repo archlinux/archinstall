@@ -225,6 +225,7 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
 			if error.exit_code in (512, 2):
+				log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -273,7 +274,7 @@ def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :
 		return collection[drive]
 
 def split_bind_name(path :Union[pathlib.Path, str]) -> list:
-	log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
+	# log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
 	# we check for the bind notation. if exist we'll only use the "true" device path
 	if '[' in str(path) :  # is a bind path (btrfs subvolume path)
 		device_path, bind_path = str(path).split('[')
@@ -363,8 +364,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		if not type(blockdev) is Partition:
 			continue
 
-		for mountpoint in blockdev.mount_information:
-			block_devices_mountpoints[mountpoint['target']] = blockdev
+		for blockdev_mountpoint in blockdev.mount_information:
+			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.INFO)
 
