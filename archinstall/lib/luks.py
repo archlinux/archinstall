@@ -82,7 +82,7 @@ class luks2:
 		with open(key_file, 'wb') as fh:
 			fh.write(password)
 
-		SysCommand(f'bash -c "partprobe"') # Might be redundant
+		partition.partprobe()
 
 		cryptsetup_args = shlex.join([
 			'/usr/bin/cryptsetup',
