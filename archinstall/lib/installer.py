@@ -540,8 +540,6 @@ class Installer:
 		#       the partitioning. Leaving here for now.
 
 		for partition in self.partitions:
-			print(partition, partition.filesystem)
-
 			if partition.filesystem == 'btrfs':
 				# if partition.encrypted:
 				if 'btrfs-progs' not in self.base_packages:
@@ -661,7 +659,6 @@ class Installer:
 		root_partition = None
 		root_partition_fs = None
 		for partition in self.partitions:
-			print(partition, partition.mountpoint)
 			if partition.mountpoint == os.path.join(self.target, 'boot'):
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
@@ -739,9 +736,7 @@ class Installer:
 					else:
 						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 
-					print(f"Iterating subvolumes on {root_partition}")
 					for subvolume in root_partition.subvolumes:
-						print(f'Found subvolume: {subvolume} ({subvolume.root})')
 						if subvolume.root is True:
 							options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
