@@ -100,7 +100,7 @@ class Partition:
 
 		except SysCallError as error:
 			# Not mounted anywhere most likely
-			log(f"Could not locate mount information for {self.path}: {error}", level=logging.WARNING, fg="yellow")
+			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG)
 			pass
 
 		return None
@@ -256,8 +256,6 @@ class Partition:
 
 	@property
 	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
-		# https://stackoverflow.com/a/32865333/929999
-		# return os.lstat(self.path).st_ino in (256, 2)
 		for mountpoint in self.mount_information:
 			for result in get_subvolumes_from_findmnt(mountpoint):
 				yield result
