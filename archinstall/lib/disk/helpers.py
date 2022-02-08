@@ -369,7 +369,6 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.INFO)
-	exit(0)
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
 		if mountpoint in block_devices_mountpoints:
