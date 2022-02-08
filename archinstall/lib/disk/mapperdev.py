@@ -76,6 +76,8 @@ class MapperDev:
 
 	@property
 	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
-		print(self.partition)
-		for subvolume in self.partition.subvolumes:
-			yield subvolume
+		from .btrfs import get_subvolumes_from_findmnt
+		
+		for mountpoint in self.mount_information:
+			for result in get_subvolumes_from_findmnt(mountpoint):
+				yield result
