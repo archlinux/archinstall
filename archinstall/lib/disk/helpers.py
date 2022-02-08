@@ -119,7 +119,7 @@ def blkid(cmd :str) -> Dict[str, Any]:
 	try:
 		raw_data = SysCommand(cmd).decode()
 	except SysCallError as error:
-		log(f"Could not get block device information using blkid() using command {cmd}", level=logging.ERROR, fg="red")
+		log(f"Could not get block device information using blkid() using command {cmd}", level=logging.DEBUG)
 		raise error
 
 	result = {}
