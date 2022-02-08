@@ -368,7 +368,7 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		for blockdev_mountpoint in blockdev.mount_information:
 			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
-	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.INFO)
+	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
 		if mountpoint in block_devices_mountpoints:
@@ -379,7 +379,7 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 			elif type(mounts[mountpoint]) == DMCryptDev and type(block_devices_mountpoints[mountpoint]) == MapperDev:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
 
-	log(f"Available partitions: {mounts}", level=logging.INFO)
+	log(f"Available partitions: {mounts}", level=logging.DEBUG)
 
 	return mounts
 

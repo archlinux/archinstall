@@ -567,7 +567,6 @@ class Installer:
 			if self.detect_encryption(partition):
 				if 'encrypt' not in self.HOOKS:
 					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
-		exit(0)
 
 		if not has_uefi():
 			self.base_packages.append('grub')
