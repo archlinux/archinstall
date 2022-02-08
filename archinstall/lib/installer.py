@@ -636,6 +636,178 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
+	def add_systemd_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+		self.pacstrap('efibootmgr')
+
+		if not has_uefi():
+			raise HardwareIncompatibilityError
+		# TODO: Ideally we would want to check if another config
+		# points towards the same disk and/or partition.
+		# And in which case we should do some clean up.
+
+		# Install the boot loader
+		if SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install').exit_code != 0:
+			# Fallback, try creating the boot loader without touching the EFI variables
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+
+		# Ensure that the /boot/loader directory exists before we try to create files in it
+		if not os.path.exists(f'{self.target}/boot/loader'):
+			os.makedirs(f'{self.target}/boot/loader')
+
+		# Modify or create a loader.conf
+		if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
+			with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
+				loader_data = loader.read().split('\n')
+		else:
+			loader_data = [
+				f"default {self.init_time}",
+				"timeout 5"
+			]
+
+		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
+			for line in loader_data:
+				if line[:8] == 'default ':
+					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
+				elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+					# We add in the default timeout to support dual-boot
+					loader.write(f"{line[1:]}\n")
+				else:
+					loader.write(f"{line}\n")
+
+		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+		if not os.path.exists(f'{self.target}/boot/loader/entries'):
+			os.makedirs(f'{self.target}/boot/loader/entries')
+
+		for kernel in self.kernels:
+			# Setup the loader entry
+			with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
+				entry.write('# Created by: archinstall\n')
+				entry.write(f'# Created on: {self.init_time}\n')
+				entry.write(f'title Arch Linux ({kernel})\n')
+				entry.write(f"linux /vmlinuz-{kernel}\n")
+				if not is_vm():
+					vendor = cpu_vendor()
+					if vendor == "AuthenticAMD":
+						entry.write("initrd /amd-ucode.img\n")
+					elif vendor == "GenuineIntel":
+						entry.write("initrd /intel-ucode.img\n")
+					else:
+						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
+				entry.write(f"initrd /initramfs-{kernel}.img\n")
+				# blkid doesn't trigger on loopback devices really well,
+				# so we'll use the old manual method until we get that sorted out.
+				if root_fs_type is not None:
+					options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
+				else:
+					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
+
+				for subvolume in root_partition.subvolumes:
+					if subvolume.root is True:
+						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
+
+				# Zswap should be disabled when using zram.
+				#
+				# https://github.com/archlinux/archinstall/issues/881
+				if self.zram_enabled:
+					options_entry = "zswap.enabled=0 " + options_entry
+
+				if real_device := self.detect_encryption(root_partition):
+					# TODO: We need to detect if the encrypted device is a whole disk encryption,
+					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
+				else:
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+					entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
+
+		self.helper_flags['bootloader'] = "systemd"
+
+		return True
+
+	def add_grub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+		self.pacstrap('grub')  # no need?
+
+		if real_device := self.detect_encryption(root_partition):
+			root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
+			_file = "/etc/default/grub"
+			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
+			enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
+
+			log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
+			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+		else:
+			_file = "/etc/default/grub"
+			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+
+		log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
+		if has_uefi():
+			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			try:
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
+			except SysCallError as error:
+				raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
+		else:
+			try:
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')
+			except SysCallError as error:
+				raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
+
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
+		except SysCallError as error:
+			raise DiskError(f"Could not configure GRUB: {error}")
+
+		self.helper_flags['bootloader'] = "grub"
+
+		return True
+
+	def add_efistub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+		self.pacstrap('efibootmgr')
+
+		if not has_uefi():
+			raise HardwareIncompatibilityError
+		# TODO: Ideally we would want to check if another config
+		# points towards the same disk and/or partition.
+		# And in which case we should do some clean up.
+
+		for kernel in self.kernels:
+			# Setup the firmware entry
+
+			label = f'Arch Linux ({kernel})'
+			loader = f"/vmlinuz-{kernel}"
+
+			kernel_parameters = []
+
+			if not is_vm():
+				vendor = cpu_vendor()
+				if vendor == "AuthenticAMD":
+					kernel_parameters.append("initrd=\\amd-ucode.img")
+				elif vendor == "GenuineIntel":
+					kernel_parameters.append("initrd=\\intel-ucode.img")
+				else:
+					self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
+
+			kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
+
+			# blkid doesn't trigger on loopback devices really well,
+			# so we'll use the old manual method until we get that sorted out.
+			if real_device := self.detect_encryption(root_partition):
+				# TODO: We need to detect if the encrypted device is a whole disk encryption,
+				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+			else:
+				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+
+			SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+
+		self.helper_flags['bootloader'] = "efistub"
+
+		return True
+
 	def add_bootloader(self, bootloader :str = 'systemd-bootctl') -> bool:
 		"""
 		Adds a bootloader to the installation instance.
@@ -672,169 +844,11 @@ class Installer:
 		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
-			self.pacstrap('efibootmgr')
-
-			if not has_uefi():
-				raise HardwareIncompatibilityError
-			# TODO: Ideally we would want to check if another config
-			# points towards the same disk and/or partition.
-			# And in which case we should do some clean up.
-
-			# Install the boot loader
-			if SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install').exit_code != 0:
-				# Fallback, try creating the boot loader without touching the EFI variables
-				SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
-
-			# Ensure that the /boot/loader directory exists before we try to create files in it
-			if not os.path.exists(f'{self.target}/boot/loader'):
-				os.makedirs(f'{self.target}/boot/loader')
-
-			# Modify or create a loader.conf
-			if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
-				with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
-					loader_data = loader.read().split('\n')
-			else:
-				loader_data = [
-					f"default {self.init_time}",
-					"timeout 5"
-				]
-
-			with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
-				for line in loader_data:
-					if line[:8] == 'default ':
-						loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-					elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
-						# We add in the default timeout to support dual-boot
-						loader.write(f"{line[1:]}\n")
-					else:
-						loader.write(f"{line}\n")
-
-			# Ensure that the /boot/loader/entries directory exists before we try to create files in it
-			if not os.path.exists(f'{self.target}/boot/loader/entries'):
-				os.makedirs(f'{self.target}/boot/loader/entries')
-
-			for kernel in self.kernels:
-				# Setup the loader entry
-				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
-					entry.write('# Created by: archinstall\n')
-					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write(f'title Arch Linux ({kernel})\n')
-					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not is_vm():
-						vendor = cpu_vendor()
-						if vendor == "AuthenticAMD":
-							entry.write("initrd /amd-ucode.img\n")
-						elif vendor == "GenuineIntel":
-							entry.write("initrd /intel-ucode.img\n")
-						else:
-							self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
-					entry.write(f"initrd /initramfs-{kernel}.img\n")
-					# blkid doesn't trigger on loopback devices really well,
-					# so we'll use the old manual method until we get that sorted out.
-					if root_fs_type is not None:
-						options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
-					else:
-						options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
-
-					for subvolume in root_partition.subvolumes:
-						if subvolume.root is True:
-							options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
-
-					# Zswap should be disabled when using zram.
-					#
-					# https://github.com/archlinux/archinstall/issues/881
-					if self.zram_enabled:
-						options_entry = "zswap.enabled=0 " + options_entry
-
-					if real_device := self.detect_encryption(root_partition):
-						# TODO: We need to detect if the encrypted device is a whole disk encryption,
-						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
-					else:
-						log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
-
-					self.helper_flags['bootloader'] = bootloader
-
+			self.add_systemd_bootloader(boot_partition, root_partition)
 		elif bootloader == "grub-install":
-			self.pacstrap('grub')  # no need?
-
-			if real_device := self.detect_encryption(root_partition):
-				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
-				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
-
-				log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
-			else:
-				_file = "/etc/default/grub"
-				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
-				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
-
-			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
-			if has_uefi():
-				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
-				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
-				except SysCallError as error:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
-			else:
-				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')
-				except SysCallError as error:
-					raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
-
-			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-			except SysCallError as error:
-				raise DiskError(f"Could not configure GRUB: {error}")
-
-			self.helper_flags['bootloader'] = True
+			self.add_grub_bootloader(boot_partition, root_partition)
 		elif bootloader == 'efistub':
-			self.pacstrap('efibootmgr')
-
-			if not has_uefi():
-				raise HardwareIncompatibilityError
-			# TODO: Ideally we would want to check if another config
-			# points towards the same disk and/or partition.
-			# And in which case we should do some clean up.
-
-			for kernel in self.kernels:
-				# Setup the firmware entry
-
-				label = f'Arch Linux ({kernel})'
-				loader = f"/vmlinuz-{kernel}"
-
-				kernel_parameters = []
-
-				if not is_vm():
-					vendor = cpu_vendor()
-					if vendor == "AuthenticAMD":
-						kernel_parameters.append("initrd=\\amd-ucode.img")
-					elif vendor == "GenuineIntel":
-						kernel_parameters.append("initrd=\\intel-ucode.img")
-					else:
-						self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
-
-				kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
-
-				# blkid doesn't trigger on loopback devices really well,
-				# so we'll use the old manual method until we get that sorted out.
-				if real_device := self.detect_encryption(root_partition):
-					# TODO: We need to detect if the encrypted device is a whole disk encryption,
-					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
-				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
-
-				SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
-
-			self.helper_flags['bootloader'] = bootloader
+			self.add_efistub_bootloader(boot_partition, root_partition)
 		else:
 			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
 
