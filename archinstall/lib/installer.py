@@ -669,7 +669,7 @@ class Installer:
 				root_fs_type = get_mount_fs_type(root_partition_fs)
 
 		if boot_partition is None or root_partition is None:
-			raise ValueError(f"Could not detect root (/) or boot (/boot) in {self.target} based on: {self.partitions}")
+			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
 
 		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 

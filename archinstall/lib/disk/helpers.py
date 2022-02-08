@@ -297,7 +297,7 @@ def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, retur
 
 	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
 		try:
-			log(f"Getting mount information for device path {traversal}", level=logging.INFO)
+			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
 			if (output := SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')):
 				break
 
