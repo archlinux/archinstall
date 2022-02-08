@@ -222,6 +222,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> List[Block
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
+			log(f"Could not use blkid on {device_path}: {error}", level=logging.DEBUG)
 			if error.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
