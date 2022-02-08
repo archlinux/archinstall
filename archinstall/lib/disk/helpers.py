@@ -206,14 +206,14 @@ def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
-def all_blockdevices(mappers=False, partitions=False) -> List[BlockDevice, Partition]:
+def all_blockdevices(mappers=False, partitions=False, error=False) -> List[BlockDevice, Partition]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
 	"""
 	from .partition import Partition
 
 	instances = {}
-	if partitions is False:
+	if partitions is False and error:
 		raise ValueError(f"Where?")
 
 	# Due to lsblk being highly unreliable for this use case,
@@ -381,7 +381,7 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 	mounts = {}
 
 	print('---- partitions=True !!!')
-	block_devices_available = all_blockdevices(mappers=True, partitions=True)
+	block_devices_available = all_blockdevices(mappers=True, partitions=True, error=True)
 	block_devices_mountpoints = {}
 	for blockdev in block_devices_available.values():
 		if not type(blockdev) is Partition:
