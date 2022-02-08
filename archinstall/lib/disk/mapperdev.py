@@ -7,6 +7,8 @@ from typing import Optional, List, Dict, Any, Iterator
 from ..exceptions import SysCallError
 from ..general import SysCommand
 from ..output import log
+if TYPE_CHECKING:
+	from .btrfs import BtrfsSubvolume
 
 @dataclass
 class MapperDev:
@@ -72,7 +74,5 @@ class MapperDev:
 
 	@property
 	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
-		from .btrfs import BtrfsSubvolume
-		
 		for subvolume in self.partition.subvolumes:
 			yield subvolume
