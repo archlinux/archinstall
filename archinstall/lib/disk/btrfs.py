@@ -223,11 +223,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 				# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
 				# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
 				fake_partition['device_instance'].path = f"{partition['device_instance'].path}[/{name}]"
-				# we reset this attribute, which holds where the partition is actually mounted. Remember, the physical partition is mounted at this moment and therefore has the value '/'.
-				# If i don't reset it, process will abort as "already mounted' .
-				# TODO It works for this purpose, but the fact that this bevahiour can happed, should make think twice
-				fake_partition['device_instance'].mountpoint = None
-				#
+
 				# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 				# as "normal" ones
 				mountpoints.append(fake_partition)
