@@ -61,6 +61,10 @@ class MapperDev:
 		return None
 
 	@property
+	def mount_information(self) -> List[Dict[str, Any]]:
+		return list(find_mountpoint(self.path))
+
+	@property
 	def filesystem(self) -> Optional[str]:
 		from .helpers import get_filesystem_type
 		return get_filesystem_type(self.path)
