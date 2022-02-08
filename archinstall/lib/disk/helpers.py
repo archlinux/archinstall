@@ -225,7 +225,8 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as error:
 			if error.exit_code in (512, 2):
-				log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
+				if device_path.startswith('/dev/sdb'):
+					log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
