@@ -213,6 +213,8 @@ def all_blockdevices(mappers=False, partitions=False) -> List[BlockDevice, Parti
 	from .partition import Partition
 
 	instances = {}
+	if partitions is False:
+		raise ValueError(f"Where?")
 
 	# Due to lsblk being highly unreliable for this use case,
 	# we'll iterate the /sys/class definitions and find the information
