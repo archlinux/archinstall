@@ -231,7 +231,8 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 			if device_path.startswith('/dev/sdb'):
 				print(f'Error during blkid: {error}')
 			if error.exit_code in (512, 2):
-				log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
+				if device_path.startswith('/dev/sdb'):
+					log(f"Could not get information on blockdevice {device_path}: {error}", level=logging.WARNING, fg="yellow")
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -248,6 +249,8 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 				raise error
 
 		information = enrich_blockdevice_information(information)
+		if device_path.startswith('/dev/sdb'):
+			print(f"Enriched information: {information}")
 
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
