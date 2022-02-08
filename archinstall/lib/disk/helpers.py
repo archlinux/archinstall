@@ -248,6 +248,9 @@ def all_blockdevices(*args :str, **kwargs :str) -> List[BlockDevice, Partition]:
 					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
+			elif path_info.get('TYPE') == 'squashfs':
+				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
+				continue
 			else:
 				log(f"Unknown device found by all_blockdevices(), ignoring: {information}", level=logging.WARNING, fg="yellow")
 
