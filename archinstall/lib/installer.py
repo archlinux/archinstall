@@ -696,6 +696,8 @@ class Installer:
 				entry.write(f"initrd /initramfs-{kernel}.img\n")
 				# blkid doesn't trigger on loopback devices really well,
 				# so we'll use the old manual method until we get that sorted out.
+				root_fs_type = get_mount_fs_type(root_partition.filesystem)
+
 				if root_fs_type is not None:
 					options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 				else:
@@ -726,6 +728,8 @@ class Installer:
 
 	def add_grub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
 		self.pacstrap('grub')  # no need?
+
+		root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
 		if real_device := self.detect_encryption(root_partition):
 			root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
@@ -771,6 +775,8 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
+
+		root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
 		for kernel in self.kernels:
 			# Setup the firmware entry
@@ -829,14 +835,11 @@ class Installer:
 
 		boot_partition = None
 		root_partition = None
-		root_partition_fs = None
 		for partition in self.partitions:
 			if partition.mountpoint == os.path.join(self.target, 'boot'):
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-				root_partition_fs = partition.filesystem
-				root_fs_type = get_mount_fs_type(root_partition_fs)
 
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
