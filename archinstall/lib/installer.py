@@ -540,6 +540,8 @@ class Installer:
 		#       the partitioning. Leaving here for now.
 
 		for partition in self.partitions:
+			print(partition, partition.filesystem)
+
 			if partition.filesystem == 'btrfs':
 				# if partition.encrypted:
 				if 'btrfs-progs' not in self.base_packages:
