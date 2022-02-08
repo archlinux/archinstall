@@ -436,7 +436,6 @@ class Partition:
 			except SysCallError as err:
 				raise err
 
-			self.mountpoint = target
 			return True
 
 		return False
@@ -450,7 +449,6 @@ class Partition:
 		if 0 < worker.exit_code < 8000:
 			raise SysCallError(f"Could not unmount {self.path} properly: {worker}", exit_code=worker.exit_code)
 
-		self.mountpoint = None
 		return True
 
 	def umount(self) -> bool:
