@@ -745,8 +745,6 @@ class Installer:
 						if subvolume.root is True:
 							options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
-					exit(1)
-
 					# Zswap should be disabled when using zram.
 					#
 					# https://github.com/archlinux/archinstall/issues/881
