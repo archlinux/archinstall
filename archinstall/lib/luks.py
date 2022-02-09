@@ -14,7 +14,6 @@ from .disk import Partition, convert_device_to_uuid
 from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
-from .storage import storage
 
 class luks2:
 	def __init__(self,
