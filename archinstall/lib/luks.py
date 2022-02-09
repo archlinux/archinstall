@@ -109,7 +109,7 @@ class luks2:
 		while cryptworker.is_alive():
 			with open('debug_outer.txt', 'a') as silent_output:
 				found = bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker
-				silent_output.write(f"Found string in worker: {found} / {pw_given}")
+				silent_output.write(f"Found string in worker: {found} / {pw_given}\r\n", line_ending=False)
 				if found and pw_given is False:
 					cryptworker.write(password)
 					pw_given = True
