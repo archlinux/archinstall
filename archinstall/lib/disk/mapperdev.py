@@ -84,4 +84,4 @@ class MapperDev:
 
 	def format(self, filesystem :str, options :List[str] = []) -> bool:
 		# TODO: Create a format() helper function rather than relying on a dummy Partition().format() call:
-		self.partition.format(filesystem=filesystem, options = options, path=self.path)
+		self.partition.format(filesystem=filesystem, options=options, path=self.path)

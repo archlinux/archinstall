@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 from .disk import Partition, convert_device_to_uuid, MapperDev
 from .general import SysCommand, SysCommandWorker
 from .output import log
-from .exceptions import SysCallError, DiskError
+from .exceptions import DiskError
 
 class luks2:
 	def __init__(self,
@@ -102,7 +102,7 @@ class luks2:
 			'luksFormat', partition.path,
 		])
 
-		cryptworker = SysCommandWorker(cryptsetup_args)
+		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
 
 		pw_given = False
 		while cryptworker.is_alive():
