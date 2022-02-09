@@ -85,9 +85,6 @@ class luks2:
 		if type(password) != bytes:
 			password = bytes(password, 'UTF-8')
 
-		partition.partprobe()
-		time.sleep(10)
-
 		cryptsetup_args = shlex.join([
 			'/usr/bin/cryptsetup',
 			'--batch-mode',
