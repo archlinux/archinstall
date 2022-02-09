@@ -283,15 +283,17 @@ class SysCommandWorker:
 
 		self.make_sure_we_are_executing()
 
-		if self.child_fd:
-			written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
-			os.fsync(self.child_fd)
+		with open('debug_write.txt', 'a') as silent_output:
+			silent_output.write(f"Writing to {self.child_fd}")
+			if self.child_fd:
+				written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
 
-			with open('debug_write.txt', 'a') as silent_output:
+				os.fsync(self.child_fd)
+
 				written_data_string = data + (b'\n' if line_ending else b'')
 				silent_output.write(f"Wrote {[written_data_string]}\n")
 
-			return written_data
+				return written_data
 
 		return 0
 
