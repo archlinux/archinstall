@@ -201,8 +201,8 @@ class luks2:
 			return self.mapdev
 
 	def close(self, mountpoint :Optional[str] = None) -> bool:
-		if not mountpoint:
-			mountpoint = self.mapdev
+		if not mountpoint and self.mapdev:
+			mountpoint = self.mapdev.path
 
 		if mountpoint:
 			SysCommand(f'/usr/bin/cryptsetup close {mountpoint}')
