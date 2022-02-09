@@ -109,6 +109,8 @@ class luks2:
 		while cryptworker.is_alive():
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
 				cryptworker.write(password)
+				with open('debug.txt', 'a') as silent_output:
+					silent_output.write(f"We did write the output to {cryptworker}")
 				pw_given = True
 
 		if cryptworker.exit_code == 256:
