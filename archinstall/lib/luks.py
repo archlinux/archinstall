@@ -72,7 +72,7 @@ class luks2:
 		if not key_file:
 			key_file = self.key_file
 
-		if not any(password, key_file):
+		if not any([password, key_file]):
 			raise AssertionError(f"luks2().encrypt() requires either a `key_file` or a `password` parameter to operate.")
 
 		if password is None and (key_file is None or pathlib.Path(key_file).exists() is False):
@@ -167,7 +167,7 @@ class luks2:
 		if not key_file:
 			key_file = self.key_file
 
-		if not any(password, key_file):
+		if not any([password, key_file]):
 			raise AssertionError(f"luks2().encrypt() requires either a `key_file` or a `password` parameter to operate.")
 
 		if password is None and (key_file is None or pathlib.Path(key_file).exists() is False):
