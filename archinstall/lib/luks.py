@@ -103,6 +103,7 @@ class luks2:
 		])
 
 		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
+		print(f" Looking for phrase: 'Enter passphrase for {partition.path}'")
 
 		pw_given = False
 		while cryptworker.is_alive():
