@@ -288,7 +288,8 @@ class SysCommandWorker:
 			os.fsync(self.child_fd)
 
 			with open('debug_write.txt', 'a') as silent_output:
-				silent_output.write(f"Wrote {[data + (b'\n' if line_ending else b'')]}\n")
+				written_data_string = data + (b'\n' if line_ending else b'')
+				silent_output.write(f"Wrote {[written_data_string]}\n")
 
 			return written_data
 
