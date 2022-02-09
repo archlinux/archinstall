@@ -284,7 +284,13 @@ class SysCommandWorker:
 		self.make_sure_we_are_executing()
 
 		if self.child_fd:
-			return os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			os.fsync(self.child_fd)
+
+			with open('debug_write.txt', 'a') as silent_output:
+				silent_output.write(f'Wrote {[data + (b'\n' if line_ending else b'')]}\n')
+
+			return written_data
 
 		return 0
 
@@ -354,6 +360,10 @@ class SysCommandWorker:
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
 		#   only way to get the traceback without loosing it.
 
+		# We need to flush any pending output to the parent
+		# otherwise it will bleed into the child: https://docs.python.org/3/library/os.html#os.execvpe
+		sys.stdout.flush()
+		
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
