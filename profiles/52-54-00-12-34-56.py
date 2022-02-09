@@ -15,7 +15,7 @@ archinstall.sys_command(f'umount -R /mnt', suppress_errors=True)
 archinstall.sys_command(f'cryptsetup close /dev/mapper/luksloop', suppress_errors=True)
 
 # Select a harddrive and a disk password
-harddrive = archinstall.all_disks()['/dev/sda']
+harddrive = archinstall.all_blockdevices()['/dev/sda']
 disk_password = '1234'
 
 with archinstall.Filesystem(harddrive) as fs:

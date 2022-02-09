@@ -58,7 +58,7 @@ Disk related
 
 .. autofunction:: archinstall.device_state
 
-.. autofunction:: archinstall.all_disks
+.. autofunction:: archinstall.all_blockdevices
 
 Luks (Disk encryption)
 ======================

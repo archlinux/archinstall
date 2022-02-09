@@ -31,3 +31,4 @@ venv
 **/install.log
 .DS_Store
 **/cmd_history.txt
+**/*.*~

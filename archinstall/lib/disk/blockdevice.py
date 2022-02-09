@@ -16,10 +16,10 @@ from ..storage import storage
 class BlockDevice:
 	def __init__(self, path :str, info :Optional[Dict[str, Any]] = None):
 		if not info:
-			from .helpers import all_disks
+			from .helpers import all_blockdevices
 			# If we don't give any information, we need to auto-fill it.
 			# Otherwise any subsequent usage will break.
-			info = all_disks()[path].info
+			info = all_blockdevices(partitions=False)[path].info
 
 		self.path = path
 		self.info = info
@@ -78,14 +78,18 @@ class BlockDevice:
 		If it's a loop-back-device it returns the back-file,
 		For other types it return self.device
 		"""
-		if self.info['type'] == 'loop':
-			for drive in json.loads(SysCommand(['losetup', '--json']).decode('UTF_8'))['loopdevices']:
-				if not drive['name'] == self.path:
-					continue
-
-				return drive['back-file']
+		if self.info.get('type') == 'loop':
+			return self.info['back-file']
 		else:
 			return self.device
+
+	@property
+	def mountpoint(self) -> None:
+		"""
+		A dummy function to enable transparent comparisons of mountpoints.
+		As blockdevices can't be mounted directly, this will always be None
+		"""
+		return None
 
 	@property
 	def device(self) -> str:
@@ -95,20 +99,20 @@ class BlockDevice:
 		If it's a ATA-drive it returns the /dev/X device
 		And if it's a crypto-device it returns the parent device
 		"""
-		if "type" not in self.info:
+		if "DEVTYPE" not in self.info:
 			raise DiskError(f'Could not locate backplane info for "{self.path}"')
 
-		if self.info['type'] in ['disk','loop']:
+		if self.info['DEVTYPE'] in ['disk','loop']:
 			return self.path
-		elif self.info['type'][:4] == 'raid':
+		elif self.info['DEVTYPE'][:4] == 'raid':
 			# This should catch /dev/md## raid devices
 			return self.path
-		elif self.info['type'] == 'crypt':
+		elif self.info['DEVTYPE'] == 'crypt':
 			if 'pkname' not in self.info:
 				raise DiskError(f'A crypt device ({self.path}) without a parent kernel device name.')
 			return f"/dev/{self.info['pkname']}"
 		else:
-			log(f"Unknown blockdevice type for {self.path}: {self.info['type']}", level=logging.DEBUG)
+			log(f"Unknown blockdevice type for {self.path}: {self.info['DEVTYPE']}", level=logging.DEBUG)
 
 	# 	if not stat.S_ISBLK(os.stat(full_path).st_mode):
 	# 		raise DiskError(f'Selected disk "{full_path}" is not a block device.')
@@ -195,7 +199,7 @@ class BlockDevice:
 					_, start, end, size, *_ = free_space.strip('\r\n;').split(':')
 					yield (start, end, size)
 		except SysCallError as error:
-			log(f"Could not get free space on {self.path}: {error}", level=logging.INFO)
+			log(f"Could not get free space on {self.path}: {error}", level=logging.DEBUG)
 
 	@property
 	def largest_free_space(self) -> List[str]:
