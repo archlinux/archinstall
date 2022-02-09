@@ -21,7 +21,6 @@ class luks2:
 		partition :Partition,
 		mountpoint :str,
 		password :str,
-		key_file :Optional[str] = None,
 		auto_unmount :bool = False,
 		*args :str,
 		**kwargs :str):
@@ -31,22 +30,15 @@ class luks2:
 		self.mountpoint = mountpoint
 		self.args = args
 		self.kwargs = kwargs
-		self.key_file = key_file
 		self.auto_unmount = auto_unmount
 		self.filesystem = 'crypto_LUKS'
 		self.mapdev = None
 
 	def __enter__(self) -> Partition:
-		if not self.key_file:
-			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
-
 		if type(self.password) != bytes:
 			self.password = bytes(self.password, 'UTF-8')
 
-		with open(self.key_file, 'wb') as fh:
-			fh.write(self.password)
-
-		return self.unlock(self.partition, self.mountpoint, self.key_file)
+		return self.unlock(self.partition, self.mountpoint, self.password)
 
 	def __exit__(self, *args :str, **kwargs :str) -> bool:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
@@ -62,25 +54,15 @@ class luks2:
 		password :Optional[str] = None,
 		key_size :int = 512,
 		hash_type :str = 'sha512',
-		iter_time :int = 10000,
-		key_file :Optional[str] = None) -> str:
+		iter_time :int = 10000) -> bool:
 
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
-
-		if not key_file:
-			if self.key_file:
-				key_file = self.key_file
-			else:
-				key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
 
 		if not password:
 			password = self.password
 
 		if type(password) != bytes:
 			password = bytes(password, 'UTF-8')
-
-		with open(key_file, 'wb') as fh:
-			fh.write(password)
 
 		partition.partprobe()
 
@@ -93,7 +75,7 @@ class luks2:
 			'--hash', hash_type,
 			'--key-size', str(key_size),
 			'--iter-time', str(iter_time),
-			'--key-file', os.path.abspath(key_file),
+			'--key-file', '/dev/stdin',
 			'--use-urandom',
 			'luksFormat', partition.path,
 		])
@@ -138,9 +120,9 @@ class luks2:
 			else:
 				raise err
 
-		return key_file
+		return True
 
-	def unlock(self, partition :Partition, mountpoint :str, key_file :str) -> Partition:
+	def unlock(self, partition :Partition, mountpoint :str, password :str) -> Partition:
 		"""
 		Mounts a luks2 compatible partition to a certain mountpoint.
 		Keyfile must be specified as there's no way to interact with the pw-prompt atm.
@@ -157,9 +139,17 @@ class luks2:
 		while pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		SysCommand(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
+		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file /dev/stdin --type luks2')
+
+		pw_given = False
+		while cryptworker.is_alive():
+			if not pw_given:
+				cryptworker.write(bytes(password, 'UTF-8'))
+				pw_given = True
+
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
+			# TODO: Return MapperDev instead of Partition
 			unlocked_partition = Partition(self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
 			return unlocked_partition
 
