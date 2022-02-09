@@ -102,7 +102,7 @@ class luks2:
 			'luksFormat', partition.path,
 		])
 
-		print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
+		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
 		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
 
 		pw_given = False
@@ -181,7 +181,7 @@ class luks2:
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
-		print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
+		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
 		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2', peak_output=True)
 
 		pw_given = False
