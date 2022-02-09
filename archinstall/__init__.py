@@ -143,6 +143,7 @@ def get_arguments():
 	"""
 	config = {}
 	args, unknowns = parser.parse_known_args()
+
 	# preprocess the json files.
 	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
@@ -175,6 +176,7 @@ def get_arguments():
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
+		
 	return config
 
 def load_config():
