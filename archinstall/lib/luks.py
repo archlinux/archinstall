@@ -107,7 +107,7 @@ class luks2:
 
 		pw_given = False
 		while cryptworker.is_alive():
-			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
+			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker._trace_log and pw_given is False:
 				cryptworker.write(password)
 				pw_given = True
 
@@ -186,7 +186,7 @@ class luks2:
 
 		pw_given = False
 		while cryptworker.is_alive():
-			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
+			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker._trace_log and pw_given is False:
 				cryptworker.write(password)
 				pw_given = True
 

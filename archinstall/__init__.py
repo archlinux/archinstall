@@ -72,6 +72,9 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--crypt-iter-time", default='10000', nargs="?", type=str)
+	parser.add_argument("--crypt-key-size", default='512', nargs="?", type=str)
+	parser.add_argument("--crypt-hash-type", default='sha512', nargs="?", type=str)
 	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:

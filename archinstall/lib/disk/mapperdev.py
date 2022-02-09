@@ -5,7 +5,7 @@ import json
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any, Iterator, TYPE_CHECKING
 
-from ..exceptions import SysCallError
+from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
 
@@ -103,12 +103,10 @@ class MapperDev:
 
 		try:
 			if options:
-				mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
+				SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
 			else:
-				mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
-
+				SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
 		except SysCallError as err:
 			raise DiskError(f"Could not mount {self.path} to {target} using options {options}: {err}")
 
 		return True
-

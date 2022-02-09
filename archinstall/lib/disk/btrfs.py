@@ -3,13 +3,13 @@ import pathlib
 import glob
 import logging
 import re
-from typing import Union, Dict, TYPE_CHECKING, Any, Iterator
+from typing import Union, Dict, TYPE_CHECKING, Any, Iterator, Optional
 from dataclasses import dataclass
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from ..installer import Installer
-from .helpers import get_mount_info
+from .helpers import get_mount_info, get_mount_fs_type
 from ..exceptions import DiskError
 from ..general import SysCommand
 from ..output import log
@@ -23,6 +23,37 @@ class BtrfsSubvolume:
 	name :str
 	options :str
 	root :bool = False
+
+	@property
+	def MapperDev(self):
+		return self._mapperdev
+
+	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
+		log(f'Mounting {self} to {target}', level=logging.INFO)
+		if not fs:
+			if not self.MapperDev.filesystem:
+				raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
+			fs = self.MapperDev.filesystem
+
+		fs_type = get_mount_fs_type(fs)
+
+		pathlib.Path(target).mkdir(parents=True, exist_ok=True)
+
+		# TODO: Detect if destination is already mounted some how.
+		# Otherwise we won't be able to mount the subvolume.
+
+		# TODO options should be better be a list than a string
+		if options:
+			options = f"{options},subvol={self.name}"
+		else:
+			options = f"subvol={self.name}"
+
+		try:
+			SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.MapperDev.path} {target}")
+		except SysCallError as err:
+			raise DiskError(f"Could not mount {self.path} to {target} using options {options}: {err}")
+
+		return True
 
 def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
 	if '@' in struct['source']:
