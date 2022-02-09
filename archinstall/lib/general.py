@@ -292,7 +292,7 @@ class SysCommandWorker:
 				sys.stdout.flush()
 				# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
 
-				silent_output.write(f"Wrote {written_data}: {[written_data_string]}\n")
+				silent_output.write(f"Wrote {written_data}: {[data]}\n")
 
 				return written_data
 
