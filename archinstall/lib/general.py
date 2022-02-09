@@ -288,7 +288,8 @@ class SysCommandWorker:
 			if self.child_fd:
 				written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
 
-				os.fsync(self.child_fd)
+				sys.stdout.flush()
+				# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
 
 				written_data_string = data + (b'\n' if line_ending else b'')
 				silent_output.write(f"Wrote {[written_data_string]}\n")
