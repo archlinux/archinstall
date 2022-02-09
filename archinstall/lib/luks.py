@@ -100,18 +100,15 @@ class luks2:
 		])
 
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
-		cryptworker = SysCommandWorker(cryptsetup_args)
+		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
 
 		# print(f'Looking for: Enter passphrase for {partition.path}')
-		with open('debug.txt', 'a') as silent_output:
-			silent_output.write(f"Looking for: Enter passphrase for {partition.path}\n")
-			pw_given = False
-			while cryptworker.is_alive():
-				if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
-					silent_output.write(f"found it! Writing password: {password}\n")
-					cryptworker.write(password)
-					pw_given = True
-				time.sleep(0.25)
+		pw_given = False
+		while cryptworker.is_alive():
+			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
+				cryptworker.write(password)
+				pw_given = True
+			time.sleep(0.25)
 
 		if cryptworker.exit_code == 256:
 			log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device: {cryptworker}', level=logging.INFO)

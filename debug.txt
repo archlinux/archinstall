@@ -1,0 +1,2 @@
+Looking for: Enter passphrase for /dev/loop0p2
+found it! Writing password: b'test'
