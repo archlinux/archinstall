@@ -111,6 +111,7 @@ class luks2:
 				# cryptworker.write(password)
 				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
 				print(password.decode())
+				print(password.decode())
 				pw_given = True
 
 		if cryptworker.exit_code == 256:
@@ -191,6 +192,7 @@ class luks2:
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
 				# cryptworker.write(password)
 				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
+				print(password.decode())
 				print(password.decode())
 				pw_given = True
 
