@@ -261,7 +261,7 @@ class Partition:
 				yield result
 
 	def partprobe(self) -> bool:
-		if self.block_device
+		if self.block_device:
 			try:
 				SysCommand(f'partprobe {self.block_device.device}')
 				time.sleep(1)
