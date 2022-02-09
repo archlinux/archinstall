@@ -288,7 +288,7 @@ class SysCommandWorker:
 			os.fsync(self.child_fd)
 
 			with open('debug_write.txt', 'a') as silent_output:
-				silent_output.write(f'Wrote {[data + (b'\n' if line_ending else b'')]}\n')
+				silent_output.write(f"Wrote {[data + (b'\n' if line_ending else b'')]}\n")
 
 			return written_data
 
@@ -363,7 +363,7 @@ class SysCommandWorker:
 		# We need to flush any pending output to the parent
 		# otherwise it will bleed into the child: https://docs.python.org/3/library/os.html#os.execvpe
 		sys.stdout.flush()
-		
+
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
