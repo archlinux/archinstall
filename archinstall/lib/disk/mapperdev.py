@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 class MapperDev:
 	mappername :str
 
+	def __repr__(self) -> str:
+		return self.path
+
 	@property
 	def name(self):
 		return self.mappername

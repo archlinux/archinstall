@@ -102,8 +102,8 @@ class luks2:
 			'luksFormat', partition.path,
 		])
 
+		print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
 		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
-		print(f" Looking for phrase: 'Enter passphrase for {partition.path}'")
 
 		pw_given = False
 		while cryptworker.is_alive():
@@ -193,9 +193,11 @@ class luks2:
 			raise DiskError(f"Could not unlock {partition}: {cryptworker}")
 
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
-			self.mapdev = f'/dev/mapper/{mountpoint}'
+			self.mapdev = MapperDev(mountpoint)
 
-			return MapperDev(mountpoint)
+			log(f"{partition} unlocked as {self.mapdev}")
+
+			return self.mapdev
 
 	def close(self, mountpoint :Optional[str] = None) -> bool:
 		if not mountpoint:
