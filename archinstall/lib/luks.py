@@ -159,7 +159,6 @@ class luks2:
 		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
 		:type mountpoint: str
 		"""
-		from .disk import get_filesystem_type
 
 		if not password:
 			password = self.password
