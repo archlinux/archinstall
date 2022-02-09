@@ -181,7 +181,8 @@ class luks2:
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
-		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2')
+		print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
+		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2', peak_output)
 
 		pw_given = False
 		while cryptworker.is_alive():

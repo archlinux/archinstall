@@ -83,7 +83,6 @@ class Filesystem:
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-				print(_("Adding partition...."))
 				start = partition.get('start') or (
 					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
