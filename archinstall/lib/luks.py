@@ -103,16 +103,15 @@ class luks2:
 		])
 
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
-		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
+		cryptworker = SysCommandWorker(cryptsetup_args)
 
 		pw_given = False
 		while cryptworker.is_alive():
-			with open('debug_outer.txt', 'a') as silent_output:
-				found = bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker
-				silent_output.write(f"Found string in worker: {found} / {pw_given}")
-				if found and pw_given is False:
-					cryptworker.write(password + b'\r\n', line_ending=False)
-					pw_given = True
+			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
+				# cryptworker.write(password)
+				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
+				print(password.decode())
+				pw_given = True
 
 		if cryptworker.exit_code == 256:
 			log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device: {cryptworker}', level=logging.INFO)
@@ -185,12 +184,14 @@ class luks2:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
-		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2', peak_output=True)
+		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2')
 
 		pw_given = False
 		while cryptworker.is_alive():
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
-				cryptworker.write(password)
+				# cryptworker.write(password)
+				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
+				print(password.decode())
 				pw_given = True
 
 		if not cryptworker.exit_code == 0:

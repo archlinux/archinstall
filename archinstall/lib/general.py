@@ -223,11 +223,8 @@ class SysCommandWorker:
 		"""
 		assert type(key) == bytes
 
-		with open('./debug.txt', 'a') as silent_output:
-			silent_output.write(f"Checking for {[key]} in {[self._trace_log]} as position {self._trace_log_pos}\n")
-			if (contains := key in self._trace_log[self._trace_log_pos:]):
-				silent_output.write(f" -Found it ({[contains]}) at {self._trace_log.find(key, self._trace_log_pos)}\n")
-				self._trace_log_pos += self._trace_log.find(key, self._trace_log_pos) + len(key)
+		if (contains := key in self._trace_log[self._trace_log_pos:]):
+			self._trace_log_pos += self._trace_log.find(key, self._trace_log_pos) + len(key)
 
 		return contains
 
@@ -284,15 +281,11 @@ class SysCommandWorker:
 
 		self.make_sure_we_are_executing()
 
-		with open('debug_write.txt', 'a') as silent_output:
 			if self.child_fd:
-				data = data + (b'\n' if line_ending else b'')
-				written_data = os.write(self.child_fd, data)
+				written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
 
-				sys.stdout.flush()
+				# sys.stdout.flush() # <- Doesn't help
 				# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
-
-				silent_output.write(f"Wrote {written_data}: {[data]}\n")
 
 				return written_data
 
