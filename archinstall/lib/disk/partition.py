@@ -261,9 +261,14 @@ class Partition:
 				yield result
 
 	def partprobe(self) -> bool:
-		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
-			time.sleep(1)
-			return True
+		if self.block_device
+			try:
+				SysCommand(f'partprobe {self.block_device.device}')
+				time.sleep(1)
+				return True
+			except SysCallError as error:
+				log(f"Could not run patprobe on {self.block_device.device}: {error}", level=logging.DEBUG)
+
 		return False
 
 	def detect_inner_filesystem(self, password :str) -> Optional[str]:
