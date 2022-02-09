@@ -279,20 +279,20 @@ class SysCommandWorker:
 		return False
 
 	def write(self, data: bytes, line_ending :bool = True) -> int:
-		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
+		if type(data) != bytes:
+			raise AssertionError(f"SysCommandWorker().write() requires bytes data to be written, not type({type(data)}).")
 
 		self.make_sure_we_are_executing()
 
 		with open('debug_write.txt', 'a') as silent_output:
-			silent_output.write(f"Writing to {self.child_fd}")
 			if self.child_fd:
-				written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+				data = data + (b'\n' if line_ending else b'')
+				written_data = os.write(self.child_fd, data)
 
 				sys.stdout.flush()
 				# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
 
-				written_data_string = data + (b'\n' if line_ending else b'')
-				silent_output.write(f"Wrote {[written_data_string]}\n")
+				silent_output.write(f"Wrote {written_data}: {[written_data_string]}\n")
 
 				return written_data
 
