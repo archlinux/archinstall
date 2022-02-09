@@ -226,7 +226,7 @@ class SysCommandWorker:
 		with open('./debug.txt', 'a') as silent_output:
 			silent_output.write(f"Checking for {[key]} in {[self._trace_log]} as position {self._trace_log_pos}\n")
 			if (contains := key in self._trace_log[self._trace_log_pos:]):
-				silent_output.write(f" -Found it at {self._trace_log.find(key, self._trace_log_pos)}\n")
+				silent_output.write(f" -Found it ({[contains]}) at {self._trace_log.find(key, self._trace_log_pos)}\n")
 				self._trace_log_pos += self._trace_log.find(key, self._trace_log_pos) + len(key)
 
 		return contains
