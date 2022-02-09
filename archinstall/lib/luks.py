@@ -108,6 +108,7 @@ class luks2:
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
 				cryptworker.write(password)
 				pw_given = True
+			time.sleep(0.25)
 
 		if cryptworker.exit_code == 256:
 			log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device: {cryptworker}', level=logging.INFO)
@@ -188,6 +189,7 @@ class luks2:
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
 				cryptworker.write(password)
 				pw_given = True
+			time.sleep(0.25)
 
 		if not cryptworker.exit_code == 0:
 			raise DiskError(f"Could not unlock {partition}: {cryptworker}")
