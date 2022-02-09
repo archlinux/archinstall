@@ -123,7 +123,6 @@ class Filesystem:
 					else:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
-					print(partition['!password'])
 					partition['device_instance'].encrypt(
 						password=partition['!password'],
 						key_size=storage['arguments']['crypt_key_size'],

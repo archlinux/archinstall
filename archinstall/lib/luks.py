@@ -86,7 +86,7 @@ class luks2:
 			password = bytes(password, 'UTF-8')
 
 		partition.partprobe()
-		time.sleep(1)
+		time.sleep(10)
 
 		cryptsetup_args = shlex.join([
 			'/usr/bin/cryptsetup',
