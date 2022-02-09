@@ -105,13 +105,11 @@ class luks2:
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
 		cryptworker = SysCommandWorker(cryptsetup_args)
 
+		# print(f'Looking for: Enter passphrase for {partition.path}')
 		pw_given = False
 		while cryptworker.is_alive():
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
-				# cryptworker.write(password)
-				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
-				time.sleep(5)
-				print(password.decode())
+				cryptworker.write(password)
 				pw_given = True
 
 		if cryptworker.exit_code == 256:
@@ -187,13 +185,11 @@ class luks2:
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
 		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2')
 
+		# print(f'Looking for: Enter passphrase for {partition.path}')
 		pw_given = False
 		while cryptworker.is_alive():
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
-				# cryptworker.write(password)
-				# TODO: Workaround, as cryptsetup doesn't appear to accept any input via os.write(child_cd, data)
-				time.sleep(5)
-				print(password.decode())
+				cryptworker.write(password)
 				pw_given = True
 
 		if not cryptworker.exit_code == 0:
