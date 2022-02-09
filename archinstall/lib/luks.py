@@ -100,7 +100,7 @@ class luks2:
 		])
 
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
-		cryptworker = SysCommandWorker(cryptsetup_args, peak_output=True)
+		cryptworker = SysCommandWorker(f'/bin/bash -c "{cryptsetup_args}"', peak_output=True)
 
 		# print(f'Looking for: Enter passphrase for {partition.path}')
 		pw_given = False
