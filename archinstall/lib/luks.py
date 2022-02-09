@@ -205,9 +205,8 @@ class luks2:
 			mountpoint = self.mapdev
 
 		if mountpoint:
-			SysCommand(f'/usr/bin/cryptsetup close {self.mapdev}')
-
-		if not mountpoint:
+			SysCommand(f'/usr/bin/cryptsetup close {mountpoint}')
+		else:
 			return False
 
 		return os.path.islink(mountpoint) is False
