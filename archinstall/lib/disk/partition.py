@@ -29,8 +29,8 @@ class Partition:
 			part_id = os.path.basename(path)
 
 		self.block_device = block_device
-		if type(self.block_device) is str:
-			raise ValueError(f"Partition()'s 'block_device' parameter has to be a archinstall.BlockDevice() instance!")
+		if type(self.block_device) != BlockDevice:
+			raise AssertionError(f"Partition()'s 'block_device' parameter has to be a archinstall.BlockDevice() instance!")
 
 		self.path = path
 		self.part_id = part_id

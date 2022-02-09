@@ -81,3 +81,7 @@ class MapperDev:
 		for mountpoint in self.mount_information:
 			for result in get_subvolumes_from_findmnt(mountpoint):
 				yield result
+
+	def format(self, filesystem :str, options :List[str] = []) -> bool:
+		# TODO: Create a format() helper function rather than relying on a dummy Partition().format() call:
+		self.partition.format(filesystem=filesystem, options = options, path=self.path)
