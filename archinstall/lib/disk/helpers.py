@@ -25,6 +25,13 @@ GIGA = 2 ** 30
 def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
 
+def get_mount_fs_type(fs :str) -> str:
+	if fs == 'ntfs':
+		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+	elif fs == 'fat32':
+		return 'vfat'  # This is the actual type used for fat32 mounting
+	return fs
+
 def sort_block_devices_based_on_performance(block_devices :List[BlockDevice]) -> Dict[BlockDevice, int]:
 	result = {device: 0 for device in block_devices}
 

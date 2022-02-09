@@ -88,3 +88,27 @@ class MapperDev:
 	def format(self, filesystem :str, options :List[str] = []) -> bool:
 		# TODO: Create a format() helper function rather than relying on a dummy Partition().format() call:
 		self.partition.format(filesystem=filesystem, options=options, path=self.path)
+
+	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
+		from .helpers import get_mount_fs_type
+
+		log(f'Mounting {self} to {target}', level=logging.INFO)
+		if not fs:
+			if not (fs := self.filesystem):
+				raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
+
+		fs_type = get_mount_fs_type(fs)
+
+		pathlib.Path(target).mkdir(parents=True, exist_ok=True)
+
+		try:
+			if options:
+				mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {self.path} {target}")
+			else:
+				mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {self.path} {target}")
+
+		except SysCallError as err:
+			raise DiskError(f"Could not mount {self.path} to {target} using options {options}: {err}")
+
+		return True
+

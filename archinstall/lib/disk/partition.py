@@ -8,7 +8,13 @@ import hashlib
 from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
-from .helpers import find_mountpoint, get_filesystem_type, convert_size_to_gb, split_bind_name
+from .helpers import (
+	find_mountpoint,
+	get_filesystem_type,
+	convert_size_to_gb,
+	split_bind_name,
+	get_mount_fs_type
+)
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -471,11 +477,3 @@ class Partition:
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True
-
-
-def get_mount_fs_type(fs :str) -> str:
-	if fs == 'ntfs':
-		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
-	elif fs == 'fat32':
-		return 'vfat'  # This is the actual type used for fat32 mounting
-	return fs
