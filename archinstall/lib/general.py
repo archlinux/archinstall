@@ -280,14 +280,13 @@ class SysCommandWorker:
 			raise AssertionError(f"SysCommandWorker().write() requires bytes data to be written, not type({type(data)}).")
 
 		self.make_sure_we_are_executing()
+		if self.child_fd:
+			written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
 
-			if self.child_fd:
-				written_data = os.write(self.child_fd, data + (b'\n' if line_ending else b''))
+			# sys.stdout.flush() # <- Doesn't help
+			# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
 
-				# sys.stdout.flush() # <- Doesn't help
-				# os.fsync(self.child_fd) # <-- Will generate OSError: [Error 22] Invalid argument
-
-				return written_data
+			return written_data
 
 		return 0
 
