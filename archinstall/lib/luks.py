@@ -5,7 +5,7 @@ import os
 import pathlib
 import shlex
 import time
-from typing import Optional, List,TYPE_CHECKING
+from typing import Optional, List, Union, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .installer import Installer
