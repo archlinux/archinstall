@@ -17,7 +17,7 @@ class MapperDev:
 	mappername :str
 
 	def __repr__(self) -> str:
-		return self.path
+		return f"MapperDev({self.path})"
 
 	@property
 	def name(self):
