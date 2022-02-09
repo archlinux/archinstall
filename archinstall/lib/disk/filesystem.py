@@ -123,6 +123,7 @@ class Filesystem:
 					else:
 						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
+					print(storage['arguments'])
 					partition['device_instance'].encrypt(
 						password=partition['!password'],
 						key_size=storage['arguments']['crypt-key-size'],
@@ -132,7 +133,7 @@ class Filesystem:
 					# Immediately unlock the encrypted device to format the inner volume
 					with luks2(partition['device_instance'], loopdev, partition['!password'], auto_unmount=True) as unlocked_device:
 						if not partition.get('wipe'):
-							if storage['arguments'] == 'silent':
+							if storage['arguments']['silent']:
 								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
 							else:
 								if not partition.get('filesystem'):
