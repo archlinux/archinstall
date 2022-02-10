@@ -1,7 +1,7 @@
 import ssl
 import urllib.request
 import json
-from typing import Dict, Any, Optional, Tuple, Iterator
+from typing import Dict, Any, Tuple, Iterator
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError
