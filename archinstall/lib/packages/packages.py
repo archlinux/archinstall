@@ -27,7 +27,7 @@ def group_search(name :str) -> Iterator[PackageSearchResult]:
 	# Just to be sure some code didn't slip through the exception
 	data = response.read().decode('UTF-8')
 
-	for package in data['results']:
+	for package in json.loads(data)['results']:
 		yield PackageSearchResult(**package)
 
 def package_search(package :str) -> PackageSearch:
