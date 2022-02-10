@@ -7,7 +7,7 @@ import sys
 import logging
 
 class Menu(TerminalMenu):
-	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True, preset_values = None, cursor_index = None):
+	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True, preset_values=None, cursor_index=None):
 		"""
 		Creates a new menu
 
@@ -91,8 +91,8 @@ class Menu(TerminalMenu):
 			clear_screen=True,
 			multi_select=multi,
 			show_search_hint=True,
-			preselected_entries = self.preset_values,
-			cursor_index = self.cursor_index
+			preselected_entries=self.preset_values,
+			cursor_index=self.cursor_index
 		)
 
 	def _show(self):
@@ -121,14 +121,11 @@ class Menu(TerminalMenu):
 
 		return ret
 
-	def preselection(self):
-		return
-
 	def set_cursor_pos(self,pos):
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
-		   self._view.active_menu_index = 0  # we define a default
+			self._view.active_menu_index = 0  # we define a default
 
 	def set_cursor_pos_entry(self,value):
 		pos = self._menu_entries.index(value)
@@ -156,4 +153,3 @@ class Menu(TerminalMenu):
 			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
 				idx = preset_values.index(self.default_option)
 				self.preset_values[idx] = f"{preset_values[idx]} (default)"
-
