@@ -269,14 +269,16 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
+		cursor_pos = None
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
+			selection = Menu('Set/Modify the below options', menu_text, sort=False, cursor_index=cursor_pos).run()
 			if selection:
+				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
 				selection = selection.strip()
 			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
