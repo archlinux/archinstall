@@ -1,17 +1,17 @@
 import ssl
 import urllib.request
 import json
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, Iterator
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
-BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
+BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/?name={group}'
 
 
-def find_group(name :str) -> bool:
+def group_search(name :str) -> Iterator[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
@@ -20,15 +20,15 @@ def find_group(name :str) -> bool:
 		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
 	except urllib.error.HTTPError as err:
 		if err.code == 404:
-			return False
+			return None
 		else:
 			raise err
 
 	# Just to be sure some code didn't slip through the exception
-	if response.code == 200:
-		return True
+	data = response.read().decode('UTF-8')
 
-	return False
+	for package in data['results']:
+		yield PackageSearchResult(**package)
 
 def package_search(package :str) -> PackageSearch:
 	"""
@@ -49,25 +49,18 @@ def package_search(package :str) -> PackageSearch:
 
 	return PackageSearch(**json.loads(data))
 
-class IsGroup(BaseException):
-	pass
-
-def find_package(package :str) -> Optional[PackageSearchResult]:
+def find_package(package :str) -> Iterator[PackageSearchResult]:
 	data = package_search(package)
 
 	# If we didn't find the package in the search results,
 	# odds are it's a group package
 	for result in data.results:
 		if result.pkgname == package:
-			return result
+			yield result
 
 	# Check if the package is actually a group
-	if find_group(package):
-		# TODO: Until upstream adds a JSON result for group searches
-		# there is no way we're going to parse HTML reliably.
-		raise IsGroup("Implement group search")
-
-	return None
+	for result in group_search(package):
+		yield result
 
 def find_packages(*names :str) -> Dict[str, Any]:
 	"""
@@ -75,7 +68,12 @@ def find_packages(*names :str) -> Dict[str, Any]:
 	The function itself is rather slow, so consider not sending to
 	many packages to the search query.
 	"""
-	return {package: find_package(package) for package in names}
+	result = {}
+	for package in names:
+		for found_package in find_package(package):
+			result[package] = found_package
+
+	return result
 
 
 def validate_package_list(packages: list) -> Tuple[list, list]:
