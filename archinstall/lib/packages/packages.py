@@ -1,7 +1,7 @@
 import ssl
 import urllib.request
 import json
-from typing import Dict, Any
+from typing import Dict, Any, Optional, Tuple
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError, RequirementError
@@ -52,17 +52,8 @@ def package_search(package :str) -> PackageSearch:
 class IsGroup(BaseException):
 	pass
 
-def find_package(package :str) -> PackageSearchResult:
+def find_package(package :str) -> Optional[PackageSearchResult]:
 	data = package_search(package)
-
-	if not data.results:
-		# Check if the package is actually a group
-		if find_group(package):
-			# TODO: Until upstream adds a JSON result for group searches
-			# there is no way we're going to parse HTML reliably.
-			raise IsGroup("Implement group search")
-
-		raise PackageError(f"Could not locate {package} while looking for repository category")
 
 	# If we didn't find the package in the search results,
 	# odds are it's a group package
@@ -70,7 +61,13 @@ def find_package(package :str) -> PackageSearchResult:
 		if result.pkgname == package:
 			return result
 
-	raise PackageError(f"Could not locate {package} in result while looking for repository category")
+	# Check if the package is actually a group
+	if find_group(package):
+		# TODO: Until upstream adds a JSON result for group searches
+		# there is no way we're going to parse HTML reliably.
+		raise IsGroup("Implement group search")
+
+	return None
 
 def find_packages(*names :str) -> Dict[str, Any]:
 	"""
@@ -81,20 +78,16 @@ def find_packages(*names :str) -> Dict[str, Any]:
 	return {package: find_package(package) for package in names}
 
 
-def validate_package_list(packages: list) -> bool:
+def validate_package_list(packages: list) -> Tuple[list, list]:
 	"""
 	Validates a list of given packages.
-	Raises `RequirementError` if one or more packages are not found.
+	return: Tuple of lists containing valid packavges in the first and invalid
+	packages in the second entry
 	"""
-	invalid_packages = [
-		package
-		for package in packages
-		if not find_package(package)['results'] and not find_group(package)
-	]
-	if invalid_packages:
-		raise RequirementError(f"Invalid package names: {invalid_packages}")
+	invalid_packages = {package for package in packages if not find_package(package)}
+	valid_packages = set(packages) - invalid_packages
 
-	return True
+	return list(valid_packages), list(invalid_packages)
 
 def installed_package(package :str) -> LocalPackage:
 	package_info = {}
@@ -105,5 +98,5 @@ def installed_package(package :str) -> LocalPackage:
 				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
 		pass
-	
+
 	return LocalPackage(**package_info)
