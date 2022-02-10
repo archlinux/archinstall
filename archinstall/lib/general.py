@@ -345,6 +345,12 @@ class SysCommandWorker:
 					except ChildProcessError:
 						self.exit_code = 1
 
+	def is_child(self):
+		return self.pid == 0
+
+	def is_parent(self):
+		return self.pid > 0
+
 	def execute(self) -> bool:
 		import pty
 
@@ -364,7 +370,7 @@ class SysCommandWorker:
 		os.chdir(old_dir)
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
-		if not self.pid:
+		if self.is_child():
 			try:
 				try:
 					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
