@@ -279,6 +279,8 @@ class GeneralMenu:
 			selection = Menu('Set/Modify the below options', menu_text, sort=False, cursor_index=cursor_pos).run()
 			if selection:
 				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
+				if cursor_pos >= len(menu_text):
+					cursor_pos = len(menu_text) - 1
 				selection = selection.strip()
 			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
