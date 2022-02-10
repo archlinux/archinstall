@@ -1,6 +1,5 @@
 from __future__ import annotations
 import getpass
-import readline
 import ipaddress
 import logging
 import re
@@ -13,7 +12,6 @@ from collections.abc import Iterable
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
-import archinstall
 from .menu.text_input import TextInput
 
 if TYPE_CHECKING:

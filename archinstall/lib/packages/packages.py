@@ -4,7 +4,7 @@ import json
 from typing import Dict, Any, Optional, Tuple
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
-from ..exceptions import PackageError, SysCallError, RequirementError
+from ..exceptions import PackageError, SysCallError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
