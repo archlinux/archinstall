@@ -7,7 +7,7 @@ import sys
 import logging
 
 class Menu(TerminalMenu):
-	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True):
+	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True, preset_values = None, cursor_index = None):
 		"""
 		Creates a new menu
 
@@ -29,6 +29,9 @@ class Menu(TerminalMenu):
 
 		:param sort: Indicate if the options should be sorted alphabetically before displaying
 		:type sort: bool
+
+		:param preset_values
+		:type preset_values: list
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
@@ -61,6 +64,7 @@ class Menu(TerminalMenu):
 		self.skip = skip
 		self.default_option = default_option
 		self.multi = multi
+		self.preselection(preset_values,cursor_index)
 
 		menu_title = f'\n{title}\n\n'
 
@@ -86,7 +90,9 @@ class Menu(TerminalMenu):
 			cycle_cursor=True,
 			clear_screen=True,
 			multi_select=multi,
-			show_search_hint=True
+			show_search_hint=True,
+			preselected_entries = self.preset_values,
+			cursor_index = self.cursor_index
 		)
 
 	def _show(self):
@@ -114,3 +120,40 @@ class Menu(TerminalMenu):
 			return self.run()
 
 		return ret
+
+	def preselection(self):
+		return
+
+	def set_cursor_pos(self,pos):
+		if pos and 0 < pos < len(self._menu_entries):
+			self._view.active_menu_index = pos
+		else:
+		   self._view.active_menu_index = 0  # we define a default
+
+	def set_cursor_pos_entry(self,value):
+		pos = self._menu_entries.index(value)
+		self.set_cursor_pos(pos)
+
+	def preselection(self,preset_values,cursor_index):
+		def from_preset_to_cursor():
+			if preset_values:
+				if isinstance(preset_values,str):
+					self.cursor_index = self.menu_options.index(preset_values)
+				else:  # should return an error, but this is smoother
+					self.cursor_index = self.menu_options.index(preset_values[0])
+
+		self.preset_values = preset_values
+		self.cursor_index = cursor_index
+		if preset_values and cursor_index is None:
+			from_preset_to_cursor()
+		if preset_values and not self.multi: # Not supported by the infraestructure
+			self.preset_values = None
+			from_preset_to_cursor()
+
+		if self.default_option and self.multi:
+			if isinstance(preset_values,str) and self.default_option == preset_values:
+				self.preset_values = f"{preset_values} (default)"
+			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
+				idx = preset_values.index(self.default_option)
+				self.preset_values[idx] = f"{preset_values[idx]} (default)"
+
