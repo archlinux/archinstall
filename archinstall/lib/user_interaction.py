@@ -393,8 +393,7 @@ def ask_for_audio_selection(desktop :bool = True) -> str:
 	return selected_audio
 
 
-# TODO: Remove? Moved?
-def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
+def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
@@ -407,7 +406,8 @@ def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
 		).run()
 		return input_packages.split(' ') if input_packages else []
 
-	packages = read_packages()
+	pre_set_packages = pre_set_packages if pre_set_packages else []
+	packages = read_packages(pre_set_packages)
 
 	while True:
 		if len(packages):

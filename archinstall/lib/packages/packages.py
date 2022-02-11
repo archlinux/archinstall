@@ -1,7 +1,9 @@
 import ssl
 import urllib.request
 import json
-from typing import Dict, Any, Tuple, Iterator
+from typing import Dict, Any, Tuple, Iterator, List
+
+import archinstall
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..exceptions import PackageError, SysCallError
@@ -11,7 +13,7 @@ BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package
 BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/?name={group}'
 
 
-def group_search(name :str) -> Iterator[PackageSearchResult]:
+def group_search(name :str) -> List[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
@@ -20,15 +22,15 @@ def group_search(name :str) -> Iterator[PackageSearchResult]:
 		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
 	except urllib.error.HTTPError as err:
 		if err.code == 404:
-			return None
+			return []
 		else:
 			raise err
 
 	# Just to be sure some code didn't slip through the exception
 	data = response.read().decode('UTF-8')
 
-	for package in json.loads(data)['results']:
-		yield PackageSearchResult(**package)
+	return [PackageSearchResult(**package) for package in json.loads(data)['results']]
+
 
 def package_search(package :str) -> PackageSearch:
 	"""
@@ -49,18 +51,24 @@ def package_search(package :str) -> PackageSearch:
 
 	return PackageSearch(**json.loads(data))
 
-def find_package(package :str) -> Iterator[PackageSearchResult]:
+
+def find_package(package :str) -> List[PackageSearchResult]:
 	data = package_search(package)
+	results = []
+
+	for result in data.results:
+		if result.pkgname == package:
+			results.append(result)
 
 	# If we didn't find the package in the search results,
 	# odds are it's a group package
-	for result in data.results:
-		if result.pkgname == package:
-			yield result
+	if not results:
+		# Check if the package is actually a group
+		for result in group_search(package):
+			results.append(result)
 
-	# Check if the package is actually a group
-	for result in group_search(package):
-		yield result
+	return results
+
 
 def find_packages(*names :str) -> Dict[str, Any]:
 	"""
@@ -76,16 +84,17 @@ def find_packages(*names :str) -> Dict[str, Any]:
 	return result
 
 
-def validate_package_list(packages: list) -> Tuple[list, list]:
+def validate_package_list(packages :list) -> Tuple[list, list]:
 	"""
 	Validates a list of given packages.
 	return: Tuple of lists containing valid packavges in the first and invalid
 	packages in the second entry
 	"""
-	invalid_packages = {package for package in packages if not find_package(package)}
-	valid_packages = set(packages) - invalid_packages
+	valid_packages = {package for package in packages if find_package(package)}
+	invalid_packages = set(packages) - valid_packages
 
 	return list(valid_packages), list(invalid_packages)
+
 
 def installed_package(package :str) -> LocalPackage:
 	package_info = {}
