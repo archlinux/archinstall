@@ -30,8 +30,11 @@ class Menu(TerminalMenu):
 		:param sort: Indicate if the options should be sorted alphabetically before displaying
 		:type sort: bool
 
-		:param preset_values
-		:type preset_values: list
+		:param preset_values: Predefined value(s) of the menu. In a multi menu, it selects the options included therein. If the selection is simple, moves the cursor to the position of the value
+		:type preset_values: str or list
+
+		:param cursor_index: The position where the cursor will be located. If it is not in range (number of elements of the menu) it goes to the first position
+		:type cursor_index: int
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case

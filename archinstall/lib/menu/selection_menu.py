@@ -185,17 +185,21 @@ class GeneralMenu:
 
 
 class GeneralMenu:
-	def __init__(self, data_store :dict = None):
+	def __init__(self, data_store :dict = None, auto_cursor=False):
 		"""
 		Create a new selection menu.
 
 		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is self._data_store (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
+		:param auto_cursor: Boolean which determines if the cursor stays on the first item (false) or steps each invocation of a selection entry (true)
+		:type auto_cursor: bool
+
 		"""
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
+		self.auto_cursor = auto_cursor
 		self._menu_options = {}
 		self._setup_selection_menu_options()
 
@@ -277,7 +281,7 @@ class GeneralMenu:
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
 			selection = Menu('Set/Modify the below options', menu_text, sort=False, cursor_index=cursor_pos).run()
-			if selection:
+			if selection and self.auto_cursor:
 				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
 				if cursor_pos >= len(menu_text):
 					cursor_pos = len(menu_text) - 1
@@ -320,6 +324,7 @@ class GeneralMenu:
 
 		result = None
 		if selector.func:
+			# TODO insert code to allow selector functions with preset value
 			result = selector.func()
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
@@ -425,7 +430,7 @@ class GeneralMenu:
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
-		super().__init__(data_store=data_store)
+		super().__init__(data_store=data_store, auto_cursor=True)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['archinstall-language'] = \
