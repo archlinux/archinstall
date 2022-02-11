@@ -1,0 +1,513 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: lib/installer.py:144
+msgid "[!] A log file has been created here: {} {}"
+msgstr ""
+
+#: lib/installer.py:145
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr ""
+
+#: lib/user_interaction.py:83
+msgid "Do you really want to abort?"
+msgstr "Weet u zeker dat u wilt afbreken?"
+
+#: lib/user_interaction.py:101 lib/user_interaction.py:104
+msgid "And one more time for verification: "
+msgstr "Nog eenmaal ter verificatie: "
+
+#: lib/user_interaction.py:272 lib/user_interaction.py:275
+msgid "Would you like to use swap on zram?"
+msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+
+#: lib/user_interaction.py:285 lib/user_interaction.py:288
+msgid "Desired hostname for the installation: "
+msgstr "Standaard hostnaam van installatie: "
+
+#: lib/user_interaction.py:290 lib/user_interaction.py:293
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Gebruikersnaam van administrator met sudo-rechten: "
+
+#: lib/user_interaction.py:310 lib/user_interaction.py:313
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Andere toe te voegen gebruikers (laat leeg om niemand toe te voegen): "
+
+#: lib/user_interaction.py:324 lib/user_interaction.py:327
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Moet deze gebruiker administrator (sudoer) worden?"
+
+#: lib/user_interaction.py:340 lib/user_interaction.py:343 lib/user_interaction.py:346
+msgid "Select a timezone"
+msgstr "Kies een tijdzone"
+
+#: lib/user_interaction.py:354 lib/user_interaction.py:357 lib/user_interaction.py:360 lib/user_interaction.py:359
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Wilt u GRUB gebruiken als opstartlader in plaats van systemd-boot?"
+
+#: lib/user_interaction.py:364 lib/user_interaction.py:367 lib/user_interaction.py:370 lib/user_interaction.py:369
+msgid "Choose a bootloader"
+msgstr "Kies een opstartlader"
+
+#: lib/user_interaction.py:380 lib/user_interaction.py:383 lib/user_interaction.py:386 lib/user_interaction.py:385
+msgid "Choose an audio server"
+msgstr "Kies een audioserver"
+
+#: lib/user_interaction.py:391 lib/user_interaction.py:394 lib/user_interaction.py:397 lib/user_interaction.py:396
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Er worden alleen basispakketten geïnstalleerd, zoals base, base-devel, linux, linux-firmware, efibootmgr en profielpakketten (optioneel)."
+
+#: lib/user_interaction.py:392 lib/user_interaction.py:395 lib/user_interaction.py:398 lib/user_interaction.py:397
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Als u een webbrowser wenst, zoals Firefox of Chromium, dan kunt u dit handmatig aangeven."
+
+#: lib/user_interaction.py:396 lib/user_interaction.py:399 lib/user_interaction.py:402 lib/user_interaction.py:401
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Typ de namen van te installeren pakketten (spatiegescheiden - laat leeg om over te slaan): "
+
+#: lib/user_interaction.py:419 lib/user_interaction.py:422 lib/user_interaction.py:425 lib/user_interaction.py:424
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO-netwerkinstellingen overzetten naar fysieke installatie"
+
+#: lib/user_interaction.py:420 lib/user_interaction.py:423 lib/user_interaction.py:426 lib/user_interaction.py:425
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager gebruiken (benodigd om internetinstellingen grafisch in te stellen in GNOME en KDE)"
+
+#: lib/user_interaction.py:428 lib/user_interaction.py:431 lib/user_interaction.py:434 lib/user_interaction.py:433
+msgid "Select one network interface to configure"
+msgstr "Kies een in te stellen netwerkkaart"
+
+#: lib/user_interaction.py:441 lib/user_interaction.py:444 lib/user_interaction.py:447 lib/user_interaction.py:446
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Geef aan welke modus moet worden gebruikt bij ‘{}’ of sla over om de standaardmodus (‘{}’) te gebruiken"
+
+#: lib/user_interaction.py:446 lib/user_interaction.py:449 lib/user_interaction.py:452 lib/user_interaction.py:451
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Voer het ip-adres en subnet in van ‘{}’ (voorbeeld: 192.168.0.5/24): "
+
+#: lib/user_interaction.py:461 lib/user_interaction.py:464 lib/user_interaction.py:467 lib/user_interaction.py:466
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Voer uw eigen gateway-adres (router-ip-adres) in of laag leeg om over te slaan: "
+
+#: lib/user_interaction.py:476 lib/user_interaction.py:479 lib/user_interaction.py:482 lib/user_interaction.py:481
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Voer uw eigen dns-servers in (spatiegescheiden - laat leeg om over te slaan): "
+
+#: lib/user_interaction.py:510 lib/user_interaction.py:513 lib/user_interaction.py:516 lib/user_interaction.py:515
+msgid "Select which filesystem your main partition should use"
+msgstr "Kies het te gebruiken bestandssysteem van de hoofdpartitie"
+
+#: lib/user_interaction.py:556 lib/user_interaction.py:559 lib/user_interaction.py:562 lib/user_interaction.py:561
+msgid "Current partition layout"
+msgstr "Huidige partitie-indeling"
+
+#: lib/user_interaction.py:607 lib/user_interaction.py:614 lib/user_interaction.py:617 lib/user_interaction.py:620 lib/user_interaction.py:619
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Geef aan wat er moet worden gedaan met\n"
+"{}"
+
+#: lib/user_interaction.py:624 lib/user_interaction.py:709 lib/user_interaction.py:631 lib/user_interaction.py:716 lib/user_interaction.py:634 lib/user_interaction.py:719 lib/user_interaction.py:637 lib/user_interaction.py:722 lib/user_interaction.py:636 lib/user_interaction.py:721
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Kies het gewenste bestandssysteem voor de partitie"
+
+#: lib/user_interaction.py:626 lib/user_interaction.py:633 lib/user_interaction.py:636 lib/user_interaction.py:639 lib/user_interaction.py:638
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+#: lib/user_interaction.py:635 lib/user_interaction.py:642 lib/user_interaction.py:645 lib/user_interaction.py:648 lib/user_interaction.py:647
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "Voer de beginsector in (percentage of bloknummer - voorbeeld: {}): “"
+
+#: lib/user_interaction.py:661 lib/user_interaction.py:668 lib/user_interaction.py:671 lib/user_interaction.py:674 lib/user_interaction.py:673
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
+
+#: lib/user_interaction.py:674 lib/user_interaction.py:681 lib/user_interaction.py:684 lib/user_interaction.py:687 lib/user_interaction.py:686
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Selecteer te verwijderen partities op indexnummer"
+
+#: lib/user_interaction.py:682 lib/user_interaction.py:689 lib/user_interaction.py:692 lib/user_interaction.py:695 lib/user_interaction.py:694
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Selecteer aan te koppelen partities op indexnummer"
+
+#: lib/user_interaction.py:686 lib/user_interaction.py:693 lib/user_interaction.py:696 lib/user_interaction.py:699 lib/user_interaction.py:698
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " *Partitie-aankoppelpunten zijn gekoppeld aan de fysieke installatie. Voorbeeld: ‘boot’ wordt ‘/boot’."
+
+#: lib/user_interaction.py:687 lib/user_interaction.py:694 lib/user_interaction.py:697 lib/user_interaction.py:700 lib/user_interaction.py:699
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Geef aan waar de partitie moet worden aangekoppeld (laat leeg om te verwijderen): "
+
+#: lib/user_interaction.py:698 lib/user_interaction.py:705 lib/user_interaction.py:708 lib/user_interaction.py:711 lib/user_interaction.py:710
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Kies welke partitie moet worden gemaskeerd alvorens te formatteren"
+
+#: lib/user_interaction.py:717 lib/user_interaction.py:724 lib/user_interaction.py:727 lib/user_interaction.py:730 lib/user_interaction.py:729
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Kies welke partitie moet worden versleuteld"
+
+#: lib/user_interaction.py:725 lib/user_interaction.py:732 lib/user_interaction.py:735 lib/user_interaction.py:738 lib/user_interaction.py:737
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Kies welke partitie moet worden aangemerkt als opstartbaar"
+
+#: lib/user_interaction.py:732 lib/user_interaction.py:739 lib/user_interaction.py:742 lib/user_interaction.py:745 lib/user_interaction.py:744
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Kies op welke partitie een bestandssysteem moet worden ingesteld"
+
+#: lib/user_interaction.py:739 lib/user_interaction.py:746 lib/user_interaction.py:749 lib/user_interaction.py:752 lib/user_interaction.py:751
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Voer de naam in van het gewenste bestandssysteem: "
+
+#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415
+msgid "Select Archinstall language"
+msgstr "Kies een Archinstall-taal"
+
+#: lib/user_interaction.py:765 lib/user_interaction.py:772 lib/user_interaction.py:775 lib/user_interaction.py:778 lib/user_interaction.py:777
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Alle geselecteerde schijven formatteren en best mogelijke partitie-indeling gebruiken"
+
+#: lib/user_interaction.py:766 lib/user_interaction.py:773 lib/user_interaction.py:776 lib/user_interaction.py:779 lib/user_interaction.py:778
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Geef per schijf aan welke actie moet worden uitgevoerd (gevolgd door partitiegebruik)"
+
+#: lib/user_interaction.py:769 lib/user_interaction.py:770 lib/user_interaction.py:777 lib/user_interaction.py:780 lib/user_interaction.py:783 lib/user_interaction.py:782
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Geef aan wat er moet worden gedaan met de gekozen blokapparaten"
+
+#: lib/user_interaction.py:822 lib/user_interaction.py:823 lib/user_interaction.py:830 lib/user_interaction.py:833 lib/user_interaction.py:836 lib/user_interaction.py:835
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Dit is een vooraf opgestelde lijst met profielen, welke het installeren van zaken als werkomgevingen vereenvoudigt"
+
+#: lib/user_interaction.py:846 lib/user_interaction.py:847 lib/user_interaction.py:854 lib/user_interaction.py:857 lib/user_interaction.py:860 lib/user_interaction.py:859
+msgid "Select Keyboard layout"
+msgstr "Kies een toetsenbordindeling"
+
+#: lib/user_interaction.py:861 lib/user_interaction.py:862 lib/user_interaction.py:869 lib/user_interaction.py:872 lib/user_interaction.py:875 lib/user_interaction.py:874
+msgid "Select one of the regions to download packages from"
+msgstr "Geef aan uit welke regio pakketten moeten worden opgehaald"
+
+#: lib/user_interaction.py:883 lib/user_interaction.py:884 lib/user_interaction.py:891 lib/user_interaction.py:894 lib/user_interaction.py:897 lib/user_interaction.py:896
+msgid "Select one or more hard drives to use and configure"
+msgstr "Selecteer één of meer in te stellen harde schijven"
+
+#: lib/user_interaction.py:910 lib/user_interaction.py:911 lib/user_interaction.py:918 lib/user_interaction.py:921 lib/user_interaction.py:924 lib/user_interaction.py:923
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Voor AMD-hardware is het aanbevolen om alle opensource- of AMD-/ATI-opties te kiezen."
+
+#: lib/user_interaction.py:912 lib/user_interaction.py:913 lib/user_interaction.py:920 lib/user_interaction.py:923 lib/user_interaction.py:926 lib/user_interaction.py:925
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Voor Intel-hardware is het aanbevolen om alle opensource- of Intel-opties te kiezen.\n"
+
+#: lib/user_interaction.py:914 lib/user_interaction.py:915 lib/user_interaction.py:922 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:927
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Voor Nvidia-hardware is het aanbevolen om het gesloten Nvidia-stuurprogramma te kiezen.\n"
+
+#: lib/user_interaction.py:917 lib/user_interaction.py:918 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:931 lib/user_interaction.py:930
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Kies een grafisch stuurprogramma of laat leeg om alle opensource-stuurprogramma's te installeren"
+
+#: lib/user_interaction.py:921 lib/user_interaction.py:922 lib/user_interaction.py:929 lib/user_interaction.py:932 lib/user_interaction.py:935 lib/user_interaction.py:934
+msgid "All open-source (default)"
+msgstr "Alle opensource-stuurprogramma's (standaard)"
+
+#: lib/user_interaction.py:940 lib/user_interaction.py:941 lib/user_interaction.py:948 lib/user_interaction.py:951 lib/user_interaction.py:954 lib/user_interaction.py:953
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Kies de te installeren kernels of laat leeg om ‘{}’ te installeren"
+
+#: lib/user_interaction.py:954 lib/user_interaction.py:955 lib/user_interaction.py:962 lib/user_interaction.py:965 lib/user_interaction.py:968 lib/user_interaction.py:967
+msgid "Choose which locale language to use"
+msgstr "Kies de te gebruiken taal"
+
+#: lib/user_interaction.py:968 lib/user_interaction.py:969 lib/user_interaction.py:976 lib/user_interaction.py:979 lib/user_interaction.py:982 lib/user_interaction.py:981
+msgid "Choose which locale encoding to use"
+msgstr "Kies de te gebruiken taalvariant"
+
+#: lib/user_interaction.py:1009 lib/user_interaction.py:1010 lib/user_interaction.py:1017 lib/user_interaction.py:1020 lib/user_interaction.py:1023 lib/user_interaction.py:1022
+msgid "Select one of the values shown below: "
+msgstr "Kies één van onderstaande waarden: "
+
+#: lib/user_interaction.py:1050 lib/user_interaction.py:1051 lib/user_interaction.py:1058 lib/user_interaction.py:1061 lib/user_interaction.py:1064 lib/user_interaction.py:1063
+msgid "Select one or more of the options below: "
+msgstr "Kies één van onderstaande opties: "
+
+#: lib/disk/filesystem.py:86
+msgid "Adding partition...."
+msgstr ""
+
+#: lib/disk/filesystem.py:139 lib/disk/filesystem.py:141
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr ""
+
+#: lib/profiles.py:89
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr ""
+
+#: lib/profiles.py:92
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr ""
+
+#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420
+msgid "Select keyboard layout"
+msgstr "Kies een toetsenbordindeling"
+
+#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423
+msgid "Select mirror region"
+msgstr "Kies een spiegelserverregio"
+
+#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428
+msgid "Select locale language"
+msgstr "Kies een taal"
+
+#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430
+msgid "Select locale encoding"
+msgstr "Kies een taalvariant"
+
+#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433
+msgid "Select harddrives"
+msgstr "Selecteer de harde schijven"
+
+#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437
+msgid "Select disk layout"
+msgstr "Kies een schijfindeling"
+
+#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445
+msgid "Set encryption password"
+msgstr "Versleutelwachtwoord instellen"
+
+#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451
+msgid "Use swap"
+msgstr "Wisselgeheugen gebruiken"
+
+#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456
+msgid "Select bootloader"
+msgstr "Kies een opstartlader"
+
+#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462
+msgid "Set root password"
+msgstr "Rootwachtwoord instellen"
+
+#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467
+msgid "Specify superuser account"
+msgstr "Geef aan welk account superuserrechten dient te hebben"
+
+#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473
+msgid "Specify user account"
+msgstr "Kies een gebruikersaccount"
+
+#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479
+msgid "Specify profile"
+msgstr "Kies een profiel"
+
+#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484
+msgid "Select audio"
+msgstr "Kies audio"
+
+#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488
+msgid "Select kernels"
+msgstr "Selecteer kernels"
+
+#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493
+msgid "Additional packages to install"
+msgstr "Aanvullende te installeren pakketten"
+
+#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498
+msgid "Configure network"
+msgstr "Netwerk instellen"
+
+#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506
+msgid "Set automatic time sync (NTP)"
+msgstr "Automatische tijdsynchronisatie (NTP) gebruiken"
+
+#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535
+msgid "Install ({} config(s) missing)"
+msgstr ""
+
+#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+
+#: lib/disk/filesystem.py:97
+msgid "Re-using partition instance: {}"
+msgstr ""
+
+#: lib/user_interaction.py:590 lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:595
+#, fuzzy
+msgid "Create a new partition"
+msgstr "Huidige partitie-indeling"
+
+#: lib/user_interaction.py:592 lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:597
+msgid "Delete a partition"
+msgstr ""
+
+#: lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:598
+msgid "Clear/Delete all partitions"
+msgstr ""
+
+#: lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:599
+msgid "Assign mount-point for a partition"
+msgstr ""
+
+#: lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:600
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr ""
+
+#: lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:602 lib/user_interaction.py:601
+msgid "Mark/Unmark a partition as encrypted"
+msgstr ""
+
+#: lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:603 lib/user_interaction.py:602
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr ""
+
+#: lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:604 lib/user_interaction.py:603
+#, fuzzy
+msgid "Set desired filesystem for a partition"
+msgstr "Kies het gewenste bestandssysteem voor de partitie"
+
+#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515
+msgid "Abort"
+msgstr ""
+
+#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459
+#, fuzzy
+msgid "Specify hostname"
+msgstr "Kies een profiel"
+
+#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500
+msgid "Not configured, unavailable unless setup manually"
+msgstr ""
+
+#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503
+#, fuzzy
+msgid "Select timezone"
+msgstr "Kies een tijdzone"
+
+#: lib/menu/selection_menu.py:266
+msgid "Set/Modify the below options"
+msgstr ""
+
+#: lib/menu/selection_menu.py:272
+msgid "Install"
+msgstr ""
+
+#: lib/menu/menu.py:68 lib/menu/menu.py:75
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+
+#: lib/user_interaction.py:591 lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:596
+#, fuzzy
+msgid "Suggest partition layout"
+msgstr "Huidige partitie-indeling"
+
+#: lib/user_interaction.py:101
+#, fuzzy
+msgid "Enter a password: "
+msgstr "Rootwachtwoord instellen"
+
+#: lib/disk/filesystem.py:117
+#, fuzzy
+msgid "Enter a encryption password for {}"
+msgstr "Versleutelwachtwoord instellen"
+
+#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575
+#, fuzzy
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Andere toe te voegen gebruikers (laat leeg om niemand toe te voegen): "
+
+#: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:617 lib/menu/selection_menu.py:625
+#, fuzzy
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Gebruikersnaam van administrator met sudo-rechten: "
+
+#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562
+#, fuzzy
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Geef aan waar de partitie moet worden aangekoppeld (laat leeg om te verwijderen): "
+
+#: lib/user_interaction.py:307 lib/user_interaction.py:324
+#, fuzzy
+msgid "Password for user \"{}\": "
+msgstr "Wachtwoord van ‘{}’"
+
+#: lib/user_interaction.py:405 lib/user_interaction.py:408 lib/user_interaction.py:407
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr ""
+
+#: lib/user_interaction.py:281
+#, fuzzy
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Wilt u automatische tijdsynchronisatie (NTP) met de standaard tijdservers gebruiken?"
+
+#: lib/user_interaction.py:282
+#, fuzzy
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr "De hardwarematige tijd en andere gelijkaardige instelstappen kunnen vereist zijn om NTP te gebruiken. Lees voor meer informatie de Arch-wiki."
+
+#: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621 lib/menu/selection_menu.py:629
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr ""
