@@ -6,7 +6,7 @@ import gettext
 
 from pathlib import Path
 from typing import List, Dict
-
+from .exceptions import TranslationError
 
 class Languages:
 	def __init__(self):
@@ -60,7 +60,10 @@ class Translation:
 		self._languages = {}
 
 		for name in self.get_all_names():
-			self._languages[name] = gettext.translation('base', localedir=locales_dir, languages=[name])
+			try:
+				self._languages[name] = gettext.translation('base', localedir=locales_dir, languages=[name])
+			except FileNotFoundError as error:
+				raise TranslationError(f"Could not locate language file for '{name}': {error}")
 
 	def activate(self, name):
 		if language := self._languages.get(name, None):
