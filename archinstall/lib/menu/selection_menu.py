@@ -1,6 +1,7 @@
 from __future__ import annotations
 import sys
 import logging
+
 from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
@@ -31,7 +32,6 @@ from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_archinstall_language
 from ..translation import Translation
-
 
 class Selector:
 	def __init__(
@@ -165,19 +165,22 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
-
 class GeneralMenu:
-	def __init__(self, data_store :dict = None):
+	def __init__(self, data_store :dict = None, auto_cursor=False):
 		"""
 		Create a new selection menu.
 
 		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is self._data_store (not preset in the call, due to circular references
 		:type  data_store:  Dict
 
+		:param auto_cursor: Boolean which determines if the cursor stays on the first item (false) or steps each invocation of a selection entry (true)
+		:type auto_cursor: bool
+
 		"""
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
+		self.auto_cursor = auto_cursor
 		self._menu_options = {}
 		self._setup_selection_menu_options()
 
@@ -247,14 +250,18 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
+		cursor_pos = None
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False).run()
-			if selection:
+			selection = Menu('Set/Modify the below options', menu_text, sort=False, cursor_index=cursor_pos).run()
+			if selection and self.auto_cursor:
+				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
+				if cursor_pos >= len(menu_text):
+					cursor_pos = len(menu_text) - 1
 				selection = selection.strip()
 			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
@@ -294,6 +301,7 @@ class GeneralMenu:
 
 		result = None
 		if selector.func:
+			# TODO insert code to allow selector functions with preset value
 			result = selector.func()
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
@@ -399,7 +407,7 @@ class GeneralMenu:
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
-		super().__init__(data_store=data_store)
+		super().__init__(data_store=data_store, auto_cursor=True)
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['archinstall-language'] = \
