@@ -1,12 +1,11 @@
+import json
 import ssl
 import urllib.request
-import json
-from typing import Dict, Any, Tuple, Iterator, List
+from typing import Dict, Any, Tuple, List
 
-import archinstall
+from ..exceptions import PackageError, SysCallError
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
-from ..exceptions import PackageError, SysCallError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
