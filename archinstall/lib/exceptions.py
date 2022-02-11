@@ -42,5 +42,10 @@ class UserError(BaseException):
 class ServiceException(BaseException):
 	pass
 
+
 class PackageError(BaseException):
+	pass
+
+
+class TranslationError(BaseException):
 	pass
