@@ -36,29 +36,6 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 				missing += 1
 		return missing
 
-
-		for entry in self._menu_options:
-			if entry in options_list:
-				# for not lineal executions, only self.option(entry).set_enabled and set_mandatory are necessary
-				if entry in mandatory_list:
-					self.enable(entry,mandatory=True)
-				else:
-					self.enable(entry)
-			else:
-				self.option(entry).set_enabled(False)
-		self._update_install()
-
-	def _missing_configs(self):
-		""" overloaded method """
-		def check(s):
-			return self.option(s).has_selection()
-
-		_, missing = self.mandatory_overview()
-		if check('harddrives'):
-			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
-		return missing
-
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.

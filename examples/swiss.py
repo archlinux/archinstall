@@ -206,6 +206,7 @@ class MyMenu(archinstall.GlobalMenu):
 	def __init__(self,data_store=archinstall.arguments,mode='full'):
 		self._execution_mode = mode
 		super().__init__(data_store)
+
 	def _setup_selection_menu_options(self):
 		super()._setup_selection_menu_options()
 		options_list = []

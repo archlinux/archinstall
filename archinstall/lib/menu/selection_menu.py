@@ -166,25 +166,6 @@ class Selector:
 			self.set_enabled(True)
 
 class GeneralMenu:
-	def __init__(self,
-			data_store :dict = None):
-		"""
-		Create a new selection menu.
-
-		:param data_store:  Area (Dict) where the resulting data will be held. At least an entry for each option. Default area is self._data_store (not preset in the call, due to circular references
-		:type  data_store:  Dict
-
-		"""
-		self._translation = Translation.load_nationalization()
-		self._data_store = data_store if data_store is not None else {}
-		self.is_context_mgr = False
-	def set_mandatory(self, status :bool = True):
-		self.mandatory = status
-		if status and not self.is_enabled():
-			self.set_enabled(True)
-
-
-class GeneralMenu:
 	def __init__(self, data_store :dict = None, auto_cursor=False):
 		"""
 		Create a new selection menu.
@@ -231,10 +212,6 @@ class GeneralMenu:
 	def pre_callback(self, selector_name):
 		""" will be called before each action in the menu """
 		return
-
-	def post_callback(self, selector_name :str, value :Any):
-		""" will be called after each action in the menu """
-		return True
 
 	def post_callback(self, selector_name :str, value :Any):
 		""" will be called after each action in the menu """
@@ -536,6 +513,7 @@ class GlobalMenu(GeneralMenu):
 				enabled=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
+
 	def _update_install(self,name :str = None ,result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
@@ -629,6 +607,7 @@ class GlobalMenu(GeneralMenu):
 				return self._select_harddrives()
 
 		return harddrives
+
 	def _select_profile(self):
 		profile = select_profile()
 

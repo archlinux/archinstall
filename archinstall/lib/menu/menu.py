@@ -124,17 +124,17 @@ class Menu(TerminalMenu):
 
 		return ret
 
-	def set_cursor_pos(self,pos):
+	def set_cursor_pos(self,pos :int):
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
 			self._view.active_menu_index = 0  # we define a default
 
-	def set_cursor_pos_entry(self,value):
+	def set_cursor_pos_entry(self,value :str):
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 
-	def preselection(self,preset_values,cursor_index):
+	def preselection(self,preset_values :list = [],cursor_index :int = None):
 		def from_preset_to_cursor():
 			if preset_values:
 				if isinstance(preset_values,str):
