@@ -111,7 +111,7 @@ class MapperDev:
 
 		return True
 
-	def unmount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
+	def unmount(self) -> bool:
 		try:
 			SysCommand(f"/usr/bin/umount {self.path}")
 		except SysCallError as error:
