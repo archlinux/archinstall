@@ -18,10 +18,14 @@ homepage = "https://archlinux.org"
 repository = "https://github.com/archlinux/archinstall"
 documentation = "https://archinstall.readthedocs.io/"
 
-keywords = ["packaging", "dependency", "infer", "pyproject.toml"]
+keywords = ["linux", "arch", "archinstall", "installer"]
 
 classifiers = [
-    "Topic :: Software Development"
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
 ]
 
 [tool.mypy]
