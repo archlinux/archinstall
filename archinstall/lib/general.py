@@ -264,13 +264,13 @@ class SysCommandWorker:
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.DEBUG, fg='red')
 
-		if self.exit_code != 0:
+		if self.exit_code is not None and self.exit_code != 0:
 			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}", self.exit_code)
 
 	def is_alive(self) -> bool:
 		self.poll()
 
-		if self.started and self.ended is None:
+		if self.started and self.exit_code is not None:
 			return True
 
 		return False
