@@ -303,7 +303,7 @@ class Installer:
 		# Open the file again in write mode, to replace the contents
 		with open("/etc/pacman.conf", "w") as pacman_conf:
 			for line in lines:
-				if pattern.match(line) and (multilib or not 'multilib' in line):
+				if pattern.match(line) and (multilib or 'multilib' not in line):
 					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
 					pacman_conf.write(line.lstrip('#'))
 					matched = True
