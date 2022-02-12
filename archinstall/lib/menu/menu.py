@@ -60,6 +60,11 @@ class Menu(TerminalMenu):
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
 
+		if any([o for o in options if not isinstance(o, str)]):
+			log(" * Menu options must be of type string * ", fg='red')
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+			raise RequirementError('Menu.__init__() requires the options to be of type string')
+
 		if sort:
 			options = sorted(options)
 
