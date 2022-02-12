@@ -11,9 +11,6 @@ authors = [
 ]
 readme = "README.md"
 python = ">=3.10"
-homepage = "https://archlinux.org"
-repository = "https://github.com/archlinux/archinstall"
-documentation = "https://archinstall.readthedocs.io/"
 
 keywords = ["linux", "arch", "archinstall", "installer"]
 
@@ -25,9 +22,13 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 
+[project.urls]
+Home = "https://archlinux.org"
+Documentation = "https://archinstall.readthedocs.io/"
+Source = "https://github.com/archlinux/archinstall"
 
 [tool.flit.sdist]
-include = ["docs/","profiles"]
+include = ["docs/","profiles", "examples"]
 exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
 
 [tool.mypy]
