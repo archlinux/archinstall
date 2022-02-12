@@ -530,6 +530,7 @@ def reboot():
 
 
 def pid_exists(pid: int) -> bool:
+	print(f'Checking if pid {pid} exists.')
 	try:
 		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
