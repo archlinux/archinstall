@@ -338,7 +338,7 @@ class SysCommandWorker:
 					self._trace_log += output
 				except OSError as error:
 					self.ended = time.time()
-					print(f'Got [OSError]: {error}')
+					self.exit_code = os.waitpid(self.pid, 0)[1]
 					break
 
 			if pid_exists(self.pid) is False:
