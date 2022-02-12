@@ -31,7 +31,7 @@ Source = "https://github.com/archlinux/archinstall"
 archinstall = "archinstall:run_as_a_module"
 
 [tool.flit.sdist]
-include = ["docs/","profiles", "examples"]
+include = ["docs/", "profiles", "examples"]
 exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
 
 [tool.mypy]
