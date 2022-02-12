@@ -333,7 +333,6 @@ class SysCommandWorker:
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
 					output = os.read(fileno, 8192)
-					print('Output:', output)
 					self.peak(output)
 					self._trace_log += output
 				except OSError as error:

@@ -110,3 +110,11 @@ class MapperDev:
 			raise DiskError(f"Could not mount {self.path} to {target} using options {options}: {err}")
 
 		return True
+
+	def unmount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
+		try:
+			SysCommand(f"/usr/bin/umount {self.path}")
+		except SysCallError as error:
+			raise DiskError(f"Could not unmount {self.path} properly: {error}")
+
+		return True
