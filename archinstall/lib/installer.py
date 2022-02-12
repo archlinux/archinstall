@@ -1,6 +1,7 @@
 import time
 import logging
 import os
+import re
 import shutil
 import shlex
 import pathlib
@@ -289,7 +290,31 @@ class Installer:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
 	def enable_testing_repositories(self):
-		return # FIX ME		
+		# Set up a regular expression pattern of a commented line containing 'testing' within []
+		pattern = re.compile("^#\[.*testing.*\]$")
+		
+		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
+		matched = False
+
+		# Read in the lines from the original file
+		with open("/etc/pacman.conf", "r") as pacman_conf:
+			lines = pacman_conf.readlines()
+
+		# Open the file again in write mode, to replace the contents
+		with open("/etc/pacman.conf", "w") as pacman_conf:
+			for line in lines:
+				if pattern.match(line):
+					# If this is the 
+					pacman_conf.write(line.lstrip('#'))
+					matched = True
+				elif matched:
+					# The previous line was a match for [.*testing.*].
+					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
+					pacman_conf.write(line.lstrip('#'))
+					matched = False # Reset the state of matched to False.
+					pac
+				else:
+					pacman_conf.write(line)
 
 	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
 		if type(packages[0]) in (list, tuple):
