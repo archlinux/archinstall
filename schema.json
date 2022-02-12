@@ -5,7 +5,7 @@
     "type": "object",
     "properties": {
         "audio": {
-            "description": "Audioserver to be installed",
+            "description": "Audio server to be installed",
             "type": "string",
             "enum": [
                 "pipewire",
