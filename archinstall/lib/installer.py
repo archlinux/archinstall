@@ -353,7 +353,7 @@ class Installer:
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
 		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
