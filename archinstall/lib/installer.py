@@ -1,6 +1,7 @@
 import time
 import logging
 import os
+import re
 import shutil
 import shlex
 import pathlib
@@ -288,6 +289,32 @@ class Installer:
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
+	def enable_testing_repositories(self):
+		# Set up a regular expression pattern of a commented line containing 'testing' within []
+		pattern = re.compile("^#\\[.*testing.*\\]$")
+		
+		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
+		matched = False
+
+		# Read in the lines from the original file
+		with open("/etc/pacman.conf", "r") as pacman_conf:
+			lines = pacman_conf.readlines()
+
+		# Open the file again in write mode, to replace the contents
+		with open("/etc/pacman.conf", "w") as pacman_conf:
+			for line in lines:
+				if pattern.match(line):
+					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
+					pacman_conf.write(line.lstrip('#'))
+					matched = True
+				elif matched:
+					# The previous line was a match for [.*testing.*].
+					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
+					pacman_conf.write(line.lstrip('#'))
+					matched = False # Reset the state of matched to False.
+				else:
+					pacman_conf.write(line)
+
 	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
@@ -533,7 +560,7 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self) -> bool:
+	def minimal_installation(self, testing=False) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
@@ -581,6 +608,14 @@ class Installer:
 					ucode.unlink()
 			else:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
+
+		# Determine whether to enable testing repositories before running pacstrap if testing flag is set.
+		# This action takes place on the host system as pacstrap copies over package repository lists.
+		if testing:
+			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
+			self.enable_testing_repositories()
+		else:
+			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
