@@ -393,6 +393,9 @@ class SysCommandWorker:
 
 				exit(1)
 
+			with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+				peak_output_log(f"[COMPLETED] {self.cmd[0]} has finished.")
+
 			exit(0)
 		else:
 			if storage['arguments'].get('debug'):
