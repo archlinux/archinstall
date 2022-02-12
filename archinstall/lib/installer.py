@@ -289,7 +289,7 @@ class Installer:
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def enable_testing_repositories(self):
+	def enable_testing_repositories(self, multilib=False):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
 		pattern = re.compile("^#\\[.*testing.*\\]$")
 		
@@ -303,7 +303,7 @@ class Installer:
 		# Open the file again in write mode, to replace the contents
 		with open("/etc/pacman.conf", "w") as pacman_conf:
 			for line in lines:
-				if pattern.match(line):
+				if pattern.match(line) and (multilib or not 'multilib' in line):
 					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
 					pacman_conf.write(line.lstrip('#'))
 					matched = True
