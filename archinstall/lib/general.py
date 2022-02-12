@@ -339,7 +339,6 @@ class SysCommandWorker:
 				except OSError as error:
 					self.ended = time.time()
 					self.exit_code = os.waitpid(self.pid, 0)[1]
-					print(f'Ended via OSErrpr: {self.exit_code}: {self._trace_log[-100:]}')
 					break
 
 			if pid_exists(self.pid) is False:
