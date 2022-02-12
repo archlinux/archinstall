@@ -1,3 +1,5 @@
+from typing import Dict, List, Union, Any
+
 from archinstall.lib.menu.simple_menu import TerminalMenu
 from ..exceptions import RequirementError
 from ..output import log
@@ -7,7 +9,17 @@ import sys
 import logging
 
 class Menu(TerminalMenu):
-	def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True, preset_values=None, cursor_index=None):
+	def __init__(
+		self,
+		title :str,
+		p_options :Union[List[str], Dict[str, Any]],
+		skip :bool = True,
+		multi :bool = False,
+		default_option :str = None,
+		sort :bool = True,
+		preset_values :Union[str, List[str]] = None,
+		cursor_index :int = None
+	):
 		"""
 		Creates a new menu
 
