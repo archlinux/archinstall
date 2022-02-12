@@ -613,7 +613,7 @@ class Installer:
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		if testing:
 			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
-			self.enable_testing_repositories() 
+			self.enable_testing_repositories()
 		else:
 			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
