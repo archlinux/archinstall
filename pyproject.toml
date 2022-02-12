@@ -26,8 +26,6 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 
-[tool.flit.scripts]
-archinstall = "archinstall:run_as_a_module"
 
 [tool.flit.sdist]
 include = ["docs/","profiles"]
