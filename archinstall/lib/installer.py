@@ -533,7 +533,7 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self) -> bool:
+	def minimal_installation(self, testing = False) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
@@ -581,6 +581,10 @@ class Installer:
 					ucode.unlink()
 			else:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
+
+		# Enable testing repositories before running pacstrap if testing flag is set
+		if testing:
+			# TODO: FIX ME.
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
