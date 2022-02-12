@@ -323,7 +323,7 @@ class SysCommandWorker:
 	def poll(self) -> None:
 		self.make_sure_we_are_executing()
 
-		if self.child_fd:
+		if self.is_parent():
 			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
@@ -366,6 +366,7 @@ class SysCommandWorker:
 		# otherwise it will bleed into the child: https://docs.python.org/3/library/os.html#os.execvpe
 		sys.stdout.flush()
 
+		self.started = time.time()
 		self.pid, self.child_fd = pty.fork()
 		os.chdir(old_dir)
 
@@ -379,15 +380,24 @@ class SysCommandWorker:
 					pass
 
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
-				if storage['arguments'].get('debug'):
-					log(f"Executing: {self.cmd}", level=logging.DEBUG)
 
 			except FileNotFoundError:
-				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
-				self.exit_code = 1
-				return False
+				with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+					peak_output_log(f"[ERROR] {self.cmd[0]} does not exist.")
 
-		self.started = time.time()
+				exit(1)
+
+			except OSError as error:
+				with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+					peak_output_log.write(f"{self.cmd[0]} ran into an error: {error}")
+
+				exit(1)
+
+			exit(0)
+		else:
+			if storage['arguments'].get('debug'):
+				log(f"Executing: {self.cmd}", level=logging.DEBUG)
+
 		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
 
 		return True
