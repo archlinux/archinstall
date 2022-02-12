@@ -2,33 +2,27 @@
 requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.flit.metadata]
-module = "archinstall"
-author = "Anton Hvornum"
-author-email = "anton@hvornum.se"
-home-page = "https://archlinux.org"
-classifiers = [ "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-"Programming Language :: Python :: 3.8",
-"Programming Language :: Python :: 3.9",
-"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-"Operating System :: POSIX :: Linux",
+[tool.setuptools_scm]
+
+[project]
+name = "archinstall"
+version = "2.4.0"
+description = "Arch Linux installer - guided, templates etc."
+authors = [
+    "Anton Hvornum <anton@hvornum.se>"
 ]
-description-file = "README.md"
-requires-python=">=3.8"
+license = "GNU General Public License v3 or later (GPLv3+)"
+readme = "README.md"
+python = ">=3.10"
+homepage = "https://archlinux.org"
+repository = "https://github.com/archlinux/archinstall"
+documentation = "https://archinstall.readthedocs.io/"
 
-[tool.flit.metadata.urls]
-Source = "https://github.com/archlinux/archinstall"
-Documentation = "https://archinstall.readthedocs.io/"
+keywords = ["packaging", "dependency", "infer", "pyproject.toml"]
 
-[tool.flit.scripts]
-archinstall = "archinstall:run_as_a_module"
-
-[tool.flit.sdist]
-include = ["docs/","profiles"]
-exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
-
-[tool.flit.metadata.requires-extra]
-doc = ["sphinx"]
+classifiers = [
+    "Topic :: Software Development"
+]
 
 [tool.mypy]
 python_version = "3.10"
