@@ -422,7 +422,7 @@ class SysCommand:
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
 		start_callback :Optional[Callable[[Any], Any]] = None,
-		peak_output :Optional[bool] = False,
+		peak_output :Optional[bool] = None,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
@@ -436,6 +436,11 @@ class SysCommand:
 
 		self.cmd = cmd
 		self._callbacks = _callbacks
+		if peak_output is None:
+			if storage['arguments'].get('debug'):
+				peak_output = True
+			else:
+				peak_output = False
 		self.peak_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
