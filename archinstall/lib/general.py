@@ -178,7 +178,7 @@ class SysCommandWorker:
 	def __init__(self,
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Any]] = None,
-		peak_output :Optional[bool] = False,
+		peak_output :Optional[bool] = None,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
 		working_directory :Optional[str] = './',
@@ -201,6 +201,11 @@ class SysCommandWorker:
 
 		self.cmd = cmd
 		self.callbacks = callbacks
+		if peak_output is None:
+			if storage['arguments'].get('debug'):
+				peak_output = True
+			else:
+				peak_output = False
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
@@ -368,7 +373,6 @@ class SysCommandWorker:
 
 		self.started = time.time()
 		self.pid, self.child_fd = pty.fork()
-		os.chdir(old_dir)
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if self.is_child():
@@ -380,6 +384,8 @@ class SysCommandWorker:
 					pass
 
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
+
+				exit(0)
 
 			except FileNotFoundError:
 				with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
@@ -394,10 +400,12 @@ class SysCommandWorker:
 				exit(1)
 
 			with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
-				peak_output_log(f"[COMPLETED] {self.cmd[0]} has finished.")
+				peak_output_log.write(f"[COMPLETED] {self.cmd[0]} has finished.")
 
-			exit(0)
+			exit(1)
 		else:
+			os.chdir(old_dir)
+
 			if storage['arguments'].get('debug'):
 				log(f"Executing: {self.cmd}", level=logging.DEBUG)
 
