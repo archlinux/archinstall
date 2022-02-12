@@ -304,11 +304,11 @@ class Installer:
 		with open("/etc/pacman.conf", "w") as pacman_conf:
 			for line in lines:
 				if pattern.match(line):
-					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
+					# If this is the [] block containing 'multilib', uncomment it and set the matched tracking boolean.
 					pacman_conf.write(line.lstrip('#'))
 					matched = True
 				elif matched:
-					# The previous line was a match for [.*testing.*].
+					# The previous line was a match for [.*multilib.*].
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
 					pacman_conf.write(line.lstrip('#'))
 					matched = False # Reset the state of matched to False.
