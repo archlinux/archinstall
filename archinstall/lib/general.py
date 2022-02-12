@@ -298,6 +298,7 @@ class SysCommandWorker:
 	def make_sure_we_are_executing(self) -> bool:
 		if not self.started:
 			return self.execute()
+
 		return True
 
 	def tell(self) -> int:
@@ -329,15 +330,15 @@ class SysCommandWorker:
 		self.make_sure_we_are_executing()
 
 		if self.is_parent():
-			got_output = False
 			for fileno, event in self.poll_object.poll(0.1):
 				try:
-					output = os.read(self.child_fd, 8192)
-					got_output = True
+					output = os.read(fileno, 8192)
+					print('Output:', output)
 					self.peak(output)
 					self._trace_log += output
-				except OSError:
+				except OSError as error:
 					self.ended = time.time()
+					print(f'Got [OSError]: {error}')
 					break
 
 			if pid_exists(self.pid) is False:
