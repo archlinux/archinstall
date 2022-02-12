@@ -27,6 +27,9 @@ Home = "https://archlinux.org"
 Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
+[project.scripts]
+archinstall = "archinstall:run_as_a_module"
+
 [tool.flit.sdist]
 include = ["docs/","profiles", "examples"]
 exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
