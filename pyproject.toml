@@ -9,7 +9,6 @@ description = "Arch Linux installer - guided, templates etc."
 authors = [
     "Anton Hvornum <anton@hvornum.se>"
 ]
-license = "GNU General Public License v3 or later (GPLv3+)"
 readme = "README.md"
 python = ">=3.10"
 homepage = "https://archlinux.org"
