@@ -23,5 +23,5 @@ jobs:
           python -m build
       - uses: actions/upload-artifact@v2
         with:
-          name: archinstall distribution files
+          name: archinstall
           path: dist/*
