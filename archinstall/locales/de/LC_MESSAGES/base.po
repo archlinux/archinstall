@@ -207,7 +207,7 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Bitte geben sie einen gewünschten Dateisystemtyp für die Partition ein: "
 
-#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407
+#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415
 msgid "Select Archinstall language"
 msgstr "Sprache für Archinstall"
 
@@ -301,83 +301,83 @@ msgstr "Fehler: Auflistung von Profilen mit URL \"{}\":"
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Fehler: \"{}\" konnte nicht in ein JSON format dekodiert werden:"
 
-#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412
+#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420
 msgid "Select keyboard layout"
 msgstr "Tastaturlayout auswählen"
 
-#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415
+#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423
 msgid "Select mirror region"
 msgstr "Mirror-region auswählen"
 
-#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420
+#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428
 msgid "Select locale language"
 msgstr "Lokale Sprache auswählen"
 
-#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422
+#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430
 msgid "Select locale encoding"
 msgstr "Lokale Kodierung auswählen"
 
-#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425
+#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433
 msgid "Select harddrives"
 msgstr "Laufwerke auswählen"
 
-#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429
+#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437
 msgid "Select disk layout"
 msgstr "Laufwerke-layout auswählen"
 
-#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437
+#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445
 msgid "Set encryption password"
 msgstr "Verschlüsselungspasswort angeben"
 
-#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443
+#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451
 msgid "Use swap"
 msgstr "Swap benützen"
 
-#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448
+#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456
 msgid "Select bootloader"
 msgstr "Bootloader auswählen"
 
-#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454
+#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462
 msgid "Set root password"
 msgstr "Root Passwort wählen"
 
-#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459
+#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467
 msgid "Specify superuser account"
 msgstr "Superuser Konto wählen"
 
-#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465
+#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473
 msgid "Specify user account"
 msgstr "Benutzerkonto wählen"
 
-#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471
+#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479
 msgid "Specify profile"
 msgstr "Profile auswählen"
 
-#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476
+#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484
 msgid "Select audio"
 msgstr "Audio auswählen"
 
-#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480
+#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488
 msgid "Select kernels"
 msgstr "Kernel auswählen"
 
-#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485
+#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493
 msgid "Additional packages to install"
 msgstr "Zus. Packete für die Installation"
 
-#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490
+#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498
 msgid "Configure network"
 msgstr "Netzwerkonfiguration"
 
-#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498
+#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506
 msgid "Set automatic time sync (NTP)"
 msgstr "Autom. Zeitsynchronisierung (NTP)"
 
-#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527
+#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535
 msgid "Install ({} config(s) missing)"
 msgstr "Installieren ({} konfiguration(en) ausständig)"
 
-#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591
+#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599
 msgid ""
 "You decided to skip harddrive selection\n"
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
@@ -425,19 +425,19 @@ msgstr "Markieren welche Partition bootbar ist (automatisch für /boot)"
 msgid "Set desired filesystem for a partition"
 msgstr "Bitte wählen Sie einen Dateisystemtyp für die Partition aus"
 
-#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507
+#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515
 msgid "Abort"
 msgstr "Abbrechen"
 
-#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451
+#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459
 msgid "Specify hostname"
 msgstr "Hostnamen wählen"
 
-#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492
+#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Nicht konfiguriert, unverfügbar wenn nicht selber eingestellt"
 
-#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495
+#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503
 msgid "Select timezone"
 msgstr "Zeitzone wählen"
 
@@ -449,7 +449,7 @@ msgstr "Setzen sie die unten stehenden Einstellungen"
 msgid "Install"
 msgstr "Installieren"
 
-#: lib/menu/menu.py:68
+#: lib/menu/menu.py:68 lib/menu/menu.py:75
 msgid ""
 "Use ESC to skip\n"
 "\n"
@@ -469,15 +469,15 @@ msgstr "Passwort eingeben: "
 msgid "Enter a encryption password for {}"
 msgstr "Verschlüsselungspasswort angeben für {}"
 
-#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567
+#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Geben sie ein Verschlüsselungspasswort ein (leer lassen um zu Überspringen): "
 
-#: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:617
+#: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:617 lib/menu/selection_menu.py:625
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Geben sie einen super-user mit sudo Privilegien an: "
 
-#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554
+#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562
 msgid "Enter root password (leave blank to disable root): "
 msgstr "Geben sie ein Root passwort ein (leer lassen um Root zu deaktivieren): "
 
@@ -501,6 +501,6 @@ msgstr ""
 "Hardware Zeit und andere Einstellungsschritte könnten notwendig sein um NTP zu benutzen.\n"
 "Für weitere Informationen wenden sie sich bitte an das Arch wiki"
 
-#: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621
+#: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621 lib/menu/selection_menu.py:629
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "

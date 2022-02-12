@@ -241,10 +241,12 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	exit(1)
 
 if not archinstall.arguments.get('offline', False):
+	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
+
 	# If we want to check for keyring updates
 	# and the installed package version is lower than the upstream version
 	if archinstall.arguments.get('skip-keyring-update', False) is False and \
-		archinstall.installed_package('archlinux-keyring') < archinstall.find_package('archlinux-keyring'):
+		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
 
 		# Then we update the keyring in the ISO environment
 		if not archinstall.update_keyring():
