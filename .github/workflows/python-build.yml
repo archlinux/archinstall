@@ -20,9 +20,9 @@ jobs:
           pip install setuptools wheel build twine
       - name: Replace symlinks with copies
         run: |
-          rm examples profiles
-          cp -R archinstall/examples .
-          cp -R archinstall/profiles .
+          rm archinstall/examples archinstall/profiles
+          cp -R examples archinstall
+          cp -R profiles archinstall
       - name: Build archinstall
         run: |
           python -m build
