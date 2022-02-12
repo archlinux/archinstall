@@ -1,17 +1,18 @@
+import json
 import ssl
 import urllib.request
-import json
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, List
+
+from ..exceptions import PackageError, SysCallError
 from ..general import SysCommand
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
-from ..exceptions import PackageError, SysCallError, RequirementError
 
 BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
-BASE_GROUP_URL = 'https://archlinux.org/groups/x86_64/{group}/'
+BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/?name={group}'
 
 
-def find_group(name :str) -> bool:
+def group_search(name :str) -> List[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
@@ -20,15 +21,15 @@ def find_group(name :str) -> bool:
 		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
 	except urllib.error.HTTPError as err:
 		if err.code == 404:
-			return False
+			return []
 		else:
 			raise err
 
 	# Just to be sure some code didn't slip through the exception
-	if response.code == 200:
-		return True
+	data = response.read().decode('UTF-8')
 
-	return False
+	return [PackageSearchResult(**package) for package in json.loads(data)['results']]
+
 
 def package_search(package :str) -> PackageSearch:
 	"""
@@ -49,28 +50,24 @@ def package_search(package :str) -> PackageSearch:
 
 	return PackageSearch(**json.loads(data))
 
-class IsGroup(BaseException):
-	pass
 
-def find_package(package :str) -> PackageSearchResult:
+def find_package(package :str) -> List[PackageSearchResult]:
 	data = package_search(package)
+	results = []
 
-	if not data.results:
-		# Check if the package is actually a group
-		if find_group(package):
-			# TODO: Until upstream adds a JSON result for group searches
-			# there is no way we're going to parse HTML reliably.
-			raise IsGroup("Implement group search")
-
-		raise PackageError(f"Could not locate {package} while looking for repository category")
+	for result in data.results:
+		if result.pkgname == package:
+			results.append(result)
 
 	# If we didn't find the package in the search results,
 	# odds are it's a group package
-	for result in data.results:
-		if result.pkgname == package:
-			return result
+	if not results:
+		# Check if the package is actually a group
+		for result in group_search(package):
+			results.append(result)
 
-	raise PackageError(f"Could not locate {package} in result while looking for repository category")
+	return results
+
 
 def find_packages(*names :str) -> Dict[str, Any]:
 	"""
@@ -78,23 +75,25 @@ def find_packages(*names :str) -> Dict[str, Any]:
 	The function itself is rather slow, so consider not sending to
 	many packages to the search query.
 	"""
-	return {package: find_package(package) for package in names}
+	result = {}
+	for package in names:
+		for found_package in find_package(package):
+			result[package] = found_package
+
+	return result
 
 
-def validate_package_list(packages: list) -> bool:
+def validate_package_list(packages :list) -> Tuple[list, list]:
 	"""
 	Validates a list of given packages.
-	Raises `RequirementError` if one or more packages are not found.
+	return: Tuple of lists containing valid packavges in the first and invalid
+	packages in the second entry
 	"""
-	invalid_packages = [
-		package
-		for package in packages
-		if not find_package(package)['results'] and not find_group(package)
-	]
-	if invalid_packages:
-		raise RequirementError(f"Invalid package names: {invalid_packages}")
+	valid_packages = {package for package in packages if find_package(package)}
+	invalid_packages = set(packages) - valid_packages
 
-	return True
+	return list(valid_packages), list(invalid_packages)
+
 
 def installed_package(package :str) -> LocalPackage:
 	package_info = {}
@@ -105,5 +104,5 @@ def installed_package(package :str) -> LocalPackage:
 				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
 		pass
-	
+
 	return LocalPackage(**package_info)
