@@ -288,6 +288,9 @@ class Installer:
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
+	def enable_testing_repositories(self):
+		return # FIX ME		
+
 	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
@@ -582,9 +585,13 @@ class Installer:
 			else:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
 
-		# Enable testing repositories before running pacstrap if testing flag is set
+		# Determine whether to enable testing repositories before running pacstrap if testing flag is set.
+		# This action takes place on the host system as pacstrap copies over package repository lists.
 		if testing:
-			# TODO: FIX ME.
+			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
+			self.enable_testing_repositories() 
+		else:
+			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
