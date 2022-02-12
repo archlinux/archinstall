@@ -339,9 +339,10 @@ class SysCommandWorker:
 				except OSError as error:
 					self.ended = time.time()
 					self.exit_code = os.waitpid(self.pid, 0)[1]
+					os.close(self.child_fd)
 					break
 
-			if pid_exists(self.pid) is False:
+			if pid_exists(self.pid) is False and self.exit_code is None:
 				self.ended = time.time()
 				try:
 					self.exit_code = os.waitpid(self.pid, 0)[1]
