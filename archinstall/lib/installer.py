@@ -304,7 +304,7 @@ class Installer:
 		with open("/etc/pacman.conf", "w") as pacman_conf:
 			for line in lines:
 				if pattern.match(line):
-					# If this is the 
+					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
 					pacman_conf.write(line.lstrip('#'))
 					matched = True
 				elif matched:
@@ -312,7 +312,6 @@ class Installer:
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
 					pacman_conf.write(line.lstrip('#'))
 					matched = False # Reset the state of matched to False.
-					pac
 				else:
 					pacman_conf.write(line)
 
