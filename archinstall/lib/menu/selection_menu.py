@@ -250,6 +250,7 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
+		self.post_callback  # as all the values can vary i have to exec this callback
 		cursor_pos = None
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
@@ -276,7 +277,7 @@ class GeneralMenu:
 			Returns true if the menu shall continue, False if it has ended
 		"""
 		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection]
+		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection.strip()]
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection}')
 		selector_name = option[0][0]

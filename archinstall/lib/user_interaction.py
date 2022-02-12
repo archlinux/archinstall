@@ -430,7 +430,7 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 		'NetworkManager': str(network_manager),
 		**list_interfaces()
 	}
-	#for this routine it's easier to set the cursor position rather than a preset value
+	# for this routine it's easier to set the cursor position rather than a preset value
 	cursor_idx = None
 	if preset:
 		if isinstance(preset,str):
@@ -461,7 +461,7 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 			cursor_idx = 1
 		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(nic, default_mode)
 		mode = Menu(prompt, modes, default_option=default_mode, cursor_index=cursor_idx).run()
-        #TODO preset values for ip and gateway
+		# TODO preset values for ip and gateway
 		if mode == 'IP (static)':
 			while 1:
 				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(nic)
