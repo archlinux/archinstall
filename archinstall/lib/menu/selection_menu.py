@@ -301,8 +301,8 @@ class GeneralMenu:
 
 		result = None
 		if selector.func:
-			# TODO insert code to allow selector functions with preset value
-			result = selector.func()
+			presel_val = self.option(selector_name).get_selection()
+			result = selector.func(presel_val)
 			self._menu_options[selector_name].set_current_selection(result)
 			self._data_store[selector_name] = result
 		exec_ret_val = selector.exec_func(selector_name,result) if selector.exec_func else False
@@ -413,29 +413,29 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Select Archinstall language'),
-				lambda: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language('English'),
 				default='English',
 				enabled=True)
 		self._menu_options['keyboard-layout'] = \
-			Selector(_('Select keyboard layout'), lambda: select_language('us'), default='us')
+			Selector(_('Select keyboard layout'), lambda x: select_language('us'), default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
 				_('Select mirror region'),
-				lambda: select_mirror_regions(),
+				lambda x: select_mirror_regions(),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector(_('Select locale language'), lambda: select_locale_lang('en_US'), default='en_US')
+			Selector(_('Select locale language'), lambda x: select_locale_lang('en_US'), default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector(_('Select locale encoding'), lambda: select_locale_enc('utf-8'), default='utf-8')
+			Selector(_('Select locale encoding'), lambda x: select_locale_enc('utf-8'), default='utf-8')
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Select harddrives'),
-				lambda: self._select_harddrives())
+				lambda x: self._select_harddrives())
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Select disk layout'),
-				lambda: select_disk_layout(
+				lambda x: select_disk_layout(
 					storage['arguments'].get('harddrives', []),
 					storage['arguments'].get('advanced', False)
 				),
@@ -443,68 +443,68 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
-				lambda: self._select_encrypted_password(),
+				lambda x: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
 				_('Use swap'),
-				lambda: ask_for_swap(),
+				lambda x: ask_for_swap(),
 				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Select bootloader'),
-				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
+				lambda x: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
 		self._menu_options['hostname'] = \
-			Selector(_('Specify hostname'), lambda: ask_hostname())
+			Selector(_('Specify hostname'), lambda x: ask_hostname())
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
-				lambda: self._set_root_password(),
+				lambda x: self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
 				_('Specify superuser account'),
-				lambda: self._create_superuser_account(),
+				lambda x: self._create_superuser_account(),
 				dependencies_not=['!root-password'],
 				display_func=lambda x: list(x.keys()) if x else '')
 		self._menu_options['!users'] = \
 			Selector(
 				_('Specify user account'),
-				lambda: self._create_user_account(),
+				lambda x: self._create_user_account(),
 				default={},
 				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
 				_('Specify profile'),
-				lambda: self._select_profile(),
+				lambda x: self._select_profile(),
 				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
 				_('Select audio'),
-				lambda: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None))))
+				lambda x: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None))))
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Select kernels'),
-				lambda: select_kernel(),
+				lambda x: select_kernel(),
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
 				_('Additional packages to install'),
-				lambda: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
+				lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
 				_('Configure network'),
-				lambda: ask_to_configure_network(),
+				ask_to_configure_network,
 				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
 				default={})
 		self._menu_options['timezone'] = \
-			Selector(_('Select timezone'), lambda: ask_for_a_timezone())
+			Selector(_('Select timezone'), lambda x: ask_for_a_timezone())
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
-				lambda: self._select_ntp(),
+				lambda x: self._select_ntp(),
 				default=True)
 		self._menu_options['install'] = \
 			Selector(
