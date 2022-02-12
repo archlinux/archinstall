@@ -1,34 +1,41 @@
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=3.6.0,<4", "setuptools>=45", "wheel"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module = "archinstall"
-author = "Anton Hvornum"
-author-email = "anton@hvornum.se"
-home-page = "https://archlinux.org"
-classifiers = [ "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-"Programming Language :: Python :: 3.8",
-"Programming Language :: Python :: 3.9",
-"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-"Operating System :: POSIX :: Linux",
+[project]
+name = "archinstall"
+version = "2.4.0"
+description = "Arch Linux installer - guided, templates etc."
+authors = [
+    {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
-description-file = "README.md"
-requires-python=">=3.8"
+readme = "README.md"
+requires-python = ">=3.10"
 
-[tool.flit.metadata.urls]
-Source = "https://github.com/archlinux/archinstall"
+keywords = ["linux", "arch", "archinstall", "installer"]
+
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+]
+
+[project.urls]
+Home = "https://archlinux.org"
 Documentation = "https://archinstall.readthedocs.io/"
+Source = "https://github.com/archlinux/archinstall"
 
-[tool.flit.scripts]
+[project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
-[tool.flit.sdist]
-include = ["docs/","profiles"]
-exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
-
-[tool.flit.metadata.requires-extra]
+[project.optional-dependencies]
 doc = ["sphinx"]
+
+[tool.flit.sdist]
+include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]
+exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
 
 [tool.mypy]
 python_version = "3.10"
