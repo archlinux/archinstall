@@ -7,7 +7,7 @@ name = "archinstall"
 version = "2.4.0"
 description = "Arch Linux installer - guided, templates etc."
 authors = [
-    "Anton Hvornum <anton@hvornum.se>"
+    {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
 readme = "README.md"
 python = ">=3.10"
