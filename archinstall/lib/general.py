@@ -270,7 +270,7 @@ class SysCommandWorker:
 	def is_alive(self) -> bool:
 		self.poll()
 
-		if self.started and self.exit_code is not None:
+		if self.started and self.exit_code is None:
 			return True
 
 		return False
@@ -486,7 +486,7 @@ class SysCommand:
 			if not self.session:
 				self.session = session
 
-			while self.session.ended is None:
+			while self.session.exit_code is None:
 				self.session.poll()
 
 		if self.peak_output:
