@@ -652,7 +652,7 @@ class Installer:
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		# This handles making sure that the repositories we enabled persist on the installed system 
+		# This handles making sure that the repositories we enabled persist on the installed system
 		if multilib or testing:
 			shutil.copy2("/etc/pacman.conf", f"{self.target}/etc/pacman.conf")
 
