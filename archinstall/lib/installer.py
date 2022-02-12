@@ -291,7 +291,7 @@ class Installer:
 
 	def enable_testing_repositories(self):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
-		pattern = re.compile("^#\[.*testing.*\]$")
+		pattern = re.compile("^#\\[.*testing.*\\]$")
 		
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
