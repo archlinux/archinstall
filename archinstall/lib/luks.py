@@ -181,12 +181,13 @@ class luks2:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
 
 		# print(f"Looking for phrase: 'Enter passphrase for {partition.path}'")
-		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2')
+		cryptworker = SysCommandWorker(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --type luks2', peak_output=True)
 
 		# print(f'Looking for: Enter passphrase for {partition.path}')
 		pw_given = False
 		while cryptworker.is_alive():
 			if bytes(f'Enter passphrase for {partition.path}', 'UTF-8') in cryptworker and pw_given is False:
+				print('Entered the passphrase..')
 				cryptworker.write(password)
 				pw_given = True
 			time.sleep(0.25)

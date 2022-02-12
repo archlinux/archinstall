@@ -335,7 +335,7 @@ class SysCommandWorker:
 					self.ended = time.time()
 					break
 
-			if self.ended or (got_output is False and pid_exists(self.pid) is False):
+			if pid_exists(self.pid) is False:
 				self.ended = time.time()
 				try:
 					self.exit_code = os.waitpid(self.pid, 0)[1]
