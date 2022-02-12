@@ -560,7 +560,7 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self, testing = False) -> bool:
+	def minimal_installation(self, testing=False) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
