@@ -33,9 +33,6 @@ archinstall = "archinstall:run_as_a_module"
 include = ["docs/","profiles"]
 exclude = ["docs/*.html", "docs/_static","docs/*.png","docs/*.psd"]
 
-[tool.flit.metadata.requires-extra]
-doc = ["sphinx"]
-
 [tool.mypy]
 python_version = "3.10"
 exclude = "tests"
