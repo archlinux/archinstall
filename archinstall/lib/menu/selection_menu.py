@@ -493,6 +493,11 @@ class GlobalMenu(GeneralMenu):
 				_('Additional packages to install'),
 				lambda: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 				default=[])
+		self._menu_options['additional-repositories'] = \
+			Selector(
+				_('Additional repositories to enable'),
+				lambda: select_additional_repositories(),
+				default=None)
 		self._menu_options['nic'] = \
 			Selector(
 				_('Configure network'),
