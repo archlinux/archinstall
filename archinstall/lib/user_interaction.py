@@ -983,7 +983,11 @@ def select_additional_repositories() -> List[str]:
 		multi=True,
 		default_option=[]
 	).run()
-	return additional_repositories
+
+	if additional_repositories is not None:
+		return additional_repositories
+
+	return []
 
 def select_locale_lang(default):
 	locales = list_locales()
