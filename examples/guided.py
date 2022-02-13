@@ -87,6 +87,8 @@ def ask_user_questions():
 
 	global_menu.enable('ntp')
 
+	global_menu.enable('additional-repositories')
+
 	global_menu.run()
 
 
