@@ -12,6 +12,8 @@ from collections.abc import Iterable
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
+from .menu.text_input import TextInput
+
 if TYPE_CHECKING:
 	from .disk.partition import Partition
 
@@ -31,6 +33,7 @@ from .mirrors import list_mirrors
 from .translation import Translation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
+
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
@@ -390,28 +393,33 @@ def ask_for_audio_selection(desktop :bool = True) -> str:
 	return selected_audio
 
 
-# TODO: Remove? Moved?
-def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
+def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	while True:
-		packages = [p for p in input(
-			_('Write additional packages to install (space separated, leave blank to skip): ')
-		).split(' ') if len(p)]
+	def read_packages(already_defined: list = []) -> list:
+		display = ' '.join(already_defined)
+		input_packages = TextInput(
+			_('Write additional packages to install (space separated, leave blank to skip): '),
+			display
+		).run()
+		return input_packages.split(' ') if input_packages else []
 
+	pre_set_packages = pre_set_packages if pre_set_packages else []
+	packages = read_packages(pre_set_packages)
+
+	while True:
 		if len(packages):
 			# Verify packages that were given
-			try:
-				print(_("Verifying that additional packages exist (this might take a few seconds)"))
-				validate_package_list(packages)
-				break
-			except RequirementError as e:
-				log(e, fg='red')
-		else:
-			# no additional packages were selected, which we'll allow
-			break
+			print(_("Verifying that additional packages exist (this might take a few seconds)"))
+			valid, invalid = validate_package_list(packages)
+
+			if invalid:
+				log(f"Some packages could not be found in the repository: {invalid}", level=logging.WARNING, fg='red')
+				packages = read_packages(valid)
+				continue
+		break
 
 	return packages
 
