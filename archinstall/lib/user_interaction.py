@@ -970,7 +970,7 @@ def select_additional_repositories() -> List[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 
-	:return: The string as a selected kernel
+	:return: The string as a selected repository
 	:rtype: string
 	"""
 
