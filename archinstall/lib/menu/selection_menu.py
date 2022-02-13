@@ -6,6 +6,7 @@ from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
 from ..general import SysCommand, secret
+from ..hardware import has_uefi
 from ..storage import storage
 from ..output import log
 from ..profiles import is_desktop_profile
@@ -455,9 +456,13 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Select bootloader'),
-				lambda x: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
+				lambda x: ask_for_bootloader(storage['arguments'].get('advanced', False)),
+				default="systemd-bootctl" if has_uefi() else "grub-install")
 		self._menu_options['hostname'] = \
-			Selector(_('Specify hostname'), lambda x: ask_hostname())
+			Selector(
+				_('Specify hostname'),
+				lambda: ask_hostname(),
+				default='archlinux')
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
@@ -501,7 +506,10 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
 				default={})
 		self._menu_options['timezone'] = \
-			Selector(_('Select timezone'), lambda x: ask_for_a_timezone())
+			Selector(
+				_('Select timezone'),
+				lambda: ask_for_a_timezone(),
+				default='UTC')
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),

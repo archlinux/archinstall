@@ -55,7 +55,7 @@ def ask_user_questions():
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
+	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
 	global_menu.enable('swap')
@@ -144,7 +144,7 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
-		if installation.minimal_installation():
+		if installation.minimal_installation(testing=archinstall.arguments.get('testing', False), multilib=archinstall.arguments.get('multilib', False)):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
@@ -241,10 +241,12 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	exit(1)
 
 if not archinstall.arguments.get('offline', False):
+	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
+
 	# If we want to check for keyring updates
 	# and the installed package version is lower than the upstream version
 	if archinstall.arguments.get('skip-keyring-update', False) is False and \
-		archinstall.installed_package('archlinux-keyring') < archinstall.find_package('archlinux-keyring'):
+		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
 
 		# Then we update the keyring in the ISO environment
 		if not archinstall.update_keyring():
