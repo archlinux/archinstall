@@ -55,7 +55,7 @@ def ask_user_questions():
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
+	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
 	global_menu.enable('swap')
