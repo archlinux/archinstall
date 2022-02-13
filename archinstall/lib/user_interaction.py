@@ -428,22 +428,22 @@ def ask_to_configure_network() -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
-
-	iso_config = str(_('Copy ISO network configuration to installation'))
-	network_manager = str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)'))
-
 	interfaces = {
-		'ISO-CONFIG': iso_config,
-		'NetworkManager': network_manager,
+		'iso_config': str(_('Copy ISO network configuration to installation')),
+		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
 		**list_interfaces()
 	}
 
-	nic = Menu(_('Select one network interface to configure'), interfaces.values()).run()
+	nic = Menu(_('Select one network interface to configure'), list(interfaces.values())).run()
 
-	if nic and nic != iso_config:
-		if nic == network_manager:
-			return {'nic': nic, 'NetworkManager': True}
+	if not nic:
+		return {}
 
+	if nic == interfaces['iso_config']:
+		return {'type': 'iso_config'}
+	elif nic == interfaces['network_manager']:
+		return {'type': 'network_manager', 'NetworkManager': True}
+	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
 		# printing out this part separate from options, passed in
@@ -491,13 +491,10 @@ def ask_to_configure_network() -> Dict[str, Any]:
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
+			return {'type': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
 		else:
-			return {'nic': nic}
-	elif nic:
-		return nic
-
-	return {}
+			# this will contain network iface names
+			return {'type': nic}
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
