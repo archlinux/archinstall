@@ -500,7 +500,10 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
 				default={})
 		self._menu_options['timezone'] = \
-			Selector(_('Select timezone'), lambda: ask_for_a_timezone())
+			Selector(
+				_('Select timezone'),
+				lambda: ask_for_a_timezone(),
+				default='UTC')
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
