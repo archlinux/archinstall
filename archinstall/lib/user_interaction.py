@@ -981,7 +981,7 @@ def select_additional_repositories() -> List[str]:
 		repositories,
 		sort=False,
 		multi=True,
-		default_option=None
+		default_option=[]
 	).run()
 	return additional_repositories
 
