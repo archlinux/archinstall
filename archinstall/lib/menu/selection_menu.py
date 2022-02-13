@@ -6,6 +6,7 @@ from typing import Callable, Any, List, Iterator
 
 from .menu import Menu
 from ..general import SysCommand, secret
+from ..hardware import has_uefi
 from ..storage import storage
 from ..output import log
 from ..profiles import is_desktop_profile
@@ -454,7 +455,8 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Select bootloader'),
-				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
+				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),
+				default="systemd-bootctl" if has_uefi() else "grub-install")
 		self._menu_options['hostname'] = \
 			Selector(_('Specify hostname'), lambda: ask_hostname())
 		self._menu_options['!root-password'] = \
