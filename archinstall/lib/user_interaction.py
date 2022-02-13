@@ -420,14 +420,14 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
-	iso_config = _('Copy ISO network configuration to installation')
+	iso_config = str(_('Copy ISO network configuration to installation'))
 	iso_config_nt = 'Copy ISO network configuration to installation' # do not translate
-	network_manager = _('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')
+	network_manager = str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)'))
 	network_manager_nt = 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)' # do not translate
 
 	interfaces = {
-		'ISO-CONFIG': str(iso_config),
-		'NetworkManager': str(network_manager),
+		'ISO-CONFIG': iso_config,
+		'NetworkManager': network_manager,
 		**list_interfaces()
 	}
 	# for this routine it's easier to set the cursor position rather than a preset value
@@ -439,14 +439,14 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 			cursor_idx = 1
 		elif preset.get('nic'):
 			try :
-				cursor_idx = list(interfaces.values()).index(preset.get('nic'))
+				cursor_idx = interfaces.values().index(preset.get('nic'))
 			except ValueError:
 				pass
 
-	nic = Menu(_('Select one network interface to configure'), list(interfaces.values()),cursor_index=cursor_idx).run()
+	nic = Menu(_('Select one network interface to configure'), interfaces.values(),cursor_index=cursor_idx).run()
 
-	if nic and nic != str(iso_config):
-		if nic == str(network_manager):
+	if nic and nic != iso_config:
+		if nic == network_manager:
 			nic = network_manager_nt
 			return {'nic': nic, 'NetworkManager': True}
 
