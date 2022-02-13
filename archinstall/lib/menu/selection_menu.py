@@ -456,7 +456,10 @@ class GlobalMenu(GeneralMenu):
 				_('Select bootloader'),
 				lambda: ask_for_bootloader(storage['arguments'].get('advanced', False)),)
 		self._menu_options['hostname'] = \
-			Selector(_('Specify hostname'), lambda: ask_hostname())
+			Selector(
+				_('Specify hostname'),
+				lambda: ask_hostname(),
+				default='archlinux')
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
