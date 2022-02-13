@@ -859,7 +859,7 @@ def select_profile() -> Optional[Profile]:
 	return None
 
 
-def select_language(default_value :str) -> str:
+def select_language(default_value :str, preset_value :str = None) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -873,7 +873,7 @@ def select_language(default_value :str) -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'), sorted_kb_lang, default_option=default_value, sort=False).run()
+	selected_lang = Menu(_('Select Keyboard layout'), sorted_kb_lang, default_option=default_value, preset_values=preset_value, sort=False).run()
 	return selected_lang
 
 

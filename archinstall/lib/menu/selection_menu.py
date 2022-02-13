@@ -418,7 +418,7 @@ class GlobalMenu(GeneralMenu):
 				default='English',
 				enabled=True)
 		self._menu_options['keyboard-layout'] = \
-			Selector(_('Select keyboard layout'), lambda x: select_language('us'), default='us')
+			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
 				_('Select mirror region'),
