@@ -966,6 +966,24 @@ def select_kernel() -> List[str]:
 	).run()
 	return selected_kernels
 
+def select_additional_repositories() -> List[str]:
+	"""
+	Allows the user to select additional repositories (multilib, and testing) if desired.
+
+	:return: The string as a selected kernel
+	:rtype: string
+	"""
+
+	repositories = ["multilib", "testing"]
+
+	additional_repositories = Menu(
+		_('Choose which optional additional repositories to enable'),
+		repositories,
+		sort=False,
+		multi=True,
+		default_option=None
+	).run()
+	return additional_repositories
 
 def select_locale_lang(default):
 	locales = list_locales()
