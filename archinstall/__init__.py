@@ -21,13 +21,12 @@ from .lib.models.dataclasses import (
 	LocalPackage
 )
 from .lib.packages.packages import (
-	find_group,
+	group_search,
 	package_search,
-	IsGroup,
 	find_package,
 	find_packages,
 	installed_package,
-	validate_package_list
+	validate_package_list,
 )
 from .lib.profiles import *
 from .lib.services import *
