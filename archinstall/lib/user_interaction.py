@@ -98,22 +98,51 @@ def do_countdown() -> bool:
 
 	return True
 
+def is_strong_password(passwd :str) -> bool:
+
+	if not (
+		any(char.isdigit() for char in passwd)
+		and any(char.isupper() for char in passwd)
+		and any(char.islower() for char in passwd)
+		and len(passwd) >= 8
+	):
+
+		log(
+            " * Your password is too weak *\n",
+            "Strong passwords must contain lowercase, uppercase,",
+            "numbers and longer than 8 letters.",
+            fg="yellow",
+        )
+		time.sleep(2) # TODO: This is a hack, we should have a better way to do this.
+		prompt = _("Are you sure to continue? ",)
+
+		choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
+		if choice == 'no':
+			return False
+		return True
+
+	return True
+
 
 def get_password(prompt :str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
 	while passwd := getpass.getpass(prompt):
+
+		if len(passwd.strip()) <= 0:
+			break
+
+		if not is_strong_password(passwd):
+			continue
+
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
 			continue
 
-		if len(passwd.strip()) <= 0:
-			break
-
 		return passwd
-	return None
+	return
 
 
 def print_large_list(options :List[str], padding :int = 5, margin_bottom :int = 0, separator :str = ': ') -> List[int]:
