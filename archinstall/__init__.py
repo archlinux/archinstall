@@ -203,6 +203,11 @@ def load_config():
 		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
+	if nic_config := arguments.get('nic', {}):
+		if nic_config.get('nic', '') == 'Copy ISO network configuration to installation':
+			arguments['nic'] = {'type': 'iso_config'}
+		elif 'NetworkManager' in nic_config:
+			arguments['nic'] = {'type': 'network_manager', 'NetworkManager': True}
 
 
 def post_process_arguments(arguments):
