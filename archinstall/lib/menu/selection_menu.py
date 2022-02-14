@@ -423,13 +423,13 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['mirror-region'] = \
 			Selector(
 				_('Select mirror region'),
-				lambda x: select_mirror_regions(),
+				select_mirror_regions,
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector(_('Select locale language'), lambda x: select_locale_lang('en_US'), default='en_US')
+			Selector(_('Select locale language'), lambda preset: select_locale_lang('en_US',preset), default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector(_('Select locale encoding'), lambda x: select_locale_enc('utf-8'), default='utf-8')
+			Selector(_('Select locale encoding'), lambda preset: select_locale_enc('utf-8',preset), default='utf-8')
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Select harddrives'),
@@ -445,13 +445,13 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
-				lambda x: self._select_encrypted_password(),
+				lambda preset: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
 				_('Use swap'),
-				lambda x: ask_for_swap(),
+				lambda preset: ask_for_swap(preset),
 				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
@@ -466,7 +466,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
-				lambda x: self._set_root_password(),
+				lambda x:self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(

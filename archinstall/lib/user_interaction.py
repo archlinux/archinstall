@@ -274,9 +274,13 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap():
+def ask_for_swap(preset :bool = True ) ->bool:
+	if preset:
+		preset_val = 'yes'
+	else:
+		preset_val = 'no'
 	prompt = _('Would you like to use swap on zram?')
-	choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+	choice = Menu(prompt, ['yes', 'no'], default_option='yes', preset_values=preset_val).run()
 	return False if choice == 'no' else True
 
 
@@ -885,7 +889,7 @@ def select_language(default_value :str, preset_value :str = None) -> str:
 	return selected_lang
 
 
-def select_mirror_regions() -> Dict[str, Any]:
+def select_mirror_regions(preset_values :Dict[str, Any] = {}) -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
@@ -893,11 +897,15 @@ def select_mirror_regions() -> Dict[str, Any]:
 	:return: The dictionary information about a mirror/region.
 	:rtype: dict
 	"""
-
+	if preset_values is None:
+		preselected = None
+	else:
+		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
 	selected_mirror = Menu(
 		_('Select one of the regions to download packages from'),
 		list(mirrors.keys()),
+		preset_values=preselected,
 		multi=True
 	).run()
 
@@ -984,7 +992,7 @@ def select_kernel() -> List[str]:
 	return selected_kernels
 
 
-def select_locale_lang(default):
+def select_locale_lang(default :str,preset :str=None) ->str  :
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
@@ -992,13 +1000,14 @@ def select_locale_lang(default):
 		_('Choose which locale language to use'),
 		locale_lang,
 		sort=True,
+		preset_values = preset,
 		default_option=default
 	).run()
 
 	return selected_locale
 
 
-def select_locale_enc(default):
+def select_locale_enc(default :str,preset :str = None) ->str:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
@@ -1006,6 +1015,7 @@ def select_locale_enc(default):
 		_('Choose which locale encoding to use'),
 		locale_enc,
 		sort=True,
+		preset_values = preset,
 		default_option=default
 	).run()
 

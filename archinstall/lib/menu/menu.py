@@ -152,9 +152,7 @@ class Menu(TerminalMenu):
 			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
 				idx = preset_values.index(self.default_option)
 				self.preset_values[idx] = f"{preset_values[idx]} (default)"
-		if  cursor_index is None or not self.multi:
+		if cursor_index is None or not self.multi:
 			from_preset_to_cursor()
 		if not self.multi: # Not supported by the infraestructure
 			self.preset_values = None
-
-
