@@ -345,7 +345,7 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 	return users, superusers
 
 
-def ask_for_a_timezone() -> str:
+def ask_for_a_timezone(preset :str = None) -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
@@ -353,6 +353,7 @@ def ask_for_a_timezone() -> str:
 		_('Select a timezone'),
 		list(timezones),
 		skip=False,
+		preset_values=preset,
 		default_option=default
 	).run()
 
@@ -394,12 +395,13 @@ def ask_for_bootloader(advanced_options :bool = False, preset :str=None) -> str:
 	return bootloader
 
 
-def ask_for_audio_selection(desktop :bool = True) -> str:
+def ask_for_audio_selection(desktop :bool = True, preset :str = None) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
 	selected_audio = Menu(
 		_('Choose an audio server'),
 		choices,
+		preset_values=preset,
 		default_option=audio,
 		skip=False
 	).run()
@@ -980,7 +982,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def select_kernel() -> List[str]:
+def select_kernel(preset :List[str] = None) -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -996,6 +998,7 @@ def select_kernel() -> List[str]:
 		kernels,
 		sort=True,
 		multi=True,
+		preset_values = preset,
 		default_option=default_kernel
 	).run()
 	return selected_kernels

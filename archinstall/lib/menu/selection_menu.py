@@ -488,11 +488,11 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['audio'] = \
 			Selector(
 				_('Select audio'),
-				lambda x: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None))))
+				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset))
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Select kernels'),
-				lambda x: select_kernel(),
+				lambda preset: select_kernel(preset),
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
@@ -508,7 +508,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['timezone'] = \
 			Selector(
 				_('Select timezone'),
-				lambda: ask_for_a_timezone(),
+				lambda preset: ask_for_a_timezone(preset),
 				default='UTC')
 		self._menu_options['ntp'] = \
 			Selector(
