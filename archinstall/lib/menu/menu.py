@@ -136,10 +136,15 @@ class Menu(TerminalMenu):
 	def preselection(self,preset_values :list = [],cursor_index :int = None):
 		def from_preset_to_cursor():
 			if preset_values:
-				if isinstance(preset_values,str):
-					self.cursor_index = self.menu_options.index(self.preset_values)
-				else:  # should return an error, but this is smoother
-					self.cursor_index = self.menu_options.index(self.preset_values[0])
+				# if the value is not extant return 0 as cursor index
+				try:
+					if isinstance(preset_values,str):
+						self.cursor_index = self.menu_options.index(self.preset_values)
+					else:  # should return an error, but this is smoother
+						self.cursor_index = self.menu_options.index(self.preset_values[0])
+				except ValueError:
+					self.cursor_index = 0
+
 		self.cursor_index = cursor_index
 		if not preset_values:
 			self.preset_values = None

@@ -445,7 +445,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!encryption-password'] = \
 			Selector(
 				_('Set encryption password'),
-				lambda preset: self._select_encrypted_password(),
+				lambda x: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
@@ -456,17 +456,17 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Select bootloader'),
-				lambda x: ask_for_bootloader(storage['arguments'].get('advanced', False)),
+				lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False),preset),
 				default="systemd-bootctl" if has_uefi() else "grub-install")
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Specify hostname'),
-				lambda: ask_hostname(),
+				lambda x: ask_hostname(),
 				default='archlinux')
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
-				lambda x:self._set_root_password(),
+				lambda preset:self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(

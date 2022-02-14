@@ -358,13 +358,22 @@ def ask_for_a_timezone() -> str:
 
 	return selected_tz
 
-def ask_for_bootloader(advanced_options :bool = False) -> str:
+def ask_for_bootloader(advanced_options :bool = False, preset :str=None) -> str:
+
+	if preset == 'systemd-bootctl':
+		preset_val = 'systemd-boot' if advanced_options else 'no'
+	elif preset == 'grub-install':
+		preset_val = 'grub' if advanced_options else 'yes'
+	else:
+		preset_val = preset
+
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
 			bootloader_choice = Menu(
 				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
 				['yes', 'no'],
+				preset_values = preset_val,
 				default_option='no'
 			).run()
 
@@ -373,7 +382,7 @@ def ask_for_bootloader(advanced_options :bool = False) -> str:
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
-			selection = Menu(_('Choose a bootloader'), choices).run()
+			selection = Menu(_('Choose a bootloader'), choices,preset_values=preset_val).run()
 			if selection != "":
 				if selection == 'systemd-boot':
 					bootloader = 'systemd-bootctl'
