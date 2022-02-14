@@ -513,7 +513,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Set automatic time sync (NTP)'),
-				lambda x: self._select_ntp(),
+				lambda preset: self._select_ntp(preset),
 				default=True)
 		self._menu_options['install'] = \
 			Selector(
@@ -586,8 +586,8 @@ class GlobalMenu(GeneralMenu):
 		else:
 			return None
 
-	def _select_ntp(self) -> bool:
-		ntp = ask_ntp()
+	def _select_ntp(self, preset :bool = True) -> bool:
+		ntp = ask_ntp(preset)
 
 		value = str(ntp).lower()
 		SysCommand(f'timedatectl set-ntp {value}')

@@ -274,7 +274,7 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap(preset :bool = True ) ->bool:
+def ask_for_swap(preset :bool = True) -> bool:
 	if preset:
 		preset_val = 'yes'
 	else:
@@ -284,10 +284,14 @@ def ask_for_swap(preset :bool = True ) ->bool:
 	return False if choice == 'no' else True
 
 
-def ask_ntp() -> bool:
+def ask_ntp(preset :bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
 	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
-	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+	if preset:
+		preset_val = 'yes'
+	else:
+		preset_val = 'no'
+	choice = Menu(prompt, ['yes', 'no'], skip=False, preset_values=preset_val, default_option='yes').run()
 	return False if choice == 'no' else True
 
 
@@ -359,7 +363,7 @@ def ask_for_a_timezone(preset :str = None) -> str:
 
 	return selected_tz
 
-def ask_for_bootloader(advanced_options :bool = False, preset :str=None) -> str:
+def ask_for_bootloader(advanced_options :bool = False, preset :str = None) -> str:
 
 	if preset == 'systemd-bootctl':
 		preset_val = 'systemd-boot' if advanced_options else 'no'
@@ -374,7 +378,7 @@ def ask_for_bootloader(advanced_options :bool = False, preset :str=None) -> str:
 			bootloader_choice = Menu(
 				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
 				['yes', 'no'],
-				preset_values = preset_val,
+				preset_values=preset_val,
 				default_option='no'
 			).run()
 
@@ -998,13 +1002,13 @@ def select_kernel(preset :List[str] = None) -> List[str]:
 		kernels,
 		sort=True,
 		multi=True,
-		preset_values = preset,
+		preset_values=preset,
 		default_option=default_kernel
 	).run()
 	return selected_kernels
 
 
-def select_locale_lang(default :str,preset :str=None) ->str  :
+def select_locale_lang(default :str,preset :str = None) -> str  :
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
@@ -1012,14 +1016,14 @@ def select_locale_lang(default :str,preset :str=None) ->str  :
 		_('Choose which locale language to use'),
 		locale_lang,
 		sort=True,
-		preset_values = preset,
+		preset_values=preset,
 		default_option=default
 	).run()
 
 	return selected_locale
 
 
-def select_locale_enc(default :str,preset :str = None) ->str:
+def select_locale_enc(default :str,preset :str = None) -> str:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
@@ -1027,7 +1031,7 @@ def select_locale_enc(default :str,preset :str = None) ->str:
 		_('Choose which locale encoding to use'),
 		locale_enc,
 		sort=True,
-		preset_values = preset,
+		preset_values=preset,
 		default_option=default
 	).run()
 
