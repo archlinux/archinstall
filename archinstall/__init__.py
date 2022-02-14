@@ -208,7 +208,8 @@ def load_config():
 			arguments['nic'] = {'type': 'iso_config'}
 		elif 'NetworkManager' in nic_config:
 			arguments['nic'] = {'type': 'network_manager', 'NetworkManager': True}
-
+		else:
+			arguments['nic'] = {k if k != 'nic' else 'type': v for k, v in nic_config.items()}
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
