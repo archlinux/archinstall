@@ -107,14 +107,8 @@ def is_strong_password(passwd :str) -> bool:
 		and len(passwd) >= 8
 	):
 
-		log(
-            " * Your password is too weak *\n",
-            "Strong passwords must contain lowercase, uppercase,",
-            "numbers and longer than 8 letters.",
-            fg="yellow",
-        )
-		time.sleep(2) # TODO: This is a hack, we should have a better way to do this.
-		prompt = _("Are you sure to continue? ",)
+		prompt = _("Your password is too weak...\n")
+		prompt += _("Are you sure to continue? ")
 
 		choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
 		if choice == 'no':
