@@ -296,8 +296,8 @@ def ask_ntp(preset :bool = True) -> bool:
 	return False if choice == 'no' else True
 
 
-def ask_hostname():
-	hostname = input(_('Desired hostname for the installation: ')).strip(' ')
+def ask_hostname(preset :str = None) -> str :
+	hostname = TextInput(_('Desired hostname for the installation: '),preset).run().strip(' ')
 	return hostname
 
 
@@ -1014,7 +1014,7 @@ def select_kernel(preset :List[str] = None) -> List[str]:
 	).run()
 	return selected_kernels
 
-def select_additional_repositories() -> List[str]:
+def select_additional_repositories(preset :List[str]) -> List[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 
@@ -1029,6 +1029,7 @@ def select_additional_repositories() -> List[str]:
 		repositories,
 		sort=False,
 		multi=True,
+		preset_values=preset,
 		default_option=[]
 	).run()
 

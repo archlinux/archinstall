@@ -413,6 +413,7 @@ class GlobalMenu(GeneralMenu):
 		super().__init__(data_store=data_store, auto_cursor=True)
 
 	def _setup_selection_menu_options(self):
+		# archinstall.Language will not use preset values
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Select Archinstall language'),
@@ -462,7 +463,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Specify hostname'),
-				lambda x: ask_hostname(),
+				ask_hostname,
 				default='archlinux')
 		self._menu_options['!root-password'] = \
 			Selector(
@@ -504,7 +505,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['additional-repositories'] = \
 			Selector(
 				_('Additional repositories to enable'),
-				lambda: select_additional_repositories(),
+				select_additional_repositories,
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
