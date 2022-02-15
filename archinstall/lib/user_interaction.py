@@ -937,7 +937,7 @@ def select_mirror_regions(preset_values :Dict[str, Any] = {}) -> Dict[str, Any]:
 	return {}
 
 
-def select_harddrives() -> Optional[str]:
+def select_harddrives(preset : List[str] = []) -> List[str]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -946,10 +946,11 @@ def select_harddrives() -> Optional[str]:
 	"""
 	hard_drives = all_blockdevices(partitions=False).values()
 	options = {f'{option}': option for option in hard_drives}
-
+	preset_disks = {f'{option}':option for option in preset}
 	selected_harddrive = Menu(
 		_('Select one or more hard drives to use and configure'),
 		list(options.keys()),
+		preset_values=list(preset_disks.keys()),
 		multi=True
 	).run()
 

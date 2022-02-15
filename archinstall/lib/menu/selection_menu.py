@@ -435,7 +435,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Select harddrives'),
-				lambda x: self._select_harddrives())
+				self._select_harddrives)
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Select disk layout'),
@@ -465,6 +465,7 @@ class GlobalMenu(GeneralMenu):
 				_('Specify hostname'),
 				ask_hostname,
 				default='archlinux')
+		# root password won't have preset value
 		self._menu_options['!root-password'] = \
 			Selector(
 				_('Set root password'),
@@ -602,12 +603,12 @@ class GlobalMenu(GeneralMenu):
 
 		return ntp
 
-	def _select_harddrives(self):
-		old_haddrives = storage['arguments'].get('harddrives', [])
-		harddrives = select_harddrives()
+	def _select_harddrives(self, old_harddrives : list) -> list:
+		# old_haddrives = storage['arguments'].get('harddrives', [])
+		harddrives = select_harddrives(old_harddrives)
 
 		# in case the harddrives got changed we have to reset the disk layout as well
-		if old_haddrives != harddrives:
+		if old_harddrives != harddrives:
 			self._menu_options.get('disk_layouts').set_current_selection(None)
 			storage['arguments']['disk_layouts'] = {}
 
