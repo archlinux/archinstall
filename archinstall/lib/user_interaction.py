@@ -12,6 +12,8 @@ from collections.abc import Iterable
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
+from .menu.text_input import TextInput
+
 if TYPE_CHECKING:
 	from .disk.partition import Partition
 
@@ -28,9 +30,10 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .translation import Translation
+from .translation import Translation, DeferredTranslation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
+
 
 # TODO: These can be removed after the move to simple_menu.py
 def get_terminal_height() -> int:
@@ -390,28 +393,33 @@ def ask_for_audio_selection(desktop :bool = True) -> str:
 	return selected_audio
 
 
-# TODO: Remove? Moved?
-def ask_additional_packages_to_install(packages :List[str] = None) -> List[str]:
+def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	while True:
-		packages = [p for p in input(
-			_('Write additional packages to install (space separated, leave blank to skip): ')
-		).split(' ') if len(p)]
+	def read_packages(already_defined: list = []) -> list:
+		display = ' '.join(already_defined)
+		input_packages = TextInput(
+			_('Write additional packages to install (space separated, leave blank to skip): '),
+			display
+		).run()
+		return input_packages.split(' ') if input_packages else []
 
+	pre_set_packages = pre_set_packages if pre_set_packages else []
+	packages = read_packages(pre_set_packages)
+
+	while True:
 		if len(packages):
 			# Verify packages that were given
-			try:
-				print(_("Verifying that additional packages exist (this might take a few seconds)"))
-				validate_package_list(packages)
-				break
-			except RequirementError as e:
-				log(e, fg='red')
-		else:
-			# no additional packages were selected, which we'll allow
-			break
+			print(_("Verifying that additional packages exist (this might take a few seconds)"))
+			valid, invalid = validate_package_list(packages)
+
+			if invalid:
+				log(f"Some packages could not be found in the repository: {invalid}", level=logging.WARNING, fg='red')
+				packages = read_packages(valid)
+				continue
+		break
 
 	return packages
 
@@ -420,22 +428,22 @@ def ask_to_configure_network() -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
-
-	iso_config = _('Copy ISO network configuration to installation')
-	network_manager = _('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')
-
 	interfaces = {
-		'ISO-CONFIG': iso_config,
-		'NetworkManager': network_manager,
+		'iso_config': str(_('Copy ISO network configuration to installation')),
+		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
 		**list_interfaces()
 	}
 
 	nic = Menu(_('Select one network interface to configure'), list(interfaces.values())).run()
 
-	if nic and nic != iso_config:
-		if nic == network_manager:
-			return {'nic': nic, 'NetworkManager': True}
+	if not nic:
+		return {}
 
+	if nic == interfaces['iso_config']:
+		return {'type': 'iso_config'}
+	elif nic == interfaces['network_manager']:
+		return {'type': 'network_manager', 'NetworkManager': True}
+	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
 		# printing out this part separate from options, passed in
@@ -483,13 +491,10 @@ def ask_to_configure_network() -> Dict[str, Any]:
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
+			return {'type': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
 		else:
-			return {'nic': nic}
-	elif nic:
-		return nic
-
-	return {}
+			# this will contain network iface names
+			return {'type': nic}
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
@@ -917,7 +922,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 
 	if drivers:
 		arguments = storage.get('arguments', {})
-		title = ''
+		title = DeferredTranslation('')
 
 		if has_amd_graphics():
 			title += _('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') + '\n'
@@ -958,6 +963,28 @@ def select_kernel() -> List[str]:
 	).run()
 	return selected_kernels
 
+def select_additional_repositories() -> List[str]:
+	"""
+	Allows the user to select additional repositories (multilib, and testing) if desired.
+
+	:return: The string as a selected repository
+	:rtype: string
+	"""
+
+	repositories = ["multilib", "testing"]
+
+	additional_repositories = Menu(
+		_('Choose which optional additional repositories to enable'),
+		repositories,
+		sort=False,
+		multi=True,
+		default_option=[]
+	).run()
+
+	if additional_repositories is not None:
+		return additional_repositories
+
+	return []
 
 def select_locale_lang(default):
 	locales = list_locales()

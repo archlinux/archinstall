@@ -4,8 +4,16 @@
     "description": "A schema for the archinstall command config, more info over at https://archinstall.readthedocs.io/installing/guided.html#options-for-config",
     "type": "object",
     "properties": {
+        "additional-repositories": {
+            "description": "Additional repositories to optionally enable",
+            "type": "string",
+            "enum": [
+                "multilib",
+                "testing"
+            ]
+        },
         "audio": {
-            "description": "Audioserver to be installed",
+            "description": "Audio server to be installed",
             "type": "string",
             "enum": [
                 "pipewire",

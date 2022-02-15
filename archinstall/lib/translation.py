@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict
 from .exceptions import TranslationError
 
+
 class Languages:
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
@@ -45,6 +46,13 @@ class DeferredTranslation:
 
 	def __gt__(self, other) -> bool:
 		return self.message > other
+
+	def __add__(self, other) -> DeferredTranslation:
+		if isinstance(other, str):
+			other = DeferredTranslation(other)
+
+		concat = self.message + other.message
+		return DeferredTranslation(concat)
 
 	def format(self, *args) -> str:
 		return self.message.format(*args)
