@@ -32,6 +32,7 @@ from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_archinstall_language
+from ..user_interaction import select_additional_repositories
 from ..translation import Translation
 
 class Selector:
@@ -498,6 +499,11 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Additional packages to install'),
 				lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
+				default=[])
+		self._menu_options['additional-repositories'] = \
+			Selector(
+				_('Additional repositories to enable'),
+				lambda: select_additional_repositories(),
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(

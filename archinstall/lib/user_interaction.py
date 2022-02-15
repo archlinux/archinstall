@@ -30,7 +30,7 @@ from .mirrors import list_mirrors
 
 # TODO: Some inconsistencies between the selection processes.
 #       Some return the keys from the options, some the values?
-from .translation import Translation
+from .translation import Translation, DeferredTranslation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
 
@@ -451,10 +451,9 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 	iso_config_nt = 'Copy ISO network configuration to installation' # do not translate
 	network_manager = str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)'))
 	network_manager_nt = 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)' # do not translate
-
 	interfaces = {
-		'ISO-CONFIG': iso_config,
-		'NetworkManager': network_manager,
+		'iso_config': str(_('Copy ISO network configuration to installation')),
+		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
 		**list_interfaces()
 	}
 	# for this routine it's easier to set the cursor position rather than a preset value
@@ -472,11 +471,15 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 
 	nic = Menu(_('Select one network interface to configure'), interfaces.values(),cursor_index=cursor_idx).run()
 
-	if nic and nic != iso_config:
-		if nic == network_manager:
+	if not nic:
+		return {}
 			nic = network_manager_nt
-			return {'nic': nic, 'NetworkManager': True}
 
+	if nic == interfaces['iso_config']:
+		return {'type': 'iso_config'}
+	elif nic == interfaces['network_manager']:
+		return {'type': 'network_manager', 'NetworkManager': True}
+	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
 		# printing out this part separate from options, passed in
@@ -526,14 +529,11 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return {'nic': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
+			return {'type': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
 		else:
-			return {'nic': nic}
-	elif nic:
+			# this will contain network iface names
+			return {'type': nic}
 		nic = iso_config_nt
-		return nic
-
-	return {}
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
@@ -965,7 +965,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 
 	if drivers:
 		arguments = storage.get('arguments', {})
-		title = ''
+		title = DeferredTranslation('')
 
 		if has_amd_graphics():
 			title += _('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') + '\n'
@@ -1007,6 +1007,28 @@ def select_kernel(preset :List[str] = None) -> List[str]:
 	).run()
 	return selected_kernels
 
+def select_additional_repositories() -> List[str]:
+	"""
+	Allows the user to select additional repositories (multilib, and testing) if desired.
+
+	:return: The string as a selected repository
+	:rtype: string
+	"""
+
+	repositories = ["multilib", "testing"]
+
+	additional_repositories = Menu(
+		_('Choose which optional additional repositories to enable'),
+		repositories,
+		sort=False,
+		multi=True,
+		default_option=[]
+	).run()
+
+	if additional_repositories is not None:
+		return additional_repositories
+
+	return []
 
 def select_locale_lang(default :str,preset :str = None) -> str  :
 	locales = list_locales()
