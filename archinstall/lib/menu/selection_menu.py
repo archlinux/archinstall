@@ -498,7 +498,8 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['packages'] = \
 			Selector(
 				_('Additional packages to install'),
-				lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
+				# lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
+				ask_additional_packages_to_install,
 				default=[])
 		self._menu_options['additional-repositories'] = \
 			Selector(

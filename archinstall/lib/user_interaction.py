@@ -9,6 +9,7 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
+from copy import copy
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
@@ -443,14 +444,10 @@ def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List
 	return packages
 
 
-def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
+def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Dict[str, Any]:
 	# Optionally configure one network interface.
 	# while 1:
 	# {MAC: Ifname}
-	iso_config = str(_('Copy ISO network configuration to installation'))
-	iso_config_nt = 'Copy ISO network configuration to installation' # do not translate
-	network_manager = str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)'))
-	network_manager_nt = 'Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)' # do not translate
 	interfaces = {
 		'iso_config': str(_('Copy ISO network configuration to installation')),
 		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
@@ -459,13 +456,14 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 	# for this routine it's easier to set the cursor position rather than a preset value
 	cursor_idx = None
 	if preset:
-		if isinstance(preset,str):
+		if preset['type'] == 'iso_config':
 			cursor_idx = 0
-		elif 'NetworkManager' in preset:
+		elif preset['type'] == 'network_manager':
 			cursor_idx = 1
-		elif preset.get('nic'):
+		else:
 			try :
-				cursor_idx = interfaces.values().index(preset.get('nic'))
+				# let's hope order in dictionaries stay
+				cursor_idx = list(interfaces.values()).index(preset.get('type'))
 			except ValueError:
 				pass
 
@@ -473,7 +471,8 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 
 	if not nic:
 		return {}
-			nic = network_manager_nt
+
+	# nic = network_manager_nt
 
 	if nic == interfaces['iso_config']:
 		return {'type': 'iso_config'}
@@ -484,18 +483,23 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 		# For selecting modes without entering text within brackets,
 		# printing out this part separate from options, passed in
 		# `generic_select`
+		# we only keep data if it is the same nic as before
+		if preset.get('type') != nic:
+			preset_d = {'type': nic, 'dhcp': True, 'ip': None, 'gateway': None, 'dns': []}
+		else:
+			preset_d = copy(preset)
+
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
-		cursor_idx = None
-		if 'ip' in preset:
-			cursor_idx = 1
+		cursor_idx = 0 if preset_d.get('dhcp',True) else 1
+
 		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(nic, default_mode)
 		mode = Menu(prompt, modes, default_option=default_mode, cursor_index=cursor_idx).run()
 		# TODO preset values for ip and gateway
 		if mode == 'IP (static)':
 			while 1:
 				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(nic)
-				ip = input(prompt).strip()
+				ip = TextInput(prompt,preset_d.get('ip')).run().strip()
 				# Implemented new check for correct IP/subnet input
 				try:
 					ipaddress.ip_interface(ip)
@@ -509,7 +513,7 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 
 			# Implemented new check for correct gateway IP address
 			while 1:
-				gateway = input(_('Enter your gateway (router) IP address or leave blank for none: ')).strip()
+				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),preset_d.get('gateway')).run().strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
@@ -524,7 +528,11 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 					)
 
 			dns = None
-			dns_input = input(_('Enter your DNS servers (space separated, blank for none): ')).strip()
+			if preset_d.get('dns'):
+				preset_d['dns'] = ' '.join(preset_d['dns'])
+			else:
+				preset_d['dns'] = None
+			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '),preset_d['dns']).run().strip()
 
 			if len(dns_input):
 				dns = dns_input.split(' ')
@@ -533,7 +541,6 @@ def ask_to_configure_network(preset :Dict[str, Any] = None) -> Dict[str, Any]:
 		else:
 			# this will contain network iface names
 			return {'type': nic}
-		nic = iso_config_nt
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
