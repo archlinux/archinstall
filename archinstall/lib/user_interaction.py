@@ -98,22 +98,25 @@ def do_countdown() -> bool:
 
 	return True
 
-def is_strong_password(passwd :str) -> bool:
+def passwd_is_weak(passwd: str) -> bool:
 
-	if not (
-		any(char.isdigit() for char in passwd)
-		and any(char.isupper() for char in passwd)
-		and any(char.islower() for char in passwd)
-		and len(passwd) >= 8
-	):
+	symbol_count = 0
+	if any(character.isdigit() for character in passwd):
+		symbol_count += 10
+	if any(character.isupper() for character in passwd):
+		symbol_count += 26
+	if any(character.islower() for character in passwd):
+		symbol_count += 26
+	if any(not character.isalnum() for character in passwd):
+		symbol_count += 40
 
-		prompt = _("Your password is too weak...\n")
-		prompt += _("Are you sure to continue? ")
+	if symbol_count ** len(passwd) < 10e20:
 
-		choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
-		if choice == 'no':
-			return False
-		return True
+		prompt = _("The password you are using seems to be weak,")
+		prompt += _("are you sure you want to use it?")
+
+		choice = Menu(prompt, ["yes", "no"], default_option="yes").run()
+		return choice == "yes"
 
 	return True
 
@@ -127,7 +130,7 @@ def get_password(prompt :str = '') -> Optional[str]:
 		if len(passwd.strip()) <= 0:
 			break
 
-		if not is_strong_password(passwd):
+		if not passwd_is_weak(passwd):
 			continue
 
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
@@ -136,7 +139,7 @@ def get_password(prompt :str = '') -> Optional[str]:
 			continue
 
 		return passwd
-	return
+	return None
 
 
 def print_large_list(options :List[str], padding :int = 5, margin_bottom :int = 0, separator :str = ': ') -> List[int]:
