@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
-from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING, Tuple
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 	from .disk.partition import Partition
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_blockdevices
-from .exceptions import RequirementError, UserError, DiskError
+from .exceptions import RequirementError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
 from .networking import list_interfaces
