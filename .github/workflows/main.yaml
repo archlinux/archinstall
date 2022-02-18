@@ -1,0 +1,70 @@
+on: [ push, pull_request ]
+name: Actions
+jobs:
+    bandit:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: pacman --noconfirm -Syu bandit
+            - name: Security checkup with Bandit
+              run: bandit -r archinstall || exit 0
+    flake8:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup
+              run: |
+                pacman --noconfirm -Syu python python-pip
+                python -m pip install --upgrade pip
+                pip install flake8
+            - name: Lint with flake8
+              run: flake8
+    mypy:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: |
+                pacman --noconfirm -Syu python mypy python-pip
+                python -m pip install --upgrade pip
+                pip install fastapi pydantic
+                python --version
+                mypy --version
+            - name: run mypy
+              run: mypy --strict --module archinstall || exit 0
+    pytest:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+            options: --privileged
+        steps:
+            - uses: actions/checkout@v2
+            - run: pacman --noconfirm -Syu python python-pip qemu gcc
+            - run: python -m pip install --upgrade pip
+            - run: pip install pytest
+            - name: Test with pytest
+              run: python -m pytest || exit 0
+    python-build:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - name: Set up Python
+            uses: actions/setup-python@v2
+            with:
+              python-version: '3.x'
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install build twine
+          - name: Build archinstall
+            run: |
+              python -m build
+          - uses: actions/upload-artifact@v2
+            with:
+              name: Python build
+              path: dist/*

@@ -2,16 +2,12 @@
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
 name: Upload archinstall to PyPi
-
 on:
   release:
-    types: [ published ]
-
+    types: [published]
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
