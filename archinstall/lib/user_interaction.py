@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
-from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING, Tuple
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
@@ -292,30 +292,15 @@ def ask_hostname():
 	return hostname
 
 
-def ask_for_superuser_account(prompt: str = '', forced :bool = False) -> Dict[str, Dict[str, str]]:
-	prompt = prompt if prompt else _('Username for required superuser with sudo privileges: ')
-	while 1:
-		new_user = input(prompt).strip(' ')
-
-		if not new_user and forced:
-			# TODO: make this text more generic?
-			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one superuser!', fg='red')
-			continue
-		elif not new_user and not forced:
-			raise UserError("No superuser was created.")
-		elif not check_for_correct_username(new_user):
-			continue
-
-		prompt = str(_('Password for user "{}": ').format(new_user))
-		password = get_password(prompt=prompt)
-		return {new_user: {"!password": password}}
+def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
+	prompt = prompt if prompt else str(_('Enter username for superuser with sudo privileges (leave blank for no superusers): '))
+	superusers = ask_for_additional_users(prompt)
+	return superusers
 
 
-def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str | None]], dict[str, dict[str, str | None]]]:
+def ask_for_additional_users(prompt :str = '') -> Dict[str, Dict[str, str | None]]:
 	prompt = prompt if prompt else _('Any additional users to install (leave blank for no users): ')
 	users = {}
-	superusers = {}
 
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -324,21 +309,11 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 		if not check_for_correct_username(new_user):
 			continue
 
-		password = get_password(prompt=str(_('Password for user "{}": ').format(new_user)))
+		password_prompt = str(_('Password for user "{}": ').format(new_user))
+		password = get_password(prompt=password_prompt)
+		users[new_user] = {"!password": password}
 
-		choice = Menu(
-			str(_('Should this user be a superuser (sudoer)?')),
-			['yes', 'no'],
-			skip=False,
-			default_option='no'
-		).run()
-
-		if choice == 'yes':
-			superusers[new_user] = {"!password": password}
-		else:
-			users[new_user] = {"!password": password}
-
-	return users, superusers
+	return users
 
 
 def ask_for_a_timezone() -> str:

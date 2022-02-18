@@ -311,14 +311,15 @@ class GeneralMenu:
 		self.post_callback(selector_name,result)
 		if exec_ret_val and self._check_mandatory_status():
 			return False
-		return True
-		""" old behaviour
-		# we allow for a callback after we get the result
-		self.post_callback(selector_name,result)
-		# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
-		if selector.exec_func:
-			if selector.exec_func(result) and self._check_mandatory_status():
-				return False
+
+		"""
+			old behaviour
+			# we allow for a callback after we get the result
+			self.post_callback(selector_name,result)
+			# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
+			if selector.exec_func:
+				if selector.exec_func(result) and self._check_mandatory_status():
+					return False
 		"""
 		return True
 
@@ -472,8 +473,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Specify superuser account'),
 				lambda: self._create_superuser_account(),
-				dependencies_not=['!root-password'],
-				display_func=lambda x: list(x.keys()) if x else '')
+				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
 			Selector(
 				_('Specify user account'),
@@ -575,14 +575,6 @@ class GlobalMenu(GeneralMenu):
 	def _set_root_password(self):
 		prompt = str(_('Enter root password (leave blank to disable root): '))
 		password = get_password(prompt=prompt)
-
-		# TODO: Do we really wanna wipe the !superusers and !users if root password is set?
-		# What if they set a superuser first, but then decides to set a root password?
-		if password is not None:
-			self._menu_options.get('!superusers').set_current_selection(None)
-			storage['arguments']['!users'] = {}
-			storage['arguments']['!superusers'] = {}
-
 		return password
 
 	def _select_encrypted_password(self):
@@ -636,11 +628,17 @@ class GlobalMenu(GeneralMenu):
 		return profile
 
 	def _create_superuser_account(self):
-		superuser = ask_for_superuser_account(str(_('Create a required super-user with sudo privileges: ')), forced=True)
-		return superuser
+		superusers = ask_for_superuser_account(str(_('Enter a username to create an additional superuser (leave blank to skip): ')))
+		return superusers if superusers else None
 
 	def _create_user_account(self):
-		users, superusers = ask_for_additional_users(str(_('Enter a username to create an additional user (leave blank to skip): ')))
-		storage['arguments']['!superusers'] = {**storage['arguments'].get('!superusers', {}), **superusers}
-
+		users = ask_for_additional_users(str(_('Enter a username to create an additional user (leave blank to skip): ')))
 		return users
+
+	def _display_superusers(self):
+		superusers = self._data_store.get('!superusers', {})
+
+		if self._menu_options.get('!root-password').has_selection():
+			return list(superusers.keys()) if superusers else '[]'
+		else:
+			return list(superusers.keys()) if superusers else ''
