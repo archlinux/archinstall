@@ -560,8 +560,6 @@ class GlobalMenu(GeneralMenu):
 			missing += 1
 		if not check('audio'):
 			missing += 1
-		if not check('timezone'):
-			missing += 1
 		if not check('!root-password') and not check('!superusers'):
 			missing += 1
 		if not check('harddrives'):
