@@ -4,7 +4,7 @@
 name: Upload archinstall to PyPi
 on:
   release:
-    types: [published]
+    types: [ published ]
 jobs:
   deploy:
     runs-on: ubuntu-latest

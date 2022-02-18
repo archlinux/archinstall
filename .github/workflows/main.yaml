@@ -16,7 +16,7 @@ jobs:
             image: archlinux:latest
         steps:
             - uses: actions/checkout@v2
-            - name: Setup
+            - name: Install dependencies
               run: |
                 pacman --noconfirm -Syu python python-pip
                 python -m pip install --upgrade pip
@@ -29,7 +29,8 @@ jobs:
             image: archlinux:latest
         steps:
             - uses: actions/checkout@v2
-            - run: |
+            - name: Install dependencies
+              run: |
                 pacman --noconfirm -Syu python mypy python-pip
                 python -m pip install --upgrade pip
                 pip install fastapi pydantic
@@ -44,9 +45,10 @@ jobs:
             options: --privileged
         steps:
             - uses: actions/checkout@v2
-            - run: pacman --noconfirm -Syu python python-pip qemu gcc
-            - run: python -m pip install --upgrade pip
-            - run: pip install pytest
+            - name: Install dependencies
+              run: |
+                pacman --noconfirm -Syu python python-pip qemu gcc
+                python -m pip install --upgrade pip pytest
             - name: Test with pytest
               run: python -m pytest || exit 0
     python-build:
