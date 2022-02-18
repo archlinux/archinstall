@@ -55,7 +55,7 @@ def ask_user_questions():
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
+	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
 	global_menu.enable('swap')
@@ -86,6 +86,8 @@ def ask_user_questions():
 	global_menu.enable('timezone')
 
 	global_menu.enable('ntp')
+
+	global_menu.enable('additional-repositories')
 
 	global_menu.run()
 
@@ -143,8 +145,12 @@ def perform_installation(mountpoint):
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-
-		if installation.minimal_installation(archinstall.arguments.get('testing', False)):
+		
+		# Retrieve list of additional repositories and set boolean values appropriately
+		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
+		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		
+		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
@@ -157,7 +163,7 @@ def perform_installation(mountpoint):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
+			if archinstall.arguments.get('nic', {}).get('type', '') == 'iso_config':
 				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
 			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
 				installation.add_additional_packages("networkmanager")
