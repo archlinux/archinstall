@@ -30,6 +30,8 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
+from .pacman import run_pacman
+
 
 class InstallationFile:
 	def __init__(self, installation :'Installer', filename :str, owner :str, mode :str = "w"):
@@ -292,7 +294,7 @@ class Installer:
 	def enable_multilib_repository(self):
 		# Set up a regular expression pattern of a commented line containing 'multilib' within []
 		pattern = re.compile("^#\\[.*multilib.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 
@@ -318,7 +320,7 @@ class Installer:
 	def enable_testing_repositories(self, enable_multilib_testing=False):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
 		pattern = re.compile("^#\\[.*testing.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 
@@ -352,7 +354,7 @@ class Installer:
 
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
+		if (sync_mirrors := run_pacman('-Syy', default_cmd='/usr/bin/pacman')).exit_code == 0:
 			if (pacstrap := SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
