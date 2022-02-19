@@ -425,9 +425,9 @@ def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List
 
 
 def ask_to_configure_network() -> Dict[str, Any]:
-	# Optionally configure one network interface.
-	# while 1:
-	# {MAC: Ifname}
+	"""
+		Configure the network on the newly installed system
+	"""
 	interfaces = {
 		'iso_config': str(_('Copy ISO network configuration to installation')),
 		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
@@ -442,7 +442,7 @@ def ask_to_configure_network() -> Dict[str, Any]:
 	if nic == interfaces['iso_config']:
 		return {'type': 'iso_config'}
 	elif nic == interfaces['network_manager']:
-		return {'type': 'network_manager', 'NetworkManager': True}
+		return {'type': 'network_manager'}
 	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,

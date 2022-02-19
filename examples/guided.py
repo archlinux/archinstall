@@ -145,11 +145,11 @@ def perform_installation(mountpoint):
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-		
+
 		# Retrieve list of additional repositories and set boolean values appropriately
 		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
 		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
-		
+
 		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
@@ -163,14 +163,16 @@ def perform_installation(mountpoint):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', {}).get('type', '') == 'iso_config':
+			nic = archinstall.arguments.get('nic', {})
+			type_ = nic.get('type', '')
+			if type_ == 'iso_config':
 				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
+			elif type_ == 'network_manager':
 				installation.add_additional_packages("networkmanager")
 				installation.enable_service('NetworkManager.service')
 			# Otherwise, if a interface was selected, configure that interface
 			elif archinstall.arguments.get('nic', {}):
-				installation.configure_nic(**archinstall.arguments.get('nic', {}))
+				installation.configure_nic(**nic)
 				installation.enable_service('systemd-networkd')
 				installation.enable_service('systemd-resolved')
 
