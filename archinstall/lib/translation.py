@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING
 from .exceptions import TranslationError
 
-if TYPE_CHECKING: _: Any
+if TYPE_CHECKING:
+	_: Any
 
 
 class Languages:

@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
-from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING, Type
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput

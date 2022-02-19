@@ -8,7 +8,8 @@ from collections.abc import Iterable
 import sys
 import logging
 
-if TYPE_CHECKING: _: Any
+if TYPE_CHECKING:
+	_: Any
 
 
 class Menu(TerminalMenu):

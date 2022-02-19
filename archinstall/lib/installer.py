@@ -24,7 +24,8 @@ from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 
-if TYPE_CHECKING: _: Any
+if TYPE_CHECKING:
+	_: Any
 
 
 # Any package that the Installer() is responsible for (optional and the default ones)
