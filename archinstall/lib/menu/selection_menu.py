@@ -311,16 +311,6 @@ class GeneralMenu:
 		self.post_callback(selector_name,result)
 		if exec_ret_val and self._check_mandatory_status():
 			return False
-
-		"""
-			old behaviour
-			# we allow for a callback after we get the result
-			self.post_callback(selector_name,result)
-			# we have a callback, by option, to determine if we can exit the menu. Only if ALL mandatory fields are written
-			if selector.exec_func:
-				if selector.exec_func(result) and self._check_mandatory_status():
-					return False
-		"""
 		return True
 
 	def _set_kb_language(self):
