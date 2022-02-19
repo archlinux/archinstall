@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from types import ModuleType
-from typing import Union, Dict, Any, List, Optional, Iterator, Mapping
+from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -23,6 +23,9 @@ from .profiles import Profile
 from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+
+if TYPE_CHECKING: _: Any
+
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
@@ -292,7 +295,7 @@ class Installer:
 	def enable_multilib_repository(self):
 		# Set up a regular expression pattern of a commented line containing 'multilib' within []
 		pattern = re.compile("^#\\[.*multilib.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 
@@ -318,7 +321,7 @@ class Installer:
 	def enable_testing_repositories(self, enable_multilib_testing=False):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
 		pattern = re.compile("^#\\[.*testing.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 

@@ -9,13 +9,14 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
-from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
+from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING, Type
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
 
 if TYPE_CHECKING:
 	from .disk.partition import Partition
+	_: Any
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_blockdevices
 from .exceptions import RequirementError, UserError, DiskError
@@ -33,6 +34,10 @@ from .mirrors import list_mirrors
 from .translation import Translation, DeferredTranslation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
+
+
+# used for signal handler
+SIG_TRIGGER = None
 
 
 # TODO: These can be removed after the move to simple_menu.py

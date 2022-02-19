@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Any
+from typing import Dict, List, Union, Any, TYPE_CHECKING
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 from ..exceptions import RequirementError
@@ -7,6 +7,9 @@ from ..output import log
 from collections.abc import Iterable
 import sys
 import logging
+
+if TYPE_CHECKING: _: Any
+
 
 class Menu(TerminalMenu):
 	def __init__(
