@@ -507,7 +507,6 @@ class Installer:
 		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
-
 	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
 		# Copy (if any) iwd password and config files
 		if os.path.isdir('/var/lib/iwd/'):

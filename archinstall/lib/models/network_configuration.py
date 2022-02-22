@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Any, Optional, Dict
+from typing import List, Optional, Dict
 
 from ... import log
 
