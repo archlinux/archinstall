@@ -208,7 +208,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list]:
+				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list if sub_list[subvolume] ]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -292,7 +292,7 @@ class Installer:
 	def enable_multilib_repository(self):
 		# Set up a regular expression pattern of a commented line containing 'multilib' within []
 		pattern = re.compile("^#\\[.*multilib.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 
@@ -318,7 +318,7 @@ class Installer:
 	def enable_testing_repositories(self, enable_multilib_testing=False):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
 		pattern = re.compile("^#\\[.*testing.*\\]$")
-		
+
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
 
