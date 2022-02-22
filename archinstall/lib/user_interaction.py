@@ -98,7 +98,7 @@ def do_countdown() -> bool:
 
 	return True
 
-def passwd_is_weak(passwd: str) -> bool:
+def check_password_strong(passwd :str) -> bool:
 
 	symbol_count = 0
 	if any(character.isdigit() for character in passwd):
@@ -130,7 +130,7 @@ def get_password(prompt :str = '') -> Optional[str]:
 		if len(passwd.strip()) <= 0:
 			break
 
-		if not passwd_is_weak(passwd):
+		if not check_password_strong(passwd):
 			continue
 
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
