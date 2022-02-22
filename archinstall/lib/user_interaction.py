@@ -13,6 +13,7 @@ from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
+from .models.network_configuration import NetworkConfiguration, NicType
 
 if TYPE_CHECKING:
 	from .disk.partition import Partition
@@ -424,25 +425,28 @@ def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List
 	return packages
 
 
-def ask_to_configure_network() -> Dict[str, Any]:
+def ask_to_configure_network() -> Optional[NetworkConfiguration]:
 	"""
 		Configure the network on the newly installed system
 	"""
 	interfaces = {
+		'none': str(_('No network configuration')),
 		'iso_config': str(_('Copy ISO network configuration to installation')),
 		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
 		**list_interfaces()
 	}
 
-	nic = Menu(_('Select one network interface to configure'), list(interfaces.values())).run()
+	nic = Menu(_('Select one network interface to configure'), list(interfaces.values()), sort=False).run()
 
 	if not nic:
-		return {}
+		return None
 
-	if nic == interfaces['iso_config']:
-		return {'type': 'iso_config'}
+	if nic == interfaces['none']:
+		return None
+	elif nic == interfaces['iso_config']:
+		return NetworkConfiguration(NicType.ISO)
 	elif nic == interfaces['network_manager']:
-		return {'type': 'network_manager'}
+		return NetworkConfiguration(NicType.NM)
 	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
@@ -491,10 +495,17 @@ def ask_to_configure_network() -> Dict[str, Any]:
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return {'type': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
+			return NetworkConfiguration(
+				NicType.MANUAL,
+				iface=nic,
+				ip=ip,
+				gateway=gateway,
+				dns=dns,
+				dhcp=False
+			)
 		else:
 			# this will contain network iface names
-			return {'type': nic}
+			return NetworkConfiguration(NicType.MANUAL, iface=nic)
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
