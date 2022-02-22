@@ -13,7 +13,7 @@
     "keyboard-layout": "us",
     "mirror-region": "Worldwide",
     "nic": {
-    	"NetworkManager": true
+    	"type": "NM"
     },
     "ntp": true,
     "packages": ["docker", "git", "wget", "zsh"],
