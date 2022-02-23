@@ -30,6 +30,8 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
+from .pacman import run_pacman
+
 
 class InstallationFile:
 	def __init__(self, installation :'Installer', filename :str, owner :str, mode :str = "w"):
@@ -352,7 +354,7 @@ class Installer:
 
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
+		if (sync_mirrors := run_pacman('-Syy', default_cmd='/usr/bin/pacman')).exit_code == 0:
 			if (pacstrap := SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
