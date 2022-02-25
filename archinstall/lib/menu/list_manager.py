@@ -10,33 +10,33 @@ Use ESC to skip
 
 
 > uno : 1
-  dos : 2
-  tres : 3
-  cuatro : 4
-  ==>
-  Confirm and exit
-  Cancel
+dos : 2
+tres : 3
+cuatro : 4
+==>
+Confirm and exit
+Cancel
 (Press "/" to search)
 ```
 Once you select one of the elements of the list, you will be promted with the action to be done to the selected element
 ```
 
-  uno : 1
-  dos : 2
+uno : 1
+dos : 2
 > tres : 3
-  cuatro : 4
-  ==>
-  Confirm and exit
-  Cancel
+cuatro : 4
+==>
+Confirm and exit
+Cancel
 (Press "/" to search)
 
 Select an action for < {'tres': 3} >
 
 
-  Add
-  Copy
-  Edit
-  Delete
+Add
+Copy
+Edit
+Delete
 > Cancel
 ```
 You execute the action for this element (which might or not involve user interaction) and return to the list main page
@@ -60,9 +60,9 @@ The contents in the base class of this methods serve for a very basic usage, and
 
 ```
 	class ObjectList(archinstall.ListManager):
+		def __init__(prompt,list):
 			self.ObjectAction = [... list of actions ...]
 			self.ObjectNullAction = one ObjectAction
-		def __init__(prompt,list):
 			super().__init__(prompt,list,ObjectActions,ObjectNullAction)
 		def reformat(self):
 			... beautfy the output of the list
