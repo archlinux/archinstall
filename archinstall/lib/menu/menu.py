@@ -1,6 +1,7 @@
 from typing import Dict, List, Union, Any
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
+
 from ..exceptions import RequirementError
 from ..output import log
 
@@ -18,7 +19,8 @@ class Menu(TerminalMenu):
 		default_option :str = None,
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
-		cursor_index :int = None
+		cursor_index :int = None,
+		**kwargs
 	):
 		"""
 		Creates a new menu
@@ -47,6 +49,8 @@ class Menu(TerminalMenu):
 
 		:param cursor_index: The position where the cursor will be located. If it is not in range (number of elements of the menu) it goes to the first position
 		:type cursor_index: int
+
+		:param kwargs : any SimpleTerminal parameter
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
@@ -100,19 +104,23 @@ class Menu(TerminalMenu):
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
-
+		# defaults that can be changed up the stack
+		kwargs['clear_screen'] = kwargs.get('clear_screen',True)
+		kwargs['show_search_hint'] = kwargs.get('show_search_hint',True)
+		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor',True)
 		super().__init__(
 			menu_entries=self.menu_options,
 			title=menu_title,
 			menu_cursor=cursor,
 			menu_cursor_style=main_menu_cursor_style,
 			menu_highlight_style=main_menu_style,
-			cycle_cursor=True,
-			clear_screen=True,
+			# cycle_cursor=True,
+			# clear_screen=True,
 			multi_select=multi,
-			show_search_hint=True,
+			# show_search_hint=True,
 			preselected_entries=self.preset_values,
-			cursor_index=self.cursor_index
+			cursor_index=self.cursor_index,
+			**kwargs,
 		)
 
 	def _show(self):

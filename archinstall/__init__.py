@@ -34,6 +34,8 @@ from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
+from .lib.menu.list_manager import ListManager
+from .lib.menu.text_input import TextInput
 from .lib.menu.selection_menu import (
 	GlobalMenu,
 	Selector,
