@@ -105,10 +105,11 @@ class ListManager:
 			raise RequirementError('Data list for ListManager can not be empty if there is no null_action')
 
 		self.prompt = prompt if prompt else _('Choose an object from the list')
+		self.null_action = str(null_action)
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
 		self.separator = '==>'
-		self.bottom_list = [self.separator,self.confirm_action,self.cancel_action]
+		self.bottom_list = [self.confirm_action,self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
 		if null_action and str(null_action) not in self.base_actions:
@@ -118,30 +119,40 @@ class ListManager:
 		self.data = copy(base_list) # as refs, changes are immediate
 		# default values for the null case
 		self.target = None
-		self.action = str(null_action)
+		self.action = self.null_action
 		if len(self.data) == 0:
 			self.exec_action()
 
 	def run(self):
 		while True:
 			self.data_formatted = self.reformat()
+			options = self.data_formatted + [self.separator]
+			if self.null_action:
+				options += [self.null_action]
+			options += self.bottom_list
 			system('clear')
 			target = Menu(self.prompt,
-				self.data_formatted + self.bottom_list,
+				options,
 				sort=False,
 				clear_screen=False,
 				clear_menu_on_exit=False).run()
 
-			if target and target == self.separator:
-				continue
 			if not target or target in self.bottom_list:
 				break
+			if target and target == self.separator:
+				continue
+			if target and target == self.null_action:
+				target = None
+				self.target = None
+				self.action = str(self.null_action)
+				self.exec_action()
+				continue
 			if isinstance(self.data,dict):
 				key = list(self.data.keys())[self.data_formatted.index(target)]
 				self.target = {key: self.data[key]}
 			else:
 				self.target = self.data[self.data_formatted.index(target)]
-			if self.run_actions():
+			if self.run_actions(target):
 				self._menu_options = self.reformat() + self.bottom_list
 
 		if not target or target == self.cancel_action:  # TODO dubious
@@ -149,9 +160,9 @@ class ListManager:
 		else:
 			return self.data
 
-	def run_actions(self):
+	def run_actions(self,prompt_data=None):
 		options = self.action_list() + self.bottom_item
-		prompt = _("Select an action for < {} >").format(self.target)
+		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
 		self.action = Menu(prompt,
 				options,
 				sort=False,
