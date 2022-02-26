@@ -196,6 +196,7 @@ def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
 			if partition.get('mountpoint', None) not in ('/boot', None):
+				log(f"Marked {partition} to be encrypted.", level=logging.WARNING, fg="yellow")
 				partition['encrypted'] = True
 				partition['!password'] = password
 
