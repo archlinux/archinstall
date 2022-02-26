@@ -22,7 +22,7 @@ Or use `pip install --upgrade archinstall` to use as a library.
 
 ## Running the [guided](examples/guided.py) installer
 
-Assuming you are on an Arch Linux live-ISO and booted into EFI mode.
+Assuming you are on an Arch Linux live-ISO:
 
     # archinstall
 
