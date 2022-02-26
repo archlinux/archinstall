@@ -195,7 +195,7 @@ def generic_multi_select(options, text="Select one or more of the options above 
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) != '/boot':
+			if partition.get('mountpoint', None) != '/boot' and partition.get('wipe'):
 				partition['encrypted'] = True
 				partition['!password'] = password
 
