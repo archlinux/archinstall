@@ -195,11 +195,11 @@ def generic_multi_select(options, text="Select one or more of the options above 
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) != '/boot' and partition.get('wipe'):
+			if partition.get('mountpoint', None) not in ('/boot', None):
 				partition['encrypted'] = True
 				partition['!password'] = password
 
-				if partition['mountpoint'] and partition['mountpoint'] != '/':
+				if partition['mountpoint'] != '/':
 					# Tell the upcoming steps to generate a key-file for non root mounts.
 					log(f"Marking partition for use with encryption-key: {partition}", level=logging.WARNING, fg="yellow")
 					partition['generate-encryption-key-file'] = True
