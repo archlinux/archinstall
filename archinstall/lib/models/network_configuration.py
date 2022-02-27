@@ -54,12 +54,8 @@ class NetworkConfiguration:
 			exit(1)
 
 		if type == NicType.MANUAL:
-			if config.get('dhcp', False):
-				dhcp = True
-			elif not any([config.get(v) for v in ['ip', 'gateway', 'dns']]):
-				dhcp = True
-			else:
-				dhcp = False
+			if config.get('dhcp', False) or not any([config.get(v) for v in ['ip', 'gateway', 'dns']]):
+				return NetworkConfiguration(type, iface=config.get('iface', ''))
 
 			ip = config.get('ip', '')
 			if not ip:
@@ -72,7 +68,7 @@ class NetworkConfiguration:
 				ip=ip,
 				gateway=config.get('gateway', ''),
 				dns=config.get('dns', []),
-				dhcp=dhcp
+				dhcp=False
 			)
 		else:
 			return NetworkConfiguration(type)
