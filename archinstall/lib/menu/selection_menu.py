@@ -463,12 +463,14 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Specify superuser account'),
 				lambda: self._create_superuser_account(),
+				exec_func=lambda n,v:self._users_resynch(),
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
 			Selector(
 				_('Specify user account'),
 				lambda: self._create_user_account(),
 				default={},
+				exec_func=lambda n,v:self._users_resynch(),
 				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
@@ -616,11 +618,11 @@ class GlobalMenu(GeneralMenu):
 		return profile
 
 	def _create_superuser_account(self):
-		superusers = ask_for_superuser_account(str(_('Enter a username to create an additional superuser (leave blank to skip): ')))
+		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))
 		return superusers if superusers else None
 
 	def _create_user_account(self):
-		users = ask_for_additional_users(str(_('Enter a username to create an additional user (leave blank to skip): ')))
+		users = ask_for_additional_users(str(_('Manage ordinary user accounts: ')))
 		return users
 
 	def _display_superusers(self):
@@ -630,3 +632,8 @@ class GlobalMenu(GeneralMenu):
 			return list(superusers.keys()) if superusers else '[]'
 		else:
 			return list(superusers.keys()) if superusers else ''
+
+	def _users_resynch(self):
+		self.synch('!superusers')
+		self.synch('!users')
+		return False
