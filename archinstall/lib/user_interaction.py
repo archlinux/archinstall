@@ -522,7 +522,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return choice
 
 
-def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> str:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -563,7 +563,7 @@ def current_partition_layout(partitions :List[Partition], with_idx :bool = False
 
 		current_layout += f'{row[:-1]}\n'
 
-	title = _('Current partition layout')
+	title = str(_('Current partition layout'))
 	return f'\n\n{title}:\n\n{current_layout}'
 
 
@@ -597,15 +597,15 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
-	new_partition = _('Create a new partition')
-	suggest_partition_layout = _('Suggest partition layout')
-	delete_partition = _('Delete a partition')
-	delete_all_partitions = _('Clear/Delete all partitions')
-	assign_mount_point = _('Assign mount-point for a partition')
-	mark_formatted = _('Mark/Unmark a partition to be formatted (wipes data)')
-	mark_encrypted = _('Mark/Unmark a partition as encrypted')
-	mark_bootable = _('Mark/Unmark a partition as bootable (automatic for /boot)')
-	set_filesystem_partition = _('Set desired filesystem for a partition')
+	new_partition = str(_('Create a new partition'))
+	suggest_partition_layout = str(_('Suggest partition layout'))
+	delete_partition = str(_('Delete a partition'))
+	delete_all_partitions = str(_('Clear/Delete all partitions'))
+	assign_mount_point = str(_('Assign mount-point for a partition'))
+	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
+	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
+	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
+	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
 
 	while True:
 		modes = [new_partition, suggest_partition_layout]
