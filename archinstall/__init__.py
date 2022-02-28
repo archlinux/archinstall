@@ -206,7 +206,6 @@ def load_config():
 	if arguments.get('nic', None) is not None:
 		arguments['nic'] = NetworkConfiguration.parse_arguments(arguments.get('nic'))
 
-
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
 	if arguments.get('mount_point'):

@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Any
+from typing import Dict, List, Union, Any, TYPE_CHECKING
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 from ..exceptions import RequirementError
@@ -7,6 +7,10 @@ from ..output import log
 from collections.abc import Iterable
 import sys
 import logging
+
+if TYPE_CHECKING:
+	_: Any
+
 
 class Menu(TerminalMenu):
 	def __init__(
@@ -84,8 +88,6 @@ class Menu(TerminalMenu):
 		self.skip = skip
 		self.default_option = default_option
 		self.multi = multi
-		self.preselection(preset_values,cursor_index)
-
 		menu_title = f'\n{title}\n\n'
 
 		if skip:
@@ -97,6 +99,7 @@ class Menu(TerminalMenu):
 			default = f'{default_option} (default)'
 			self.menu_options = [default] + [o for o in self.menu_options if default_option != o]
 
+		self.preselection(preset_values,cursor_index)
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
@@ -154,22 +157,28 @@ class Menu(TerminalMenu):
 	def preselection(self,preset_values :list = [],cursor_index :int = None):
 		def from_preset_to_cursor():
 			if preset_values:
-				if isinstance(preset_values,str):
-					self.cursor_index = self.menu_options.index(preset_values)
-				else:  # should return an error, but this is smoother
-					self.cursor_index = self.menu_options.index(preset_values[0])
+				# if the value is not extant return 0 as cursor index
+				try:
+					if isinstance(preset_values,str):
+						self.cursor_index = self.menu_options.index(self.preset_values)
+					else:  # should return an error, but this is smoother
+						self.cursor_index = self.menu_options.index(self.preset_values[0])
+				except ValueError:
+					self.cursor_index = 0
+
+		self.cursor_index = cursor_index
+		if not preset_values:
+			self.preset_values = None
+			return
 
 		self.preset_values = preset_values
-		self.cursor_index = cursor_index
-		if preset_values and cursor_index is None:
-			from_preset_to_cursor()
-		if preset_values and not self.multi: # Not supported by the infraestructure
-			self.preset_values = None
-			from_preset_to_cursor()
-
-		if self.default_option and self.multi:
+		if self.default_option:
 			if isinstance(preset_values,str) and self.default_option == preset_values:
 				self.preset_values = f"{preset_values} (default)"
 			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
 				idx = preset_values.index(self.default_option)
 				self.preset_values[idx] = f"{preset_values[idx]} (default)"
+		if cursor_index is None or not self.multi:
+			from_preset_to_cursor()
+		if not self.multi: # Not supported by the infraestructure
+			self.preset_values = None

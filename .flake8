@@ -7,4 +7,3 @@ max-line-length = 236
 show-source = True
 statistics = True
 per-file-ignores = __init__.py:F401,F403,F405 simple_menu.py:C901,W503 guided.py:C901 network_configuration.py:F821
-builtins = _
