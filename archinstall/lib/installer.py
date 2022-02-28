@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from types import ModuleType
-from typing import Union, Dict, Any, List, Optional, Iterator, Mapping
+from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -23,6 +23,10 @@ from .profiles import Profile
 from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+
+if TYPE_CHECKING:
+	_: Any
+
 
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]

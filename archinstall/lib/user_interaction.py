@@ -17,6 +17,7 @@ from .menu.text_input import TextInput
 
 if TYPE_CHECKING:
 	from .disk.partition import Partition
+	_: Any
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_blockdevices
 from .exceptions import RequirementError, DiskError
@@ -34,6 +35,10 @@ from .mirrors import list_mirrors
 from .translation import Translation, DeferredTranslation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
+
+
+# used for signal handler
+SIG_TRIGGER = None
 
 
 # TODO: These can be removed after the move to simple_menu.py

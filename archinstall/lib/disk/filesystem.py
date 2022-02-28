@@ -7,6 +7,7 @@ from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
+	_: Any
 
 from .partition import Partition
 from .validators import valid_fs_type
