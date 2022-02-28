@@ -2,7 +2,7 @@ from __future__ import annotations
 import sys
 import logging
 
-from typing import Callable, Any, List, Iterator
+from typing import Callable, Any, List, Iterator, Tuple, Optional
 
 from .menu import Menu
 from ..general import SysCommand, secret
@@ -12,7 +12,7 @@ from ..output import log
 from ..profiles import is_desktop_profile
 from ..disk import encrypted_partitions
 from ..locale_helpers import set_keyboard_language
-from ..user_interaction import get_password, ask_for_a_timezone
+from ..user_interaction import get_password, ask_for_a_timezone, save_config
 from ..user_interaction import ask_ntp
 from ..user_interaction import ask_for_swap
 from ..user_interaction import ask_for_bootloader
@@ -47,7 +47,8 @@ class Selector:
 		dependencies_not :List = [],
 		exec_func :Callable = None,
 		preview_func :Callable = None,
-		mandatory :bool = False
+		mandatory :bool = False,
+		no_store :bool = False
 	):
 		"""
 		Create a new menu selection entry
@@ -83,13 +84,15 @@ class Selector:
 		menu returns to the selection screen. If not specified it is assumed the return is False
 		:type exec_func: Callable
 
-		:param preview_func: A callable which invokws a preview screen (not implemented)
+		:param preview_func: A callable which invokws a preview screen
 		:type preview_func: Callable
 
 		:param mandatory: A boolean which determines that the field is mandatory, i.e. menu can not be exited if it is not set
 		:type mandatory: bool
-		"""
 
+		:param no_store: A boolean which determines that the field should or shouldn't be stored in the data storage
+		:type no_store: bool
+		"""
 		self._description = description
 		self.func = func
 		self._display_func = display_func
@@ -98,20 +101,28 @@ class Selector:
 		self._dependencies = dependencies
 		self._dependencies_not = dependencies_not
 		self.exec_func = exec_func
-		self.preview_func = preview_func
+		self._preview_func = preview_func
 		self.mandatory = mandatory
+		self._no_store = no_store
 
 	@property
-	def dependencies(self) -> dict:
+	def dependencies(self) -> List:
 		return self._dependencies
 
 	@property
-	def dependencies_not(self) -> dict:
+	def dependencies_not(self) -> List:
 		return self._dependencies_not
 
 	@property
 	def current_selection(self):
 		return self._current_selection
+
+	@property
+	def preview_func(self):
+		return self._preview_func
+
+	def do_store(self) -> bool:
+		return self._no_store is False
 
 	def set_enabled(self, status :bool = True):
 		self.enabled = status
@@ -247,6 +258,20 @@ class GeneralMenu:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
 
+	def _preview_display(self, selection_name: str) -> Optional[str]:
+		config_name, selector = self._find_selection(selection_name)
+		if preview := selector.preview_func:
+			return preview()
+		return None
+
+	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
+		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
+		if len(option) != 1:
+			raise ValueError(f'Selection not found: {selection_name}')
+		config_name = option[0][0]
+		selector = option[0][1]
+		return config_name, selector
+
 	def run(self):
 		""" Calls the Menu framework"""
 		# we synch all the options just in case
@@ -260,7 +285,16 @@ class GeneralMenu:
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
-			selection = Menu('Set/Modify the below options', menu_text, sort=False, cursor_index=cursor_pos).run()
+
+			selection = Menu(
+				_('Set/Modify the below options'),
+				menu_text,
+				sort=False,
+				cursor_index=cursor_pos,
+				preview_command=self._preview_display,
+				preview_size=0.5
+			).run()
+
 			if selection and self.auto_cursor:
 				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
 				if cursor_pos >= len(menu_text):
@@ -273,21 +307,16 @@ class GeneralMenu:
 		if not self.is_context_mgr:
 			self.__exit__()
 
-	def _process_selection(self, selection :str) -> bool:
+	def _process_selection(self, selection_name :str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
 			Returns true if the menu shall continue, False if it has ended
 		"""
 		# find the selected option in our option list
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection.strip()]
-		if len(option) != 1:
-			raise ValueError(f'Selection not found: {selection}')
-		selector_name = option[0][0]
-		selector = option[0][1]
+		config_name, selector = self._find_selection(selection_name)
+		return self.exec_option(config_name, selector)
 
-		return self.exec_option(selector_name,selector)
-
-	def exec_option(self,selector_name :str, p_selector :Selector = None) -> bool:
+	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
 		""" processes the exection of a given menu entry
 		- pre process callback
 		- selection function
@@ -296,20 +325,22 @@ class GeneralMenu:
 		returns True if the loop has to continue, false if the loop can be closed
 		"""
 		if not p_selector:
-			selector = self.option(selector_name)
+			selector = self.option(config_name)
 		else:
 			selector = p_selector
 
-		self.pre_callback(selector_name)
+		self.pre_callback(config_name)
 
 		result = None
 		if selector.func:
-			presel_val = self.option(selector_name).get_selection()
+			presel_val = self.option(config_name).get_selection()
 			result = selector.func(presel_val)
-			self._menu_options[selector_name].set_current_selection(result)
-			self._data_store[selector_name] = result
-		exec_ret_val = selector.exec_func(selector_name,result) if selector.exec_func else False
-		self.post_callback(selector_name,result)
+			self._menu_options[config_name].set_current_selection(result)
+			if selector.do_store():
+				self._data_store[config_name] = result
+		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
+		self.post_callback(config_name,result)
+
 		if exec_ret_val and self._check_mandatory_status():
 			return False
 		return True
@@ -515,20 +546,28 @@ class GlobalMenu(GeneralMenu):
 				_('Set automatic time sync (NTP)'),
 				lambda preset: self._select_ntp(preset),
 				default=True)
+		self._menu_options['save_config'] = \
+			Selector(
+				_('Save configuration'),
+				lambda: save_config(self._data_store),
+				enabled=True,
+				no_store=True)
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
-				exec_func=lambda n,v: True if self._missing_configs() == 0 else False,
-				enabled=True)
+				exec_func=lambda n,v: True if len(self._missing_configs()) == 0 else False,
+				preview_func=self._prev_install_missing_config,
+				enabled=True,
+				no_store=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
 
-	def _update_install(self,name :str = None ,result :Any = None):
+	def _update_install_text(self, name :str = None, result :Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
 	def post_callback(self,name :str = None ,result :Any = None):
-		self._update_install(name,result)
+		self._update_install_text(name, result)
 
 	def exit_callback(self):
 		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
@@ -539,29 +578,37 @@ class GlobalMenu(GeneralMenu):
 					storage['arguments']['disk_layouts'], storage['arguments']['!encryption-password'])
 
 	def _install_text(self):
-		missing = self._missing_configs()
+		missing = len(self._missing_configs())
 		if missing > 0:
 			return _('Install ({} config(s) missing)').format(missing)
 		return 'Install'
 
-	def _missing_configs(self):
+	def _prev_install_missing_config(self) -> Optional[str]:
+		if missing := self._missing_configs():
+			text = str(_('Missing configurations:\n'))
+			for m in missing:
+				text += f'- {m}\n'
+			return text[:-1]  # remove last new line
+		return None
+
+	def _missing_configs(self) -> List[str]:
 		def check(s):
 			return self._menu_options.get(s).has_selection()
 
-		missing = 0
+		missing = []
 		if not check('bootloader'):
-			missing += 1
+			missing += ['Bootloader']
 		if not check('hostname'):
-			missing += 1
+			missing += ['Hostname']
 		if not check('audio'):
-			missing += 1
+			missing += ['Audio']
 		if not check('!root-password') and not check('!superusers'):
-			missing += 1
+			missing += [str(_('Either root-password or at least 1 superuser must be specified'))]
 		if not check('harddrives'):
-			missing += 1
+			missing += ['Hard drives']
 		if check('harddrives'):
 			if not self._menu_options.get('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
+				missing += ['Disk layout']
 
 		return missing
 

@@ -19,6 +19,7 @@ import time
 import pathlib
 
 import archinstall
+from archinstall import ConfigurationOutput
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -248,10 +249,10 @@ class MyMenu(archinstall.GlobalMenu):
 					self.enable(entry)
 			else:
 				self.option(entry).set_enabled(False)
-		self._update_install()
+		self._update_install_text()
 
 	def post_callback(self,option,value=None):
-		self._update_install(self._execution_mode)
+		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
 		def check(s):
@@ -271,7 +272,7 @@ class MyMenu(archinstall.GlobalMenu):
 			return f'Instalation ({missing} config(s) missing)'
 		return 'Install'
 
-	def _update_install(self,mode='full'):
+	def _update_install_text(self, mode='full'):
 		text = self._install_text(mode)
 		self.option('install').update_description(text)
 
@@ -492,7 +493,11 @@ mode = archinstall.arguments.get('mode', 'full').lower()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
 
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
+
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 if not archinstall.arguments.get('silent'):

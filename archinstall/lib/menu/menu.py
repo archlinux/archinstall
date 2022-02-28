@@ -12,7 +12,6 @@ import logging
 if TYPE_CHECKING:
 	_: Any
 
-
 class Menu(TerminalMenu):
 	def __init__(
 		self,
@@ -24,6 +23,9 @@ class Menu(TerminalMenu):
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
 		cursor_index :int = None,
+		preview_command=None,
+		preview_size=0.75,
+		preview_title='Info',
 		**kwargs
 	):
 		"""
@@ -53,6 +55,15 @@ class Menu(TerminalMenu):
 
 		:param cursor_index: The position where the cursor will be located. If it is not in range (number of elements of the menu) it goes to the first position
 		:type cursor_index: int
+
+		:param preview_command: A function that should return a string that will be displayed in a preview window when a menu selection item is in focus
+		:type preview_command: Callable
+
+		:param preview_size: Size of the preview window in ratio to the full window
+		:type preview_size: float
+
+		:param preview_title: Title of the preview window
+		:type preview_title: str
 
 		:param kwargs : any SimpleTerminal parameter
 		"""
@@ -123,6 +134,9 @@ class Menu(TerminalMenu):
 			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
+			preview_command=preview_command,
+			preview_size=preview_size,
+			preview_title=preview_title,
 			**kwargs,
 		)
 
