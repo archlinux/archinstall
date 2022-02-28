@@ -243,7 +243,7 @@ class BlockDevice:
 				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 				count += 1
 		else:
-			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
+			log(f"Could not find {uuid} in disk {self.path} after 5 retries",level=logging.INFO)
 			log(f"Cache: {self.part_cache}", level=logging.DEBUG)
 			log(f"Partitions: {self.partitions.items()}", level=logging.DEBUG)
 			log(f"UUID: {[uuid]}", level=logging.DEBUG)
