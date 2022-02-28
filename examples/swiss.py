@@ -156,26 +156,26 @@ class SetupMenu(archinstall.GeneralMenu):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
 				_('Select Archinstall language'),
-				lambda: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language('English'),
 				default='English',
 				enabled=True))
 		self.set_option('ntp',
 		archinstall.Selector(
 			'Activate NTP',
-			lambda: select_activate_NTP(),
+			lambda x: select_activate_NTP(),
 			default='Y',
 			enabled=True))
 		self.set_option('mode',
 			archinstall.Selector(
 				'Excution mode',
-				lambda: select_mode(),
+				lambda x : select_mode(),
 				default='full',
 				enabled=True))
 		for item in ['LC_ALL','LC_CTYPE','LC_NUMERIC','LC_TIME','LC_MESSAGES','LC_COLLATE']:
 			self.set_option(item,
 				archinstall.Selector(
 					f'{get_locale_mode_text(item)} locale',
-					lambda item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
+					lambda x,item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
 					enabled=True,
 					dependencies_not=['LC_ALL'] if item != 'LC_ALL' else []))
 		self.option('LC_ALL').set_enabled(True)
@@ -393,19 +393,10 @@ def os_setup(installation):
 		if archinstall.arguments['swap']:
 			installation.setup_swap('zram')
 
-		# If user selected to copy the current ISO network configuration
-		# Perform a copy of the config
-		if archinstall.arguments.get('nic', {}).get('type', '') == 'iso_config':
-			installation.copy_iso_network_config(
-				enable_services=True)  # Sources the ISO network configuration to the install medium.
-		elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
-			installation.add_additional_packages("networkmanager")
-			installation.enable_service('NetworkManager.service')
-		# Otherwise, if a interface was selected, configure that interface
-		elif archinstall.arguments.get('nic', {}):
-			installation.configure_nic(**archinstall.arguments.get('nic', {}))
-			installation.enable_service('systemd-networkd')
-			installation.enable_service('systemd-resolved')
+		network_config = archinstall.arguments.get('nic', None)
+
+		if network_config:
+			network_config.config_installer(installation)
 
 		if archinstall.arguments.get('audio', None) is not None:
 			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)

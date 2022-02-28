@@ -8,7 +8,7 @@ import pathlib
 import subprocess
 import glob
 from types import ModuleType
-from typing import Union, Dict, Any, List, Optional, Iterator, Mapping
+from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -24,6 +24,10 @@ from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 
+if TYPE_CHECKING:
+	_: Any
+
+
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
@@ -31,6 +35,7 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 from .pacman import run_pacman
+from .models.network_configuration import NetworkConfiguration
 
 
 class InstallationFile:
@@ -475,37 +480,35 @@ class Installer:
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
-	def configure_nic(self,
-		nic :str,
-		dhcp :bool = True,
-		ip :Optional[str] = None,
-		gateway :Optional[str] = None,
-		dns :Optional[str] = None,
-		*args :str,
-		**kwargs :str
-	) -> None:
+	def configure_nic(self, network_config: NetworkConfiguration) -> None:
 		from .systemd import Networkd
 
-		if dhcp:
-			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
+		if network_config.dhcp:
+			conf = Networkd(Match={"Name": network_config.iface}, Network={"DHCP": "yes"})
 		else:
-			assert ip
+			network = {"Address": network_config.ip}
+			if network_config.gateway:
+				network["Gateway"] = network_config.gateway
+			if network_config.dns:
+				dns = network_config.dns
+				network["DNS"] = dns if isinstance(dns, list) else [dns]
 
-			network = {"Address": ip}
-			if gateway:
-				network["Gateway"] = gateway
-			if dns:
-				assert type(dns) == list
-				network["DNS"] = dns
-
-			conf = Networkd(Match={"Name": nic}, Network=network)
+			conf = Networkd(Match={"Name": network_config.iface}, Network=network)
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
-				if (new_conf := plugin.on_configure_nic(nic, dhcp, ip, gateway, dns)):
+				new_conf = plugin.on_configure_nic(
+					network_config.iface,
+					network_config.dhcp,
+					network_config.ip,
+					network_config.gateway,
+					network_config.dns
+				)
+
+				if new_conf:
 					conf = new_conf
 
-		with open(f"{self.target}/etc/systemd/network/10-{nic}.network", "a") as netconf:
+		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
 	def copy_iso_network_config(self, enable_services :bool = False) -> bool:

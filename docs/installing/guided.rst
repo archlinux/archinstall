@@ -73,8 +73,7 @@ There are three different configuration files, all of which are optional.
         "keyboard-language": "us",
         "mirror-region": "Worldwide",
         "nic": {
-            "NetworkManager": true,
-            "nic": "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+            "type": "NM"
         },
         "ntp": true,
         "packages": ["docker", "git", "wget", "zsh"],
@@ -124,9 +123,13 @@ Options for ``--config``
 |                      | | "Worldwide" or "Sweden"                              | | Either takes a dictionary structure of region and a given set of mirrors.                 |                                               |
 |                      |                                                        | | Or just a region and archinstall will source any mirrors for that region automatically    |                                               |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| nic                  | | { NetworkManager: <boolean> }                        | | Takes three different kind of options. Copy, NetworkManager or a nic name.                | No                                            |
-|                      | | { "eth0": {"address": "<ip>", "subnet": "255.0.0.0"}}| | Copy will copy the network configuration used in the live ISO. NetworkManager will        |                                               |
-|                      | | "Copy ISO network configuration to installation"     | | install and configure `NetworkManager <https://wiki.archlinux.org/title/NetworkManager>`_ |                                               |
+| nic                  | | { type: <ISO|NM|MANUAL> }                            | | Type must be one of ISO, NM, MANUAL. ISO will copy the configuration on the image,        | No                                            |
+|                      | |                                                      | | NM configures NetworkManager and MANUAL allows to specify custom configuration            |                                               |
+|                      | | { "iface": "eth0"}                                   | | Only MANUAL: name of the interface                                                        |                                               |
+|                      | | { "dhcp": <boolean>}                                 | | Only MANUAL: If set to true DHCP auto will be setup and all further configs ignored       |                                               |
+|                      | | { "ip": <ip>}                                        | | Only MANUAL: Ip address to set, is MANDATORY                                              |                                               |
+|                      | | { "gateway": <ip>}                                   | | Only MANUAL: Optional gateway                                                             |                                               |
+|                      | | { "dns": [<ip>]}                                     | | Only MANUAL: Optional DNS servers                                                         |                                               |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 | ntp                  | <boolean>                                              | Set to true to set-up ntp post install                                                      | No                                            |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+

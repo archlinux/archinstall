@@ -7,7 +7,9 @@ import os
 #   (4. Added the ~/.config directory as an additional option for future reasons)
 #
 # And Keeping this in dict ensures that variables are shared across imports.
-storage = {
+from typing import Any, Dict
+
+storage: Dict[str, Any] = {
 	'PROFILE_PATH': [
 		'./profiles',
 		'~/.config/archinstall/profiles',
