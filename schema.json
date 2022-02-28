@@ -84,18 +84,18 @@
             "description": "Choose between NetworkManager, manual configuration, use systemd-networkd from the ISO or no configuration",
             "type": "object",
             "properties": {
-                "NetworkManager": {
-                    "description": "<boolean>",
-                    "type": "boolean"
-                },
-                "interface-name": {
-                    "address": "ip address",
-                    "subnet": "255.255.255.0",
-                    "gateway": "ip address",
-                    "dns": "ip address"
-                },
-                "nic": "Copy ISO network configuration to installation",
-                "nic": {}
+                "type": "string",
+                "iface": "string",
+                "dhcp": "boolean",
+                "ip": "string",
+                "gateway": "string",
+                "dns": {
+                    "description": "List of DNS servers",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
             }
         },
         "ntp": {
