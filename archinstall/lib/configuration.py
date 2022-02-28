@@ -1,64 +1,123 @@
 import json
-import pathlib
 import logging
+from pathlib import Path
+from typing import Optional, Dict
+
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log
 
-def output_configs(area :dict, show :bool = True, save :bool = True):
-	""" Show on the screen the configuration data (except credentials) and/or save them on a json file
-	:param area: a dictionary to be shown/save (basically archinstall.arguments, but needed to be passed explictly to avoid circular references
-	:type area: dict
-	:param show:Determines if the config data will be displayed on screen in Json format
-	:type show: bool
-	:param save:Determines if the config data will we written as a Json file
-	:type save:bool
-	"""
-	user_credentials = {}
-	disk_layout = {}
-	user_config = {}
-	for key in area:
-		if key in ['!users','!superusers','!encryption-password']:
-			user_credentials[key] = area[key]
-		elif key == 'disk_layouts':
-			disk_layout = area[key]
-		elif key in ['abort','install','config','creds','dry_run']:
-			pass
-		else:
-			user_config[key] = area[key]
 
-	user_configuration_json = json.dumps({
-		'config_version': storage['__version__'], # Tells us what version was used to generate the config
-		**user_config, # __version__ will be overwritten by old version definition found in config
-		'version': storage['__version__']
-	} , indent=4, sort_keys=True, cls=JSON)
-	if disk_layout:
-		disk_layout_json = json.dumps(disk_layout, indent=4, sort_keys=True, cls=JSON)
-	if user_credentials:
-		user_credentials_json = json.dumps(user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
+class ConfigurationOutput:
+	def __init__(self, config: Dict):
+		"""
+		Configuration output handler to parse the existing configuration data structure and prepare for output on the
+		console and for saving it to configuration files
 
-	if save:
-		dest_path = pathlib.Path(storage.get('LOG_PATH','.'))
-		if (not dest_path.exists()) or not (dest_path.is_dir()):
-			log(f"Destination directory {dest_path.resolve()} does not exist or is not a directory,\n Configuration files can't be saved",fg="yellow",)
-			input("Press enter to continue")
-		else:
-			with (dest_path / "user_configuration.json").open('w') as config_file:
-				config_file.write(user_configuration_json)
-			if user_credentials:
-				target = dest_path / "user_credentials.json"
-				with target.open('w') as config_file:
-					config_file.write(user_credentials_json)
-			if disk_layout:
-				target = dest_path / "user_disk_layout.json"
-				with target.open('w') as config_file:
-					config_file.write(disk_layout_json)
+		:param config: A dictionary containing configurations (basically archinstall.arguments)
+		:type config: Dict
+		"""
+		self._config = config
+		self._user_credentials = {}
+		self._disk_layout = None
+		self._user_config = {}
+		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
+		self._user_config_file = 'user_configuration.json'
+		self._user_creds_file = "user_credentials.json"
+		self._disk_layout_file = "user_disk_layout.json"
 
-	if show:
-		print()
-		print('This is your chosen configuration:')
-		log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
-		log(user_configuration_json, level=logging.INFO)
+		self._sensitive = ['!users', '!superusers', '!encryption-password']
+		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
+
+		self._process_config()
+
+	@property
+	def user_credentials_file(self):
+		return self._user_creds_file
+
+	@property
+	def user_configuration_file(self):
+		return self._user_config_file
+
+	@property
+	def disk_layout_file(self):
+		return self._disk_layout_file
+
+	def _process_config(self):
+		for key in self._config:
+			if key in self._sensitive:
+				self._user_credentials[key] = self._config[key]
+			elif key == 'disk_layouts':
+				self._disk_layout = self._config[key]
+			elif key in self._ignore:
+				pass
+			else:
+				self._user_config[key] = self._config[key]
+
+	def user_config_to_json(self) -> str:
+		return json.dumps({
+			'config_version': storage['__version__'],  # Tells us what version was used to generate the config
+			**self._user_config,  # __version__ will be overwritten by old version definition found in config
+			'version': storage['__version__']
+		}, indent=4, sort_keys=True, cls=JSON)
+
+	def disk_layout_to_json(self) -> Optional[str]:
+		if self._disk_layout:
+			return json.dumps(self._disk_layout, indent=4, sort_keys=True, cls=JSON)
+		return None
+
+	def user_credentials_to_json(self) -> Optional[str]:
+		if self._user_credentials:
+			return json.dumps(self._user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
+		return None
+
+	def show(self):
+		print(_('\nThis is your chosen configuration:'))
+		log(" -- Chosen configuration --", level=logging.DEBUG)
+
+		user_conig = self.user_config_to_json()
+		disk_layout = self.disk_layout_to_json()
+		log(user_conig, level=logging.INFO)
+
 		if disk_layout:
-			log(disk_layout_json, level=logging.INFO)
+			log(disk_layout, level=logging.INFO)
+
 		print()
+
+	def _is_valid_path(self, dest_path :Path) -> bool:
+		if (not dest_path.exists()) or not (dest_path.is_dir()):
+			log(
+				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
+				fg="yellow"
+			)
+			return False
+		return True
+
+	def save_user_config(self, dest_path :Path = None):
+		if self._is_valid_path(dest_path):
+			with open(dest_path / self._user_config_file, 'w') as config_file:
+				config_file.write(self.user_config_to_json())
+
+	def save_user_creds(self, dest_path :Path = None):
+		if self._is_valid_path(dest_path):
+			if user_creds := self.user_credentials_to_json():
+				target = dest_path / self._user_creds_file
+				with open(target, 'w') as config_file:
+					config_file.write(user_creds)
+
+	def save_disk_layout(self, dest_path :Path = None):
+		if self._is_valid_path(dest_path):
+			if disk_layout := self.disk_layout_to_json():
+				target = dest_path / self._disk_layout_file
+				with target.open('w') as config_file:
+					config_file.write(disk_layout)
+
+	def save(self, dest_path :Path = None):
+		if not dest_path:
+			dest_path = self._default_save_path
+
+		if self._is_valid_path(dest_path):
+			self.save_user_config(dest_path)
+			self.save_user_creds(dest_path)
+			self.save_disk_layout(dest_path)
+

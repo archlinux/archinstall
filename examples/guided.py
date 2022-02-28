@@ -3,6 +3,7 @@ import os
 import time
 
 import archinstall
+from archinstall import ConfigurationOutput
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -145,11 +146,11 @@ def perform_installation(mountpoint):
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-		
+
 		# Retrieve list of additional repositories and set boolean values appropriately
 		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
 		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
-		
+
 		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
@@ -263,7 +264,10 @@ if not archinstall.arguments.get('offline', False):
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)

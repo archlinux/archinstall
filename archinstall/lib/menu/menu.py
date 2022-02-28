@@ -8,6 +8,7 @@ from collections.abc import Iterable
 import sys
 import logging
 
+
 class Menu(TerminalMenu):
 	def __init__(
 		self,
@@ -18,7 +19,10 @@ class Menu(TerminalMenu):
 		default_option :str = None,
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
-		cursor_index :int = None
+		cursor_index :int = None,
+		preview_command=None,
+		preview_size=0.75,
+		preview_title='Info'
 	):
 		"""
 		Creates a new menu
@@ -47,6 +51,15 @@ class Menu(TerminalMenu):
 
 		:param cursor_index: The position where the cursor will be located. If it is not in range (number of elements of the menu) it goes to the first position
 		:type cursor_index: int
+
+		:param preview_command: A function that should return a string that will be displayed in a preview window when a menu selection item is in focus
+		:type preview_command: Callable
+
+		:param preview_size: Size of the preview window in ratio to the full window
+		:type preview_size: float
+
+		:param preview_title: Title of the preview window
+		:type preview_title: str
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
@@ -112,7 +125,10 @@ class Menu(TerminalMenu):
 			multi_select=multi,
 			show_search_hint=True,
 			preselected_entries=self.preset_values,
-			cursor_index=self.cursor_index
+			cursor_index=self.cursor_index,
+			preview_command=preview_command,
+			preview_size=preview_size,
+			preview_title=preview_title
 		)
 
 	def _show(self):

@@ -19,6 +19,7 @@ import time
 import pathlib
 
 import archinstall
+from archinstall import ConfigurationOutput
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -248,10 +249,10 @@ class MyMenu(archinstall.GlobalMenu):
 					self.enable(entry)
 			else:
 				self.option(entry).set_enabled(False)
-		self._update_install()
+		self._update_install_text()
 
 	def post_callback(self,option,value=None):
-		self._update_install(self._execution_mode)
+		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
 		def check(s):
@@ -271,7 +272,7 @@ class MyMenu(archinstall.GlobalMenu):
 			return f'Instalation ({missing} config(s) missing)'
 		return 'Install'
 
-	def _update_install(self,mode='full'):
+	def _update_install_text(self, mode='full'):
 		text = self._install_text(mode)
 		self.option('install').update_description(text)
 
@@ -393,19 +394,10 @@ def os_setup(installation):
 		if archinstall.arguments['swap']:
 			installation.setup_swap('zram')
 
-		# If user selected to copy the current ISO network configuration
-		# Perform a copy of the config
-		if archinstall.arguments.get('nic', {}).get('type', '') == 'iso_config':
-			installation.copy_iso_network_config(
-				enable_services=True)  # Sources the ISO network configuration to the install medium.
-		elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
-			installation.add_additional_packages("networkmanager")
-			installation.enable_service('NetworkManager.service')
-		# Otherwise, if a interface was selected, configure that interface
-		elif archinstall.arguments.get('nic', {}):
-			installation.configure_nic(**archinstall.arguments.get('nic', {}))
-			installation.enable_service('systemd-networkd')
-			installation.enable_service('systemd-resolved')
+		network_config = archinstall.arguments.get('nic', None)
+
+		if network_config:
+			network_config.config_installer(installation)
 
 		if archinstall.arguments.get('audio', None) is not None:
 			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)
@@ -501,7 +493,11 @@ mode = archinstall.arguments.get('mode', 'full').lower()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
 
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
+
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 if not archinstall.arguments.get('silent'):

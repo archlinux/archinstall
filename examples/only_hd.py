@@ -4,6 +4,8 @@ import os
 import pathlib
 
 import archinstall
+from archinstall import ConfigurationOutput
+
 
 class OnlyHDMenu(archinstall.GlobalMenu):
 	def _setup_selection_menu_options(self):
@@ -23,7 +25,7 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 					self.enable(entry)
 			else:
 				self.option(entry).set_enabled(False)
-		self._update_install()
+		self._update_install_text()
 
 	def _missing_configs(self):
 		""" overloaded method """
@@ -122,7 +124,11 @@ if not archinstall.check_mirror_reachable():
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
