@@ -20,7 +20,7 @@ The installer also doubles as a python library to install Arch Linux and manage 
 Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
 Or use `pip install --upgrade archinstall` to use as a library.
 
-## Running the [guided](examples/guided.py) installer
+## Running the [guided](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) installer
 
 Assuming you are on an Arch Linux live-ISO:
 
@@ -31,7 +31,7 @@ Some additional options that are not needed by most users are hidden behind the 
 ## Running from a declarative configuration file or URL
 
 Prequisites:
-   1. Edit the [configuration file](examples/config-sample.json) according to your requirements.
+   1. Edit the [configuration file](https://github.com/archlinux/archinstall/blob/master/examples/config-sample.json) according to your requirements.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
@@ -59,9 +59,9 @@ Therefore, Archinstall will try its best to not introduce any breaking changes e
 
 # Scripting your own installation
 
-You could just copy [guided.py](examples/guided.py) as a starting point.
+You could just copy [guided.py](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) as a starting point.
 
-However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines onto local disk images, here is a [minimal example](examples/minimal.py) of how to install using archinstall as a Python library:<br>
+However, assuming you're building your own ISO and want to create an automated installation process, or you want to install virtual machines onto local disk images, here is a [minimal example](https://github.com/archlinux/archinstall/blob/master/examples/minimal.py) of how to install using archinstall as a Python library:<br>
 
 ```python
 import archinstall, getpass
@@ -122,8 +122,8 @@ This installer will perform the following:
 
 ## Unattended installation based on MAC address
 
-Archinstall comes with an [unattended](examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
-For instance, if the machine that [unattended](examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](profiles/52-54-00-12-34-56.py).
+Archinstall comes with an [unattended](https://github.com/archlinux/archinstall/blob/master/examples/unattended.py) example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
+For instance, if the machine that [unattended](https://github.com/archlinux/archinstall/blob/master/examples/unattended.py) is run on has the MAC address `52:54:00:12:34:56` it will look for a profile called [profiles/52-54-00-12-34-56.py](https://github.com/archlinux/archinstall/blob/master/profiles/52-54-00-12-34-56.py).
 If it's found, the unattended installation will commence and source that profile as its installation procedure.
 
 # Testing
