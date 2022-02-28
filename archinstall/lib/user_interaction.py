@@ -9,20 +9,14 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
-<<<<<<< HEAD
 from pathlib import Path
-=======
 from copy import copy
->>>>>>> f07704529f411b39756a616995c4a3f7725eb550
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
-<<<<<<< HEAD
 from .configuration import ConfigurationOutput
-=======
 from .models.network_configuration import NetworkConfiguration, NicType
->>>>>>> f07704529f411b39756a616995c4a3f7725eb550
 
 if TYPE_CHECKING:
 	from .disk.partition import Partition
