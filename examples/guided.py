@@ -164,16 +164,10 @@ def perform_installation(mountpoint):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', {}).get('type', '') == 'iso_config':
-				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
-				installation.add_additional_packages("networkmanager")
-				installation.enable_service('NetworkManager.service')
-			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', {}):
-				installation.configure_nic(**archinstall.arguments.get('nic', {}))
-				installation.enable_service('systemd-networkd')
-				installation.enable_service('systemd-resolved')
+			network_config = archinstall.arguments.get('nic', None)
+
+			if network_config:
+				network_config.config_installer(installation)
 
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)

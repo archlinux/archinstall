@@ -9,18 +9,27 @@ import signal
 import sys
 import time
 from collections.abc import Iterable
+<<<<<<< HEAD
 from pathlib import Path
+=======
+from copy import copy
+>>>>>>> f07704529f411b39756a616995c4a3f7725eb550
 from typing import List, Any, Optional, Dict, Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 from .menu.text_input import TextInput
+<<<<<<< HEAD
 from .configuration import ConfigurationOutput
+=======
+from .models.network_configuration import NetworkConfiguration, NicType
+>>>>>>> f07704529f411b39756a616995c4a3f7725eb550
 
 if TYPE_CHECKING:
 	from .disk.partition import Partition
+	_: Any
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_blockdevices
-from .exceptions import RequirementError, UserError, DiskError
+from .exceptions import RequirementError, DiskError
 from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
 from .networking import list_interfaces
@@ -35,6 +44,10 @@ from .mirrors import list_mirrors
 from .translation import Translation, DeferredTranslation
 from .disk.validators import fs_types
 from .packages.packages import validate_package_list
+
+
+# used for signal handler
+SIG_TRIGGER = None
 
 
 # TODO: These can be removed after the move to simple_menu.py
@@ -100,19 +113,45 @@ def do_countdown() -> bool:
 
 	return True
 
+def check_password_strong(passwd :str) -> bool:
+
+	symbol_count = 0
+	if any(character.isdigit() for character in passwd):
+		symbol_count += 10
+	if any(character.isupper() for character in passwd):
+		symbol_count += 26
+	if any(character.islower() for character in passwd):
+		symbol_count += 26
+	if any(not character.isalnum() for character in passwd):
+		symbol_count += 40
+
+	if symbol_count ** len(passwd) < 10e20:
+
+		prompt = _("The password you are using seems to be weak,")
+		prompt += _("are you sure you want to use it?")
+
+		choice = Menu(prompt, ["yes", "no"], default_option="yes").run()
+		return choice == "yes"
+
+	return True
+
 
 def get_password(prompt :str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
 	while passwd := getpass.getpass(prompt):
+
+		if len(passwd.strip()) <= 0:
+			break
+
+		if not check_password_strong(passwd):
+			continue
+
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
 			continue
-
-		if len(passwd.strip()) <= 0:
-			break
 
 		return passwd
 	return None
@@ -276,48 +315,41 @@ class MiniCurses:
 			return response
 
 
-def ask_for_swap():
+def ask_for_swap(preset :bool = True) -> bool:
+	if preset:
+		preset_val = 'yes'
+	else:
+		preset_val = 'no'
 	prompt = _('Would you like to use swap on zram?')
-	choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+	choice = Menu(prompt, ['yes', 'no'], default_option='yes', preset_values=preset_val).run()
 	return False if choice == 'no' else True
 
 
-def ask_ntp() -> bool:
+def ask_ntp(preset :bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
 	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
-	choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+	if preset:
+		preset_val = 'yes'
+	else:
+		preset_val = 'no'
+	choice = Menu(prompt, ['yes', 'no'], skip=False, preset_values=preset_val, default_option='yes').run()
 	return False if choice == 'no' else True
 
 
-def ask_hostname():
-	hostname = input(_('Desired hostname for the installation: ')).strip(' ')
+def ask_hostname(preset :str = None) -> str :
+	hostname = TextInput(_('Desired hostname for the installation: '),preset).run().strip(' ')
 	return hostname
 
 
-def ask_for_superuser_account(prompt: str = '', forced :bool = False) -> Dict[str, Dict[str, str]]:
-	prompt = prompt if prompt else _('Username for required superuser with sudo privileges: ')
-	while 1:
-		new_user = input(prompt).strip(' ')
-
-		if not new_user and forced:
-			# TODO: make this text more generic?
-			#       It's only used to create the first sudo user when root is disabled in guided.py
-			log(' * Since root is disabled, you need to create a least one superuser!', fg='red')
-			continue
-		elif not new_user and not forced:
-			raise UserError("No superuser was created.")
-		elif not check_for_correct_username(new_user):
-			continue
-
-		prompt = str(_('Password for user "{}": ').format(new_user))
-		password = get_password(prompt=prompt)
-		return {new_user: {"!password": password}}
+def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
+	prompt = prompt if prompt else str(_('Enter username for superuser with sudo privileges (leave blank for no superusers): '))
+	superusers = ask_for_additional_users(prompt)
+	return superusers
 
 
-def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str | None]], dict[str, dict[str, str | None]]]:
+def ask_for_additional_users(prompt :str = '') -> Dict[str, Dict[str, str | None]]:
 	prompt = prompt if prompt else _('Any additional users to install (leave blank for no users): ')
 	users = {}
-	superusers = {}
 
 	while 1:
 		new_user = input(prompt).strip(' ')
@@ -326,24 +358,14 @@ def ask_for_additional_users(prompt :str = '') -> tuple[dict[str, dict[str, str 
 		if not check_for_correct_username(new_user):
 			continue
 
-		password = get_password(prompt=str(_('Password for user "{}": ').format(new_user)))
+		password_prompt = str(_('Password for user "{}": ').format(new_user))
+		password = get_password(prompt=password_prompt)
+		users[new_user] = {"!password": password}
 
-		choice = Menu(
-			str(_('Should this user be a superuser (sudoer)?')),
-			['yes', 'no'],
-			skip=False,
-			default_option='no'
-		).run()
-
-		if choice == 'yes':
-			superusers[new_user] = {"!password": password}
-		else:
-			users[new_user] = {"!password": password}
-
-	return users, superusers
+	return users
 
 
-def ask_for_a_timezone() -> str:
+def ask_for_a_timezone(preset :str = None) -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
@@ -351,18 +373,28 @@ def ask_for_a_timezone() -> str:
 		_('Select a timezone'),
 		list(timezones),
 		skip=False,
+		preset_values=preset,
 		default_option=default
 	).run()
 
 	return selected_tz
 
-def ask_for_bootloader(advanced_options :bool = False) -> str:
+def ask_for_bootloader(advanced_options :bool = False, preset :str = None) -> str:
+
+	if preset == 'systemd-bootctl':
+		preset_val = 'systemd-boot' if advanced_options else 'no'
+	elif preset == 'grub-install':
+		preset_val = 'grub' if advanced_options else 'yes'
+	else:
+		preset_val = preset
+
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
 			bootloader_choice = Menu(
 				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
 				['yes', 'no'],
+				preset_values=preset_val,
 				default_option='no'
 			).run()
 
@@ -371,7 +403,7 @@ def ask_for_bootloader(advanced_options :bool = False) -> str:
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
-			selection = Menu(_('Choose a bootloader'), choices).run()
+			selection = Menu(_('Choose a bootloader'), choices,preset_values=preset_val).run()
 			if selection != "":
 				if selection == 'systemd-boot':
 					bootloader = 'systemd-bootctl'
@@ -383,12 +415,13 @@ def ask_for_bootloader(advanced_options :bool = False) -> str:
 	return bootloader
 
 
-def ask_for_audio_selection(desktop :bool = True) -> str:
+def ask_for_audio_selection(desktop :bool = True, preset :str = None) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
 	selected_audio = Menu(
 		_('Choose an audio server'),
 		choices,
+		preset_values=preset,
 		default_option=audio,
 		skip=False
 	).run()
@@ -426,40 +459,63 @@ def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List
 	return packages
 
 
-def ask_to_configure_network() -> Dict[str, Any]:
-	# Optionally configure one network interface.
-	# while 1:
-	# {MAC: Ifname}
+def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkConfiguration]:
+	"""
+		Configure the network on the newly installed system
+	"""
 	interfaces = {
+		'none': str(_('No network configuration')),
 		'iso_config': str(_('Copy ISO network configuration to installation')),
 		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
 		**list_interfaces()
 	}
+	# for this routine it's easier to set the cursor position rather than a preset value
+	cursor_idx = None
+	if preset:
+		if preset['type'] == 'iso_config':
+			cursor_idx = 0
+		elif preset['type'] == 'network_manager':
+			cursor_idx = 1
+		else:
+			try :
+				# let's hope order in dictionaries stay
+				cursor_idx = list(interfaces.values()).index(preset.get('type'))
+			except ValueError:
+				pass
 
-	nic = Menu(_('Select one network interface to configure'), list(interfaces.values())).run()
+	nic = Menu(_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx, sort=False).run()
 
 	if not nic:
-		return {}
+		return None
 
-	if nic == interfaces['iso_config']:
-		return {'type': 'iso_config'}
+	if nic == interfaces['none']:
+		return None
+	elif nic == interfaces['iso_config']:
+		return NetworkConfiguration(NicType.ISO)
 	elif nic == interfaces['network_manager']:
-		return {'type': 'network_manager', 'NetworkManager': True}
+		return NetworkConfiguration(NicType.NM)
 	else:
 		# Current workaround:
 		# For selecting modes without entering text within brackets,
 		# printing out this part separate from options, passed in
 		# `generic_select`
+		# we only keep data if it is the same nic as before
+		if preset.get('type') != nic:
+			preset_d = {'type': nic, 'dhcp': True, 'ip': None, 'gateway': None, 'dns': []}
+		else:
+			preset_d = copy(preset)
+
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
+		cursor_idx = 0 if preset_d.get('dhcp',True) else 1
 
 		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(nic, default_mode)
-		mode = Menu(prompt, modes, default_option=default_mode).run()
-
+		mode = Menu(prompt, modes, default_option=default_mode, cursor_index=cursor_idx).run()
+		# TODO preset values for ip and gateway
 		if mode == 'IP (static)':
 			while 1:
 				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(nic)
-				ip = input(prompt).strip()
+				ip = TextInput(prompt,preset_d.get('ip')).run().strip()
 				# Implemented new check for correct IP/subnet input
 				try:
 					ipaddress.ip_interface(ip)
@@ -473,7 +529,7 @@ def ask_to_configure_network() -> Dict[str, Any]:
 
 			# Implemented new check for correct gateway IP address
 			while 1:
-				gateway = input(_('Enter your gateway (router) IP address or leave blank for none: ')).strip()
+				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),preset_d.get('gateway')).run().strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
@@ -488,15 +544,26 @@ def ask_to_configure_network() -> Dict[str, Any]:
 					)
 
 			dns = None
-			dns_input = input(_('Enter your DNS servers (space separated, blank for none): ')).strip()
+			if preset_d.get('dns'):
+				preset_d['dns'] = ' '.join(preset_d['dns'])
+			else:
+				preset_d['dns'] = None
+			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '),preset_d['dns']).run().strip()
 
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return {'type': nic, 'dhcp': False, 'ip': ip, 'gateway': gateway, 'dns': dns}
+			return NetworkConfiguration(
+				NicType.MANUAL,
+				iface=nic,
+				ip=ip,
+				gateway=gateway,
+				dns=dns,
+				dhcp=False
+			)
 		else:
 			# this will contain network iface names
-			return {'type': nic}
+			return NetworkConfiguration(NicType.MANUAL, iface=nic)
 
 
 def partition_overlap(partitions :list, start :str, end :str) -> bool:
@@ -524,7 +591,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 	return choice
 
 
-def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> Dict[str, Any]:
+def current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> str:
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -565,7 +632,7 @@ def current_partition_layout(partitions :List[Partition], with_idx :bool = False
 
 		current_layout += f'{row[:-1]}\n'
 
-	title = _('Current partition layout')
+	title = str(_('Current partition layout'))
 	return f'\n\n{title}:\n\n{current_layout}'
 
 
@@ -599,15 +666,15 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
-	new_partition = _('Create a new partition')
-	suggest_partition_layout = _('Suggest partition layout')
-	delete_partition = _('Delete a partition')
-	delete_all_partitions = _('Clear/Delete all partitions')
-	assign_mount_point = _('Assign mount-point for a partition')
-	mark_formatted = _('Mark/Unmark a partition to be formatted (wipes data)')
-	mark_encrypted = _('Mark/Unmark a partition as encrypted')
-	mark_bootable = _('Mark/Unmark a partition as bootable (automatic for /boot)')
-	set_filesystem_partition = _('Set desired filesystem for a partition')
+	new_partition = str(_('Create a new partition'))
+	suggest_partition_layout = str(_('Suggest partition layout'))
+	delete_partition = str(_('Delete a partition'))
+	delete_all_partitions = str(_('Clear/Delete all partitions'))
+	assign_mount_point = str(_('Assign mount-point for a partition'))
+	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
+	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
+	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
+	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
 
 	while True:
 		modes = [new_partition, suggest_partition_layout]
@@ -849,7 +916,7 @@ def select_profile() -> Optional[Profile]:
 	return None
 
 
-def select_language(default_value :str) -> str:
+def select_language(default_value :str, preset_value :str = None) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -863,11 +930,11 @@ def select_language(default_value :str) -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'), sorted_kb_lang, default_option=default_value, sort=False).run()
+	selected_lang = Menu(_('Select Keyboard layout'), sorted_kb_lang, default_option=default_value, preset_values=preset_value, sort=False).run()
 	return selected_lang
 
 
-def select_mirror_regions() -> Dict[str, Any]:
+def select_mirror_regions(preset_values :Dict[str, Any] = {}) -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
@@ -875,11 +942,15 @@ def select_mirror_regions() -> Dict[str, Any]:
 	:return: The dictionary information about a mirror/region.
 	:rtype: dict
 	"""
-
+	if preset_values is None:
+		preselected = None
+	else:
+		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
 	selected_mirror = Menu(
 		_('Select one of the regions to download packages from'),
 		list(mirrors.keys()),
+		preset_values=preselected,
 		multi=True
 	).run()
 
@@ -889,7 +960,7 @@ def select_mirror_regions() -> Dict[str, Any]:
 	return {}
 
 
-def select_harddrives() -> Optional[str]:
+def select_harddrives(preset : List[str] = []) -> List[str]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -898,10 +969,11 @@ def select_harddrives() -> Optional[str]:
 	"""
 	hard_drives = all_blockdevices(partitions=False).values()
 	options = {f'{option}': option for option in hard_drives}
-
+	preset_disks = {f'{option}':option for option in preset}
 	selected_harddrive = Menu(
 		_('Select one or more hard drives to use and configure'),
 		list(options.keys()),
+		preset_values=list(preset_disks.keys()),
 		multi=True
 	).run()
 
@@ -945,7 +1017,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def select_kernel() -> List[str]:
+def select_kernel(preset :List[str] = None) -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -961,11 +1033,12 @@ def select_kernel() -> List[str]:
 		kernels,
 		sort=True,
 		multi=True,
+		preset_values=preset,
 		default_option=default_kernel
 	).run()
 	return selected_kernels
 
-def select_additional_repositories() -> List[str]:
+def select_additional_repositories(preset :List[str]) -> List[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 
@@ -980,6 +1053,7 @@ def select_additional_repositories() -> List[str]:
 		repositories,
 		sort=False,
 		multi=True,
+		preset_values=preset,
 		default_option=[]
 	).run()
 
@@ -988,7 +1062,7 @@ def select_additional_repositories() -> List[str]:
 
 	return []
 
-def select_locale_lang(default):
+def select_locale_lang(default :str,preset :str = None) -> str  :
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
@@ -996,13 +1070,14 @@ def select_locale_lang(default):
 		_('Choose which locale language to use'),
 		locale_lang,
 		sort=True,
+		preset_values=preset,
 		default_option=default
 	).run()
 
 	return selected_locale
 
 
-def select_locale_enc(default):
+def select_locale_enc(default :str,preset :str = None) -> str:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
@@ -1010,6 +1085,7 @@ def select_locale_enc(default):
 		_('Choose which locale encoding to use'),
 		locale_enc,
 		sort=True,
+		preset_values=preset,
 		default_option=default
 	).run()
 

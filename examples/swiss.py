@@ -157,26 +157,26 @@ class SetupMenu(archinstall.GeneralMenu):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
 				_('Select Archinstall language'),
-				lambda: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language('English'),
 				default='English',
 				enabled=True))
 		self.set_option('ntp',
 		archinstall.Selector(
 			'Activate NTP',
-			lambda: select_activate_NTP(),
+			lambda x: select_activate_NTP(),
 			default='Y',
 			enabled=True))
 		self.set_option('mode',
 			archinstall.Selector(
 				'Excution mode',
-				lambda: select_mode(),
+				lambda x : select_mode(),
 				default='full',
 				enabled=True))
 		for item in ['LC_ALL','LC_CTYPE','LC_NUMERIC','LC_TIME','LC_MESSAGES','LC_COLLATE']:
 			self.set_option(item,
 				archinstall.Selector(
 					f'{get_locale_mode_text(item)} locale',
-					lambda item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
+					lambda x,item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
 					enabled=True,
 					dependencies_not=['LC_ALL'] if item != 'LC_ALL' else []))
 		self.option('LC_ALL').set_enabled(True)
