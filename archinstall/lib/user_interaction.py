@@ -963,7 +963,12 @@ def select_harddrives(preset : List[str] = []) -> List[str]:
 	"""
 	hard_drives = all_blockdevices(partitions=False).values()
 	options = {f'{option}': option for option in hard_drives}
-	preset_disks = {f'{option}':option for option in preset}
+	
+	if preset:
+		preset_disks = {f'{option}':option for option in preset}
+	else:
+		preset_disks = {}
+
 	selected_harddrive = Menu(
 		_('Select one or more hard drives to use and configure'),
 		list(options.keys()),
