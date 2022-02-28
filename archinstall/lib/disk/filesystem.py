@@ -51,11 +51,14 @@ class Filesystem:
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
+	def has_partition_table(self) -> bool:
+		return bool(str(SysCommand(f'blkid -s PTTYPE -o value {self.blockdevice.path}')))
+
 	def load_layout(self, layout :dict):
 		from ..luks import luks2
 
 		# If the layout tells us to wipe the drive, we do so
-		if layout.get('wipe', False):
+		if layout.get('wipe', False) or self.has_partition_table() is False:
 			if self.mode == GPT:
 				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
 					raise KeyError(f"Could not create a GPT label on {self}")
