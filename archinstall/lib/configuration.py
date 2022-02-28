@@ -120,4 +120,3 @@ class ConfigurationOutput:
 			self.save_user_config(dest_path)
 			self.save_user_creds(dest_path)
 			self.save_disk_layout(dest_path)
-

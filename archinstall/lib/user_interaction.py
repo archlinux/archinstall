@@ -1149,7 +1149,7 @@ def save_config(config: Dict):
 		dest_path = Path(path)
 		if dest_path.exists() and dest_path.is_dir():
 			break
-		log(_('Not a valid directory: {}').format(dest_path))
+		log(_('Not a valid directory: {}').format(dest_path), fg='red')
 
 	if options['user_config'] == selection:
 		config_output.save_user_config(dest_path)
