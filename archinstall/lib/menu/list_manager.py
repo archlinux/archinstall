@@ -41,8 +41,15 @@ Delete
 ```
 You execute the action for this element (which might or not involve user interaction) and return to the list main page
 till you call one of the options `confirm and exit` which returns the modified list or `cancel` which returns the original list unchanged.
-If the list is empty one of the actions can be defined as default (usually Add). We call it **null_action**
-
+If the list is empty one action can be defined as default (usually Add). We call it **null_action**
+YOu can also define a **default_action** which will appear below the separator, not tied to any element of the list. Barring explicit definition, default_action will be the null_action
+```
+==>
+Add
+Confirm and exit
+Cancel
+(Press "/" to search)
+```
 The default implementation can handle simple lists and a key:value dictionary. The default actions are the shown above.
 A sample of basic usage is included at the end of the source.
 
@@ -77,7 +84,6 @@ The contents in the base class of this methods serve for a very basic usage, and
 ```
 
 """
-# import time
 
 from .text_input import TextInput
 from .menu import Menu
@@ -86,7 +92,7 @@ from os import system
 from copy import copy
 
 class ListManager:
-	def __init__(self,prompt :str, base_list :list ,base_actions :list = None,null_action :str = None):
+	def __init__(self,prompt :str, base_list :list ,base_actions :list = None,null_action :str = None, default_action :str = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -99,6 +105,10 @@ class ListManager:
 
 		param: null_action action which will be taken (if any) when base_list is empty
 		type param: string
+
+		param: default_action action which will be presented at the bottom of the list. Shouldn't need a target. If not present, null_action is set there.
+		Both Null and Default actions can be defined outside the base_actions list, as long as they are launched in exec_action
+		type param: string
 		"""
 
 		if not null_action and len(base_list) == 0:
@@ -106,14 +116,16 @@ class ListManager:
 
 		self.prompt = prompt if prompt else _('Choose an object from the list')
 		self.null_action = str(null_action)
+		if not default_action:
+			self.default_action = self.null_action
+		else:
+			self.default_action = str(default_action)
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
 		self.separator = '==>'
 		self.bottom_list = [self.confirm_action,self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
-		if null_action and str(null_action) not in self.base_actions:
-			raise RequirementError(f'{null_action} for ListManager must be a defined base action')
 
 		self.base_data = base_list
 		self.data = copy(base_list) # as refs, changes are immediate
@@ -127,8 +139,8 @@ class ListManager:
 		while True:
 			self.data_formatted = self.reformat()
 			options = self.data_formatted + [self.separator]
-			if self.null_action:
-				options += [self.null_action]
+			if self.default_action:
+				options += [self.default_action]
 			options += self.bottom_list
 			system('clear')
 			target = Menu(self.prompt,
@@ -141,10 +153,10 @@ class ListManager:
 				break
 			if target and target == self.separator:
 				continue
-			if target and target == self.null_action:
+			if target and target == self.default_action:
 				target = None
 				self.target = None
-				self.action = str(self.null_action)
+				self.action = self.default_action
 				self.exec_action()
 				continue
 			if isinstance(self.data,dict):
@@ -152,8 +164,8 @@ class ListManager:
 				self.target = {key: self.data[key]}
 			else:
 				self.target = self.data[self.data_formatted.index(target)]
-			if self.run_actions(target):
-				self._menu_options = self.reformat() + self.bottom_list
+			# Possible enhacement. If run_actions returns false a message line indicating the failure
+			self.run_actions(target)
 
 		if not target or target == self.cancel_action:  # TODO dubious
 			return self.base_data  # return the original list
