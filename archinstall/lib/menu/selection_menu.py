@@ -496,7 +496,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!superusers'] = \
 			Selector(
 				_('Specify superuser account'),
-				lambda: self._create_superuser_account(),
+				lambda preset: self._create_superuser_account(),
 				dependencies_not=['!root-password'],
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
