@@ -7,6 +7,7 @@ from typing import Union, Dict, Any, List
 from .exceptions import HardwareIncompatibilityError
 from .general import SysCommand
 from .output import log
+from .pacman import run_pacman
 from .storage import storage
 
 
@@ -32,7 +33,7 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 
 def check_mirror_reachable() -> bool:
 	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
-	if SysCommand("pacman -Sy").exit_code == 0:
+	if run_pacman("-Sy").exit_code == 0:
 		return True
 
 	elif os.geteuid() != 0:
@@ -42,9 +43,9 @@ def check_mirror_reachable() -> bool:
 
 def update_keyring() -> bool:
 	log("Updating archlinux-keyring ...", level=logging.INFO)
-	if SysCommand("pacman -Sy --noconfirm archlinux-keyring").exit_code == 0:
+	if run_pacman("-Sy --noconfirm archlinux-keyring").exit_code == 0:
 		return True
-	
+
 	elif os.geteuid() != 0:
 		log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
 
