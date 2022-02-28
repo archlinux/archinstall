@@ -316,7 +316,7 @@ class GeneralMenu:
 		config_name, selector = self._find_selection(selection_name)
 		return self.exec_option(config_name, selector)
 
-	def exec_option(self,config_name :str, p_selector :Selector = None) -> bool:
+	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
 		""" processes the exection of a given menu entry
 		- pre process callback
 		- selection function
@@ -333,13 +333,13 @@ class GeneralMenu:
 
 		result = None
 		if selector.func:
-			presel_val = self.option(selector_name).get_selection()
+			presel_val = self.option(config_name).get_selection()
 			result = selector.func(presel_val)
-			self._menu_options[selector_name].set_current_selection(result)
+			self._menu_options[config_name].set_current_selection(result)
 			if selector.do_store():
 				self._data_store[config_name] = result
-		exec_ret_val = selector.exec_func(selector_name,result) if selector.exec_func else False
-		self.post_callback(selector_name,result)
+		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
+		self.post_callback(config_name,result)
 
 		if exec_ret_val and self._check_mandatory_status():
 			return False
