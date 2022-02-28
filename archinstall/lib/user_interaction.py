@@ -99,19 +99,45 @@ def do_countdown() -> bool:
 
 	return True
 
+def check_password_strong(passwd :str) -> bool:
+
+	symbol_count = 0
+	if any(character.isdigit() for character in passwd):
+		symbol_count += 10
+	if any(character.isupper() for character in passwd):
+		symbol_count += 26
+	if any(character.islower() for character in passwd):
+		symbol_count += 26
+	if any(not character.isalnum() for character in passwd):
+		symbol_count += 40
+
+	if symbol_count ** len(passwd) < 10e20:
+
+		prompt = _("The password you are using seems to be weak,")
+		prompt += _("are you sure you want to use it?")
+
+		choice = Menu(prompt, ["yes", "no"], default_option="yes").run()
+		return choice == "yes"
+
+	return True
+
 
 def get_password(prompt :str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
 	while passwd := getpass.getpass(prompt):
+
+		if len(passwd.strip()) <= 0:
+			break
+
+		if not check_password_strong(passwd):
+			continue
+
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
 		if passwd != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
 			continue
-
-		if len(passwd.strip()) <= 0:
-			break
 
 		return passwd
 	return None
