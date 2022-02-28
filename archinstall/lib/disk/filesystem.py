@@ -67,20 +67,18 @@ class Filesystem:
 
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
-			# We don't want to re-add an existing partition (those containing a UUID already)
-			if partition.get('format', False) and not partition.get('PARTUUID', None):
+			# Create a new partition if a filesystem is defined in 'format'
+			if partition.get('filesystem', {}).get('format', False) and not partition.get('PARTUUID', None):
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=partition.get('start', '1MiB'), # TODO: Revisit sane block starts (4MB for memorycards for instance)
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
-				# TODO: device_instance some times become None
-				# print('Device instance:', partition['device_instance'])
-
+			# Or re-use existing partition if we can find PARTUUID
 			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
 				log(f"[BETA] Re-using partition_instance: {partition_instance}", level=logging.WARNING, fg="yellow")
 				partition['device_instance'] = partition_instance
 			else:
-				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
+				raise ValueError(f"{self}.load_layout() doesn't know how to handle {partition}. Cannot continue without a new partition with 'format' definition or a UUID ({partition.get('PARTUUID')}) to re-use a partition.")
 
 			if partition.get('filesystem', {}).get('format', False):
 
