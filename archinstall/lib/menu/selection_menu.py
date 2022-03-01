@@ -179,7 +179,7 @@ class Selector:
 			self.set_enabled(True)
 
 class GeneralMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False):
+	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -189,6 +189,9 @@ class GeneralMenu:
 		:param auto_cursor: Boolean which determines if the cursor stays on the first item (false) or steps each invocation of a selection entry (true)
 		:type auto_cursor: bool
 
+		:param preview_size. Size in fractions of screen size of the preview window
+		;type preview_size: float (range 0..1)
+
 		"""
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
@@ -196,6 +199,7 @@ class GeneralMenu:
 		self.auto_cursor = auto_cursor
 		self._menu_options = {}
 		self._setup_selection_menu_options()
+		self.preview_size = preview_size
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
 		self.is_context_mgr = True
@@ -292,7 +296,7 @@ class GeneralMenu:
 				sort=False,
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
-				preview_size=0.5
+				preview_size=self.preview_size
 			).run()
 
 			if selection and self.auto_cursor:
@@ -551,7 +555,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),
-				lambda: save_config(self._data_store),
+				lambda preset: save_config(self._data_store),
 				enabled=True,
 				no_store=True)
 		self._menu_options['install'] = \
