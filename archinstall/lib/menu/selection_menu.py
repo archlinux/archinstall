@@ -179,7 +179,7 @@ class Selector:
 			self.set_enabled(True)
 
 class GeneralMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float=0.2):
+	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
