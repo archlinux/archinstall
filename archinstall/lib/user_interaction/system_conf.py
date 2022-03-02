@@ -11,10 +11,10 @@ from ..storage import storage
 from ..translation import DeferredTranslation
 
 if TYPE_CHECKING:
-  _: Any
+	_: Any
 
 
-def select_kernel(preset :List[str] = None) -> List[str]:
+def select_kernel(preset: List[str] = None) -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -25,18 +25,16 @@ def select_kernel(preset :List[str] = None) -> List[str]:
 	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 	default_kernel = "linux"
 
-	selected_kernels = Menu(
-		_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
-		kernels,
-		sort=True,
-		multi=True,
-		preset_values=preset,
-		default_option=default_kernel
-	).run()
+	selected_kernels = Menu(_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
+							kernels,
+							sort=True,
+							multi=True,
+							preset_values=preset,
+							default_option=default_kernel).run()
 	return selected_kernels
 
 
-def select_harddrives(preset : List[str] = []) -> List[str]:
+def select_harddrives(preset: List[str] = []) -> List[str]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -47,16 +45,14 @@ def select_harddrives(preset : List[str] = []) -> List[str]:
 	options = {f'{option}': option for option in hard_drives}
 
 	if preset:
-		preset_disks = {f'{option}':option for option in preset}
+		preset_disks = {f'{option}': option for option in preset}
 	else:
 		preset_disks = {}
 
-	selected_harddrive = Menu(
-		_('Select one or more hard drives to use and configure'),
-		list(options.keys()),
-		preset_values=list(preset_disks.keys()),
-		multi=True
-	).run()
+	selected_harddrive = Menu(_('Select one or more hard drives to use and configure'),
+								list(options.keys()),
+								preset_values=list(preset_disks.keys()),
+								multi=True).run()
 
 	if selected_harddrive and len(selected_harddrive) > 0:
 		return [options[i] for i in selected_harddrive]
@@ -64,7 +60,7 @@ def select_harddrives(preset : List[str] = []) -> List[str]:
 	return []
 
 
-def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bool = False) -> str:
+def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask: bool = False) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -80,11 +76,17 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 		title = DeferredTranslation('')
 
 		if has_amd_graphics():
-			title += _('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.') + '\n'
+			title += _(
+				'For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.'
+			) + '\n'
 		if has_intel_graphics():
-			title += _('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n')
+			title += _(
+				'For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'
+			)
 		if has_nvidia_graphics():
-			title += _('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n')
+			title += _(
+				'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
+			)
 
 		if not arguments.get('gfx_driver', None) or force_ask:
 			title += _('\n\nSelect a graphics driver or leave blank to install all open-source drivers')
@@ -98,7 +100,7 @@ def select_driver(options :Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask :bo
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def ask_for_bootloader(advanced_options :bool = False, preset :str = None) -> str:
+def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> str:
 
 	if preset == 'systemd-bootctl':
 		preset_val = 'systemd-boot' if advanced_options else 'no'
@@ -110,19 +112,17 @@ def ask_for_bootloader(advanced_options :bool = False, preset :str = None) -> st
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
-			bootloader_choice = Menu(
-				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
-				['yes', 'no'],
-				preset_values=preset_val,
-				default_option='no'
-			).run()
+			bootloader_choice = Menu(_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
+										['yes', 'no'],
+										preset_values=preset_val,
+										default_option='no').run()
 
 			if bootloader_choice == "yes":
 				bootloader = "grub-install"
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
-			selection = Menu(_('Choose a bootloader'), choices,preset_values=preset_val).run()
+			selection = Menu(_('Choose a bootloader'), choices, preset_values=preset_val).run()
 			if selection != "":
 				if selection == 'systemd-boot':
 					bootloader = 'systemd-bootctl'
@@ -134,7 +134,7 @@ def ask_for_bootloader(advanced_options :bool = False, preset :str = None) -> st
 	return bootloader
 
 
-def ask_for_swap(preset :bool = True) -> bool:
+def ask_for_swap(preset: bool = True) -> bool:
 	if preset:
 		preset_val = 'yes'
 	else:

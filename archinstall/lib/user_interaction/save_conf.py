@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 def save_config(config: Dict):
+
 	def preview(selection: str):
 		if options['user_config'] == selection:
 			json_config = config_output.user_config_to_json()
@@ -44,14 +45,12 @@ def save_config(config: Dict):
 		'all': str(_('Save all'))
 	}
 
-	selection = Menu(
-		_('Choose which configuration to save'),
-		list(options.values()),
-		sort=False,
-		skip=True,
-		preview_size=0.75,
-		preview_command=preview
-	).run()
+	selection = Menu(_('Choose which configuration to save'),
+						list(options.values()),
+						sort=False,
+						skip=True,
+						preview_size=0.75,
+						preview_command=preview).run()
 
 	if not selection:
 		return

@@ -9,16 +9,17 @@ from ..output import log
 from ..disk.validators import fs_types
 
 if TYPE_CHECKING:
-  from ..disk.partition import Partition
-  _: Any
+	from ..disk.partition import Partition
+	_: Any
 
 
-def partition_overlap(partitions :list, start :str, end :str) -> bool:
+def partition_overlap(partitions: list, start: str, end: str) -> bool:
 	# TODO: Implement sanity check
 	return False
 
 
-def _current_partition_layout(partitions :List[Partition], with_idx :bool = False) -> str:
+def _current_partition_layout(partitions: List[Partition], with_idx: bool = False) -> str:
+
 	def do_padding(name, max_len):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
@@ -63,7 +64,7 @@ def _current_partition_layout(partitions :List[Partition], with_idx :bool = Fals
 	return f'\n\n{title}:\n\n{current_layout}'
 
 
-def select_partition(title :str, partitions :List[Partition], multiple :bool = False) -> Union[int, List[int], None]:
+def select_partition(title: str, partitions: List[Partition], multiple: bool = False) -> Union[int, List[int], None]:
 	partition_indexes = list(map(str, range(len(partitions))))
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 
@@ -76,10 +77,8 @@ def select_partition(title :str, partitions :List[Partition], multiple :bool = F
 	return None
 
 
-def get_default_partition_layout(
-	block_devices :Union[BlockDevice, List[BlockDevice]],
-	advanced_options :bool = False
-) -> Dict[str, Any]:
+def get_default_partition_layout(block_devices: Union[BlockDevice, List[BlockDevice]],
+									advanced_options: bool = False) -> Dict[str, Any]:
 
 	if len(block_devices) == 1:
 		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
@@ -98,10 +97,8 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, Any]:
-	block_device_struct = {
-		"partitions": [partition.__dump__() for partition in block_device.partitions.values()]
-	}
+def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, Any]:
+	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
@@ -148,7 +145,8 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 			fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(), skip=False).run()
 
-			prompt = _('Enter the start sector (percentage or block number, default: {}): ').format(block_device.first_free_sector)
+			prompt = _('Enter the start sector (percentage or block number, default: {}): ').format(
+				block_device.first_free_sector)
 			start = input(prompt).strip()
 
 			if not start.strip():
@@ -157,7 +155,8 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 			else:
 				end_suggested = '100%'
 
-			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): ').format(end_suggested)
+			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): ').format(
+				end_suggested)
 			end = input(prompt).strip()
 
 			if not end.strip():
@@ -165,21 +164,23 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 			if valid_parted_position(start) and valid_parted_position(end):
 				if partition_overlap(block_device_struct["partitions"], start, end):
-					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.", fg="red")
+					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.",
+						fg="red")
 					continue
 
 				block_device_struct["partitions"].append({
-					"type" : "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
-					"start" : start,
-					"size" : end,
-					"mountpoint" : None,
-					"wipe" : True,
-					"filesystem" : {
-						"format" : fstype
+					"type": "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"start": start,
+					"size": end,
+					"mountpoint": None,
+					"wipe": True,
+					"filesystem": {
+						"format": fstype
 					}
 				})
 			else:
-				log(f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.", fg="red")
+				log(f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.",
+					fg="red")
 				continue
 		elif task == suggest_partition_layout:
 			if len(block_device_struct["partitions"]):
@@ -200,7 +201,9 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 				to_delete = select_partition(title, block_device_struct["partitions"], multiple=True)
 
 				if to_delete:
-					block_device_struct['partitions'] = [p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete]
+					block_device_struct['partitions'] = [
+						p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete
+					]
 			elif task == delete_all_partitions:
 				block_device_struct["partitions"] = []
 			elif task == assign_mount_point:
@@ -208,8 +211,10 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
-					print(_(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'))
-					mountpoint = input(_('Select where to mount partition (leave blank to remove mountpoint): ')).strip()
+					print(
+						_(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'))
+					mountpoint = input(
+						_('Select where to mount partition (leave blank to remove mountpoint): ')).strip()
 
 					if len(mountpoint):
 						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
@@ -217,7 +222,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 							log(f"Marked partition as bootable because mountpoint was set to /boot.", fg="yellow")
 							block_device_struct["partitions"][partition]['boot'] = True
 					else:
-						del(block_device_struct["partitions"][partition]['mountpoint'])
+						del (block_device_struct["partitions"][partition]['mountpoint'])
 
 			elif task == mark_formatted:
 				title = _('{}\n\nSelect which partition to mask for formatting').format(current_layout)
@@ -227,16 +232,18 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 					# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 					# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 					# it's safe to change the filesystem for this partition.
-					if block_device_struct["partitions"][partition].get('filesystem', {}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
+					if block_device_struct["partitions"][partition].get('filesystem',{}).get('format', 'crypto_LUKS') == 'crypto_LUKS':
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(), skip=False).run()
+						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(),
+										skip=False).run()
 
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 					# Negate the current wipe marking
-					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
+					block_device_struct["partitions"][partition][
+						'wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
 			elif task == mark_encrypted:
 				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
@@ -244,14 +251,16 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 
 				if partition is not None:
 					# Negate the current encryption marking
-					block_device_struct["partitions"][partition]['encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
+					block_device_struct["partitions"][partition][
+						'encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
 
 			elif task == mark_bootable:
 				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
-					block_device_struct["partitions"][partition]['boot'] = not block_device_struct["partitions"][partition].get('boot', False)
+					block_device_struct["partitions"][partition][
+						'boot'] = not block_device_struct["partitions"][partition].get('boot', False)
 
 			elif task == set_filesystem_partition:
 				title = _('{}\n\nSelect which partition to set a filesystem on').format(current_layout)
@@ -269,7 +278,7 @@ def manage_new_and_existing_partitions(block_device :BlockDevice) -> Dict[str, A
 	return block_device_struct
 
 
-def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
+def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
 			if partition.get('mountpoint', None) != '/boot':

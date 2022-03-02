@@ -13,10 +13,10 @@ from ..menu import Menu
 from ..output import log
 
 if TYPE_CHECKING:
-  _: Any
+	_: Any
 
 
-def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkConfiguration]:
+def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkConfiguration]:
 	"""
 		Configure the network on the newly installed system
 	"""
@@ -34,13 +34,14 @@ def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkCon
 		elif preset['type'] == 'network_manager':
 			cursor_idx = 1
 		else:
-			try :
+			try:
 				# let's hope order in dictionaries stay
 				cursor_idx = list(interfaces.values()).index(preset.get('type'))
 			except ValueError:
 				pass
 
-	nic = Menu(_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx, sort=False).run()
+	nic = Menu(_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx,
+				sort=False).run()
 
 	if not nic:
 		return None
@@ -64,7 +65,7 @@ def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkCon
 
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
-		cursor_idx = 0 if preset_d.get('dhcp',True) else 1
+		cursor_idx = 0 if preset_d.get('dhcp', True) else 1
 
 		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(nic, default_mode)
 		mode = Menu(prompt, modes, default_option=default_mode, cursor_index=cursor_idx).run()
@@ -72,21 +73,18 @@ def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkCon
 		if mode == 'IP (static)':
 			while 1:
 				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(nic)
-				ip = TextInput(prompt,preset_d.get('ip')).run().strip()
+				ip = TextInput(prompt, preset_d.get('ip')).run().strip()
 				# Implemented new check for correct IP/subnet input
 				try:
 					ipaddress.ip_interface(ip)
 					break
 				except ValueError:
-					log(
-						"You need to enter a valid IP in IP-config mode.",
-						level=logging.WARNING,
-						fg='red'
-					)
+					log("You need to enter a valid IP in IP-config mode.", level=logging.WARNING, fg='red')
 
 			# Implemented new check for correct gateway IP address
 			while 1:
-				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),preset_d.get('gateway')).run().strip()
+				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
+									preset_d.get('gateway')).run().strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
@@ -94,30 +92,20 @@ def ask_to_configure_network(preset :Dict[str, Any] = {}) -> Optional[NetworkCon
 						ipaddress.ip_address(gateway)
 					break
 				except ValueError:
-					log(
-						"You need to enter a valid gateway (router) IP address.",
-						level=logging.WARNING,
-						fg='red'
-					)
+					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
 
 			dns = None
 			if preset_d.get('dns'):
 				preset_d['dns'] = ' '.join(preset_d['dns'])
 			else:
 				preset_d['dns'] = None
-			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '),preset_d['dns']).run().strip()
+			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '),
+									preset_d['dns']).run().strip()
 
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return NetworkConfiguration(
-				NicType.MANUAL,
-				iface=nic,
-				ip=ip,
-				gateway=gateway,
-				dns=dns,
-				dhcp=False
-			)
+			return NetworkConfiguration(NicType.MANUAL, iface=nic, ip=ip, gateway=gateway, dns=dns, dhcp=False)
 		else:
 			# this will contain network iface names
 			return NetworkConfiguration(NicType.MANUAL, iface=nic)

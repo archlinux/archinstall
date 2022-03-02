@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING
 
-from .partitioning import manage_new_and_existing_partitions, get_default_partition_layout
+from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
 from ..disk import BlockDevice
 from ..exceptions import DiskError
 from ..menu import Menu
@@ -13,16 +13,9 @@ if TYPE_CHECKING:
 
 
 def ask_for_main_filesystem_format(advanced_options=False):
-	options = {
-		'btrfs': 'btrfs',
-		'ext4': 'ext4',
-		'xfs': 'xfs',
-		'f2fs': 'f2fs'
-	}
+	options = {'btrfs': 'btrfs', 'ext4': 'ext4', 'xfs': 'xfs', 'f2fs': 'f2fs'}
 
-	advanced = {
-		'ntfs': 'ntfs'
-	}
+	advanced = {'ntfs': 'ntfs'}
 
 	if advanced_options:
 		options.update(advanced)
@@ -43,7 +36,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str, Any]:
+def select_disk_layout(block_devices: list, advanced_options=False) -> Dict[str, Any]:
 	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
 	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
@@ -57,7 +50,7 @@ def select_disk_layout(block_devices :list, advanced_options=False) -> Dict[str,
 		return select_individual_blockdevice_usage(block_devices)
 
 
-def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
+def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.
 	Usually this is combined with :ref:`archinstall.list_drives`.
@@ -71,9 +64,12 @@ def select_disk(dict_o_disks :Dict[str, BlockDevice]) -> BlockDevice:
 	drives = sorted(list(dict_o_disks.keys()))
 	if len(drives) >= 1:
 		for index, drive in enumerate(drives):
-			print(f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})")
+			print(
+				f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})"
+			)
 
-		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)", fg="yellow")
+		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)",
+			fg="yellow")
 
 		drive = Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
 		if not drive:

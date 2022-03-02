@@ -15,10 +15,10 @@ from ..translation import Translation
 from ..packages.packages import validate_package_list
 
 if TYPE_CHECKING:
-  _: Any
+	_: Any
 
 
-def ask_ntp(preset :bool = True) -> bool:
+def ask_ntp(preset: bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
 	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
 	if preset:
@@ -29,40 +29,32 @@ def ask_ntp(preset :bool = True) -> bool:
 	return False if choice == 'no' else True
 
 
-def ask_hostname(preset :str = None) -> str :
-	hostname = TextInput(_('Desired hostname for the installation: '),preset).run().strip(' ')
+def ask_hostname(preset: str = None) -> str:
+	hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip(' ')
 	return hostname
 
 
-def ask_for_a_timezone(preset :str = None) -> str:
+def ask_for_a_timezone(preset: str = None) -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
-	selected_tz = Menu(
-		_('Select a timezone'),
-		list(timezones),
-		skip=False,
-		preset_values=preset,
-		default_option=default
-	).run()
+	selected_tz = Menu(_('Select a timezone'),
+						list(timezones),
+						skip=False,
+						preset_values=preset,
+						default_option=default).run()
 
 	return selected_tz
 
 
-def ask_for_audio_selection(desktop :bool = True, preset :str = None) -> str:
+def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(
-		_('Choose an audio server'),
-		choices,
-		preset_values=preset,
-		default_option=audio,
-		skip=False
-	).run()
+	selected_audio = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=audio, skip=False).run()
 	return selected_audio
 
 
-def select_language(default_value :str, preset_value :str = None) -> str:
+def select_language(default_value: str, preset_value: str = None) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -76,11 +68,15 @@ def select_language(default_value :str, preset_value :str = None) -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'), sorted_kb_lang, default_option=default_value, preset_values=preset_value, sort=False).run()
+	selected_lang = Menu(_('Select Keyboard layout'),
+							sorted_kb_lang,
+							default_option=default_value,
+							preset_values=preset_value,
+							sort=False).run()
 	return selected_lang
 
 
-def select_mirror_regions(preset_values :Dict[str, Any] = {}) -> Dict[str, Any]:
+def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
 	Usually this is combined with :ref:`archinstall.list_mirrors`.
@@ -93,12 +89,10 @@ def select_mirror_regions(preset_values :Dict[str, Any] = {}) -> Dict[str, Any]:
 	else:
 		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
-	selected_mirror = Menu(
-		_('Select one of the regions to download packages from'),
-		list(mirrors.keys()),
-		preset_values=preselected,
-		multi=True
-	).run()
+	selected_mirror = Menu(_('Select one of the regions to download packages from'),
+							list(mirrors.keys()),
+							preset_values=preselected,
+							multi=True).run()
 
 	if selected_mirror is not None:
 		return {selected: mirrors[selected] for selected in selected_mirror}
@@ -139,17 +133,14 @@ def select_profile() -> Optional[Profile]:
 	return None
 
 
-def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List[str]:
+def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
 	def read_packages(already_defined: list = []) -> list:
 		display = ' '.join(already_defined)
-		input_packages = TextInput(
-			_('Write additional packages to install (space separated, leave blank to skip): '),
-			display
-		).run()
+		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run()
 		return input_packages.split(' ') if input_packages else []
 
 	pre_set_packages = pre_set_packages if pre_set_packages else []
@@ -170,7 +161,7 @@ def ask_additional_packages_to_install(pre_set_packages :List[str] = []) -> List
 	return packages
 
 
-def select_additional_repositories(preset :List[str]) -> List[str]:
+def select_additional_repositories(preset: List[str]) -> List[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
 
@@ -180,14 +171,12 @@ def select_additional_repositories(preset :List[str]) -> List[str]:
 
 	repositories = ["multilib", "testing"]
 
-	additional_repositories = Menu(
-		_('Choose which optional additional repositories to enable'),
-		repositories,
-		sort=False,
-		multi=True,
-		preset_values=preset,
-		default_option=[]
-	).run()
+	additional_repositories = Menu(_('Choose which optional additional repositories to enable'),
+									repositories,
+									sort=False,
+									multi=True,
+									preset_values=preset,
+									default_option=[]).run()
 
 	if additional_repositories is not None:
 		return additional_repositories

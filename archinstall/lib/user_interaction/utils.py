@@ -10,14 +10,13 @@ from ..menu import Menu
 from ..output import log
 
 if TYPE_CHECKING:
-  _: Any
-
+	_: Any
 
 # used for signal handler
 SIG_TRIGGER = None
 
 
-def check_password_strong(passwd :str) -> bool:
+def check_password_strong(passwd: str) -> bool:
 	symbol_count = 0
 	if any(character.isdigit() for character in passwd):
 		symbol_count += 10
@@ -28,7 +27,7 @@ def check_password_strong(passwd :str) -> bool:
 	if any(not character.isalnum() for character in passwd):
 		symbol_count += 40
 
-	if symbol_count ** len(passwd) < 10e20:
+	if symbol_count**len(passwd) < 10e20:
 
 		prompt = _("The password you are using seems to be weak,")
 		prompt += _("are you sure you want to use it?")
@@ -39,7 +38,7 @@ def check_password_strong(passwd :str) -> bool:
 	return True
 
 
-def get_password(prompt :str = '') -> Optional[str]:
+def get_password(prompt: str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
@@ -63,11 +62,11 @@ def get_password(prompt :str = '') -> Optional[str]:
 def do_countdown() -> bool:
 	SIG_TRIGGER = False
 
-	def kill_handler(sig :int, frame :Any) -> None:
+	def kill_handler(sig: int, frame: Any) -> None:
 		print()
 		exit(0)
 
-	def sig_handler(sig :int, frame :Any) -> None:
+	def sig_handler(sig: int, frame: Any) -> None:
 		global SIG_TRIGGER
 		SIG_TRIGGER = True
 		signal.signal(signal.SIGINT, kill_handler)

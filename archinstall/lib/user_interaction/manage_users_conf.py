@@ -18,7 +18,8 @@ class UserList(ListManager):
 	"""
 	subclass of ListManager for the managing of user accounts
 	"""
-	def __init__(self,prompt :str, lusers :dict, sudo :bool = None):
+
+	def __init__(self, prompt: str, lusers: dict, sudo: bool = None):
 		"""
 		param: prompt
 		type: str
@@ -34,9 +35,10 @@ class UserList(ListManager):
 			str(_('Delete User'))
 		]
 		self.default_action = self.actions[0]
-		super().__init__(prompt,lusers,self.actions,self.default_action)
+		super().__init__(prompt, lusers, self.actions, self.default_action)
 
 	def reformat(self):
+
 		def format_element(elem):
 			# secret gives away the length of the password
 			if self.data[elem].get('!password'):
@@ -49,14 +51,15 @@ class UserList(ListManager):
 			else:
 				super = ' '
 			return f"{elem:16}: password {pwd:16} {super}"
-		return list(map(lambda x:format_element(x),self.data))
+
+		return list(map(lambda x: format_element(x), self.data))
 
 	def action_list(self):
 		if self.target:
 			active_user = list(self.target.keys())[0]
 		else:
 			active_user = None
-		sudoer = self.target[active_user].get('sudoer',False)
+		sudoer = self.target[active_user].get('sudoer', False)
 		if self.sudo is None:
 			return self.actions
 		if self.sudo and sudoer:
@@ -74,25 +77,22 @@ class UserList(ListManager):
 		else:
 			active_user = None
 
-		if self.action == self.actions[0]: # add
+		if self.action == self.actions[0]:  # add
 			new_user = self.add_user()
 			# no unicity check, if exists will be replaced
 			self.data.update(new_user)
-		elif self.action == self.actions[1]: # change password
-			self.data[active_user]['!password'] = get_password(prompt=str(_('Password for user "{}": ').format(active_user)))
-		elif self.action == self.actions[2]: # promote/demote
+		elif self.action == self.actions[1]:  # change password
+			self.data[active_user]['!password'] = get_password(
+				prompt=str(_('Password for user "{}": ').format(active_user)))
+		elif self.action == self.actions[2]:  # promote/demote
 			self.data[active_user]['sudoer'] = not self.data[active_user]['sudoer']
-		elif self.action == self.actions[3]: # delete
+		elif self.action == self.actions[3]:  # delete
 			del self.data[active_user]
 
 	def _check_for_correct_username(username: str) -> bool:
 		if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 			return True
-		log(
-			"The username you entered is invalid. Try again",
-			level=logging.WARNING,
-			fg='red'
-		)
+		log("The username you entered is invalid. Try again", level=logging.WARNING, fg='red')
 		return False
 
 	def add_user(self):
@@ -112,44 +112,58 @@ class UserList(ListManager):
 			sudoer = False
 		else:
 			sudoer = False
-			sudo_choice = Menu(
-				str(_('Should {} be a superuser (sudoer)?')).format(userid),
-				['yes', 'no'],
-				skip=False,
-				preset_values='yes' if sudoer else 'no',
-				default_option='no'
-			).run()
+			sudo_choice = Menu(str(_('Should {} be a superuser (sudoer)?')).format(userid), ['yes', 'no'],
+								skip=False,
+								preset_values='yes' if sudoer else 'no',
+								default_option='no').run()
 			sudoer = True if sudo_choice == 'yes' else False
 
 		password = get_password(prompt=str(_('Password for user "{}": ').format(userid)))
 
-		return {userid :{"!password":password, "sudoer":sudoer}}
+		return {userid: {"!password": password, "sudoer": sudoer}}
 
 
-def manage_users(prompt :str, sudo :bool) -> tuple[dict, dict]:
+def manage_users(prompt: str, sudo: bool) -> tuple[dict, dict]:
 	# TODO Filtering and some kind of simpler code
 	lusers = {}
-	if storage['arguments'].get('!superusers',{}):
-		lusers.update({uid: {'!password':storage['arguments']['!superusers'][uid].get('!password'), 'sudoer':True} for uid in storage['arguments'].get('!superusers',{})})
-	if storage['arguments'].get('!users',{}):
-		lusers.update({uid: {'!password':storage['arguments']['!users'][uid].get('!password'), 'sudoer':False} for uid in storage['arguments'].get('!users',{})})
+	if storage['arguments'].get('!superusers', {}):
+		lusers.update({
+			uid: {
+				'!password': storage['arguments']['!superusers'][uid].get('!password'),
+				'sudoer': True
+			}
+			for uid in storage['arguments'].get('!superusers', {})
+		})
+	if storage['arguments'].get('!users', {}):
+		lusers.update({
+			uid: {
+				'!password': storage['arguments']['!users'][uid].get('!password'),
+				'sudoer': False
+			}
+			for uid in storage['arguments'].get('!users', {})
+		})
 	# processing
-	lusers = UserList(prompt,lusers,sudo).run()
+	lusers = UserList(prompt, lusers, sudo).run()
 	# return data
-	superusers = {uid: {'!password':lusers[uid].get('!password')} for uid in lusers if lusers[uid].get('sudoer',False)}
-	users = {uid: {'!password':lusers[uid].get('!password')} for uid in lusers if not lusers[uid].get('sudoer',False)}
+	superusers = {
+		uid: {
+			'!password': lusers[uid].get('!password')
+		}
+		for uid in lusers if lusers[uid].get('sudoer', False)
+	}
+	users = {uid: {'!password': lusers[uid].get('!password')} for uid in lusers if not lusers[uid].get('sudoer', False)}
 	storage['arguments']['!superusers'] = superusers
 	storage['arguments']['!users'] = users
-	return superusers,users
+	return superusers, users
 
 
 def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
 	prompt = prompt if prompt else str(_('Define users with sudo privilege: '))
-	superusers,dummy = manage_users(prompt,sudo=True)
+	superusers, dummy = manage_users(prompt, sudo=True)
 	return superusers
 
 
-def ask_for_additional_users(prompt :str = '') -> Dict[str, Dict[str, str | None]]:
+def ask_for_additional_users(prompt: str = '') -> Dict[str, Dict[str, str | None]]:
 	prompt = prompt if prompt else _('Any additional users to install (leave blank for no users): ')
-	dummy,users = manage_users(prompt,sudo=False)
+	dummy, users = manage_users(prompt, sudo=False)
 	return users
