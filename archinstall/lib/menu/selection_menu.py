@@ -35,21 +35,21 @@ from ..user_interaction import select_archinstall_language
 from ..user_interaction import select_additional_repositories
 from ..translation import Translation
 
+
 class Selector:
-	def __init__(
-		self,
-		description :str,
-		func :Callable = None,
-		display_func :Callable = None,
-		default :Any = None,
-		enabled :bool = False,
-		dependencies :List = [],
-		dependencies_not :List = [],
-		exec_func :Callable = None,
-		preview_func :Callable = None,
-		mandatory :bool = False,
-		no_store :bool = False
-	):
+
+	def __init__(self,
+					description: str,
+					func: Callable = None,
+					display_func: Callable = None,
+					default: Any = None,
+					enabled: bool = False,
+					dependencies: List = [],
+					dependencies_not: List = [],
+					exec_func: Callable = None,
+					preview_func: Callable = None,
+					mandatory: bool = False,
+					no_store: bool = False):
 		"""
 		Create a new menu selection entry
 
@@ -124,10 +124,10 @@ class Selector:
 	def do_store(self) -> bool:
 		return self._no_store is False
 
-	def set_enabled(self, status :bool = True):
+	def set_enabled(self, status: bool = True):
 		self.enabled = status
 
-	def update_description(self, description :str):
+	def update_description(self, description: str):
 		self._description = description
 
 	def menu_text(self) -> str:
@@ -149,7 +149,7 @@ class Selector:
 	def text(self):
 		return self.menu_text()
 
-	def set_current_selection(self, current :str):
+	def set_current_selection(self, current: str):
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
@@ -173,13 +173,15 @@ class Selector:
 	def is_mandatory(self) -> bool:
 		return self.mandatory
 
-	def set_mandatory(self, status :bool = True):
+	def set_mandatory(self, status: bool = True):
 		self.mandatory = status
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
+
 class GeneralMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
+
+	def __init__(self, data_store: dict = None, auto_cursor=False, preview_size: float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -201,11 +203,11 @@ class GeneralMenu:
 		self._setup_selection_menu_options()
 		self.preview_size = preview_size
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
+	def __enter__(self, *args: Any, **kwargs: Any) -> GeneralMenu:
 		self.is_context_mgr = True
 		return self
 
-	def __exit__(self, *args :Any, **kwargs :Any) -> None:
+	def __exit__(self, *args: Any, **kwargs: Any) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
@@ -230,7 +232,7 @@ class GeneralMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selector_name :str, value :Any):
+	def post_callback(self, selector_name: str, value: Any):
 		""" will be called after each action in the menu """
 		return True
 
@@ -238,7 +240,7 @@ class GeneralMenu:
 		""" will be called at the end of the processing of the menu """
 		return
 
-	def synch(self, selector_name :str, omit_if_set :bool = False,omit_if_disabled :bool = False):
+	def synch(self, selector_name: str, omit_if_set: bool = False, omit_if_disabled: bool = False):
 		""" loads menu options with data_store value """
 		arg = self._data_store.get(selector_name, None)
 		# don't display the menu option if it was defined already
@@ -251,13 +253,13 @@ class GeneralMenu:
 		if arg is not None:
 			self._menu_options[selector_name].set_current_selection(arg)
 
-	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
+	def enable(self, selector_name: str, omit_if_set: bool = False, mandatory: bool = False):
 		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
-			self.synch(selector_name,omit_if_set)
+			self.synch(selector_name, omit_if_set)
 		else:
 			print(f'No selector found: {selector_name}')
 			sys.exit(1)
@@ -290,14 +292,12 @@ class GeneralMenu:
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
 
-			selection = Menu(
-				_('Set/Modify the below options'),
-				menu_text,
-				sort=False,
-				cursor_index=cursor_pos,
-				preview_command=self._preview_display,
-				preview_size=self.preview_size
-			).run()
+			selection = Menu(_('Set/Modify the below options'),
+								menu_text,
+								sort=False,
+								cursor_index=cursor_pos,
+								preview_command=self._preview_display,
+								preview_size=self.preview_size).run()
 
 			if selection and self.auto_cursor:
 				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
@@ -311,7 +311,7 @@ class GeneralMenu:
 		if not self.is_context_mgr:
 			self.__exit__()
 
-	def _process_selection(self, selection_name :str) -> bool:
+	def _process_selection(self, selection_name: str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
 			Returns true if the menu shall continue, False if it has ended
@@ -320,7 +320,7 @@ class GeneralMenu:
 		config_name, selector = self._find_selection(selection_name)
 		return self.exec_option(config_name, selector)
 
-	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
+	def exec_option(self, config_name: str, p_selector: Selector = None) -> bool:
 		""" processes the exection of a given menu entry
 		- pre process callback
 		- selection function
@@ -342,8 +342,8 @@ class GeneralMenu:
 			self._menu_options[config_name].set_current_selection(result)
 			if selector.do_store():
 				self._data_store[config_name] = result
-		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
-		self.post_callback(config_name,result)
+		exec_ret_val = selector.exec_func(config_name, result) if selector.exec_func else False
+		self.post_callback(config_name, result)
 
 		if exec_ret_val and self._check_mandatory_status():
 			return False
@@ -356,7 +356,7 @@ class GeneralMenu:
 		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
 			set_keyboard_language(self._data_store['keyboard-layout'])
 
-	def _verify_selection_enabled(self, selection_name :str) -> bool:
+	def _verify_selection_enabled(self, selection_name: str) -> bool:
 		""" general """
 		if selection := self._menu_options.get(selection_name, None):
 			if not selection.enabled:
@@ -385,7 +385,7 @@ class GeneralMenu:
 
 		return enabled_menus
 
-	def option(self,name :str) -> Selector:
+	def option(self, name: str) -> Selector:
 		# TODO check inexistent name
 		return self._menu_options[name]
 
@@ -403,7 +403,7 @@ class GeneralMenu:
 			if item in self._menus_to_enable():
 				yield item
 
-	def set_option(self, name :str, selector :Selector):
+	def set_option(self, name: str, selector: Selector):
 		self._menu_options[name] = selector
 		self.synch(name)
 
@@ -414,7 +414,7 @@ class GeneralMenu:
 				return False
 		return True
 
-	def set_mandatory(self, field :str, status :bool):
+	def set_mandatory(self, field: str, status: bool):
 		self.option(field).set_mandatory(status)
 
 	def mandatory_overview(self) -> [int, int]:
@@ -435,144 +435,105 @@ class GeneralMenu:
 
 
 class GlobalMenu(GeneralMenu):
-	def __init__(self,data_store):
+
+	def __init__(self, data_store):
 		super().__init__(data_store=data_store, auto_cursor=True)
 
 	def _setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
-		self._menu_options['archinstall-language'] = \
-			Selector(
-				_('Select Archinstall language'),
-				lambda x: self._select_archinstall_language('English'),
-				default='English',
-				enabled=True)
-		self._menu_options['keyboard-layout'] = \
-			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
-		self._menu_options['mirror-region'] = \
-			Selector(
-				_('Select mirror region'),
-				select_mirror_regions,
-				display_func=lambda x: list(x.keys()) if x else '[]',
-				default={})
-		self._menu_options['sys-language'] = \
-			Selector(_('Select locale language'), lambda preset: select_locale_lang('en_US',preset), default='en_US')
-		self._menu_options['sys-encoding'] = \
-			Selector(_('Select locale encoding'), lambda preset: select_locale_enc('utf-8',preset), default='utf-8')
-		self._menu_options['harddrives'] = \
-			Selector(
-				_('Select harddrives'),
-				self._select_harddrives)
-		self._menu_options['disk_layouts'] = \
-			Selector(
-				_('Select disk layout'),
-				lambda x: select_disk_layout(
-					storage['arguments'].get('harddrives', []),
-					storage['arguments'].get('advanced', False)
-				),
-				dependencies=['harddrives'])
-		self._menu_options['!encryption-password'] = \
-			Selector(
-				_('Set encryption password'),
-				lambda x: self._select_encrypted_password(),
-				display_func=lambda x: secret(x) if x else 'None',
-				dependencies=['harddrives'])
-		self._menu_options['swap'] = \
-			Selector(
-				_('Use swap'),
-				lambda preset: ask_for_swap(preset),
-				default=True)
-		self._menu_options['bootloader'] = \
-			Selector(
-				_('Select bootloader'),
-				lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False),preset),
-				default="systemd-bootctl" if has_uefi() else "grub-install")
-		self._menu_options['hostname'] = \
-			Selector(
-				_('Specify hostname'),
-				ask_hostname,
-				default='archlinux')
+		self._menu_options['archinstall-language'] = Selector(_('Select Archinstall language'),
+																lambda x: self._select_archinstall_language('English'),
+																default='English',
+																enabled=True)
+		self._menu_options['keyboard-layout'] = Selector(_('Select keyboard layout'),
+															lambda preset: select_language('us', preset),
+															default='us')
+		self._menu_options['mirror-region'] = Selector(_('Select mirror region'),
+														select_mirror_regions,
+														display_func=lambda x: list(x.keys()) if x else '[]',
+														default={})
+		self._menu_options['sys-language'] = Selector(_('Select locale language'),
+														lambda preset: select_locale_lang('en_US', preset),
+														default='en_US')
+		self._menu_options['sys-encoding'] = Selector(_('Select locale encoding'),
+														lambda preset: select_locale_enc('utf-8', preset),
+														default='utf-8')
+		self._menu_options['harddrives'] = Selector(_('Select harddrives'), self._select_harddrives)
+		self._menu_options['disk_layouts'] = Selector(
+			_('Select disk layout'),
+			lambda x: select_disk_layout(storage['arguments'].get('harddrives', []), storage['arguments'].get(
+				'advanced', False)),
+			dependencies=['harddrives'])
+		self._menu_options['!encryption-password'] = Selector(_('Set encryption password'),
+																lambda x: self._select_encrypted_password(),
+																display_func=lambda x: secret(x) if x else 'None',
+																dependencies=['harddrives'])
+		self._menu_options['swap'] = Selector(_('Use swap'), lambda preset: ask_for_swap(preset), default=True)
+		self._menu_options['bootloader'] = Selector(
+			_('Select bootloader'),
+			lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False), preset),
+			default="systemd-bootctl" if has_uefi() else "grub-install")
+		self._menu_options['hostname'] = Selector(_('Specify hostname'), ask_hostname, default='archlinux')
 		# root password won't have preset value
-		self._menu_options['!root-password'] = \
-			Selector(
-				_('Set root password'),
-				lambda preset:self._set_root_password(),
-				display_func=lambda x: secret(x) if x else 'None')
-		self._menu_options['!superusers'] = \
-			Selector(
-				_('Specify superuser account'),
-				lambda preset: self._create_superuser_account(),
-				exec_func=lambda n,v:self._users_resynch(),
-				dependencies_not=['!root-password'],
-				display_func=lambda x: self._display_superusers())
-		self._menu_options['!users'] = \
-			Selector(
-				_('Specify user account'),
-				lambda x: self._create_user_account(),
-				default={},
-				exec_func=lambda n,v:self._users_resynch(),
-				display_func=lambda x: list(x.keys()) if x else '[]')
-		self._menu_options['profile'] = \
-			Selector(
-				_('Specify profile'),
-				lambda x: self._select_profile(),
-				display_func=lambda x: x if x else 'None')
-		self._menu_options['audio'] = \
-			Selector(
-				_('Select audio'),
-				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset))
-		self._menu_options['kernels'] = \
-			Selector(
-				_('Select kernels'),
-				lambda preset: select_kernel(preset),
-				default=['linux'])
-		self._menu_options['packages'] = \
-			Selector(
-				_('Additional packages to install'),
-				# lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
-				ask_additional_packages_to_install,
-				default=[])
-		self._menu_options['additional-repositories'] = \
-			Selector(
-				_('Additional repositories to enable'),
-				select_additional_repositories,
-				default=[])
-		self._menu_options['nic'] = \
-			Selector(
-				_('Configure network'),
-				ask_to_configure_network,
-				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
-				default={})
-		self._menu_options['timezone'] = \
-			Selector(
-				_('Select timezone'),
-				lambda preset: ask_for_a_timezone(preset),
-				default='UTC')
-		self._menu_options['ntp'] = \
-			Selector(
-				_('Set automatic time sync (NTP)'),
-				lambda preset: self._select_ntp(preset),
-				default=True)
-		self._menu_options['save_config'] = \
-			Selector(
-				_('Save configuration'),
-				lambda preset: save_config(self._data_store),
-				enabled=True,
-				no_store=True)
-		self._menu_options['install'] = \
-			Selector(
-				self._install_text(),
-				exec_func=lambda n,v: True if len(self._missing_configs()) == 0 else False,
-				preview_func=self._prev_install_missing_config,
-				enabled=True,
-				no_store=True)
+		self._menu_options['!root-password'] = Selector(_('Set root password'),
+														lambda preset: self._set_root_password(),
+														display_func=lambda x: secret(x) if x else 'None')
+		self._menu_options['!superusers'] = Selector(_('Specify superuser account'),
+														lambda preset: self._create_superuser_account(),
+														exec_func=lambda n, v: self._users_resynch(),
+														dependencies_not=['!root-password'],
+														display_func=lambda x: self._display_superusers())
+		self._menu_options['!users'] = Selector(_('Specify user account'),
+												lambda x: self._create_user_account(),
+												default={},
+												exec_func=lambda n, v: self._users_resynch(),
+												display_func=lambda x: list(x.keys()) if x else '[]')
+		self._menu_options['profile'] = Selector(_('Specify profile'),
+													lambda x: self._select_profile(),
+													display_func=lambda x: x if x else 'None')
+		self._menu_options['audio'] = Selector(
+			_('Select audio'), lambda preset: ask_for_audio_selection(
+				is_desktop_profile(storage['arguments'].get('profile', None)), preset))
+		self._menu_options['kernels'] = Selector(_('Select kernels'),
+													lambda preset: select_kernel(preset),
+													default=['linux'])
+		self._menu_options['packages'] = Selector(
+			_('Additional packages to install'),
+			# lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
+			ask_additional_packages_to_install,
+			default=[])
+		self._menu_options['additional-repositories'] = Selector(_('Additional repositories to enable'),
+																	select_additional_repositories,
+																	default=[])
+		self._menu_options['nic'] = Selector(_('Configure network'),
+												ask_to_configure_network,
+												display_func=lambda x: x
+												if x else _('Not configured, unavailable unless setup manually'),
+												default={})
+		self._menu_options['timezone'] = Selector(_('Select timezone'),
+													lambda preset: ask_for_a_timezone(preset),
+													default='UTC')
+		self._menu_options['ntp'] = Selector(_('Set automatic time sync (NTP)'),
+												lambda preset: self._select_ntp(preset),
+												default=True)
+		self._menu_options['save_config'] = Selector(_('Save configuration'),
+														lambda preset: save_config(self._data_store),
+														enabled=True,
+														no_store=True)
+		self._menu_options['install'] = Selector(self._install_text(),
+													exec_func=lambda n, v: True
+													if len(self._missing_configs()) == 0 else False,
+													preview_func=self._prev_install_missing_config,
+													enabled=True,
+													no_store=True)
 
-		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
+		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n, v: exit(1), enabled=True)
 
-	def _update_install_text(self, name :str = None, result :Any = None):
+	def _update_install_text(self, name: str = None, result: Any = None):
 		text = self._install_text()
 		self._menu_options.get('install').update_description(text)
 
-	def post_callback(self,name :str = None ,result :Any = None):
+	def post_callback(self, name: str = None, result: Any = None):
 		self._update_install_text(name, result)
 
 	def exit_callback(self):
@@ -598,6 +559,7 @@ class GlobalMenu(GeneralMenu):
 		return None
 
 	def _missing_configs(self) -> List[str]:
+
 		def check(s):
 			return self._menu_options.get(s).has_selection()
 
@@ -629,7 +591,7 @@ class GlobalMenu(GeneralMenu):
 		else:
 			return None
 
-	def _select_ntp(self, preset :bool = True) -> bool:
+	def _select_ntp(self, preset: bool = True) -> bool:
 		ntp = ask_ntp(preset)
 
 		value = str(ntp).lower()
@@ -637,7 +599,7 @@ class GlobalMenu(GeneralMenu):
 
 		return ntp
 
-	def _select_harddrives(self, old_harddrives : list) -> list:
+	def _select_harddrives(self, old_harddrives: list) -> list:
 		# old_haddrives = storage['arguments'].get('harddrives', [])
 		harddrives = select_harddrives(old_harddrives)
 
@@ -650,8 +612,7 @@ class GlobalMenu(GeneralMenu):
 			prompt = _(
 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
 				"WARNING: Archinstall won't check the suitability of this setup\n"
-				"Do you wish to continue?"
-			).format(storage['MOUNT_POINT'])
+				"Do you wish to continue?").format(storage['MOUNT_POINT'])
 
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 

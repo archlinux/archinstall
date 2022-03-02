@@ -2,6 +2,7 @@ import readline
 
 
 class TextInput:
+
 	def __init__(self, prompt: str, prefilled_text=''):
 		self._prompt = prompt
 		self._prefilled_text = prefilled_text

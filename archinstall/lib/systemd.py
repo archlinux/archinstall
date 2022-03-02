@@ -9,7 +9,8 @@ from .storage import storage
 
 
 class Ini:
-	def __init__(self, *args :str, **kwargs :str):
+
+	def __init__(self, *args: str, **kwargs: str):
 		"""
 		Limited INI handler for now.
 		Supports multiple keywords through dictionary list items.
@@ -49,6 +50,7 @@ class Networkd(Systemd):
 
 
 class Boot:
+
 	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.container_name = 'archinstall'
@@ -57,18 +59,16 @@ class Boot:
 
 	def __enter__(self) -> 'Boot':
 		if (existing_session := storage.get('active_boot', None)) and existing_session.instance != self.instance:
-			raise KeyError("Archinstall only supports booting up one instance, and a active session is already active and it is not this one.")
+			raise KeyError(
+				"Archinstall only supports booting up one instance, and a active session is already active and it is not this one."
+			)
 
 		if existing_session:
 			self.session = existing_session.session
 			self.ready = existing_session.ready
 		else:
 			self.session = SysCommandWorker([
-				'/usr/bin/systemd-nspawn',
-				'-D', self.instance.target,
-				'--timezone=off',
-				'-b',
-				'--no-pager',
+				'/usr/bin/systemd-nspawn', '-D', self.instance.target, '--timezone=off', '-b', '--no-pager',
 				'--machine', self.container_name
 			])
 			# '-P' or --console=pipe  could help us not having to do a bunch of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
@@ -82,13 +82,15 @@ class Boot:
 		storage['active_boot'] = self
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
+	def __exit__(self, *args: str, **kwargs: str) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
-			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
+			log(f"The error above occured in a temporary boot-up of the installation {self.instance}",
+				level=logging.ERROR,
+				fg="red")
 
 		shutdown = None
 
@@ -104,7 +106,8 @@ class Boot:
 		if self.session.exit_code == 0 or (shutdown and shutdown.exit_code == 0):
 			storage['active_boot'] = None
 		else:
-			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=shutdown.exit_code)
+			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}",
+								exit_code=shutdown.exit_code)
 
 	def __iter__(self) -> Iterator[str]:
 		if self.session:

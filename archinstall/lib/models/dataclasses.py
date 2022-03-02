@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
+
 @dataclass
 class VersionDef:
 	version_string: str
@@ -31,15 +32,13 @@ class VersionDef:
 			_, patch_version = versions[-1].split('-', 1)
 			return patch_version
 
-	def __eq__(self, other :'VersionDef') -> bool:
-		if other.major == self.major and \
-			other.minor == self.minor and \
-			other.patch == self.patch:
+	def __eq__(self, other: 'VersionDef') -> bool:
+		if other.major == self.major and other.minor == self.minor and other.patch == self.patch:
 
 			return True
 		return False
-		
-	def __lt__(self, other :'VersionDef') -> bool:
+
+	def __lt__(self, other: 'VersionDef') -> bool:
 		if self.major > other.major:
 			return False
 		elif self.minor and other.minor and self.minor > other.minor:
@@ -49,6 +48,7 @@ class VersionDef:
 
 	def __str__(self) -> str:
 		return self.version_string
+
 
 @dataclass
 class PackageSearchResult:
@@ -83,11 +83,12 @@ class PackageSearchResult:
 	def pkg_version(self) -> str:
 		return self.pkgver
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version
+
 
 @dataclass
 class PackageSearch:
@@ -101,11 +102,12 @@ class PackageSearch:
 	def __post_init__(self):
 		self.results = [PackageSearchResult(**x) for x in self.results]
 
+
 @dataclass
 class LocalPackage:
 	name: str
 	version: str
-	description:str
+	description: str
 	architecture: str
 	url: str
 	licenses: str
@@ -129,8 +131,8 @@ class LocalPackage:
 	def pkg_version(self) -> str:
 		return self.version
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version

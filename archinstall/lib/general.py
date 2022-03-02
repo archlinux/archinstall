@@ -28,38 +28,45 @@ else:
 		Create a epoll() implementation that simulates the epoll() behavior.
 		This so that the rest of the code doesn't need to worry weither we're using select() or epoll().
 		"""
+
 		def __init__(self) -> None:
 			self.sockets: Dict[str, Any] = {}
 			self.monitoring: Dict[int, Any] = {}
 
-		def unregister(self, fileno :int, *args :List[Any], **kwargs :Dict[str, Any]) -> None:
+		def unregister(self, fileno: int, *args: List[Any], **kwargs: Dict[str, Any]) -> None:
 			try:
-				del(self.monitoring[fileno])
+				del (self.monitoring[fileno])
 			except:
 				pass
 
-		def register(self, fileno :int, *args :int, **kwargs :Dict[str, Any]) -> None:
+		def register(self, fileno: int, *args: int, **kwargs: Dict[str, Any]) -> None:
 			self.monitoring[fileno] = True
 
-		def poll(self, timeout: float = 0.05, *args :str, **kwargs :Dict[str, Any]) -> List[Any]:
+		def poll(self, timeout: float = 0.05, *args: str, **kwargs: Dict[str, Any]) -> List[Any]:
 			try:
 				return [[fileno, 1] for fileno in select.select(list(self.monitoring.keys()), [], [], timeout)[0]]
 			except OSError:
 				return []
 
+
 from .exceptions import RequirementError, SysCallError
 from .output import log
 from .storage import storage
 
-def gen_uid(entropy_length :int = 256) -> str:
+
+def gen_uid(entropy_length: int = 256) -> str:
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
-def generate_password(length :int = 64) -> str:
-	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+
+def generate_password(length: int = 64) -> str:
+	haystack = string.printable  # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
-def multisplit(s :str, splitters :List[str]) -> str:
-	s = [s, ]
+
+def multisplit(s: str, splitters: List[str]) -> str:
+	s = [
+		s,
+	]
 	for key in splitters:
 		ns = []
 		for obj in s:
@@ -72,17 +79,19 @@ def multisplit(s :str, splitters :List[str]) -> str:
 		s = ns
 	return s
 
-def locate_binary(name :str) -> str:
+
+def locate_binary(name: str) -> str:
 	for PATH in os.environ['PATH'].split(':'):
 		for root, folders, files in os.walk(PATH):
 			for file in files:
 				if file == name:
 					return os.path.join(root, file)
-			break # Don't recurse
+			break  # Don't recurse
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
-def clear_vt100_escape_codes(data :Union[bytes, str]):
+
+def clear_vt100_escape_codes(data: Union[bytes, str]):
 	# https://stackoverflow.com/a/43627833/929999
 	if type(data) == bytes:
 		vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
@@ -94,12 +103,15 @@ def clear_vt100_escape_codes(data :Union[bytes, str]):
 
 	return data
 
-def json_dumps(*args :str, **kwargs :str) -> str:
+
+def json_dumps(*args: str, **kwargs: str) -> str:
 	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
+
 class JsonEncoder:
+
 	@staticmethod
-	def _encode(obj :Any) -> Any:
+	def _encode(obj: Any) -> Any:
 		"""
 		This JSON encoder function will try it's best to convert
 		any archinstall data structures, instances or variables into
@@ -136,7 +148,7 @@ class JsonEncoder:
 			return obj
 
 	@staticmethod
-	def _unsafe_encode(obj :Any) -> Any:
+	def _unsafe_encode(obj: Any) -> Any:
 		"""
 		Same as _encode() but it keeps dictionary keys starting with !
 		"""
@@ -154,35 +166,41 @@ class JsonEncoder:
 		else:
 			return JsonEncoder._encode(obj)
 
+
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
-	def _encode(self, obj :Any) -> Any:
+
+	def _encode(self, obj: Any) -> Any:
 		return JsonEncoder._encode(obj)
 
-	def encode(self, obj :Any) -> Any:
+	def encode(self, obj: Any) -> Any:
 		return super(JSON, self).encode(self._encode(obj))
+
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
-	def _encode(self, obj :Any) -> Any:
+
+	def _encode(self, obj: Any) -> Any:
 		return JsonEncoder._unsafe_encode(obj)
 
-	def encode(self, obj :Any) -> Any:
+	def encode(self, obj: Any) -> Any:
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
+
 class SysCommandWorker:
+
 	def __init__(self,
-		cmd :Union[str, List[str]],
-		callbacks :Optional[Dict[str, Any]] = None,
-		peak_output :Optional[bool] = False,
-		environment_vars :Optional[Dict[str, Any]] = None,
-		logfile :Optional[None] = None,
-		working_directory :Optional[str] = './',
-		remove_vt100_escape_codes_from_lines :bool = True):
+					cmd: Union[str, List[str]],
+					callbacks: Optional[Dict[str, Any]] = None,
+					peak_output: Optional[bool] = False,
+					environment_vars: Optional[Dict[str, Any]] = None,
+					logfile: Optional[None] = None,
+					working_directory: Optional[str] = './',
+					remove_vt100_escape_codes_from_lines: bool = True):
 
 		if not callbacks:
 			callbacks = {}
@@ -192,7 +210,7 @@ class SysCommandWorker:
 		if type(cmd) is str:
 			cmd = shlex.split(cmd)
 
-		cmd = list(cmd) # This is to please mypy
+		cmd = list(cmd)  # This is to please mypy
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore.
@@ -203,18 +221,18 @@ class SysCommandWorker:
 		self.callbacks = callbacks
 		self.peak_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
-		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
+		self.environment_vars = {**storage.get('CMD_LOCALE', {}), **environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
 
-		self.exit_code :Optional[int] = None
+		self.exit_code: Optional[int] = None
 		self._trace_log = b''
 		self._trace_log_pos = 0
 		self.poll_object = epoll()
-		self.child_fd :Optional[int] = None
-		self.started :Optional[float] = None
-		self.ended :Optional[float] = None
-		self.remove_vt100_escape_codes_from_lines :bool = remove_vt100_escape_codes_from_lines
+		self.child_fd: Optional[int] = None
+		self.started: Optional[float] = None
+		self.ended: Optional[float] = None
+		self.remove_vt100_escape_codes_from_lines: bool = remove_vt100_escape_codes_from_lines
 
 	def __contains__(self, key: bytes) -> bool:
 		"""
@@ -228,7 +246,7 @@ class SysCommandWorker:
 
 		return contains
 
-	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: str, **kwargs: Dict[str, Any]) -> Iterator[bytes]:
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
 			if line:
 				if self.remove_vt100_escape_codes_from_lines:
@@ -245,7 +263,7 @@ class SysCommandWorker:
 	def __enter__(self) -> 'SysCommandWorker':
 		return self
 
-	def __exit__(self, *args :str) -> None:
+	def __exit__(self, *args: str) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
@@ -265,7 +283,9 @@ class SysCommandWorker:
 			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}", self.exit_code)
+			raise SysCallError(
+				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}",
+				self.exit_code)
 
 	def is_alive(self) -> bool:
 		self.poll()
@@ -275,7 +295,7 @@ class SysCommandWorker:
 
 		return False
 
-	def write(self, data: bytes, line_ending :bool = True) -> int:
+	def write(self, data: bytes, line_ending: bool = True) -> int:
 		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
@@ -294,7 +314,7 @@ class SysCommandWorker:
 		self.make_sure_we_are_executing()
 		return self._trace_log_pos
 
-	def seek(self, pos :int) -> None:
+	def seek(self, pos: int) -> None:
 		self.make_sure_we_are_executing()
 		# Safety check to ensure 0 < pos < len(tracelog)
 		self._trace_log_pos = min(max(0, pos), len(self._trace_log))
@@ -377,19 +397,20 @@ class SysCommandWorker:
 
 		return True
 
-	def decode(self, encoding :str = 'UTF-8') -> str:
+	def decode(self, encoding: str = 'UTF-8') -> str:
 		return self._trace_log.decode(encoding)
 
 
 class SysCommand:
+
 	def __init__(self,
-		cmd :Union[str, List[str]],
-		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
-		start_callback :Optional[Callable[[Any], Any]] = None,
-		peak_output :Optional[bool] = False,
-		environment_vars :Optional[Dict[str, Any]] = None,
-		working_directory :Optional[str] = './',
-		remove_vt100_escape_codes_from_lines :bool = True):
+					cmd: Union[str, List[str]],
+					callbacks: Optional[Dict[str, Callable[[Any], Any]]] = None,
+					start_callback: Optional[Callable[[Any], Any]] = None,
+					peak_output: Optional[bool] = False,
+					environment_vars: Optional[Dict[str, Any]] = None,
+					working_directory: Optional[str] = './',
+					remove_vt100_escape_codes_from_lines: bool = True):
 
 		_callbacks = {}
 		if callbacks:
@@ -405,25 +426,25 @@ class SysCommand:
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
 
-		self.session :Optional[SysCommandWorker] = None
+		self.session: Optional[SysCommandWorker] = None
 		self.create_session()
 
 	def __enter__(self) -> Optional[SysCommandWorker]:
 		return self.session
 
-	def __exit__(self, *args :str, **kwargs :Dict[str, Any]) -> None:
+	def __exit__(self, *args: str, **kwargs: Dict[str, Any]) -> None:
 		# b''.join(sys_command('sync')) # No need to, since the underlying fs() object will call sync.
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
 
-	def __iter__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> Iterator[bytes]:
+	def __iter__(self, *args: List[Any], **kwargs: Dict[str, Any]) -> Iterator[bytes]:
 		if self.session:
 			for line in self.session:
 				yield line
 
-	def __getitem__(self, key :slice) -> Optional[bytes]:
+	def __getitem__(self, key: slice) -> Optional[bytes]:
 		if not self.session:
 			raise KeyError(f"SysCommand() does not have an active session.")
 		elif type(key) is slice:
@@ -432,14 +453,16 @@ class SysCommand:
 
 			return self.session._trace_log[start:end]
 		else:
-			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
+			raise ValueError(
+				"SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
-	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
+	def __repr__(self, *args: List[Any], **kwargs: Dict[str, Any]) -> str:
 		if self.session:
 			return self.session._trace_log.decode('UTF-8')
 		return ''
 
-	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
+	def __json__(
+			self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,
@@ -457,7 +480,12 @@ class SysCommand:
 		if self.session:
 			return self.session
 
-		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars, remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines) as session:
+		with SysCommandWorker(
+			self.cmd,
+			callbacks=self._callbacks,
+			peak_output=self.peak_output,
+			environment_vars=self.environment_vars,
+			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines) as session:
 			if not self.session:
 				self.session = session
 
@@ -470,7 +498,7 @@ class SysCommand:
 
 		return True
 
-	def decode(self, fmt :str = 'UTF-8') -> Optional[str]:
+	def decode(self, fmt: str = 'UTF-8') -> Optional[str]:
 		if self.session:
 			return self.session._trace_log.decode(fmt)
 		return None
@@ -500,6 +528,7 @@ def prerequisite_check() -> bool:
 
 	return True
 
+
 def reboot():
 	SysCommand("/usr/bin/reboot")
 
@@ -511,7 +540,7 @@ def pid_exists(pid: int) -> bool:
 		return False
 
 
-def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
+def run_custom_user_commands(commands: List[str], installation: Installer) -> None:
 	for index, command in enumerate(commands):
 		log(f'Executing custom command "{command}" ...', level=logging.INFO)
 
@@ -523,7 +552,8 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
-def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
+
+def json_stream_to_structure(id: str, stream: str, target: dict) -> bool:
 	""" Function to load a stream (file (as name) or valid JSON string into an existing dictionary
 	Returns true if it could be done
 	Return  false if operation could not be executed
@@ -535,22 +565,23 @@ def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
 			with open(Path(stream)) as fh:
 				target.update(json.load(fh))
 		except Exception as e:
-			log(f"{id} = {stream} does not contain a valid JSON format: {e}",level=logging.ERROR)
+			log(f"{id} = {stream} does not contain a valid JSON format: {e}", level=logging.ERROR)
 			return False
 	else:
-		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream",level=logging.DEBUG)
+		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream", level=logging.DEBUG)
 		# NOTE: failure of this check doesn't make stream 'real' invalid JSON, just it first level entry is not an object (i.e. dict), so it is not a format we handle.
 		if stream.strip().startswith('{') and stream.strip().endswith('}'):
 			try:
 				target.update(json.loads(stream))
 			except Exception as e:
-				log(f" {id} Contains an invalid JSON format : {e}",level=logging.ERROR)
+				log(f" {id} Contains an invalid JSON format : {e}", level=logging.ERROR)
 				return False
 		else:
-			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
+			log(f" {id} is neither a file nor is a JSON string:", level=logging.ERROR)
 			return False
 	return True
 
-def secret(x :str):
+
+def secret(x: str):
 	""" return * with len equal to to the input string """
 	return '*' * len(x)

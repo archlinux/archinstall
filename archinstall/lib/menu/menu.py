@@ -12,22 +12,22 @@ import logging
 if TYPE_CHECKING:
 	_: Any
 
+
 class Menu(TerminalMenu):
-	def __init__(
-		self,
-		title :str,
-		p_options :Union[List[str], Dict[str, Any]],
-		skip :bool = True,
-		multi :bool = False,
-		default_option :str = None,
-		sort :bool = True,
-		preset_values :Union[str, List[str]] = None,
-		cursor_index :int = None,
-		preview_command=None,
-		preview_size=0.75,
-		preview_title='Info',
-		**kwargs
-	):
+
+	def __init__(self,
+					title: str,
+					p_options: Union[List[str], Dict[str, Any]],
+					skip: bool = True,
+					multi: bool = False,
+					default_option: str = None,
+					sort: bool = True,
+					preset_values: Union[str, List[str]] = None,
+					cursor_index: int = None,
+					preview_command=None,
+					preview_size=0.75,
+					preview_title='Info',
+					**kwargs):
 		"""
 		Creates a new menu
 
@@ -76,24 +76,24 @@ class Menu(TerminalMenu):
 		# it options is a dictionary we use the values as entries of the list
 		# if options is a string object, each character becomes an entry
 		# if options is a list, we implictily build a copy to mantain immutability
-		if not isinstance(p_options,Iterable):
-			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu",fg="red")
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+		if not isinstance(p_options, Iterable):
+			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu", fg="red")
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>", level=logging.WARNING)
 			raise RequirementError("Menu() requires an iterable as option.")
 
-		if isinstance(p_options,dict):
+		if isinstance(p_options, dict):
 			options = list(p_options.keys())
 		else:
 			options = list(p_options)
 
 		if not options:
 			log(" * Menu didn't find any options to choose from * ", fg='red')
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>", level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
 
 		if any([o for o in options if not isinstance(o, str)]):
 			log(" * Menu options must be of type string * ", fg='red')
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
+			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>", level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires the options to be of type string')
 
 		if sort:
@@ -114,14 +114,14 @@ class Menu(TerminalMenu):
 			default = f'{default_option} (default)'
 			self.menu_options = [default] + [o for o in self.menu_options if default_option != o]
 
-		self.preselection(preset_values,cursor_index)
+		self.preselection(preset_values, cursor_index)
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
 		# defaults that can be changed up the stack
-		kwargs['clear_screen'] = kwargs.get('clear_screen',True)
-		kwargs['show_search_hint'] = kwargs.get('show_search_hint',True)
-		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor',True)
+		kwargs['clear_screen'] = kwargs.get('clear_screen', True)
+		kwargs['show_search_hint'] = kwargs.get('show_search_hint', True)
+		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor', True)
 		super().__init__(
 			menu_entries=self.menu_options,
 			title=menu_title,
@@ -144,7 +144,9 @@ class Menu(TerminalMenu):
 		idx = self.show()
 		if idx is not None:
 			if isinstance(idx, (list, tuple)):
-				return [self.default_option if ' (default)' in self.menu_options[i] else self.menu_options[i] for i in idx]
+				return [
+					self.default_option if ' (default)' in self.menu_options[i] else self.menu_options[i] for i in idx
+				]
 			else:
 				selected = self.menu_options[idx]
 				if ' (default)' in selected and self.default_option:
@@ -166,22 +168,23 @@ class Menu(TerminalMenu):
 
 		return ret
 
-	def set_cursor_pos(self,pos :int):
+	def set_cursor_pos(self, pos: int):
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
 			self._view.active_menu_index = 0  # we define a default
 
-	def set_cursor_pos_entry(self,value :str):
+	def set_cursor_pos_entry(self, value: str):
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 
-	def preselection(self,preset_values :list = [],cursor_index :int = None):
+	def preselection(self, preset_values: list = [], cursor_index: int = None):
+
 		def from_preset_to_cursor():
 			if preset_values:
 				# if the value is not extant return 0 as cursor index
 				try:
-					if isinstance(preset_values,str):
+					if isinstance(preset_values, str):
 						self.cursor_index = self.menu_options.index(self.preset_values)
 					else:  # should return an error, but this is smoother
 						self.cursor_index = self.menu_options.index(self.preset_values[0])
@@ -195,12 +198,12 @@ class Menu(TerminalMenu):
 
 		self.preset_values = preset_values
 		if self.default_option:
-			if isinstance(preset_values,str) and self.default_option == preset_values:
+			if isinstance(preset_values, str) and self.default_option == preset_values:
 				self.preset_values = f"{preset_values} (default)"
-			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
+			elif isinstance(preset_values, (list, tuple)) and self.default_option in preset_values:
 				idx = preset_values.index(self.default_option)
 				self.preset_values[idx] = f"{preset_values[idx]} (default)"
 		if cursor_index is None or not self.multi:
 			from_preset_to_cursor()
-		if not self.multi: # Not supported by the infraestructure
+		if not self.multi:  # Not supported by the infraestructure
 			self.preset_values = None

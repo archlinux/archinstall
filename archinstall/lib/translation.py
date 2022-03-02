@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 
 class Languages:
+
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
 
@@ -32,6 +33,7 @@ class Languages:
 
 
 class DeferredTranslation:
+
 	def __init__(self, message: str):
 		self.message = message
 
@@ -67,6 +69,7 @@ class DeferredTranslation:
 
 
 class Translation:
+
 	def __init__(self, locales_dir):
 		self._languages = {}
 

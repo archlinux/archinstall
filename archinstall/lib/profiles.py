@@ -22,16 +22,19 @@ from .storage import storage
 from .exceptions import ProfileNotFound
 
 
-def grab_url_data(path :str) -> str:
-	safe_path = path[: path.find(':') + 1] + ''.join([item if item in ('/', '?', '=', '&') else urllib.parse.quote(item) for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))])
+def grab_url_data(path: str) -> str:
+	safe_path = path[:path.find(':') + 1] + ''.join([
+		item if item in ('/', '?', '=', '&') else urllib.parse.quote(item)
+		for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))
+	])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
-	return response.read() # bytes?
+	return response.read()  # bytes?
 
 
-def is_desktop_profile(profile :str) -> bool:
+def is_desktop_profile(profile: str) -> bool:
 	if str(profile) == 'Profile(desktop)':
 		return True
 
@@ -48,11 +51,9 @@ def is_desktop_profile(profile :str) -> bool:
 	return False
 
 
-def list_profiles(
-	filter_irrelevant_macs :bool = True,
-	subpath :str = '',
-	filter_top_level_profiles :bool = False
-) -> Dict[str, Dict[str, Union[str, bool]]]:
+def list_profiles(filter_irrelevant_macs: bool = True,
+					subpath: str = '',
+					filter_top_level_profiles: bool = False) -> Dict[str, Dict[str, Union[str, bool]]]:
 	# TODO: Grab from github page as well, not just local static files
 
 	if filter_irrelevant_macs:
@@ -78,7 +79,11 @@ def list_profiles(
 						if len(first_line) and first_line[0] == '#':
 							description = first_line[1:].strip()
 
-					cache[file[:-3]] = {'path': os.path.join(root, file), 'description': description, 'tailored': tailored}
+					cache[file[:-3]] = {
+						'path': os.path.join(root, file),
+						'description': description,
+						'tailored': tailored
+					}
 			break
 
 	# Grab profiles from upstream URL
@@ -101,7 +106,11 @@ def list_profiles(
 						continue
 					tailored = True
 
-				cache[profile[:-3]] = {'path': os.path.join(storage["UPSTREAM_URL"] + subpath, profile), 'description': profile_list[profile], 'tailored': tailored}
+				cache[profile[:-3]] = {
+					'path': os.path.join(storage["UPSTREAM_URL"] + subpath, profile),
+					'description': profile_list[profile],
+					'tailored': tailored
+				}
 
 	if filter_top_level_profiles:
 		for profile in list(cache.keys()):
@@ -112,7 +121,8 @@ def list_profiles(
 
 
 class Script:
-	def __init__(self, profile :str, installer :Optional[Installer] = None):
+
+	def __init__(self, profile: str, installer: Optional[Installer] = None):
 		"""
 		:param profile: A string representing either a boundled profile, a local python file
 			or a remote path (URL) to a python script-profile. Three examples:
@@ -121,18 +131,18 @@ class Script:
 			* profile: /path/to/profile.py
 		"""
 		self.profile = profile
-		self.installer = installer # TODO: Appears not to be used anymore?
+		self.installer = installer  # TODO: Appears not to be used anymore?
 		self.converted_path = None
 		self.spec = None
 		self.examples = {}
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
 
-	def __enter__(self, *args :str, **kwargs :str) -> ModuleType:
+	def __enter__(self, *args: str, **kwargs: str) -> ModuleType:
 		self.execute()
 		return sys.modules[self.namespace]
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
+	def __exit__(self, *args: str, **kwargs: str) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		if len(args) >= 2 and args[1]:
 			raise args[1]
@@ -140,7 +150,7 @@ class Script:
 		if self.original_namespace:
 			self.namespace = self.original_namespace
 
-	def localize_path(self, profile_path :str) -> str:
+	def localize_path(self, profile_path: str) -> str:
 		if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 			if not self.converted_path:
 				self.converted_path = f"/tmp/{os.path.basename(self.profile).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
@@ -178,7 +188,7 @@ class Script:
 		else:
 			raise ProfileNotFound(f"Cannot handle scheme {parsed_url.scheme}")
 
-	def load_instructions(self, namespace :Optional[str] = None) -> 'Script':
+	def load_instructions(self, namespace: Optional[str] = None) -> 'Script':
 		if namespace:
 			self.namespace = namespace
 
@@ -198,13 +208,14 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer :Optional[Installer], path :str):
+
+	def __init__(self, installer: Optional[Installer], path: str):
 		super(Profile, self).__init__(path, installer)
 
-	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:
+	def __dump__(self, *args: str, **kwargs: str) -> Dict[str, str]:
 		return {'path': self.path}
 
-	def __repr__(self, *args :str, **kwargs :str) -> str:
+	def __repr__(self, *args: str, **kwargs: str) -> str:
 		return f'Profile({os.path.basename(self.profile)})'
 
 	def install(self) -> ModuleType:
@@ -295,7 +306,8 @@ class Profile(Script):
 
 
 class Application(Profile):
-	def __repr__(self, *args :str, **kwargs :str):
+
+	def __repr__(self, *args: str, **kwargs: str):
 		return f'Application({os.path.basename(self.profile)})'
 
 	@property

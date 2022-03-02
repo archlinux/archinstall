@@ -9,6 +9,7 @@ from .output import log
 
 
 class ConfigurationOutput:
+
 	def __init__(self, config: Dict):
 		"""
 		Configuration output handler to parse the existing configuration data structure and prepare for output on the
@@ -55,11 +56,17 @@ class ConfigurationOutput:
 				self._user_config[key] = self._config[key]
 
 	def user_config_to_json(self) -> str:
-		return json.dumps({
-			'config_version': storage['__version__'],  # Tells us what version was used to generate the config
-			**self._user_config,  # __version__ will be overwritten by old version definition found in config
-			'version': storage['__version__']
-		}, indent=4, sort_keys=True, cls=JSON)
+		return json.dumps(
+			{
+				'config_version':
+				storage['__version__'],  # Tells us what version was used to generate the config
+				**self._user_config,  # __version__ will be overwritten by old version definition found in config
+				'version':
+				storage['__version__']
+			},
+			indent=4,
+			sort_keys=True,
+			cls=JSON)
 
 	def disk_layout_to_json(self) -> Optional[str]:
 		if self._disk_layout:
@@ -84,35 +91,34 @@ class ConfigurationOutput:
 
 		print()
 
-	def _is_valid_path(self, dest_path :Path) -> bool:
+	def _is_valid_path(self, dest_path: Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
-			log(
-				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
-				fg="yellow"
-			)
+			log('Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.
+				format(dest_path.resolve()),
+				fg="yellow")
 			return False
 		return True
 
-	def save_user_config(self, dest_path :Path = None):
+	def save_user_config(self, dest_path: Path = None):
 		if self._is_valid_path(dest_path):
 			with open(dest_path / self._user_config_file, 'w') as config_file:
 				config_file.write(self.user_config_to_json())
 
-	def save_user_creds(self, dest_path :Path = None):
+	def save_user_creds(self, dest_path: Path = None):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
 				with open(target, 'w') as config_file:
 					config_file.write(user_creds)
 
-	def save_disk_layout(self, dest_path :Path = None):
+	def save_disk_layout(self, dest_path: Path = None):
 		if self._is_valid_path(dest_path):
 			if disk_layout := self.disk_layout_to_json():
 				target = dest_path / self._disk_layout_file
 				with target.open('w') as config_file:
 					config_file.write(disk_layout)
 
-	def save(self, dest_path :Path = None):
+	def save(self, dest_path: Path = None):
 		if not dest_path:
 			dest_path = self._default_save_path
 

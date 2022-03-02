@@ -1,10 +1,10 @@
 from typing import Optional, List
 from pydantic import BaseModel
-
 """
 This python file is not in use.
 Pydantic is not a builtin, and we use the dataclasses.py instead!
 """
+
 
 class VersionDef(BaseModel):
 	version_string: str
@@ -35,15 +35,12 @@ class VersionDef(BaseModel):
 			_, patch_version = versions[-1].split('-', 1)
 			return patch_version
 
-	def __eq__(self, other :'VersionDef') -> bool:
-		if other.major == self.major and \
-			other.minor == self.minor and \
-			other.patch == self.patch:
-
+	def __eq__(self, other: 'VersionDef') -> bool:
+		if other.major == self.major and other.minor == self.minor and other.patch == self.patch:
 			return True
 		return False
-		
-	def __lt__(self, other :'VersionDef') -> bool:
+
+	def __lt__(self, other: 'VersionDef') -> bool:
 		if self.major > other.major:
 			return False
 		elif self.minor and other.minor and self.minor > other.minor:
@@ -87,10 +84,10 @@ class PackageSearchResult(BaseModel):
 	def pkg_version(self) -> str:
 		return self.pkgver
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version
 
 
@@ -104,7 +101,7 @@ class PackageSearch(BaseModel):
 class LocalPackage(BaseModel):
 	name: str
 	version: str
-	description:str
+	description: str
 	architecture: str
 	url: str
 	licenses: str
@@ -127,8 +124,8 @@ class LocalPackage(BaseModel):
 	def pkg_version(self) -> str:
 		return self.version
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other: 'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version

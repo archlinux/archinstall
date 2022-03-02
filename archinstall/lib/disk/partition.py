@@ -15,15 +15,17 @@ from ..output import log
 from ..general import SysCommand
 from .btrfs import get_subvolumes_from_findmnt, BtrfsSubvolume
 
+
 class Partition:
+
 	def __init__(self,
-		path: str,
-		block_device: BlockDevice,
-		part_id :Optional[str] = None,
-		filesystem :Optional[str] = None,
-		mountpoint :Optional[str] = None,
-		encrypted :bool = False,
-		autodetect_filesystem :bool = True):
+					path: str,
+					block_device: BlockDevice,
+					part_id: Optional[str] = None,
+					filesystem: Optional[str] = None,
+					mountpoint: Optional[str] = None,
+					encrypted: bool = False,
+					autodetect_filesystem: bool = True):
 
 		if not part_id:
 			part_id = os.path.basename(path)
@@ -54,7 +56,7 @@ class Partition:
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
 
-	def __lt__(self, left_comparitor :BlockDevice) -> bool:
+	def __lt__(self, left_comparitor: BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
 		else:
@@ -63,7 +65,7 @@ class Partition:
 		# The goal is to check if /dev/nvme0n1p1 comes before /dev/nvme0n1p5
 		return self.path < left_comparitor
 
-	def __repr__(self, *args :str, **kwargs :str) -> str:
+	def __repr__(self, *args: str, **kwargs: str) -> str:
 		mount_repr = ''
 		if self.mountpoint:
 			mount_repr = f", mounted={self.mountpoint}"
@@ -266,12 +268,13 @@ class Partition:
 			return True
 		return False
 
-	def detect_inner_filesystem(self, password :str) -> Optional[str]:
+	def detect_inner_filesystem(self, password: str) -> Optional[str]:
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
 		from ..luks import luks2
 
 		try:
-			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
+			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password,
+						auto_unmount=True) as unlocked_device:
 				return unlocked_device.filesystem
 		except SysCallError:
 			return None
@@ -290,14 +293,15 @@ class Partition:
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		iterations = 0
-		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and (iterations := iterations + 1) < 10:
+		while SysCommand(f"/usr/bin/umount -R {temporary_mountpoint}").exit_code != 0 and iterations < 10:
 			time.sleep(1)
+			iterations += 1
 
 		temporary_path.rmdir()
 
 		return True if files > 0 else False
 
-	def encrypt(self, *args :str, **kwargs :str) -> str:
+	def encrypt(self, *args: str, **kwargs: str) -> str:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
@@ -306,7 +310,11 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = []) -> bool:
+	def format(self,
+				filesystem: Optional[str] = None,
+				path: Optional[str] = None,
+				log_formatting: bool = True,
+				options: List[str] = []) -> bool:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -393,7 +401,7 @@ class Partition:
 
 		return True
 
-	def find_parent_of(self, data :Dict[str, Any], name :str, parent :Optional[str] = None) -> Optional[str]:
+	def find_parent_of(self, data: Dict[str, Any], name: str, parent: Optional[str] = None) -> Optional[str]:
 		if data['name'] == name:
 			return parent
 		elif 'children' in data:
@@ -401,7 +409,7 @@ class Partition:
 				if parent := self.find_parent_of(child, name, parent=data['name']):
 					return parent
 
-	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
+	def mount(self, target: str, fs: Optional[str] = None, options: str = '') -> bool:
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
 			if not fs:
@@ -440,7 +448,7 @@ class Partition:
 
 	def unmount(self) -> bool:
 		worker = SysCommand(f"/usr/bin/umount {self.path}")
-			
+
 		# Without to much research, it seams that low error codes are errors.
 		# And above 8k is indicators such as "/dev/x not mounted.".
 		# So anything in between 0 and 8k are errors (?).
@@ -468,7 +476,7 @@ class Partition:
 		return True
 
 
-def get_mount_fs_type(fs :str) -> str:
+def get_mount_fs_type(fs: str) -> str:
 	if fs == 'ntfs':
 		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
 	elif fs == 'fat32':

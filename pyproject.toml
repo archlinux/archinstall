@@ -44,3 +44,16 @@ exclude = "tests"
 [tool.bandit]
 targets = ["ourkvm"]
 exclude = ["/tests"]
+
+[tool.yapfignore]
+ignore_patterns = [
+  "**/simple_menu.py",
+  "venv/",
+  ".venv/",
+]
+
+[tool.yapf]
+BASED_ON_STYLE = "pep8"
+COLUMN_LIMIT = 120
+USE_TABS = true
+CONTINUATION_ALIGN_STYLE = "VALIGN-RIGHT"

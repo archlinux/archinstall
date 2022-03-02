@@ -8,8 +8,9 @@ from .storage import storage
 
 
 class Journald:
+
 	@staticmethod
-	def log(message :str, level :int = logging.DEBUG) -> None:
+	def log(message: str, level: int = logging.DEBUG) -> None:
 		try:
 			import systemd.journal  # type: ignore
 		except ModuleNotFoundError:
@@ -27,6 +28,7 @@ class Journald:
 
 # TODO: Replace log() for session based logging.
 class SessionLogging:
+
 	def __init__(self):
 		pass
 
@@ -47,7 +49,7 @@ def supports_color() -> bool:
 
 # Heavily influenced by: https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
 # Color options here: https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
-def stylize_output(text: str, *opts :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> str:
+def stylize_output(text: str, *opts: str, **kwargs: Union[str, int, Dict[str, Union[str, int]]]) -> str:
 	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
 	color_names = ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')
 	foreground = {color_names[x]: '3%s' % x for x in range(8)}
@@ -70,7 +72,7 @@ def stylize_output(text: str, *opts :str, **kwargs :Union[str, int, Dict[str, Un
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
 
-def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> None:
+def log(*args: str, **kwargs: Union[str, int, Dict[str, Union[str, int]]]) -> None:
 	string = orig_string = ' '.join([str(x) for x in args])
 
 	# Attempt to colorize the output if supported

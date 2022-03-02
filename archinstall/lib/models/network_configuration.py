@@ -62,14 +62,12 @@ class NetworkConfiguration:
 				log('Manual nic configuration with no auto DHCP requires an IP address', fg='red')
 				exit(1)
 
-			return NetworkConfiguration(
-				type,
-				iface=config.get('iface', ''),
-				ip=ip,
-				gateway=config.get('gateway', ''),
-				dns=config.get('dns', []),
-				dhcp=False
-			)
+			return NetworkConfiguration(type,
+										iface=config.get('iface', ''),
+										ip=ip,
+										gateway=config.get('gateway', ''),
+										dns=config.get('dns', []),
+										dhcp=False)
 		else:
 			return NetworkConfiguration(type)
 
@@ -86,7 +84,8 @@ class NetworkConfiguration:
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
 		if self.is_iso():
-			installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
+			installation.copy_iso_network_config(
+				enable_services=True)  # Sources the ISO network configuration to the install medium.
 		elif self.is_network_manager():
 			installation.add_additional_packages("networkmanager")
 			installation.enable_service('NetworkManager.service')

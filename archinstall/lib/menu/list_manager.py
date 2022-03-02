@@ -91,8 +91,15 @@ from ..general import RequirementError
 from os import system
 from copy import copy
 
+
 class ListManager:
-	def __init__(self,prompt :str, base_list :list ,base_actions :list = None,null_action :str = None, default_action :str = None):
+
+	def __init__(self,
+					prompt: str,
+					base_list: list,
+					base_actions: list = None,
+					null_action: str = None,
+					default_action: str = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -123,12 +130,15 @@ class ListManager:
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
 		self.separator = '==>'
-		self.bottom_list = [self.confirm_action,self.cancel_action]
+		self.bottom_list = [self.confirm_action, self.cancel_action]
 		self.bottom_item = [self.cancel_action]
-		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
+		self.base_actions = base_actions if base_actions else [
+			str(_('Add')), str(_('Copy')), str(_('Edit')),
+			str(_('Delete'))
+		]
 
 		self.base_data = base_list
-		self.data = copy(base_list) # as refs, changes are immediate
+		self.data = copy(base_list)  # as refs, changes are immediate
 		# default values for the null case
 		self.target = None
 		self.action = self.null_action
@@ -143,11 +153,7 @@ class ListManager:
 				options += [self.default_action]
 			options += self.bottom_list
 			system('clear')
-			target = Menu(self.prompt,
-				options,
-				sort=False,
-				clear_screen=False,
-				clear_menu_on_exit=False).run()
+			target = Menu(self.prompt, options, sort=False, clear_screen=False, clear_menu_on_exit=False).run()
 
 			if not target or target in self.bottom_list:
 				break
@@ -159,7 +165,7 @@ class ListManager:
 				self.action = self.default_action
 				self.exec_action()
 				continue
-			if isinstance(self.data,dict):
+			if isinstance(self.data, dict):
 				key = list(self.data.keys())[self.data_formatted.index(target)]
 				self.target = {key: self.data[key]}
 			else:
@@ -172,21 +178,22 @@ class ListManager:
 		else:
 			return self.data
 
-	def run_actions(self,prompt_data=None):
+	def run_actions(self, prompt_data=None):
 		options = self.action_list() + self.bottom_item
 		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
 		self.action = Menu(prompt,
-				options,
-				sort=False,
-				skip=False,
-				clear_screen=False,
-				clear_menu_on_exit=False,
-				preset_values=self.bottom_item,
-				show_search_hint=False).run()
+							options,
+							sort=False,
+							skip=False,
+							clear_screen=False,
+							clear_menu_on_exit=False,
+							preset_values=self.bottom_item,
+							show_search_hint=False).run()
 		if self.action == self.cancel_action:
 			return False
 		else:
 			return self.exec_action()
+
 	"""
 	The following methods are expected to be overwritten by the user if the needs of the list are beyond the simple case
 	"""
@@ -196,10 +203,10 @@ class ListManager:
 		method to get the data in a format suitable to be shown
 		It is executed once for run loop and processes the whole self.data structure
 		"""
-		if isinstance(self.data,dict):
-			return list(map(lambda x:f"{x} : {self.data[x]}",self.data))
+		if isinstance(self.data, dict):
+			return list(map(lambda x: f"{x} : {self.data[x]}", self.data))
 		else:
-			return list(map(lambda x:str(x),self.data))
+			return list(map(lambda x: str(x), self.data))
 
 	def action_list(self):
 		"""
@@ -217,42 +224,42 @@ class ListManager:
 		"""
 		# TODO guarantee unicity
 
-		if isinstance(self.data,list):
+		if isinstance(self.data, list):
 			if self.action == str(_('Add')):
-				self.target = TextInput(_('Add :'),None).run()
+				self.target = TextInput(_('Add :'), None).run()
 				self.data.append(self.target)
 			if self.action == str(_('Copy')):
 				while True:
-					target = TextInput(_('Copy to :'),self.target).run()
+					target = TextInput(_('Copy to :'), self.target).run()
 					if target != self.target:
 						self.data.append(self.target)
 						break
 			elif self.action == str(_('Edit')):
 				tgt = self.target
 				idx = self.data.index(self.target)
-				result = TextInput(_('Edite :'),tgt).run()
+				result = TextInput(_('Edite :'), tgt).run()
 				self.data[idx] = result
 			elif self.action == str(_('Delete')):
 				del self.data[self.data.index(self.target)]
-		elif isinstance(self.data,dict):
+		elif isinstance(self.data, dict):
 			# allows overwrites
 			if self.target:
-				origkey,origval = list(self.target.items())[0]
+				origkey, origval = list(self.target.items())[0]
 			else:
 				origkey = None
 				origval = None
 			if self.action == str(_('Add')):
-				key = TextInput(_('Key :'),None).run()
-				value = TextInput(_('Value :'),None).run()
+				key = TextInput(_('Key :'), None).run()
+				value = TextInput(_('Value :'), None).run()
 				self.data[key] = value
 			if self.action == str(_('Copy')):
 				while True:
-					key = TextInput(_('Copy to new key:'),origkey).run()
+					key = TextInput(_('Copy to new key:'), origkey).run()
 					if key != origkey:
 						self.data[key] = origval
 						break
 			elif self.action == str(_('Edit')):
-				value = TextInput(_(f'Edit {origkey} :'),origval).run()
+				value = TextInput(_(f'Edit {origkey} :'), origval).run()
 				self.data[origkey] = value
 			elif self.action == str(_('Delete')):
 				del self.data[origkey]
@@ -263,7 +270,7 @@ class ListManager:
 if __name__ == "__main__":
 	# opciones = ['uno','dos','tres','cuatro']
 	# opciones = archinstall.list_mirrors()
-	opciones = {'uno':1,'dos':2,'tres':3,'cuatro':4}
+	opciones = {'uno': 1, 'dos': 2, 'tres': 3, 'cuatro': 4}
 	# acciones = ['editar','borrar','añadir']
-	opciones = ListManager('Vamos alla',opciones,None,_('Add')).run()
+	opciones = ListManager('Vamos alla', opciones, None, _('Add')).run()
 	print(opciones)

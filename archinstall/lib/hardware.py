@@ -51,11 +51,7 @@ AVAILABLE_GFX_DRIVERS = {
 		"intel-media-driver",
 		"vulkan-intel",
 	],
-	"Nvidia (open-source)": [
-		"mesa",
-		"xf86-video-nouveau",
-		"libva-mesa-driver"
-	],
+	"Nvidia (open-source)": ["mesa", "xf86-video-nouveau", "libva-mesa-driver"],
 	"Nvidia (proprietary)": ["nvidia"],
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
@@ -84,10 +80,7 @@ def meminfo(key: Optional[str] = None) -> Union[dict[str, int], Optional[int]]:
 	or the value of the given key of said dict.
 	"""
 	with MEMINFO.open() as file:
-		mem_info = {
-			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
-			for line in file
-		}
+		mem_info = {(columns := line.strip().split())[0].rstrip(':'): int(columns[1]) for line in file}
 
 	if key is None:
 		return mem_info
@@ -104,7 +97,6 @@ def has_cpu_vendor(vendor_id: str) -> bool:
 
 
 has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
-
 
 has_intel_cpu = partial(has_cpu_vendor, "GenuineIntel")
 
@@ -185,5 +177,6 @@ def is_vm() -> bool:
 	except SysCallError as error:
 		log(f"System is not running in a VM: {error}", level=logging.DEBUG)
 	return None
+
 
 # TODO: Add more identifiers

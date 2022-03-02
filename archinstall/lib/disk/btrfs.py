@@ -15,27 +15,27 @@ from ..general import SysCommand
 from ..output import log
 from ..exceptions import SysCallError
 
+
 @dataclass
 class BtrfsSubvolume:
-	target :str
-	source :str
-	fstype :str
-	name :str
-	options :str
-	root :bool = False
+	target: str
+	source: str
+	fstype: str
+	name: str
+	options: str
+	root: bool = False
 
-def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
+
+def get_subvolumes_from_findmnt(struct: Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
 	if '@' in struct['source']:
 		subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
 		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
-		yield BtrfsSubvolume(
-			target=struct['target'],
-			source=struct['source'],
-			fstype=struct['fstype'],
-			name=subvolume,
-			options=struct['options'],
-			root=index == 0
-		)
+		yield BtrfsSubvolume(target=struct['target'],
+								source=struct['source'],
+								fstype=struct['fstype'],
+								name=subvolume,
+								options=struct['options'],
+								root=index == 0)
 		index += 1
 
 		for child in struct.get('children', []):
@@ -43,7 +43,8 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 				yield item
 				index += 1
 
-def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
+
+def get_subvolume_info(path: pathlib.Path) -> Dict[str, Any]:
 	try:
 		output = SysCommand(f"btrfs subvol show {path}").decode()
 	except SysCallError as error:
@@ -57,7 +58,8 @@ def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
 
 	return result
 
-def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str], force=False) -> bool:
+
+def mount_subvolume(installation: Installer, subvolume_location: Union[pathlib.Path, str], force=False) -> bool:
 	"""
 	This function uses mount to mount a subvolume on a given device, at a given location with a given subvolume name.
 
@@ -68,7 +70,9 @@ def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.P
 	This function is DEPRECATED. you can get the same result creating a partition dict like any other partition, and using the standard mount procedure.
 	Only change partition['device_instance'].path with the apropriate bind name: real_partition_path[/subvolume_name]
 	"""
-	log("[Deprecated] function btrfs.mount_subvolume is deprecated. See code for alternatives",fg="yellow",level=logging.WARNING)
+	log("[Deprecated] function btrfs.mount_subvolume is deprecated. See code for alternatives",
+		fg="yellow",
+		level=logging.WARNING)
 	installation_mountpoint = installation.target
 	if type(installation_mountpoint) == str:
 		installation_mountpoint = pathlib.Path(installation_mountpoint)
@@ -93,7 +97,8 @@ def mount_subvolume(installation :Installer, subvolume_location :Union[pathlib.P
 
 	return SysCommand(f"mount {mount_information['source']} {target} -o subvol=@{subvolume_location}").exit_code == 0
 
-def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
+
+def create_subvolume(installation: Installer, subvolume_location: Union[pathlib.Path, str]) -> bool:
 	"""
 	This function uses btrfs to create a subvolume.
 
@@ -126,7 +131,8 @@ def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
 
-def _has_option(option :str,options :list) -> bool:
+
+def _has_option(option: str, options: list) -> bool:
 	""" auxiliary routine to check if an option is present in a list.
 	we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
 	"""
@@ -137,8 +143,11 @@ def _has_option(option :str,options :list) -> bool:
 			return True
 	return False
 
-def manage_btrfs_subvolumes(installation :Installer,
-	partition :Dict[str, str],) -> list:
+
+def manage_btrfs_subvolumes(
+	installation: Installer,
+	partition: Dict[str, str],
+) -> list:
 	from copy import deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:
@@ -170,14 +179,14 @@ def manage_btrfs_subvolumes(installation :Installer,
 			if not right_hand:
 				location = None
 			# just a string. per backward compatibility the mount point
-			elif isinstance(right_hand,str):
+			elif isinstance(right_hand, str):
 				location = right_hand
 			# a dict. two elements 'mountpoint' (obvious) and and a mount options list ¿?
-			elif isinstance(right_hand,dict):
-				location = right_hand.get('mountpoint',None)
-				subvol_options = right_hand.get('options',[])
+			elif isinstance(right_hand, dict):
+				location = right_hand.get('mountpoint', None)
+				subvol_options = right_hand.get('options', [])
 			# we create the subvolume
-			create_subvolume(installation,name)
+			create_subvolume(installation, name)
 			# Make the nodatacow processing now
 			# It will be the main cause of creation of subvolumes which are not to be mounted
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
@@ -193,7 +202,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 			# in this way only zstd compression is activaded
 			# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
 			if 'compress' in subvol_options:
-				if not _has_option('compress',partition.get('filesystem',{}).get('mount_options',[])):
+				if not _has_option('compress', partition.get('filesystem', {}).get('mount_options', [])):
 					if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 						raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 				# entry is deleted so compress doesn't propagate to the mount options
@@ -215,7 +224,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 				fake_partition['subvolume'] = name
 				# here we add the special mount options for the subvolume, if any.
 				# if the original partition['options'] is not a list might give trouble
-				if fake_partition.get('filesystem',{}).get('mount_options',[]):
+				if fake_partition.get('filesystem', {}).get('mount_options', []):
 					fake_partition['filesystem']['mount_options'].extend(subvol_options)
 				else:
 					fake_partition['filesystem']['mount_options'] = subvol_options

@@ -8,3 +8,5 @@ show-source = True
 statistics = True
 builtins = _
 per-file-ignores = __init__.py:F401,F403,F405 simple_menu.py:C901,W503 guided.py:C901 network_configuration.py:F821
+# this is a file pulled in from an external repo
+exclude = **/simple_menu.py

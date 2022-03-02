@@ -1,6 +1,7 @@
 from typing import List
 
-def valid_parted_position(pos :str) -> bool:
+
+def valid_parted_position(pos: str) -> bool:
 	if not len(pos):
 		return False
 
@@ -33,9 +34,12 @@ def fs_types() -> List[str]:
 	return [
 		"btrfs",
 		"ext2",
-		"ext3", "ext4",  # `man parted` allows these
-		"fat16", "fat32",
-		"hfs", "hfs+",  # "hfsx", not included in `man parted`
+		"ext3",
+		"ext4",  # `man parted` allows these
+		"fat16",
+		"fat32",
+		"hfs",
+		"hfs+",  # "hfsx", not included in `man parted`
 		"linux-swap",
 		"ntfs",
 		"reiserfs",
@@ -44,5 +48,5 @@ def fs_types() -> List[str]:
 	]
 
 
-def valid_fs_type(fstype :str) -> bool:
+def valid_fs_type(fstype: str) -> bool:
 	return fstype.lower() in fs_types()

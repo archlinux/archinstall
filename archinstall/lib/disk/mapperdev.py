@@ -12,9 +12,10 @@ from ..output import log
 if TYPE_CHECKING:
 	from .btrfs import BtrfsSubvolume
 
+
 @dataclass
 class MapperDev:
-	mappername :str
+	mappername: str
 
 	@property
 	def name(self):
@@ -37,12 +38,15 @@ class MapperDev:
 
 				for slave in glob.glob(f"/sys/class/block/{dm_device.name}/slaves/*"):
 					partition_belonging_to_dmcrypt_device = pathlib.Path(slave).name
-					
+
 					try:
-						uevent_data = SysCommand(f"blkid -o export /dev/{partition_belonging_to_dmcrypt_device}").decode()
+						uevent_data = SysCommand(
+							f"blkid -o export /dev/{partition_belonging_to_dmcrypt_device}").decode()
 					except SysCallError as error:
-						log(f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}", level=logging.ERROR, fg="red")
-					
+						log(f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}",
+							level=logging.ERROR,
+							fg="red")
+
 					information = uevent(uevent_data)
 					block_device = BlockDevice(get_parent_of_partition('/dev/' / pathlib.Path(information['DEVNAME'])))
 
@@ -77,7 +81,7 @@ class MapperDev:
 	@property
 	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
 		from .btrfs import get_subvolumes_from_findmnt
-		
+
 		for mountpoint in self.mount_information:
 			for result in get_subvolumes_from_findmnt(mountpoint):
 				yield result

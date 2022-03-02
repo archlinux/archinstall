@@ -28,7 +28,7 @@ for plugin_definition in metadata.entry_points().get('archinstall.plugin', []):
 
 
 # The following functions and core are support structures for load_plugin()
-def localize_path(profile_path :str) -> str:
+def localize_path(profile_path: str) -> str:
 	if (url := urllib.parse.urlparse(profile_path)).scheme and url.scheme in ('https', 'http'):
 		converted_path = f"/tmp/{os.path.basename(profile_path).replace('.py', '')}_{hashlib.md5(os.urandom(12)).hexdigest()}.py"
 
@@ -40,7 +40,7 @@ def localize_path(profile_path :str) -> str:
 		return profile_path
 
 
-def import_via_path(path :str, namespace :Optional[str] = None) -> ModuleType:
+def import_via_path(path: str, namespace: Optional[str] = None) -> ModuleType:
 	if not namespace:
 		namespace = os.path.basename(path)
 
@@ -60,18 +60,20 @@ def import_via_path(path :str, namespace :Optional[str] = None) -> ModuleType:
 		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
 
 		try:
-			del(sys.modules[namespace])
+			del (sys.modules[namespace])
 		except:
 			pass
 
-def find_nth(haystack :List[str], needle :str, n :int) -> int:
+
+def find_nth(haystack: List[str], needle: str, n: int) -> int:
 	start = haystack.find(needle)
 	while start >= 0 and n > 1:
 		start = haystack.find(needle, start + len(needle))
 		n -= 1
 	return start
 
-def load_plugin(path :str) -> ModuleType:
+
+def load_plugin(path: str) -> ModuleType:
 	parsed_url = urllib.parse.urlparse(path)
 
 	# The Profile was not a direct match on a remote URL
@@ -86,10 +88,13 @@ def load_plugin(path :str) -> ModuleType:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
 		if hasattr(sys.modules[namespace], '__archinstall__version__'):
-			archinstall_major_and_minor_version = float(storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
+			archinstall_major_and_minor_version = float(
+				storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
-				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.", fg="red", level=logging.ERROR)
+				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.",
+					fg="red",
+					level=logging.ERROR)
 
 		# Locate the plugin entry-point called Plugin()
 		# This in accordance with the entry_points() from setup.cfg above

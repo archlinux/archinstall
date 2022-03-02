@@ -6,7 +6,8 @@ from typing import Union, Mapping, Iterable, Dict, Any, List
 from .general import SysCommand
 from .output import log
 
-def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
+
+def sort_mirrorlist(raw_data: bytes, sort_order=["https", "http"]) -> bytes:
 	"""
 	This function can sort /etc/pacman.d/mirrorlist according to the
 	mirror's URL prefix. By default places HTTPS before HTTP but it also
@@ -34,7 +35,7 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 		elif line[:6].lower() == b'server' or line[:7].lower() == b'#server':
 			opening, url = line.split(b'=', 1)
 			opening, url = opening.strip(), url.strip()
-			if (category := url.split(b'://',1)[0].decode('UTF-8')) in categories:
+			if (category := url.split(b'://', 1)[0].decode('UTF-8')) in categories:
 				categories[category].append(comments_and_whitespaces)
 				categories[category].append(opening + b' = ' + url + b'\n')
 			else:
@@ -51,12 +52,11 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	return new_raw_data
 
 
-def filter_mirrors_by_region(regions :str,
-	destination :str = '/etc/pacman.d/mirrorlist',
-	sort_order :List[str] = ["https", "http"],
-	*args :str,
-	**kwargs :str
-) -> Union[bool, bytes]:
+def filter_mirrors_by_region(regions: str,
+								destination: str = '/etc/pacman.d/mirrorlist',
+								sort_order: List[str] = ["https", "http"],
+								*args: str,
+								**kwargs: str) -> Union[bool, bytes]:
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.
@@ -65,7 +65,10 @@ def filter_mirrors_by_region(regions :str,
 	:type regions: str
 	"""
 	region_list = [f'country={region}' for region in regions.split(',')]
-	response = urllib.request.urlopen(urllib.request.Request(f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'", headers={'User-Agent': 'ArchInstall'}))
+	response = urllib.request.urlopen(
+		urllib.request.Request(
+			f"https://archlinux.org/mirrorlist/?{'&'.join(region_list)}&protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on'",
+			headers={'User-Agent': 'ArchInstall'}))
 	new_list = response.read().replace(b"#Server", b"Server")
 
 	if sort_order:
@@ -80,7 +83,7 @@ def filter_mirrors_by_region(regions :str,
 		return new_list.decode('UTF-8')
 
 
-def add_custom_mirrors(mirrors: List[str], *args :str, **kwargs :str) -> bool:
+def add_custom_mirrors(mirrors: List[str], *args: str, **kwargs: str) -> bool:
 	"""
 	This will append custom mirror definitions in pacman.conf
 
@@ -96,7 +99,7 @@ def add_custom_mirrors(mirrors: List[str], *args :str, **kwargs :str) -> bool:
 	return True
 
 
-def insert_mirrors(mirrors :Dict[str, Any], *args :str, **kwargs :str) -> bool:
+def insert_mirrors(mirrors: Dict[str, Any], *args: str, **kwargs: str) -> bool:
 	"""
 	This function will insert a given mirror-list at the top of `/etc/pacman.d/mirrorlist`.
 	It will not flush any other mirrors, just insert new ones.
@@ -118,10 +121,7 @@ def insert_mirrors(mirrors :Dict[str, Any], *args :str, **kwargs :str) -> bool:
 	return True
 
 
-def use_mirrors(
-	regions: Mapping[str, Iterable[str]],
-	destination: str = '/etc/pacman.d/mirrorlist'
-) -> None:
+def use_mirrors(regions: Mapping[str, Iterable[str]], destination: str = '/etc/pacman.d/mirrorlist') -> None:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	with open(destination, 'w') as mirrorlist:
 		for region, mirrors in regions.items():
@@ -143,7 +143,7 @@ def re_rank_mirrors(
 	return True
 
 
-def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
+def list_mirrors(sort_order: List[str] = ["https", "http"]) -> Dict[str, Any]:
 	url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
 	regions = {}
 

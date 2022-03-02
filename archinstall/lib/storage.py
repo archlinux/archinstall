@@ -16,14 +16,26 @@ storage: Dict[str, Any] = {
 		os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'profiles'),
 		# os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
 	],
-	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
-	'PROFILE_DB': None,  # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
-	'LOG_PATH': '/var/log/archinstall',
-	'LOG_FILE': 'install.log',
-	'MOUNT_POINT': '/mnt/archinstall',
-	'ENC_IDENTIFIER': 'ainst',
-	'DISK_TIMEOUTS' : 1, # seconds
-	'DISK_RETRY_ATTEMPTS' : 20, # RETRY_ATTEMPTS * DISK_TIMEOUTS is used in disk operations
-	'CMD_LOCALE':{'LC_ALL':'C'}, # default locale for execution commands. Can be overriden with set_cmd_locale()
-	'CMD_LOCALE_DEFAULT':{'LC_ALL':'C'}, # should be the same as the former. Not be used except in reset_cmd_locale()
+	'UPSTREAM_URL':
+	'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
+	'PROFILE_DB':
+	None,  # Used in cases when listing profiles is desired, not mandatory for direct profile grabing.
+	'LOG_PATH':
+	'/var/log/archinstall',
+	'LOG_FILE':
+	'install.log',
+	'MOUNT_POINT':
+	'/mnt/archinstall',
+	'ENC_IDENTIFIER':
+	'ainst',
+	'DISK_TIMEOUTS':
+	1,  # seconds
+	'DISK_RETRY_ATTEMPTS':
+	20,  # RETRY_ATTEMPTS * DISK_TIMEOUTS is used in disk operations
+	'CMD_LOCALE': {
+		'LC_ALL': 'C'
+	},  # default locale for execution commands. Can be overriden with set_cmd_locale()
+	'CMD_LOCALE_DEFAULT': {
+		'LC_ALL': 'C'
+	},  # should be the same as the former. Not be used except in reset_cmd_locale()
 }

@@ -8,9 +8,10 @@ from ..general import SysCommand
 from ..output import log
 from .mapperdev import MapperDev
 
+
 @dataclass
 class DMCryptDev:
-	dev_path :pathlib.Path
+	dev_path: pathlib.Path
 
 	@property
 	def name(self):
