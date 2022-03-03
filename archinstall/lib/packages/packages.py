@@ -3,7 +3,7 @@ import ssl
 from typing import Dict, Any, Tuple, List
 from urllib.error import HTTPError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import urlopen
 
 from ..exceptions import PackageError, SysCallError
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
