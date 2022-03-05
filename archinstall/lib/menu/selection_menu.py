@@ -2,7 +2,7 @@ from __future__ import annotations
 import sys
 import logging
 
-from typing import Callable, Any, List, Iterator, Tuple, Optional
+from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu
 from ..general import SysCommand, secret
@@ -34,6 +34,10 @@ from ..user_interaction import select_profile
 from ..user_interaction import select_archinstall_language
 from ..user_interaction import select_additional_repositories
 from ..translation import Translation
+
+if TYPE_CHECKING:
+	_: Any
+
 
 class Selector:
 	def __init__(
@@ -149,7 +153,7 @@ class Selector:
 	def text(self):
 		return self.menu_text()
 
-	def set_current_selection(self, current :str):
+	def set_current_selection(self, current :Optional[str]):
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
@@ -197,7 +201,7 @@ class GeneralMenu:
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
 		self.auto_cursor = auto_cursor
-		self._menu_options = {}
+		self._menu_options: Dict[str, Selector] = {}
 		self._setup_selection_menu_options()
 		self.preview_size = preview_size
 
@@ -269,7 +273,7 @@ class GeneralMenu:
 		return None
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		option = [[k, v] for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
+		option = [(k, v) for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')
 		config_name = option[0][0]
@@ -364,12 +368,12 @@ class GeneralMenu:
 
 			if len(selection.dependencies) > 0:
 				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or self._menu_options.get(d).is_empty():
+					if not self._verify_selection_enabled(d) or self._menu_options[d].is_empty():
 						return False
 
 			if len(selection.dependencies_not) > 0:
 				for d in selection.dependencies_not:
-					if not self._menu_options.get(d).is_empty():
+					if not self._menu_options[d].is_empty():
 						return False
 			return True
 
@@ -417,7 +421,7 @@ class GeneralMenu:
 	def set_mandatory(self, field :str, status :bool):
 		self.option(field).set_mandatory(status)
 
-	def mandatory_overview(self) -> [int, int]:
+	def mandatory_overview(self) -> Tuple[int, int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
 		for field in self._menu_options:
@@ -570,7 +574,7 @@ class GlobalMenu(GeneralMenu):
 
 	def _update_install_text(self, name :str = None, result :Any = None):
 		text = self._install_text()
-		self._menu_options.get('install').update_description(text)
+		self._menu_options['install'].update_description(text)
 
 	def post_callback(self,name :str = None ,result :Any = None):
 		self._update_install_text(name, result)
@@ -613,7 +617,7 @@ class GlobalMenu(GeneralMenu):
 		if not check('harddrives'):
 			missing += ['Hard drives']
 		if check('harddrives'):
-			if not self._menu_options.get('harddrives').is_empty() and not check('disk_layouts'):
+			if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
 				missing += ['Disk layout']
 
 		return missing
@@ -638,12 +642,11 @@ class GlobalMenu(GeneralMenu):
 		return ntp
 
 	def _select_harddrives(self, old_harddrives : list) -> list:
-		# old_haddrives = storage['arguments'].get('harddrives', [])
 		harddrives = select_harddrives(old_harddrives)
 
 		# in case the harddrives got changed we have to reset the disk layout as well
 		if old_harddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
+			self._menu_options['disk_layouts'].set_current_selection(None)
 			storage['arguments']['disk_layouts'] = {}
 
 		if not harddrives:
@@ -656,7 +659,7 @@ class GlobalMenu(GeneralMenu):
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 			if choice == 'no':
-				return self._select_harddrives()
+				return self._select_harddrives(old_harddrives)
 
 		return harddrives
 
