@@ -963,6 +963,9 @@ class Installer:
 			sudoers_path.mkdir(parents=True)
 			# Guarantees sudoer confs directory recommended perms
 			os.chmod(sudoers_dir, 0o440)
+			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
+			with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
+				sudoers.write('@includedir /etc/sudoers.d\n')
 		
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
@@ -978,7 +981,8 @@ class Installer:
 		with open(rule_file_name, 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 			# Guarantees sudoer conf file recommended perms
-			os.chmod(pathlib.Path(rule_file_name), 0o440)
+		
+		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
 		return True
 
