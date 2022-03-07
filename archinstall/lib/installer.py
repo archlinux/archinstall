@@ -961,7 +961,7 @@ class Installer:
 		# Creates directory if not exists
 		if not (sudoers_path := pathlib.Path(sudoers_dir)).exists():
 			sudoers_path.mkdir(parents=True)
-			# guarantees sudoer conf file recommended perms
+			# guarantees sudoer confs directory recommended perms
 			os.chmod(sudoers_dir, 0o440)
 		
 		# We count how many files are there so we know which number to prefix the file with
