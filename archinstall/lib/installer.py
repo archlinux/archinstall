@@ -966,9 +966,13 @@ class Installer:
 		
 		# We count how many files are there so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
-		file_num_str = "{:02d}".format(num_of_rules_already)
+		file_num_str = "{:02d}".format(num_of_rules_already) # 00_user1, 01_user2, etc
 
-		rule_file_name = f"{sudoers_dir}/{file_num_str}_{entity}"
+		# Guarantees that entity str does not contain invalid characters for a linux file name:
+		# \ / : * ? " < > |
+		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\)', '', entity)
+
+		rule_file_name = f"{sudoers_dir}/{file_num_str}_{safe_entity_file_name}"
 		
 
 		with open(rule_file_name, 'a') as sudoers:
