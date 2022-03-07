@@ -961,10 +961,10 @@ class Installer:
 		# Creates directory if not exists
 		if not (sudoers_path := pathlib.Path(sudoers_dir)).exists():
 			sudoers_path.mkdir(parents=True)
-			# guarantees sudoer confs directory recommended perms
+			# Guarantees sudoer confs directory recommended perms
 			os.chmod(sudoers_dir, 0o440)
 		
-		# We count how many files are there so we know which number to prefix the file with
+		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
 		file_num_str = "{:02d}".format(num_of_rules_already) # 00_user1, 01_user2, etc
 
@@ -977,7 +977,7 @@ class Installer:
 
 		with open(rule_file_name, 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
-			# guarantees sudoer conf file recommended perms
+			# Guarantees sudoer conf file recommended perms
 			os.chmod(pathlib.Path(rule_file_name), 0o440)
 
 		return True
