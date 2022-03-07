@@ -956,6 +956,7 @@ class Installer:
 
 	def enable_sudo(self, entity: str, group :bool = False) -> bool:
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
+		
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
 		
 		# Creates directory if not exists
@@ -969,19 +970,18 @@ class Installer:
 		
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
-		file_num_str = "{:02d}".format(num_of_rules_already) # 00_user1, 01_user2, etc
+		file_num_str = "{:02d}".format(num_of_rules_already) # We want 00_user1, 01_user2, etc
 
 		# Guarantees that entity str does not contain invalid characters for a linux file name:
 		# \ / : * ? " < > |
-		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\)', '', entity)
+		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', '', entity)
 
 		rule_file_name = f"{sudoers_dir}/{file_num_str}_{safe_entity_file_name}"
 		
-
 		with open(rule_file_name, 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
-			# Guarantees sudoer conf file recommended perms
 		
+		# Guarantees sudoer conf file recommended perms
 		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
 		return True
