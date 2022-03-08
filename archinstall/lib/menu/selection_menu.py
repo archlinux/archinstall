@@ -179,7 +179,7 @@ class Selector:
 			self.set_enabled(True)
 
 class GeneralMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False):
+	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -189,6 +189,9 @@ class GeneralMenu:
 		:param auto_cursor: Boolean which determines if the cursor stays on the first item (false) or steps each invocation of a selection entry (true)
 		:type auto_cursor: bool
 
+		:param preview_size. Size in fractions of screen size of the preview window
+		;type preview_size: float (range 0..1)
+
 		"""
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
@@ -196,6 +199,7 @@ class GeneralMenu:
 		self.auto_cursor = auto_cursor
 		self._menu_options = {}
 		self._setup_selection_menu_options()
+		self.preview_size = preview_size
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
 		self.is_context_mgr = True
@@ -292,7 +296,7 @@ class GeneralMenu:
 				sort=False,
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
-				preview_size=0.5
+				preview_size=self.preview_size
 			).run()
 
 			if selection and self.auto_cursor:
@@ -496,7 +500,8 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['!superusers'] = \
 			Selector(
 				_('Specify superuser account'),
-				lambda: self._create_superuser_account(),
+				lambda preset: self._create_superuser_account(),
+				exec_func=lambda n,v:self._users_resynch(),
 				dependencies_not=['!root-password'],
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
@@ -504,6 +509,7 @@ class GlobalMenu(GeneralMenu):
 				_('Specify user account'),
 				lambda x: self._create_user_account(),
 				default={},
+				exec_func=lambda n,v:self._users_resynch(),
 				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
@@ -549,7 +555,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),
-				lambda: save_config(self._data_store),
+				lambda preset: save_config(self._data_store),
 				enabled=True,
 				no_store=True)
 		self._menu_options['install'] = \
@@ -668,11 +674,11 @@ class GlobalMenu(GeneralMenu):
 		return profile
 
 	def _create_superuser_account(self):
-		superusers = ask_for_superuser_account(str(_('Enter a username to create an additional superuser (leave blank to skip): ')))
+		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))
 		return superusers if superusers else None
 
 	def _create_user_account(self):
-		users = ask_for_additional_users(str(_('Enter a username to create an additional user (leave blank to skip): ')))
+		users = ask_for_additional_users(str(_('Manage ordinary user accounts: ')))
 		return users
 
 	def _display_superusers(self):
@@ -682,3 +688,8 @@ class GlobalMenu(GeneralMenu):
 			return list(superusers.keys()) if superusers else '[]'
 		else:
 			return list(superusers.keys()) if superusers else ''
+
+	def _users_resynch(self):
+		self.synch('!superusers')
+		self.synch('!users')
+		return False

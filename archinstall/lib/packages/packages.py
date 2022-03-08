@@ -1,25 +1,35 @@
 import json
 import ssl
-import urllib.request
 from typing import Dict, Any, Tuple, List
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from ..exceptions import PackageError, SysCallError
 from ..models.dataclasses import PackageSearch, PackageSearchResult, LocalPackage
 from ..pacman import run_pacman
 
-BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/?name={package}'
+BASE_URL_PKG_SEARCH = 'https://archlinux.org/packages/search/json/'
 # BASE_URL_PKG_CONTENT = 'https://archlinux.org/packages/search/json/'
-BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/?name={group}'
+BASE_GROUP_URL = 'https://archlinux.org/groups/search/json/'
+
+
+def _make_request(url: str, params: Dict) -> Any:
+	ssl_context = ssl.create_default_context()
+	ssl_context.check_hostname = False
+	ssl_context.verify_mode = ssl.CERT_NONE
+
+	encoded = urlencode(params)
+	full_url = f'{url}?{encoded}'
+
+	return urlopen(full_url, context=ssl_context)
 
 
 def group_search(name :str) -> List[PackageSearchResult]:
 	# TODO UPSTREAM: Implement /json/ for the groups search
-	ssl_context = ssl.create_default_context()
-	ssl_context.check_hostname = False
-	ssl_context.verify_mode = ssl.CERT_NONE
 	try:
-		response = urllib.request.urlopen(BASE_GROUP_URL.format(group=name), context=ssl_context)
-	except urllib.error.HTTPError as err:
+		response = _make_request(BASE_GROUP_URL, {'name': name})
+	except HTTPError as err:
 		if err.code == 404:
 			return []
 		else:
@@ -38,10 +48,7 @@ def package_search(package :str) -> PackageSearch:
 	"""
 	# TODO UPSTREAM: Implement bulk search, either support name=X&name=Y or split on space (%20 or ' ')
 	# TODO: utilize pacman cache first, upstream second.
-	ssl_context = ssl.create_default_context()
-	ssl_context.check_hostname = False
-	ssl_context.verify_mode = ssl.CERT_NONE
-	response = urllib.request.urlopen(BASE_URL_PKG_SEARCH.format(package=package), context=ssl_context)
+	response = _make_request(BASE_URL_PKG_SEARCH, {'name': package})
 
 	if response.code != 200:
 		raise PackageError(f"Could not locate package: [{response.code}] {response}")
