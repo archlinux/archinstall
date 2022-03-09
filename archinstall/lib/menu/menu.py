@@ -26,6 +26,7 @@ class Menu(TerminalMenu):
 		preview_command=None,
 		preview_size=0.75,
 		preview_title='Info',
+		header :Union[List[str],str] = None,
 		**kwargs
 	):
 		"""
@@ -64,6 +65,9 @@ class Menu(TerminalMenu):
 
 		:param preview_title: Title of the preview window
 		:type preview_title: str
+
+		param: header one or more header lines for the menu
+		type param: string or list
 
 		:param kwargs : any SimpleTerminal parameter
 		"""
@@ -104,10 +108,17 @@ class Menu(TerminalMenu):
 		self.default_option = default_option
 		self.multi = multi
 		menu_title = f'\n{title}\n\n'
-
-		if skip:
+		if header:
+			separator = '\n  '
+			if not isinstance(header,(list,tuple)):
+				header = [header,]
+			if skip:
+				menu_title += str(_("Use ESC to skip\n"))
+			menu_title += separator + separator.join(header)
+		elif skip:
 			menu_title += str(_("Use ESC to skip\n\n"))
-
+		print(menu_title)
+		input('yep')
 		if default_option:
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well

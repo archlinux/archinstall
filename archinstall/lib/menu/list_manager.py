@@ -93,7 +93,7 @@ from copy import copy
 from typing import Union
 
 class ListManager:
-	def __init__(self,prompt :str, base_list :Union[list,dict] ,base_actions :list = None,null_action :str = None, default_action :Union[str,list] = None):
+	def __init__(self,prompt :str, base_list :Union[list,dict] ,base_actions :list = None,null_action :str = None, default_action :Union[str,list] = None, header :Union[str,list] = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -110,6 +110,9 @@ class ListManager:
 		param: default_action action which will be presented at the bottom of the list. Shouldn't need a target. If not present, null_action is set there.
 		Both Null and Default actions can be defined outside the base_actions list, as long as they are launched in exec_action
 		type param: string or list
+
+		param: header one or more header lines for the list
+		type param: string or list
 		"""
 
 		if not null_action and len(base_list) == 0:
@@ -123,6 +126,8 @@ class ListManager:
 			self.default_action = default_action
 		else:
 			self.default_action = [str(default_action)]
+
+		self.header = header if header else None
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
 		self.separator = '==>'
@@ -150,7 +155,8 @@ class ListManager:
 				options,
 				sort=False,
 				clear_screen=False,
-				clear_menu_on_exit=False).run()
+				clear_menu_on_exit=False,
+				header=self.header).run()
 
 			if not target or target in self.bottom_list:
 				break
@@ -267,5 +273,6 @@ if __name__ == "__main__":
 	# opciones = archinstall.list_mirrors()
 	opciones = {'uno':1,'dos':2,'tres':3,'cuatro':4}
 	acciones = ['editar','borrar','añadir']
-	opciones = ListManager('Vamos alla',opciones,None,_('Add'),default_action=acciones).run()
+	cabecera = ["En Jaen Donde Resido","Vive don Lope de Sosa"]
+	opciones = ListManager('Vamos alla',opciones,None,_('Add'),default_action=acciones,header=cabecera).run()
 	print(opciones)
