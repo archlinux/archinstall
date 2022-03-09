@@ -117,8 +117,6 @@ class Menu(TerminalMenu):
 			menu_title += separator + separator.join(header)
 		elif skip:
 			menu_title += str(_("Use ESC to skip\n\n"))
-		print(menu_title)
-		input('yep')
 		if default_option:
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well

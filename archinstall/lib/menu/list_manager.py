@@ -122,10 +122,10 @@ class ListManager:
 		self.null_action = str(null_action)
 		if not default_action:
 			self.default_action = [self.null_action,]
-		elif isinstance(default_action,(list,tuple,str)):
+		elif isinstance(default_action,(list,tuple)):
 			self.default_action = default_action
 		else:
-			self.default_action = [str(default_action)]
+			self.default_action = [str(default_action),]
 
 		self.header = header if header else None
 		self.cancel_action = str(_('Cancel'))
