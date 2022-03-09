@@ -90,9 +90,10 @@ from .menu import Menu
 from ..general import RequirementError
 from os import system
 from copy import copy
+from typing import Union
 
 class ListManager:
-	def __init__(self,prompt :str, base_list :list ,base_actions :list = None,null_action :str = None, default_action :str = None):
+	def __init__(self,prompt :str, base_list :Union[list,dict] ,base_actions :list = None,null_action :str = None, default_action :Union[str,list] = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -108,7 +109,7 @@ class ListManager:
 
 		param: default_action action which will be presented at the bottom of the list. Shouldn't need a target. If not present, null_action is set there.
 		Both Null and Default actions can be defined outside the base_actions list, as long as they are launched in exec_action
-		type param: string
+		type param: string or list
 		"""
 
 		if not null_action and len(base_list) == 0:
@@ -117,9 +118,11 @@ class ListManager:
 		self.prompt = prompt if prompt else _('Choose an object from the list')
 		self.null_action = str(null_action)
 		if not default_action:
-			self.default_action = self.null_action
+			self.default_action = [self.null_action,]
+		elif isinstance(default_action,(list,tuple,str)):
+			self.default_action = default_action
 		else:
-			self.default_action = str(default_action)
+			self.default_action = [str(default_action)]
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
 		self.separator = '==>'
@@ -140,7 +143,7 @@ class ListManager:
 			self.data_formatted = self.reformat()
 			options = self.data_formatted + [self.separator]
 			if self.default_action:
-				options += [self.default_action]
+				options += self.default_action
 			options += self.bottom_list
 			system('clear')
 			target = Menu(self.prompt,
@@ -153,10 +156,10 @@ class ListManager:
 				break
 			if target and target == self.separator:
 				continue
-			if target and target == self.default_action:
+			if target and target in self.default_action:
+				self.action = target
 				target = None
 				self.target = None
-				self.action = self.default_action
 				self.exec_action()
 				continue
 			if isinstance(self.data,dict):
@@ -216,7 +219,6 @@ class ListManager:
 		The basic code is useful for simple lists and dictionaries (key:value pairs, both strings)
 		"""
 		# TODO guarantee unicity
-
 		if isinstance(self.data,list):
 			if self.action == str(_('Add')):
 				self.target = TextInput(_('Add :'),None).run()
@@ -264,6 +266,6 @@ if __name__ == "__main__":
 	# opciones = ['uno','dos','tres','cuatro']
 	# opciones = archinstall.list_mirrors()
 	opciones = {'uno':1,'dos':2,'tres':3,'cuatro':4}
-	# acciones = ['editar','borrar','añadir']
-	opciones = ListManager('Vamos alla',opciones,None,_('Add')).run()
+	acciones = ['editar','borrar','añadir']
+	opciones = ListManager('Vamos alla',opciones,None,_('Add'),default_action=acciones).run()
 	print(opciones)
