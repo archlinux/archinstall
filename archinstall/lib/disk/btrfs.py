@@ -25,7 +25,7 @@ class BtrfsSubvolume:
 	root :bool = False
 
 def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
-	if '@' in struct['source']:
+	if '[' in struct['source']:
 		subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
 		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
 		yield BtrfsSubvolume(
