@@ -37,7 +37,6 @@ from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
 from .lib.menu.selection_menu import (
-	GlobalMenu,
 	Selector,
 	GeneralMenu
 )
