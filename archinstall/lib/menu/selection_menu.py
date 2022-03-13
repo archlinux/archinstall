@@ -7,8 +7,15 @@ from typing import Callable, Any, List, Iterator, Tuple, Optional
 from .menu import Menu
 from ..locale_helpers import set_keyboard_language
 from ..output import log
-from ..user_interaction import select_archinstall_language
 from ..translation import Translation
+
+def select_archinstall_language(default='English'):
+	"""
+	copied from user_interaction/general_conf.py as a temporary measure
+	"""
+	languages = Translation.get_all_names()
+	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
+	return language
 
 class Selector:
 	def __init__(
