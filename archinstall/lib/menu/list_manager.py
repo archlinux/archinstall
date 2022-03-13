@@ -87,7 +87,6 @@ The contents in the base class of this methods serve for a very basic usage, and
 
 from .text_input import TextInput
 from .menu import Menu
-from ..general import RequirementError
 from os import system
 from copy import copy
 from typing import Union
@@ -115,11 +114,11 @@ class ListManager:
 		type param: string or list
 		"""
 
-		if not null_action and len(base_list) == 0:
-			raise RequirementError('Data list for ListManager can not be empty if there is no null_action')
+		explainer = _('\n Choose an object from the list, and select one of the available actions for it to execute')
+		self.prompt = prompt + explainer if prompt else explainer
 
-		self.prompt = prompt if prompt else _('Choose an object from the list')
-		self.null_action = str(null_action)
+		self.null_action = str(null_action) if null_action else None
+
 		if not default_action:
 			self.default_action = [self.null_action,]
 		elif isinstance(default_action,(list,tuple)):
@@ -140,7 +139,7 @@ class ListManager:
 		# default values for the null case
 		self.target = None
 		self.action = self.null_action
-		if len(self.data) == 0:
+		if len(self.data) == 0 and self.null_action:
 			self.exec_action()
 
 	def run(self):
