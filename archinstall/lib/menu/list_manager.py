@@ -114,7 +114,7 @@ class ListManager:
 		type param: string or list
 		"""
 
-		explainer = _('\n Choose an object from the list, and select one of the available actions for it to execute')
+		explainer = str(_('\n Choose an object from the list, and select one of the available actions for it to execute'))
 		self.prompt = prompt + explainer if prompt else explainer
 
 		self.null_action = str(null_action) if null_action else None
