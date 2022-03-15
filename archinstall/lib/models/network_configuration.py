@@ -95,3 +95,24 @@ class NetworkConfiguration:
 			installation.configure_nic(self)
 			installation.enable_service('systemd-networkd')
 			installation.enable_service('systemd-resolved')
+
+	def get(self, key :str, default_value :Any=None) -> Any:
+		result = self.__getitem__(key)
+		if result is None:
+			return default_value
+		else:
+			return result
+
+	def __getitem__(self, key :str) -> Any:
+		if key == 'type':
+			return self.type
+		elif key == 'iface':
+			return self.iface
+		elif key == 'gateway':
+			return self.gateway
+		elif key == 'dns':
+			return self.dns
+		elif key == 'dhcp':
+			return self.dhcp
+		else:
+			raise KeyError(f"key {key} not available at NetworkConfiguration")
