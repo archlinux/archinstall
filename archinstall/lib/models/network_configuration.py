@@ -44,26 +44,26 @@ class NetworkConfiguration:
 		nic_type = config.get('type', None)
 
 		if not nic_type:
-			#old style definitions
+			# old style definitions
 			if isinstance(config,str): # is a ISO network
 				return NetworkConfiguration(NicType.ISO)
 			elif config.get('NetworkManager'): # is a network manager configuration
 				return NetworkConfiguration(NicType.NM)
 			elif 'ip' in config:
-					return NetworkConfiguration(
-						NicType.MANUAL,
-						iface=config.get('nic', ''),
-						ip=config.get('ip'),
-						gateway=config.get('gateway', ''),
-						dns=config.get('dns', []),
-						dhcp=False
-					)
+				return NetworkConfiguration(
+					NicType.MANUAL,
+					iface=config.get('nic', ''),
+					ip=config.get('ip'),
+					gateway=config.get('gateway', ''),
+					dns=config.get('dns', []),
+					dhcp=False
+				)
 			elif 'nic' in config:
-					return NetworkConfiguration(
-						NicType.MANUAL,
-						iface=config.get('nic', ''),
-						dhcp=True
-					)
+				return NetworkConfiguration(
+					NicType.MANUAL,
+					iface=config.get('nic', ''),
+					dhcp=True
+				)
 			else:  # not recognized
 				return None
 
@@ -117,7 +117,7 @@ class NetworkConfiguration:
 			installation.enable_service('systemd-networkd')
 			installation.enable_service('systemd-resolved')
 
-	def get(self, key :str, default_value :Any=None) -> Any:
+	def get(self, key :str, default_value :Any = None) -> Any:
 		result = self.__getitem__(key)
 		if result is None:
 			return default_value
