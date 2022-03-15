@@ -40,11 +40,32 @@ class NetworkConfiguration:
 		return self.__dict__
 
 	@classmethod
-	def parse_arguments(cls, config: Dict[str, str]) -> Optional["NetworkConfiguration"]:
+	def parse_arguments(cls, config: Union[str,Dict[str, str]]) -> Optional["NetworkConfiguration"]:
 		nic_type = config.get('type', None)
 
 		if not nic_type:
-			return None
+			#old style definitions
+			if isinstance(config,str): # is a ISO network
+				return NetworkConfiguration(NicType.ISO)
+			elif config.get('NetworkManager'): # is a network manager configuration
+				return NetworkConfiguration(NicType.NM)
+			elif 'ip' in config:
+					return NetworkConfiguration(
+						NicType.MANUAL,
+						iface=config.get('nic', ''),
+						ip=config.get('ip'),
+						gateway=config.get('gateway', ''),
+						dns=config.get('dns', []),
+						dhcp=False
+					)
+			elif 'nic' in config:
+					return NetworkConfiguration(
+						NicType.MANUAL,
+						iface=config.get('nic', ''),
+						dhcp=True
+					)
+			else:  # not recognized
+				return None
 
 		try:
 			type = NicType(nic_type)
