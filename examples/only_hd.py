@@ -27,21 +27,6 @@ def load_harddrives():
 		archinstall.arguments['harddrives'] = [archinstall.BlockDevice(BlockDev) for BlockDev in archinstall.arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 
-def load_disk_layouts():
-	if archinstall.arguments.get('disk_layouts', None) is not None:
-		dl_path = pathlib.Path(archinstall.arguments['disk_layouts'])
-		if dl_path.exists(): # and str(dl_path).endswith('.json'):
-			try:
-				with open(dl_path) as fh:
-					archinstall.storage['disk_layouts'] = json.load(fh)
-			except Exception as e:
-				raise ValueError(f"--disk_layouts does not contain a valid JSON format: {e}")
-		else:
-			try:
-				archinstall.storage['disk_layouts'] = json.loads(archinstall.arguments['disk_layouts'])
-			except:
-				raise ValueError("--disk_layouts=<json> needs either a JSON file or a JSON string given with a valid disk layout.")
-
 def ask_harddrives():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
@@ -106,7 +91,6 @@ def load_config():
 	load_localization()
 	load_gfxdriver()
 	load_servers()
-	load_disk_layouts()
 
 def ask_user_questions():
 	"""
@@ -132,7 +116,7 @@ def write_config_files():
 			disk_layout_file.write(user_disk_layout)
 	print()
 
-	if archinstall.arguments.get('dry-run'):
+	if archinstall.arguments.get('dry_run'):
 		exit(0)
 
 	# it is here so a dry run execution will not save the credentials file ¿?
@@ -221,6 +205,10 @@ def perform_installation(mountpoint):
 				if partition.size <= 0.25: # in GB
 					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
 
+		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
+		target = pathlib.Path(f"{mountpoint}/etc/fstab")
+		if not target.parent.exists():
+			target.parent.mkdir(parents=True)
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
@@ -255,7 +243,7 @@ load_config()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-# YEP write_config_files()
+write_config_files()
 
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
