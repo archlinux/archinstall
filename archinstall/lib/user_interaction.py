@@ -193,14 +193,36 @@ def generic_multi_select(options, text="Select one or more of the options above 
 	return selected_options
 
 def select_encrypted_partitions(block_devices :dict, password :str) -> dict:
+	def get_mountpoint(partition):
+		result_list = []
+		if partition.get('mountpoint'):
+			result_list.append(partition['mountpoint'])
+		elif partition.get('btrfs',{}).get('subvolumes',{}):
+			# a list comprehension can be written but it's a bit offuscated
+			for subvol in partition['btrfs']['subvolumes']:
+				if isinstance(partition['btrfs']['subvolumes'][subvol],str):
+					result_list.append(partition['btrfs']['subvolumes'][subvol])
+				elif partition['btrfs']['subvolumes'][subvol].get('mountpoint'):
+					result_list.append(partition['btrfs']['subvolumes'][subvol]['mountpoint'])
+		return result_list
+
+	def is_encryptable(mountpoint_list):
+		if len(mountpoint_list) == 0:
+			return False
+		elif '/boot' in mountpoint_list:
+			return False
+		else:
+			return True
+
 	for device in block_devices:
 		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) not in ('/boot', None):
+			mounts = get_mountpoint(partition)
+			if is_encryptable(mounts):
 				log(f"Marked {partition} to be encrypted.", level=logging.WARNING, fg="yellow")
 				partition['encrypted'] = True
 				partition['!password'] = password
 
-				if partition['mountpoint'] != '/':
+				if '/' not in mounts:
 					# Tell the upcoming steps to generate a key-file for non root mounts.
 					log(f"Marking partition for use with encryption-key: {partition}", level=logging.WARNING, fg="yellow")
 					partition['generate-encryption-key-file'] = True
