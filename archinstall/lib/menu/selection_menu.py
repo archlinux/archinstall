@@ -657,7 +657,7 @@ class GlobalMenu(GeneralMenu):
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 			if choice == 'no':
-				return self._select_harddrives()
+				exit(1)
 
 		return harddrives
 
