@@ -158,7 +158,7 @@ def manage_users(prompt: str, sudo: bool) -> tuple[dict, dict]:
 
 
 def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
-	prompt = prompt if prompt else str(_('Define users with sudo privilege: '))
+	prompt = prompt if prompt else str(_('Define users with sudo privilege, by username: '))
 	superusers, dummy = manage_users(prompt, sudo=True)
 	return superusers
 
