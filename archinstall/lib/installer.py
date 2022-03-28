@@ -380,7 +380,7 @@ class Installer:
 	def genfstab(self, flags :str = '-pU') -> bool:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
-		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')):
+		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).exit_code == 0:
 			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
 
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
