@@ -37,7 +37,6 @@ from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
 from .lib.menu.selection_menu import (
-	GlobalMenu,
 	Selector,
 	GeneralMenu
 )
@@ -46,7 +45,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 from .lib.configuration import *
 parser = ArgumentParser()
 
-__version__ = "2.4.0-dev0"
+__version__ = "2.4.0.RC1"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the

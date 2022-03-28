@@ -14,7 +14,7 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 		mandatory_list = []
 		options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
 		mandatory_list = ['harddrives']
-		options_list.extend(['install','abort'])
+		options_list.extend(['save_config','install','abort'])
 
 		for entry in self._menu_options:
 			if entry in options_list:
@@ -27,15 +27,27 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 				self.option(entry).set_enabled(False)
 		self._update_install_text()
 
+	def mandatory_lacking(self) -> [int, list]:
+		mandatory_fields = []
+		mandatory_waiting = 0
+		for field in self._menu_options:
+			option = self._menu_options[field]
+			if option.is_mandatory():
+				if not option.has_selection():
+					mandatory_waiting += 1
+					mandatory_fields += [field,]
+		return mandatory_fields, mandatory_waiting
+
 	def _missing_configs(self):
 		""" overloaded method """
 		def check(s):
 			return self.option(s).has_selection()
 
-		_, missing = self.mandatory_overview()
+		missing, missing_cnt = self.mandatory_lacking()
 		if check('harddrives'):
 			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
+				missing_cnt += 1
+				missing += ['disk_layout']
 		return missing
 
 def ask_user_questions():
