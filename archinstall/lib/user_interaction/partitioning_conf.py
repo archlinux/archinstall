@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable
 
-from ..disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position
 from ..menu import Menu
 from ..output import log
 
@@ -10,6 +9,7 @@ from ..disk.validators import fs_types
 from .subvolume_config import SubvolumeList
 
 if TYPE_CHECKING:
+	from ..disk import BlockDevice
 	from ..disk.partition import Partition
 	_: Any
 
@@ -92,8 +92,9 @@ def select_partition(title :str, partitions :List[Partition], multiple :bool = F
 	return None
 
 
-def get_default_partition_layout(block_devices: Union[BlockDevice, List[BlockDevice]],
+def get_default_partition_layout(block_devices: Union['BlockDevice', List['BlockDevice']],
 									advanced_options: bool = False) -> Dict[str, Any]:
+	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
 
 	if len(block_devices) == 1:
 		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
@@ -112,7 +113,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, Any]:
+def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
@@ -155,6 +156,8 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 			break
 
 		if task == new_partition:
+			from ..disk import valid_parted_position
+			
 			# if partition_type == 'gpt':
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
@@ -200,6 +203,8 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 					fg="red")
 				continue
 		elif task == suggest_partition_layout:
+			from ..disk import suggest_single_disk_layout
+
 			if len(block_device_struct["partitions"]):
 				prompt = _('{} contains queued partitions, this will remove those, are you sure?').format(block_device)
 				choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
