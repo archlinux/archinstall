@@ -16,7 +16,6 @@ from ..general import (
 from ..hardware import has_uefi
 from ..profiles import is_desktop_profile
 from ..disk.helpers import encrypted_partitions
-from ..user_interaction.general_conf import select_profile
 from ..user_interaction.system_conf import (
 	select_harddrives,
 	select_kernel,
@@ -30,7 +29,8 @@ from ..user_interaction.general_conf import (
 	ask_additional_packages_to_install,
 	ask_for_audio_selection,
 	ask_hostname,
-	select_mirror_regions
+	select_mirror_regions,
+	select_profile
 )
 from ..user_interaction.utils import get_password
 from ..user_interaction.network_conf import ask_to_configure_network
