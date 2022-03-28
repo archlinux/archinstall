@@ -6,7 +6,6 @@ from ..menu import Menu
 from ..output import log
 
 from ..disk.validators import fs_types
-from .subvolume_config import SubvolumeList
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -157,7 +156,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 		if task == new_partition:
 			from ..disk import valid_parted_position
-			
+
 			# if partition_type == 'gpt':
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
@@ -298,6 +297,8 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 			elif task == set_btrfs_subvolumes:
+				from .subvolume_config import SubvolumeList
+				
 				# TODO get preexisting partitions
 				title = _('{}\n\nSelect which partition to set subvolumes on').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"],filter=lambda x:True if x.get('filesystem',{}).get('format') == 'btrfs' else False)
