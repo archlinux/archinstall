@@ -17,7 +17,7 @@ conflicts=('archinstall' 'python-archinstall' 'python-archinstall-git')
 build() {
         cd "$startdir"
         python setup.py build
-        make man -C docs
+        PYTHONDONTWRITEBYTECODE=1 make man -C docs
 }
 
 package() {

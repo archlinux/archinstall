@@ -5,39 +5,20 @@ import logging
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu
-from ..general import SysCommand, secret
-from ..hardware import has_uefi
-from ..storage import storage
-from ..output import log
-from ..profiles import is_desktop_profile
-from ..disk import encrypted_partitions
 from ..locale_helpers import set_keyboard_language
-from ..user_interaction import get_password, ask_for_a_timezone, save_config
-from ..user_interaction import ask_ntp
-from ..user_interaction import ask_for_swap
-from ..user_interaction import ask_for_bootloader
-from ..user_interaction import ask_hostname
-from ..user_interaction import ask_for_audio_selection
-from ..user_interaction import ask_additional_packages_to_install
-from ..user_interaction import ask_to_configure_network
-from ..user_interaction import ask_for_superuser_account
-from ..user_interaction import ask_for_additional_users
-from ..user_interaction import select_language
-from ..user_interaction import select_mirror_regions
-from ..user_interaction import select_locale_lang
-from ..user_interaction import select_locale_enc
-from ..user_interaction import select_disk_layout
-from ..user_interaction import select_kernel
-from ..user_interaction import select_encrypted_partitions
-from ..user_interaction import select_harddrives
-from ..user_interaction import select_profile
-from ..user_interaction import select_archinstall_language
-from ..user_interaction import select_additional_repositories
+from ..output import log
 from ..translation import Translation
 
 if TYPE_CHECKING:
 	_: Any
 
+def select_archinstall_language(default='English'):
+	"""
+	copied from user_interaction/general_conf.py as a temporary measure
+	"""
+	languages = Translation.get_all_names()
+	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
+	return language
 
 class Selector:
 	def __init__(
@@ -506,6 +487,7 @@ class GlobalMenu(GeneralMenu):
 				_('Specify superuser account'),
 				lambda preset: self._create_superuser_account(),
 				exec_func=lambda n,v:self._users_resynch(),
+				default={},
 				dependencies_not=['!root-password'],
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \

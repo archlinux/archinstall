@@ -215,7 +215,7 @@ class MyMenu(archinstall.GlobalMenu):
 		if self._execution_mode in ('full','lineal'):
 			options_list = ['keyboard-layout', 'mirror-region', 'harddrives', 'disk_layouts',
 					'!encryption-password','swap', 'bootloader', 'hostname', '!root-password',
-					'!superusers', '!users', 'profile', 'audio', 'kernels', 'packages','nic',
+					'!superusers', '!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
 					'timezone', 'ntp']
 			if archinstall.arguments.get('advanced',False):
 				options_list.extend(['sys-language','sys-encoding'])
@@ -226,7 +226,7 @@ class MyMenu(archinstall.GlobalMenu):
 		elif self._execution_mode == 'only_os':
 			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
 					'!root-password', '!superusers', '!users', 'profile', 'audio', 'kernels',
-					'packages', 'nic', 'timezone', 'ntp']
+					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp']
 			mandatory_list = ['hostname']
 			if archinstall.arguments.get('advanced',False):
 				options_list.expand(['sys-language','sys-encoding'])
@@ -236,7 +236,7 @@ class MyMenu(archinstall.GlobalMenu):
 			archinstall.log(f"self._execution_mode {self._execution_mode} not supported")
 			exit(1)
 		if self._execution_mode != 'lineal':
-			options_list.extend(['install','abort'])
+			options_list.extend(['save_config','install','abort'])
 			if not archinstall.arguments.get('advanced'):
 				options_list.append('archinstall-language')
 
@@ -415,11 +415,13 @@ def os_setup(installation):
 		if archinstall.arguments.get('profile', None):
 			installation.install_profile(archinstall.arguments.get('profile', None))
 
-		for user, user_info in archinstall.arguments.get('!users', {}).items():
-			installation.user_create(user, user_info["!password"], sudo=False)
+		if archinstall.arguments.get('!users',{}):
+			for user, user_info in archinstall.arguments.get('!users', {}).items():
+				installation.user_create(user, user_info["!password"], sudo=False)
 
-		for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-			installation.user_create(superuser, user_info["!password"], sudo=True)
+		if archinstall.arguments.get('!superusers',{}):
+			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
+				installation.user_create(superuser, user_info["!password"], sudo=True)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
