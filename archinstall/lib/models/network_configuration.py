@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional, Dict
 
-from ... import log
-
 
 class NicType(str, Enum):
 	ISO = "iso"
@@ -41,6 +39,8 @@ class NetworkConfiguration:
 
 	@classmethod
 	def parse_arguments(cls, config: Union[str,Dict[str, str]]) -> Optional["NetworkConfiguration"]:
+		from ... import log
+		
 		nic_type = config.get('type', None)
 
 		if not nic_type:
