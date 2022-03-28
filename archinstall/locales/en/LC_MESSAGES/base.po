@@ -100,87 +100,87 @@ msgstr ""
 msgid "Select which filesystem your main partition should use"
 msgstr ""
 
-#: lib/user_interaction.py:556 lib/user_interaction.py:559 lib/user_interaction.py:562 lib/user_interaction.py:561 lib/user_interaction/partitioning_conf.py:64
+#: lib/user_interaction.py:556 lib/user_interaction.py:559 lib/user_interaction.py:562 lib/user_interaction.py:561 lib/user_interaction/partitioning_conf.py:64 lib/user_interaction/partitioning_conf.py:63
 msgid "Current partition layout"
 msgstr ""
 
-#: lib/user_interaction.py:607 lib/user_interaction.py:614 lib/user_interaction.py:617 lib/user_interaction.py:620 lib/user_interaction.py:619 lib/user_interaction/partitioning_conf.py:145
+#: lib/user_interaction.py:607 lib/user_interaction.py:614 lib/user_interaction.py:617 lib/user_interaction.py:620 lib/user_interaction.py:619 lib/user_interaction/partitioning_conf.py:145 lib/user_interaction/partitioning_conf.py:146
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
 
-#: lib/user_interaction.py:624 lib/user_interaction.py:709 lib/user_interaction.py:631 lib/user_interaction.py:716 lib/user_interaction.py:634 lib/user_interaction.py:719 lib/user_interaction.py:637 lib/user_interaction.py:722 lib/user_interaction.py:636 lib/user_interaction.py:721 lib/user_interaction/partitioning_conf.py:162 lib/user_interaction/partitioning_conf.py:255
+#: lib/user_interaction.py:624 lib/user_interaction.py:709 lib/user_interaction.py:631 lib/user_interaction.py:716 lib/user_interaction.py:634 lib/user_interaction.py:719 lib/user_interaction.py:637 lib/user_interaction.py:722 lib/user_interaction.py:636 lib/user_interaction.py:721 lib/user_interaction/partitioning_conf.py:162 lib/user_interaction/partitioning_conf.py:255 lib/user_interaction/partitioning_conf.py:165 lib/user_interaction/partitioning_conf.py:260
 msgid "Enter a desired filesystem type for the partition"
 msgstr ""
 
-#: lib/user_interaction.py:626 lib/user_interaction.py:633 lib/user_interaction.py:636 lib/user_interaction.py:639 lib/user_interaction.py:638 lib/user_interaction/partitioning_conf.py:164
+#: lib/user_interaction.py:626 lib/user_interaction.py:633 lib/user_interaction.py:636 lib/user_interaction.py:639 lib/user_interaction.py:638 lib/user_interaction/partitioning_conf.py:164 lib/user_interaction/partitioning_conf.py:167
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr ""
 
-#: lib/user_interaction.py:635 lib/user_interaction.py:642 lib/user_interaction.py:645 lib/user_interaction.py:648 lib/user_interaction.py:647 lib/user_interaction/partitioning_conf.py:174
+#: lib/user_interaction.py:635 lib/user_interaction.py:642 lib/user_interaction.py:645 lib/user_interaction.py:648 lib/user_interaction.py:647 lib/user_interaction/partitioning_conf.py:174 lib/user_interaction/partitioning_conf.py:177
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
 msgstr ""
 
-#: lib/user_interaction.py:661 lib/user_interaction.py:668 lib/user_interaction.py:671 lib/user_interaction.py:674 lib/user_interaction.py:673 lib/user_interaction/partitioning_conf.py:203
+#: lib/user_interaction.py:661 lib/user_interaction.py:668 lib/user_interaction.py:671 lib/user_interaction.py:674 lib/user_interaction.py:673 lib/user_interaction/partitioning_conf.py:203 lib/user_interaction/partitioning_conf.py:208
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 
-#: lib/user_interaction.py:674 lib/user_interaction.py:681 lib/user_interaction.py:684 lib/user_interaction.py:687 lib/user_interaction.py:686 lib/user_interaction/partitioning_conf.py:216
+#: lib/user_interaction.py:674 lib/user_interaction.py:681 lib/user_interaction.py:684 lib/user_interaction.py:687 lib/user_interaction.py:686 lib/user_interaction/partitioning_conf.py:216 lib/user_interaction/partitioning_conf.py:221
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partitions to delete"
 msgstr ""
 
-#: lib/user_interaction.py:682 lib/user_interaction.py:689 lib/user_interaction.py:692 lib/user_interaction.py:695 lib/user_interaction.py:694 lib/user_interaction/partitioning_conf.py:226
+#: lib/user_interaction.py:682 lib/user_interaction.py:689 lib/user_interaction.py:692 lib/user_interaction.py:695 lib/user_interaction.py:694 lib/user_interaction/partitioning_conf.py:226 lib/user_interaction/partitioning_conf.py:231
 msgid ""
 "{}\n"
 "\n"
 "Select by index which partition to mount where"
 msgstr ""
 
-#: lib/user_interaction.py:686 lib/user_interaction.py:693 lib/user_interaction.py:696 lib/user_interaction.py:699 lib/user_interaction.py:698 lib/user_interaction/partitioning_conf.py:231
+#: lib/user_interaction.py:686 lib/user_interaction.py:693 lib/user_interaction.py:696 lib/user_interaction.py:699 lib/user_interaction.py:698 lib/user_interaction/partitioning_conf.py:231 lib/user_interaction/partitioning_conf.py:236
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr ""
 
-#: lib/user_interaction.py:687 lib/user_interaction.py:694 lib/user_interaction.py:697 lib/user_interaction.py:700 lib/user_interaction.py:699 lib/user_interaction/partitioning_conf.py:233
+#: lib/user_interaction.py:687 lib/user_interaction.py:694 lib/user_interaction.py:697 lib/user_interaction.py:700 lib/user_interaction.py:699 lib/user_interaction/partitioning_conf.py:233 lib/user_interaction/partitioning_conf.py:238
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr ""
 
-#: lib/user_interaction.py:698 lib/user_interaction.py:705 lib/user_interaction.py:708 lib/user_interaction.py:711 lib/user_interaction.py:710 lib/user_interaction/partitioning_conf.py:244
+#: lib/user_interaction.py:698 lib/user_interaction.py:705 lib/user_interaction.py:708 lib/user_interaction.py:711 lib/user_interaction.py:710 lib/user_interaction/partitioning_conf.py:244 lib/user_interaction/partitioning_conf.py:249
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mask for formatting"
 msgstr ""
 
-#: lib/user_interaction.py:717 lib/user_interaction.py:724 lib/user_interaction.py:727 lib/user_interaction.py:730 lib/user_interaction.py:729 lib/user_interaction/partitioning_conf.py:265
+#: lib/user_interaction.py:717 lib/user_interaction.py:724 lib/user_interaction.py:727 lib/user_interaction.py:730 lib/user_interaction.py:729 lib/user_interaction/partitioning_conf.py:265 lib/user_interaction/partitioning_conf.py:270
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as encrypted"
 msgstr ""
 
-#: lib/user_interaction.py:725 lib/user_interaction.py:732 lib/user_interaction.py:735 lib/user_interaction.py:738 lib/user_interaction.py:737 lib/user_interaction/partitioning_conf.py:274
+#: lib/user_interaction.py:725 lib/user_interaction.py:732 lib/user_interaction.py:735 lib/user_interaction.py:738 lib/user_interaction.py:737 lib/user_interaction/partitioning_conf.py:274 lib/user_interaction/partitioning_conf.py:279
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to mark as bootable"
 msgstr ""
 
-#: lib/user_interaction.py:732 lib/user_interaction.py:739 lib/user_interaction.py:742 lib/user_interaction.py:745 lib/user_interaction.py:744 lib/user_interaction/partitioning_conf.py:282
+#: lib/user_interaction.py:732 lib/user_interaction.py:739 lib/user_interaction.py:742 lib/user_interaction.py:745 lib/user_interaction.py:744 lib/user_interaction/partitioning_conf.py:282 lib/user_interaction/partitioning_conf.py:287
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set a filesystem on"
 msgstr ""
 
-#: lib/user_interaction.py:739 lib/user_interaction.py:746 lib/user_interaction.py:749 lib/user_interaction.py:752 lib/user_interaction.py:751 lib/user_interaction/partitioning_conf.py:289
+#: lib/user_interaction.py:739 lib/user_interaction.py:746 lib/user_interaction.py:749 lib/user_interaction.py:752 lib/user_interaction.py:751 lib/user_interaction/partitioning_conf.py:289 lib/user_interaction/partitioning_conf.py:294
 msgid "Enter a desired filesystem type for the partition: "
 msgstr ""
 
-#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:17 lib/user_interaction/general_conf.py:105 lib/user_interaction/global_menu.py:43
+#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:17 lib/user_interaction/general_conf.py:105 lib/user_interaction/global_menu.py:43 lib/menu/selection_menu.py:53 lib/menu/selection_menu.py:463 lib/menu/global_menu.py:43
 msgid "Select Archinstall language"
 msgstr ""
 
@@ -271,83 +271,83 @@ msgstr ""
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr ""
 
-#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420 lib/user_interaction/global_menu.py:48
+#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420 lib/user_interaction/global_menu.py:48 lib/menu/selection_menu.py:468 lib/menu/global_menu.py:48
 msgid "Select keyboard layout"
 msgstr ""
 
-#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423 lib/user_interaction/global_menu.py:51
+#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423 lib/user_interaction/global_menu.py:51 lib/menu/selection_menu.py:471 lib/menu/global_menu.py:51
 msgid "Select mirror region"
 msgstr ""
 
-#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428 lib/user_interaction/global_menu.py:56
+#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428 lib/user_interaction/global_menu.py:56 lib/menu/selection_menu.py:476 lib/menu/global_menu.py:56
 msgid "Select locale language"
 msgstr ""
 
-#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430 lib/user_interaction/global_menu.py:58
+#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430 lib/user_interaction/global_menu.py:58 lib/menu/selection_menu.py:478 lib/menu/global_menu.py:58
 msgid "Select locale encoding"
 msgstr ""
 
-#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433 lib/user_interaction/global_menu.py:61
+#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433 lib/user_interaction/global_menu.py:61 lib/menu/selection_menu.py:481 lib/menu/global_menu.py:61
 msgid "Select harddrives"
 msgstr ""
 
-#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437 lib/user_interaction/global_menu.py:65
+#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437 lib/user_interaction/global_menu.py:65 lib/menu/selection_menu.py:485 lib/menu/global_menu.py:65
 msgid "Select disk layout"
 msgstr ""
 
-#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445 lib/user_interaction/global_menu.py:73
+#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445 lib/user_interaction/global_menu.py:73 lib/menu/selection_menu.py:493 lib/menu/global_menu.py:73
 msgid "Set encryption password"
 msgstr ""
 
-#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451 lib/user_interaction/global_menu.py:79
+#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451 lib/user_interaction/global_menu.py:79 lib/menu/selection_menu.py:499 lib/menu/global_menu.py:79
 msgid "Use swap"
 msgstr ""
 
-#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456 lib/user_interaction/global_menu.py:84
+#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456 lib/user_interaction/global_menu.py:84 lib/menu/selection_menu.py:504 lib/menu/global_menu.py:84
 msgid "Select bootloader"
 msgstr ""
 
-#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462 lib/user_interaction/global_menu.py:95
+#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462 lib/user_interaction/global_menu.py:95 lib/menu/selection_menu.py:515 lib/menu/global_menu.py:95
 msgid "Set root password"
 msgstr ""
 
-#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467 lib/user_interaction/global_menu.py:100
+#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467 lib/user_interaction/global_menu.py:100 lib/menu/selection_menu.py:520 lib/menu/global_menu.py:100
 msgid "Specify superuser account"
 msgstr ""
 
-#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473 lib/user_interaction/global_menu.py:107
+#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473 lib/user_interaction/global_menu.py:107 lib/menu/selection_menu.py:528 lib/menu/global_menu.py:107
 msgid "Specify user account"
 msgstr ""
 
-#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479 lib/user_interaction/global_menu.py:114
+#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479 lib/user_interaction/global_menu.py:114 lib/menu/selection_menu.py:535 lib/menu/global_menu.py:114
 msgid "Specify profile"
 msgstr ""
 
-#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484 lib/user_interaction/global_menu.py:119
+#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484 lib/user_interaction/global_menu.py:119 lib/menu/selection_menu.py:540 lib/menu/global_menu.py:119
 msgid "Select audio"
 msgstr ""
 
-#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488 lib/user_interaction/global_menu.py:123
+#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488 lib/user_interaction/global_menu.py:123 lib/menu/selection_menu.py:544 lib/menu/global_menu.py:123
 msgid "Select kernels"
 msgstr ""
 
-#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493 lib/user_interaction/global_menu.py:128
+#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493 lib/user_interaction/global_menu.py:128 lib/menu/selection_menu.py:549 lib/menu/global_menu.py:128
 msgid "Additional packages to install"
 msgstr ""
 
-#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498 lib/user_interaction/global_menu.py:139
+#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498 lib/user_interaction/global_menu.py:139 lib/menu/selection_menu.py:560 lib/menu/global_menu.py:139
 msgid "Configure network"
 msgstr ""
 
-#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506 lib/user_interaction/global_menu.py:150
+#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506 lib/user_interaction/global_menu.py:150 lib/menu/selection_menu.py:571 lib/menu/global_menu.py:150
 msgid "Set automatic time sync (NTP)"
 msgstr ""
 
-#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535 lib/user_interaction/global_menu.py:187
+#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535 lib/user_interaction/global_menu.py:187 lib/menu/selection_menu.py:608 lib/menu/global_menu.py:187
 msgid "Install ({} config(s) missing)"
 msgstr ""
 
-#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599 lib/user_interaction/global_menu.py:249
+#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599 lib/user_interaction/global_menu.py:249 lib/menu/selection_menu.py:669 lib/menu/global_menu.py:249
 msgid ""
 "You decided to skip harddrive selection\n"
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
@@ -359,55 +359,55 @@ msgstr ""
 msgid "Re-using partition instance: {}"
 msgstr ""
 
-#: lib/user_interaction.py:590 lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:595 lib/user_interaction/partitioning_conf.py:119
+#: lib/user_interaction.py:590 lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:595 lib/user_interaction/partitioning_conf.py:119 lib/user_interaction/partitioning_conf.py:120
 msgid "Create a new partition"
 msgstr ""
 
-#: lib/user_interaction.py:592 lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:597 lib/user_interaction/partitioning_conf.py:121
+#: lib/user_interaction.py:592 lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:597 lib/user_interaction/partitioning_conf.py:121 lib/user_interaction/partitioning_conf.py:122
 msgid "Delete a partition"
 msgstr ""
 
-#: lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:598 lib/user_interaction/partitioning_conf.py:122
+#: lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:598 lib/user_interaction/partitioning_conf.py:122 lib/user_interaction/partitioning_conf.py:123
 msgid "Clear/Delete all partitions"
 msgstr ""
 
-#: lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:599 lib/user_interaction/partitioning_conf.py:123
+#: lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:599 lib/user_interaction/partitioning_conf.py:123 lib/user_interaction/partitioning_conf.py:124
 msgid "Assign mount-point for a partition"
 msgstr ""
 
-#: lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:600 lib/user_interaction/partitioning_conf.py:124
+#: lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:600 lib/user_interaction/partitioning_conf.py:124 lib/user_interaction/partitioning_conf.py:125
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr ""
 
-#: lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:602 lib/user_interaction.py:601 lib/user_interaction/partitioning_conf.py:125
+#: lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:602 lib/user_interaction.py:601 lib/user_interaction/partitioning_conf.py:125 lib/user_interaction/partitioning_conf.py:126
 msgid "Mark/Unmark a partition as encrypted"
 msgstr ""
 
-#: lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:603 lib/user_interaction.py:602 lib/user_interaction/partitioning_conf.py:126
+#: lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:603 lib/user_interaction.py:602 lib/user_interaction/partitioning_conf.py:126 lib/user_interaction/partitioning_conf.py:127
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr ""
 
-#: lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:604 lib/user_interaction.py:603 lib/user_interaction/partitioning_conf.py:127
+#: lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:604 lib/user_interaction.py:603 lib/user_interaction/partitioning_conf.py:127 lib/user_interaction/partitioning_conf.py:128
 msgid "Set desired filesystem for a partition"
 msgstr ""
 
-#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515 lib/user_interaction/global_menu.py:167
+#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515 lib/user_interaction/global_menu.py:167 lib/menu/selection_menu.py:588 lib/menu/global_menu.py:167
 msgid "Abort"
 msgstr ""
 
-#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459 lib/user_interaction/global_menu.py:89
+#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459 lib/user_interaction/global_menu.py:89 lib/menu/selection_menu.py:509 lib/menu/global_menu.py:89
 msgid "Specify hostname"
 msgstr ""
 
-#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500 lib/user_interaction/global_menu.py:141
+#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500 lib/user_interaction/global_menu.py:141 lib/menu/selection_menu.py:562 lib/menu/global_menu.py:141
 msgid "Not configured, unavailable unless setup manually"
 msgstr ""
 
-#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503 lib/user_interaction/global_menu.py:145
+#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503 lib/user_interaction/global_menu.py:145 lib/menu/selection_menu.py:566 lib/menu/global_menu.py:145
 msgid "Select timezone"
 msgstr ""
 
-#: lib/menu/selection_menu.py:266 lib/menu/selection_menu.py:276
+#: lib/menu/selection_menu.py:266 lib/menu/selection_menu.py:276 lib/menu/selection_menu.py:312
 msgid "Set/Modify the below options"
 msgstr ""
 
@@ -421,7 +421,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: lib/user_interaction.py:591 lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:596 lib/user_interaction/partitioning_conf.py:120
+#: lib/user_interaction.py:591 lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:596 lib/user_interaction/partitioning_conf.py:120 lib/user_interaction/partitioning_conf.py:121
 msgid "Suggest partition layout"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgstr ""
 msgid "Enter a encryption password for {}"
 msgstr ""
 
-#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575 lib/user_interaction/global_menu.py:225
+#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575 lib/user_interaction/global_menu.py:225 lib/menu/selection_menu.py:646 lib/menu/global_menu.py:225
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr ""
 
@@ -441,7 +441,7 @@ msgstr ""
 msgid "Create a required super-user with sudo privileges: "
 msgstr ""
 
-#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562 lib/user_interaction/global_menu.py:220
+#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562 lib/user_interaction/global_menu.py:220 lib/menu/selection_menu.py:641 lib/menu/global_menu.py:220
 msgid "Enter root password (leave blank to disable root): "
 msgstr ""
 
@@ -534,7 +534,7 @@ msgstr ""
 msgid "Edit {origkey} :"
 msgstr ""
 
-#: lib/models/network_configuration.py:53
+#: lib/models/network_configuration.py:53 lib/models/network_configuration.py:74
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr ""
 
@@ -594,18 +594,18 @@ msgstr ""
 msgid "No network configuration"
 msgstr ""
 
-#: lib/user_interaction/partitioning_conf.py:128
+#: lib/user_interaction/partitioning_conf.py:128 lib/user_interaction/partitioning_conf.py:129
 msgid "Set desired subvolumes on a btrfs partition"
 msgstr ""
 
-#: lib/user_interaction/partitioning_conf.py:296
+#: lib/user_interaction/partitioning_conf.py:296 lib/user_interaction/partitioning_conf.py:303
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
 
-#: lib/user_interaction/partitioning_conf.py:305
+#: lib/user_interaction/partitioning_conf.py:305 lib/user_interaction/partitioning_conf.py:312
 msgid "Manage btrfs subvolumes for current partition"
 msgstr ""
 
@@ -649,27 +649,27 @@ msgstr ""
 msgid "are you sure you want to use it?"
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:134
+#: lib/user_interaction/global_menu.py:134 lib/menu/selection_menu.py:555 lib/menu/global_menu.py:134
 msgid "Additional repositories to enable"
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:155
+#: lib/user_interaction/global_menu.py:155 lib/menu/selection_menu.py:576 lib/menu/global_menu.py:155
 msgid "Save configuration"
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:192
+#: lib/user_interaction/global_menu.py:192 lib/menu/selection_menu.py:613 lib/menu/global_menu.py:192
 msgid "Missing configurations:\n"
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:210
+#: lib/user_interaction/global_menu.py:210 lib/menu/selection_menu.py:631 lib/menu/global_menu.py:210
 msgid "Either root-password or at least 1 superuser must be specified"
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:275
+#: lib/user_interaction/global_menu.py:275 lib/menu/selection_menu.py:695 lib/menu/global_menu.py:275
 msgid "Manage superuser accounts: "
 msgstr ""
 
-#: lib/user_interaction/global_menu.py:279
+#: lib/user_interaction/global_menu.py:279 lib/menu/selection_menu.py:699 lib/menu/global_menu.py:279
 msgid "Manage ordinary user accounts: "
 msgstr ""
 
@@ -717,4 +717,12 @@ msgstr ""
 
 #: lib/user_interaction/subvolume_config.py:128
 msgid "Select the desired subvolume options "
+msgstr ""
+
+#: lib/user_interaction/manage_users_conf.py:161
+msgid "Define users with sudo privilege, by username: "
+msgstr ""
+
+#: lib/installer.py:152
+msgid "[!] A log file has been created here: {}"
 msgstr ""
