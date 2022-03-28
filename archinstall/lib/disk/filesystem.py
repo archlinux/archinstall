@@ -227,7 +227,7 @@ class Filesystem:
 		return self.parted(f'{self.blockdevice.device} name {partition + 1} "{name}"') == 0
 
 	def set(self, partition: int, string: str):
-		log(f"Setting '{string}'' on (parted) partition index {partition+1}", level=logging.INFO)
+		log(f"Setting '{string}' on (parted) partition index {partition+1}", level=logging.INFO)
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
 	def parted_mklabel(self, device: str, disk_label: str):

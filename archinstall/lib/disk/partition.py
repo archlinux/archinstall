@@ -392,7 +392,7 @@ class Partition:
 			else:
 				mount_options = ''
 
-			log(f"Mount command: /usr/bin/mount -t {fs_type} {mount_options} {device_path} {target}", fg="yellow")
+			log(f"Mount command: /usr/bin/mount -t {fs_type} {mount_options} {device_path} {target}", fg="yellow", level=logging.DEBUG)
 			mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} {mount_options} {device_path} {target}")
 
 			# TODO: Should be redundant to check for exit_code
