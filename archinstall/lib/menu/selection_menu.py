@@ -502,6 +502,7 @@ class GlobalMenu(GeneralMenu):
 				_('Specify superuser account'),
 				lambda preset: self._create_superuser_account(),
 				exec_func=lambda n,v:self._users_resynch(),
+				default={},
 				dependencies_not=['!root-password'],
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
@@ -656,7 +657,7 @@ class GlobalMenu(GeneralMenu):
 			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
 
 			if choice == 'no':
-				return self._select_harddrives()
+				exit(1)
 
 		return harddrives
 
