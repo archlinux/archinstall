@@ -32,3 +32,4 @@ venv
 .DS_Store
 **/cmd_history.txt
 **/*.*~
+/*.sig
