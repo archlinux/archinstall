@@ -80,6 +80,7 @@ def select_partition(title :str, partitions :List[Partition], multiple :bool = F
 		return None
 	# old code without filter
 	# partition_indexes = list(map(str, range(len(partitions))))
+
 	partition = Menu(title, partition_indexes, multi=multiple).run()
 
 	if partition is not None:
@@ -309,6 +310,7 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 						del block_device_struct["partitions"][partition]['btrfs']
 
 	return block_device_struct
+
 
 def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
 	for device in block_devices:

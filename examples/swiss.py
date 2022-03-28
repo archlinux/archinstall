@@ -415,11 +415,13 @@ def os_setup(installation):
 		if archinstall.arguments.get('profile', None):
 			installation.install_profile(archinstall.arguments.get('profile', None))
 
-		for user, user_info in archinstall.arguments.get('!users', {}).items():
-			installation.user_create(user, user_info["!password"], sudo=False)
+		if archinstall.arguments.get('!users',{}):
+			for user, user_info in archinstall.arguments.get('!users', {}).items():
+				installation.user_create(user, user_info["!password"], sudo=False)
 
-		for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-			installation.user_create(superuser, user_info["!password"], sudo=True)
+		if archinstall.arguments.get('!superusers',{}):
+			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
+				installation.user_create(superuser, user_info["!password"], sudo=True)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)

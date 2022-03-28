@@ -149,7 +149,7 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(_("[!] A log file has been created here: {} {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise args[1]
 
@@ -956,9 +956,9 @@ class Installer:
 
 	def enable_sudo(self, entity: str, group :bool = False) -> bool:
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
-		
+
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
-		
+
 		# Creates directory if not exists
 		if not (sudoers_path := pathlib.Path(sudoers_dir)).exists():
 			sudoers_path.mkdir(parents=True)
@@ -967,7 +967,7 @@ class Installer:
 			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
 			with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
 				sudoers.write('@includedir /etc/sudoers.d\n')
-		
+
 		# We count how many files are there already so we know which number to prefix the file with
 		num_of_rules_already = len(os.listdir(sudoers_dir))
 		file_num_str = "{:02d}".format(num_of_rules_already) # We want 00_user1, 01_user2, etc
@@ -977,10 +977,10 @@ class Installer:
 		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', '', entity)
 
 		rule_file_name = f"{sudoers_dir}/{file_num_str}_{safe_entity_file_name}"
-		
+
 		with open(rule_file_name, 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
-		
+
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
