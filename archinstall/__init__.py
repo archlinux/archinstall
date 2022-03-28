@@ -176,6 +176,7 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 def load_config():
+	from .lib.models import NetworkConfiguration
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
