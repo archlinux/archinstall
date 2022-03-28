@@ -10,3 +10,4 @@ from .general_conf import (ask_ntp, ask_for_a_timezone, ask_for_audio_selection,
 							select_additional_repositories, ask_hostname)
 from .disk_conf import ask_for_main_filesystem_format, select_individual_blockdevice_usage, select_disk_layout, select_disk
 from .utils import get_password, do_countdown
+from .global_menu import GlobalMenu
