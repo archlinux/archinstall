@@ -257,7 +257,6 @@ class GlobalMenu(GeneralMenu):
 			if choice == 'no':
 				exit(1)
 
-
 		return harddrives
 
 	def _select_profile(self):
