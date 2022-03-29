@@ -9,11 +9,12 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Optional, Dict, Union, TYPE_CHECKING
+from typing import Optional, Dict, Union, TYPE_CHECKING, Any
 from types import ModuleType
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .installer import Installer
+	_: Any
 
 from .general import multisplit
 from .networking import list_interfaces
@@ -123,7 +124,7 @@ class Script:
 		self.installer = installer # TODO: Appears not to be used anymore?
 		self.converted_path = None
 		self.spec = None
-		self.examples = None
+		self.examples = {}
 		self.namespace = os.path.splitext(os.path.basename(self.path))[0]
 		self.original_namespace = self.namespace
 
@@ -197,7 +198,7 @@ class Script:
 
 
 class Profile(Script):
-	def __init__(self, installer :Installer, path :str):
+	def __init__(self, installer :Optional[Installer], path :str):
 		super(Profile, self).__init__(path, installer)
 
 	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:

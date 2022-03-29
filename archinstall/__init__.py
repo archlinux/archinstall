@@ -21,13 +21,12 @@ from .lib.models.dataclasses import (
 	LocalPackage
 )
 from .lib.packages.packages import (
-	find_group,
+	group_search,
 	package_search,
-	IsGroup,
 	find_package,
 	find_packages,
 	installed_package,
-	validate_package_list
+	validate_package_list,
 )
 from .lib.profiles import *
 from .lib.services import *
@@ -35,8 +34,10 @@ from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
 from .lib.menu import Menu
+from .lib.menu.list_manager import ListManager
+from .lib.menu.text_input import TextInput
+from .lib.menu.global_menu import GlobalMenu
 from .lib.menu.selection_menu import (
-	GlobalMenu,
 	Selector,
 	GeneralMenu
 )
@@ -45,7 +46,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 from .lib.configuration import *
 parser = ArgumentParser()
 
-__version__ = "2.4.0-dev0"
+__version__ = "2.4.0.RC2"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -124,7 +125,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 					print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
-def get_arguments():
+def get_arguments() -> Dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
@@ -175,6 +176,7 @@ def get_arguments():
 	return config
 
 def load_config():
+	from .lib.models import NetworkConfiguration
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
@@ -204,7 +206,8 @@ def load_config():
 		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
-
+	if arguments.get('nic', None) is not None:
+		arguments['nic'] = NetworkConfiguration.parse_arguments(arguments.get('nic'))
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments

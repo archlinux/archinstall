@@ -19,6 +19,7 @@ import time
 import pathlib
 
 import archinstall
+from archinstall import ConfigurationOutput
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -156,26 +157,26 @@ class SetupMenu(archinstall.GeneralMenu):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
 				_('Select Archinstall language'),
-				lambda: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language('English'),
 				default='English',
 				enabled=True))
 		self.set_option('ntp',
 		archinstall.Selector(
 			'Activate NTP',
-			lambda: select_activate_NTP(),
+			lambda x: select_activate_NTP(),
 			default='Y',
 			enabled=True))
 		self.set_option('mode',
 			archinstall.Selector(
 				'Excution mode',
-				lambda: select_mode(),
+				lambda x : select_mode(),
 				default='full',
 				enabled=True))
 		for item in ['LC_ALL','LC_CTYPE','LC_NUMERIC','LC_TIME','LC_MESSAGES','LC_COLLATE']:
 			self.set_option(item,
 				archinstall.Selector(
 					f'{get_locale_mode_text(item)} locale',
-					lambda item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
+					lambda x,item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
 					enabled=True,
 					dependencies_not=['LC_ALL'] if item != 'LC_ALL' else []))
 		self.option('LC_ALL').set_enabled(True)
@@ -214,7 +215,7 @@ class MyMenu(archinstall.GlobalMenu):
 		if self._execution_mode in ('full','lineal'):
 			options_list = ['keyboard-layout', 'mirror-region', 'harddrives', 'disk_layouts',
 					'!encryption-password','swap', 'bootloader', 'hostname', '!root-password',
-					'!superusers', '!users', 'profile', 'audio', 'kernels', 'packages','nic',
+					'!superusers', '!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
 					'timezone', 'ntp']
 			if archinstall.arguments.get('advanced',False):
 				options_list.extend(['sys-language','sys-encoding'])
@@ -225,7 +226,7 @@ class MyMenu(archinstall.GlobalMenu):
 		elif self._execution_mode == 'only_os':
 			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
 					'!root-password', '!superusers', '!users', 'profile', 'audio', 'kernels',
-					'packages', 'nic', 'timezone', 'ntp']
+					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp']
 			mandatory_list = ['hostname']
 			if archinstall.arguments.get('advanced',False):
 				options_list.expand(['sys-language','sys-encoding'])
@@ -235,7 +236,7 @@ class MyMenu(archinstall.GlobalMenu):
 			archinstall.log(f"self._execution_mode {self._execution_mode} not supported")
 			exit(1)
 		if self._execution_mode != 'lineal':
-			options_list.extend(['install','abort'])
+			options_list.extend(['save_config','install','abort'])
 			if not archinstall.arguments.get('advanced'):
 				options_list.append('archinstall-language')
 
@@ -248,10 +249,10 @@ class MyMenu(archinstall.GlobalMenu):
 					self.enable(entry)
 			else:
 				self.option(entry).set_enabled(False)
-		self._update_install()
+		self._update_install_text()
 
 	def post_callback(self,option,value=None):
-		self._update_install(self._execution_mode)
+		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
 		def check(s):
@@ -271,7 +272,7 @@ class MyMenu(archinstall.GlobalMenu):
 			return f'Instalation ({missing} config(s) missing)'
 		return 'Install'
 
-	def _update_install(self,mode='full'):
+	def _update_install_text(self, mode='full'):
 		text = self._install_text(mode)
 		self.option('install').update_description(text)
 
@@ -393,19 +394,10 @@ def os_setup(installation):
 		if archinstall.arguments['swap']:
 			installation.setup_swap('zram')
 
-		# If user selected to copy the current ISO network configuration
-		# Perform a copy of the config
-		if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
-			installation.copy_iso_network_config(
-				enable_services=True)  # Sources the ISO network configuration to the install medium.
-		elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
-			installation.add_additional_packages("networkmanager")
-			installation.enable_service('NetworkManager.service')
-		# Otherwise, if a interface was selected, configure that interface
-		elif archinstall.arguments.get('nic', {}):
-			installation.configure_nic(**archinstall.arguments.get('nic', {}))
-			installation.enable_service('systemd-networkd')
-			installation.enable_service('systemd-resolved')
+		network_config = archinstall.arguments.get('nic', None)
+
+		if network_config:
+			network_config.config_installer(installation)
 
 		if archinstall.arguments.get('audio', None) is not None:
 			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)
@@ -423,11 +415,13 @@ def os_setup(installation):
 		if archinstall.arguments.get('profile', None):
 			installation.install_profile(archinstall.arguments.get('profile', None))
 
-		for user, user_info in archinstall.arguments.get('!users', {}).items():
-			installation.user_create(user, user_info["!password"], sudo=False)
+		if archinstall.arguments.get('!users',{}):
+			for user, user_info in archinstall.arguments.get('!users', {}).items():
+				installation.user_create(user, user_info["!password"], sudo=False)
 
-		for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-			installation.user_create(superuser, user_info["!password"], sudo=True)
+		if archinstall.arguments.get('!superusers',{}):
+			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
+				installation.user_create(superuser, user_info["!password"], sudo=True)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -501,7 +495,11 @@ mode = archinstall.arguments.get('mode', 'full').lower()
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
 
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
+
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 if not archinstall.arguments.get('silent'):

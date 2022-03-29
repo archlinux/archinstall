@@ -1,0 +1,783 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: lib/installer.py:144 lib/installer.py:152
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] یہاں ایک لاگ فائل بنائی گئی ہے: {} {}"
+
+#: lib/installer.py:145 lib/installer.py:153
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    براہ کرم یہ مسئلہ (اور فائل) https://github.com/archlinux/archinstall/issues پراپلوڈکریں"
+
+#: lib/user_interaction.py:83 lib/user_interaction/utils.py:86
+msgid "Do you really want to abort?"
+msgstr "کیا آپ واقعی بند کرنا چاہتے ہیں؟"
+
+#: lib/user_interaction.py:101 lib/user_interaction.py:104 lib/user_interaction/utils.py:53
+msgid "And one more time for verification: "
+msgstr "تصدیق کے لیے ایک بار اور:"
+
+#: lib/user_interaction.py:272 lib/user_interaction.py:275 lib/user_interaction/system_conf.py:142
+msgid "Would you like to use swap on zram?"
+msgstr "کیا آپ زی ریم پر سواپ استعمال کرنا چاہیں گے؟"
+
+#: lib/user_interaction.py:285 lib/user_interaction.py:288 lib/user_interaction/general_conf.py:33
+msgid "Desired hostname for the installation: "
+msgstr "انسٹالیشن کے لیے منتخب ہوسٹ کا نام:"
+
+#: lib/user_interaction.py:290 lib/user_interaction.py:293
+msgid "Username for required superuser with sudo privileges: "
+msgstr "sudo  کے ساتھ مطلوبہ سپر یوزر کے لیے صارف نام:"
+
+#: lib/user_interaction.py:310 lib/user_interaction.py:313 lib/user_interaction/manage_users_conf.py:167
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "انسٹال کے لیے کوئی اضافی صارف (نہ ہونے کی صورت میں خالی چھوڑ دیں):"
+
+#: lib/user_interaction.py:324 lib/user_interaction.py:327
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "کیا اس صارف کو سپر یوزر (sudoer) ہونا چاہیے؟"
+
+#: lib/user_interaction.py:340 lib/user_interaction.py:343 lib/user_interaction.py:346 lib/user_interaction/general_conf.py:41
+msgid "Select a timezone"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+#: lib/user_interaction.py:354 lib/user_interaction.py:357 lib/user_interaction.py:360 lib/user_interaction.py:359 lib/user_interaction/system_conf.py:115
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "کیا آپ GRUB کو systemd-boot کے بجائے بوٹ لوڈر کے طور پر استعمال کرنا چاہیں گے؟"
+
+#: lib/user_interaction.py:364 lib/user_interaction.py:367 lib/user_interaction.py:370 lib/user_interaction.py:369 lib/user_interaction/system_conf.py:125
+msgid "Choose a bootloader"
+msgstr "بوٹ لوڈرکا انتخاب کریں"
+
+#: lib/user_interaction.py:380 lib/user_interaction.py:383 lib/user_interaction.py:386 lib/user_interaction.py:385 lib/user_interaction/general_conf.py:53
+msgid "Choose an audio server"
+msgstr "آڈیو سرور کا انتخاب کریں"
+
+#: lib/user_interaction.py:391 lib/user_interaction.py:394 lib/user_interaction.py:397 lib/user_interaction.py:396 lib/user_interaction/general_conf.py:138
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "صرف پیکیج جیسے کہ بیس، بیس ڈیول، لینکس، لینکس فرم ویئر، efibootmgr اور اختیاری پروفائل پیکجز انسٹال ہیں۔"
+
+#: lib/user_interaction.py:392 lib/user_interaction.py:395 lib/user_interaction.py:398 lib/user_interaction.py:397 lib/user_interaction/general_conf.py:139
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "اگر آپ ویب براؤزر جیسےکہ فائر فاکس یا کرومیم چاہتے ہیں، تو آپ اسے اگلے پرامپٹ میں بتا سکتے ہیں۔"
+
+#: lib/user_interaction.py:396 lib/user_interaction.py:399 lib/user_interaction.py:402 lib/user_interaction.py:401 lib/user_interaction/general_conf.py:143
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (الگ الگ لیکھیں، نہیں کی صورت میں خالی چھوڑیں):"
+
+#: lib/user_interaction.py:419 lib/user_interaction.py:422 lib/user_interaction.py:425 lib/user_interaction.py:424 lib/user_interaction/network_conf.py:25
+msgid "Copy ISO network configuration to installation"
+msgstr "آئی ایس او نیٹ ورک کنفیگریشن کو انسٹالیشن میں کاپی کریں"
+
+#: lib/user_interaction.py:420 lib/user_interaction.py:423 lib/user_interaction.py:426 lib/user_interaction.py:425 lib/user_interaction/network_conf.py:26
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
+
+#: lib/user_interaction.py:428 lib/user_interaction.py:431 lib/user_interaction.py:434 lib/user_interaction.py:433 lib/user_interaction/network_conf.py:43
+msgid "Select one network interface to configure"
+msgstr "کنفیگر کرنے کے لیے ایک نیٹ ورک انٹرفیس منتخب کریں"
+
+#: lib/user_interaction.py:441 lib/user_interaction.py:444 lib/user_interaction.py:447 lib/user_interaction.py:446 lib/user_interaction/network_conf.py:70
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "منتخب کریں کہ کون سا موڈ \"{}\" کے لیے کنفیگر کرنا ہے یا ڈیفالٹ موڈ \"{}\" استعمال کرنے کے لیےخالی چھوڑ دیں۔"
+
+#: lib/user_interaction.py:446 lib/user_interaction.py:449 lib/user_interaction.py:452 lib/user_interaction.py:451 lib/user_interaction/network_conf.py:75
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "{} کے لیے IP اور ذیلی نیٹ درج کریں (مثلاً: 192.168.0.5/24):"
+
+#: lib/user_interaction.py:461 lib/user_interaction.py:464 lib/user_interaction.py:467 lib/user_interaction.py:466 lib/user_interaction/network_conf.py:86
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "اپنےگیٹ وے (راؤٹر) آئی پی ایڈریس درج کریں یا نہیں کی صورت میں خالی چھوڑیں:"
+
+#: lib/user_interaction.py:476 lib/user_interaction.py:479 lib/user_interaction.py:482 lib/user_interaction.py:481 lib/user_interaction/network_conf.py:102
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "اپنےڈی این ایس سرورز درج کریں (الگ الگ لیکھیں،نہیں کی صورت میں خالی چھوڑیں):"
+
+#: lib/user_interaction.py:510 lib/user_interaction.py:513 lib/user_interaction.py:516 lib/user_interaction.py:515 lib/user_interaction/disk_conf.py:23
+msgid "Select which filesystem your main partition should use"
+msgstr "اپنے مین پارٹیشن کیلیے فائل سسٹم کا انتخاب کریں"
+
+#: lib/user_interaction.py:556 lib/user_interaction.py:559 lib/user_interaction.py:562 lib/user_interaction.py:561 lib/user_interaction/partitioning_conf.py:64 lib/user_interaction/partitioning_conf.py:63
+msgid "Current partition layout"
+msgstr "موجودہ پارٹیشن کی ترتیب"
+
+#: lib/user_interaction.py:607 lib/user_interaction.py:614 lib/user_interaction.py:617 lib/user_interaction.py:620 lib/user_interaction.py:619 lib/user_interaction/partitioning_conf.py:145 lib/user_interaction/partitioning_conf.py:146
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"منتخب کریں کہ اس کا کیا کرنا ہے۔\n"
+"{}"
+
+#: lib/user_interaction.py:624 lib/user_interaction.py:709 lib/user_interaction.py:631 lib/user_interaction.py:716 lib/user_interaction.py:634 lib/user_interaction.py:719 lib/user_interaction.py:637 lib/user_interaction.py:722 lib/user_interaction.py:636 lib/user_interaction.py:721 lib/user_interaction/partitioning_conf.py:162 lib/user_interaction/partitioning_conf.py:255 lib/user_interaction/partitioning_conf.py:165 lib/user_interaction/partitioning_conf.py:260
+msgid "Enter a desired filesystem type for the partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+#: lib/user_interaction.py:626 lib/user_interaction.py:633 lib/user_interaction.py:636 lib/user_interaction.py:639 lib/user_interaction.py:638 lib/user_interaction/partitioning_conf.py:164 lib/user_interaction/partitioning_conf.py:167
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+
+#: lib/user_interaction.py:635 lib/user_interaction.py:642 lib/user_interaction.py:645 lib/user_interaction.py:648 lib/user_interaction.py:647 lib/user_interaction/partitioning_conf.py:174 lib/user_interaction/partitioning_conf.py:177
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
+
+#: lib/user_interaction.py:661 lib/user_interaction.py:668 lib/user_interaction.py:671 lib/user_interaction.py:674 lib/user_interaction.py:673 lib/user_interaction/partitioning_conf.py:203 lib/user_interaction/partitioning_conf.py:208
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
+
+#: lib/user_interaction.py:674 lib/user_interaction.py:681 lib/user_interaction.py:684 lib/user_interaction.py:687 lib/user_interaction.py:686 lib/user_interaction/partitioning_conf.py:216 lib/user_interaction/partitioning_conf.py:221
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"انڈیکس کے ذریعہ منتخب کریں کہ کون سے پارٹیشنز کو حذف کرنا ہے"
+
+#: lib/user_interaction.py:682 lib/user_interaction.py:689 lib/user_interaction.py:692 lib/user_interaction.py:695 lib/user_interaction.py:694 lib/user_interaction/partitioning_conf.py:226 lib/user_interaction/partitioning_conf.py:231
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"انڈیکس کے ذریعہ منتخب کریں کہ کون سا پارٹیشن کہاں ماؤنٹ کرنا ہے"
+
+#: lib/user_interaction.py:686 lib/user_interaction.py:693 lib/user_interaction.py:696 lib/user_interaction.py:699 lib/user_interaction.py:698 lib/user_interaction/partitioning_conf.py:231 lib/user_interaction/partitioning_conf.py:236
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "* پارٹیشن ماؤنٹ پوائنٹس انسٹالیشن کی نسبت سے ہیں، بوٹ مثال کے طور /boot پرہوگا۔"
+
+#: lib/user_interaction.py:687 lib/user_interaction.py:694 lib/user_interaction.py:697 lib/user_interaction.py:700 lib/user_interaction.py:699 lib/user_interaction/partitioning_conf.py:233 lib/user_interaction/partitioning_conf.py:238
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "منتخب کریں کہ پارٹیشن کہاں ماؤنٹ کرنا ہے (ماؤنٹ پوائنٹ کو ہٹانے کے لیے جگہ خالی چھوڑیں):"
+
+#: lib/user_interaction.py:698 lib/user_interaction.py:705 lib/user_interaction.py:708 lib/user_interaction.py:711 lib/user_interaction.py:710 lib/user_interaction/partitioning_conf.py:244 lib/user_interaction/partitioning_conf.py:249
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"فارمیٹنگ کے لیے کس پارٹیشن کو ماسک کرنا ہے"
+
+#: lib/user_interaction.py:717 lib/user_interaction.py:724 lib/user_interaction.py:727 lib/user_interaction.py:730 lib/user_interaction.py:729 lib/user_interaction/partitioning_conf.py:265 lib/user_interaction/partitioning_conf.py:270
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+#: lib/user_interaction.py:725 lib/user_interaction.py:732 lib/user_interaction.py:735 lib/user_interaction.py:738 lib/user_interaction.py:737 lib/user_interaction/partitioning_conf.py:274 lib/user_interaction/partitioning_conf.py:279
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"منتخب کریں کہ کس پارٹیشن کو بوٹ ایبل رکھنا ہے"
+
+#: lib/user_interaction.py:732 lib/user_interaction.py:739 lib/user_interaction.py:742 lib/user_interaction.py:745 lib/user_interaction.py:744 lib/user_interaction/partitioning_conf.py:282 lib/user_interaction/partitioning_conf.py:287
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"فائل سسٹم کو کس پارٹیشن پر سیٹ کرنا ہے"
+
+#: lib/user_interaction.py:739 lib/user_interaction.py:746 lib/user_interaction.py:749 lib/user_interaction.py:752 lib/user_interaction.py:751 lib/user_interaction/partitioning_conf.py:289 lib/user_interaction/partitioning_conf.py:294
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:17 lib/user_interaction/general_conf.py:105 lib/user_interaction/global_menu.py:43 lib/menu/selection_menu.py:53 lib/menu/selection_menu.py:463 lib/menu/global_menu.py:43
+msgid "Select Archinstall language"
+msgstr "آرچ انسٹال کے لیے زبان کا انتخاب کریں"
+
+#: lib/user_interaction.py:765 lib/user_interaction.py:772 lib/user_interaction.py:775 lib/user_interaction.py:778 lib/user_interaction.py:777 lib/user_interaction/disk_conf.py:40
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "تمام منتخب ڈرائیوز کو صاف کریں اور ایک بہترین ڈیفالٹ پارٹیشن لے آؤٹ استعمال کریں"
+
+#: lib/user_interaction.py:766 lib/user_interaction.py:773 lib/user_interaction.py:776 lib/user_interaction.py:779 lib/user_interaction.py:778 lib/user_interaction/disk_conf.py:41
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "منتخب کریں کہ ہر انفرادی ڈرائیو کے ساتھ کیا کرنا ہے (اس کے بعد پارٹیشن کا استعمال)"
+
+#: lib/user_interaction.py:769 lib/user_interaction.py:770 lib/user_interaction.py:777 lib/user_interaction.py:780 lib/user_interaction.py:783 lib/user_interaction.py:782 lib/user_interaction/disk_conf.py:45
+msgid "Select what you wish to do with the selected block devices"
+msgstr "انتخاب کریں کہ آپ منتخب بلاک ڈیوائسز کے ساتھ کیا کرنا چاہتے ہیں"
+
+#: lib/user_interaction.py:822 lib/user_interaction.py:823 lib/user_interaction.py:830 lib/user_interaction.py:833 lib/user_interaction.py:836 lib/user_interaction.py:835 lib/user_interaction/general_conf.py:126
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "یہ پہلے سے پروگرام شدہ پروفائلز کی فہرست ہے، وہ ڈیسک ٹاپ انسٹالیشن جیسی چیزوں کو آسان بناتے ہیں"
+
+#: lib/user_interaction.py:846 lib/user_interaction.py:847 lib/user_interaction.py:854 lib/user_interaction.py:857 lib/user_interaction.py:860 lib/user_interaction.py:859 lib/user_interaction/general_conf.py:71
+msgid "Select Keyboard layout"
+msgstr "کی بورڈ لے آؤٹ کو منتخب کریں"
+
+#: lib/user_interaction.py:861 lib/user_interaction.py:862 lib/user_interaction.py:869 lib/user_interaction.py:872 lib/user_interaction.py:875 lib/user_interaction.py:874 lib/user_interaction/general_conf.py:92
+msgid "Select one of the regions to download packages from"
+msgstr "پیکیجز ڈاؤن لوڈ کرنے کے لیے علاقوں میں سے ایک کو منتخب کریں"
+
+#: lib/user_interaction.py:883 lib/user_interaction.py:884 lib/user_interaction.py:891 lib/user_interaction.py:894 lib/user_interaction.py:897 lib/user_interaction.py:896 lib/user_interaction/system_conf.py:52
+msgid "Select one or more hard drives to use and configure"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+#: lib/user_interaction.py:910 lib/user_interaction.py:911 lib/user_interaction.py:918 lib/user_interaction.py:921 lib/user_interaction.py:924 lib/user_interaction.py:923 lib/user_interaction/system_conf.py:80
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "اپنے AMD ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ یا تو تمام اوپن سورس یا AMD/ATI آپشنز استعمال کرنا چاہیں گے"
+
+#: lib/user_interaction.py:912 lib/user_interaction.py:913 lib/user_interaction.py:920 lib/user_interaction.py:923 lib/user_interaction.py:926 lib/user_interaction.py:925 lib/user_interaction/system_conf.py:84
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "اپنے intel ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ یا تو تمام اوپن سورس یا intel آپشنز استعمال کرنا چاہیں گے۔\n"
+
+#: lib/user_interaction.py:914 lib/user_interaction.py:915 lib/user_interaction.py:922 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:927 lib/user_interaction/system_conf.py:88
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "اپنے Nvidia ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ Nvidia کے ملکیتی ڈرائیور کو استعمال کرنا چاہیں گے۔\n"
+
+#: lib/user_interaction.py:917 lib/user_interaction.py:918 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:931 lib/user_interaction.py:930 lib/user_interaction/system_conf.py:92
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"\n"
+"ایک گرافکس ڈرائیور منتخب کریں یا تمام اوپن سورس ڈرائیورز کو انسٹال کرنے کے لیے خالی چھوڑ دیں"
+
+#: lib/user_interaction.py:921 lib/user_interaction.py:922 lib/user_interaction.py:929 lib/user_interaction.py:932 lib/user_interaction.py:935 lib/user_interaction.py:934 lib/user_interaction/system_conf.py:96
+msgid "All open-source (default)"
+msgstr "سبھی اوپن سورس (ڈیفالٹ)"
+
+#: lib/user_interaction.py:940 lib/user_interaction.py:941 lib/user_interaction.py:948 lib/user_interaction.py:951 lib/user_interaction.py:954 lib/user_interaction.py:953 lib/user_interaction/system_conf.py:28
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "منتخب کریں کہ کن کنلز کو استعمال کرنا ہے یا ڈیفالٹ \"{}\" کے لیے خالی چھوڑ دیں"
+
+#: lib/user_interaction.py:954 lib/user_interaction.py:955 lib/user_interaction.py:962 lib/user_interaction.py:965 lib/user_interaction.py:968 lib/user_interaction.py:967 lib/user_interaction/locale_conf.py:16
+msgid "Choose which locale language to use"
+msgstr "منتخب کریں کہ کون سی مقامی زبان استعمال کرنی ہے"
+
+#: lib/user_interaction.py:968 lib/user_interaction.py:969 lib/user_interaction.py:976 lib/user_interaction.py:979 lib/user_interaction.py:982 lib/user_interaction.py:981 lib/user_interaction/locale_conf.py:29
+msgid "Choose which locale encoding to use"
+msgstr "منتخب کریں کہ کون سا مقامی انکوڈنگ استعمال کرنا ہے"
+
+#: lib/user_interaction.py:1009 lib/user_interaction.py:1010 lib/user_interaction.py:1017 lib/user_interaction.py:1020 lib/user_interaction.py:1023 lib/user_interaction.py:1022 lib/user_interaction/backwards_compatible_conf.py:49
+msgid "Select one of the values shown below: "
+msgstr "ذیل میں دکھائی گئی قدروں میں سے ایک کو منتخب کریں:"
+
+#: lib/user_interaction.py:1050 lib/user_interaction.py:1051 lib/user_interaction.py:1058 lib/user_interaction.py:1061 lib/user_interaction.py:1064 lib/user_interaction.py:1063 lib/user_interaction/backwards_compatible_conf.py:88
+msgid "Select one or more of the options below: "
+msgstr "ذیل میں سے ایک یا زیادہ اختیارات کو منتخب کریں:"
+
+#: lib/disk/filesystem.py:86 lib/disk/filesystem.py:87
+msgid "Adding partition...."
+msgstr "پارٹیشن شامل ہو رہی ہے..."
+
+#: lib/disk/filesystem.py:139 lib/disk/filesystem.py:141 lib/disk/filesystem.py:142
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "جاری رکھنے کے لیے آپ کو ایک درست fs-typeدرج کرنے کی ضرورت ہے۔ درست fs-types کے لیے 'man parted' دیکھیں۔"
+
+#: lib/profiles.py:89 lib/profiles.py:90
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "خرابی: URL \"{}\" پر پروفائلز کی فہرست بنانے کا نتیجہ یہ ہوا:"
+
+#: lib/profiles.py:92 lib/profiles.py:93
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "خرابی: \"{}\" نتیجہ کو JSON کے بطور ڈی کوڈ نہیں کیا جا سکا:"
+
+#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420 lib/user_interaction/global_menu.py:48 lib/menu/selection_menu.py:468 lib/menu/global_menu.py:48
+msgid "Select keyboard layout"
+msgstr "کی بورڈ لے آؤٹ کو منتخب کریں"
+
+#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423 lib/user_interaction/global_menu.py:51 lib/menu/selection_menu.py:471 lib/menu/global_menu.py:51
+msgid "Select mirror region"
+msgstr "متبادل علاقہ منتخب کریں"
+
+#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428 lib/user_interaction/global_menu.py:56 lib/menu/selection_menu.py:476 lib/menu/global_menu.py:56
+msgid "Select locale language"
+msgstr "منتخب کریں کہ کون سی مقامی زبان استعمال کرنی ہے"
+
+#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430 lib/user_interaction/global_menu.py:58 lib/menu/selection_menu.py:478 lib/menu/global_menu.py:58
+msgid "Select locale encoding"
+msgstr "منتخب کریں کہ کون سا مقامی انکوڈنگ استعمال کرنا ہے"
+
+#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433 lib/user_interaction/global_menu.py:61 lib/menu/selection_menu.py:481 lib/menu/global_menu.py:61
+msgid "Select harddrives"
+msgstr "ہارڈ ڈرائیوز کو منتخب کریں"
+
+#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437 lib/user_interaction/global_menu.py:65 lib/menu/selection_menu.py:485 lib/menu/global_menu.py:65
+msgid "Select disk layout"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445 lib/user_interaction/global_menu.py:73 lib/menu/selection_menu.py:493 lib/menu/global_menu.py:73
+msgid "Set encryption password"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451 lib/user_interaction/global_menu.py:79 lib/menu/selection_menu.py:499 lib/menu/global_menu.py:79
+msgid "Use swap"
+msgstr "سواپ کا استعمال کریں"
+
+#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456 lib/user_interaction/global_menu.py:84 lib/menu/selection_menu.py:504 lib/menu/global_menu.py:84
+msgid "Select bootloader"
+msgstr "بوٹ لوڈرکا انتخاب کریں"
+
+#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462 lib/user_interaction/global_menu.py:95 lib/menu/selection_menu.py:515 lib/menu/global_menu.py:95
+msgid "Set root password"
+msgstr "روٹ پاس ورڈ سیٹ کریں"
+
+#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467 lib/user_interaction/global_menu.py:100 lib/menu/selection_menu.py:520 lib/menu/global_menu.py:100
+msgid "Specify superuser account"
+msgstr "سپر یوزر اکاؤنٹ کی وضاحت کریں"
+
+#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473 lib/user_interaction/global_menu.py:107 lib/menu/selection_menu.py:528 lib/menu/global_menu.py:107
+msgid "Specify user account"
+msgstr "یوزر اکاؤنٹ کی وضاحت کریں"
+
+#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479 lib/user_interaction/global_menu.py:114 lib/menu/selection_menu.py:535 lib/menu/global_menu.py:114
+msgid "Specify profile"
+msgstr "پروفائل کی وضاحت کریں"
+
+#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484 lib/user_interaction/global_menu.py:119 lib/menu/selection_menu.py:540 lib/menu/global_menu.py:119
+msgid "Select audio"
+msgstr "آڈیو کا انتخاب کریں"
+
+#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488 lib/user_interaction/global_menu.py:123 lib/menu/selection_menu.py:544 lib/menu/global_menu.py:123
+msgid "Select kernels"
+msgstr "کرنلز منتخب کریں"
+
+#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493 lib/user_interaction/global_menu.py:128 lib/menu/selection_menu.py:549 lib/menu/global_menu.py:128
+msgid "Additional packages to install"
+msgstr "انسٹال کرنے کے لیے اضافی پیکجز"
+
+#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498 lib/user_interaction/global_menu.py:139 lib/menu/selection_menu.py:560 lib/menu/global_menu.py:139
+msgid "Configure network"
+msgstr "نیٹ ورک ترتیب دیں"
+
+#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506 lib/user_interaction/global_menu.py:150 lib/menu/selection_menu.py:571 lib/menu/global_menu.py:150
+msgid "Set automatic time sync (NTP)"
+msgstr "خودکار وقت کی مطابقت  سیٹ کریں (NTP)"
+
+#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535 lib/user_interaction/global_menu.py:187 lib/menu/selection_menu.py:608 lib/menu/global_menu.py:187
+msgid "Install ({} config(s) missing)"
+msgstr "انسٹال کریں ({} کنفیگریشنز غائب ہیں)"
+
+#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599 lib/user_interaction/global_menu.py:249 lib/menu/selection_menu.py:669 lib/menu/global_menu.py:249
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"آپ نے ہارڈ ڈرائیو کا انتخاب چھوڑنے کا فیصلہ کیا۔\n"
+"اور جو بھی ڈرائیو سیٹ اپ {} (تجرباتی) پر ماؤنٹ کیا گیا ہے اسے استعمال کرے گا۔\n"
+"انتباہ: آرچ انسٹال اس سیٹ اپ کی مناسبیت کی جانچ نہیں کرے گا۔\n"
+"کیا آپ جاری رکھنا چاہتے ہیں؟"
+
+#: lib/disk/filesystem.py:97 lib/disk/filesystem.py:98
+msgid "Re-using partition instance: {}"
+msgstr "پارٹیشن کو دوبارہ استعمال کرنا: {}"
+
+#: lib/user_interaction.py:590 lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:595 lib/user_interaction/partitioning_conf.py:119 lib/user_interaction/partitioning_conf.py:120
+msgid "Create a new partition"
+msgstr "ایک نیا پارٹیشن بنائیں"
+
+#: lib/user_interaction.py:592 lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:597 lib/user_interaction/partitioning_conf.py:121 lib/user_interaction/partitioning_conf.py:122
+msgid "Delete a partition"
+msgstr "ایک پارٹیشن کو حذف کریں"
+
+#: lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:598 lib/user_interaction/partitioning_conf.py:122 lib/user_interaction/partitioning_conf.py:123
+msgid "Clear/Delete all partitions"
+msgstr "تمام پارٹیشنز کو صاف/حذف کریں"
+
+#: lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:599 lib/user_interaction/partitioning_conf.py:123 lib/user_interaction/partitioning_conf.py:124
+msgid "Assign mount-point for a partition"
+msgstr "پارٹیشن کے لیے ماؤنٹ پوائنٹ تفویض کریں"
+
+#: lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:600 lib/user_interaction/partitioning_conf.py:124 lib/user_interaction/partitioning_conf.py:125
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "فارمیٹ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں (ڈیٹا صاف کرتا ہے)"
+
+#: lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:602 lib/user_interaction.py:601 lib/user_interaction/partitioning_conf.py:125 lib/user_interaction/partitioning_conf.py:126
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "انکرپٹڈ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں"
+
+#: lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:603 lib/user_interaction.py:602 lib/user_interaction/partitioning_conf.py:126 lib/user_interaction/partitioning_conf.py:127
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "بوٹ ایبل کرنے کے لیے پارٹیشن کو مارک​​/ انمارک کریں(/boot)"
+
+#: lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:604 lib/user_interaction.py:603 lib/user_interaction/partitioning_conf.py:127 lib/user_interaction/partitioning_conf.py:128
+msgid "Set desired filesystem for a partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515 lib/user_interaction/global_menu.py:167 lib/menu/selection_menu.py:588 lib/menu/global_menu.py:167
+msgid "Abort"
+msgstr "ختم کریں"
+
+#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459 lib/user_interaction/global_menu.py:89 lib/menu/selection_menu.py:509 lib/menu/global_menu.py:89
+msgid "Specify hostname"
+msgstr "میزبان نام کی وضاحت کریں"
+
+#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500 lib/user_interaction/global_menu.py:141 lib/menu/selection_menu.py:562 lib/menu/global_menu.py:141
+msgid "Not configured, unavailable unless setup manually"
+msgstr "کنفیگر نہیں، دستیاب نہیں جب تک کہ دستی طور پر سیٹ اپ نہ کیا جائے"
+
+#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503 lib/user_interaction/global_menu.py:145 lib/menu/selection_menu.py:566 lib/menu/global_menu.py:145
+msgid "Select timezone"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+#: lib/menu/selection_menu.py:266 lib/menu/selection_menu.py:276 lib/menu/selection_menu.py:312
+msgid "Set/Modify the below options"
+msgstr "ذیل کے اختیارات کو سیٹ/ترمیم کریں"
+
+#: lib/menu/selection_menu.py:272
+msgid "Install"
+msgstr "انسٹال"
+
+#: lib/menu/menu.py:68 lib/menu/menu.py:75 lib/menu/menu.py:119
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"چھوڑنے کے لیے ESC استعمال کریں\n"
+"\n"
+
+#: lib/user_interaction.py:591 lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:596 lib/user_interaction/partitioning_conf.py:120 lib/user_interaction/partitioning_conf.py:121
+msgid "Suggest partition layout"
+msgstr "پارٹیشن لے آؤٹ تجویز کریں"
+
+#: lib/user_interaction.py:101 lib/user_interaction/utils.py:43
+msgid "Enter a password: "
+msgstr "پاس ورڈ درج کریں:"
+
+#: lib/disk/filesystem.py:117 lib/disk/filesystem.py:118
+msgid "Enter a encryption password for {}"
+msgstr "{} کے لیے ایک انکرپشن پاس ورڈ درج کریں"
+
+#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575 lib/user_interaction/global_menu.py:225 lib/menu/selection_menu.py:646 lib/menu/global_menu.py:225
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "ڈسک انکرپشن پاس ورڈ درج کریں (انکرپشن کو غیر فعال کرنے کے لیے خالی چھوڑ دیں):"
+
+#: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:617 lib/menu/selection_menu.py:625
+msgid "Create a required super-user with sudo privileges: "
+msgstr "sudo مراعات کے ساتھ ایک مطلوبہ سپر صارف بنائیں:"
+
+#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562 lib/user_interaction/global_menu.py:220 lib/menu/selection_menu.py:641 lib/menu/global_menu.py:220
+msgid "Enter root password (leave blank to disable root): "
+msgstr "روٹ پاس ورڈ درج کریں (روٹ کو غیر فعال کرنے کے لیے خالی چھوڑ دیں):"
+
+#: lib/user_interaction.py:307 lib/user_interaction.py:324 lib/user_interaction/manage_users_conf.py:86 lib/user_interaction/manage_users_conf.py:121
+msgid "Password for user \"{}\": "
+msgstr "صارف \"{}\" کے لیے پاس ورڈ:"
+
+#: lib/user_interaction.py:405 lib/user_interaction.py:408 lib/user_interaction.py:407 lib/user_interaction/general_conf.py:152
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "اس بات کی تصدیق ہو رہی ہےکہ اضافی پیکجز موجود ہیں (اس میں چند سیکنڈ لگ سکتے ہیں)"
+
+#: lib/user_interaction.py:281 lib/user_interaction/general_conf.py:22
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "کیا آپ ڈیفالٹ ٹائم سرورز کے ساتھ آٹومیٹک ٹائم سنکرونائزیشن (NTP) استعمال کرنا چاہیں گے؟\n"
+
+#: lib/user_interaction.py:282 lib/user_interaction/general_conf.py:23
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP کے کام کرنے کے لیے ہارڈ ویئر کا وقت اور کنفیگریشن کے بعد کے دیگر اقدامات درکار ہو سکتے ہیں۔\n"
+"مزید معلومات کے لیے، براہ کرم آرک ویکی کو دیکھیں"
+
+#: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621 lib/menu/selection_menu.py:629
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#: lib/menu/menu.py:116
+msgid "Use ESC to skip\n"
+msgstr "چھوڑنے کے لیے ESC استعمال کریں\n"
+
+#: lib/menu/list_manager.py:117
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+
+#: lib/menu/list_manager.py:130 lib/user_interaction/subvolume_config.py:90
+msgid "Cancel"
+msgstr "منسوخ کریں"
+
+#: lib/menu/list_manager.py:131
+msgid "Confirm and exit"
+msgstr "تصدیق کریں اور باہر نکلیں"
+
+#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:228 lib/menu/list_manager.py:251 lib/menu/list_manager.py:276 lib/user_interaction/subvolume_config.py:12 lib/user_interaction/subvolume_config.py:44 lib/user_interaction/subvolume_config.py:78 lib/user_interaction/subvolume_config.py:82 lib/user_interaction/subvolume_config.py:85
+msgid "Add"
+msgstr "شامل"
+
+#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:231 lib/menu/list_manager.py:255 lib/user_interaction/subvolume_config.py:78
+msgid "Copy"
+msgstr "کاپی"
+
+#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:237 lib/menu/list_manager.py:261 lib/user_interaction/subvolume_config.py:82 lib/user_interaction/subvolume_config.py:85
+msgid "Edit"
+msgstr "ترمیم"
+
+#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:242 lib/menu/list_manager.py:264 lib/user_interaction/subvolume_config.py:40
+msgid "Delete"
+msgstr "حذف"
+
+#: lib/menu/list_manager.py:185
+msgid "Select an action for < {} >"
+msgstr "< {} > کے لیے ایک عمل منتخب کریں"
+
+#: lib/menu/list_manager.py:229
+msgid "Add :"
+msgstr "شامل:"
+
+#: lib/menu/list_manager.py:233
+msgid "Copy to :"
+msgstr "اس میں کاپی :"
+
+#: lib/menu/list_manager.py:240
+msgid "Edite :"
+msgstr "ترمیم:"
+
+#: lib/menu/list_manager.py:252
+msgid "Key :"
+msgstr "کلید:"
+
+#: lib/menu/list_manager.py:253
+msgid "Value :"
+msgstr "قدر:"
+
+#: lib/menu/list_manager.py:257
+msgid "Copy to new key:"
+msgstr "نئی کلید میں کاپی کریں:"
+
+#: lib/menu/list_manager.py:262
+#, python-brace-format
+msgid "Edit {origkey} :"
+msgstr "ترمیم {origkey} :"
+
+#: lib/models/network_configuration.py:53 lib/models/network_configuration.py:74
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "نامعلوم nic قسم: {}۔ ممکنہ قدریں ہیں {}"
+
+#: lib/configuration.py:75
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"یہ آپ کی منتخب کردہ ترتیب ہے:"
+
+#: lib/pacman.py:18
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman پہلے ہی چل رہا ہے، اس کے ختم ہونے کے لیے زیادہ سے زیادہ 10 منٹ انتظار "
+
+#: lib/pacman.py:25
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "پہلے سے موجود پیک مین لاک کبھی نہیں نکلا۔ براہ کرم archinstall استعمال کرنے سے پہلے کسی بھی موجودہ pacman سیشن کو صاف کریں۔"
+
+#: lib/user_interaction/general_conf.py:174
+msgid "Choose which optional additional repositories to enable"
+msgstr "منتخب کریں کہ کون سے اختیاری اضافی ریپوزیٹریز کو فعال کرنا ہے"
+
+#: lib/user_interaction/manage_users_conf.py:32
+msgid "Add an user"
+msgstr "ایک صارف شامل کریں"
+
+#: lib/user_interaction/manage_users_conf.py:33
+msgid "Change password"
+msgstr "پاس ورڈ تبدیل کریں"
+
+#: lib/user_interaction/manage_users_conf.py:34
+msgid "Promote/Demote user"
+msgstr "صارف کو پروموٹ/ڈیموٹ کریں"
+
+#: lib/user_interaction/manage_users_conf.py:35
+msgid "Delete User"
+msgstr "صارف کو حذف کریں"
+
+#: lib/user_interaction/manage_users_conf.py:99
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"ایک نئے صارف کی وضاحت کریں۔\n"
+
+#: lib/user_interaction/manage_users_conf.py:100
+msgid "User Name : "
+msgstr "صارف کا نام:"
+
+#: lib/user_interaction/manage_users_conf.py:115
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "کیا {} کو سپر یوزر (sudoer) ہونا چاہیے؟"
+
+#: lib/user_interaction/manage_users_conf.py:161
+msgid "Define users with sudo privilege: "
+msgstr "sudo استحقاق کے ساتھ صارفین کی وضاحت کریں:"
+
+#: lib/user_interaction/network_conf.py:24
+msgid "No network configuration"
+msgstr "کوئی نیٹ ورک کنفیگریشن نہیں ہے"
+
+#: lib/user_interaction/partitioning_conf.py:128 lib/user_interaction/partitioning_conf.py:129
+#, fuzzy
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+#: lib/user_interaction/partitioning_conf.py:296 lib/user_interaction/partitioning_conf.py:303
+#, fuzzy
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"فائل سسٹم کو کس پارٹیشن پر سیٹ کرنا ہے"
+
+#: lib/user_interaction/partitioning_conf.py:305 lib/user_interaction/partitioning_conf.py:312
+msgid "Manage btrfs subvolumes for current partition"
+msgstr ""
+
+#: lib/user_interaction/save_conf.py:24 lib/user_interaction/save_conf.py:29
+msgid "No configuration"
+msgstr "کوئی کنفیگریشن نہیں"
+
+#: lib/user_interaction/save_conf.py:42
+msgid "Save user configuration"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+#: lib/user_interaction/save_conf.py:43
+msgid "Save user credentials"
+msgstr "صارف کی اسناد کو محفوظ کریں"
+
+#: lib/user_interaction/save_conf.py:44
+msgid "Save disk layout"
+msgstr "ڈسک لے آؤٹ کو محفوظ کریں"
+
+#: lib/user_interaction/save_conf.py:45
+msgid "Save all"
+msgstr "سب کو محفوظ کریں"
+
+#: lib/user_interaction/save_conf.py:48
+msgid "Choose which configuration to save"
+msgstr "منتخب کریں کہ کون سی کنفیگریشن محفوظ کرنی ہے"
+
+#: lib/user_interaction/save_conf.py:59
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+#: lib/user_interaction/save_conf.py:63
+msgid "Not a valid directory: {}"
+msgstr "درست ڈائریکٹری نہیں ہے: {}"
+
+#: lib/user_interaction/utils.py:32
+msgid "The password you are using seems to be weak,"
+msgstr "آپ جو پاس ورڈ استعمال کر رہے ہیں وہ کمزور لگ رہا ہے،"
+
+#: lib/user_interaction/utils.py:33
+msgid "are you sure you want to use it?"
+msgstr "کیا آپ واقعی اسے استعمال کرنا چاہتے ہیں؟"
+
+#: lib/user_interaction/global_menu.py:134 lib/menu/selection_menu.py:555 lib/menu/global_menu.py:134
+msgid "Additional repositories to enable"
+msgstr "اضافی ریپوزٹریزکو فعال"
+
+#: lib/user_interaction/global_menu.py:155 lib/menu/selection_menu.py:576 lib/menu/global_menu.py:155
+msgid "Save configuration"
+msgstr "ترتیب کو محفوظ کریں"
+
+#: lib/user_interaction/global_menu.py:192 lib/menu/selection_menu.py:613 lib/menu/global_menu.py:192
+msgid "Missing configurations:\n"
+msgstr "لاپتہ کنفیگریشنز:\n"
+
+#: lib/user_interaction/global_menu.py:210 lib/menu/selection_menu.py:631 lib/menu/global_menu.py:210
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "روٹ پاس ورڈ یا کم از کم ۱ سپر یوزر کی وضاحت ہونی چاہیے"
+
+#: lib/user_interaction/global_menu.py:275 lib/menu/selection_menu.py:695 lib/menu/global_menu.py:275
+msgid "Manage superuser accounts: "
+msgstr "سپر یوزر اکاؤنٹس کا نظم کریں:"
+
+#: lib/user_interaction/global_menu.py:279 lib/menu/selection_menu.py:699 lib/menu/global_menu.py:279
+msgid "Manage ordinary user accounts: "
+msgstr "عام صارف اکاؤنٹس کا نظم کریں:"
+
+#: lib/user_interaction/subvolume_config.py:17
+msgid " Subvolume :{:16}"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:19 lib/user_interaction/subvolume_config.py:22
+msgid " mounted at {:16}"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:26
+msgid " with option {}"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:46
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:77
+msgid "Subvolume name "
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:81
+msgid "Subvolume mountpoint"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:84
+msgid "Subvolume options"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:87
+#, fuzzy
+msgid "Save"
+msgstr "سب کو محفوظ کریں"
+
+#: lib/user_interaction/subvolume_config.py:121
+msgid "Subvolume name :"
+msgstr ""
+
+#: lib/user_interaction/subvolume_config.py:124
+#, fuzzy
+msgid "Select a mount point :"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+#: lib/user_interaction/subvolume_config.py:128
+msgid "Select the desired subvolume options "
+msgstr ""
+
+#: lib/user_interaction/manage_users_conf.py:161
+#, fuzzy
+msgid "Define users with sudo privilege, by username: "
+msgstr "sudo استحقاق کے ساتھ صارفین کی وضاحت کریں:"
+
+#: lib/installer.py:152
+#, fuzzy
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] یہاں ایک لاگ فائل بنائی گئی ہے: {} {}"
+
+#~ msgid "Choose an object from the list"
+#~ msgstr "فہرست سے ایک آبجیکٹ منتخب کریں۔"

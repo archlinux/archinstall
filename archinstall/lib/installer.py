@@ -1,13 +1,14 @@
 import time
 import logging
 import os
+import re
 import shutil
 import shlex
 import pathlib
 import subprocess
 import glob
 from types import ModuleType
-from typing import Union, Dict, Any, List, Optional, Iterator, Mapping
+from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -23,11 +24,18 @@ from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 
+if TYPE_CHECKING:
+	_: Any
+
+
 # Any package that the Installer() is responsible for (optional and the default ones)
 __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "linux-zen", "linux-hardened"]
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
+
+from .pacman import run_pacman
+from .models.network_configuration import NetworkConfiguration
 
 
 class InstallationFile:
@@ -141,7 +149,7 @@ class Installer:
 
 			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
-			print(_("[!] A log file has been created here: {} {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise args[1]
 
@@ -207,7 +215,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list]:
+				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list if sub_list[subvolume]]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -288,6 +296,58 @@ class Installer:
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
+	def enable_multilib_repository(self):
+		# Set up a regular expression pattern of a commented line containing 'multilib' within []
+		pattern = re.compile("^#\\[.*multilib.*\\]$")
+
+		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
+		matched = False
+
+		# Read in the lines from the original file
+		with open("/etc/pacman.conf", "r") as pacman_conf:
+			lines = pacman_conf.readlines()
+
+		# Open the file again in write mode, to replace the contents
+		with open("/etc/pacman.conf", "w") as pacman_conf:
+			for line in lines:
+				if pattern.match(line):
+					# If this is the [] block containing 'multilib', uncomment it and set the matched tracking boolean.
+					pacman_conf.write(line.lstrip('#'))
+					matched = True
+				elif matched:
+					# The previous line was a match for [.*multilib.*].
+					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
+					pacman_conf.write(line.lstrip('#'))
+					matched = False # Reset the state of matched to False.
+				else:
+					pacman_conf.write(line)
+
+	def enable_testing_repositories(self, enable_multilib_testing=False):
+		# Set up a regular expression pattern of a commented line containing 'testing' within []
+		pattern = re.compile("^#\\[.*testing.*\\]$")
+
+		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
+		matched = False
+
+		# Read in the lines from the original file
+		with open("/etc/pacman.conf", "r") as pacman_conf:
+			lines = pacman_conf.readlines()
+
+		# Open the file again in write mode, to replace the contents
+		with open("/etc/pacman.conf", "w") as pacman_conf:
+			for line in lines:
+				if pattern.match(line) and (enable_multilib_testing or 'multilib' not in line):
+					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
+					pacman_conf.write(line.lstrip('#'))
+					matched = True
+				elif matched:
+					# The previous line was a match for [.*testing.*].
+					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
+					pacman_conf.write(line.lstrip('#'))
+					matched = False # Reset the state of matched to False.
+				else:
+					pacman_conf.write(line)
+
 	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
@@ -299,8 +359,8 @@ class Installer:
 
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		if (sync_mirrors := SysCommand('/usr/bin/pacman -Syy')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
+		if (sync_mirrors := run_pacman('-Syy', default_cmd='/usr/bin/pacman')).exit_code == 0:
+			if (pacstrap := SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
 				return True
 			else:
 				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
@@ -320,11 +380,14 @@ class Installer:
 	def genfstab(self, flags :str = '-pU') -> bool:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
+		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).exit_code == 0:
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
+
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
-			fstab_fh.write((fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).decode())
+			fstab_fh.write(fstab.decode())
 
 		if not os.path.isfile(f'{self.target}/etc/fstab'):
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n{fstab}')
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_genfstab'):
@@ -420,37 +483,35 @@ class Installer:
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
-	def configure_nic(self,
-		nic :str,
-		dhcp :bool = True,
-		ip :Optional[str] = None,
-		gateway :Optional[str] = None,
-		dns :Optional[str] = None,
-		*args :str,
-		**kwargs :str
-	) -> None:
+	def configure_nic(self, network_config: NetworkConfiguration) -> None:
 		from .systemd import Networkd
 
-		if dhcp:
-			conf = Networkd(Match={"Name": nic}, Network={"DHCP": "yes"})
+		if network_config.dhcp:
+			conf = Networkd(Match={"Name": network_config.iface}, Network={"DHCP": "yes"})
 		else:
-			assert ip
+			network = {"Address": network_config.ip}
+			if network_config.gateway:
+				network["Gateway"] = network_config.gateway
+			if network_config.dns:
+				dns = network_config.dns
+				network["DNS"] = dns if isinstance(dns, list) else [dns]
 
-			network = {"Address": ip}
-			if gateway:
-				network["Gateway"] = gateway
-			if dns:
-				assert type(dns) == list
-				network["DNS"] = dns
-
-			conf = Networkd(Match={"Name": nic}, Network=network)
+			conf = Networkd(Match={"Name": network_config.iface}, Network=network)
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
-				if (new_conf := plugin.on_configure_nic(nic, dhcp, ip, gateway, dns)):
+				new_conf = plugin.on_configure_nic(
+					network_config.iface,
+					network_config.dhcp,
+					network_config.ip,
+					network_config.gateway,
+					network_config.dns
+				)
+
+				if new_conf:
 					conf = new_conf
 
-		with open(f"{self.target}/etc/systemd/network/10-{nic}.network", "a") as netconf:
+		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
 	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
@@ -533,7 +594,7 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self) -> bool:
+	def minimal_installation(self, testing=False, multilib=False) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
@@ -582,8 +643,26 @@ class Installer:
 			else:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
 
+		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
+		# This action takes place on the host system as pacstrap copies over package repository lists.
+		if multilib:
+			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
+			self.enable_multilib_repository()
+		else:
+			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+
+		if testing:
+			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
+			self.enable_testing_repositories(multilib)
+		else:
+			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+
 		self.pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
+
+		# This handles making sure that the repositories we enabled persist on the installed system
+		if multilib or testing:
+			shutil.copy2("/etc/pacman.conf", f"{self.target}/etc/pacman.conf")
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst
 		# having no adverse effect on other devices. Most distributions enable
@@ -880,8 +959,34 @@ class Installer:
 
 	def enable_sudo(self, entity: str, group :bool = False) -> bool:
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
-		with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
+
+		sudoers_dir = f"{self.target}/etc/sudoers.d"
+
+		# Creates directory if not exists
+		if not (sudoers_path := pathlib.Path(sudoers_dir)).exists():
+			sudoers_path.mkdir(parents=True)
+			# Guarantees sudoer confs directory recommended perms
+			os.chmod(sudoers_dir, 0o440)
+			# Appends a reference to the sudoers file, because if we are here sudoers.d did not exist yet
+			with open(f'{self.target}/etc/sudoers', 'a') as sudoers:
+				sudoers.write('@includedir /etc/sudoers.d\n')
+
+		# We count how many files are there already so we know which number to prefix the file with
+		num_of_rules_already = len(os.listdir(sudoers_dir))
+		file_num_str = "{:02d}".format(num_of_rules_already) # We want 00_user1, 01_user2, etc
+
+		# Guarantees that entity str does not contain invalid characters for a linux file name:
+		# \ / : * ? " < > |
+		safe_entity_file_name = re.sub(r'(\\|\/|:|\*|\?|"|<|>|\|)', '', entity)
+
+		rule_file_name = f"{sudoers_dir}/{file_num_str}_{safe_entity_file_name}"
+
+		with open(rule_file_name, 'a') as sudoers:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
+
+		# Guarantees sudoer conf file recommended perms
+		os.chmod(pathlib.Path(rule_file_name), 0o440)
+
 		return True
 
 	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[str] = None, sudo :bool = False) -> None:

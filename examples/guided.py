@@ -3,6 +3,7 @@ import os
 import time
 
 import archinstall
+from archinstall import ConfigurationOutput
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -55,7 +56,7 @@ def ask_user_questions():
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
-	# Ask which boot-loader to use (will only ask if we're in BIOS (non-efi) mode)
+	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
 	global_menu.enable('swap')
@@ -86,6 +87,8 @@ def ask_user_questions():
 	global_menu.enable('timezone')
 
 	global_menu.enable('ntp')
+
+	global_menu.enable('additional-repositories')
 
 	global_menu.run()
 
@@ -144,7 +147,11 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
-		if installation.minimal_installation():
+		# Retrieve list of additional repositories and set boolean values appropriately
+		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
+		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+
+		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
@@ -157,16 +164,10 @@ def perform_installation(mountpoint):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			if archinstall.arguments.get('nic', {}) == 'Copy ISO network configuration to installation':
-				installation.copy_iso_network_config(enable_services=True)  # Sources the ISO network configuration to the install medium.
-			elif archinstall.arguments.get('nic', {}).get('NetworkManager', False):
-				installation.add_additional_packages("networkmanager")
-				installation.enable_service('NetworkManager.service')
-			# Otherwise, if a interface was selected, configure that interface
-			elif archinstall.arguments.get('nic', {}):
-				installation.configure_nic(**archinstall.arguments.get('nic', {}))
-				installation.enable_service('systemd-networkd')
-				installation.enable_service('systemd-resolved')
+			network_config = archinstall.arguments.get('nic', None)
+
+			if network_config:
+				network_config.config_installer(installation)
 
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
@@ -184,11 +185,13 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			for user, user_info in archinstall.arguments.get('!users', {}).items():
-				installation.user_create(user, user_info["!password"], sudo=False)
+			if archinstall.arguments.get('!users',{}):
+				for user, user_info in archinstall.arguments.get('!users', {}).items():
+					installation.user_create(user, user_info["!password"], sudo=False)
 
-			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-				installation.user_create(superuser, user_info["!password"], sudo=True)
+			if archinstall.arguments.get('!superusers',{}):
+				for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
+					installation.user_create(superuser, user_info["!password"], sudo=True)
 
 			if timezone := archinstall.arguments.get('timezone', None):
 				installation.set_timezone(timezone)
@@ -241,10 +244,12 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	exit(1)
 
 if not archinstall.arguments.get('offline', False):
+	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
+
 	# If we want to check for keyring updates
 	# and the installed package version is lower than the upstream version
 	if archinstall.arguments.get('skip-keyring-update', False) is False and \
-		archinstall.installed_package('archlinux-keyring') < archinstall.find_package('archlinux-keyring'):
+		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
 
 		# Then we update the keyring in the ISO environment
 		if not archinstall.update_keyring():
@@ -255,7 +260,10 @@ if not archinstall.arguments.get('offline', False):
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
-archinstall.output_configs(archinstall.arguments,show=False if archinstall.arguments.get('silent') else True)
+config_output = ConfigurationOutput(archinstall.arguments)
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)

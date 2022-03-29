@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import logging
-import os
+import os  # type: ignore
 import pathlib
 import re
 import time
@@ -10,7 +10,7 @@ from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .partition import Partition
-	
+
 from .blockdevice import BlockDevice
 from .dmcryptdev import DMCryptDev
 from .mapperdev import MapperDev
@@ -206,7 +206,7 @@ def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
-def all_blockdevices(mappers=False, partitions=False, error=False) -> List[BlockDevice, Partition]:
+def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, Any]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
 	"""
@@ -237,7 +237,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> List[Block
 				raise error
 
 		information = enrich_blockdevice_information(information)
-		
+
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
 				instances[path] = DMCryptDev(dev_path=path)

@@ -13,7 +13,7 @@ __packages__ = [
 	"grim",
 	"slurp",
 	"pavucontrol",
-	"alacritty",
+	"foot",
 ]
 
 
