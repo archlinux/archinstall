@@ -270,6 +270,8 @@ def create_global_block_map(disks=None):
 	GLOBAL_BLOCK_MAP.update(disk_layout)
 
 def normalize_from_layout(partition_list,disk):
+	last_sector = GLOBAL_BLOCK_MAP[disk]['size'] - 1
+
 	def subvol_normalize(part):
 		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
 		norm_subvol = {}
@@ -283,17 +285,25 @@ def normalize_from_layout(partition_list,disk):
 					norm_subvol[subvol] = subvol_info[subvol]
 		return norm_subvol
 
+	def size_normalize(part,disk):
+		start = convert_units(part['start'],'s','s')
+		if isinstance(part['size'],str) and part['size'].endswith('%'):
+			size = round((last_sector - start + 1) * float(part['size'][:-1]) * 0.01,0)
+			sizeG = part['size']
+		else:
+			size = convert_units(part['size'],'s','s')
+			sizeG = part['size'] if part['size'].lower().endswith('b') else None
+		return start, size, sizeG
 	result = []
 	for part in partition_list:
-		start = convert_units(part['start'],'s') # CHECK i believe this is the actual default
-		size = convert_units(part['size'],'s')  # TODO el porcentaje
+		start,size,sizeG = size_normalize(part,disk)
 		result.append({
 			"id": f"{disk} {start:>15}",
 			"class": "partition",
 			"type" : part.get('type','primary'),
 			"start" : start,
 			"size" : size,
-			# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
+			"sizeG": sizeG,
 			"boot" : part.get('boot',False),
 			"encrypted" : part.get('encrypted',False),
 			"wipe" : part.get('wipe',False),
