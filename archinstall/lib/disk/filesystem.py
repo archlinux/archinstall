@@ -90,11 +90,11 @@ class Filesystem:
 				print(_("Adding partition...."))
 				start = partition.get('start') or (
 					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
-				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
-																	start=start,
-																	end=partition.get('size', '100%'),
-																	partition_format=partition.get(
-																		'filesystem', {}).get('format', 'btrfs'))
+				partition['device_instance'] = self.add_partition(
+					partition.get('type', 'primary'),
+					start=start,
+					end=partition.get('size', '100%'),
+					partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
 				# TODO: device_instance some times become None
 				# print('Device instance:', partition['device_instance'])
 
@@ -158,7 +158,9 @@ class Filesystem:
 										if not partition['filesystem']['format'] or valid_fs_type(
 											partition['filesystem']['format']) is False:
 											print(
-												_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
+												_(
+													"You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+												))
 											continue
 										break
 
@@ -212,11 +214,8 @@ class Filesystem:
 		# TODO: Implement this with declarative profiles instead.
 		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
-	def add_partition(self,
-						partition_type: str,
-						start: str,
-						end: str,
-						partition_format: Optional[str] = None) -> Partition:
+	def add_partition(
+			self, partition_type: str, start: str, end: str, partition_format: Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
 		previous_partition_uuids = {partition.uuid for partition in self.blockdevice.partitions.values()}
@@ -255,7 +254,8 @@ class Filesystem:
 						raise err
 				else:
 					count += 1
-					log(f"Could not get UUID for partition. Waiting before retry attempt {count} of 10 ...",
+					log(
+						f"Could not get UUID for partition. Waiting before retry attempt {count} of 10 ...",
 						level=logging.DEBUG)
 					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
 			else:
@@ -265,7 +265,8 @@ class Filesystem:
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
 		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})}",
+		log(
+			f"New partitions: {(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})}",
 			level=logging.ERROR,
 			fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")

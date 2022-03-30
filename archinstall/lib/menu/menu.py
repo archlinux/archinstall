@@ -15,19 +15,20 @@ if TYPE_CHECKING:
 
 class Menu(TerminalMenu):
 
-	def __init__(self,
-					title: str,
-					p_options: Union[List[str], Dict[str, Any]],
-					skip: bool = True,
-					multi: bool = False,
-					default_option: str = None,
-					sort: bool = True,
-					preset_values: Union[str, List[str]] = None,
-					cursor_index: int = None,
-					preview_command=None,
-					preview_size=0.75,
-					preview_title='Info',
-					**kwargs):
+	def __init__(
+			self,
+			title: str,
+			p_options: Union[List[str], Dict[str, Any]],
+			skip: bool = True,
+			multi: bool = False,
+			default_option: str = None,
+			sort: bool = True,
+			preset_values: Union[str, List[str]] = None,
+			cursor_index: int = None,
+			preview_command=None,
+			preview_size=0.75,
+			preview_title='Info',
+			**kwargs):
 		"""
 		Creates a new menu
 
@@ -172,7 +173,7 @@ class Menu(TerminalMenu):
 		if pos and 0 < pos < len(self._menu_entries):
 			self._view.active_menu_index = pos
 		else:
-			self._view.active_menu_index = 0  # we define a default
+			self._view.active_menu_index = 0 # we define a default
 
 	def set_cursor_pos_entry(self, value: str):
 		pos = self._menu_entries.index(value)
@@ -186,7 +187,7 @@ class Menu(TerminalMenu):
 				try:
 					if isinstance(preset_values, str):
 						self.cursor_index = self.menu_options.index(self.preset_values)
-					else:  # should return an error, but this is smoother
+					else: # should return an error, but this is smoother
 						self.cursor_index = self.menu_options.index(self.preset_values[0])
 				except ValueError:
 					self.cursor_index = 0
@@ -205,5 +206,5 @@ class Menu(TerminalMenu):
 				self.preset_values[idx] = f"{preset_values[idx]} (default)"
 		if cursor_index is None or not self.multi:
 			from_preset_to_cursor()
-		if not self.multi:  # Not supported by the infraestructure
+		if not self.multi: # Not supported by the infraestructure
 			self.preset_values = None

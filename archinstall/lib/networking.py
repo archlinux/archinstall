@@ -97,8 +97,8 @@ def wireless_scan(interface: str) -> None:
 def get_wireless_networks(interface: str) -> None:
 	# TODO: Make this oneliner pritter to check if the interface is scanning or not.
 	# TODO: Rename this to list_wireless_networks() as it doesn't return anything
-	if '_WIFI' not in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get(
-		'scanning', False) is False:
+	if '_WIFI' not in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning',
+																										False) is False:
 		import time
 
 		wireless_scan(interface)

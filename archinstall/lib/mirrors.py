@@ -52,11 +52,12 @@ def sort_mirrorlist(raw_data: bytes, sort_order=["https", "http"]) -> bytes:
 	return new_raw_data
 
 
-def filter_mirrors_by_region(regions: str,
-								destination: str = '/etc/pacman.d/mirrorlist',
-								sort_order: List[str] = ["https", "http"],
-								*args: str,
-								**kwargs: str) -> Union[bool, bytes]:
+def filter_mirrors_by_region(
+		regions: str,
+		destination: str = '/etc/pacman.d/mirrorlist',
+		sort_order: List[str] = ["https", "http"],
+		*args: str,
+		**kwargs: str) -> Union[bool, bytes]:
 	"""
 	This function will change the active mirrors on the live medium by
 	filtering which regions are active based on `regions`.

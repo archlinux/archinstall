@@ -59,14 +59,12 @@ def gen_uid(entropy_length: int = 256) -> str:
 
 
 def generate_password(length: int = 64) -> str:
-	haystack = string.printable  # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
+	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
 
 def multisplit(s: str, splitters: List[str]) -> str:
-	s = [
-		s,
-	]
+	s = [s]
 	for key in splitters:
 		ns = []
 		for obj in s:
@@ -86,7 +84,7 @@ def locate_binary(name: str) -> str:
 			for file in files:
 				if file == name:
 					return os.path.join(root, file)
-			break  # Don't recurse
+			break # Don't recurse
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
@@ -193,14 +191,15 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 
 class SysCommandWorker:
 
-	def __init__(self,
-					cmd: Union[str, List[str]],
-					callbacks: Optional[Dict[str, Any]] = None,
-					peak_output: Optional[bool] = False,
-					environment_vars: Optional[Dict[str, Any]] = None,
-					logfile: Optional[None] = None,
-					working_directory: Optional[str] = './',
-					remove_vt100_escape_codes_from_lines: bool = True):
+	def __init__(
+			self,
+			cmd: Union[str, List[str]],
+			callbacks: Optional[Dict[str, Any]] = None,
+			peak_output: Optional[bool] = False,
+			environment_vars: Optional[Dict[str, Any]] = None,
+			logfile: Optional[None] = None,
+			working_directory: Optional[str] = './',
+			remove_vt100_escape_codes_from_lines: bool = True):
 
 		if not callbacks:
 			callbacks = {}
@@ -210,7 +209,7 @@ class SysCommandWorker:
 		if type(cmd) is str:
 			cmd = shlex.split(cmd)
 
-		cmd = list(cmd)  # This is to please mypy
+		cmd = list(cmd) # This is to please mypy
 		if cmd[0][0] != '/' and cmd[0][:2] != './':
 			# "which" doesn't work as it's a builtin to bash.
 			# It used to work, but for whatever reason it doesn't anymore.
@@ -296,7 +295,7 @@ class SysCommandWorker:
 		return False
 
 	def write(self, data: bytes, line_ending: bool = True) -> int:
-		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
+		assert type(data) == bytes # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
 
@@ -403,14 +402,15 @@ class SysCommandWorker:
 
 class SysCommand:
 
-	def __init__(self,
-					cmd: Union[str, List[str]],
-					callbacks: Optional[Dict[str, Callable[[Any], Any]]] = None,
-					start_callback: Optional[Callable[[Any], Any]] = None,
-					peak_output: Optional[bool] = False,
-					environment_vars: Optional[Dict[str, Any]] = None,
-					working_directory: Optional[str] = './',
-					remove_vt100_escape_codes_from_lines: bool = True):
+	def __init__(
+			self,
+			cmd: Union[str, List[str]],
+			callbacks: Optional[Dict[str, Callable[[Any], Any]]] = None,
+			start_callback: Optional[Callable[[Any], Any]] = None,
+			peak_output: Optional[bool] = False,
+			environment_vars: Optional[Dict[str, Any]] = None,
+			working_directory: Optional[str] = './',
+			remove_vt100_escape_codes_from_lines: bool = True):
 
 		_callbacks = {}
 		if callbacks:

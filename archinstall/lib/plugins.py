@@ -92,7 +92,8 @@ def load_plugin(path: str) -> ModuleType:
 				storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
-				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.",
+				log(
+					f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.",
 					fg="red",
 					level=logging.ERROR)
 

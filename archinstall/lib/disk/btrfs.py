@@ -30,12 +30,13 @@ def get_subvolumes_from_findmnt(struct: Dict[str, Any], index=0) -> Iterator[Btr
 	if '@' in struct['source']:
 		subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
 		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
-		yield BtrfsSubvolume(target=struct['target'],
-								source=struct['source'],
-								fstype=struct['fstype'],
-								name=subvolume,
-								options=struct['options'],
-								root=index == 0)
+		yield BtrfsSubvolume(
+			target=struct['target'],
+			source=struct['source'],
+			fstype=struct['fstype'],
+			name=subvolume,
+			options=struct['options'],
+			root=index == 0)
 		index += 1
 
 		for child in struct.get('children', []):
@@ -70,7 +71,8 @@ def mount_subvolume(installation: Installer, subvolume_location: Union[pathlib.P
 	This function is DEPRECATED. you can get the same result creating a partition dict like any other partition, and using the standard mount procedure.
 	Only change partition['device_instance'].path with the apropriate bind name: real_partition_path[/subvolume_name]
 	"""
-	log("[Deprecated] function btrfs.mount_subvolume is deprecated. See code for alternatives",
+	log(
+		"[Deprecated] function btrfs.mount_subvolume is deprecated. See code for alternatives",
 		fg="yellow",
 		level=logging.WARNING)
 	installation_mountpoint = installation.target

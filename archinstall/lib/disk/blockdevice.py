@@ -59,11 +59,12 @@ class BlockDevice:
 
 	def __dump__(self) -> Dict[str, Dict[str, Any]]:
 		return {
-			self.path: {
-				'partuuid': self.uuid,
-				'wipe': self.info.get('wipe', None),
-				'partitions': [part.__dump__() for part in self.partitions.values()]
-			}
+			self.path:
+				{
+					'partuuid': self.uuid,
+					'wipe': self.info.get('wipe', None),
+					'partitions': [part.__dump__() for part in self.partitions.values()]
+				}
 		}
 
 	@property

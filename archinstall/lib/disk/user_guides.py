@@ -12,15 +12,16 @@ from ..output import log
 from ..menu import Menu
 
 
-def suggest_single_disk_layout(block_device: BlockDevice,
-								default_filesystem: Optional[str] = None,
-								advanced_options: bool = False) -> Dict[str, Any]:
+def suggest_single_disk_layout(
+		block_device: BlockDevice,
+		default_filesystem: Optional[str] = None,
+		advanced_options: bool = False) -> Dict[str, Any]:
 
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
 		default_filesystem = ask_for_main_filesystem_format(advanced_options)
 
-	MIN_SIZE_TO_ALLOW_HOME_PART = 40  # GiB
+	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # GiB
 	using_subvolumes = False
 	using_home_partition = False
 
@@ -39,19 +40,20 @@ def suggest_single_disk_layout(block_device: BlockDevice,
 	# TODO: On BIOS, /boot partition is only needed if the drive will
 	# be encrypted, otherwise it is not recommended. We should probably
 	# add a check for whether the drive will be encrypted or not.
-	layout[block_device.path]['partitions'].append({
-		# Boot
-		"type": "primary",
-		"start": "3MiB",
-		"size": "203MiB",
-		"boot": True,
-		"encrypted": False,
-		"wipe": True,
-		"mountpoint": "/boot",
-		"filesystem": {
-			"format": "fat32"
-		}
-	})
+	layout[block_device.path]['partitions'].append(
+		{
+			# Boot
+			"type": "primary",
+			"start": "3MiB",
+			"size": "203MiB",
+			"boot": True,
+			"encrypted": False,
+			"wipe": True,
+			"mountpoint": "/boot",
+			"filesystem": {
+				"format": "fat32"
+			}
+		})
 
 	# Increase the UEFI partition if UEFI is detected.
 	# Also re-align the start to 1MiB since we don't need the first sectors
@@ -60,17 +62,18 @@ def suggest_single_disk_layout(block_device: BlockDevice,
 		layout[block_device.path]['partitions'][-1]['start'] = '1MiB'
 		layout[block_device.path]['partitions'][-1]['size'] = '512MiB'
 
-	layout[block_device.path]['partitions'].append({
-		# Root
-		"type": "primary",
-		"start": "206MiB",
-		"encrypted": False,
-		"wipe": True,
-		"mountpoint": "/" if not using_subvolumes else None,
-		"filesystem": {
-			"format": default_filesystem
-		}
-	})
+	layout[block_device.path]['partitions'].append(
+		{
+			# Root
+			"type": "primary",
+			"start": "206MiB",
+			"encrypted": False,
+			"wipe": True,
+			"mountpoint": "/" if not using_subvolumes else None,
+			"filesystem": {
+				"format": default_filesystem
+			}
+		})
 
 	if has_uefi():
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
@@ -95,13 +98,14 @@ def suggest_single_disk_layout(block_device: BlockDevice,
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		layout[block_device.path]['partitions'][1]['btrfs'] = {
-			"subvolumes": {
-				"@": "/",
-				"@home": "/home",
-				"@log": "/var/log",
-				"@pkg": "/var/cache/pacman/pkg",
-				"@.snapshots": "/.snapshots"
-			}
+			"subvolumes":
+				{
+					"@": "/",
+					"@home": "/home",
+					"@log": "/var/log",
+					"@pkg": "/var/cache/pacman/pkg",
+					"@.snapshots": "/.snapshots"
+				}
 		}
 		# else:
 		# 	pass # ... implement a guided setup
@@ -110,25 +114,27 @@ def suggest_single_disk_layout(block_device: BlockDevice,
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		layout[block_device.path]['partitions'].append({
-			# Home
-			"type": "primary",
-			"start": f"{min(block_device.size, 20)}GiB",
-			"size": "100%",
-			"encrypted": False,
-			"wipe": True,
-			"mountpoint": "/home",
-			"filesystem": {
-				"format": default_filesystem
-			}
-		})
+		layout[block_device.path]['partitions'].append(
+			{
+				# Home
+				"type": "primary",
+				"start": f"{min(block_device.size, 20)}GiB",
+				"size": "100%",
+				"encrypted": False,
+				"wipe": True,
+				"mountpoint": "/home",
+				"filesystem": {
+					"format": default_filesystem
+				}
+			})
 
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices: List[BlockDevice],
-								default_filesystem: Optional[str] = None,
-								advanced_options: bool = False) -> Dict[str, Any]:
+def suggest_multi_disk_layout(
+		block_devices: List[BlockDevice],
+		default_filesystem: Optional[str] = None,
+		advanced_options: bool = False) -> Dict[str, Any]:
 
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
@@ -138,76 +144,77 @@ def suggest_multi_disk_layout(block_devices: List[BlockDevice],
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/
 
-	MIN_SIZE_TO_ALLOW_HOME_PART = 40  # GiB
-	ARCH_LINUX_INSTALLED_SIZE = 20  # GiB, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
+	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # GiB
+	ARCH_LINUX_INSTALLED_SIZE = 20 # GiB, rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 
 	block_devices = sort_block_devices_based_on_performance(block_devices).keys()
 
 	home_device = select_largest_device(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
-	root_device = select_disk_larger_than_or_close_to(block_devices,
-														gigabytes=ARCH_LINUX_INSTALLED_SIZE,
-														filter_out=[home_device])
+	root_device = select_disk_larger_than_or_close_to(
+		block_devices, gigabytes=ARCH_LINUX_INSTALLED_SIZE, filter_out=[home_device])
 
-	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home",
+	log(
+		f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home",
 		level=logging.DEBUG)
 
 	layout = {
 		root_device.path: {
-			"wipe": True,
-			"partitions": []
+			"wipe": True, "partitions": []
 		},
 		home_device.path: {
-			"wipe": True,
-			"partitions": []
+			"wipe": True, "partitions": []
 		},
 	}
 
 	# TODO: Same deal as with the single disk layout, we should
 	# probably check if the drive will be encrypted.
-	layout[root_device.path]['partitions'].append({
-		# Boot
-		"type": "primary",
-		"start": "3MiB",
-		"size": "203MiB",
-		"boot": True,
-		"encrypted": False,
-		"wipe": True,
-		"mountpoint": "/boot",
-		"filesystem": {
-			"format": "fat32"
-		}
-	})
+	layout[root_device.path]['partitions'].append(
+		{
+			# Boot
+			"type": "primary",
+			"start": "3MiB",
+			"size": "203MiB",
+			"boot": True,
+			"encrypted": False,
+			"wipe": True,
+			"mountpoint": "/boot",
+			"filesystem": {
+				"format": "fat32"
+			}
+		})
 
 	if has_uefi():
 		layout[root_device.path]['partitions'][-1]['start'] = '1MiB'
 		layout[root_device.path]['partitions'][-1]['size'] = '512MiB'
 
-	layout[root_device.path]['partitions'].append({
-		# Root
-		"type": "primary",
-		"start": "206MiB",
-		"size": "100%",
-		"encrypted": False,
-		"wipe": True,
-		"mountpoint": "/",
-		"filesystem": {
-			"format": default_filesystem
-		}
-	})
+	layout[root_device.path]['partitions'].append(
+		{
+			# Root
+			"type": "primary",
+			"start": "206MiB",
+			"size": "100%",
+			"encrypted": False,
+			"wipe": True,
+			"mountpoint": "/",
+			"filesystem": {
+				"format": default_filesystem
+			}
+		})
 	if has_uefi():
 		layout[root_device.path]['partitions'][-1]['start'] = '513MiB'
 
-	layout[home_device.path]['partitions'].append({
-		# Home
-		"type": "primary",
-		"start": "1MiB",
-		"size": "100%",
-		"encrypted": False,
-		"wipe": True,
-		"mountpoint": "/home",
-		"filesystem": {
-			"format": default_filesystem
-		}
-	})
+	layout[home_device.path]['partitions'].append(
+		{
+			# Home
+			"type": "primary",
+			"start": "1MiB",
+			"size": "100%",
+			"encrypted": False,
+			"wipe": True,
+			"mountpoint": "/home",
+			"filesystem": {
+				"format": default_filesystem
+			}
+		})
 
 	return layout

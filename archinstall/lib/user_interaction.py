@@ -3,7 +3,7 @@ import getpass
 import ipaddress
 import logging
 import re
-import select  # Used for char by char polling of sys.stdin
+import select # Used for char by char polling of sys.stdin
 import shutil
 import signal
 import sys
@@ -316,7 +316,9 @@ def ask_for_swap(preset: bool = True) -> bool:
 def ask_ntp(preset: bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
 	prompt += str(
-		_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
+		_(
+			'Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'
+		))
 	if preset:
 		preset_val = 'yes'
 	else:
@@ -346,11 +348,8 @@ def ask_for_a_timezone(preset: str = None) -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
-	selected_tz = Menu(_('Select a timezone'),
-						list(timezones),
-						skip=False,
-						preset_values=preset,
-						default_option=default).run()
+	selected_tz = Menu(
+		_('Select a timezone'), list(timezones), skip=False, preset_values=preset, default_option=default).run()
 
 	return selected_tz
 
@@ -367,10 +366,10 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
 	if has_uefi():
 		if not advanced_options:
-			bootloader_choice = Menu(_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
-										['yes', 'no'],
-										preset_values=preset_val,
-										default_option='no').run()
+			bootloader_choice = Menu(
+				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'), ['yes', 'no'],
+				preset_values=preset_val,
+				default_option='no').run()
 
 			if bootloader_choice == "yes":
 				bootloader = "grub-install"
@@ -392,21 +391,23 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
 	audio = 'pipewire' if desktop else 'none'
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=audio,
-							skip=False).run()
+	selected_audio = Menu(
+		_('Choose an audio server'), choices, preset_values=preset, default_option=audio, skip=False).run()
 	return selected_audio
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(
-		_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
+		_(
+			'Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'
+		))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
 	def read_packages(already_defined: list = []) -> list:
 		display = ' '.join(already_defined)
-		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '),
-									display).run()
+		input_packages = TextInput(
+			_('Write additional packages to install (space separated, leave blank to skip): '), display).run()
 		return input_packages.split(' ') if input_packages else []
 
 	pre_set_packages = pre_set_packages if pre_set_packages else []
@@ -451,8 +452,8 @@ def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkCon
 			except ValueError:
 				pass
 
-	nic = Menu(_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx,
-				sort=False).run()
+	nic = Menu(
+		_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx, sort=False).run()
 
 	if not nic:
 		return None
@@ -494,8 +495,9 @@ def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkCon
 
 			# Implemented new check for correct gateway IP address
 			while 1:
-				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
-									preset_d.get('gateway')).run().strip()
+				gateway = TextInput(
+					_('Enter your gateway (router) IP address or leave blank for none: '),
+					preset_d.get('gateway')).run().strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
@@ -675,22 +677,26 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 
 			if valid_parted_position(start) and valid_parted_position(end):
 				if partition_overlap(block_device_struct["partitions"], start, end):
-					log(f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.",
+					log(
+						f"This partition overlaps with other partitions on the drive! Ignoring this partition creation.",
 						fg="red")
 					continue
 
-				block_device_struct["partitions"].append({
-					"type": "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
-					"start": start,
-					"size": end,
-					"mountpoint": None,
-					"wipe": True,
-					"filesystem": {
-						"format": fstype
-					}
-				})
+				block_device_struct["partitions"].append(
+					{
+						"type":
+							"primary", # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+						"start": start,
+						"size": end,
+						"mountpoint": None,
+						"wipe": True,
+						"filesystem": {
+							"format": fstype
+						}
+					})
 			else:
-				log(f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.",
+				log(
+					f"Invalid start ({valid_parted_position(start)}) or end ({valid_parted_position(end)}) for this partition. Ignoring this partition creation.",
 					fg="red")
 				continue
 		elif task == suggest_partition_layout:
@@ -723,7 +729,9 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 
 				if partition is not None:
 					print(
-						_(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'))
+						_(
+							' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'
+						))
 					mountpoint = input(
 						_('Select where to mount partition (leave blank to remove mountpoint): ')).strip()
 
@@ -749,8 +757,8 @@ def manage_new_and_existing_partitions(block_device: BlockDevice) -> Dict[str, A
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(),
-										skip=False).run()
+						fstype = Menu(
+							_('Enter a desired filesystem type for the partition'), fs_types(), skip=False).run()
 
 						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
@@ -840,7 +848,8 @@ def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:
 				f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})"
 			)
 
-		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)",
+		log(
+			"You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)",
 			fg="yellow")
 
 		drive = Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
@@ -896,11 +905,12 @@ def select_language(default_value: str, preset_value: str = None) -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'),
-							sorted_kb_lang,
-							default_option=default_value,
-							preset_values=preset_value,
-							sort=False).run()
+	selected_lang = Menu(
+		_('Select Keyboard layout'),
+		sorted_kb_lang,
+		default_option=default_value,
+		preset_values=preset_value,
+		sort=False).run()
 	return selected_lang
 
 
@@ -917,10 +927,11 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 	else:
 		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
-	selected_mirror = Menu(_('Select one of the regions to download packages from'),
-							list(mirrors.keys()),
-							preset_values=preselected,
-							multi=True).run()
+	selected_mirror = Menu(
+		_('Select one of the regions to download packages from'),
+		list(mirrors.keys()),
+		preset_values=preselected,
+		multi=True).run()
 
 	if selected_mirror is not None:
 		return {selected: mirrors[selected] for selected in selected_mirror}
@@ -943,10 +954,11 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	else:
 		preset_disks = {}
 
-	selected_harddrive = Menu(_('Select one or more hard drives to use and configure'),
-								list(options.keys()),
-								preset_values=list(preset_disks.keys()),
-								multi=True).run()
+	selected_harddrive = Menu(
+		_('Select one or more hard drives to use and configure'),
+		list(options.keys()),
+		preset_values=list(preset_disks.keys()),
+		multi=True).run()
 
 	if selected_harddrive and len(selected_harddrive) > 0:
 		return [options[i] for i in selected_harddrive]
@@ -1005,12 +1017,13 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 	default_kernel = "linux"
 
-	selected_kernels = Menu(_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
-							kernels,
-							sort=True,
-							multi=True,
-							preset_values=preset,
-							default_option=default_kernel).run()
+	selected_kernels = Menu(
+		_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
+		kernels,
+		sort=True,
+		multi=True,
+		preset_values=preset,
+		default_option=default_kernel).run()
 	return selected_kernels
 
 
@@ -1024,12 +1037,13 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 
 	repositories = ["multilib", "testing"]
 
-	additional_repositories = Menu(_('Choose which optional additional repositories to enable'),
-									repositories,
-									sort=False,
-									multi=True,
-									preset_values=preset,
-									default_option=[]).run()
+	additional_repositories = Menu(
+		_('Choose which optional additional repositories to enable'),
+		repositories,
+		sort=False,
+		multi=True,
+		preset_values=preset,
+		default_option=[]).run()
 
 	if additional_repositories is not None:
 		return additional_repositories
@@ -1041,11 +1055,9 @@ def select_locale_lang(default: str, preset: str = None) -> str:
 	locales = list_locales()
 	locale_lang = set([locale.split()[0] for locale in locales])
 
-	selected_locale = Menu(_('Choose which locale language to use'),
-							locale_lang,
-							sort=True,
-							preset_values=preset,
-							default_option=default).run()
+	selected_locale = Menu(
+		_('Choose which locale language to use'), locale_lang, sort=True, preset_values=preset,
+		default_option=default).run()
 
 	return selected_locale
 
@@ -1054,11 +1066,9 @@ def select_locale_enc(default: str, preset: str = None) -> str:
 	locales = list_locales()
 	locale_enc = set([locale.split()[1] for locale in locales])
 
-	selected_locale = Menu(_('Choose which locale encoding to use'),
-							locale_enc,
-							sort=True,
-							preset_values=preset,
-							default_option=default).run()
+	selected_locale = Menu(
+		_('Choose which locale encoding to use'), locale_enc, sort=True, preset_values=preset,
+		default_option=default).run()
 
 	return selected_locale
 
@@ -1067,7 +1077,7 @@ def generic_select(
 		p_options: Union[list, dict],
 		input_text: str = '',
 		allow_empty_input: bool = True,
-		options_output: bool = True,  # function not available
+		options_output: bool = True, # function not available
 		sort: bool = False,
 		multi: bool = False,
 		default: Any = None) -> Any:
@@ -1111,38 +1121,31 @@ def generic_select(
 	soptions = list(map(str, options))
 	default_value = options[options.index(default)] if default else None
 
-	selected_option = Menu(input_text,
-							soptions,
-							skip=allow_empty_input,
-							multi=multi,
-							default_option=default_value,
-							sort=sort).run()
+	selected_option = Menu(
+		input_text, soptions, skip=allow_empty_input, multi=multi, default_option=default_value, sort=sort).run()
 	# we return the original objects, not the strings.
 	# options is the list with the original objects and soptions the list with the string values
 	# thru the map, we get from the value selected in soptions it index, and thu it the original object
 	if not selected_option:
 		return selected_option
-	elif isinstance(selected_option, list):  # for multi True
+	elif isinstance(selected_option, list): # for multi True
 		selected_option = list(map(lambda x: options[soptions.index(x)], selected_option))
-	else:  # for multi False
+	else: # for multi False
 		selected_option = options[soptions.index(selected_option)]
 	return selected_option
 
 
-def generic_multi_select(p_options: Union[list, dict],
-							text: str = '',
-							sort: bool = False,
-							default: Any = None,
-							allow_empty: bool = False) -> Any:
+def generic_multi_select(
+		p_options: Union[list, dict],
+		text: str = '',
+		sort: bool = False,
+		default: Any = None,
+		allow_empty: bool = False) -> Any:
 
 	text = text if text else _("Select one or more of the options below: ")
 
-	return generic_select(p_options,
-							input_text=text,
-							allow_empty_input=allow_empty,
-							sort=sort,
-							multi=True,
-							default=default)
+	return generic_select(
+		p_options, input_text=text, allow_empty_input=allow_empty, sort=sort, multi=True, default=default)
 
 
 class UserList(ListManager):
@@ -1160,10 +1163,7 @@ class UserList(ListManager):
 		"""
 		self.sudo = sudo
 		self.actions = [
-			str(_('Add an user')),
-			str(_('Change password')),
-			str(_('Promote/Demote user')),
-			str(_('Delete User'))
+			str(_('Add an user')), str(_('Change password')), str(_('Promote/Demote user')), str(_('Delete User'))
 		]
 		self.default_action = self.actions[0]
 		super().__init__(prompt, lusers, self.actions, self.default_action)
@@ -1208,16 +1208,16 @@ class UserList(ListManager):
 		else:
 			active_user = None
 
-		if self.action == self.actions[0]:  # add
+		if self.action == self.actions[0]: # add
 			new_user = self.add_user()
 			# no unicity check, if exists will be replaced
 			self.data.update(new_user)
-		elif self.action == self.actions[1]:  # change password
+		elif self.action == self.actions[1]: # change password
 			self.data[active_user]['!password'] = get_password(
 				prompt=str(_('Password for user "{}": ').format(active_user)))
-		elif self.action == self.actions[2]:  # promote/demote
+		elif self.action == self.actions[2]: # promote/demote
 			self.data[active_user]['sudoer'] = not self.data[active_user]['sudoer']
-		elif self.action == self.actions[3]:  # delete
+		elif self.action == self.actions[3]: # delete
 			del self.data[active_user]
 
 	def add_user(self):
@@ -1226,7 +1226,7 @@ class UserList(ListManager):
 		while True:
 			userid = input(prompt).strip(' ')
 			if not userid:
-				return {}  # end
+				return {} # end
 			if not check_for_correct_username(userid):
 				pass
 			else:
@@ -1237,10 +1237,11 @@ class UserList(ListManager):
 			sudoer = False
 		else:
 			sudoer = False
-			sudo_choice = Menu(str(_('Should {} be a superuser (sudoer)?')).format(userid), ['yes', 'no'],
-								skip=False,
-								preset_values='yes' if sudoer else 'no',
-								default_option='no').run()
+			sudo_choice = Menu(
+				str(_('Should {} be a superuser (sudoer)?')).format(userid), ['yes', 'no'],
+				skip=False,
+				preset_values='yes' if sudoer else 'no',
+				default_option='no').run()
 			sudoer = True if sudo_choice == 'yes' else False
 
 		password = get_password(prompt=str(_('Password for user "{}": ').format(userid)))
@@ -1253,21 +1254,21 @@ def manage_users(prompt: str, sudo: bool) -> tuple[dict, dict]:
 	# TODO Filtering and some kind of simpler code
 	lusers = {}
 	if storage['arguments'].get('!superusers', {}):
-		lusers.update({
-			uid: {
-				'!password': storage['arguments']['!superusers'][uid].get('!password'),
-				'sudoer': True
-			}
-			for uid in storage['arguments'].get('!superusers', {})
-		})
+		lusers.update(
+			{
+				uid: {
+					'!password': storage['arguments']['!superusers'][uid].get('!password'), 'sudoer': True
+				}
+				for uid in storage['arguments'].get('!superusers', {})
+			})
 	if storage['arguments'].get('!users', {}):
-		lusers.update({
-			uid: {
-				'!password': storage['arguments']['!users'][uid].get('!password'),
-				'sudoer': False
-			}
-			for uid in storage['arguments'].get('!users', {})
-		})
+		lusers.update(
+			{
+				uid: {
+					'!password': storage['arguments']['!users'][uid].get('!password'), 'sudoer': False
+				}
+				for uid in storage['arguments'].get('!users', {})
+			})
 	# processing
 	lusers = UserList(prompt, lusers, sudo).run()
 	# return data
@@ -1317,12 +1318,13 @@ def save_config(config: Dict):
 		'all': str(_('Save all'))
 	}
 
-	selection = Menu(_('Choose which configuration to save'),
-						list(options.values()),
-						sort=False,
-						skip=True,
-						preview_size=0.75,
-						preview_command=preview).run()
+	selection = Menu(
+		_('Choose which configuration to save'),
+		list(options.values()),
+		sort=False,
+		skip=True,
+		preview_size=0.75,
+		preview_command=preview).run()
 
 	if not selection:
 		return

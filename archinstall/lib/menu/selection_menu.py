@@ -38,18 +38,19 @@ from ..translation import Translation
 
 class Selector:
 
-	def __init__(self,
-					description: str,
-					func: Callable = None,
-					display_func: Callable = None,
-					default: Any = None,
-					enabled: bool = False,
-					dependencies: List = [],
-					dependencies_not: List = [],
-					exec_func: Callable = None,
-					preview_func: Callable = None,
-					mandatory: bool = False,
-					no_store: bool = False):
+	def __init__(
+			self,
+			description: str,
+			func: Callable = None,
+			display_func: Callable = None,
+			default: Any = None,
+			enabled: bool = False,
+			dependencies: List = [],
+			dependencies_not: List = [],
+			exec_func: Callable = None,
+			preview_func: Callable = None,
+			mandatory: bool = False,
+			no_store: bool = False):
 		"""
 		Create a new menu selection entry
 
@@ -283,7 +284,7 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
-		self.post_callback  # as all the values can vary i have to exec this callback
+		self.post_callback # as all the values can vary i have to exec this callback
 		cursor_pos = None
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
@@ -292,15 +293,16 @@ class GeneralMenu:
 			enabled_menus = self._menus_to_enable()
 			menu_text = [m.text for m in enabled_menus.values()]
 
-			selection = Menu(_('Set/Modify the below options'),
-								menu_text,
-								sort=False,
-								cursor_index=cursor_pos,
-								preview_command=self._preview_display,
-								preview_size=self.preview_size).run()
+			selection = Menu(
+				_('Set/Modify the below options'),
+				menu_text,
+				sort=False,
+				cursor_index=cursor_pos,
+				preview_command=self._preview_display,
+				preview_size=self.preview_size).run()
 
 			if selection and self.auto_cursor:
-				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
+				cursor_pos = menu_text.index(selection) + 1 # before the strip otherwise fails
 				if cursor_pos >= len(menu_text):
 					cursor_pos = len(menu_text) - 1
 				selection = selection.strip()
@@ -441,33 +443,33 @@ class GlobalMenu(GeneralMenu):
 
 	def _setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
-		self._menu_options['archinstall-language'] = Selector(_('Select Archinstall language'),
-																lambda x: self._select_archinstall_language('English'),
-																default='English',
-																enabled=True)
-		self._menu_options['keyboard-layout'] = Selector(_('Select keyboard layout'),
-															lambda preset: select_language('us', preset),
-															default='us')
-		self._menu_options['mirror-region'] = Selector(_('Select mirror region'),
-														select_mirror_regions,
-														display_func=lambda x: list(x.keys()) if x else '[]',
-														default={})
-		self._menu_options['sys-language'] = Selector(_('Select locale language'),
-														lambda preset: select_locale_lang('en_US', preset),
-														default='en_US')
-		self._menu_options['sys-encoding'] = Selector(_('Select locale encoding'),
-														lambda preset: select_locale_enc('utf-8', preset),
-														default='utf-8')
+		self._menu_options['archinstall-language'] = Selector(
+			_('Select Archinstall language'),
+			lambda x: self._select_archinstall_language('English'),
+			default='English',
+			enabled=True)
+		self._menu_options['keyboard-layout'] = Selector(
+			_('Select keyboard layout'), lambda preset: select_language('us', preset), default='us')
+		self._menu_options['mirror-region'] = Selector(
+			_('Select mirror region'),
+			select_mirror_regions,
+			display_func=lambda x: list(x.keys()) if x else '[]',
+			default={})
+		self._menu_options['sys-language'] = Selector(
+			_('Select locale language'), lambda preset: select_locale_lang('en_US', preset), default='en_US')
+		self._menu_options['sys-encoding'] = Selector(
+			_('Select locale encoding'), lambda preset: select_locale_enc('utf-8', preset), default='utf-8')
 		self._menu_options['harddrives'] = Selector(_('Select harddrives'), self._select_harddrives)
 		self._menu_options['disk_layouts'] = Selector(
 			_('Select disk layout'),
-			lambda x: select_disk_layout(storage['arguments'].get('harddrives', []), storage['arguments'].get(
-				'advanced', False)),
+			lambda x: select_disk_layout(
+				storage['arguments'].get('harddrives', []), storage['arguments'].get('advanced', False)),
 			dependencies=['harddrives'])
-		self._menu_options['!encryption-password'] = Selector(_('Set encryption password'),
-																lambda x: self._select_encrypted_password(),
-																display_func=lambda x: secret(x) if x else 'None',
-																dependencies=['harddrives'])
+		self._menu_options['!encryption-password'] = Selector(
+			_('Set encryption password'),
+			lambda x: self._select_encrypted_password(),
+			display_func=lambda x: secret(x) if x else 'None',
+			dependencies=['harddrives'])
 		self._menu_options['swap'] = Selector(_('Use swap'), lambda preset: ask_for_swap(preset), default=True)
 		self._menu_options['bootloader'] = Selector(
 			_('Select bootloader'),
@@ -475,57 +477,57 @@ class GlobalMenu(GeneralMenu):
 			default="systemd-bootctl" if has_uefi() else "grub-install")
 		self._menu_options['hostname'] = Selector(_('Specify hostname'), ask_hostname, default='archlinux')
 		# root password won't have preset value
-		self._menu_options['!root-password'] = Selector(_('Set root password'),
-														lambda preset: self._set_root_password(),
-														display_func=lambda x: secret(x) if x else 'None')
-		self._menu_options['!superusers'] = Selector(_('Specify superuser account'),
-														lambda preset: self._create_superuser_account(),
-														exec_func=lambda n, v: self._users_resynch(),
-														dependencies_not=['!root-password'],
-														display_func=lambda x: self._display_superusers())
-		self._menu_options['!users'] = Selector(_('Specify user account'),
-												lambda x: self._create_user_account(),
-												default={},
-												exec_func=lambda n, v: self._users_resynch(),
-												display_func=lambda x: list(x.keys()) if x else '[]')
-		self._menu_options['profile'] = Selector(_('Specify profile'),
-													lambda x: self._select_profile(),
-													display_func=lambda x: x if x else 'None')
+		self._menu_options['!root-password'] = Selector(
+			_('Set root password'),
+			lambda preset: self._set_root_password(),
+			display_func=lambda x: secret(x) if x else 'None')
+		self._menu_options['!superusers'] = Selector(
+			_('Specify superuser account'),
+			lambda preset: self._create_superuser_account(),
+			exec_func=lambda n,
+			v: self._users_resynch(),
+			dependencies_not=['!root-password'],
+			display_func=lambda x: self._display_superusers())
+		self._menu_options['!users'] = Selector(
+			_('Specify user account'),
+			lambda x: self._create_user_account(),
+			default={},
+			exec_func=lambda n,
+			v: self._users_resynch(),
+			display_func=lambda x: list(x.keys()) if x else '[]')
+		self._menu_options['profile'] = Selector(
+			_('Specify profile'), lambda x: self._select_profile(), display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = Selector(
-			_('Select audio'), lambda preset: ask_for_audio_selection(
+			_('Select audio'),
+			lambda preset: ask_for_audio_selection(
 				is_desktop_profile(storage['arguments'].get('profile', None)), preset))
-		self._menu_options['kernels'] = Selector(_('Select kernels'),
-													lambda preset: select_kernel(preset),
-													default=['linux'])
+		self._menu_options['kernels'] = Selector(
+			_('Select kernels'), lambda preset: select_kernel(preset), default=['linux'])
 		self._menu_options['packages'] = Selector(
 			_('Additional packages to install'),
 			# lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 			ask_additional_packages_to_install,
 			default=[])
-		self._menu_options['additional-repositories'] = Selector(_('Additional repositories to enable'),
-																	select_additional_repositories,
-																	default=[])
-		self._menu_options['nic'] = Selector(_('Configure network'),
-												ask_to_configure_network,
-												display_func=lambda x: x
-												if x else _('Not configured, unavailable unless setup manually'),
-												default={})
-		self._menu_options['timezone'] = Selector(_('Select timezone'),
-													lambda preset: ask_for_a_timezone(preset),
-													default='UTC')
-		self._menu_options['ntp'] = Selector(_('Set automatic time sync (NTP)'),
-												lambda preset: self._select_ntp(preset),
-												default=True)
-		self._menu_options['save_config'] = Selector(_('Save configuration'),
-														lambda preset: save_config(self._data_store),
-														enabled=True,
-														no_store=True)
-		self._menu_options['install'] = Selector(self._install_text(),
-													exec_func=lambda n, v: True
-													if len(self._missing_configs()) == 0 else False,
-													preview_func=self._prev_install_missing_config,
-													enabled=True,
-													no_store=True)
+		self._menu_options['additional-repositories'] = Selector(
+			_('Additional repositories to enable'), select_additional_repositories, default=[])
+		self._menu_options['nic'] = Selector(
+			_('Configure network'),
+			ask_to_configure_network,
+			display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
+			default={})
+		self._menu_options['timezone'] = Selector(
+			_('Select timezone'), lambda preset: ask_for_a_timezone(preset), default='UTC')
+		self._menu_options['ntp'] = Selector(
+			_('Set automatic time sync (NTP)'), lambda preset: self._select_ntp(preset), default=True)
+		self._menu_options['save_config'] = Selector(
+			_('Save configuration'), lambda preset: save_config(self._data_store), enabled=True, no_store=True)
+		self._menu_options['install'] = Selector(
+			self._install_text(),
+			exec_func=lambda n,
+			v: True if len(self._missing_configs()) == 0 else False,
+			preview_func=self._prev_install_missing_config,
+			enabled=True,
+			no_store=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n, v: exit(1), enabled=True)
 
@@ -555,7 +557,7 @@ class GlobalMenu(GeneralMenu):
 			text = str(_('Missing configurations:\n'))
 			for m in missing:
 				text += f'- {m}\n'
-			return text[:-1]  # remove last new line
+			return text[:-1] # remove last new line
 		return None
 
 	def _missing_configs(self) -> List[str]:

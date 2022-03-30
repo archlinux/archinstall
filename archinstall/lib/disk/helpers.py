@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import logging
-import os  # type: ignore
+import os # type: ignore
 import pathlib
 import re
 import time
@@ -52,9 +52,8 @@ def filter_disks_below_size_in_gb(devices: List[BlockDevice], gigabytes: int) ->
 			yield disk
 
 
-def select_largest_device(devices: List[BlockDevice],
-							gigabytes: int,
-							filter_out: Optional[List[BlockDevice]] = None) -> BlockDevice:
+def select_largest_device(
+		devices: List[BlockDevice], gigabytes: int, filter_out: Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
 		filter_out = []
 
@@ -71,9 +70,8 @@ def select_largest_device(devices: List[BlockDevice],
 	return max(copy_devices, key=(lambda device: device.size))
 
 
-def select_disk_larger_than_or_close_to(devices: List[BlockDevice],
-										gigabytes: int,
-										filter_out: Optional[List[BlockDevice]] = None) -> BlockDevice:
+def select_disk_larger_than_or_close_to(
+		devices: List[BlockDevice], gigabytes: int, filter_out: Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
 		filter_out = []
 
@@ -160,13 +158,15 @@ def get_loop_info(path: str) -> Dict[str, Any]:
 			continue
 
 		return {
-			path: {
-				**drive, 'type': 'loop',
-				'TYPE': 'loop',
-				'DEVTYPE': 'loop',
-				'PATH': drive['name'],
-				'path': drive['name']
-			}
+			path:
+				{
+					**drive,
+					'type': 'loop',
+					'TYPE': 'loop',
+					'DEVTYPE': 'loop',
+					'PATH': drive['name'],
+					'path': drive['name']
+				}
 		}
 
 	return {}
@@ -206,16 +206,16 @@ def get_blockdevice_uevent(dev_name: str) -> Dict[str, Any]:
 		device_information.update(uevent(fh.read()))
 
 	return {
-		f"/dev/{dev_name}": {
-			**device_information, 'path': f'/dev/{dev_name}',
-			'PATH': f'/dev/{dev_name}',
-			'PTTYPE': None
-		}
+		f"/dev/{dev_name}":
+			{
+				**device_information, 'path': f'/dev/{dev_name}', 'PATH': f'/dev/{dev_name}', 'PTTYPE': None
+			}
 	}
 
 
 def all_disks() -> List[BlockDevice]:
-	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.",
+	log(
+		f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.",
 		level=logging.WARNING,
 		fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
@@ -238,7 +238,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 			information = blkid(f'blkid -p -o export {device_path}')
 
 		# TODO: No idea why F841 is raised here:
-		except SysCallError as error:  # noqa: F841
+		except SysCallError as error: # noqa: F841
 			if error.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
@@ -265,7 +265,8 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
-				log(f"Unknown device found by all_blockdevices(), ignoring: {information}",
+				log(
+					f"Unknown device found by all_blockdevices(), ignoring: {information}",
 					level=logging.WARNING,
 					fg="yellow")
 
@@ -297,9 +298,9 @@ def harddrive(size: Optional[float] = None, model: Optional[str] = None, fuzzy: 
 def split_bind_name(path: Union[pathlib.Path, str]) -> list:
 	# log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
 	# we check for the bind notation. if exist we'll only use the "true" device path
-	if '[' in str(path):  # is a bind path (btrfs subvolume path)
+	if '[' in str(path): # is a bind path (btrfs subvolume path)
 		device_path, bind_path = str(path).split('[')
-		bind_path = bind_path[:-1].strip()  # remove the ]
+		bind_path = bind_path[:-1].strip() # remove the ]
 	else:
 		device_path = path
 		bind_path = None
@@ -448,7 +449,7 @@ def find_partition_by_mountpoint(block_devices: List[BlockDevice], relative_moun
 
 def partprobe() -> bool:
 	if SysCommand(f'bash -c "partprobe"').exit_code == 0:
-		time.sleep(5)  # TODO: Remove, we should be relying on blkid instead of lsblk
+		time.sleep(5) # TODO: Remove, we should be relying on blkid instead of lsblk
 		return True
 	return False
 

@@ -59,10 +59,10 @@ class ConfigurationOutput:
 		return json.dumps(
 			{
 				'config_version':
-				storage['__version__'],  # Tells us what version was used to generate the config
-				**self._user_config,  # __version__ will be overwritten by old version definition found in config
+					storage['__version__'], # Tells us what version was used to generate the config
+				**self._user_config, # __version__ will be overwritten by old version definition found in config
 				'version':
-				storage['__version__']
+					storage['__version__']
 			},
 			indent=4,
 			sort_keys=True,
@@ -93,7 +93,8 @@ class ConfigurationOutput:
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
-			log('Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.
+			log(
+				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.
 				format(dest_path.resolve()),
 				fg="yellow")
 			return False

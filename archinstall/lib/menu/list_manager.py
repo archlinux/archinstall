@@ -94,12 +94,13 @@ from copy import copy
 
 class ListManager:
 
-	def __init__(self,
-					prompt: str,
-					base_list: list,
-					base_actions: list = None,
-					null_action: str = None,
-					default_action: str = None):
+	def __init__(
+			self,
+			prompt: str,
+			base_list: list,
+			base_actions: list = None,
+			null_action: str = None,
+			default_action: str = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -133,12 +134,11 @@ class ListManager:
 		self.bottom_list = [self.confirm_action, self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [
-			str(_('Add')), str(_('Copy')), str(_('Edit')),
-			str(_('Delete'))
+			str(_('Add')), str(_('Copy')), str(_('Edit')), str(_('Delete'))
 		]
 
 		self.base_data = base_list
-		self.data = copy(base_list)  # as refs, changes are immediate
+		self.data = copy(base_list) # as refs, changes are immediate
 		# default values for the null case
 		self.target = None
 		self.action = self.null_action
@@ -173,22 +173,23 @@ class ListManager:
 			# Possible enhacement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target)
 
-		if not target or target == self.cancel_action:  # TODO dubious
-			return self.base_data  # return the original list
+		if not target or target == self.cancel_action: # TODO dubious
+			return self.base_data # return the original list
 		else:
 			return self.data
 
 	def run_actions(self, prompt_data=None):
 		options = self.action_list() + self.bottom_item
 		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
-		self.action = Menu(prompt,
-							options,
-							sort=False,
-							skip=False,
-							clear_screen=False,
-							clear_menu_on_exit=False,
-							preset_values=self.bottom_item,
-							show_search_hint=False).run()
+		self.action = Menu(
+			prompt,
+			options,
+			sort=False,
+			skip=False,
+			clear_screen=False,
+			clear_menu_on_exit=False,
+			preset_values=self.bottom_item,
+			show_search_hint=False).run()
 		if self.action == self.cancel_action:
 			return False
 		else:

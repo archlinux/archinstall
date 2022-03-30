@@ -26,18 +26,19 @@ __packages__ = [
 AVAILABLE_GFX_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
 	# and lists are a list of packages to be installed
-	"All open-source (default)": [
-		"mesa",
-		"xf86-video-amdgpu",
-		"xf86-video-ati",
-		"xf86-video-nouveau",
-		"xf86-video-vmware",
-		"libva-mesa-driver",
-		"libva-intel-driver",
-		"intel-media-driver",
-		"vulkan-radeon",
-		"vulkan-intel",
-	],
+	"All open-source (default)":
+		[
+			"mesa",
+			"xf86-video-amdgpu",
+			"xf86-video-ati",
+			"xf86-video-nouveau",
+			"xf86-video-vmware",
+			"libva-mesa-driver",
+			"libva-intel-driver",
+			"intel-media-driver",
+			"vulkan-radeon",
+			"vulkan-intel",
+		],
 	"AMD / ATI (open-source)": [
 		"mesa",
 		"xf86-video-amdgpu",

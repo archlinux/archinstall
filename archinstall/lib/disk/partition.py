@@ -18,14 +18,15 @@ from .btrfs import get_subvolumes_from_findmnt, BtrfsSubvolume
 
 class Partition:
 
-	def __init__(self,
-					path: str,
-					block_device: BlockDevice,
-					part_id: Optional[str] = None,
-					filesystem: Optional[str] = None,
-					mountpoint: Optional[str] = None,
-					encrypted: bool = False,
-					autodetect_filesystem: bool = True):
+	def __init__(
+			self,
+			path: str,
+			block_device: BlockDevice,
+			part_id: Optional[str] = None,
+			filesystem: Optional[str] = None,
+			mountpoint: Optional[str] = None,
+			encrypted: bool = False,
+			autodetect_filesystem: bool = True):
 
 		if not part_id:
 			part_id = os.path.basename(path)
@@ -120,7 +121,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['start']  # * self.sector_size
+				return partition['start'] # * self.sector_size
 
 	@property
 	def end(self) -> Optional[str]:
@@ -130,7 +131,7 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition['size']  # * self.sector_size
+				return partition['size'] # * self.sector_size
 
 	@property
 	def end_sectors(self) -> Optional[str]:
@@ -310,11 +311,12 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self,
-				filesystem: Optional[str] = None,
-				path: Optional[str] = None,
-				log_formatting: bool = True,
-				options: List[str] = []) -> bool:
+	def format(
+			self,
+			filesystem: Optional[str] = None,
+			path: Optional[str] = None,
+			log_formatting: bool = True,
+			options: List[str] = []) -> bool:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
@@ -470,7 +472,7 @@ class Partition:
 		try:
 			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
 		except (SysCallError, DiskError):
-			pass  # We supported it, but /dev/null is not formattable as expected so the mkfs call exited with an error code
+			pass # We supported it, but /dev/null is not formattable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:
 			raise err
 		return True
@@ -478,7 +480,7 @@ class Partition:
 
 def get_mount_fs_type(fs: str) -> str:
 	if fs == 'ntfs':
-		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+		return 'ntfs3' # Needed to use the Paragon R/W NTFS driver
 	elif fs == 'fat32':
-		return 'vfat'  # This is the actual type used for fat32 mounting
+		return 'vfat' # This is the actual type used for fat32 mounting
 	return fs

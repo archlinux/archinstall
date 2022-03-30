@@ -67,10 +67,17 @@ class Boot:
 			self.session = existing_session.session
 			self.ready = existing_session.ready
 		else:
-			self.session = SysCommandWorker([
-				'/usr/bin/systemd-nspawn', '-D', self.instance.target, '--timezone=off', '-b', '--no-pager',
-				'--machine', self.container_name
-			])
+			self.session = SysCommandWorker(
+				[
+					'/usr/bin/systemd-nspawn',
+					'-D',
+					self.instance.target,
+					'--timezone=off',
+					'-b',
+					'--no-pager',
+					'--machine',
+					self.container_name
+				])
 			# '-P' or --console=pipe  could help us not having to do a bunch of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 
 		if not self.ready:
@@ -88,7 +95,8 @@ class Boot:
 
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
-			log(f"The error above occured in a temporary boot-up of the installation {self.instance}",
+			log(
+				f"The error above occured in a temporary boot-up of the installation {self.instance}",
 				level=logging.ERROR,
 				fg="red")
 
@@ -106,8 +114,8 @@ class Boot:
 		if self.session.exit_code == 0 or (shutdown and shutdown.exit_code == 0):
 			storage['active_boot'] = None
 		else:
-			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}",
-								exit_code=shutdown.exit_code)
+			raise SysCallError(
+				f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=shutdown.exit_code)
 
 	def __iter__(self) -> Iterator[str]:
 		if self.session:

@@ -43,7 +43,8 @@ class MapperDev:
 						uevent_data = SysCommand(
 							f"blkid -o export /dev/{partition_belonging_to_dmcrypt_device}").decode()
 					except SysCallError as error:
-						log(f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}",
+						log(
+							f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}",
 							level=logging.ERROR,
 							fg="red")
 

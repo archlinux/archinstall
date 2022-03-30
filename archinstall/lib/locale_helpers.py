@@ -58,12 +58,13 @@ def unset_cmd_locale():
 	storage['CMD_LOCALE'] = {}
 
 
-def set_cmd_locale(general: str = None,
-					charset: str = 'C',
-					numbers: str = 'C',
-					time: str = 'C',
-					collate: str = 'C',
-					messages: str = 'C'):
+def set_cmd_locale(
+		general: str = None,
+		charset: str = 'C',
+		numbers: str = 'C',
+		time: str = 'C',
+		collate: str = 'C',
+		messages: str = 'C'):
 	"""
 	Set the cmd locale.
 	If the parameter general is specified, it takes precedence over the rest (might as well not exist)
@@ -75,7 +76,8 @@ def set_cmd_locale(general: str = None,
 		if general in installed_locales:
 			storage['CMD_LOCALE'] = {'LC_ALL': general}
 		else:
-			log(f"{get_locale_mode_text('LC_ALL')} {general} is not installed. Defaulting to C",
+			log(
+				f"{get_locale_mode_text('LC_ALL')} {general} is not installed. Defaulting to C",
 				fg="yellow",
 				level=logging.WARNING)
 		return
@@ -84,35 +86,40 @@ def set_cmd_locale(general: str = None,
 		if numbers in installed_locales:
 			result["LC_NUMERIC"] = numbers
 		else:
-			log(f"{get_locale_mode_text('LC_NUMERIC')} {numbers} is not installed. Defaulting to installation language",
+			log(
+				f"{get_locale_mode_text('LC_NUMERIC')} {numbers} is not installed. Defaulting to installation language",
 				fg="yellow",
 				level=logging.WARNING)
 	if charset:
 		if charset in installed_locales:
 			result["LC_CTYPE"] = charset
 		else:
-			log(f"{get_locale_mode_text('LC_CTYPE')} {charset} is not installed. Defaulting to installation language",
+			log(
+				f"{get_locale_mode_text('LC_CTYPE')} {charset} is not installed. Defaulting to installation language",
 				fg="yellow",
 				level=logging.WARNING)
 	if time:
 		if time in installed_locales:
 			result["LC_TIME"] = time
 		else:
-			log(f"{get_locale_mode_text('LC_TIME')} {time} is not installed. Defaulting to installation language",
+			log(
+				f"{get_locale_mode_text('LC_TIME')} {time} is not installed. Defaulting to installation language",
 				fg="yellow",
 				level=logging.WARNING)
 	if collate:
 		if collate in installed_locales:
 			result["LC_COLLATE"] = collate
 		else:
-			log(f"{get_locale_mode_text('LC_COLLATE')} {collate} is not installed. Defaulting to installation language",
+			log(
+				f"{get_locale_mode_text('LC_COLLATE')} {collate} is not installed. Defaulting to installation language",
 				fg="yellow",
 				level=logging.WARNING)
 	if messages:
 		if messages in installed_locales:
 			result["LC_MESSAGES"] = messages
 		else:
-			log(f"{get_locale_mode_text('LC_MESSAGES')} {messages} is not installed. Defaulting to installation language",
+			log(
+				f"{get_locale_mode_text('LC_MESSAGES')} {messages} is not installed. Defaulting to installation language",
 				fg="yellow",
 				level=logging.WARNING)
 	storage['CMD_LOCALE'] = result

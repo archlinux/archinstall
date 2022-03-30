@@ -19,14 +19,15 @@ from .storage import storage
 
 class luks2:
 
-	def __init__(self,
-					partition: Partition,
-					mountpoint: str,
-					password: str,
-					key_file: Optional[str] = None,
-					auto_unmount: bool = False,
-					*args: str,
-					**kwargs: str):
+	def __init__(
+			self,
+			partition: Partition,
+			mountpoint: str,
+			password: str,
+			key_file: Optional[str] = None,
+			auto_unmount: bool = False,
+			*args: str,
+			**kwargs: str):
 
 		self.password = password
 		self.partition = partition
@@ -40,7 +41,7 @@ class luks2:
 
 	def __enter__(self) -> Partition:
 		if not self.key_file:
-			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+			self.key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw" # TODO: Make disk-pw-file randomly unique?
 
 		if type(self.password) != bytes:
 			self.password = bytes(self.password, 'UTF-8')
@@ -60,13 +61,14 @@ class luks2:
 
 		return True
 
-	def encrypt(self,
-				partition: Partition,
-				password: Optional[str] = None,
-				key_size: int = 512,
-				hash_type: str = 'sha512',
-				iter_time: int = 10000,
-				key_file: Optional[str] = None) -> str:
+	def encrypt(
+			self,
+			partition: Partition,
+			password: Optional[str] = None,
+			key_size: int = 512,
+			hash_type: str = 'sha512',
+			iter_time: int = 10000,
+			key_file: Optional[str] = None) -> str:
 
 		log(f'Encrypting {partition} (This might take a while)', level=logging.INFO)
 
@@ -74,7 +76,7 @@ class luks2:
 			if self.key_file:
 				key_file = self.key_file
 			else:
-				key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw"  # TODO: Make disk-pw-file randomly unique?
+				key_file = f"/tmp/{os.path.basename(self.partition.path)}.disk_pw" # TODO: Make disk-pw-file randomly unique?
 
 		if not password:
 			password = self.password
@@ -87,26 +89,27 @@ class luks2:
 
 		partition.partprobe()
 
-		cryptsetup_args = shlex.join([
-			'/usr/bin/cryptsetup',
-			'--batch-mode',
-			'--verbose',
-			'--type',
-			'luks2',
-			'--pbkdf',
-			'argon2id',
-			'--hash',
-			hash_type,
-			'--key-size',
-			str(key_size),
-			'--iter-time',
-			str(iter_time),
-			'--key-file',
-			os.path.abspath(key_file),
-			'--use-urandom',
-			'luksFormat',
-			partition.path,
-		])
+		cryptsetup_args = shlex.join(
+			[
+				'/usr/bin/cryptsetup',
+				'--batch-mode',
+				'--verbose',
+				'--type',
+				'luks2',
+				'--pbkdf',
+				'argon2id',
+				'--hash',
+				hash_type,
+				'--key-size',
+				str(key_size),
+				'--iter-time',
+				str(iter_time),
+				'--key-file',
+				os.path.abspath(key_file),
+				'--use-urandom',
+				'luksFormat',
+				partition.path,
+			])
 
 		try:
 			# Retry formatting the volume because archinstall can some times be too quick
@@ -122,7 +125,8 @@ class luks2:
 				raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 		except SysCallError as err:
 			if err.exit_code == 256:
-				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.',
+				log(
+					f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.',
 					level=logging.DEBUG)
 				# Partition was in use, unmount it and try again
 				partition.unmount()
@@ -163,7 +167,7 @@ class luks2:
 		from .disk import get_filesystem_type
 
 		if '/' in mountpoint:
-			os.path.basename(mountpoint)  # TODO: Raise exception instead?
+			os.path.basename(mountpoint) # TODO: Raise exception instead?
 
 		wait_timer = time.time()
 		while pathlib.Path(partition.path).exists() is False and time.time() - wait_timer < 10:
@@ -174,11 +178,12 @@ class luks2:
 		)
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
-			unlocked_partition = Partition(self.mapdev,
-											None,
-											encrypted=True,
-											filesystem=get_filesystem_type(self.mapdev),
-											autodetect_filesystem=False)
+			unlocked_partition = Partition(
+				self.mapdev,
+				None,
+				encrypted=True,
+				filesystem=get_filesystem_type(self.mapdev),
+				autodetect_filesystem=False)
 			return unlocked_partition
 
 	def close(self, mountpoint: Optional[str] = None) -> bool:
@@ -197,8 +202,8 @@ class luks2:
 			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
 
 		log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
-		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}",
-									environment_vars={'LC_ALL': 'C'})
+		worker = SysCommandWorker(
+			f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}", environment_vars={'LC_ALL': 'C'})
 		pw_injected = False
 		while worker.is_alive():
 			if b'Enter any existing passphrase' in worker and pw_injected is False:

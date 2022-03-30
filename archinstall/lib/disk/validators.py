@@ -35,16 +35,16 @@ def fs_types() -> List[str]:
 		"btrfs",
 		"ext2",
 		"ext3",
-		"ext4",  # `man parted` allows these
+		"ext4", # `man parted` allows these
 		"fat16",
 		"fat32",
 		"hfs",
-		"hfs+",  # "hfsx", not included in `man parted`
+		"hfs+", # "hfsx", not included in `man parted`
 		"linux-swap",
 		"ntfs",
 		"reiserfs",
-		"udf",  # "ufs", not included in `man parted`
-		"xfs",  # `man parted` allows this
+		"udf", # "ufs", not included in `man parted`
+		"xfs", # `man parted` allows this
 	]
 
 

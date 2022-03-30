@@ -23,15 +23,16 @@ from .exceptions import ProfileNotFound
 
 
 def grab_url_data(path: str) -> str:
-	safe_path = path[:path.find(':') + 1] + ''.join([
-		item if item in ('/', '?', '=', '&') else urllib.parse.quote(item)
-		for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))
-	])
+	safe_path = path[:path.find(':') + 1] + ''.join(
+		[
+			item if item in ('/', '?', '=', '&') else urllib.parse.quote(item)
+			for item in multisplit(path[path.find(':') + 1:], ('/', '?', '=', '&'))
+		])
 	ssl_context = ssl.create_default_context()
 	ssl_context.check_hostname = False
 	ssl_context.verify_mode = ssl.CERT_NONE
 	response = urllib.request.urlopen(safe_path, context=ssl_context)
-	return response.read()  # bytes?
+	return response.read() # bytes?
 
 
 def is_desktop_profile(profile: str) -> bool:
@@ -80,9 +81,7 @@ def list_profiles(filter_irrelevant_macs: bool = True,
 							description = first_line[1:].strip()
 
 					cache[file[:-3]] = {
-						'path': os.path.join(root, file),
-						'description': description,
-						'tailored': tailored
+						'path': os.path.join(root, file), 'description': description, 'tailored': tailored
 					}
 			break
 
@@ -131,7 +130,7 @@ class Script:
 			* profile: /path/to/profile.py
 		"""
 		self.profile = profile
-		self.installer = installer  # TODO: Appears not to be used anymore?
+		self.installer = installer # TODO: Appears not to be used anymore?
 		self.converted_path = None
 		self.spec = None
 		self.examples = {}

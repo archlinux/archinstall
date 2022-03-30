@@ -161,15 +161,17 @@ class Installer:
 
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:',
-						fg='red',
-						level=logging.WARNING)
+			self.log(
+				'Some required steps were not successfully installed/configured before leaving the installer:',
+				fg='red',
+				level=logging.WARNING)
 			for step in missing_steps:
 				self.log(f' - {step}', fg='red', level=logging.WARNING)
 
 			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
-			self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues",
-						level=logging.WARNING)
+			self.log(
+				"Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues",
+				level=logging.WARNING)
 
 			self.sync_log_to_install_medium()
 			return False
@@ -218,11 +220,9 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs", {}).get('subvolumes', {})):
-				for mountpoint in [
-					sub_list[subvolume]
-					if isinstance(sub_list[subvolume], str) else sub_list[subvolume].get("mountpoint")
-					for subvolume in sub_list if sub_list[subvolume]
-				]:
+				for mountpoint in [sub_list[subvolume]
+									if isinstance(sub_list[subvolume], str) else sub_list[subvolume].get("mountpoint")
+									for subvolume in sub_list if sub_list[subvolume]]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -276,7 +276,8 @@ class Installer:
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)],
 								key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
-			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}",
+			log(
+				f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}",
 				level=logging.INFO)
 
 			if partition.get('filesystem', {}).get('mount_options', []):
@@ -331,7 +332,7 @@ class Installer:
 					# The previous line was a match for [.*multilib.*].
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
 					pacman_conf.write(line.lstrip('#'))
-					matched = False  # Reset the state of matched to False.
+					matched = False # Reset the state of matched to False.
 				else:
 					pacman_conf.write(line)
 
@@ -357,7 +358,7 @@ class Installer:
 					# The previous line was a match for [.*testing.*].
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
 					pacman_conf.write(line.lstrip('#'))
-					matched = False  # Reset the state of matched to False.
+					matched = False # Reset the state of matched to False.
 				else:
 					pacman_conf.write(line)
 
@@ -429,7 +430,7 @@ class Installer:
 		if not zone:
 			return True
 		if not len(zone):
-			return True  # Redundant
+			return True # Redundant
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_timezone'):
@@ -442,9 +443,8 @@ class Installer:
 			return True
 
 		else:
-			self.log(f"Time zone {zone} does not exist, continuing with system default.",
-						level=logging.WARNING,
-						fg='red')
+			self.log(
+				f"Time zone {zone} does not exist, continuing with system default.", level=logging.WARNING, fg='red')
 
 		return False
 
@@ -453,8 +453,9 @@ class Installer:
 		self.activate_time_syncronization()
 
 	def activate_time_syncronization(self) -> None:
-		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.',
-					level=logging.INFO)
+		self.log(
+			'Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.',
+			level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
 
 		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
@@ -514,8 +515,12 @@ class Installer:
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
-				new_conf = plugin.on_configure_nic(network_config.iface, network_config.dhcp, network_config.ip,
-													network_config.gateway, network_config.dns)
+				new_conf = plugin.on_configure_nic(
+					network_config.iface,
+					network_config.dhcp,
+					network_config.ip,
+					network_config.gateway,
+					network_config.dns)
 
 				if new_conf:
 					conf = new_conf
@@ -650,8 +655,9 @@ class Installer:
 				if (ucode := pathlib.Path(f"{self.target}/boot/intel-ucode.img")).exists():
 					ucode.unlink()
 			else:
-				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.",
-							level=logging.DEBUG)
+				self.log(
+					f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.",
+					level=logging.DEBUG)
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
@@ -802,13 +808,15 @@ class Installer:
 				if real_device := self.detect_encryption(root_partition):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.",
+					log(
+						f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.",
 						level=logging.DEBUG)
 					entry.write(
 						f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}'
 					)
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.",
+					log(
+						f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.",
 						level=logging.DEBUG)
 					entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
 
@@ -817,7 +825,7 @@ class Installer:
 		return True
 
 	def add_grub_bootloader(self, boot_partition: Partition, root_partition: Partition) -> bool:
-		self.pacstrap('grub')  # no need?
+		self.pacstrap('grub') # no need?
 
 		root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
@@ -837,7 +845,7 @@ class Installer:
 
 		log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 		if has_uefi():
-			self.pacstrap('efibootmgr')  # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 			try:
 				SysCommand(
 					f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable'
@@ -896,13 +904,15 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.",
+				log(
+					f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.",
 					level=logging.DEBUG)
 				kernel_parameters.append(
 					f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}'
 				)
 			else:
-				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.",
+				log(
+					f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.",
 					level=logging.DEBUG)
 				kernel_parameters.append(
 					f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}'
@@ -948,8 +958,9 @@ class Installer:
 				f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}"
 			)
 
-		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}',
-					level=logging.INFO)
+		self.log(
+			f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}',
+			level=logging.INFO)
 
 		if bootloader == 'systemd-bootctl':
 			self.add_systemd_bootloader(boot_partition, root_partition)
@@ -989,11 +1000,8 @@ class Installer:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 		return True
 
-	def user_create(self,
-					user: str,
-					password: Optional[str] = None,
-					groups: Optional[str] = None,
-					sudo: bool = False) -> None:
+	def user_create(
+			self, user: str, password: Optional[str] = None, groups: Optional[str] = None, sudo: bool = False) -> None:
 		if groups is None:
 			groups = []
 
@@ -1066,9 +1074,10 @@ class Installer:
 
 				self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
-			self.log('Keyboard language was not changed from default (no language specified).',
-						fg="yellow",
-						level=logging.INFO)
+			self.log(
+				'Keyboard language was not changed from default (no language specified).',
+				fg="yellow",
+				level=logging.INFO)
 
 		return True
 
@@ -1090,8 +1099,9 @@ class Installer:
 				if (output := session.SysCommand(["localectl", "set-x11-keymap", language])).exit_code != 0:
 					raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
 		else:
-			self.log(f'X11-Keyboard language was not changed from default (no language specified).',
-						fg="yellow",
-						level=logging.INFO)
+			self.log(
+				f'X11-Keyboard language was not changed from default (no language specified).',
+				fg="yellow",
+				level=logging.INFO)
 
 		return True
