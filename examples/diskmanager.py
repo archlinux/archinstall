@@ -403,12 +403,12 @@ def convert_to_disk_layout(list_layout):
 			in_set = True
 
 		if in_set:
-			disk_dict = {disk : None}
+			disk_dict = {}
 			for attr in disk_attr:
-				disk_dict[attr] = list_layout[disk].get('attr')
+				disk_dict[attr] = list_layout[disk].get(attr)
 			disk_dict['partitions'] = parts
 			# TODO cliean parts
-			disk_layout.update(disk_dict)
+			disk_layout.update({disk : disk_dict})
 	return disk_layout
 
 
