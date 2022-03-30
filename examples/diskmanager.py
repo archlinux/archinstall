@@ -1,12 +1,13 @@
 import archinstall
 import pathlib
 from pprint import pprint
-#from pudb import set_trace
+# from pudb import set_trace
 import logging
 from copy import deepcopy, copy
 import re
+
 from archinstall.lib.user_interaction.disk_conf import get_default_partition_layout
-from archinstall.lib.user_interaction.subvolume_config import SubvolumeList, SubvolumeMenu
+from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
 GLOBAL_BLOCK_MAP = {}
 """
@@ -473,6 +474,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		self.cancel_action = 'cancel'
 		self.save_action = 'save'
 		self.bottom_list = [self.save_action,self.cancel_action]
+
 	def fast_exit(self,accion):
 		if self.option(accion).get_selection():
 			for item in self.list_options():
@@ -539,8 +541,8 @@ class PartitionMenu(archinstall.GeneralMenu):
 
 	def _select_physical(self,prev):
 		from os import system
-		MINIMAL_SECTOR = 34
-		MINIMAL_PARTITION_SIZE = 2 ** 21  # one GiB in sectors
+		# MINIMAL_SECTOR = 34
+		# MINIMAL_PARTITION_SIZE = 2 ** 21  # one GiB in sectors
 		if self.data.get('uuid'): # an existing partition can not be physically changed
 			return prev
 		if not prev:
@@ -630,7 +632,7 @@ class DevList(archinstall.ListManager):
 		super().__init__(prompt,list,self.ObjectActions,self.ObjectNullAction,self.ObjectDefaultAction)
 		bar = '|'
 		if archinstall.arguments.get('long_form'):
-			self.header =((f"  {'identifier':^16}"
+			self.header = ((f"  {'identifier':^16}"
 						f"{bar}{'wipe':^5}"
 						f"{bar}{'boot':^5}"
 						f"{bar}{'encrypted':^7.7}"
@@ -642,7 +644,7 @@ class DevList(archinstall.ListManager):
 						f"{bar}{'uuid':^24}"),
 						f"{'-' * 18}{bar}{'-'*5}{bar}{'-'*5}{bar}{'-'*7}{bar}{'-'*12}{bar}{'-'*13}{bar}{'-'*12}{bar}{'-'*19}{bar}{'-'*19}{bar}{'-'*24}")
 		else:
-			self.header =((f"  {'identifier':^16}"
+			self.header = ((f"  {'identifier':^16}"
 						f"{bar}{'wipe':^5}"
 						f"{bar}{'boot':^5}"
 						f"{bar}{'encrypted':^7.7}"
@@ -722,7 +724,7 @@ class DevList(archinstall.ListManager):
 						f"{bar}{'BOOT' if entry.get('boot') else blank:^5}"
 						f"{bar}{'CRYPT' if entry.get('encrypted') else blank:^7}"
 						f"{bar}{entry['start'] if entry.get('start') else 0 :>12}"
-						f"{bar}{entry['sizeG'] if entry.get('sizeG') else int(entry.get('size',0 )):>12} "
+						f"{bar}{entry['sizeG'] if entry.get('sizeG') else entry.get('size'):>12} "
 						f"{bar}{entry['filesystem'].get('format') if entry.get('filesystem') else blank:12}"
 						f"{bar}{mount:19.19}"
 						f"{bar}{amount:19.19}"
@@ -909,7 +911,7 @@ def frontpage():
 					arguments['disk_layouts'] = {}
 				if result == options[1]:
 					# we will create an standard layout, but will left open, editing it
-					layout = archinstall.get_default_partition_layout(harddrives) # TODO advanced options
+					layout = get_default_partition_layout(harddrives) # TODO advanced options
 				# elif result == options[2]:
 					# layout = navigate_structure(arguments['harddrives'])
 			elif result == options[3]:
@@ -928,5 +930,3 @@ if not list_layout:
 # pprint(list_layout)
 result = DevList('*** Disk Layout ***',list_layout).run()
 pprint(convert_to_disk_layout(result))
-
-
