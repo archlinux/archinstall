@@ -5,7 +5,9 @@ from pprint import pprint
 import logging
 from copy import deepcopy, copy
 import re
+import json
 
+from archinstall.lib.general import JSON
 from archinstall.lib.user_interaction.disk_conf import get_default_partition_layout
 from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
@@ -382,14 +384,21 @@ def device_size_sectors(path):
 		size = file.read()
 	return int(size)
 
-def convert_to_disk_layout(list_layout):
+def convert_to_disk_layout(list_layout :dict) -> dict:
+	""" This routine converts the abstract internal layout into a standard disk layout """
+	# TODO set size to current configuration
+	# TODO clear empty iterators ¿?
 	def emount(value):
+		""" has mountpoint """
 		if value.get('mountpoint'):
 			return True
+		for subvolume in value.get('btrfs',{}).get('subvolumes',{}):  # expect normalized contents
+			if 'mountpoint' in value['btrfs']['subvolumes'][subvolume]:
+				return True
 		# TODO if i reuse a btrfs volume. How I do it
 
 	disk_attr = ('wipe',)
-	part_attr = ('boot','btrfs', 'encrypted','filesystem','mountpoint','size','start','wipe')
+	part_attr = ('boot','subvolumes', 'encrypted','filesystem','mountpoint','size','start','wipe')
 	disks = [key for key in list_layout if list_layout[key]['class'] == 'disk']
 	disk_layout = {}
 	for disk in disks:
@@ -407,7 +416,17 @@ def convert_to_disk_layout(list_layout):
 			for attr in disk_attr:
 				disk_dict[attr] = list_layout[disk].get(attr)
 			disk_dict['partitions'] = parts
-			# TODO cliean parts
+			for part in disk_dict['partitions']:
+				if 'subvolumes' in part:
+					if part['subvolumes']:
+						part['btrfs'] = {}
+						part['btrfs']['subvolumes'] = part['subvolumes']
+					del part['subvolumes']
+				# size according to actual standard (not size but last entry
+				end = part['size'] + part['start'] - 1
+				part['start'] = int(part['start'])
+				part['size'] = int(end)
+			# TODO clean parts
 			disk_layout.update({disk : disk_dict})
 	return disk_layout
 
@@ -939,4 +958,6 @@ if not list_layout:
 	exit()
 # pprint(list_layout)
 result = DevList('*** Disk Layout ***',list_layout).run()
-pprint(convert_to_disk_layout(result))
+# pprint(result)
+dl = convert_to_disk_layout(result)
+print(json.dumps(dl, indent=4, sort_keys=True, cls=JSON))
