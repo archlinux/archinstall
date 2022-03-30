@@ -21,7 +21,7 @@ class ManualNetworkConfig(ListManager):
 	subclass of ListManager for the managing of network configuration accounts
 	"""
 
-	def __init__(self, prompt: str, ifaces: Union[None, List[NetworkConfiguration]]):
+	def __init__(self, prompt: str, ifaces: Union[None, NetworkConfiguration, List[NetworkConfiguration]]):
 		"""
 		param: prompt
 		type: str
@@ -42,7 +42,7 @@ class ManualNetworkConfig(ListManager):
 
 		super().__init__(prompt, display_values, self._iface_actions, self._action_add)
 
-	def run_manual(self):
+	def run_manual(self) -> List[NetworkConfiguration]:
 		ifaces = super().run()
 		if ifaces is not None:
 			return list(ifaces.values())
@@ -101,12 +101,11 @@ class ManualNetworkConfig(ListManager):
 				except ValueError:
 					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
 
-			dns = None
 			if edit_iface.dns:
-				edit_iface.dns = ' '.join(edit_iface.dns)
+				display_dns = ' '.join(edit_iface.dns)
 			else:
-				edit_iface.dns = None
-			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '), edit_iface.dns).run().strip()
+				display_dns = None
+			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '), display_dns).run().strip()
 
 			if len(dns_input):
 				dns = dns_input.split(' ')
