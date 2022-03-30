@@ -17,9 +17,13 @@ import logging
 import os
 import time
 import pathlib
+from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput
+from archinstall import ConfigurationOutput, NetworkConfigurationHandler
+
+if TYPE_CHECKING:
+	_: Any
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
