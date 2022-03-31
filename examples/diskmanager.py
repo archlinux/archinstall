@@ -455,7 +455,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		self.ds = deepcopy(self.data)
 		# we convert formats
 		if 'start' in self.ds or 'size' in self.ds:
-			self.ds['location'] = {'start':self.ds.get('start'), 'size':self.ds.get('size')}
+			self.ds['location'] = {'start':self.ds.get('start'), 'size':self.ds.get('size'), 'sizeG':self.ds.get('sizeG')}
 			del self.ds['start']
 			del self.ds['size']
 		# if 'btrfs' in self.ds: # TODO this might be not needed anymore
@@ -474,7 +474,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def _setup_selection_menu_options(self):
 		self._menu_options['location'] = archinstall.Selector(str(_("Physical layout")),
 									self._select_physical,
-									display_func=lambda x:f"{x['size']} sectors ({convert_units(x['size'],'GiB','s')} GiB) starting at {x['start']}",
+									display_func=self._show_location,
 									enabled=True)
 		self._menu_options['type'] = archinstall.Selector(str(_("Partition type")),
 							enabled=False)
@@ -529,6 +529,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			if item == 'location':
 				self.data['start'] = self.ds[item].get('start')
 				self.data['size'] = self.ds[item].get('size')
+				self.data['sizeG'] = self.ds[item].get('sizeG')
 			# elif item == 'subvolumes' and self.ds.get(item): # TODO this might not be needed anymore
 				# self.data['btrfs']['subvolumes'] = self.ds[item]
 			elif item == 'fs' and self.ds.get(item):
@@ -554,6 +555,12 @@ class PartitionMenu(archinstall.GeneralMenu):
 			return True
 		else:
 			return False
+
+	def _show_location(self,location):
+		if location.get('sizeG'):
+			return f"{location['sizeG']} : {int(location['size'])} sectors starting at {int(location['start'])}"
+		else:
+			return f"{int(location['size'])} sectors  starting at {int(location['start'])} ({convert_units(location['size'],'GiB','s')} GiB)"
 
 	def _select_boot(self,prev):
 		value = self._generic_boolean_editor(str(_('Set bootable partition :')),prev),
