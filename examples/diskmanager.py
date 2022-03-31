@@ -506,7 +506,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 													exec_func=lambda n,v:True,
 													enabled=True)
 		self._menu_options['cancel'] = archinstall.Selector(str(_('Cancel')),
-													# func = lambda pre:True,
+													func = lambda pre:True,
 													exec_func=lambda n,v:self.fast_exit(n),
 													enabled=True)
 		self.cancel_action = 'cancel'
@@ -523,6 +523,9 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def exit_callback(self):
 		# we exit without moving data
 		if self.option(self.cancel_action).get_selection():
+			return
+		# if no location is given we abort
+		if self.ds.get('location') is None:
 			return
 		for item in self.ds:
 			# reconvert to basic format
@@ -642,7 +645,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 			starts = archinstall.TextInput(_("Define a start sector for the partition \n n to get to the first free sector or \n q to quit \n ==> "),starts).run()
 			inplace = False
 			if starts.lower() == 'q':
-				return prev
+				if prev:
+					return prev
+				else:
+					return None
 			elif starts.lower() == 'n':
 				starts = free[0][0]
 			else:
@@ -662,7 +668,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 		while True:
 			size = archinstall.TextInput(_("Define a size for the partition \n(max {} sectors / {}GiB), a percentaje of the free space (ends with %),\n or q to quit \n ==> ").format(maxsize,maxsize_g),size).run()
 			if size.lower() == 'q':
-				return prev
+				if prev:
+					return prev
+				else:
+					return None
 			if size.endswith('%'):
 				size_s = round(maxsize * int(size[:-1]) * 0.01)
 			else:
@@ -873,10 +882,18 @@ class DevList(archinstall.ListManager):
 				part_data['start'] = value.get('start')
 				part_data['size'] = value.get('size')
 			with PartitionMenu(part_data,disk,self) as add_menu:
+				exit_menu = False
 				for option in add_menu.list_options():
 					if option not in add_menu.bottom_list:
 						add_menu.exec_option(option)
-				add_menu.run()
+						# broke execution there
+						if option == 'location' and add_menu.option('location').get_selection() is None:
+							exit_menu=True
+							break
+				if not exit_menu:
+					add_menu.run()
+				else:
+					add_menu.exec_option(add_menu.cancel_action)
 			if part_data:
 				key = f"{disk} {part_data.get('start'):>15}"
 				part_data['id'] = key
