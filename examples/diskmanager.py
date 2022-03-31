@@ -194,7 +194,9 @@ def create_global_block_map(disks=None):
 							'pttype':result[res].info.get('PTTYPE',None),
 							'ptuuid':result[res].info.get('PTUUID',None),
 							'sizeG':result[res].size,
-							'size':device_size_sectors(res)}
+							'size':device_size_sectors(res),
+							'sector_size':device_sector_size(res)}
+
 			except KeyError as e:
 				print(f"Horror at {res} Terror at {e}")
 				pprint(device_info)
@@ -380,6 +382,13 @@ def from_general_dict_to_display(layout):
 def device_size_sectors(path):
 	nombre = path.split('/')[-1]
 	filename = f"/sys/class/block/{nombre}/size"
+	with open(filename,'r') as file:
+		size = file.read()
+	return int(size)
+
+def device_sector_size(path):
+	nombre = path.split('/')[-1]
+	filename = f"/sys/class/block/{nombre}/queue/logical_block_size"
 	with open(filename,'r') as file:
 		size = file.read()
 	return int(size)
@@ -623,7 +632,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			if size.lower() == 'q':
 				return prev
 			if size.endswith('%'):
-				size_s = round(maxsize * int(size[:-1]) / 100,0)
+				size_s = round(maxsize * int(size[:-1]) * 0.01)
 			else:
 				size_s = convert_units(size,'s','s')
 			# TODO when they match something fails ¿? decimals ?
@@ -885,7 +894,8 @@ class DevList(archinstall.ListManager):
 		for gap in tmp_gaps:
 			# and the off by one ¿?
 			gap_list.append((gap['start'],gap['size'] + gap['start'] ,gap['size']))
-		return None,None,gap_list
+		# the return values are meant to be compatible with list_free_space.
+		return GLOBAL_BLOCK_MAP[disk]['size'],GLOBAL_BLOCK_MAP[disk]['sector_size'],gap_list
 
 	def reorder_data(self):
 		new_struct = {}
@@ -951,7 +961,6 @@ def frontpage():
 			return from_general_dict_to_display(integrate_layout_in_global_map(harddrives,layout))
 		else:
 			return
-
 
 list_layout = frontpage()
 if not list_layout:
