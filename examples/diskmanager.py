@@ -32,7 +32,7 @@ def list_free_space(device :archinstall.BlockDevice, unit :str = 'compact'):
 				if unit == 'compact':
 					free_array.append((line_split[1],line_split[2],line_split[3]))
 				else:
-					free_array.append(list(map(lambda x,u=unit:int(convert_units(x,u)), (line_split[1],line_split[2],line_split[3]))))
+					free_array.append(list(map(lambda x,u=unit:int(convert_units(x,u)), [line_split[1],line_split[2],line_split[3]])))
 				# (start, end, size))
 	except archinstall.SysCallError as error:
 		archinstall.log(f"Could not get free space on {device.path}: {error}", level=logging.DEBUG)
@@ -122,7 +122,7 @@ def create_gaps(structure,disk,disk_size):
 				"class" : 'gap',
 				"type" : None,
 				"start" : presumed_start,
-				"size" : int(part['start']) - presumed_start,
+				"size" : int(part['start']) - presumed_start ,
 				# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
 				"boot" : False,
 				"encrypted" : False,
@@ -137,9 +137,9 @@ def create_gaps(structure,disk,disk_size):
 			}
 			struct_full.append(gap)
 		elif int(part['start']) < presumed_start:
-			print(f"Ojo tengo problemas de +1 ,{part['start']},{presumed_start}")
+			print(f"Might have off by one error ,{part['start']},{presumed_start}")
 		struct_full.append(part)
-		# TODO percentajes if it is not at the end. MIght be off by one
+		# TODO percentajes if it is not at the end. Might be off by one. I believe it never reaches here
 		if isinstance(part['size'],str) and part['size'].endswith('%'): # if it is at the end. Might be off by one
 			size = ((disk_size - 34) - int(part['start'])) * int(part['size'][:-1]) * 0.01
 			presumed_start = int(part['start']) + int(size)
@@ -499,7 +499,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 							self._select_boot,
 							enabled=True)
 		self._menu_options['encrypted'] = archinstall.Selector(str(_("Encrypted")),
-							lambda prev: self._generic_boolean_editor(str(_('Set bootable partition :')),prev),
+							lambda prev: self._generic_boolean_editor(str(_('Set ENCRYPTED partition :')),prev),
 							enabled=True)
 
 		self._menu_options['save'] = archinstall.Selector(str(_('Save')),
@@ -588,15 +588,35 @@ class PartitionMenu(archinstall.GeneralMenu):
 		from os import system
 		# MINIMAL_SECTOR = 34
 		# MINIMAL_PARTITION_SIZE = 2 ** 21  # one GiB in sectors
+		# MINIMAL_START_POS = 1024
 		if self.data.get('uuid'): # an existing partition can not be physically changed
 			return prev
 		if not prev:
 			prev = {}
+		# we get the free list and if there exists prev we add this to the list
 		if self.caller:
 			total_size,sector_size,free = self.caller.gap_map(self.block_device)
 		else:
 			total_size,sector_size,free = list_free_space(self.block_device,'s')
+		if prev:
+			# we will include the selected chunck as free space, so we can expand it if necessary
+			prev_line = [int(prev.get('start')),int(prev.get('size') + prev.get('start') - 1),prev.get('size'),'Current gap']
+			free.append(prev_line)
+			free.sort()
+			pos = free.index(prev_line)
+			# the comparations should be equal, but this way i solve possible errors
+			# read conditional as start_of_one_gap <= end_of_other_gap + 1 thus they are contiguous or overlap
+			# must be in this order, to avoid errors in position, due to del
+			if pos + 1 < len(free) and free[pos + 1][0] <= free[pos][1] + 1: # expand forward
+				free[pos][1] = free[pos + 1][1]
+				free[pos][2] = free[pos][1] - free[pos][0] + 1
+				del free[pos + 1]
+			if pos - 1 >= 0 and free[pos][0] <= free[pos - 1][1] + 1: # expand backwards
+				free[pos][0] = free[pos - 1][0]
+				free[pos][2] = free[pos][1] - free[pos][0] + 1
+				del free[pos - 1]
 		# TODO define a minimum size for partitions
+		# TODO define a minimal start position
 		# TODO standarize units for return code
 		system('clear')
 		print()
@@ -605,16 +625,21 @@ class PartitionMenu(archinstall.GeneralMenu):
 		print("{:12} | {:12} | {:12}".format('start','end','size'))
 		print("{}|{}|{}".format('-' * 13,'-' * 14,'-' * 14))
 		for linea in free:
-			print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB")
+			if len(linea) == 3:
+				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB")
+			else:
+				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB   Current Location")
 		print()
 		# TODO check minimal size
 		# TODO text with possible unit definition
 		# TODO preselect optimal ¿? hole
-		print(_("Current physical location start :{}, size :{}").format(prev.get('start'),prev.get('size')))
-		starts = f"{prev.get('start')}s" if prev.get('start') else ''
+		if prev:
+			print(_("Current physical location selection"))
+			print(f"{int(prev.get('start')):>12} | {int(prev.get('size') + prev.get('start') -1):>12} | {convert_units(prev.get('size'),'GiB','s'):>12}GiB")
+		starts = str(int(prev.get('start'))) if prev.get('start') else ''
 		size = f"{prev.get('size')}s" if prev.get('size') else ''
 		while True:
-			starts = archinstall.TextInput(_("Define a start sector for the partition \n n to get to the first free sector or \n q to quit : "),starts).run()
+			starts = archinstall.TextInput(_("Define a start sector for the partition \n n to get to the first free sector or \n q to quit \n ==> "),starts).run()
 			inplace = False
 			if starts.lower() == 'q':
 				return prev
@@ -635,7 +660,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			else:
 				break
 		while True:
-			size = archinstall.TextInput(_("Define a size for the partition \n(max {} sectors / {}GiB), a percentaje of the free space (ends with %),\n or q to quit :").format(maxsize,maxsize_g),size).run()
+			size = archinstall.TextInput(_("Define a size for the partition \n(max {} sectors / {}GiB), a percentaje of the free space (ends with %),\n or q to quit \n ==> ").format(maxsize,maxsize_g),size).run()
 			if size.lower() == 'q':
 				return prev
 			if size.endswith('%'):
@@ -900,7 +925,7 @@ class DevList(archinstall.ListManager):
 		tmp_gaps = [value for part,value in sorted(self.data.items()) if value.get('parent') == disk and value['class'] == 'gap']
 		for gap in tmp_gaps:
 			# and the off by one ¿?
-			gap_list.append((gap['start'],gap['size'] + gap['start'] ,gap['size']))
+			gap_list.append([gap['start'],gap['size'] + gap['start'] - 1 ,gap['size']])
 		# the return values are meant to be compatible with list_free_space.
 		return GLOBAL_BLOCK_MAP[disk]['size'],GLOBAL_BLOCK_MAP[disk]['sector_size'],gap_list
 
@@ -968,6 +993,7 @@ def frontpage():
 			return from_general_dict_to_display(integrate_layout_in_global_map(harddrives,layout))
 		else:
 			return
+
 
 list_layout = frontpage()
 if not list_layout:
