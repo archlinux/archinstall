@@ -437,7 +437,7 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 		# TODO if i reuse a btrfs volume. How I do it
 
 	disk_attr = ('wipe',)
-	part_attr = ('boot','subvolumes', 'encrypted','filesystem','mountpoint','size','start','wipe')
+	part_attr = ('boot','subvolumes', 'encrypted','filesystem','mountpoint','size','sizeG','start','wipe')
 	disks = [key for key in list_layout if list_layout[key]['class'] == 'disk']
 	disk_layout = {}
 	for disk in disks:
@@ -463,8 +463,19 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 					del part['subvolumes']
 				# size according to actual standard (not size but last entry
 				end = part['size'] + part['start'] - 1
-				part['start'] = int(part['start'])
+				part['start'] = part['start']
 				part['size'] = int(end)
+				# we create a sizeG argument, now just for show
+				if part.get('sizeG'):
+					if part['sizeG'].endswith('%'):
+						pass
+					else:
+						result = re.split(r'(\d+\.\d+|\d+)',part['sizeG'].replace(',','').strip())
+						if result[2]:
+						   part['sizeG'] = f"{convert_units(part['size'],result[2],'s')}{result[2]}"
+						else:
+						   del part['sizeG']
+
 			# TODO clean parts
 			disk_layout.update({disk : disk_dict})
 	return disk_layout
@@ -660,7 +671,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# TODO define a minimal start position
 		# TODO standarize units for return code
 		system('clear')
-		print(free)
 		print()
 		print(f"List of free space at {self.block_device.path} in sectors")
 		print()
