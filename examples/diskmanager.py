@@ -66,7 +66,7 @@ def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3)
 
 	if isinstance(value,(int,float)):
 		target_value = value
-		from_unit = d_from_unit if d_from_unit else 'b'
+		from_unit = d_from_unit.lower().strip() # if d_from_unit else 'b'
 	else:
 		result = re.split(r'(\d+\.\d+|\d+)',value.replace(',','').strip())
 		from_unit = result[2].lower().strip() if result[2].strip() else d_from_unit
@@ -89,7 +89,10 @@ def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3)
 
 	if to_unit == from_unit:
 		return target_value
-	return(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision))
+	if to_unit in ('s','b'):
+		return(int(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision)))
+	else:
+		return(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision))
 
 def get_device_info(device):
 	try:
