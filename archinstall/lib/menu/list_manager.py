@@ -156,8 +156,7 @@ class ListManager:
 				clear_screen=False,
 				clear_menu_on_exit=False,
 				header=self.header,
-				skip_empty_entries=True
-			).run()
+				skip_empty_entries=True).run()
 
 			if not target or target in self.bottom_list:
 				break

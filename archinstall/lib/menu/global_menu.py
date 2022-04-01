@@ -154,8 +154,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['__separator__'] = \
 			Selector(
 				'',
-				enabled=True
-			)
+				enabled=True)
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),

@@ -69,7 +69,6 @@ __version_info__ = (1, 4, 1)
 __version__ = ".".join(map(str, __version_info__))
 
 
-
 DEFAULT_ACCEPT_KEYS = ("enter",)
 DEFAULT_CLEAR_MENU_ON_EXIT = True
 DEFAULT_CLEAR_SCREEN = False
