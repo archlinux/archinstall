@@ -5,9 +5,7 @@ from pprint import pprint
 import logging
 from copy import deepcopy, copy
 import re
-import json
 
-from archinstall.lib.general import JSON
 from archinstall.lib.user_interaction.disk_conf import get_default_partition_layout
 from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
@@ -387,7 +385,7 @@ def device_size_sectors(path):
 	filename = f"/sys/class/block/{nombre}/size"
 	with open(filename,'r') as file:
 		size = file.read()
-	return int(size)
+	return int(size) - 33 # The last 34 sectors are used by the system in GPT drives. If I substract 34 i miss 1 sector
 
 def device_sector_size(path):
 	nombre = path.split('/')[-1]
@@ -463,8 +461,8 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 					del part['subvolumes']
 				# size according to actual standard (not size but last entry
 				end = part['size'] + part['start'] - 1
-				part['start'] = part['start']
-				part['size'] = int(end)
+				part['start'] = f"{part['start']}s"
+				part['size'] = f"{int(end)}s"
 				# we create a sizeG argument, now just for show
 				if part.get('sizeG'):
 					if part['sizeG'].endswith('%'):
@@ -472,9 +470,9 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 					else:
 						result = re.split(r'(\d+\.\d+|\d+)',part['sizeG'].replace(',','').strip())
 						if result[2]:
-						   part['sizeG'] = f"{convert_units(part['size'],result[2],'s')}{result[2]}"
+							part['sizeG'] = f"{convert_units(part['size'],result[2],'s')}{result[2]}"
 						else:
-						   del part['sizeG']
+							del part['sizeG']
 
 			# TODO clean parts
 			disk_layout.update({disk : disk_dict})
@@ -1095,5 +1093,10 @@ if not list_layout:
 # pprint(list_layout)
 result = DevList('*** Disk Layout ***',list_layout).run()
 # pprint(result)
-dl = convert_to_disk_layout(result)
-print(json.dumps(dl, indent=4, sort_keys=True, cls=JSON))
+archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
+archinstall.arguments['harddrives'] = harddrives = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
+config_output = archinstall.ConfigurationOutput(archinstall.arguments)
+config_output._disk_layout_file = 'layout_diskmanager.json'
+if not archinstall.arguments.get('silent'):
+	config_output.show()
+config_output.save()
