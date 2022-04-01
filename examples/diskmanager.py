@@ -90,9 +90,9 @@ def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3)
 	if to_unit == from_unit:
 		return target_value
 	if to_unit in ('s','b'):
-		return(int(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision)))
+		return int(round(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision),0))
 	else:
-		return(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision))
+		return from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision)
 
 def get_device_info(device):
 	try:
@@ -396,6 +396,33 @@ def device_sector_size(path):
 		size = file.read()
 	return int(size)
 
+def eval_percent(percentage,start,end,disk_path):
+	"""
+	Routine to evaluate percentages of space allocation
+	The input percentage will be from the gap space
+	It outputs the space in sectors to be allocated (the integer part of the percentage)
+	The output percentage will be from the start of the gap to the end of the disk, so a replay should give the same
+	space allocations (plus minus a 1% of the disk)
+	"""
+	# TODO check if assumption is correct
+	# TODO check off by one
+	end_disk_sector = device_size_sectors(disk_path) - 1
+	factor = float(percentage[:-1]) * 0.01  # assume it has been checked
+	change_needed = True
+	if end >= end_disk_sector:
+		change_needed = False
+		end = end_disk_sector
+	sectors_allocated = int(round((end - start + 1) * factor,0))
+	if change_needed:
+		general_pct = f"{int(round(sectors_allocated * 100 / (end_disk_sector - start +1),0))}%"
+	else:
+		general_pct = percentage
+	return sectors_allocated,general_pct
+
+def from_global_to_partial_pct(percentage,start,size,disk_path):
+	blocks_allocated = int(round((device_size_sectors(disk_path) - start) * float(percentage[:-1]) * 0.01,0))
+	return f"{int(round(blocks_allocated * 100 / size,0))}%"
+
 def convert_to_disk_layout(list_layout :dict) -> dict:
 	""" This routine converts the abstract internal layout into a standard disk layout """
 	# TODO set size to current configuration
@@ -509,7 +536,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 													exec_func=lambda n,v:True,
 													enabled=True)
 		self._menu_options['cancel'] = archinstall.Selector(str(_('Cancel')),
-													func = lambda pre:True,
+													func=lambda pre:True,
 													exec_func=lambda n,v:self.fast_exit(n),
 													enabled=True)
 		self.cancel_action = 'cancel'
@@ -643,7 +670,15 @@ class PartitionMenu(archinstall.GeneralMenu):
 			print(_("Current physical location selection"))
 			print(f"{int(prev.get('start')):>12} | {int(prev.get('size') + prev.get('start') -1):>12} | {convert_units(prev.get('size'),'GiB','s'):>12}GiB")
 		starts = str(int(prev.get('start'))) if prev.get('start') else ''
-		size = f"{prev.get('size')}s" if prev.get('size') else ''
+		if prev.get('sizeG'):
+			# TODO percentages back
+			if prev['sizeG'].strip()[-1] == '%':
+				current_gap = ['found' if len(line) == 4 else None for line in free].index('found')
+				size = from_global_to_partial_pct(prev['sizeG'],prev['start'],free[current_gap][1] - prev['start'] + 1,self.block_device.path)
+			else:
+				size = f"{prev.get('sizeG')}"
+		else:
+			size = f"{prev.get('size')}" if prev.get('size') else ''
 		while True:
 			starts = archinstall.TextInput(_("Define a start sector for the partition \n n to get to the first free sector or \n q to quit \n ==> "),starts).run()
 			inplace = False
@@ -652,14 +687,16 @@ class PartitionMenu(archinstall.GeneralMenu):
 					return prev
 				else:
 					return None
-			elif starts.lower() == 'n':
+			elif starts.lower() == 'n':  # TODO this is not what i wanted
 				starts = free[0][0]
 			else:
 				starts = int(convert_units(starts,'s','s')) # default value are sectors
-
+			maxsize = 0
+			endgap = 0
 			for gap in free:
 				# asume it is always sectors
 				if int(gap[0]) <= int(starts) <= int(gap[1]):
+					endgap = int(gap[1])
 					maxsize = int(gap[1]) - starts + 1 # i think i got it right
 					maxsize_g = convert_units(f"{maxsize}s",'GiB')
 					inplace = True
@@ -676,7 +713,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 				else:
 					return None
 			if size.endswith('%'):
-				size_s = round(maxsize * int(size[:-1]) * 0.01)
+				size_s,size = eval_percent(size,starts,endgap,self.block_device.path)
 			else:
 				size_s = convert_units(size,'s','s')
 			# TODO when they match something fails ¿? decimals ?
@@ -686,7 +723,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 				size_s = maxsize # TODO give options to user
 			else: # TODO
 				break
-		return {'start':starts,'size':size_s}
+		if size.lower().strip()[-1] in ('b','%'):
+			return {'start':starts,'size':size_s,'sizeG':size}
+		else:
+			return {'start':starts,'size':size_s}
 
 	def _manage_subvolumes(self,prev):
 		if self.option('fs').get_selection() != 'btrfs':
@@ -891,7 +931,7 @@ class DevList(archinstall.ListManager):
 						add_menu.exec_option(option)
 						# broke execution there
 						if option == 'location' and add_menu.option('location').get_selection() is None:
-							exit_menu=True
+							exit_menu = True
 							break
 				if not exit_menu:
 					add_menu.run()
