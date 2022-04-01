@@ -618,9 +618,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 		return fstype
 
 	def _select_physical(self,prev):
+		# TODO check if IDs have to change when you modify a partition, and if it is allowed
 		from os import system
 		# MINIMAL_SECTOR = 34
-		# MINIMAL_PARTITION_SIZE = 2 ** 21  # one GiB in sectors
+		MINIMAL_PARTITION_SIZE = 2 ** 11 # one MiB in sectors
 		# MINIMAL_START_POS = 1024
 		if self.data.get('uuid'): # an existing partition can not be physically changed
 			return prev
@@ -633,7 +634,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			total_size,sector_size,free = list_free_space(self.block_device,'s')
 		if prev:
 			# we will include the selected chunck as free space, so we can expand it if necessary
-			prev_line = [int(prev.get('start')),int(prev.get('size') + prev.get('start') - 1),prev.get('size'),'Current gap']
+			prev_line = [int(prev.get('start')),int(prev.get('size') + prev.get('start') - 1),prev.get('size'),'Current Location']
 			free.append(prev_line)
 			free.sort()
 			pos = free.index(prev_line)
@@ -649,9 +650,17 @@ class PartitionMenu(archinstall.GeneralMenu):
 				free[pos][2] = free[pos][1] - free[pos][0] + 1
 				del free[pos - 1]
 		# TODO define a minimum size for partitions
+		for linea in free:
+			if linea[2] < MINIMAL_PARTITION_SIZE:
+				linea.append(_("Not suitable"))
+		if prev:
+			current_gap = [line[3] if len(line) == 4 else None for line in free].index('Current Location')
+		else:
+			current_gap = 0
 		# TODO define a minimal start position
 		# TODO standarize units for return code
 		system('clear')
+		print(free)
 		print()
 		print(f"List of free space at {self.block_device.path} in sectors")
 		print()
@@ -661,7 +670,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			if len(linea) == 3:
 				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB")
 			else:
-				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB   Current Location")
+				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB    {linea[3]}")
 		print()
 		# TODO check minimal size
 		# TODO text with possible unit definition
@@ -673,22 +682,37 @@ class PartitionMenu(archinstall.GeneralMenu):
 		if prev.get('sizeG'):
 			# TODO percentages back
 			if prev['sizeG'].strip()[-1] == '%':
-				current_gap = ['found' if len(line) == 4 else None for line in free].index('found')
 				size = from_global_to_partial_pct(prev['sizeG'],prev['start'],free[current_gap][1] - prev['start'] + 1,self.block_device.path)
 			else:
 				size = f"{prev.get('sizeG')}"
 		else:
 			size = f"{prev.get('size')}" if prev.get('size') else ''
 		while True:
-			starts = archinstall.TextInput(_("Define a start sector for the partition \n n to get to the first free sector or \n q to quit \n ==> "),starts).run()
+			if prev:
+				prompt = _("Define a start sector for the partition. Enter a value or \n"
+						"c to get the first sector of the current slot \n"
+						"q to quit \n"
+						"==> ")
+			else:
+				prompt = _("Define a start sector for the partition. Enter a value or \n"
+						"f to get the first sector of the first free slot which can hold a partition\n"
+						"l to get the first sector of the last free slot \n"
+						"q to quit \n"
+						"==> ")
+			starts = archinstall.TextInput(prompt,starts).run()
 			inplace = False
 			if starts.lower() == 'q':
 				if prev:
 					return prev
 				else:
 					return None
-			elif starts.lower() == 'n':  # TODO this is not what i wanted
+			elif starts.lower() == 'f':
+				# TODO check really which is the first allocatable sector in a disk
 				starts = free[0][0]
+			elif starts.lower() == 'l':
+				starts = free[-1][0]
+			elif starts.lower() == 'c':
+				starts = free[current_gap][0]
 			else:
 				starts = int(convert_units(starts,'s','s')) # default value are sectors
 			maxsize = 0
