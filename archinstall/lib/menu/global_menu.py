@@ -151,6 +151,11 @@ class GlobalMenu(GeneralMenu):
 				_('Set automatic time sync (NTP)'),
 				lambda preset: self._select_ntp(preset),
 				default=True)
+		self._menu_options['__separator__'] = \
+			Selector(
+				'',
+				enabled=True
+			)
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),

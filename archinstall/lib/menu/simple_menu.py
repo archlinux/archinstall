@@ -69,6 +69,7 @@ __version_info__ = (1, 4, 1)
 __version__ = ".".join(map(str, __version_info__))
 
 
+
 DEFAULT_ACCEPT_KEYS = ("enter",)
 DEFAULT_CLEAR_MENU_ON_EXIT = True
 DEFAULT_CLEAR_SCREEN = False
@@ -298,6 +299,7 @@ class TerminalMenu:
             selection: "TerminalMenu.Selection",
             viewport: "TerminalMenu.Viewport",
             cycle_cursor: bool = True,
+            skip_indices: List[int] = []
         ):
             self._menu_entries = list(menu_entries)
             self._search = search
@@ -305,6 +307,7 @@ class TerminalMenu:
             self._viewport = viewport
             self._cycle_cursor = cycle_cursor
             self._active_displayed_index = None  # type: Optional[int]
+            self._skip_indices = skip_indices
             self.update_view()
 
         def update_view(self) -> None:
@@ -328,6 +331,9 @@ class TerminalMenu:
                     self._active_displayed_index = 0
                 self._viewport.keep_visible(self._active_displayed_index)
 
+            if self._active_displayed_index in self._skip_indices:
+                self.increment_active_index()
+
         def decrement_active_index(self) -> None:
             if self._active_displayed_index is not None:
                 if self._active_displayed_index > 0:
@@ -335,6 +341,9 @@ class TerminalMenu:
                 elif self._cycle_cursor:
                     self._active_displayed_index = len(self._displayed_index_to_menu_index) - 1
                 self._viewport.keep_visible(self._active_displayed_index)
+
+            if self._active_displayed_index in self._skip_indices:
+                self.decrement_active_index()
 
         def is_visible(self, menu_index: int) -> bool:
             return menu_index in self._menu_index_to_displayed_index and (
@@ -570,7 +579,7 @@ class TerminalMenu:
         multi_select_select_on_accept: bool = DEFAULT_MULTI_SELECT_SELECT_ON_ACCEPT,
         preselected_entries: Optional[Iterable[Union[str, int]]] = None,
         preview_border: bool = DEFAULT_PREVIEW_BORDER,
-        preview_command: Optional[Union[str, Callable[[str], str]]] = None,
+        preview_command: Optional[Union[str, Callable[[Optional[str]], str]]] = None,
         preview_size: float = DEFAULT_PREVIEW_SIZE,
         preview_title: str = DEFAULT_PREVIEW_TITLE,
         search_case_sensitive: bool = DEFAULT_SEARCH_CASE_SENSITIVE,
@@ -587,28 +596,40 @@ class TerminalMenu:
         status_bar: Optional[Union[str, Iterable[str], Callable[[str], str]]] = None,
         status_bar_below_preview: bool = DEFAULT_STATUS_BAR_BELOW_PREVIEW,
         status_bar_style: Optional[Iterable[str]] = DEFAULT_STATUS_BAR_STYLE,
-        title: Optional[Union[str, Iterable[str]]] = None
+        title: Optional[Union[str, Iterable[str]]] = None,
+        skip_empty_entries: bool = False
     ):
         def extract_shortcuts_menu_entries_and_preview_arguments(
             entries: Iterable[str],
-        ) -> Tuple[List[str], List[str], List[str]]:
+        ) -> Tuple[List[str], List[Union[None, str]], List[Union[None, str]], List[int]]:
             separator_pattern = re.compile(r"([^\\])\|")
             escaped_separator_pattern = re.compile(r"\\\|")
             menu_entry_pattern = re.compile(r"^(?:\[(\S)\]\s*)?([^\x1F]+)(?:\x1F([^\x1F]*))?")
-            shortcut_keys = []
-            menu_entries = []
-            preview_arguments = []
-            for entry in entries:
-                unit_separated_entry = escaped_separator_pattern.sub("|", separator_pattern.sub("\\1\x1F", entry))
-                match_obj = menu_entry_pattern.match(unit_separated_entry)
-                assert match_obj is not None
-                shortcut_key = match_obj.group(1)
-                display_text = match_obj.group(2)
-                preview_argument = match_obj.group(3)
-                shortcut_keys.append(shortcut_key)
-                menu_entries.append(display_text)
-                preview_arguments.append(preview_argument)
-            return menu_entries, shortcut_keys, preview_arguments
+            shortcut_keys: List[Union[None, str]] = []
+            menu_entries: List[str] = []
+            preview_arguments: List[Union[None, str]] = []
+            skip_indices: List[int] = []
+
+            for idx, entry in enumerate(entries):
+                if (entry is None or len(entry) == 0) and skip_empty_entries:
+                    shortcut_keys.append(None)
+                    menu_entries.append('')
+                    preview_arguments.append(None)
+                    skip_indices.append(idx)
+                else:
+                    unit_separated_entry = escaped_separator_pattern.sub("|", separator_pattern.sub("\\1\x1F", entry))
+                    match_obj = menu_entry_pattern.match(unit_separated_entry)
+                    # this is none in case the entry was an emtpy string which
+                    # will be interpreted as a separator
+                    assert match_obj is not None
+                    shortcut_key = match_obj.group(1)
+                    display_text = match_obj.group(2)
+                    preview_argument = match_obj.group(3)
+                    shortcut_keys.append(shortcut_key)
+                    menu_entries.append(display_text)
+                    preview_arguments.append(preview_argument)
+
+            return menu_entries, shortcut_keys, preview_arguments, skip_indices
 
         def convert_preselected_entries_to_indices(
             preselected_indices_or_entries: Iterable[Union[str, int]]
@@ -641,7 +662,7 @@ class TerminalMenu:
             title_or_status_bar: Optional[Union[str, Iterable[str]]],
             show_shortcut_hints: bool,
             menu_entries: Iterable[str],
-            shortcut_keys: Iterable[str],
+            shortcut_keys: Iterable[Union[None, str]],
             shortcut_hints_in_parentheses: bool,
         ) -> Tuple[str, ...]:
             if title_or_status_bar is None:
@@ -662,6 +683,7 @@ class TerminalMenu:
             self._menu_entries,
             self._shortcut_keys,
             self._preview_arguments,
+            self._skip_indices
         ) = extract_shortcuts_menu_entries_and_preview_arguments(menu_entries)
         self._shortcuts_defined = any(key is not None for key in self._shortcut_keys)
         self._accept_keys = tuple(accept_keys)
@@ -749,7 +771,14 @@ class TerminalMenu:
             0,
             0,
         )
-        self._view = self.View(self._menu_entries, self._search, self._selection, self._viewport, self._cycle_cursor)
+        self._view = self.View(
+            self._menu_entries,
+            self._search,
+            self._selection,
+            self._viewport,
+            self._cycle_cursor,
+            self._skip_indices
+        )
         if cursor_index and 0 < cursor_index < len(self._menu_entries):
             self._view.active_menu_index = cursor_index
         self._search.change_callback = self._view.update_view
@@ -767,7 +796,7 @@ class TerminalMenu:
     @staticmethod
     def _get_shortcut_hints_line(
         menu_entries: Iterable[str],
-        shortcut_keys: Iterable[str],
+        shortcut_keys: Iterable[Union[None, str]],
         shortcut_hints_in_parentheses: bool,
     ) -> Optional[str]:
         shortcut_hints_line = ", ".join(
@@ -1336,10 +1365,14 @@ class TerminalMenu:
             displayed_index = 0
             for displayed_index, _, _ in self._view:
                 self._tty_out.write("\r" + cursor_width * self._codename_to_terminal_code["cursor_right"])
-                if displayed_index in displayed_selected_indices:
-                    self._tty_out.write(checked_multi_select_cursor)
+                if displayed_index in self._skip_indices:
+                    self._tty_out.write('')
                 else:
-                    self._tty_out.write(unchecked_multi_select_cursor)
+                    if displayed_index in displayed_selected_indices:
+                        self._tty_out.write(checked_multi_select_cursor)
+                    else:
+                        self._tty_out.write(unchecked_multi_select_cursor)
+
                 if displayed_index < self._viewport.upper_index:
                     self._tty_out.write(self._codename_to_terminal_code["cursor_down"])
             self._tty_out.write("\r")
