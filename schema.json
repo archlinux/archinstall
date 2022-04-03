@@ -114,6 +114,7 @@
             "type": "string",
             "enum": [
                 "awesome",
+                "bspwm",
                 "budgie",
                 "cinnamon",
                 "cutefish",
