@@ -12,5 +12,6 @@ jobs:
             - run: pip install fastapi pydantic
             - run: python --version
             - run: mypy --version
+            # one day this will be enabled
             - name: run mypy
               run: mypy --strict --module archinstall || exit 0

@@ -150,7 +150,7 @@ def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 	try:
 		response = urllib.request.urlopen(url)
 	except urllib.error.URLError as err:
-		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="yellow")
+		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="orange")
 		return regions
 
 	mirrorlist = response.read()

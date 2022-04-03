@@ -29,6 +29,7 @@ __supported__ = [
 	'xfce4',
 	'lxqt',
 	'i3',
+	'bspwm',
 	'budgie',
 	'mate',
 	'deepin',

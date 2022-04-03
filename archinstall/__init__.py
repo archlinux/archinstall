@@ -36,8 +36,8 @@ from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
+from .lib.menu.global_menu import GlobalMenu
 from .lib.menu.selection_menu import (
-	GlobalMenu,
 	Selector,
 	GeneralMenu
 )
@@ -46,7 +46,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 from .lib.configuration import *
 parser = ArgumentParser()
 
-__version__ = "2.4.0-dev0"
+__version__ = "2.4.0.RC2"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -176,6 +176,7 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 def load_config():
+	from .lib.models import NetworkConfiguration
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
