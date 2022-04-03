@@ -225,7 +225,7 @@ def create_global_block_map(disks=None):
 					"start" : device_info['PART_ENTRY_OFFSET'],
 					"size" : device_info['PART_ENTRY_SIZE'],
 					# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
-					"boot" : True if device_info['PART_ENTRY_NAME'] == 'EFI' else False,
+					"boot" : device_info['PART_ENTRY_NAME'] == 'EFI' or device_info.get('PART_ENTRY_TYPE','').startswith('c12a') or result[res].boot,
 					"encrypted" : encrypted,
 					"wipe" : False,
 					"actual_mountpoint" : result[res].mountpoint,  # <-- this is false
@@ -460,7 +460,7 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 						part['btrfs']['subvolumes'] = part['subvolumes']
 					del part['subvolumes']
 				# size according to actual standard (not size but last entry
-				end = part['size'] + part['start'] - 1
+				end = int(part['size']) + int(part['start']) - 1
 				part['start'] = f"{part['start']}s"
 				part['size'] = f"{int(end)}s"
 				# we create a sizeG argument, now just for show
@@ -749,10 +749,8 @@ class PartitionMenu(archinstall.GeneralMenu):
 			else:
 				size_s = convert_units(size,'s','s')
 			# TODO when they match something fails ¿? decimals ?
-			print(f"{size_s} > {maxsize}?")
 			if size_s > maxsize:
-				print("Size is too big for selected  gap. Reducing to fit")
-				size_s = maxsize # TODO give options to user
+				print(f"Size is too big for selected  gap. {size_s} > {maxsize} Reduce it to fit")
 			else: # TODO
 				break
 		if size.lower().strip()[-1] in ('b','%'):
@@ -937,15 +935,16 @@ class DevList(archinstall.ListManager):
 			key = None
 			value = None
 			disk = None
-
+		# reset
 		if self.action == self.ObjectDefaultAction:
 			self.data = self.base_data
-			# Add disk to installation set',          # 0
+			self.partitions_to_delete = {}
+		# Add disk to installation set',          # 0
 		elif self.action == self.ObjectActions[0]:
 			# select harddrive still not on set
 			# load its info and partitions into the list
 			pass
-			# Add partition',                         # 1
+		# Add partition',                         # 1
 		elif self.action == self.ObjectActions[1]:
 			# check if empty disk. A bit complex now. TODO sumplify
 			if len([key for key in self.data if key.startswith(disk) and self.data[key]['class'] == 'partition']) == 0:
@@ -1000,6 +999,8 @@ class DevList(archinstall.ListManager):
 			ripple_delete(key,head=True)
 			# Exclude partition from installation set', # 6
 		elif self.action == self.ObjectActions[6]:
+			# TODO should restore to original values
+			# del self.data[key]
 			self.data[key]['hide'] = True
 			self.data[key]['wipe'] = False
 			# Delete partition'                       # 7
