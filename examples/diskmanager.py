@@ -891,13 +891,12 @@ class DevList(archinstall.ListManager):
 						f"{bar}{mount:19.19}"                                                              # 74
 						f"{bar}{'IN USE' if amount or entry.get('uuid') else blank:6}")
 		self.reorder_data()
-		tmp_list = list(filter(lambda x:not self.data[x].get('hide',False),self.data))
-		return list(map(lambda x:pretty_disk(x,self.data[x]) if self.data[x]['class'] == 'disk' else pretty_part(x,self.data[x]),tmp_list))
+		return list(map(lambda x:pretty_disk(x,self.data[x]) if self.data[x]['class'] == 'disk' else pretty_part(x,self.data[x]),self.data))
 		# ... beautfy the output of the list
 
 	def action_list(self):
 		disk_actions = (0,1,2,5)
-		part_actions = (3,4,6,7)
+		part_actions = (3,4,7)  # BUG hide partition disallowed for the time being (3,4,6,7)
 		if self.target:
 			key,value = list(self.target.items())[0]
 		else:
@@ -984,26 +983,24 @@ class DevList(archinstall.ListManager):
 			self.data[key]['wipe'] = True
 			# no need to delete partitions in this disk
 			ripple_delete(key,head=False)
-			# Clear Partition & edit attributes',     # 3
+		# Clear Partition & edit attributes',     # 3
 		elif self.action == self.ObjectActions[3]:
 			PartitionMenu(value,disk,self).run()
 			if value:
 				value['wipe'] = True
 				self.data.update({key:value})
-			# Edit partition attributes',             # 4
+		# Edit partition attributes',             # 4
 		elif self.action == self.ObjectActions[4]:
 			PartitionMenu(value,disk,self).run()
 			self.data.update({key:value})
-			# Exclude disk from installation set',    # 5
+		# Exclude disk from installation set',    # 5
 		elif self.action == self.ObjectActions[5]:
 			ripple_delete(key,head=True)
-			# Exclude partition from installation set', # 6
+		# Exclude partition from installation set', # 6
 		elif self.action == self.ObjectActions[6]:
-			# TODO should restore to original values
-			# del self.data[key]
-			self.data[key]['hide'] = True
-			self.data[key]['wipe'] = False
-			# Delete partition'                       # 7
+			# BUG for the time being disallowed. Current implementation is faulty
+			pass
+		# Delete partition'                       # 7
 		elif self.action == self.ObjectActions[7]:
 			if value.get('uuid'):
 				self.partitions_to_delete.update(self.target)
