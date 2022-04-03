@@ -172,7 +172,8 @@ class Partition:
 
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
-				return partition.get('bootable', False)
+				# first condition is for MBR disks, second for GPT disks
+				return partition.get('bootable', False) or partition.get('type','') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
 
 		return False
 
@@ -440,7 +441,7 @@ class Partition:
 
 	def unmount(self) -> bool:
 		worker = SysCommand(f"/usr/bin/umount {self.path}")
-			
+
 		# Without to much research, it seams that low error codes are errors.
 		# And above 8k is indicators such as "/dev/x not mounted.".
 		# So anything in between 0 and 8k are errors (?).
