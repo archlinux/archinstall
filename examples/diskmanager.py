@@ -225,7 +225,7 @@ def create_global_block_map(disks=None):
 					"start" : device_info['PART_ENTRY_OFFSET'],
 					"size" : device_info['PART_ENTRY_SIZE'],
 					# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
-					"boot" : device_info['PART_ENTRY_NAME'] == 'EFI' or device_info.get('PART_ENTRY_TYPE','').startswith('c12a') or result[res].boot,
+					"boot" : result[res].boot,
 					"encrypted" : encrypted,
 					"wipe" : False,
 					"actual_mountpoint" : result[res].mountpoint,  # <-- this is false
@@ -540,6 +540,15 @@ class PartitionMenu(archinstall.GeneralMenu):
 		self._menu_options['encrypted'] = archinstall.Selector(str(_("Encrypted")),
 							lambda prev: self._generic_boolean_editor(str(_('Set ENCRYPTED partition :')),prev),
 							enabled=True)
+		# readonly options
+		if self.ds.get('uuid'):
+			self._menu_options['actual_mountpoint'] = archinstall.Selector(str(_("Actual mount")),
+								enabled=True)
+			if self.ds.get('fs') == 'btrfs':
+				self._menu_options['actual_subvolumes'] = archinstall.Selector(str(_("Actual Btrfs Subvolumes")),
+									enabled=True)
+			self._menu_options['uuid'] = archinstall.Selector(str(_("uuid")),
+								enabled=True)
 
 		self._menu_options['save'] = archinstall.Selector(str(_('Save')),
 													exec_func=lambda n,v:True,
@@ -957,7 +966,7 @@ class DevList(archinstall.ListManager):
 			with PartitionMenu(part_data,disk,self) as add_menu:
 				exit_menu = False
 				for option in add_menu.list_options():
-					if option not in add_menu.bottom_list:
+					if option in ('location','mountpoint','fs','subvolumes','boot','encrypted'):
 						add_menu.exec_option(option)
 						# broke execution there
 						if option == 'location' and add_menu.option('location').get_selection() is None:
@@ -1090,7 +1099,7 @@ if not list_layout:
 	exit()
 # pprint(list_layout)
 result = DevList('*** Disk Layout ***',list_layout).run()
-# pprint(result)
+pprint(result)
 archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
 archinstall.arguments['harddrives'] = harddrives = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
 config_output = archinstall.ConfigurationOutput(archinstall.arguments)
