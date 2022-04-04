@@ -7,40 +7,7 @@ from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CH
 from .menu import Menu
 from ..locale_helpers import set_keyboard_language
 from ..output import log
-from ..storage import storage
 from ..translation import Translation
-from ..general import (
-	SysCommand,
-	secret
-)
-from ..hardware import has_uefi
-from ..profiles import is_desktop_profile
-from ..disk.helpers import encrypted_partitions
-from ..user_interaction.system_conf import (
-	select_harddrives,
-	select_kernel,
-	ask_for_bootloader,
-	ask_for_swap
-)
-from ..user_interaction.general_conf import (
-	ask_ntp,
-	ask_for_a_timezone,
-	select_additional_repositories,
-	ask_additional_packages_to_install,
-	ask_for_audio_selection,
-	ask_hostname,
-	select_mirror_regions,
-	select_profile
-)
-from ..user_interaction.utils import get_password
-from ..user_interaction.network_conf import ask_to_configure_network
-from ..user_interaction.save_conf import save_config
-from ..user_interaction.disk_conf import select_disk_layout
-from ..user_interaction.partitioning_conf import select_encrypted_partitions
-from ..user_interaction.manage_users_conf import (
-	ask_for_additional_users,
-	ask_for_superuser_account
-)
 
 if TYPE_CHECKING:
 	_: Any

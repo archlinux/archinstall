@@ -13,7 +13,5 @@ jobs:
             - run: python --version
             - run: mypy --version
             # one day this will be enabled
-#            - name: run mypy
-#              run: mypy --strict --module archinstall || exit 0
             - name: run mypy
-              run: mypy --follow-imports=skip archinstall/lib/menu/selection_menu.py
+              run: mypy --strict --module archinstall || exit 0
