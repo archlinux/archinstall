@@ -1100,9 +1100,7 @@ def frontpage():
 		else:
 			return
 
-create_global_block_map()
-pprint(GLOBAL_BLOCK_MAP)
-exit()
+
 list_layout = frontpage()
 if not list_layout:
 	exit()
