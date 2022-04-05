@@ -815,6 +815,12 @@ class DevList(archinstall.ListManager):
 						f"{bar}{'used':^6}"),
 						f"{'-' * 18}{bar}{'-'*5}{bar}{'-'*5}{bar}{'-'*7}{bar}{'-'*9}{bar}{'-'*8}{bar}{'-'*19}{bar}{'-'*6}")
 
+	# i need this overload because i have another parameter to return (partitions to delete)
+	def run(self):
+		if self.target == self.cancel_action:
+			self.partitions_to_delete = {}
+		return super().run(),self.partitions_to_delete
+
 	def reformat(self):
 		blank = ''
 		bar = r'\|'
@@ -1093,13 +1099,14 @@ def frontpage():
 		else:
 			return
 
-
+create_global_block_map()
+pprint(GLOBAL_BLOCK_MAP)
+exit()
 list_layout = frontpage()
 if not list_layout:
 	exit()
 # pprint(list_layout)
-result = DevList('*** Disk Layout ***',list_layout).run()
-pprint(result)
+result,partitions_to_delete = DevList('*** Disk Layout ***',list_layout).run()
 archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
 archinstall.arguments['harddrives'] = harddrives = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
 config_output = archinstall.ConfigurationOutput(archinstall.arguments)
