@@ -364,7 +364,7 @@ def integrate_layout_in_global_map(harddrives,layout):
 					# TODO reconcilie list.
 					# NO overlap. Fist delete then add/compare from the physical list
 					# result_dict[disk]['partitions'] = create_gaps(normalized_partitions, disk, GLOBAL_BLOCK_MAP[disk]['size'])
-					result.dict[disk]['partitions'] = normalized_partitions
+					result_dict[disk]['partitions'] = normalized_partitions
 	return result_dict
 
 def from_general_dict_to_display(layout):
@@ -1227,7 +1227,7 @@ def ask_user_questions():
 			# pprint(list_layout)
 			result,partitions_to_delete = DevList('*** Disk Layout ***',list_layout).run()
 			archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
-			archinstall.arguments['harddrives'] = harddrives = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
+			archinstall.arguments['harddrives'] = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
 			menu.run()
 
 
