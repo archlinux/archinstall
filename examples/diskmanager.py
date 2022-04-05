@@ -817,9 +817,10 @@ class DevList(archinstall.ListManager):
 
 	# i need this overload because i have another parameter to return (partitions to delete)
 	def run(self):
-		if self.target == self.cancel_action:
+		result_list = super().run()
+		if not self.action or self.action == self.cancel_action:
 			self.partitions_to_delete = {}
-		return super().run(),self.partitions_to_delete
+		return result_list, self.partitions_to_delete
 
 	def reformat(self):
 		blank = ''
