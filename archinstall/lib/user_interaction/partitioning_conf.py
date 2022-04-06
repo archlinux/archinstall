@@ -6,6 +6,7 @@ from ..menu import Menu
 from ..output import log
 
 from ..disk.validators import fs_types
+from ..disk.helpers import has_mountpoint
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -298,7 +299,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			elif task == set_btrfs_subvolumes:
 				from .subvolume_config import SubvolumeList
-				
+
 				# TODO get preexisting partitions
 				title = _('{}\n\nSelect which partition to set subvolumes on').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"],filter=lambda x:True if x.get('filesystem',{}).get('format') == 'btrfs' else False)
@@ -325,7 +326,7 @@ def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
 				partition['encrypted'] = True
 				partition['!password'] = password
 
-				if partition['mountpoint'] != '/':
+				if not has_mountpoint(partition,'/'):
 					# Tell the upcoming steps to generate a key-file for non root mounts.
 					partition['generate-encryption-key-file'] = True
 
