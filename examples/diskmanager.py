@@ -626,7 +626,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def _select_filesystem(self,prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
-		if fstype != self.data.get('filesystem',{}).get('format'): # changed FS means reformat
+		if fstype != self.data.get('filesystem',{}).get('format') and self.data.get('uuid'): # changed FS means reformat if the disk exists
 			self.ds['wipe'] = True
 		if fstype == 'btrfs':
 			self.option('subvolumes').set_enabled(True)
@@ -1109,57 +1109,6 @@ def frontpage():
 		else:
 			return
 
-class OnlyHDMenu(archinstall.GlobalMenu):
-	def _setup_selection_menu_options(self):
-		super()._setup_selection_menu_options()
-		self._menu_options['harddrives'] = \
-			archinstall.Selector(
-				_('Harddrives'))
-		self._menu_options['disk_layouts'] = \
-			archinstall.Selector(
-				_('Disk layout'))
-
-		options_list = []
-		mandatory_list = []
-		options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
-		mandatory_list = ['harddrives']
-		options_list.extend(['save_config','install','abort'])
-
-		for entry in self._menu_options:
-			if entry in options_list:
-				# for not lineal executions, only self.option(entry).set_enabled and set_mandatory are necessary
-				if entry in mandatory_list:
-					self.enable(entry,mandatory=True)
-				else:
-					self.enable(entry)
-			else:
-				self.option(entry).set_enabled(False)
-		self._update_install_text()
-
-	def mandatory_lacking(self) -> [int, list]:
-		mandatory_fields = []
-		mandatory_waiting = 0
-		for field in self._menu_options:
-			option = self._menu_options[field]
-			if option.is_mandatory():
-				if not option.has_selection():
-					mandatory_waiting += 1
-					mandatory_fields += [field,]
-		return mandatory_fields, mandatory_waiting
-
-	def _missing_configs(self):
-		""" overloaded method """
-		def check(s):
-			return self.option(s).has_selection()
-
-		missing, missing_cnt = self.mandatory_lacking()
-		if check('harddrives'):
-			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
-				missing_cnt += 1
-				missing += ['disk_layout']
-		return missing
-
-
 def perform_installation(mountpoint):
 	"""
 		Issue a final warning before we continue with something un-revertable.
@@ -1244,14 +1193,10 @@ def ask_user_questions():
 					partitions_to_delete[part]['uuid'],
 					partitions_to_delete[part]['partnr']]
 				for part in partitions_to_delete]
-			manage_encryption()
+			if archinstall.arguments.get('harddrives'):
+				manage_encryption()
 	perform_disk_management()
-	# with OnlyHDMenu(data_store=archinstall.arguments) as menu:
-	# 	# We select the execution language separated
-	# 	menu.exec_option('archinstall-language')
-	# 	menu.option('archinstall-language').set_enabled(False)
-	# 	perform_disk_management()
-	# 	menu.run()
+
 def manage_encryption():
 	# we do exactly as has been done till now. TODO I think this needs a lot more work
 	if passwd := archinstall.get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
