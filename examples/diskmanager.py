@@ -113,63 +113,6 @@ def get_device_info(device):
 	information = archinstall.enrich_blockdevice_information(information)
 	return information
 
-# perform_gap_assignement
-def create_gaps(structure,disk,disk_size):
-	struct_full = []
-	presumed_start = 34  # TODO this is for GPT formatted disks. Need to establish a standard behavior
-	for part in structure:
-		if int(part['start']) > presumed_start:
-			gap = {
-				"id": f"{disk} {presumed_start:>15}",
-				"class" : 'gap',
-				"type" : None,
-				"start" : presumed_start,
-				"size" : int(part['start']) - presumed_start ,
-				# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
-				"boot" : False,
-				"encrypted" : False,
-				"wipe" : False,
-				"actual_mountpoint" : None,
-				"mountpoint" : None,
-				"filesystem" : {},
-				"uuid": None,
-				# "partnr": device_info['PART_ENTRY_NUMBER'],
-				"path": None,
-				"subvolumes":{}
-			}
-			struct_full.append(gap)
-		elif int(part['start']) < presumed_start:
-			print(f"Might have off by one error ,{part['start']},{presumed_start}")
-		struct_full.append(part)
-		# TODO percentajes if it is not at the end. Might be off by one. I believe it never reaches here
-		if isinstance(part['size'],str) and part['size'].endswith('%'): # if it is at the end. Might be off by one
-			size = ((disk_size - 34) - int(part['start'])) * int(part['size'][:-1]) * 0.01
-			presumed_start = int(part['start']) + int(size)
-		else:
-			presumed_start = int(part['start']) + int(part['size'])
-
-	# don't ask me why the 34 sector difference. Probably a copy of a master record or such
-	if presumed_start < (disk_size - 34) :
-		gap = {
-			"id": f"{disk} {presumed_start:>15}",
-			"class" : 'gap',
-			"type" : None,
-			"start" : presumed_start,
-			"size" : disk_size - 34 - presumed_start,
-			# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
-			"boot" : False,
-			"encrypted" : False,
-			"wipe" : False,
-			"actual_mountpoint" : None,
-			"mountpoint" : None,
-			"filesystem" : {},
-			"uuid": None,
-			# "partnr": device_info['PART_ENTRY_NUMBER'],
-			"path": None,
-			"subvolumes":{}
-		}
-		struct_full.append(gap)
-	return struct_full
 
 def create_global_block_map(disks=None):
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -270,9 +213,7 @@ def create_global_block_map(disks=None):
 			pprint(device_info)
 			print()
 			# TODO move relevant information to the corresponding partition
-	for disk in disk_layout:
-		if 'structure' in disk_layout[disk]:
-			disk_layout[disk]['structure'] = create_gaps(disk_layout[disk]['structure'],disk,disk_layout[disk]['size'])
+
 	GLOBAL_BLOCK_MAP.update(disk_layout)
 
 def normalize_from_layout(partition_list,disk):
