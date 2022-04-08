@@ -1244,7 +1244,7 @@ def ask_user_questions():
 					partitions_to_delete[part]['uuid'],
 					partitions_to_delete[part]['partnr']]
 				for part in partitions_to_delete]
-
+			manage_encryption()
 	perform_disk_management()
 	# with OnlyHDMenu(data_store=archinstall.arguments) as menu:
 	# 	# We select the execution language separated
@@ -1252,6 +1252,17 @@ def ask_user_questions():
 	# 	menu.option('archinstall-language').set_enabled(False)
 	# 	perform_disk_management()
 	# 	menu.run()
+def manage_encryption():
+	# we do exactly as has been done till now. TODO I think this needs a lot more work
+	if passwd := archinstall.get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
+		archinstall.arguments["!encryption-password"] = passwd
+		# TODO check if it is already set. and if any action is needed
+		if archinstall.arguments.get('harddrives', None):
+			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
+			# Then we need to identify which partitions to encrypt. This will default to / (root).
+			if len(list(archinstall.encrypted_partitions(archinstall.arguments.get('disk_layouts', [])))) == 0:
+				archinstall.arguments['disk_layouts'] = archinstall.select_encrypted_partitions(
+					archinstall.arguments['disk_layouts'], archinstall.arguments['!encryption-password'])
 
 def delete_partition(mode,disk,uuid,partnr):
 	block = archinstall.Filesystem(archinstall.BlockDevice(disk),mode) # FIX needed only because parted is a method of FileSystem and needs a blockdevice
