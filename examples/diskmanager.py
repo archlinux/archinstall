@@ -235,7 +235,7 @@ def create_global_block_map(disks=None):
 						"format" : device_info['TYPE'] if device_info['TYPE'] != 'vfat' else device_info['VERSION']
 					},
 					"uuid": result[res].uuid,
-					# "partnr": device_info['PART_ENTRY_NUMBER'],
+					"partnr": device_info['PART_ENTRY_NUMBER'],
 					"path": device_info['PATH'],
 					"actual_subvolumes": subvol_info,
 					"subvolumes":{}
@@ -618,7 +618,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		value = self._generic_boolean_editor(str(_('Set bootable partition :')),prev),
 		# TODO needs a refresh
 		# TODO only a boot per disk ¿?
-		# TODO It's a bit more complex than that
+		# TODO It's a bit more complex than that. This is only for GPT drives
 		if value[0]:
 			self.ds['mountpoint'] = '/boot'
 			self.ds['fs'] = 'FAT32'
@@ -823,6 +823,26 @@ class DevList(archinstall.ListManager):
 			self.partitions_to_delete = {}
 		return result_list, self.partitions_to_delete
 
+	def amount(self,entry):
+		blank = ''
+		if entry.get('actual_subvolumes'):
+			subvolumes = entry['actual_subvolumes']
+			mountlist = []
+			for subvol in subvolumes:
+				if isinstance(subvolumes[subvol],str):
+					mountlist.append(subvolumes[subvol])
+				elif subvolumes[subvol].get('mountpoint'):
+					mountlist.append(subvolumes[subvol]['mountpoint'])
+			if mountlist:
+				amount = f"//HOST({', '.join(mountlist):15.15})..."
+			else:
+				amount = blank
+		elif entry.get('actual_mountpoint'):
+			amount = f"//HOST{entry['actual_mountpoint']}"
+		else:
+			amount = blank
+		return amount
+
 	def reformat(self):
 		blank = ''
 		bar = r'\|'
@@ -864,22 +884,9 @@ class DevList(archinstall.ListManager):
 					mount = blank
 			else:
 				mount = blank
-			if entry.get('actual_subvolumes'):
-				subvolumes = entry['actual_subvolumes']
-				mountlist = []
-				for subvol in subvolumes:
-					if isinstance(subvolumes[subvol],str):
-						mountlist.append(subvolumes[subvol])
-					elif subvolumes[subvol].get('mountpoint'):
-						mountlist.append(subvolumes[subvol]['mountpoint'])
-				if mountlist:
-					amount = f"//HOST({', '.join(mountlist):15.15})..."
-				else:
-					amount = blank
-			elif entry.get('actual_mountpoint'):
-				amount = f"//HOST{entry['actual_mountpoint']}"
-			else:
-				amount = blank
+
+			amount = self.amount(entry)
+
 			# UUID for manual layout
 			if entry.get('path'):
 				identifier = entry['path']
@@ -1019,7 +1026,10 @@ class DevList(archinstall.ListManager):
 			pass
 		# Delete partition'                       # 7
 		elif self.action == self.ObjectActions[7]:
-			if value.get('uuid'):
+			if self.amount(value):
+				print('Can not delete partition, because it is in use')  # TODO it doesn't show actually
+				return
+			elif value.get('uuid'):
 				self.partitions_to_delete.update(self.target)
 			del self.data[key]
 
@@ -1157,7 +1167,7 @@ def perform_installation(mountpoint):
 		Issue a final warning before we continue with something un-revertable.
 		We mention the drive one last time, and count from 5 to 0.
 	"""
-	if archinstall.arguments.get('harddrives', None):
+	if archinstall.arguments.get('harddrives', None) or archinstall.arguments.get('partitions_to_delete',None):
 		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
 		archinstall.do_countdown()
 		"""
@@ -1168,6 +1178,10 @@ def perform_installation(mountpoint):
 		if archinstall.has_uefi() is False:
 			mode = archinstall.MBR
 
+		for part_to_delete in archinstall.arguments.get('partitions_to_delete',[]):
+			delete_partition(mode,*part_to_delete)
+		if not archinstall.arguments.get('harddrives',None):
+			return
 		for drive in archinstall.arguments.get('harddrives', []):
 			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
 				with archinstall.Filesystem(drive, mode) as fs:
@@ -1214,10 +1228,7 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	with OnlyHDMenu(data_store=archinstall.arguments) as menu:
-		# We select the execution language separated
-		menu.exec_option('archinstall-language')
-		menu.option('archinstall-language').set_enabled(False)
+	def perform_disk_management():
 		list_layout = frontpage()
 		if not list_layout:
 			exit()
@@ -1226,9 +1237,36 @@ def ask_user_questions():
 		else:
 			# pprint(list_layout)
 			result,partitions_to_delete = DevList('*** Disk Layout ***',list_layout).run()
+			if not result:
+				exit()
 			archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
 			archinstall.arguments['harddrives'] = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
-			menu.run()
+			archinstall.arguments['partitions_to_delete'] = [
+				[partitions_to_delete[part]['parent'],
+					partitions_to_delete[part]['uuid'],
+					partitions_to_delete[part]['partnr']]
+				for part in partitions_to_delete]
+
+	perform_disk_management()
+	# with OnlyHDMenu(data_store=archinstall.arguments) as menu:
+	# 	# We select the execution language separated
+	# 	menu.exec_option('archinstall-language')
+	# 	menu.option('archinstall-language').set_enabled(False)
+	# 	perform_disk_management()
+	# 	menu.run()
+
+def delete_partition(mode,disk,uuid,partnr):
+	block = archinstall.Filesystem(archinstall.BlockDevice(disk),mode) # FIX needed only because parted is a method of FileSystem and needs a blockdevice
+	part_cmd = f"{disk} rm {partnr}"
+	if not block.parted(part_cmd):
+		archinstall.log(f'Something went wrong with the partition delete for uuid {uuid} nr {partnr}',fg="red")
+		exit(1)
+	else:
+		archinstall.log(f"Partition nr {partnr} from {disk} deleted")
+	# possible error codes
+	# partition does not exists
+	# partition in use
+	# others
 
 
 if archinstall.arguments.get('help'):
