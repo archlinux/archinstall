@@ -270,9 +270,7 @@ def create_global_block_map(disks=None):
 			pprint(device_info)
 			print()
 			# TODO move relevant information to the corresponding partition
-	for disk in disk_layout:
-		if 'structure' in disk_layout[disk]:
-			disk_layout[disk]['structure'] = create_gaps(disk_layout[disk]['structure'],disk,disk_layout[disk]['size'])
+
 	GLOBAL_BLOCK_MAP.update(disk_layout)
 
 def normalize_from_layout(partition_list,disk):
