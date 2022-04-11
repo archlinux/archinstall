@@ -1028,7 +1028,10 @@ class Installer:
 			# This means the root account isn't locked/disabled with * in /etc/passwd
 			self.helper_flags['user'] = True
 
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{user}:{password}' | chpasswd\"").exit_code == 0
+		combo = f'{user}:{password}'
+		echo = shlex.join(['echo', combo])
+		result = archinstall.SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+		return result.exit_code == 0
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
