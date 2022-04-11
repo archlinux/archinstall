@@ -1030,7 +1030,9 @@ class Installer:
 
 		combo = f'{user}:{password}'
 		echo = shlex.join(['echo', combo])
-		result = archinstall.SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+		sh = shlex.join(['sh', '-c', echo])
+		
+		result = SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
 		return result.exit_code == 0
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
