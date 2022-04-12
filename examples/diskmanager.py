@@ -37,6 +37,20 @@ def list_free_space(device :archinstall.BlockDevice, unit :str = 'compact'):
 		archinstall.log(f"Could not get free space on {device.path}: {error}", level=logging.DEBUG)
 	return full_size,sector_size,free_array
 
+def unit_best_fit(raw_value,default_unit='s'):
+	base_value = convert_units(raw_value,'s',default_unit)
+	conversion_rates = {
+		'KiB' : 2,
+		'MiB' : 2**11,
+		'GiB' : 2**21,
+		'TiB' : 2**31,
+	}
+	for unit in ('TiB','GiB','MiB','KiB'):
+		if base_value > conversion_rates[unit]:
+			return f"{convert_units(base_value,unit,'s',precision=1)} {unit}"
+	return f"{base_value} s"
+
+
 def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3):
 	conversion_rates = {
 		'kb' : 10**3,
@@ -172,6 +186,12 @@ def create_gaps(structure,disk,disk_size):
 	return struct_full
 
 def create_global_block_map(disks=None):
+	def list_subvols(object):
+		subvol_info = {}
+		for subvol in object.subvolumes:
+			subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
+		return subvol_info
+
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
 	result = archinstall.all_blockdevices(partitions=True)
 	hard_drives = []
@@ -215,9 +235,7 @@ def create_global_block_map(disks=None):
 					encrypted = False
 				# TODO make the subvolumes work
 				if device_info['TYPE'] == 'btrfs':
-					subvol_info = {}
-					for subvol in result[res].subvolumes:
-						subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
+					subvol_info = list_subvols(result[res])
 				else:
 					subvol_info = {}
 				partition = {
@@ -252,6 +270,7 @@ def create_global_block_map(disks=None):
 			# gaps
 		if isinstance(result[res],archinstall.DMCryptDev):
 			# TODO we need to ensure the device is opened and later closed to get the info
+			# Problems with integration. Returned prior to normal partitions
 			print('==>')
 			print(res)
 			print(result[res])
@@ -260,17 +279,18 @@ def create_global_block_map(disks=None):
 			print('\t',result[res].MapperDev)
 			print('\t\t',result[res].MapperDev.name)
 			print('\t\t',result[res].MapperDev.partition)
+			print('\t\t',result[res].MapperDev.partition.path)  # <-- linkage
 			print('\t\t',result[res].MapperDev.path)
-			print('\t\t',result[res].MapperDev.filesystem)
-			print('\t\t',result[res].MapperDev.subvolumes)
-			print('\t\t',result[res].MapperDev.mount_information)
-			print('\t\t',result[res].MapperDev.mountpoint)
+			print('\t\t',result[res].MapperDev.filesystem) # <--
+			print('\t\t',list_subvols(result[res].MapperDev)) # <-- is empty if not mounted/
+			print('\t\t',result[res].MapperDev.mount_information) # <-- error if not mounted
+			print('\t\t',result[res].MapperDev.mountpoint) # <-- error if not mounted
 			print('\t',result[res].mountpoint)
 			print('\t',result[res].filesystem)
 			pprint(device_info)
 			print()
 			# TODO move relevant information to the corresponding partition
-
+			input('yep')
 	GLOBAL_BLOCK_MAP.update(disk_layout)
 
 def normalize_from_layout(partition_list,disk):
@@ -477,6 +497,53 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 			disk_layout.update({disk : disk_dict})
 	return disk_layout
 
+def location_to_gap(location :dict, text :str='') -> list:
+	gap = [int(location.get('start')),int(location.get('size') + location.get('start') - 1),location.get('size'),text]
+	return gap
+
+def gap_to_location(gap :list) -> dict:
+	location = {'start':location[0],
+			    'size':location[2] }
+	return location
+
+def merge_list(free,prev_line):
+	# TODO convert prev as parameter as a list
+	# we will include the selected chunck as free space, so we can expand it if necessary
+	free.append(prev_line)
+	free.sort()
+	pos = free.index(prev_line)
+	# the comparations should be equal, but this way i solve possible errors
+	# read conditional as start_of_one_gap <= end_of_other_gap + 1 thus they are contiguous or overlap
+	# must be in this order, to avoid errors in position, due to del
+	if pos + 1 < len(free) and free[pos + 1][0] <= free[pos][1] + 1: # expand forward
+		free[pos][1] = free[pos + 1][1]
+		free[pos][2] = free[pos][1] - free[pos][0] + 1
+		del free[pos + 1]
+	if pos - 1 >= 0 and free[pos][0] <= free[pos - 1][1] + 1: # expand backwards
+		free[pos][0] = free[pos - 1][0]
+		free[pos][2] = free[pos][1] - free[pos][0] + 1
+		del free[pos - 1]
+
+def align_entry(entry,ALIGNMENT,LAST_SECTOR):
+	normalized = entry[:]
+	if ALIGNMENT > 1:
+		# print(">{:>20,}{:>20,}{:>20,} {}".format(*slot))
+		if entry[0] % ALIGNMENT != 0:
+			pos_ini = (entry[0] // ALIGNMENT + 1) * ALIGNMENT
+			if pos_ini > LAST_SECTOR:
+				pos_ini = LAST_SECTOR
+		else:
+			pos_ini = entry[0]
+		if entry[1] % ALIGNMENT != 0:
+			pos_fin = (entry[1] // ALIGNMENT) * ALIGNMENT - 1
+		else:
+			pos_fin = entry[0]
+		size = pos_fin - pos_ini + 1
+		normalized[0] = pos_ini
+		normalized[1] = pos_fin
+		normalized[2] = size
+	return normalized
+
 
 """
 UI classes
@@ -637,9 +704,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def _select_physical(self,prev):
 		# TODO check if IDs have to change when you modify a partition, and if it is allowed
 		from os import system
-		# MINIMAL_SECTOR = 34
-		MINIMAL_PARTITION_SIZE = 2 ** 11 # one MiB in sectors
-		# MINIMAL_START_POS = 1024
 		if self.data.get('uuid'): # an existing partition can not be physically changed
 			return prev
 		if not prev:
@@ -647,29 +711,64 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# we get the free list and if there exists prev we add this to the list
 		if self.caller:
 			total_size,sector_size,free = self.caller.gap_map(self.block_device)
-		else:
+		else: # Might not be needed, but permits to execute standalone
 			total_size,sector_size,free = list_free_space(self.block_device,'s')
+			total_size = int(total_size[:-1])
+
+		ALIGNMENT = convert_units(archinstall.arguments.get('align',0),'s','s') # 2**13
+		MIN_PARTITION = ALIGNMENT if ALIGNMENT > 1 else 2**13 # 4 MiB
+		LAST_SECTOR = total_size - 33 # last assignable sector (we leave 34 sectors por internal info
+
+		def align_gaps(free_slots,ALIGNMENT,MIN_PARTITIONS,LAST_SECTOR):
+			#
+			# the gap list has to be renormalized thru the use of ALIGNMENT,
+			# so we only asign aligned partitions to the structure we define
+			#
+			norm_free_slot = []
+			for slot in free_slots:
+				norm_slot = align_entry(slot,ALIGNMENT,LAST_SECTOR)
+				if norm_slot[2] > 0:
+					norm_free_slot.append(norm_slot)
+				else:
+					continue
+				# mark unavailable slots
+				if len(norm_free_slot[-1]) == 3:
+					norm_free_slot[-1].append('')
+				if norm_free_slot[-1][2] < MIN_PARTITION:
+					norm_free_slot[-1][3] += ' too short'
+			return norm_free_slot
+
+		def show_free_slots(free,prev,ALIGNMENT):
+			# print("<{:>20,}{:>20,}{:>20,} {}".format(*norm_free_slot[-1]))
+			print()
+			print(f"List of free space at {self.block_device.path} in sectors")
+			print()
+			print("{:20} | {:20} | {:20}".format('start','end','size'))
+			print("{}|{}|{}".format('-' * 21,'-' * 21,'-' * 21))
+			for linea in free:
+				if len(linea) == 3:
+					print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}")
+				else:
+					print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}    {linea[3]}")
+			print()
+			# TODO check minimal size
+			# TODO text with possible unit definition
+			# TODO preselect optimal ¿? hole
+			if prev:
+				print(_("Current physical location selection"))
+				print(f"{int(prev.get('start')):>20,} | {int(prev.get('size') + prev.get('start') -1):>20,} | {unit_best_fit(prev.get('size')):>12}")
+				if ALIGNMENT > 1:
+					print(_("Current physical location selection; aligned"))
+					norm_slot = align_entry([int(prev.get('start')),int(prev.get('size')) + int(prev.get('start')) - 1,int(prev.get('size'))],ALIGNMENT,LAST_SECTOR)
+					print(f"{norm_slot[0]:>20,} | {norm_slot[1]:>20,} | {unit_best_fit(norm_slot[2]):>12}")
+			print()
+
+		# we will include the selected chunck as free space, so we can expand it if necessary
 		if prev:
-			# we will include the selected chunck as free space, so we can expand it if necessary
-			prev_line = [int(prev.get('start')),int(prev.get('size') + prev.get('start') - 1),prev.get('size'),'Current Location']
-			free.append(prev_line)
-			free.sort()
-			pos = free.index(prev_line)
-			# the comparations should be equal, but this way i solve possible errors
-			# read conditional as start_of_one_gap <= end_of_other_gap + 1 thus they are contiguous or overlap
-			# must be in this order, to avoid errors in position, due to del
-			if pos + 1 < len(free) and free[pos + 1][0] <= free[pos][1] + 1: # expand forward
-				free[pos][1] = free[pos + 1][1]
-				free[pos][2] = free[pos][1] - free[pos][0] + 1
-				del free[pos + 1]
-			if pos - 1 >= 0 and free[pos][0] <= free[pos - 1][1] + 1: # expand backwards
-				free[pos][0] = free[pos - 1][0]
-				free[pos][2] = free[pos][1] - free[pos][0] + 1
-				del free[pos - 1]
-		# TODO define a minimum size for partitions
-		for linea in free:
-			if linea[2] < MINIMAL_PARTITION_SIZE:
-				linea.append(_("Not suitable"))
+			merge_list(free,location_to_gap(prev,'Current Location'))
+		# normalize free space according to alignment
+		free = align_gaps(free,ALIGNMENT,MIN_PARTITION,LAST_SECTOR)
+
 		if prev:
 			current_gap = [line[3] if len(line) == 4 else None for line in free].index('Current Location')
 		else:
@@ -677,23 +776,8 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# TODO define a minimal start position
 		# TODO standarize units for return code
 		system('clear')
-		print()
-		print(f"List of free space at {self.block_device.path} in sectors")
-		print()
-		print("{:12} | {:12} | {:12}".format('start','end','size'))
-		print("{}|{}|{}".format('-' * 13,'-' * 14,'-' * 14))
-		for linea in free:
-			if len(linea) == 3:
-				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB")
-			else:
-				print(f"{linea[0]:>12} | {linea[1]:>12} | {convert_units(linea[2],'GiB','s'):>12}GiB    {linea[3]}")
-		print()
-		# TODO check minimal size
-		# TODO text with possible unit definition
-		# TODO preselect optimal ¿? hole
-		if prev:
-			print(_("Current physical location selection"))
-			print(f"{int(prev.get('start')):>12} | {int(prev.get('size') + prev.get('start') -1):>12} | {convert_units(prev.get('size'),'GiB','s'):>12}GiB")
+		show_free_slots(free,prev,ALIGNMENT)
+
 		starts = str(int(prev.get('start'))) if prev.get('start') else ''
 		if prev.get('sizeG'):
 			# TODO percentages back
