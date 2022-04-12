@@ -129,7 +129,7 @@ class ListManager:
 		self.header = header if header else None
 		self.cancel_action = str(_('Cancel'))
 		self.confirm_action = str(_('Confirm and exit'))
-		self.separator = '==>'
+		self.separator = ''
 		self.bottom_list = [self.confirm_action,self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
@@ -155,7 +155,8 @@ class ListManager:
 				sort=False,
 				clear_screen=False,
 				clear_menu_on_exit=False,
-				header=self.header).run()
+				header=self.header,
+				skip_empty_entries=True).run()
 
 			if not target or target in self.bottom_list:
 				break
