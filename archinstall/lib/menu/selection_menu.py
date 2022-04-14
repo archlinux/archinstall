@@ -116,6 +116,9 @@ class Selector:
 		self._description = description
 
 	def menu_text(self) -> str:
+		if self._description == '': # special menu option for __separator__
+			return ''
+
 		current = ''
 
 		if self._display_func:
@@ -273,21 +276,22 @@ class GeneralMenu:
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
-			menu_text = [m.text for m in enabled_menus.values()]
+			menu_options = [m.text for m in enabled_menus.values()]
 
 			selection = Menu(
 				_('Set/Modify the below options'),
-				menu_text,
+				menu_options,
 				sort=False,
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
-				preview_size=self.preview_size
+				preview_size=self.preview_size,
+				skip_empty_entries=True
 			).run()
 
 			if selection and self.auto_cursor:
-				cursor_pos = menu_text.index(selection) + 1  # before the strip otherwise fails
-				if cursor_pos >= len(menu_text):
-					cursor_pos = len(menu_text) - 1
+				cursor_pos = menu_options.index(selection) + 1  # before the strip otherwise fails
+				if cursor_pos >= len(menu_options):
+					cursor_pos = len(menu_options) - 1
 				selection = selection.strip()
 			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
