@@ -947,7 +947,7 @@ msgid "Choose which optional additional repositories to enable"
 msgstr "Выберите, какие дополнительные репозитории следует включить"
 
 #: lib/user_interaction/manage_users_conf.py:32
-msgid "Add an user"
+msgid "Add a user"
 msgstr "Добавить пользователя"
 
 #: lib/user_interaction/manage_users_conf.py:33
