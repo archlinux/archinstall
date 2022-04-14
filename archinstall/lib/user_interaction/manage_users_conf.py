@@ -29,7 +29,7 @@ class UserList(ListManager):
 		"""
 		self.sudo = sudo
 		self.actions = [
-			str(_('Add an user')),
+			str(_('Add a user')),
 			str(_('Change password')),
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
