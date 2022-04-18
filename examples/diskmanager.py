@@ -234,13 +234,13 @@ def create_global_block_map(disks=None):
 				else:
 					encrypted = False
 				# TODO make the subvolumes work
-				if device_info['TYPE'] == 'btrfs':
+				if result[res].filesystem == 'btrfs':
 					subvol_info = list_subvols(result[res])
 				else:
 					subvol_info = {}
 				partition = {
 					"id": f"{result[res].parent} {device_info['PART_ENTRY_OFFSET']:>15}",
-					"type" : device_info['PART_ENTRY_NAME'],
+					"type" : device_info.get('PART_ENTRY_NAME',device_info.get('PART_ENTRY_TYPE','')),
 					"start" : device_info['PART_ENTRY_OFFSET'],
 					"size" : device_info['PART_ENTRY_SIZE'],
 					# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
@@ -250,7 +250,7 @@ def create_global_block_map(disks=None):
 					"actual_mountpoint" : result[res].mountpoint,  # <-- this is false
 					"mountpoint" : None,
 					"filesystem" : {
-						"format" : device_info['TYPE'] if device_info['TYPE'] != 'vfat' else device_info['VERSION']
+						"format" : result[res].filesystem
 					},
 					"uuid": result[res].uuid,
 					"partnr": device_info['PART_ENTRY_NUMBER'],
@@ -497,13 +497,13 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 			disk_layout.update({disk : disk_dict})
 	return disk_layout
 
-def location_to_gap(location :dict, text :str='') -> list:
+def location_to_gap(location :dict, text :str = '') -> list:
 	gap = [int(location.get('start')),int(location.get('size') + location.get('start') - 1),location.get('size'),text]
 	return gap
 
 def gap_to_location(gap :list) -> dict:
-	location = {'start':location[0],
-			    'size':location[2] }
+	location = {'start':gap[0],
+				'size':gap[2] if gap[2] else gap[1] - gap[0] + 1}
 	return location
 
 def merge_list(free,prev_line):
