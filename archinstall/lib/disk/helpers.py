@@ -221,10 +221,8 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
-
-		# TODO: No idea why F841 is raised here:
-		except SysCallError as error: # noqa: F841
-			if error.exit_code in (512, 2):
+		except SysCallError as ex:
+			if ex.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -234,7 +232,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				except SysCallError:
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
-				raise error
+				raise ex
 
 		information = enrich_blockdevice_information(information)
 
