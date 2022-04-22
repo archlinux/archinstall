@@ -38,6 +38,9 @@ def ask_user_questions():
 	archinstall.SysCommand('timedatectl set-ntp true')
 
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+
+	global_menu.enable('archinstall-language')
+
 	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation
@@ -89,6 +92,12 @@ def ask_user_questions():
 	global_menu.enable('ntp')
 
 	global_menu.enable('additional-repositories')
+
+	global_menu.enable('__separator__')
+
+	global_menu.enable('save_config')
+	global_menu.enable('install')
+	global_menu.enable('abort')
 
 	global_menu.run()
 
