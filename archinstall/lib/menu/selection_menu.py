@@ -380,9 +380,9 @@ class GeneralMenu:
 
 		# sort the enabled menu by the order we enabled them in
 		# we'll add the entries that have been enabled via the selector constructor at the top
-		# enabled_keys = [i for i in enabled_menus.keys() if i not in self._enabled_order]
+		enabled_keys = [i for i in enabled_menus.keys() if i not in self._enabled_order]
 		# and then we add the ones explicitly enabled by the enable function
-		enabled_keys = [i for i in self._enabled_order if i in enabled_menus.keys()]
+		enabled_keys += [i for i in self._enabled_order if i in enabled_menus.keys()]
 
 		ordered_menus = {k: enabled_menus[k] for k in enabled_keys}
 
