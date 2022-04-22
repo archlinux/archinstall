@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
+from ..models import NetworkConfiguration
 from ..storage import storage
 from ..output import log
 from ..profiles import is_desktop_profile
@@ -139,7 +140,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Configure network'),
 				ask_to_configure_network,
-				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
+				display_func=lambda x: self._prev_network_configuration(x),
 				default={})
 		self._menu_options['timezone'] = \
 			Selector(
@@ -191,6 +192,16 @@ class GlobalMenu(GeneralMenu):
 		if missing > 0:
 			return _('Install ({} config(s) missing)').format(missing)
 		return 'Install'
+
+	def _prev_network_configuration(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
+		if not cur_value:
+			return _('Not configured, unavailable unless setup manually')
+		else:
+			if isinstance(cur_value, list):
+				ifaces = [x.iface for x in cur_value]
+				return f'Configured ifaces: {ifaces}'
+			else:
+				return str(cur_value)
 
 	def _prev_install_missing_config(self) -> Optional[str]:
 		if missing := self._missing_configs():

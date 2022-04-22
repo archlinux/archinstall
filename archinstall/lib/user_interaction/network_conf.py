@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import ipaddress
 import logging
-from copy import copy
-from typing import Any, Optional, Dict, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, List, Union
 
 from ..menu.text_input import TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
@@ -11,69 +10,77 @@ from ..models.network_configuration import NetworkConfiguration, NicType
 from ..networking import list_interfaces
 from ..menu import Menu
 from ..output import log
+from ..menu.list_manager import ListManager
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkConfiguration]:
+class ManualNetworkConfig(ListManager):
 	"""
-		Configure the network on the newly installed system
+	subclass of ListManager for the managing of network configuration accounts
 	"""
-	interfaces = {
-		'none': str(_('No network configuration')),
-		'iso_config': str(_('Copy ISO network configuration to installation')),
-		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
-		**list_interfaces()
-	}
-	# for this routine it's easier to set the cursor position rather than a preset value
-	cursor_idx = None
-	if preset:
-		if preset['type'] == 'iso_config':
-			cursor_idx = 0
-		elif preset['type'] == 'network_manager':
-			cursor_idx = 1
+
+	def __init__(self, prompt: str, ifaces: Union[None, NetworkConfiguration, List[NetworkConfiguration]]):
+		"""
+		param: prompt
+		type: str
+		param: ifaces already defined previously
+		type: Dict
+		"""
+
+		if ifaces is not None and isinstance(ifaces, list):
+			display_values = {iface.iface: iface for iface in ifaces}
 		else:
-			try:
-				# let's hope order in dictionaries stay
-				cursor_idx = list(interfaces.values()).index(preset.get('type'))
-			except ValueError:
-				pass
+			display_values = {}
 
-	nic = Menu(_('Select one network interface to configure'), interfaces.values(), cursor_index=cursor_idx,
-				sort=False).run()
+		self._action_add = str(_('Add interface'))
+		self._action_edit = str(_('Edit interface'))
+		self._action_delete = str(_('Delete interface'))
 
-	if not nic:
-		return None
+		self._iface_actions = [self._action_edit, self._action_delete]
 
-	if nic == interfaces['none']:
-		return None
-	elif nic == interfaces['iso_config']:
-		return NetworkConfiguration(NicType.ISO)
-	elif nic == interfaces['network_manager']:
-		return NetworkConfiguration(NicType.NM)
-	else:
-		# Current workaround:
-		# For selecting modes without entering text within brackets,
-		# printing out this part separate from options, passed in
-		# `generic_select`
-		# we only keep data if it is the same nic as before
-		if preset.get('type') != nic:
-			preset_d = {'type': nic, 'dhcp': True, 'ip': None, 'gateway': None, 'dns': []}
-		else:
-			preset_d = copy(preset)
+		super().__init__(prompt, display_values, self._iface_actions, self._action_add)
 
+	def run_manual(self) -> List[NetworkConfiguration]:
+		ifaces = super().run()
+		if ifaces is not None:
+			return list(ifaces.values())
+		return []
+
+	def exec_action(self, data: Any):
+		if self.action == self._action_add:
+			iface_name = self._select_iface(data.keys())
+			if iface_name:
+				iface = NetworkConfiguration(NicType.MANUAL, iface=iface_name)
+				data[iface_name] = self._edit_iface(iface)
+		elif self.target:
+			iface_name = list(self.target.keys())[0]
+			iface = data[iface_name]
+
+			if self.action == self._action_edit:
+				data[iface_name] = self._edit_iface(iface)
+			elif self.action == self._action_delete:
+				del data[iface_name]
+
+	def _select_iface(self, existing_ifaces: List[str]) -> Optional[str]:
+		all_ifaces = list_interfaces().values()
+		available = set(all_ifaces) - set(existing_ifaces)
+		iface = Menu(str(_('Select interface to add')), list(available), skip=True).run()
+		return iface
+
+	def _edit_iface(self, edit_iface :NetworkConfiguration):
+		iface_name = edit_iface.iface
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
-		cursor_idx = 0 if preset_d.get('dhcp', True) else 1
 
-		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(nic, default_mode)
-		mode = Menu(prompt, modes, default_option=default_mode, cursor_index=cursor_idx).run()
-		# TODO preset values for ip and gateway
+		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(iface_name, default_mode)
+		mode = Menu(prompt, modes, default_option=default_mode).run()
+
 		if mode == 'IP (static)':
 			while 1:
-				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(nic)
-				ip = TextInput(prompt, preset_d.get('ip')).run().strip()
+				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)
+				ip = TextInput(prompt, edit_iface.ip).run().strip()
 				# Implemented new check for correct IP/subnet input
 				try:
 					ipaddress.ip_interface(ip)
@@ -84,7 +91,7 @@ def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkCon
 			# Implemented new check for correct gateway IP address
 			while 1:
 				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
-									preset_d.get('gateway')).run().strip()
+									edit_iface.gateway).run().strip()
 				try:
 					if len(gateway) == 0:
 						gateway = None
@@ -94,18 +101,58 @@ def ask_to_configure_network(preset: Dict[str, Any] = {}) -> Optional[NetworkCon
 				except ValueError:
 					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
 
-			dns = None
-			if preset_d.get('dns'):
-				preset_d['dns'] = ' '.join(preset_d['dns'])
+			if edit_iface.dns:
+				display_dns = ' '.join(edit_iface.dns)
 			else:
-				preset_d['dns'] = None
-			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '),
-									preset_d['dns']).run().strip()
+				display_dns = None
+			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '), display_dns).run().strip()
 
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
-			return NetworkConfiguration(NicType.MANUAL, iface=nic, ip=ip, gateway=gateway, dns=dns, dhcp=False)
+			return NetworkConfiguration(NicType.MANUAL, iface=iface_name, ip=ip, gateway=gateway, dns=dns, dhcp=False)
 		else:
 			# this will contain network iface names
-			return NetworkConfiguration(NicType.MANUAL, iface=nic)
+			return NetworkConfiguration(NicType.MANUAL, iface=iface_name)
+
+
+def ask_to_configure_network(preset: Union[None, NetworkConfiguration, List[NetworkConfiguration]]) -> Optional[Union[List[NetworkConfiguration], NetworkConfiguration]]:
+	"""
+		Configure the network on the newly installed system
+	"""
+	network_options = {
+		'none': str(_('No network configuration')),
+		'iso_config': str(_('Copy ISO network configuration to installation')),
+		'network_manager': str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)')),
+		'manual': str(_('Manual configuration'))
+	}
+	# for this routine it's easier to set the cursor position rather than a preset value
+	cursor_idx = None
+
+	if preset and not isinstance(preset, list):
+		if preset.type == 'iso_config':
+			cursor_idx = 0
+		elif preset.type == 'network_manager':
+			cursor_idx = 1
+
+	nic = Menu(_(
+		'Select one network interface to configure'),
+		list(network_options.values()),
+		cursor_index=cursor_idx,
+		sort=False
+	).run()
+
+	if not nic:
+		return preset
+
+	if nic == network_options['none']:
+		return None
+	elif nic == network_options['iso_config']:
+		return NetworkConfiguration(NicType.ISO)
+	elif nic == network_options['network_manager']:
+		return NetworkConfiguration(NicType.NM)
+	elif nic == network_options['manual']:
+		manual = ManualNetworkConfig('Configure interfaces', preset)
+		return manual.run_manual()
+
+	return preset
