@@ -7,11 +7,12 @@ from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .partition import Partition
-	
+
 from ..exceptions import DiskError, SysCallError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
+
 
 class BlockDevice:
 	def __init__(self, path :str, info :Optional[Dict[str, Any]] = None):
@@ -38,7 +39,9 @@ class BlockDevice:
 			yield self.partitions[partition]
 
 	def __getitem__(self, key :str, *args :str, **kwargs :str) -> Any:
-		if key not in self.info:
+		if hasattr(self, key):
+			return getattr(self, key)
+		elif key not in self.info:
 			raise KeyError(f'{self} does not contain information: "{key}"')
 		return self.info[key]
 
