@@ -43,8 +43,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Select Archinstall language'),
 				lambda x: self._select_archinstall_language('English'),
-				default='English',
-				enabled=True)
+				default='English')
 		self._menu_options['keyboard-layout'] = \
 			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
 		self._menu_options['mirror-region'] = \
@@ -153,24 +152,20 @@ class GlobalMenu(GeneralMenu):
 				lambda preset: self._select_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
-			Selector(
-				'',
-				enabled=True)
+			Selector('')
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),
 				lambda preset: save_config(self._data_store),
-				enabled=True,
 				no_store=True)
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
 				exec_func=lambda n,v: True if len(self._missing_configs()) == 0 else False,
 				preview_func=self._prev_install_missing_config,
-				enabled=True,
 				no_store=True)
 
-		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
+		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
 	def _update_install_text(self, name :str = None, result :Any = None):
 		text = self._install_text()
