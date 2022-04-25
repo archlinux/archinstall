@@ -141,7 +141,7 @@ class Selector:
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
-		if self._current_selection is None:
+		if not self._current_selection:
 			return False
 		return True
 
