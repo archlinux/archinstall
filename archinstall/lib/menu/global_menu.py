@@ -118,7 +118,10 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['audio'] = \
 			Selector(
 				_('Select audio'),
-				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset))
+				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset),
+				display_func=lambda x: x if x else 'None',
+				default=None
+			)
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Select kernels'),
@@ -215,8 +218,6 @@ class GlobalMenu(GeneralMenu):
 			missing += ['Bootloader']
 		if not check('hostname'):
 			missing += ['Hostname']
-		if not check('audio'):
-			missing += ['Audio']
 		if not check('!root-password') and not check('!superusers'):
 			missing += [str(_('Either root-password or at least 1 superuser must be specified'))]
 		if not check('harddrives'):
