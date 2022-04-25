@@ -440,3 +440,35 @@ def convert_device_to_uuid(path :str) -> str:
 		time.sleep(storage['DISK_TIMEOUTS'])
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
+
+def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, strict: bool = True) -> bool:
+	""" Determine if a certain partition is mounted (or has a mountpoint) as specific target (path)
+	Coded for clarity rather than performance
+
+	Input parms:
+	:parm partition the partition we check
+	:type Either a Partition object or a dict with the contents of a partition definiton in the disk_layouts schema
+
+	:parm target (a string representing a mount path we want to check for.
+	:type str
+
+	:parm strict if the check will be strict, target is exactly the mountpoint, or no, where the target is a leaf (f.i. to check if it is in /mnt/archinstall/). Not available for root check ('/') for obvious reasons
+
+	"""
+	# we create the mountpoint list
+	if isinstance(partition,dict):
+		subvols = partition.get('btrfs',{}).get('subvolumes',{})
+		mountpoints = [partition.get('mountpoint'),] + [subvols[subvol] if isinstance(subvols[subvol],str) or not subvols[subvol] else subvols[subvol].get('mountpoint') for subvol in subvols]
+	else:
+		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
+	# we check
+	if strict or target == '/':
+		if target in mountpoints:
+			return True
+		else:
+			return False
+	else:
+		for mp in mountpoints:
+			if mp and mp.endswith(target):
+				return True
+		return False
