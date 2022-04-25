@@ -169,6 +169,7 @@ class ListManager:
 				skip_empty_entries=True).run()
 
 			if not target or target in self.bottom_list:
+				self.action = target
 				break
 			if target and target == self.separator:
 				continue
