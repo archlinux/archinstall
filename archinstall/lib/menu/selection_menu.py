@@ -181,7 +181,7 @@ class GeneralMenu:
 		;type preview_size: float (range 0..1)
 
 		"""
-		self._enabled_order = []
+		self._enabled_order :List[str] = []
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}

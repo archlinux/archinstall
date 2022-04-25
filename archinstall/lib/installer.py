@@ -740,14 +740,14 @@ class Installer:
 		else:
 			loader_data = [
 				f"default {self.init_time}",
-				"timeout 5"
+				"timeout 15"
 			]
 
 		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 			for line in loader_data:
 				if line[:8] == 'default ':
 					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-				elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+				elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
 					# We add in the default timeout to support dual-boot
 					loader.write(f"{line[1:]}\n")
 				else:
