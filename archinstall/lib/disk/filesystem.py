@@ -49,7 +49,7 @@ class Filesystem:
 	def partuuid_to_index(self, uuid :str) -> Optional[int]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
-			time.sleep(storage['DISK_TIMEOUTS'] * (i - 1))
+			time.sleep(min(0.1, storage['DISK_TIMEOUTS'] * (i - 1)))
 
 			# We'll use unreliable lbslk to grab children under the /dev/<device>
 			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
