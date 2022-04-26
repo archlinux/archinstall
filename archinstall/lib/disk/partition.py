@@ -192,7 +192,9 @@ class Partition:
 		For bind mounts all the subvolumes share the same uuid
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
-			self.partprobe()
+			if not self.partprobe():
+				raise DiskError(f"Could not perform partprobe on {self.device_path}")
+				
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			partuuid = self._safe_uuid
@@ -208,13 +210,11 @@ class Partition:
 		This function should only be used where uuid is not crucial.
 		For instance when you want to get a __repr__ of the class.
 		"""
-		try:
-			self.partprobe()
-		except SysCallError as partprobe_error:
+		if not self.partprobe():
 			if self.block_device.info.get('TYPE') == 'iso9660':
 				return None
 
-			raise DiskError(f"Could not get PARTUUID of partition {self} due to partprobe error: {partprobe_error}")
+			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
 
 		try:
 			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
@@ -223,7 +223,7 @@ class Partition:
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
 				return None
 
-			raise DiskError(f"Could not get PARTUUID of partition {self}: {error}")
+			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
 
 	@property
 	def encrypted(self) -> Union[bool, None]:
@@ -267,8 +267,12 @@ class Partition:
 				yield result
 
 	def partprobe(self) -> bool:
-		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
-			return True
+		try:
+			if self.block_device:
+				return 0 == SysCommand(f'partprobe {self.block_device.device}').exit_code
+		except SysCallError as error:
+			log(f"Unreliable results might be given for {self.path} due to partprobe error: {error}", level=logging.DEBUG)
+
 		return False
 
 	def detect_inner_filesystem(self, password :str) -> Optional[str]:
