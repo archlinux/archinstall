@@ -234,9 +234,9 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
-					if not "filesystem" in block_device_struct["partitions"][partition]:
+					if "filesystem" not in block_device_struct["partitions"][partition]:
 						block_device_struct["partitions"][partition]["filesystem"] = {}
-					if not "mount_options" in block_device_struct["partitions"][partition]["filesystem"]:
+					if "mount_options" not in block_device_struct["partitions"][partition]["filesystem"]:
 						block_device_struct["partitions"][partition]["filesystem"]["mount_options"] = []
 
 					if "compress=zstd" not in block_device_struct["partitions"][partition]["filesystem"]["mount_options"]:
