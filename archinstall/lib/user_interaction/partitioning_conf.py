@@ -125,6 +125,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 	assign_mount_point = str(_('Assign mount-point for a partition'))
 	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
 	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
+	mark_compressed = str(_('Mark/Unmark a partition as compressed (btrfs only)'))
 	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
 	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
 	set_btrfs_subvolumes = str(_('Set desired subvolumes on a btrfs partition'))
@@ -140,6 +141,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				mark_formatted,
 				mark_encrypted,
 				mark_bootable,
+				mark_compressed,
 				set_filesystem_partition,
 				set_btrfs_subvolumes,
 			]
@@ -213,6 +215,19 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
+		elif task == mark_compressed:
+			title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
+					if not "filesystem" in block_device_struct["partitions"][partition]:
+						block_device_struct["partitions"][partition]["filesystem"] = {}
+					if not "mount_options" in block_device_struct["partitions"][partition]["filesystem"]:
+						block_device_struct["partitions"][partition]["filesystem"]["mount_options"] = []
+
+					if "compress=zstd" not in block_device_struct["partitions"][partition]["filesystem"]["mount_options"]:
+						block_device_struct["partitions"][partition]["filesystem"]["mount_options"].append("compress=zstd")
+						
 		elif task is None:
 			return block_device_struct
 		else:

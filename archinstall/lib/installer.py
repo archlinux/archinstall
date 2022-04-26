@@ -235,7 +235,7 @@ class Installer:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
 		# we manage the encrypted partititons
-		for partition in [entry for entry in list_part if entry.get('encrypted',False)]:
+		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
 				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
@@ -252,7 +252,11 @@ class Installer:
 
 		# we manage the btrfs partitions
 		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
-			self.mount(partition['device_instance'],"/")
+			if partition.get('filesystem',{}).get('mount_options',[]):
+				mount_options = ','.join(partition['filesystem']['mount_options'])
+				self.mount(partition['device_instance'], "/", options=mount_options)
+			else:
+				self.mount(partition['device_instance'], "/")
 			try:
 				new_mountpoints = manage_btrfs_subvolumes(self,partition)
 			except Exception as e:
@@ -270,7 +274,7 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
 			else:
 				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
@@ -287,11 +291,11 @@ class Installer:
 			log(f"creating key-file for {ppath}",level=logging.INFO)
 			self._create_keyfile(handle[0],handle[1],handle[2])
 
-	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True) -> None:
+	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
 			os.makedirs(f'{self.target}{mountpoint}')
 
-		partition.mount(f'{self.target}{mountpoint}')
+		partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
