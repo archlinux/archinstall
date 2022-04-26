@@ -142,6 +142,7 @@ class Partition:
 	def size(self) -> Optional[float]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
+			time.sleep(storage['DISK_TIMEOUTS'] * (i-1))
 
 			try:
 				lsblk = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}").decode())
@@ -153,8 +154,6 @@ class Partition:
 					return None
 				else:
 					raise error
-
-			time.sleep(storage['DISK_TIMEOUTS'])
 
 	@property
 	def boot(self) -> bool:
@@ -194,12 +193,11 @@ class Partition:
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
+			time.sleep(storage['DISK_TIMEOUTS'] * (i-1))
 
 			partuuid = self._safe_uuid
 			if partuuid:
 				return partuuid
-
-			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
 
@@ -210,7 +208,14 @@ class Partition:
 		This function should only be used where uuid is not crucial.
 		For instance when you want to get a __repr__ of the class.
 		"""
-		self.partprobe()
+		try:
+			self.partprobe()
+		except SysCallError as partprobe_error:
+			if self.block_device.info.get('TYPE') == 'iso9660':
+				return None
+
+			raise DiskError(f"Could not get PARTUUID of partition {self} due to partprobe error: {partprobe_error}")
+
 		try:
 			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
 		except SysCallError as error:
@@ -263,7 +268,6 @@ class Partition:
 
 	def partprobe(self) -> bool:
 		if self.block_device and SysCommand(f'partprobe {self.block_device.device}').exit_code == 0:
-			time.sleep(1)
 			return True
 		return False
 
