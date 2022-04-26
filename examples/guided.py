@@ -151,6 +151,25 @@ def perform_installation(mountpoint):
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
+		# If we've activated NTP, make sure at least one time-sync finishes
+		# before we continue with the installation
+		if archinstall.arguments.get('ntp', False):
+			# TODO: First block might be redundant, but this service is not activated unless
+			# `timedatectl set-ntp true` is executed.
+			logged = False
+			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
+				if not logged:
+					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
+					logged = True
+				time.sleep(1)
+
+			logged = False
+			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
+				if not logged:
+					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
+					logged = True
+				time.sleep(1)
+
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
