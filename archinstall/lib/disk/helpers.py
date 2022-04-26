@@ -418,16 +418,20 @@ def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_moun
 			if partition.get('mountpoint', None) == relative_mountpoint:
 				return partition
 
-def partprobe() -> bool:
-	if SysCommand(f'bash -c "partprobe"').exit_code == 0:
-		time.sleep(5) # TODO: Remove, we should be relying on blkid instead of lsblk
-		return True
+def partprobe(path :str = '') -> bool:
+	try:
+		if SysCommand(f'bash -c "partprobe {path}"').exit_code == 0:
+			return True
+	except SysCallError:
+		pass
 	return False
 
 def convert_device_to_uuid(path :str) -> str:
 	device_name, bind_name = split_bind_name(path)
+
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
-		partprobe()
+		partprobe(device_name)
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
 
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
@@ -436,8 +440,6 @@ def convert_device_to_uuid(path :str) -> str:
 		for device in output['blockdevices']:
 			if (dev_uuid := device.get('uuid', None)):
 				return dev_uuid
-
-		time.sleep(storage['DISK_TIMEOUTS'])
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
 
