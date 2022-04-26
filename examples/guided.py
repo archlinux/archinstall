@@ -36,8 +36,6 @@ def ask_user_questions():
 	# the default value specified in the menu options; in
 	# case it will be changed by the user we'll also update
 	# the system immediately
-	archinstall.SysCommand('timedatectl set-ntp true')
-
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
 
 	global_menu.enable('archinstall-language')
