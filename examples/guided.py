@@ -151,10 +151,13 @@ def perform_installation(mountpoint):
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
-		# If we've activated NTP, make sure at least one time-sync finishes
-		# before we continue with the installation
+		# If we've activated NTP, make sure it's active in the ISO too and
+		# make sure at least one time-sync finishes before we continue with the installation
 		if archinstall.arguments.get('ntp', False):
-			# TODO: First block might be redundant, but this service is not activated unless
+			# Activate NTP in the ISO
+			archinstall.SysCommand('timedatectl set-ntp true')
+
+			# TODO: This block might be redundant, but this service is not activated unless
 			# `timedatectl set-ntp true` is executed.
 			logged = False
 			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
