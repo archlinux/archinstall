@@ -142,7 +142,7 @@ class Partition:
 	def size(self) -> Optional[float]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
-			time.sleep(storage['DISK_TIMEOUTS'] * (i-1))
+			time.sleep(storage['DISK_TIMEOUTS'] * (i - 1))
 
 			try:
 				lsblk = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}").decode())
@@ -193,7 +193,7 @@ class Partition:
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
-			time.sleep(storage['DISK_TIMEOUTS'] * (i-1))
+			time.sleep(storage['DISK_TIMEOUTS'] * (i - 1))
 
 			partuuid = self._safe_uuid
 			if partuuid:

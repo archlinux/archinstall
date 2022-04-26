@@ -431,7 +431,7 @@ def convert_device_to_uuid(path :str) -> str:
 
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
 		partprobe(device_name)
-		time.sleep(storage['DISK_TIMEOUTS'] * (i-1)) # TODO: Remove, we should be relying on blkid instead of lsblk
+		time.sleep(storage['DISK_TIMEOUTS'] * (i - 1)) # TODO: Remove, we should be relying on blkid instead of lsblk
 
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
