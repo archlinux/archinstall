@@ -23,11 +23,16 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	MIN_SIZE_TO_ALLOW_HOME_PART = 40 # GiB
 	using_subvolumes = False
 	using_home_partition = False
+	compression = False
 
 	if default_filesystem == 'btrfs':
 		prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
 		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 		using_subvolumes = choice == 'yes'
+
+		prompt = 'Would you like to use BTRFS compression?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		compression = choice == 'yes'
 
 	layout = {
 		block_device.path : {
@@ -73,7 +78,8 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		"wipe" : True,
 		"mountpoint" : "/" if not using_subvolumes else None,
 		"filesystem" : {
-			"format" : default_filesystem
+			"format" : default_filesystem,
+			"mount_options" : ["compress=zstd"] if compression else []
 		}
 	})
 
@@ -124,7 +130,8 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 			"wipe" : True,
 			"mountpoint" : "/home",
 			"filesystem" : {
-				"format" : default_filesystem
+				"format" : default_filesystem,
+				"mount_options" : ["compress=zstd"] if compression else []
 			}
 		})
 
@@ -150,6 +157,17 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 
 	home_device = select_largest_device(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
 	root_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=ARCH_LINUX_INSTALLED_SIZE, filter_out=[home_device])
+
+	compression = False
+
+	if default_filesystem == 'btrfs':
+		# prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
+		# choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		# using_subvolumes = choice == 'yes'
+
+		prompt = 'Would you like to use BTRFS compression?'
+		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
+		compression = choice == 'yes'
 
 	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 
@@ -193,7 +211,8 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"wipe" : True,
 		"mountpoint" : "/",
 		"filesystem" : {
-			"format" : default_filesystem
+			"format" : default_filesystem,
+			"mount_options" : ["compress=zstd"] if compression else []
 		}
 	})
 	if has_uefi():
@@ -208,7 +227,8 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		"wipe" : True,
 		"mountpoint" : "/home",
 		"filesystem" : {
-			"format" : default_filesystem
+			"format" : default_filesystem,
+			"mount_options" : ["compress=zstd"] if compression else []
 		}
 	})
 
