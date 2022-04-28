@@ -694,7 +694,7 @@ msgstr "Назначить точку монтирования для разде
 #: lib/user_interaction/partitioning_conf.py:125
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr ""
-"Пометить/ снять отметку с раздела, который будет отформатирован (стирание "
+"Пометить/снять отметку с раздела, который будет отформатирован (стирание "
 "данных)"
 
 #: lib/user_interaction.py:596 lib/user_interaction.py:599
@@ -702,7 +702,7 @@ msgstr ""
 #: lib/user_interaction/partitioning_conf.py:125
 #: lib/user_interaction/partitioning_conf.py:126
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Пометить/снять отметку раздела как зашифрованный"
+msgstr "Пометить/снять отметку с раздела как зашифрованный"
 
 #: lib/user_interaction.py:597 lib/user_interaction.py:600
 #: lib/user_interaction.py:603 lib/user_interaction.py:602
@@ -710,7 +710,7 @@ msgstr "Пометить/снять отметку раздела как заш�
 #: lib/user_interaction/partitioning_conf.py:127
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr ""
-"Пометить/снять отметку раздела как загрузочный (автоматически для /boot)"
+"Пометить/снять отметку с раздела как загрузочный (автоматически для /boot)"
 
 #: lib/user_interaction.py:598 lib/user_interaction.py:601
 #: lib/user_interaction.py:604 lib/user_interaction.py:603
