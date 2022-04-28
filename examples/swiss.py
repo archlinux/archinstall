@@ -17,9 +17,13 @@ import logging
 import os
 import time
 import pathlib
+from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput
+from archinstall import ConfigurationOutput, NetworkConfigurationHandler
+
+if TYPE_CHECKING:
+	_: Any
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -397,7 +401,8 @@ def os_setup(installation):
 		network_config = archinstall.arguments.get('nic', None)
 
 		if network_config:
-			network_config.config_installer(installation)
+			handler = NetworkConfigurationHandler(network_config)
+			handler.config_installer(installation)
 
 		if archinstall.arguments.get('audio', None) is not None:
 			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)

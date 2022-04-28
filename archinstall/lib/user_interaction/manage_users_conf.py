@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING, List
 
 from ..menu import Menu
 from ..menu.list_manager import ListManager
@@ -34,25 +34,22 @@ class UserList(ListManager):
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
 		]
-		self.default_action = self.actions[0]
-		super().__init__(prompt, lusers, self.actions, self.default_action)
+		super().__init__(prompt, lusers, self.actions, self.actions[0])
 
-	def reformat(self):
-
-		def format_element(elem):
+	def reformat(self, data: Any) -> List[Any]:
+		def format_element(elem :str):
 			# secret gives away the length of the password
-			if self.data[elem].get('!password'):
+			if data[elem].get('!password'):
 				pwd = '*' * 16
-				# pwd = archinstall.secret(self.data[elem]['!password'])
 			else:
 				pwd = ''
-			if self.data[elem].get('sudoer'):
-				super = 'Superuser'
+			if data[elem].get('sudoer'):
+				super_user = 'Superuser'
 			else:
-				super = ' '
-			return f"{elem:16}: password {pwd:16} {super}"
+				super_user = ' '
+			return f"{elem:16}: password {pwd:16} {super_user}"
 
-		return list(map(lambda x: format_element(x), self.data))
+		return list(map(lambda x: format_element(x), data))
 
 	def action_list(self):
 		if self.target:
@@ -71,7 +68,7 @@ class UserList(ListManager):
 		else:
 			return self.actions
 
-	def exec_action(self):
+	def exec_action(self, data: Any):
 		if self.target:
 			active_user = list(self.target.keys())[0]
 		else:
@@ -80,14 +77,14 @@ class UserList(ListManager):
 		if self.action == self.actions[0]:  # add
 			new_user = self.add_user()
 			# no unicity check, if exists will be replaced
-			self.data.update(new_user)
+			data.update(new_user)
 		elif self.action == self.actions[1]:  # change password
-			self.data[active_user]['!password'] = get_password(
+			data[active_user]['!password'] = get_password(
 				prompt=str(_('Password for user "{}": ').format(active_user)))
 		elif self.action == self.actions[2]:  # promote/demote
-			self.data[active_user]['sudoer'] = not self.data[active_user]['sudoer']
+			data[active_user]['sudoer'] = not data[active_user]['sudoer']
 		elif self.action == self.actions[3]:  # delete
-			del self.data[active_user]
+			del data[active_user]
 
 	def _check_for_correct_username(self, username: str) -> bool:
 		if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:

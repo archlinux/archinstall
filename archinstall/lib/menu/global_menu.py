@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
+from ..models import NetworkConfiguration
 from ..storage import storage
 from ..output import log
 from ..profiles import is_desktop_profile
@@ -42,8 +43,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Select Archinstall language'),
 				lambda x: self._select_archinstall_language('English'),
-				default='English',
-				enabled=True)
+				default='English')
 		self._menu_options['keyboard-layout'] = \
 			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
 		self._menu_options['mirror-region'] = \
@@ -118,7 +118,10 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['audio'] = \
 			Selector(
 				_('Select audio'),
-				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset))
+				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset),
+				display_func=lambda x: x if x else 'None',
+				default=None
+			)
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Select kernels'),
@@ -139,7 +142,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Configure network'),
 				ask_to_configure_network,
-				display_func=lambda x: x if x else _('Not configured, unavailable unless setup manually'),
+				display_func=lambda x: self._prev_network_configuration(x),
 				default={})
 		self._menu_options['timezone'] = \
 			Selector(
@@ -152,24 +155,20 @@ class GlobalMenu(GeneralMenu):
 				lambda preset: self._select_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
-			Selector(
-				'',
-				enabled=True)
+			Selector('')
 		self._menu_options['save_config'] = \
 			Selector(
 				_('Save configuration'),
 				lambda preset: save_config(self._data_store),
-				enabled=True,
 				no_store=True)
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
 				exec_func=lambda n,v: True if len(self._missing_configs()) == 0 else False,
 				preview_func=self._prev_install_missing_config,
-				enabled=True,
 				no_store=True)
 
-		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1), enabled=True)
+		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
 	def _update_install_text(self, name :str = None, result :Any = None):
 		text = self._install_text()
@@ -192,6 +191,16 @@ class GlobalMenu(GeneralMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return 'Install'
 
+	def _prev_network_configuration(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
+		if not cur_value:
+			return _('Not configured, unavailable unless setup manually')
+		else:
+			if isinstance(cur_value, list):
+				ifaces = [x.iface for x in cur_value]
+				return f'Configured ifaces: {ifaces}'
+			else:
+				return str(cur_value)
+
 	def _prev_install_missing_config(self) -> Optional[str]:
 		if missing := self._missing_configs():
 			text = str(_('Missing configurations:\n'))
@@ -209,8 +218,6 @@ class GlobalMenu(GeneralMenu):
 			missing += ['Bootloader']
 		if not check('hostname'):
 			missing += ['Hostname']
-		if not check('audio'):
-			missing += ['Audio']
 		if not check('!root-password') and not check('!superusers'):
 			missing += [str(_('Either root-password or at least 1 superuser must be specified'))]
 		if not check('harddrives'):

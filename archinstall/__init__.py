@@ -12,6 +12,7 @@ from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
+from .lib.models.network_configuration import NetworkConfigurationHandler
 from .lib.networking import *
 from .lib.output import *
 from .lib.models.dataclasses import (
@@ -46,7 +47,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 from .lib.configuration import *
 parser = ArgumentParser()
 
-__version__ = "2.4.0.RC2"
+__version__ = "2.4.1"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -207,7 +208,9 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 	if arguments.get('nic', None) is not None:
-		arguments['nic'] = NetworkConfiguration.parse_arguments(arguments.get('nic'))
+		handler = NetworkConfigurationHandler()
+		handler.parse_arguments(arguments.get('nic'))
+		arguments['nic'] = handler.configuration
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
@@ -227,6 +230,8 @@ def post_process_arguments(arguments):
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
 		else:
+			if arguments.get('harddrives') is None:
+				arguments['harddrives'] = [disk for disk in layout_storage]
 			# backward compatibility. Change partition.format for partition.wipe
 			for disk in layout_storage:
 				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):

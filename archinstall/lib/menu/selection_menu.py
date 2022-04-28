@@ -1,7 +1,7 @@
 from __future__ import annotations
-import sys
-import logging
 
+import logging
+import sys
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu
@@ -141,7 +141,7 @@ class Selector:
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
-		if self._current_selection is None:
+		if not self._current_selection:
 			return False
 		return True
 
@@ -181,6 +181,7 @@ class GeneralMenu:
 		;type preview_size: float (range 0..1)
 
 		"""
+		self._enabled_order :List[str] = []
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
@@ -239,10 +240,15 @@ class GeneralMenu:
 		if arg is not None:
 			self._menu_options[selector_name].set_current_selection(arg)
 
+	def _update_enabled_order(self, selector_name: str):
+		self._enabled_order.append(selector_name)
+
 	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
 		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
+			self._update_enabled_order(selector_name)
+
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
 			self.synch(selector_name,omit_if_set)
@@ -372,7 +378,15 @@ class GeneralMenu:
 			if self._verify_selection_enabled(name):
 				enabled_menus[name] = selection
 
-		return enabled_menus
+		# sort the enabled menu by the order we enabled them in
+		# we'll add the entries that have been enabled via the selector constructor at the top
+		enabled_keys = [i for i in enabled_menus.keys() if i not in self._enabled_order]
+		# and then we add the ones explicitly enabled by the enable function
+		enabled_keys += [i for i in self._enabled_order if i in enabled_menus.keys()]
+
+		ordered_menus = {k: enabled_menus[k] for k in enabled_keys}
+
+		return ordered_menus
 
 	def option(self,name :str) -> Selector:
 		# TODO check inexistent name

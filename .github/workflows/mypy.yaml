@@ -13,5 +13,6 @@ jobs:
             - run: python --version
             - run: mypy --version
             # one day this will be enabled
+              # run: mypy --strict --module archinstall || exit 0
             - name: run mypy
-              run: mypy --strict --module archinstall || exit 0
+              run: mypy --follow-imports=skip archinstall/lib/menu/selection_menu.py archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py

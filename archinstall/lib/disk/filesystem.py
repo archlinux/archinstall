@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 from .partition import Partition
 from .validators import valid_fs_type
-from ..exceptions import DiskError
+from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage
@@ -49,7 +49,7 @@ class Filesystem:
 	def partuuid_to_index(self, uuid :str) -> Optional[int]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			self.partprobe()
-			time.sleep(5)
+			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			# We'll use unreliable lbslk to grab children under the /dev/<device>
 			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
@@ -60,8 +60,6 @@ class Filesystem:
 					partition_uuid = SysCommand(f"blkid -s PARTUUID -o value /dev/{partition.get('name')}").decode().strip()
 					if partition_uuid.lower() == uuid.lower():
 						return index
-
-			time.sleep(storage['DISK_TIMEOUTS'])
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
@@ -162,11 +160,11 @@ class Filesystem:
 				return partition
 
 	def partprobe(self) -> bool:
-		result = SysCommand(f'partprobe {self.blockdevice.device}')
-
-		if result.exit_code != 0:
-			log(f"Could not execute partprobe: {result!r}", level=logging.ERROR, fg="red")
-			raise DiskError(f"Could not run partprobe: {result!r}")
+		try:
+			SysCommand(f'partprobe {self.blockdevice.device}')
+		except SysCallError as error:
+			log(f"Could not execute partprobe: {error!r}", level=logging.ERROR, fg="red")
+			raise DiskError(f"Could not run partprobe on {self.blockdevice.device}: {error!r}")
 
 		return True
 

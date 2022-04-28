@@ -30,6 +30,8 @@ jobs:
       - run: pwd
       - run: find .
       - run: cat /etc/os-release
+      - run: pacman-key --init
+      - run: pacman --noconfirm -Sy archlinux-keyring
       - run: mkdir -p /tmp/archlive/airootfs/root/archinstall-git; cp -r . /tmp/archlive/airootfs/root/archinstall-git
       - run: echo "pip uninstall archinstall -y; cd archinstall-git; rm -rf dist; python -m build -n; pip install dist/archinstall*.whl" > /tmp/archlive/airootfs/root/.zprofile
       - run: echo "echo \"This is an unofficial ISO for development and testing of archinstall. No support will be provided.\"" >> /tmp/archlive/airootfs/root/.zprofile

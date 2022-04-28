@@ -235,7 +235,7 @@ class Installer:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
 		# we manage the encrypted partititons
-		for partition in [entry for entry in list_part if entry.get('encrypted',False)]:
+		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
 				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
@@ -252,7 +252,11 @@ class Installer:
 
 		# we manage the btrfs partitions
 		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
-			self.mount(partition['device_instance'],"/")
+			if partition.get('filesystem',{}).get('mount_options',[]):
+				mount_options = ','.join(partition['filesystem']['mount_options'])
+				self.mount(partition['device_instance'], "/", options=mount_options)
+			else:
+				self.mount(partition['device_instance'], "/")
 			try:
 				new_mountpoints = manage_btrfs_subvolumes(self,partition)
 			except Exception as e:
@@ -270,7 +274,7 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}",options=mount_options)
+				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
 			else:
 				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
@@ -287,11 +291,11 @@ class Installer:
 			log(f"creating key-file for {ppath}",level=logging.INFO)
 			self._create_keyfile(handle[0],handle[1],handle[2])
 
-	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True) -> None:
+	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
 			os.makedirs(f'{self.target}{mountpoint}')
 
-		partition.mount(f'{self.target}{mountpoint}')
+		partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -740,14 +744,14 @@ class Installer:
 		else:
 			loader_data = [
 				f"default {self.init_time}",
-				"timeout 5"
+				"timeout 15"
 			]
 
 		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
 			for line in loader_data:
 				if line[:8] == 'default ':
 					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-				elif line[:8] == '#timeout' and 'timeout 5' not in loader_data:
+				elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
 					# We add in the default timeout to support dual-boot
 					loader.write(f"{line[1:]}\n")
 				else:
@@ -828,12 +832,15 @@ class Installer:
 		if has_uefi():
 			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable')
-			except SysCallError as error:
-				raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+			except SysCallError:
+				try:
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+				except SysCallError as error:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
 		else:
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peak_output=True)
 			except SysCallError as error:
 				raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
 

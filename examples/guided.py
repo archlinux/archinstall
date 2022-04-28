@@ -4,6 +4,7 @@ import time
 
 import archinstall
 from archinstall import ConfigurationOutput
+from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -35,9 +36,10 @@ def ask_user_questions():
 	# the default value specified in the menu options; in
 	# case it will be changed by the user we'll also update
 	# the system immediately
-	archinstall.SysCommand('timedatectl set-ntp true')
-
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+
+	global_menu.enable('archinstall-language')
+
 	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation
@@ -89,6 +91,12 @@ def ask_user_questions():
 	global_menu.enable('ntp')
 
 	global_menu.enable('additional-repositories')
+
+	global_menu.enable('__separator__')
+
+	global_menu.enable('save_config')
+	global_menu.enable('install')
+	global_menu.enable('abort')
 
 	global_menu.run()
 
@@ -143,6 +151,28 @@ def perform_installation(mountpoint):
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
 
+		# If we've activated NTP, make sure it's active in the ISO too and
+		# make sure at least one time-sync finishes before we continue with the installation
+		if archinstall.arguments.get('ntp', False):
+			# Activate NTP in the ISO
+			archinstall.SysCommand('timedatectl set-ntp true')
+
+			# TODO: This block might be redundant, but this service is not activated unless
+			# `timedatectl set-ntp true` is executed.
+			logged = False
+			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
+				if not logged:
+					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
+					logged = True
+				time.sleep(1)
+
+			logged = False
+			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
+				if not logged:
+					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
+					logged = True
+				time.sleep(1)
+
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
@@ -167,7 +197,8 @@ def perform_installation(mountpoint):
 			network_config = archinstall.arguments.get('nic', None)
 
 			if network_config:
-				network_config.config_installer(installation)
+				handler = NetworkConfigurationHandler(network_config)
+				handler.config_installer(installation)
 
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)

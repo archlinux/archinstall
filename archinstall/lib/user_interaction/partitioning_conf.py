@@ -6,6 +6,7 @@ from ..menu import Menu
 from ..output import log
 
 from ..disk.validators import fs_types
+from ..disk.helpers import has_mountpoint
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -112,7 +113,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:
+def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]: # noqa: max-complexity: 50
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
@@ -124,6 +125,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 	assign_mount_point = str(_('Assign mount-point for a partition'))
 	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
 	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
+	mark_compressed = str(_('Mark/Unmark a partition as compressed (btrfs only)'))
 	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
 	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
 	set_btrfs_subvolumes = str(_('Set desired subvolumes on a btrfs partition'))
@@ -139,6 +141,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				mark_formatted,
 				mark_encrypted,
 				mark_bootable,
+				mark_compressed,
 				set_filesystem_partition,
 				set_btrfs_subvolumes,
 			]
@@ -212,6 +215,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
+						
 		elif task is None:
 			return block_device_struct
 		else:
@@ -225,6 +229,18 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					block_device_struct['partitions'] = [
 						p for idx, p in enumerate(block_device_struct['partitions']) if idx not in to_delete
 					]
+			elif task == mark_compressed:
+				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
+				partition = select_partition(title, block_device_struct["partitions"])
+
+				if partition is not None:
+					if "filesystem" not in block_device_struct["partitions"][partition]:
+						block_device_struct["partitions"][partition]["filesystem"] = {}
+					if "mount_options" not in block_device_struct["partitions"][partition]["filesystem"]:
+						block_device_struct["partitions"][partition]["filesystem"]["mount_options"] = []
+
+					if "compress=zstd" not in block_device_struct["partitions"][partition]["filesystem"]["mount_options"]:
+						block_device_struct["partitions"][partition]["filesystem"]["mount_options"].append("compress=zstd")
 			elif task == delete_all_partitions:
 				block_device_struct["partitions"] = []
 			elif task == assign_mount_point:
@@ -298,7 +314,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			elif task == set_btrfs_subvolumes:
 				from .subvolume_config import SubvolumeList
-				
+
 				# TODO get preexisting partitions
 				title = _('{}\n\nSelect which partition to set subvolumes on').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"],filter=lambda x:True if x.get('filesystem',{}).get('format') == 'btrfs' else False)
@@ -325,7 +341,7 @@ def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
 				partition['encrypted'] = True
 				partition['!password'] = password
 
-				if partition['mountpoint'] != '/':
+				if not has_mountpoint(partition,'/'):
 					# Tell the upcoming steps to generate a key-file for non root mounts.
 					partition['generate-encryption-key-file'] = True
 

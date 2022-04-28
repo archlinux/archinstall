@@ -221,10 +221,8 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
-
-		# TODO: No idea why F841 is raised here:
-		except SysCallError as error: # noqa: F841
-			if error.exit_code in (512, 2):
+		except SysCallError as ex:
+			if ex.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -234,7 +232,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				except SysCallError:
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
-				raise error
+				raise ex
 
 		information = enrich_blockdevice_information(information)
 
@@ -420,16 +418,20 @@ def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_moun
 			if partition.get('mountpoint', None) == relative_mountpoint:
 				return partition
 
-def partprobe() -> bool:
-	if SysCommand(f'bash -c "partprobe"').exit_code == 0:
-		time.sleep(5) # TODO: Remove, we should be relying on blkid instead of lsblk
-		return True
+def partprobe(path :str = '') -> bool:
+	try:
+		if SysCommand(f'bash -c "partprobe {path}"').exit_code == 0:
+			return True
+	except SysCallError:
+		pass
 	return False
 
 def convert_device_to_uuid(path :str) -> str:
 	device_name, bind_name = split_bind_name(path)
+
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
-		partprobe()
+		partprobe(device_name)
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
 
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
@@ -439,6 +441,36 @@ def convert_device_to_uuid(path :str) -> str:
 			if (dev_uuid := device.get('uuid', None)):
 				return dev_uuid
 
-		time.sleep(storage['DISK_TIMEOUTS'])
-
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
+
+def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, strict: bool = True) -> bool:
+	""" Determine if a certain partition is mounted (or has a mountpoint) as specific target (path)
+	Coded for clarity rather than performance
+
+	Input parms:
+	:parm partition the partition we check
+	:type Either a Partition object or a dict with the contents of a partition definiton in the disk_layouts schema
+
+	:parm target (a string representing a mount path we want to check for.
+	:type str
+
+	:parm strict if the check will be strict, target is exactly the mountpoint, or no, where the target is a leaf (f.i. to check if it is in /mnt/archinstall/). Not available for root check ('/') for obvious reasons
+
+	"""
+	# we create the mountpoint list
+	if isinstance(partition,dict):
+		subvols = partition.get('btrfs',{}).get('subvolumes',{})
+		mountpoints = [partition.get('mountpoint'),] + [subvols[subvol] if isinstance(subvols[subvol],str) or not subvols[subvol] else subvols[subvol].get('mountpoint') for subvol in subvols]
+	else:
+		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
+	# we check
+	if strict or target == '/':
+		if target in mountpoints:
+			return True
+		else:
+			return False
+	else:
+		for mp in mountpoints:
+			if mp and mp.endswith(target):
+				return True
+		return False
