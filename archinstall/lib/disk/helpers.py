@@ -241,7 +241,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if partitions:
-					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
+					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
 			elif path_info.get('TYPE') == 'squashfs':

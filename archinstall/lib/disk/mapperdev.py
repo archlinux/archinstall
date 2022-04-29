@@ -46,7 +46,7 @@ class MapperDev:
 					information = uevent(uevent_data)
 					block_device = BlockDevice(get_parent_of_partition('/dev/' / pathlib.Path(information['DEVNAME'])))
 
-					return Partition(information['DEVNAME'], block_device)
+					return Partition(information['DEVNAME'], block_device=block_device)
 
 		raise ValueError(f"Could not convert {self.mappername} to a real dm-crypt device")
 
