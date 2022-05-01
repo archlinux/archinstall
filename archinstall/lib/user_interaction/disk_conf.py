@@ -41,13 +41,13 @@ def select_disk_layout(block_devices: list, advanced_options=False) -> Dict[str,
 	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
 
-	print(modes)
-	mode = Menu(_('Select what you wish to do with the selected block devices'), modes, skip=False).run()
+	mode = Menu(_('Select what you wish to do with the selected block devices'), modes).run()
 
-	if mode == wipe_mode:
-		return get_default_partition_layout(block_devices, advanced_options)
-	else:
-		return select_individual_blockdevice_usage(block_devices)
+	if mode:
+		if mode == wipe_mode:
+			return get_default_partition_layout(block_devices, advanced_options)
+		else:
+			return select_individual_blockdevice_usage(block_devices)
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:

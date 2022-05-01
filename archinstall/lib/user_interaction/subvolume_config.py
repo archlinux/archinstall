@@ -4,6 +4,7 @@ from ..menu.list_manager import ListManager
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..menu.text_input import TextInput
 from ..menu import Menu
+
 """
 UI classes
 """
@@ -14,7 +15,7 @@ class SubvolumeList(ListManager):
 		self.ObjectDefaultAction = str(_('Add'))
 		super().__init__(prompt,list,None,self.ObjectNullAction,self.ObjectDefaultAction)
 
-	def reformat(self, data: Any) -> List[Any]:
+	def reformat(self, data: Dict) -> Dict:
 		def presentation(key :str, value :Dict):
 			text = _(" Subvolume :{:16}").format(key)
 			if isinstance(value,str):
@@ -28,14 +29,15 @@ class SubvolumeList(ListManager):
 					text += _(" with option {}").format(', '.join(value['options']))
 			return text
 
-		return sorted(list(map(lambda x:presentation(x,data[x]),data)))
+		formatted = {presentation(k, v): k for k, v in data.items()}
+		return {k: v for k, v in sorted(formatted.items(), key=lambda e: e[0])}
 
 	def action_list(self):
 		return super().action_list()
 
 	def exec_action(self, data: Any):
 		if self.target:
-			origkey,origval = list(self.target.items())[0]
+			origkey, origval = list(self.target.items())[0]
 		else:
 			origkey = None
 

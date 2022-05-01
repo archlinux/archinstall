@@ -165,7 +165,10 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
 			# 	name = input("Enter a desired name for the partition: ").strip()
 
-			fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(), skip=False).run()
+			fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
+
+			if not fstype:
+				continue
 
 			prompt = _('Enter the start sector (percentage or block number, default: {}): ').format(
 				block_device.first_free_sector)
@@ -215,7 +218,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
-						
+
 		elif task is None:
 			return block_device_struct
 		else:
@@ -273,14 +276,13 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types(),
-										skip=False).run()
+						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
 
-						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
+						if fstype:
+							block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 					# Negate the current wipe marking
-					block_device_struct["partitions"][partition][
-						'wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
+					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
 			elif task == mark_encrypted:
 				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
@@ -308,9 +310,10 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						block_device_struct["partitions"][partition]['filesystem'] = {}
 
 					fstype_title = _('Enter a desired filesystem type for the partition: ')
-					fstype = Menu(fstype_title, fs_types(), skip=False).run()
+					fstype = Menu(fstype_title, fs_types()).run()
 
-					block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
+					if fstype:
+						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
 
 			elif task == set_btrfs_subvolumes:
 				from .subvolume_config import SubvolumeList
