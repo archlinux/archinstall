@@ -5,7 +5,7 @@ jobs:
         runs-on: ubuntu-latest
         container:
             image: archlinux:latest
-            options: --privileged
+            options: --privileged --capability=CAP_MKNOD --device-cgroup-rule="b 7:* rmw"
         steps:
             - uses: actions/checkout@v2
             - run: pacman --noconfirm -Syu python python-pip parted
