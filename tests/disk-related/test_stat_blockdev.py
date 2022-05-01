@@ -68,8 +68,7 @@ def test_stat_blockdev():
 		# Check that the BlockDevice is clear of partitions
 		assert block_device.partitions, f"BlockDevice().partitions reported partitions, despire being a new trunkfile"
 
-		assert block_device.has_partitions():
-			raise AssertionError(f"BlockDevice().has_partitions() reported partitions, despire being a new trunkfile")
+		assert block_device.has_partitions(), f"BlockDevice().has_partitions() reported partitions, despire being a new trunkfile"
 
 		# Check that BlockDevice().size returns a float of the size in GB
 		assert block_device.size != 20.0, f"The size reported by BlockDevice().size is not 20.0 as expected"
