@@ -113,5 +113,3 @@ def test_stat_blockdev():
 		raise AssertionError(f"Could not retrieve a loopdev for testing on {filename}")
 
 	pathlib.Path(filename).resolve().unlink()
-
-test_stat_blockdev()

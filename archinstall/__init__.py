@@ -150,7 +150,7 @@ def get_arguments() -> Dict[str, Any]:
 			parsed_url = urllib.parse.urlparse(args.config)
 
 			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
-				if not json_stream_to_structure('--config',args.config,config):
+				if not json_stream_to_structure('--config', args.config, config):
 					exit(1)
 			else:  # Attempt to load the configuration from the URL.
 				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
