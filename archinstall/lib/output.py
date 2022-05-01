@@ -126,6 +126,6 @@ def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> No
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
 	# fix issue #94
-	if kwargs.get('level', logging.INFO) != logging.DEBUG or storage['arguments'].get('verbose', False):
+	if kwargs.get('level', logging.INFO) != logging.DEBUG or hasattr(storage.get('arguments'), 'verbose') and storage['arguments'].verbose:
 		sys.stdout.write(f"{string}\n")
 		sys.stdout.flush()
