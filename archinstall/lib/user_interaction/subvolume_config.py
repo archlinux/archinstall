@@ -1,4 +1,4 @@
-from typing import List, Any, Dict
+from typing import Any, Dict
 
 from ..menu.list_manager import ListManager
 from ..menu.selection_menu import Selector, GeneralMenu
