@@ -10,6 +10,8 @@ jobs:
             - uses: actions/checkout@v2
             - run: pacman --noconfirm -Syu python python-pip
             - run: python -m pip install --upgrade pip
+            - run: pwd
+            - run: ls -la
             - run: pip install .
             - run: pip install pytest
             - name: Test with pytest
