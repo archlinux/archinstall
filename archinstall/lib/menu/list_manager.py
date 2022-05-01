@@ -91,8 +91,6 @@ from os import system
 from copy import copy
 from typing import Union, Any, TYPE_CHECKING, Dict
 
-from ..output import log
-
 if TYPE_CHECKING:
 	_: Any
 
@@ -168,7 +166,6 @@ class ListManager:
 
 			options += self.bottom_list
 
-			log(options)
 			system('clear')
 			target = Menu(
 				self._prompt,
@@ -194,7 +191,7 @@ class ListManager:
 				key = self._data[data_key]
 				self.target = {data_key: key}
 			else:
-				self.target = self._data[data_formatted.index(target)]
+				self.target = self._data[data_formatted[target]]
 
 			# Possible enhacement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target)
