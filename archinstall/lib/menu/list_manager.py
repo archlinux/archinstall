@@ -89,7 +89,7 @@ from .text_input import TextInput
 from .menu import Menu
 from os import system
 from copy import copy
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING, Dict
 
 if TYPE_CHECKING:
 	_: Any
@@ -149,18 +149,26 @@ class ListManager:
 		# default values for the null case
 		self.target = None
 		self.action = self._null_action
+
 		if len(self._data) == 0 and self._null_action:
 			self.exec_action(self._data)
 
 	def run(self):
 		while True:
-			self._data_formatted = self.reformat(self._data)
-			options = self._data_formatted + [self.separator]
+			# this will return a dictionary with the key as the menu entry to be displayed
+			# and the value is the original value from the self._data container
+			data_formatted = self.reformat(self._data)
+			options = list(data_formatted.keys())
+			options.append(self.separator)
+
 			if self._default_action:
 				options += self._default_action
+
 			options += self.bottom_list
+
 			system('clear')
-			target = Menu(self._prompt,
+			target = Menu(
+				self._prompt,
 				options,
 				sort=False,
 				clear_screen=False,
@@ -171,19 +179,20 @@ class ListManager:
 			if not target or target in self.bottom_list:
 				self.action = target
 				break
-			if target and target == self.separator:
-				continue
+
 			if target and target in self._default_action:
 				self.action = target
-				target = None
 				self.target = None
 				self.exec_action(self._data)
 				continue
+
 			if isinstance(self._data,dict):
-				key = list(self._data.keys())[self._data_formatted.index(target)]
-				self.target = {key: self._data[key]}
+				data_key = data_formatted[target]
+				key = self._data[data_key]
+				self.target = {data_key: key}
 			else:
-				self.target = self._data[self._data_formatted.index(target)]
+				self.target = self._data[data_formatted[target]]
+
 			# Possible enhacement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target)
 
@@ -211,15 +220,15 @@ class ListManager:
 	The following methods are expected to be overwritten by the user if the needs of the list are beyond the simple case
 	"""
 
-	def reformat(self, data: Any) -> List[Any]:
+	def reformat(self, data: Any) -> Dict[str, Any]:
 		"""
 		method to get the data in a format suitable to be shown
 		It is executed once for run loop and processes the whole self._data structure
 		"""
 		if isinstance(data,dict):
-			return list(map(lambda x:f"{x} : {data[x]}",data))
+			return {f'{k}: {v}': k for k, v in data.items()}
 		else:
-			return list(map(lambda x:str(x),data))
+			return {str(k): k for k in data}
 
 	def action_list(self):
 		"""
