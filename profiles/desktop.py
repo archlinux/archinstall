@@ -1,5 +1,6 @@
 # A desktop environment selector.
 import archinstall
+from archinstall import log
 
 is_top_level_profile = True
 
@@ -38,29 +39,33 @@ __supported__ = [
 ]
 
 
-def _prep_function(*args, **kwargs):
+def _prep_function(*args, **kwargs) -> bool:
 	"""
 	Magic function called by the importing installer
 	before continuing any further. It also avoids executing any
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	desktop = archinstall.Menu('Select your desired desktop environment', __supported__, skip=False).run()
+	desktop = archinstall.Menu('Select your desired desktop environment', __supported__).run()
 
-	# Temporarily store the selected desktop profile
-	# in a session-safe location, since this module will get reloaded
-	# the next time it gets executed.
-	if not archinstall.storage.get('_desktop_profile', None):
-		archinstall.storage['_desktop_profile'] = desktop
-	if not archinstall.arguments.get('desktop-environment', None):
-		archinstall.arguments['desktop-environment'] = desktop
-	profile = archinstall.Profile(None, desktop)
-	# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
-	with profile.load_instructions(namespace=f"{desktop}.py") as imported:
-		if hasattr(imported, '_prep_function'):
-			return imported._prep_function()
-		else:
-			print(f"Deprecated (??): {desktop} profile has no _prep_function() anymore")
+	if desktop:
+		# Temporarily store the selected desktop profile
+		# in a session-safe location, since this module will get reloaded
+		# the next time it gets executed.
+		if not archinstall.storage.get('_desktop_profile', None):
+			archinstall.storage['_desktop_profile'] = desktop
+		if not archinstall.arguments.get('desktop-environment', None):
+			archinstall.arguments['desktop-environment'] = desktop
+		profile = archinstall.Profile(None, desktop)
+		# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
+		with profile.load_instructions(namespace=f"{desktop}.py") as imported:
+			if hasattr(imported, '_prep_function'):
+				return imported._prep_function()
+			else:
+				log(f"Deprecated (??): {desktop} profile has no _prep_function() anymore")
+				exit(1)
+
+	return False
 
 
 if __name__ == 'desktop':
