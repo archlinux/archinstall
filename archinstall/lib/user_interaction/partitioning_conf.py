@@ -215,7 +215,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
-						
+
 		elif task is None:
 			return block_device_struct
 		else:
