@@ -8,7 +8,6 @@ from ..general import SysCommand, secret
 from ..hardware import has_uefi
 from ..models import NetworkConfiguration
 from ..storage import storage
-from ..output import log
 from ..profiles import is_desktop_profile
 from ..disk import encrypted_partitions
 
