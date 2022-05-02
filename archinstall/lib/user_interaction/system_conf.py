@@ -60,7 +60,7 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	return []
 
 
-def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask: bool = False) -> str:
+def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -88,9 +88,8 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS, force_ask: bo
 				'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
 			)
 
-		if not arguments.get('gfx_driver', None) or force_ask:
-			title += _('\n\nSelect a graphics driver or leave blank to install all open-source drivers')
-			arguments['gfx_driver'] = Menu(title, drivers).run()
+		title += _('\n\nSelect a graphics driver or leave blank to install all open-source drivers')
+		arguments['gfx_driver'] = Menu(title, drivers).run()
 
 		if arguments.get('gfx_driver', None) is None:
 			arguments['gfx_driver'] = _("All open-source (default)")

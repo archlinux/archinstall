@@ -26,15 +26,18 @@ def _prep_function(*args, **kwargs):
 	Magic function called by the importing installer
 	before continuing any further.
 	"""
-	if not archinstall.storage.get('_selected_servers', None):
-		servers = archinstall.Menu(
-			'Choose which servers to install, if none then a minimal installation wil be done', available_servers,
-			multi=True
-		).run()
+	servers = archinstall.Menu(
+		'Choose which servers to install, if none then a minimal installation wil be done',
+		available_servers,
+		preset_values=archinstall.storage.get('_selected_servers', []),
+		multi=True
+	).run()
 
+	if servers:
 		archinstall.storage['_selected_servers'] = servers
+		return True
 
-	return True
+	return False
 
 
 if __name__ == 'server':
