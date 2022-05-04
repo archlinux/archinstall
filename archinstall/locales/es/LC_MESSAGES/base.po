@@ -13,7 +13,7 @@ msgstr ""
 
 #: lib/installer.py:144 lib/installer.py:152
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Un archivo de registro ha sido creado aquí: {} {}"
+msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
 
 #: lib/installer.py:145 lib/installer.py:153
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
@@ -21,7 +21,7 @@ msgstr "    Por favor envíe este problema (y archivo) a https://github.com/arch
 
 #: lib/user_interaction.py:83 lib/user_interaction/utils.py:86
 msgid "Do you really want to abort?"
-msgstr "Realmente desea abortar?"
+msgstr "¿Realmente desea abortar?"
 
 #: lib/user_interaction.py:101 lib/user_interaction.py:104
 #: lib/user_interaction/utils.py:53
@@ -31,7 +31,7 @@ msgstr "Una última vez para verificación: "
 #: lib/user_interaction.py:272 lib/user_interaction.py:275
 #: lib/user_interaction/system_conf.py:142
 msgid "Would you like to use swap on zram?"
-msgstr "Te gustaría usar swap en zram?"
+msgstr "¿Te gustaría usar swap en zram?"
 
 #: lib/user_interaction.py:285 lib/user_interaction.py:288
 #: lib/user_interaction/general_conf.py:33
@@ -752,11 +752,8 @@ msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Introduzca un nombre de usuario para crear un usuario adicional (dejar en blanco para saltar): "
 
 #: lib/menu/menu.py:116
-#, fuzzy
 msgid "Use ESC to skip\n"
-msgstr ""
-"Usar ESC para saltar\n"
-"\n"
+msgstr "Use ESC para saltar\n"
 
 #: lib/menu/list_manager.py:117
 msgid ""
@@ -940,9 +937,8 @@ msgid "Save all"
 msgstr "Guardar todo"
 
 #: lib/user_interaction/save_conf.py:48
-#, fuzzy
 msgid "Choose which configuration to save"
-msgstr "Elige qué idioma local usar"
+msgstr "Elija qué configuración guardar"
 
 #: lib/user_interaction/save_conf.py:59
 msgid "Enter a directory for the configuration(s) to be saved: "
@@ -957,15 +953,13 @@ msgid "The password you are using seems to be weak,"
 msgstr "La contraseña que está utilizando parece ser débil,"
 
 #: lib/user_interaction/utils.py:33
-#, fuzzy
 msgid "are you sure you want to use it?"
-msgstr "Realmente desea abortar?"
+msgstr "¿Estás seguro de que quieres usarlo?"
 
 #: lib/user_interaction/global_menu.py:134 lib/menu/selection_menu.py:555
 #: lib/menu/global_menu.py:134
-#, fuzzy
 msgid "Additional repositories to enable"
-msgstr "Paquetes adicionales a instalar"
+msgstr "Repositorios adicionales para habilitar"
 
 #: lib/user_interaction/global_menu.py:155 lib/menu/selection_menu.py:576
 #: lib/menu/global_menu.py:155
@@ -984,15 +978,13 @@ msgstr "Se debe especificar una contraseña raíz o al menos 1 superusuario"
 
 #: lib/user_interaction/global_menu.py:275 lib/menu/selection_menu.py:695
 #: lib/menu/global_menu.py:275
-#, fuzzy
 msgid "Manage superuser accounts: "
-msgstr "Especificar la cuenta de superusuario"
+msgstr "Administrar cuentas de superusuario: "
 
 #: lib/user_interaction/global_menu.py:279 lib/menu/selection_menu.py:699
 #: lib/menu/global_menu.py:279
-#, fuzzy
 msgid "Manage ordinary user accounts: "
-msgstr "Especificar la cuenta de usuario"
+msgstr "Administrar cuentas de usuario ordinarias: "
 
 #: lib/user_interaction/subvolume_config.py:17
 msgid " Subvolume :{:16}"
@@ -1036,20 +1028,17 @@ msgid "Subvolume name :"
 msgstr "Nombre del subvolumen :"
 
 #: lib/user_interaction/subvolume_config.py:124
-#, fuzzy
 msgid "Select a mount point :"
-msgstr "Selecciona una zona horaria"
+msgstr "Seleccione un punto de montaje :"
 
 #: lib/user_interaction/subvolume_config.py:128
 msgid "Select the desired subvolume options "
 msgstr "Seleccione las opciones de subvolumen deseadas "
 
 #: lib/user_interaction/manage_users_conf.py:161
-#, fuzzy
 msgid "Define users with sudo privilege, by username: "
-msgstr "Crear un super-usuario requerido con privilegios sudo: "
+msgstr "Defina usuarios con privilegio sudo, por nombre de usuario: "
 
 #: lib/installer.py:152
-#, fuzzy
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Un archivo de registro ha sido creado aquí: {} {}"
+msgstr "[!] Se ha creado un archivo de registro aquí: {}"
