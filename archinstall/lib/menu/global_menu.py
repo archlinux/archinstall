@@ -262,9 +262,9 @@ class GlobalMenu(GeneralMenu):
 				"Do you wish to continue?"
 			).format(storage['MOUNT_POINT'])
 
-			choice = Menu(prompt, ['yes', 'no'], default_option='yes').run()
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 
-			if choice == 'no':
+			if choice == Menu.no():
 				exit(1)
 
 		return harddrives

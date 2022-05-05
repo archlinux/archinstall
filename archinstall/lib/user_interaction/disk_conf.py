@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING, Optional
 
 from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
 from ..disk import BlockDevice
@@ -36,7 +36,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 	return result
 
 
-def select_disk_layout(block_devices: list, advanced_options=False) -> Dict[str, Any]:
+def select_disk_layout(block_devices: list, advanced_options=False) -> Optional[Dict[str, Any]]:
 	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
 	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
