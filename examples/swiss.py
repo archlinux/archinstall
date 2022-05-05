@@ -20,7 +20,7 @@ import pathlib
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput, NetworkConfigurationHandler
+from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,8 +38,8 @@ TODO exec con return parameter
 """
 def select_activate_NTP():
 	prompt = "Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: "
-	choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-	if choice == 'yes':
+	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+	if choice == Menu.yes():
 		return True
 	else:
 		return False
@@ -480,8 +480,8 @@ def perform_installation(mountpoint, mode):
 			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 			if not archinstall.arguments.get('silent'):
 				prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
-				choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-				if choice == 'yes':
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+				if choice == Menu.yes():
 					try:
 						installation.drop_to_shell()
 					except:

@@ -102,9 +102,9 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> str:
 
 	if preset == 'systemd-bootctl':
-		preset_val = 'systemd-boot' if advanced_options else 'no'
+		preset_val = 'systemd-boot' if advanced_options else Menu.no()
 	elif preset == 'grub-install':
-		preset_val = 'grub' if advanced_options else 'yes'
+		preset_val = 'grub' if advanced_options else Menu.yes()
 	else:
 		preset_val = preset
 
@@ -112,11 +112,11 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 	if has_uefi():
 		if not advanced_options:
 			bootloader_choice = Menu(_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
-										['yes', 'no'],
+										Menu.yes_no(),
 										preset_values=preset_val,
-										default_option='no').run()
+										default_option=Menu.no()).run()
 
-			if bootloader_choice == "yes":
+			if bootloader_choice == Menu.yes():
 				bootloader = "grub-install"
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
@@ -135,9 +135,9 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 
 def ask_for_swap(preset: bool = True) -> bool:
 	if preset:
-		preset_val = 'yes'
+		preset_val = Menu.yes()
 	else:
-		preset_val = 'no'
+		preset_val = Menu.no()
 	prompt = _('Would you like to use swap on zram?')
-	choice = Menu(prompt, ['yes', 'no'], default_option='yes', preset_values=preset_val).run()
-	return False if choice == 'no' else True
+	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), preset_values=preset_val).run()
+	return False if choice == Menu.no() else True

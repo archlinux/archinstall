@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable
+from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable, Optional
 
 from ..menu import Menu
 from ..output import log
@@ -97,8 +97,10 @@ def select_partition(title :str, partitions :List[Partition], multiple :bool = F
 	return None
 
 
-def get_default_partition_layout(block_devices: Union['BlockDevice', List['BlockDevice']],
-									advanced_options: bool = False) -> Dict[str, Any]:
+def get_default_partition_layout(
+	block_devices: Union['BlockDevice', List['BlockDevice']],
+	advanced_options: bool = False
+) -> Optional[Dict[str, Any]]:
 	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
 
 	if len(block_devices) == 1:
@@ -224,9 +226,9 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			if len(block_device_struct["partitions"]):
 				prompt = _('{} contains queued partitions, this will remove those, are you sure?').format(block_device)
-				choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no()).run()
 
-				if choice == 'no':
+				if choice == Menu.no():
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
