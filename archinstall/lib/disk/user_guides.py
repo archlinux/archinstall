@@ -159,7 +159,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice], default_filesyst
 
 	if home_device is None or root_device is None:
 		text = _('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
-		text += _('Minimum capacity for home partition: {}GB\n').format(MIN_SIZE_TO_ALLOW_HOME_PART)
+		text += _('Minimum capacity for /home partition: {}GB\n').format(MIN_SIZE_TO_ALLOW_HOME_PART)
 		text += _('Minimum capacity for Arch Linux partition: {}GB').format(ARCH_LINUX_INSTALLED_SIZE)
 		Menu(str(text), [str(_('Continue'))], skip=False).run()
 		return None
