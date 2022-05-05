@@ -8,7 +8,6 @@ from ..general import SysCommand, secret
 from ..hardware import has_uefi
 from ..models import NetworkConfiguration
 from ..storage import storage
-from ..output import log
 from ..profiles import is_desktop_profile
 from ..disk import encrypted_partitions
 
@@ -277,11 +276,12 @@ class GlobalMenu(GeneralMenu):
 		if profile and profile.has_prep_function():
 			namespace = f'{profile.namespace}.py'
 			with profile.load_instructions(namespace=namespace) as imported:
-				if not imported._prep_function():
-					log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
-					exit(1)
+				if imported._prep_function():
+					return profile
+				else:
+					return self._select_profile()
 
-		return profile
+		return self._data_store.get('profile', None)
 
 	def _create_superuser_account(self):
 		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))

@@ -129,6 +129,8 @@ class Installer:
 		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
+		self._zram_enabled = False
+
 	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -713,7 +715,7 @@ class Installer:
 
 			self.enable_service('systemd-zram-setup@zram0.service')
 
-			self.zram_enabled = True
+			self._zram_enabled = True
 
 			return True
 		else:
@@ -793,7 +795,7 @@ class Installer:
 				# Zswap should be disabled when using zram.
 				#
 				# https://github.com/archlinux/archinstall/issues/881
-				if self.zram_enabled:
+				if self._zram_enabled:
 					options_entry = "zswap.enabled=0 " + options_entry
 
 				if real_device := self.detect_encryption(root_partition):
@@ -1038,7 +1040,7 @@ class Installer:
 		combo = f'{user}:{password}'
 		echo = shlex.join(['echo', combo])
 		sh = shlex.join(['sh', '-c', echo])
-		
+
 		result = SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
 		return result.exit_code == 0
 

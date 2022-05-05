@@ -36,7 +36,7 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, self.actions, self.actions[0])
 
-	def reformat(self, data: Any) -> List[Any]:
+	def reformat(self, data: List) -> Dict:
 		def format_element(elem :str):
 			# secret gives away the length of the password
 			if data[elem].get('!password'):
@@ -49,7 +49,7 @@ class UserList(ListManager):
 				super_user = ' '
 			return f"{elem:16}: password {pwd:16} {super_user}"
 
-		return list(map(lambda x: format_element(x), data))
+		return {format_element(e): e for e in data}
 
 	def action_list(self):
 		if self.target:

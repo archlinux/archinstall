@@ -15,6 +15,7 @@ from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
+from .disk.mapperdev import MapperDev
 
 class luks2:
 	def __init__(self,
@@ -160,7 +161,14 @@ class luks2:
 		SysCommand(f'/usr/bin/cryptsetup open {partition.path} {mountpoint} --key-file {os.path.abspath(key_file)} --type luks2')
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
-			unlocked_partition = Partition(self.mapdev, None, encrypted=True, filesystem=get_filesystem_type(self.mapdev), autodetect_filesystem=False)
+
+			unlocked_partition = Partition(
+				self.mapdev,
+				block_device=MapperDev(mountpoint).partition.block_device,
+				encrypted=True,
+				filesystem=get_filesystem_type(self.mapdev),
+				autodetect_filesystem=False
+			)
 			return unlocked_partition
 
 	def close(self, mountpoint :Optional[str] = None) -> bool:

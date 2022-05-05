@@ -47,7 +47,7 @@ from .lib.plugins import plugins, load_plugin # This initiates the plugin loadin
 from .lib.configuration import *
 parser = ArgumentParser()
 
-__version__ = "2.4.1"
+__version__ = "2.4.2"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the

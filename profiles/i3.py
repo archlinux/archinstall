@@ -27,20 +27,21 @@ def _prep_function(*args, **kwargs):
 
 	supported_configurations = ['i3-wm', 'i3-gaps']
 
-	desktop = archinstall.Menu('Select your desired configuration', supported_configurations, skip=False).run()
+	desktop = archinstall.Menu('Select your desired configuration', supported_configurations).run()
 
-	# Temporarily store the selected desktop profile
-	# in a session-safe location, since this module will get reloaded
-	# the next time it gets executed.
-	archinstall.storage['_i3_configuration'] = desktop
+	if desktop:
+		# Temporarily store the selected desktop profile
+		# in a session-safe location, since this module will get reloaded
+		# the next time it gets executed.
+		archinstall.storage['_i3_configuration'] = desktop
 
-	# i3 requires a functioning Xorg installation.
-	profile = archinstall.Profile(None, 'xorg')
-	with profile.load_instructions(namespace='xorg.py') as imported:
-		if hasattr(imported, '_prep_function'):
-			return imported._prep_function()
-		else:
-			print('Deprecated (??): xorg profile has no _prep_function() anymore')
+		# i3 requires a functioning Xorg installation.
+		profile = archinstall.Profile(None, 'xorg')
+		with profile.load_instructions(namespace='xorg.py') as imported:
+			if hasattr(imported, '_prep_function'):
+				return imported._prep_function()
+			else:
+				print('Deprecated (??): xorg profile has no _prep_function() anymore')
 
 
 if __name__ == 'i3':
