@@ -777,7 +777,7 @@ class Installer:
 					elif vendor == "GenuineIntel":
 						entry.write("initrd /intel-ucode.img\n")
 					else:
-						self.log("unknow cpu vendor, not adding ucode to systemd-boot config")
+						self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.", level=logging.DEBUG)
 				entry.write(f"initrd /initramfs-{kernel}.img\n")
 				# blkid doesn't trigger on loopback devices really well,
 				# so we'll use the old manual method until we get that sorted out.
@@ -881,7 +881,7 @@ class Installer:
 				elif vendor == "GenuineIntel":
 					kernel_parameters.append("initrd=\\intel-ucode.img")
 				else:
-					self.log("unknow cpu vendor, not adding ucode to firmware boot entry")
+					self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.", level=logging.DEBUG)
 
 			kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
 
