@@ -160,6 +160,7 @@ class Menu(TerminalMenu):
 			preview_command=preview_command,
 			preview_size=preview_size,
 			preview_title=preview_title,
+			multi_select_select_on_accept=False,
 			**kwargs,
 		)
 
