@@ -109,11 +109,11 @@ class UserList(ListManager):
 			sudoer = False
 		else:
 			sudoer = False
-			sudo_choice = Menu(str(_('Should {} be a superuser (sudoer)?')).format(userid), ['yes', 'no'],
+			sudo_choice = Menu(str(_('Should {} be a superuser (sudoer)?')).format(userid), Menu.yes_no(),
 								skip=False,
-								preset_values='yes' if sudoer else 'no',
-								default_option='no').run()
-			sudoer = True if sudo_choice == 'yes' else False
+								preset_values=Menu.yes() if sudoer else Menu.no(),
+								default_option=Menu.no()).run()
+			sudoer = True if sudo_choice == Menu.yes() else False
 
 		password = get_password(prompt=str(_('Password for user "{}": ').format(userid)))
 

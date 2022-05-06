@@ -12,7 +12,21 @@ import logging
 if TYPE_CHECKING:
 	_: Any
 
+
 class Menu(TerminalMenu):
+
+	@classmethod
+	def yes(cls):
+		return str(_('yes'))
+
+	@classmethod
+	def no(cls):
+		return str(_('no'))
+
+	@classmethod
+	def yes_no(cls):
+		return [cls.yes(), cls.no()]
+
 	def __init__(
 		self,
 		title :str,

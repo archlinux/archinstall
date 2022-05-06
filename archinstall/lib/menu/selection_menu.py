@@ -91,6 +91,10 @@ class Selector:
 		self._no_store = no_store
 
 	@property
+	def description(self) -> str:
+		return self._description
+
+	@property
 	def dependencies(self) -> List:
 		return self._dependencies
 
@@ -115,7 +119,7 @@ class Selector:
 	def update_description(self, description :str):
 		self._description = description
 
-	def menu_text(self) -> str:
+	def menu_text(self, padding: int = 0) -> str:
 		if self._description == '': # special menu option for __separator__
 			return ''
 
@@ -128,14 +132,14 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(str(self._description))
-			current = ' ' * padding + f'SET: {current}'
+			padding += 5
+			description = str(self._description).ljust(padding, ' ')
+			current = str(_('set: {}').format(current))
+		else:
+			description = self._description
+			current = ''
 
-		return f'{self._description} {current}'
-
-	@property
-	def text(self):
-		return self.menu_text()
+		return f'{description} {current}'
 
 	def set_current_selection(self, current :Optional[str]):
 		self._current_selection = current
@@ -262,8 +266,13 @@ class GeneralMenu:
 			return preview()
 		return None
 
+	def _get_menu_text_padding(self, entries: List[Selector]):
+		return max([len(selection.description) for selection in entries])
+
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		option = [(k, v) for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
+		padding = self._get_menu_text_padding(list(self._menu_options.values()))
+		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
+
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')
 		config_name = option[0][0]
@@ -275,14 +284,18 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
-		self.post_callback  # as all the values can vary i have to exec this callback
+
+		self.post_callback()  # as all the values can vary i have to exec this callback
 		cursor_pos = None
+
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
-			menu_options = [m.text for m in enabled_menus.values()]
+
+			padding = self._get_menu_text_padding(list(enabled_menus.values()))
+			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
 			selection = Menu(
 				_('Set/Modify the below options'),

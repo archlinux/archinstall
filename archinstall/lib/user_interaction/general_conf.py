@@ -22,11 +22,11 @@ def ask_ntp(preset: bool = True) -> bool:
 	prompt = str(_('Would you like to use automatic time synchronization (NTP) with the default time servers?\n'))
 	prompt += str(_('Hardware time and other post-configuration steps might be required in order for NTP to work.\nFor more information, please check the Arch wiki'))
 	if preset:
-		preset_val = 'yes'
+		preset_val = Menu.yes()
 	else:
-		preset_val = 'no'
-	choice = Menu(prompt, ['yes', 'no'], skip=False, preset_values=preset_val, default_option='yes').run()
-	return False if choice == 'no' else True
+		preset_val = Menu.no()
+	choice = Menu(prompt, Menu.yes_no(), skip=False, preset_values=preset_val, default_option=Menu.yes()).run()
+	return False if choice == Menu.no() else True
 
 
 def ask_hostname(preset: str = None) -> str:
