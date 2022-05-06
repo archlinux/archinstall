@@ -309,8 +309,15 @@ class GeneralMenu:
 
 			if selection and self.auto_cursor:
 				cursor_pos = menu_options.index(selection) + 1  # before the strip otherwise fails
-				if cursor_pos >= len(menu_options):
-					cursor_pos = len(menu_options) - 1
+
+				# in case the new position lands on a "placeholder" we'll skip them as well
+				while True:
+					if cursor_pos >= len(menu_options):
+						cursor_pos = 0
+					if len(menu_options[cursor_pos]) > 0:
+						break
+					cursor_pos += 1
+
 				selection = selection.strip()
 			if selection:
 				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
