@@ -76,7 +76,7 @@ msgid ""
 " optional profile packages are installed."
 msgstr ""
 "Apenas pacote como base, base-devel, linux, linux-firmware, efibootmgr, e"
-" conjuntos de pácotes opcionais (perfis) são instalados."
+" conjuntos de pacotes opcionais (perfis) são instalados."
 
 #: lib/user_interaction.py:392 lib/user_interaction.py:395 lib/user_interaction.py:398 lib/user_interaction.py:397 lib/user_interaction/general_conf.py:139
 msgid ""
