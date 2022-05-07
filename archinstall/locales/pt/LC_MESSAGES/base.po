@@ -118,7 +118,7 @@ msgstr ""
 
 #: lib/user_interaction.py:446 lib/user_interaction.py:449 lib/user_interaction.py:452 lib/user_interaction.py:451 lib/user_interaction/network_conf.py:75
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Inisra o endereço IP e subrede para {} (exemplo: 192.168.0.5/24): "
+msgstr "Insira o endereço IP e subrede para {} (exemplo: 192.168.0.5/24): "
 
 #: lib/user_interaction.py:461 lib/user_interaction.py:464 lib/user_interaction.py:467 lib/user_interaction.py:466 lib/user_interaction/network_conf.py:86
 msgid "Enter your gateway (router) IP address or leave blank for none: "
