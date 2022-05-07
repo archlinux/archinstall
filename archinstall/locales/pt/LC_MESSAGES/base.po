@@ -83,7 +83,7 @@ msgid ""
 "If you desire a web browser, such as firefox or chromium, you may specify it"
 " in the following prompt."
 msgstr ""
-"Se voçê deseja um navegador de internet, como Firefox ou Chromium, você pode"
+"Se você deseja um navegador de internet, como Firefox ou Chromium, você pode"
 " especificá-lo na seguinte configuração."
 
 #: lib/user_interaction.py:396 lib/user_interaction.py:399 lib/user_interaction.py:402 lib/user_interaction.py:401 lib/user_interaction/general_conf.py:143
