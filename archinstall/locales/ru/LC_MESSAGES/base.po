@@ -1369,6 +1369,14 @@ msgstr ""
 msgid "Press Enter to continue."
 msgstr "Нажмите Enter, чтобы продолжить."
 
+#: examples/guided.py:260
+msgid ""
+"Would you like to chroot into the newly created installation and perform "
+"post-installation configuration?"
+msgstr ""
+"Хотите ли вы использовать chroot в новой созданной установке и выполнить "
+"настройку после установки?"
+
 #~ msgid "Archinstall requires root privileges to run. See --help for more."
 #~ msgstr ""
 #~ "Для запуска Archinstall требуются привилегии root. Для получения "
