@@ -300,7 +300,7 @@ if archinstall.arguments.get('dry_run'):
 	exit(0)
 
 if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	input(str(_('Press Enter to continue.')))
 
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
