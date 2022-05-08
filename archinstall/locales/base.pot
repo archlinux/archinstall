@@ -1252,3 +1252,7 @@ msgstr ""
 #: profiles/xorg.py:9
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr ""
+
+#: examples/guided.py:303
+msgid "Press Enter to continue."
+msgstr ""
