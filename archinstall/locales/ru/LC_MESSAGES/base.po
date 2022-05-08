@@ -1365,6 +1365,10 @@ msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr ""
 "Устанавливает минимальную систему, а также xorg и графические драйверы."
 
+#: examples/guided.py:303
+msgid "Press Enter to continue."
+msgstr "Нажмите Enter, чтобы продолжить."
+
 #~ msgid "Archinstall requires root privileges to run. See --help for more."
 #~ msgstr ""
 #~ "Для запуска Archinstall требуются привилегии root. Для получения "
