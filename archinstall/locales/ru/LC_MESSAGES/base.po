@@ -1050,7 +1050,7 @@ msgid ""
 "Define a new user\n"
 msgstr ""
 "\n"
-"Обозначить нового пользователя\n"
+"Укажите нового пользователя\n"
 
 #: lib/user_interaction/manage_users_conf.py:100
 #: lib/user_interaction/manage_users_conf.py:97
