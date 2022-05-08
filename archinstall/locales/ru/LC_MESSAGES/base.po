@@ -184,8 +184,8 @@ msgstr ""
 
 #: lib/user_interaction.py:556 lib/user_interaction.py:559
 #: lib/user_interaction.py:562 lib/user_interaction.py:561
-#: lib/user_interaction/partitioning_conf.py:64
 #: lib/user_interaction/partitioning_conf.py:63
+#: lib/user_interaction/partitioning_conf.py:64
 msgid "Current partition layout"
 msgstr "Текущая разметка разделов"
 
@@ -1323,6 +1323,47 @@ msgid ""
 msgstr ""
 "Пароль, который вы используете, кажется слабым, вы уверены, что хотите его "
 "использовать?"
+
+#: profiles/desktop.py:7
+msgid ""
+"Provides a selection of desktop environments and tiling window managers, e."
+"g. gnome, kde, sway"
+msgstr ""
+"Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, "
+"например, gnome, kde, sway"
+
+#: profiles/desktop.py:49
+msgid "Select your desired desktop environment"
+msgstr "Выберите желаемое окружение рабочего стола"
+
+#: profiles/minimal.py:5
+msgid ""
+"A very basic installation that allows you to customize Arch Linux as you see "
+"fit."
+msgstr ""
+"Очень базовая установка, позволяющая настроить Arch Linux по своему "
+"усмотрению."
+
+#: profiles/server.py:9
+msgid ""
+"Provides a selection of various server packages to install and enable, e.g. "
+"httpd, nginx, mariadb"
+msgstr ""
+"Предоставляет выбор различных пакетов сервера для установки и включения, "
+"например, httpd, nginx, mariadb"
+
+#: profiles/server.py:30
+msgid ""
+"Choose which servers to install, if none then a minimal installation wil be "
+"done"
+msgstr ""
+"Выберите серверы для установки, если их нет, то будет выполнена минимальная "
+"установка"
+
+#: profiles/xorg.py:9
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr ""
+"Устанавливает минимальную систему, а также xorg и графические драйверы."
 
 #~ msgid "Archinstall requires root privileges to run. See --help for more."
 #~ msgstr ""
