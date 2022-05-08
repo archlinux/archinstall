@@ -46,7 +46,7 @@ def _prep_function(*args, **kwargs) -> bool:
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	desktop = archinstall.Menu('Select your desired desktop environment', __supported__).run()
+	desktop = archinstall.Menu(str(_('Select your desired desktop environment')), __supported__).run()
 
 	if desktop:
 		# Temporarily store the selected desktop profile
