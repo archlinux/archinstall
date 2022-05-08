@@ -257,7 +257,7 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 			if choice == Menu.yes():
 				try:
