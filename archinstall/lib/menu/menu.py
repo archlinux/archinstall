@@ -56,6 +56,7 @@ class Menu(TerminalMenu):
 		preview_title='Info',
 		header :Union[List[str],str] = None,
 		explode_on_interrupt :bool = False,
+		explode_warning :str = '',
 		**kwargs
 	):
 		"""
@@ -95,8 +96,14 @@ class Menu(TerminalMenu):
 		:param preview_title: Title of the preview window
 		:type preview_title: str
 
-		param: header one or more header lines for the menu
+		param header: one or more header lines for the menu
 		type param: string or list
+
+		param explode_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
+		type param: bool
+
+		param explode_warning: If explode_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		type param: str
 
 		:param kwargs : any SimpleTerminal parameter
 		"""
@@ -138,6 +145,8 @@ class Menu(TerminalMenu):
 		self._skip = skip
 		self._default_option = default_option
 		self._multi = multi
+		self._explode_on_interrupt = explode_on_interrupt
+		self._explode_warning = explode_warning
 
 		menu_title = f'\n{title}\n\n'
 
@@ -151,9 +160,9 @@ class Menu(TerminalMenu):
 		if skip:
 			action_info += str(_("Use ESC to skip"))
 
-		if explode_on_interrupt:
+		if self._explode_on_interrupt:
 			if len(action_info) > 0:
-				action_info += ', '
+				action_info += '\n'
 			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
 
 		menu_title += action_info
@@ -189,7 +198,7 @@ class Menu(TerminalMenu):
 			preview_command=preview_command,
 			preview_size=preview_size,
 			preview_title=preview_title,
-			explode_on_interrupt=explode_on_interrupt,
+			explode_on_interrupt=self._explode_on_interrupt,
 			multi_select_select_on_accept=False,
 			**kwargs,
 		)
@@ -200,8 +209,11 @@ class Menu(TerminalMenu):
 		except KeyboardInterrupt:
 			return MenuSelection(type_=MenuSelectionType.Ctrl_c)
 
-		def check_default(cur):
-			return self._default_option if self._default_option is not None and self._default_option in cur else cur
+		def check_default(elem):
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
+				return self._default_option
+			else:
+				return elem
 
 		if idx is not None:
 			if isinstance(idx, (list, tuple)):
@@ -218,6 +230,12 @@ class Menu(TerminalMenu):
 
 	def run(self) -> MenuSelection:
 		ret = self._show()
+
+		if ret.type_ == MenuSelectionType.Ctrl_c:
+			if self._explode_on_interrupt and len(self._explode_warning) > 0:
+				response = Menu(self._explode_warning, Menu.yes_no(), skip=False).run()
+				if response.value == Menu.no():
+					return self.run()
 
 		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
 			return self.run()

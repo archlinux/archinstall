@@ -55,13 +55,19 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector(_('Select locale language'), lambda preset: select_locale_lang('en_US',preset), default='en_US')
+			Selector(
+				_('Select locale language'),
+				lambda preset: select_locale_lang(preset),
+				default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector(_('Select locale encoding'), lambda preset: select_locale_enc('utf-8',preset), default='utf-8')
+			Selector(
+				_('Select locale encoding'),
+				lambda preset: select_locale_enc(preset),
+				default='UTF-8')
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Select harddrives'),
-				self._select_harddrives)
+				lambda preset: self._select_harddrives(preset))
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Select disk layout'),
@@ -115,7 +121,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['profile'] = \
 			Selector(
 				_('Specify profile'),
-				lambda x: self._select_profile(),
+				lambda preset: self._select_profile(preset),
 				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
@@ -250,30 +256,29 @@ class GlobalMenu(GeneralMenu):
 		return ntp
 
 	def _select_harddrives(self, old_harddrives : list) -> list:
-		# old_haddrives = storage['arguments'].get('harddrives', [])
 		harddrives = select_harddrives(old_harddrives)
 
-		# in case the harddrives got changed we have to reset the disk layout as well
-		if old_harddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
-			storage['arguments']['disk_layouts'] = {}
-
-		if not harddrives:
+		if len(harddrives) == 0:
 			prompt = _(
 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
 				"WARNING: Archinstall won't check the suitability of this setup\n"
 				"Do you wish to continue?"
 			).format(storage['MOUNT_POINT'])
 
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
 
-			if choice == Menu.no():
-				exit(1)
+			if choice.value == Menu.no():
+				return self._select_harddrives(old_harddrives)
+
+		# in case the harddrives got changed we have to reset the disk layout as well
+		if old_harddrives != harddrives:
+			self._menu_options.get('disk_layouts').set_current_selection(None)
+			storage['arguments']['disk_layouts'] = {}
 
 		return harddrives
 
-	def _select_profile(self):
-		profile = select_profile()
+	def _select_profile(self, preset):
+		profile = select_profile(preset)
 
 		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 		if profile and profile.has_prep_function():
@@ -282,9 +287,9 @@ class GlobalMenu(GeneralMenu):
 				if imported._prep_function():
 					return profile
 				else:
-					return self._select_profile()
+					return self._select_profile(preset)
 
-		return self._data_store.get('profile', None)
+		return None
 
 	def _create_superuser_account(self):
 		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))

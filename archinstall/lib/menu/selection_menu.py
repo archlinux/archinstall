@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_archinstall_language(cur_value: str) -> Optional[str]:
+def select_archinstall_language(preset_value: str) -> Optional[str]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
 	languages = Translation.get_all_names()
-	language = Menu(_('Select Archinstall language'), languages, preset_values=cur_value).run()
+	language = Menu(_('Select Archinstall language'), languages, preset_values=preset_value).run()
 	return language.value
 
 
@@ -457,10 +457,10 @@ class GeneralMenu:
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
-	def _select_archinstall_language(self, cur_value: str) -> str:
-		language = select_archinstall_language(cur_value)
+	def _select_archinstall_language(self, preset_value: str) -> str:
+		language = select_archinstall_language(preset_value)
 		if language is not None:
 			self._translation.activate(language)
 			return language
 
-		return cur_value
+		return preset_value

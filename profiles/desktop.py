@@ -1,6 +1,7 @@
 # A desktop environment selector.
 import archinstall
-from archinstall import log
+from archinstall import log, Menu
+from archinstall.lib.menu.menu import MenuSelectionType
 
 is_top_level_profile = True
 
@@ -46,23 +47,26 @@ def _prep_function(*args, **kwargs) -> bool:
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	desktop = archinstall.Menu('Select your desired desktop environment', __supported__).run()
+	choice = Menu('Select your desired desktop environment', __supported__).run()
 
-	if desktop:
+	if choice.type_ != MenuSelectionType.Selection:
+		return False
+
+	if choice.value:
 		# Temporarily store the selected desktop profile
 		# in a session-safe location, since this module will get reloaded
 		# the next time it gets executed.
 		if not archinstall.storage.get('_desktop_profile', None):
-			archinstall.storage['_desktop_profile'] = desktop
+			archinstall.storage['_desktop_profile'] = choice.value
 		if not archinstall.arguments.get('desktop-environment', None):
-			archinstall.arguments['desktop-environment'] = desktop
-		profile = archinstall.Profile(None, desktop)
+			archinstall.arguments['desktop-environment'] = choice.value
+		profile = archinstall.Profile(None, choice.value)
 		# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
-		with profile.load_instructions(namespace=f"{desktop}.py") as imported:
+		with profile.load_instructions(namespace=f"{choice.value}.py") as imported:
 			if hasattr(imported, '_prep_function'):
 				return imported._prep_function()
 			else:
-				log(f"Deprecated (??): {desktop} profile has no _prep_function() anymore")
+				log(f"Deprecated (??): {choice.value} profile has no _prep_function() anymore")
 				exit(1)
 
 	return False

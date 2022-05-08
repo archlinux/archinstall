@@ -86,7 +86,7 @@ The contents in the base class of this methods serve for a very basic usage, and
 """
 
 from .text_input import TextInput
-from .menu import Menu
+from .menu import Menu, MenuSelectionType
 from os import system
 from copy import copy
 from typing import Union, Any, TYPE_CHECKING, Dict
@@ -167,6 +167,7 @@ class ListManager:
 			options += self.bottom_list
 
 			system('clear')
+
 			target = Menu(
 				self._prompt,
 				options,
@@ -174,27 +175,31 @@ class ListManager:
 				clear_screen=False,
 				clear_menu_on_exit=False,
 				header=self.header,
-				skip_empty_entries=True).run()
+				skip_empty_entries=True
+			).run()
 
-			if not target or target in self.bottom_list:
+			if target.type_ == MenuSelectionType.Esc:
+				return self.run()
+
+			if not target.value or target.value in self.bottom_list:
 				self.action = target
 				break
 
-			if target and target in self._default_action:
-				self.action = target
+			if target.value and target.value in self._default_action:
+				self.action = target.value
 				self.target = None
 				self.exec_action(self._data)
 				continue
 
 			if isinstance(self._data,dict):
-				data_key = data_formatted[target]
+				data_key = data_formatted[target.value]
 				key = self._data[data_key]
 				self.target = {data_key: key}
 			else:
-				self.target = self._data[data_formatted[target]]
+				self.target = self._data[data_formatted[target.value]]
 
 			# Possible enhacement. If run_actions returns false a message line indicating the failure
-			self.run_actions(target)
+			self.run_actions(target.value)
 
 		if not target or target == self.cancel_action:  # TODO dubious
 			return self.base_data  # return the original list
@@ -204,14 +209,18 @@ class ListManager:
 	def run_actions(self,prompt_data=None):
 		options = self.action_list() + self.bottom_item
 		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
-		self.action = Menu(
+		choice = Menu(
 			prompt,
 			options,
 			sort=False,
 			clear_screen=False,
 			clear_menu_on_exit=False,
 			preset_values=self.bottom_item,
-			show_search_hint=False).run()
+			show_search_hint=False
+		).run()
+
+		self.action = choice.value
+
 		if not self.action or self.action == self.cancel_action:
 			return False
 		else:
