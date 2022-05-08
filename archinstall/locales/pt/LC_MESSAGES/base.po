@@ -76,14 +76,14 @@ msgid ""
 " optional profile packages are installed."
 msgstr ""
 "Apenas pacote como base, base-devel, linux, linux-firmware, efibootmgr, e"
-" conjuntos de pácotes opcionais (perfis) são instalados."
+" conjuntos de pacotes opcionais (perfis) são instalados."
 
 #: lib/user_interaction.py:392 lib/user_interaction.py:395 lib/user_interaction.py:398 lib/user_interaction.py:397 lib/user_interaction/general_conf.py:139
 msgid ""
 "If you desire a web browser, such as firefox or chromium, you may specify it"
 " in the following prompt."
 msgstr ""
-"Se voçê deseja um navegador de internet, como Firefox ou Chromium, você pode"
+"Se você deseja um navegador de internet, como Firefox ou Chromium, você pode"
 " especificá-lo na seguinte configuração."
 
 #: lib/user_interaction.py:396 lib/user_interaction.py:399 lib/user_interaction.py:402 lib/user_interaction.py:401 lib/user_interaction/general_conf.py:143
@@ -118,7 +118,7 @@ msgstr ""
 
 #: lib/user_interaction.py:446 lib/user_interaction.py:449 lib/user_interaction.py:452 lib/user_interaction.py:451 lib/user_interaction/network_conf.py:75
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Inisra o endereço IP e subrede para {} (exemplo: 192.168.0.5/24): "
+msgstr "Insira o endereço IP e subrede para {} (exemplo: 192.168.0.5/24): "
 
 #: lib/user_interaction.py:461 lib/user_interaction.py:464 lib/user_interaction.py:467 lib/user_interaction.py:466 lib/user_interaction/network_conf.py:86
 msgid "Enter your gateway (router) IP address or leave blank for none: "
