@@ -1256,3 +1256,8 @@ msgstr ""
 #: examples/guided.py:303
 msgid "Press Enter to continue."
 msgstr ""
+
+#: examples/guided.py:260
+msgid ""
+"Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr ""
