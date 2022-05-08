@@ -295,8 +295,6 @@ class GeneralMenu:
 			enabled_menus = self._menus_to_enable()
 
 			padding = self._get_menu_text_padding(list(enabled_menus.values()))
-			log('XXX')
-			log(padding)
 			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
 			selection = Menu(
