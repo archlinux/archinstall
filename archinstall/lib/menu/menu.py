@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Any, TYPE_CHECKING
+from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 
@@ -41,6 +41,7 @@ class Menu(TerminalMenu):
 		preview_size=0.75,
 		preview_title='Info',
 		header :Union[List[str],str] = None,
+		explode_on_interrupt :bool = False,
 		**kwargs
 	):
 		"""
@@ -128,6 +129,8 @@ class Menu(TerminalMenu):
 				header = [header,]
 			if skip:
 				menu_title += str(_("Use ESC to skip\n"))
+			if explode_on_interrupt:
+				menu_title += str(_('Use ctrl+c to reset current selection'))
 			menu_title += separator + separator.join(header)
 		elif skip:
 			menu_title += str(_("Use ESC to skip\n\n"))
@@ -160,10 +163,11 @@ class Menu(TerminalMenu):
 			preview_command=preview_command,
 			preview_size=preview_size,
 			preview_title=preview_title,
+			explode_on_interrupt=explode_on_interrupt,
 			**kwargs,
 		)
 
-	def _show(self):
+	def _show(self) -> Optional[Union[str, List[str]]]:
 		idx = self.show()
 		if idx is not None:
 			if isinstance(idx, (list, tuple)):
@@ -181,7 +185,7 @@ class Menu(TerminalMenu):
 					return self.default_option
 			return None
 
-	def run(self):
+	def run(self) -> Optional[Union[str, List[str]]]:
 		ret = self._show()
 
 		if ret is None and not self.skip:

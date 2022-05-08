@@ -68,11 +68,14 @@ def select_language(default_value: str, preset_value: str = None) -> str:
 	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'),
-							sorted_kb_lang,
-							default_option=default_value,
-							preset_values=preset_value,
-							sort=False).run()
+	selected_lang = Menu(
+		_('Select Keyboard layout'),
+		sorted_kb_lang,
+		default_option=default_value,
+		preset_values=preset_value,
+		sort=False
+	).run()
+
 	return selected_lang
 
 
