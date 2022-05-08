@@ -893,7 +893,7 @@ msgid ""
 msgstr ""
 "Для работы NTP может потребоваться аппаратное время и другие шаги после "
 "конфигурации.\n"
-"Для получения дополнительной информации, пожалуйста, ознакомьтесь с вики Arch"
+"Для получения дополнительной информации, пожалуйста, ознакомьтесь с ArchWiki"
 
 #: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621
 #: lib/menu/selection_menu.py:629
@@ -1277,7 +1277,7 @@ msgstr "нет"
 
 #: lib/menu/selection_menu.py:137
 msgid "set: {}"
-msgstr "установить: {}"
+msgstr "выбор: {}"
 
 #: lib/models/network_configuration.py:118
 msgid "Manual configuration setting must be a list"
