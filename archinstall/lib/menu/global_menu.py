@@ -41,14 +41,17 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Select Archinstall language'),
-				lambda x: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language(x),
 				default='English')
 		self._menu_options['keyboard-layout'] = \
-			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
+			Selector(
+				_('Select keyboard layout'),
+				lambda preset: select_language(preset),
+				default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
 				_('Select mirror region'),
-				select_mirror_regions,
+				lambda preset: select_mirror_regions(preset),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \

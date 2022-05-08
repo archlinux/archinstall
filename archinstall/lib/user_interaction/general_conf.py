@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
+from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
@@ -54,7 +55,7 @@ def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
 	return selected_audio
 
 
-def select_language(default_value: str, preset_value: str = None) -> str:
+def select_language(preset_value: str = None) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -64,19 +65,19 @@ def select_language(default_value: str, preset_value: str = None) -> str:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	# it's fine if the list is big because the Menu
-	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
 	selected_lang = Menu(
 		_('Select Keyboard layout'),
 		sorted_kb_lang,
-		default_option=default_value,
 		preset_values=preset_value,
 		sort=False
 	).run()
 
-	return selected_lang
+	if selected_lang.value is None:
+		return preset_value
+
+	return selected_lang.value
 
 
 def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
@@ -92,15 +93,18 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 	else:
 		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
-	selected_mirror = Menu(_('Select one of the regions to download packages from'),
-							list(mirrors.keys()),
-							preset_values=preselected,
-							multi=True).run()
+	selected_mirror = Menu(
+		_('Select one of the regions to download packages from'),
+		list(mirrors.keys()),
+		preset_values=preselected,
+		multi=True,
+		explode_on_interrupt=True
+	).run()
 
-	if selected_mirror is not None:
-		return {selected: mirrors[selected] for selected in selected_mirror}
-
-	return {}
+	match selected_mirror.type_:
+		case MenuSelectionType.Ctrl_c: return {}
+		case MenuSelectionType.Esc: return preset_values
+		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
 def select_archinstall_language(default='English'):

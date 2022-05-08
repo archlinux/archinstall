@@ -161,7 +161,7 @@ class SetupMenu(archinstall.GeneralMenu):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
 				_('Select Archinstall language'),
-				lambda x: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language(x),
 				default='English',
 				enabled=True))
 		self.set_option('ntp',
