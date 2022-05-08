@@ -6,7 +6,7 @@ import archinstall
 
 is_top_level_profile = True
 
-__description__ = 'Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb'
+__description__ = str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb'))
 
 available_servers = [
 	"cockpit",
