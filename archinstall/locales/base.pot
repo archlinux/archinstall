@@ -960,7 +960,7 @@ msgstr ""
 
 #: lib/user_interaction/manage_users_conf.py:32
 #: lib/user_interaction/manage_users_conf.py:32
-msgid "Add an user"
+msgid "Add a user"
 msgstr ""
 
 #: lib/user_interaction/manage_users_conf.py:33

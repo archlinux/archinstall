@@ -269,7 +269,7 @@ class GeneralMenu:
 		return None
 
 	def _get_menu_text_padding(self, entries: List[Selector]):
-		return max([len(selection.description) for selection in entries])
+		return max([len(str(selection.description)) for selection in entries])
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
 		padding = self._get_menu_text_padding(list(self._menu_options.values()))
@@ -314,8 +314,15 @@ class GeneralMenu:
 
 				if self.auto_cursor:
 					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
-					if cursor_pos >= len(menu_options):
-						cursor_pos = len(menu_options) - 1
+
+					# in case the new position lands on a "placeholder" we'll skip them as well
+					while True:
+						if cursor_pos >= len(menu_options):
+							cursor_pos = 0
+						if len(menu_options[cursor_pos]) > 0:
+							break
+						cursor_pos += 1
+
 					value = value.strip()
 
 					# if this calls returns false, we exit the menu

@@ -190,6 +190,7 @@ class Menu(TerminalMenu):
 			preview_size=preview_size,
 			preview_title=preview_title,
 			explode_on_interrupt=explode_on_interrupt,
+			multi_select_select_on_accept=False,
 			**kwargs,
 		)
 
