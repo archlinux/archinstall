@@ -267,7 +267,7 @@ class GeneralMenu:
 		return None
 
 	def _get_menu_text_padding(self, entries: List[Selector]):
-		return max([len(selection.description) for selection in entries])
+		return max([len(str(selection.description)) for selection in entries])
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
 		padding = self._get_menu_text_padding(list(self._menu_options.values()))
