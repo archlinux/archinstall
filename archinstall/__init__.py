@@ -55,6 +55,10 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 
+def set_unicode_font():
+	SysCommand('setfont UniCyr_8x16')
+
+
 def define_arguments():
 	"""
 	Define which explicit arguments do we allow.
@@ -242,6 +246,9 @@ def post_process_arguments(arguments):
 
 	load_config()
 
+
+# to ensure that cyrillic characters work in the installer
+set_unicode_font()
 
 define_arguments()
 arguments = get_arguments()
