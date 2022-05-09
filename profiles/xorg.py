@@ -6,7 +6,7 @@ from archinstall.lib.hardware import __packages__ as __hwd__packages__
 
 is_top_level_profile = True
 
-__description__ = 'Installs a minimal system as well as xorg and graphics drivers.'
+__description__ = str(_('Installs a minimal system as well as xorg and graphics drivers.'))
 
 __packages__ = [
 	'dkms',

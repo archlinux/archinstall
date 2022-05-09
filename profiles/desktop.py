@@ -1,11 +1,16 @@
 # A desktop environment selector.
+from typing import Any, TYPE_CHECKING
+
 import archinstall
 from archinstall import log, Menu
 from archinstall.lib.menu.menu import MenuSelectionType
 
+if TYPE_CHECKING:
+	_: Any
+
 is_top_level_profile = True
 
-__description__ = 'Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway'
+__description__ = str(_('Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway'))
 
 # New way of defining packages for a profile, which is iterable and can be used out side
 # of the profile to get a list of "what packages will be installed".
@@ -47,7 +52,7 @@ def _prep_function(*args, **kwargs) -> bool:
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	choice = Menu('Select your desired desktop environment', __supported__).run()
+	choice = Menu(str(_('Select your desired desktop environment')), __supported__).run()
 
 	if choice.type_ != MenuSelectionType.Selection:
 		return False
