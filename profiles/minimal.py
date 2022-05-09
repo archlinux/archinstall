@@ -1,4 +1,5 @@
 # Used to do a minimal install
+import archinstall
 
 is_top_level_profile = True
 
@@ -12,6 +13,7 @@ def _prep_function(*args, **kwargs):
 	we don't need to do anything special here, but it
 	needs to exist and return True.
 	"""
+	archinstall.storage['profile_minimal'] = True
 	return True  # Do nothing and just return True
 
 

@@ -154,14 +154,17 @@ def select_profile(preset) -> Optional[Profile]:
 	).run()
 
 	match selection.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection:
+			return options[selection.value] if selection.value is not None else None
 		case MenuSelectionType.Ctrl_c:
-			archinstall.storage['_selected_servers'] = None
+			archinstall.storage['profile_minimal'] = False
+			archinstall.storage['_selected_servers'] = []
 			archinstall.storage['_desktop_profile'] = None
 			archinstall.arguments['desktop-environment'] = None
 			archinstall.arguments['gfx_driver_packages'] = None
 			return None
-		case MenuSelectionType.Selection: return options[selection.value] if selection.value is not None else None
+		case MenuSelectionType.Esc:
+			return None
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:

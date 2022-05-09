@@ -28,10 +28,11 @@ def _prep_function(*args, **kwargs):
 	Magic function called by the importing installer
 	before continuing any further.
 	"""
+
 	choice = Menu(
 		'Choose which servers to install, if none then a minimal installation wil be done',
 		available_servers,
-		preset_values=archinstall.storage.get('_selected_servers', []),
+		preset_values=kwargs['servers'],
 		multi=True
 	).run()
 

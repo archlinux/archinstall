@@ -29,11 +29,11 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	if default_filesystem == 'btrfs':
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		using_subvolumes = choice == Menu.yes()
+		using_subvolumes = choice.value == Menu.yes()
 
 		prompt = str(_('Would you like to use BTRFS compression?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		compression = choice == Menu.yes()
+		compression = choice.value == Menu.yes()
 
 	layout = {
 		block_device.path : {
@@ -90,7 +90,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		prompt = str(_('Would you like to create a separate partition for /home?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		using_home_partition = choice == Menu.yes()
+		using_home_partition = choice.value == Menu.yes()
 
 	# Set a size for / (/root)
 	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:
@@ -173,7 +173,7 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice], default_filesyst
 
 		prompt = str(_('Would you like to use BTRFS compression?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		compression = choice == Menu.yes()
+		compression = choice.value == Menu.yes()
 
 	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 
