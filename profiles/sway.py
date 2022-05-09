@@ -23,8 +23,9 @@ def _check_driver() -> bool:
 
 	if packages and "nvidia" in packages:
 		prompt = 'The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'
-		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no()).run()
-		if choice == Menu.no():
+		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
+
+		if choice.value == Menu.no():
 			return False
 
 	return True

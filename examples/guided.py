@@ -45,9 +45,8 @@ def ask_user_questions():
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
 
-	if archinstall.arguments.get('advanced', False):
-		global_menu.enable('sys-language', True)
-		global_menu.enable('sys-encoding', True)
+	global_menu.enable('sys-language')
+	global_menu.enable('sys-encoding')
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.

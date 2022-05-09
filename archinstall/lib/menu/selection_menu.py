@@ -4,7 +4,7 @@ import logging
 import sys
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
-from .menu import Menu
+from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translation import Translation
@@ -12,13 +12,15 @@ from ..translation import Translation
 if TYPE_CHECKING:
 	_: Any
 
-def select_archinstall_language(default='English'):
+
+def select_archinstall_language(preset_value: str) -> Optional[str]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
 	languages = Translation.get_all_names()
-	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
-	return language
+	language = Menu(_('Select Archinstall language'), languages, preset_values=preset_value).run()
+	return language.value
+
 
 class Selector:
 	def __init__(
@@ -307,22 +309,27 @@ class GeneralMenu:
 				skip_empty_entries=True
 			).run()
 
-			if selection and self.auto_cursor:
-				cursor_pos = menu_options.index(selection) + 1  # before the strip otherwise fails
+			if selection.type_ == MenuSelectionType.Selection:
+				value = selection.value
 
-				# in case the new position lands on a "placeholder" we'll skip them as well
-				while True:
-					if cursor_pos >= len(menu_options):
-						cursor_pos = 0
-					if len(menu_options[cursor_pos]) > 0:
+				if self.auto_cursor:
+					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
+
+					# in case the new position lands on a "placeholder" we'll skip them as well
+					while True:
+						if cursor_pos >= len(menu_options):
+							cursor_pos = 0
+						if len(menu_options[cursor_pos]) > 0:
+							break
+						cursor_pos += 1
+
+					value = value.strip()
+
+					# if this calls returns false, we exit the menu
+					# we allow for an callback for special processing on realeasing control
+					if not self._process_selection(value):
 						break
-					cursor_pos += 1
 
-				selection = selection.strip()
-			if selection:
-				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
-				if not self._process_selection(selection):
-					break
 		if not self.is_context_mgr:
 			self.__exit__()
 
@@ -443,15 +450,17 @@ class GeneralMenu:
 	def mandatory_overview(self) -> Tuple[int, int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
-		for field in self._menu_options:
-			option = self._menu_options[field]
+		for field, option in self._menu_options.items():
 			if option.is_mandatory():
 				mandatory_fields += 1
 				if not option.has_selection():
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
-	def _select_archinstall_language(self, default_lang):
-		language = select_archinstall_language(default_lang)
-		self._translation.activate(language)
-		return language
+	def _select_archinstall_language(self, preset_value: str) -> str:
+		language = select_archinstall_language(preset_value)
+		if language is not None:
+			self._translation.activate(language)
+			return language
+
+		return preset_value

@@ -207,6 +207,10 @@ class Profile(Script):
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return f'Profile({os.path.basename(self.profile)})'
 
+	@property
+	def name(self) -> str:
+		return os.path.basename(self.profile)
+
 	def install(self) -> ModuleType:
 		# Before installing, revert any temporary changes to the namespace.
 		# This ensures that the namespace during installation is the original initiation namespace.

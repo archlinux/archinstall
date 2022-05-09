@@ -3,6 +3,9 @@ from __future__ import annotations
 import logging
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
+import archinstall
+
+from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
@@ -26,7 +29,8 @@ def ask_ntp(preset: bool = True) -> bool:
 	else:
 		preset_val = Menu.no()
 	choice = Menu(prompt, Menu.yes_no(), skip=False, preset_values=preset_val, default_option=Menu.yes()).run()
-	return False if choice == Menu.no() else True
+
+	return False if choice.value == Menu.no() else True
 
 
 def ask_hostname(preset: str = None) -> str:
@@ -38,23 +42,31 @@ def ask_for_a_timezone(preset: str = None) -> str:
 	timezones = list_timezones()
 	default = 'UTC'
 
-	selected_tz = Menu(_('Select a timezone'),
-						list(timezones),
-						skip=False,
-						preset_values=preset,
-						default_option=default).run()
+	choice = Menu(
+		_('Select a timezone'),
+		list(timezones),
+		preset_values=preset,
+		default_option=default
+	).run()
 
-	return selected_tz
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection: return choice.value
 
 
 def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
-	audio = 'pipewire' if desktop else 'none'
-	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', 'none']
-	selected_audio = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=audio, skip=False).run()
-	return selected_audio
+	no_audio = str(_('No audio server'))
+	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', no_audio]
+	default = 'pipewire' if desktop else no_audio
+
+	choice = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=default).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection: return choice.value
 
 
-def select_language(default_value: str, preset_value: str = None) -> str:
+def select_language(preset_value: str = None) -> str:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -64,16 +76,19 @@ def select_language(default_value: str, preset_value: str = None) -> str:
 	"""
 	kb_lang = list_keyboard_languages()
 	# sort alphabetically and then by length
-	# it's fine if the list is big because the Menu
-	# allows for searching anyways
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(_('Select Keyboard layout'),
-							sorted_kb_lang,
-							default_option=default_value,
-							preset_values=preset_value,
-							sort=False).run()
-	return selected_lang
+	selected_lang = Menu(
+		_('Select Keyboard layout'),
+		sorted_kb_lang,
+		preset_values=preset_value,
+		sort=False
+	).run()
+
+	if selected_lang.value is None:
+		return preset_value
+
+	return selected_lang.value
 
 
 def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
@@ -89,15 +104,18 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 	else:
 		preselected = list(preset_values.keys())
 	mirrors = list_mirrors()
-	selected_mirror = Menu(_('Select one of the regions to download packages from'),
-							list(mirrors.keys()),
-							preset_values=preselected,
-							multi=True).run()
+	selected_mirror = Menu(
+		_('Select one of the regions to download packages from'),
+		list(mirrors.keys()),
+		preset_values=preselected,
+		multi=True,
+		explode_on_interrupt=True
+	).run()
 
-	if selected_mirror is not None:
-		return {selected: mirrors[selected] for selected in selected_mirror}
-
-	return {}
+	match selected_mirror.type_:
+		case MenuSelectionType.Ctrl_c: return {}
+		case MenuSelectionType.Esc: return preset_values
+		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
 def select_archinstall_language(default='English'):
@@ -106,7 +124,7 @@ def select_archinstall_language(default='English'):
 	return language
 
 
-def select_profile() -> Optional[Profile]:
+def select_profile(preset) -> Optional[Profile]:
 	"""
 	# Asks the user to select a profile from the available profiles.
 	#
@@ -125,12 +143,27 @@ def select_profile() -> Optional[Profile]:
 
 	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
 
-	selection = Menu(title=title, p_options=list(options.keys())).run()
+	warning = str(_('Are you sure you want to reset this setting?'))
 
-	if selection is not None:
-		return options[selection]
+	selection = Menu(
+		title=title,
+		p_options=list(options.keys()),
+		explode_on_interrupt=True,
+		explode_warning=warning
+	).run()
 
-	return None
+	match selection.type_:
+		case MenuSelectionType.Selection:
+			return options[selection.value] if selection.value is not None else None
+		case MenuSelectionType.Ctrl_c:
+			archinstall.storage['profile_minimal'] = False
+			archinstall.storage['_selected_servers'] = []
+			archinstall.storage['_desktop_profile'] = None
+			archinstall.arguments['desktop-environment'] = None
+			archinstall.arguments['gfx_driver_packages'] = None
+			return None
+		case MenuSelectionType.Esc:
+			return None
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
@@ -171,14 +204,16 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 
 	repositories = ["multilib", "testing"]
 
-	additional_repositories = Menu(_('Choose which optional additional repositories to enable'),
-									repositories,
-									sort=False,
-									multi=True,
-									preset_values=preset,
-									default_option=[]).run()
+	choice = Menu(
+		_('Choose which optional additional repositories to enable'),
+		repositories,
+		sort=False,
+		multi=True,
+		preset_values=preset,
+		explode_on_interrupt=True
+	).run()
 
-	if additional_repositories is not None:
-		return additional_repositories
-
-	return []
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Selection: return choice.value

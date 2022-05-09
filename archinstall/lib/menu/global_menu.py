@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union
 
+import archinstall
+
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
 from ..models import NetworkConfiguration
 from ..storage import storage
-from ..profiles import is_desktop_profile
+from ..profiles import is_desktop_profile, Profile
 from ..disk import encrypted_partitions
 
 from ..user_interaction import get_password, ask_for_a_timezone, save_config
@@ -41,28 +43,38 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Select Archinstall language'),
-				lambda x: self._select_archinstall_language('English'),
+				lambda x: self._select_archinstall_language(x),
 				default='English')
 		self._menu_options['keyboard-layout'] = \
-			Selector(_('Select keyboard layout'), lambda preset: select_language('us',preset), default='us')
+			Selector(
+				_('Select keyboard layout'),
+				lambda preset: select_language(preset),
+				default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
 				_('Select mirror region'),
-				select_mirror_regions,
+				lambda preset: select_mirror_regions(preset),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
-			Selector(_('Select locale language'), lambda preset: select_locale_lang('en_US',preset), default='en_US')
+			Selector(
+				_('Select locale language'),
+				lambda preset: select_locale_lang(preset),
+				default='en_US')
 		self._menu_options['sys-encoding'] = \
-			Selector(_('Select locale encoding'), lambda preset: select_locale_enc('utf-8',preset), default='utf-8')
+			Selector(
+				_('Select locale encoding'),
+				lambda preset: select_locale_enc(preset),
+				default='UTF-8')
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Select harddrives'),
-				self._select_harddrives)
+				lambda preset: self._select_harddrives(preset))
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Select disk layout'),
-				lambda x: select_disk_layout(
+				lambda preset: select_disk_layout(
+					preset,
 					storage['arguments'].get('harddrives', []),
 					storage['arguments'].get('advanced', False)
 				),
@@ -112,7 +124,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['profile'] = \
 			Selector(
 				_('Specify profile'),
-				lambda x: self._select_profile(),
+				lambda preset: self._select_profile(preset),
 				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
@@ -247,41 +259,73 @@ class GlobalMenu(GeneralMenu):
 		return ntp
 
 	def _select_harddrives(self, old_harddrives : list) -> list:
-		# old_haddrives = storage['arguments'].get('harddrives', [])
 		harddrives = select_harddrives(old_harddrives)
 
-		# in case the harddrives got changed we have to reset the disk layout as well
-		if old_harddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
-			storage['arguments']['disk_layouts'] = {}
-
-		if not harddrives:
+		if len(harddrives) == 0:
 			prompt = _(
 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
 				"WARNING: Archinstall won't check the suitability of this setup\n"
 				"Do you wish to continue?"
 			).format(storage['MOUNT_POINT'])
 
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
 
-			if choice == Menu.no():
-				exit(1)
+			if choice.value == Menu.no():
+				return self._select_harddrives(old_harddrives)
+
+		# in case the harddrives got changed we have to reset the disk layout as well
+		if old_harddrives != harddrives:
+			self._menu_options.get('disk_layouts').set_current_selection(None)
+			storage['arguments']['disk_layouts'] = {}
 
 		return harddrives
 
-	def _select_profile(self):
-		profile = select_profile()
+	def _select_profile(self, preset):
+		profile = select_profile(preset)
+		ret = None
+
+		if profile is None:
+			if any([
+				archinstall.storage.get('profile_minimal', False),
+				archinstall.storage.get('_selected_servers', None),
+				archinstall.storage.get('_desktop_profile', None),
+				archinstall.arguments.get('desktop-environment', None),
+				archinstall.arguments.get('gfx_driver_packages', None)
+			]):
+				return preset
+			else:  # ctrl+c was actioned and all profile settings have been reset
+				return None
+
+		servers = archinstall.storage.get('_selected_servers', [])
+		desktop = archinstall.storage.get('_desktop_profile', None)
+		desktop_env = archinstall.arguments.get('desktop-environment', None)
+		gfx_driver = archinstall.arguments.get('gfx_driver_packages', None)
 
 		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
 		if profile and profile.has_prep_function():
 			namespace = f'{profile.namespace}.py'
 			with profile.load_instructions(namespace=namespace) as imported:
-				if imported._prep_function():
-					return profile
-				else:
-					return self._select_profile()
+				if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
+					ret: Profile = profile
 
-		return self._data_store.get('profile', None)
+					match ret.name:
+						case 'minimal':
+							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment', 'gfx_driver_packages']
+						case 'server':
+							reset = ['_desktop_profile', 'desktop-environment']
+						case 'desktop':
+							reset = ['_selected_servers']
+						case 'xorg':
+							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment']
+
+					for r in reset:
+						archinstall.storage[r] = None
+				else:
+					return self._select_profile(preset)
+		elif profile:
+			ret = profile
+
+		return ret
 
 	def _create_superuser_account(self):
 		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))
