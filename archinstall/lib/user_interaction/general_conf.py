@@ -49,7 +49,6 @@ def ask_for_a_timezone(preset: str = None) -> str:
 		default_option=default
 	).run()
 
-
 	match choice.type_:
 		case MenuSelectionType.Esc: return preset
 		case MenuSelectionType.Selection: return choice.value

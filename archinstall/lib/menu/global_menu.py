@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union
 
 import archinstall
-from .menu import MenuSelectionType
 
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
@@ -282,8 +281,6 @@ class GlobalMenu(GeneralMenu):
 		return harddrives
 
 	def _select_profile(self, preset):
-		from archinstall import log
-
 		profile = select_profile(preset)
 		ret = None
 
@@ -311,7 +308,6 @@ class GlobalMenu(GeneralMenu):
 				if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
 					ret: Profile = profile
 
-					log(ret.name)
 					match ret.name:
 						case 'minimal':
 							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment', 'gfx_driver_packages']

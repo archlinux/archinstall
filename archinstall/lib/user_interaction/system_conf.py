@@ -9,8 +9,6 @@ from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..storage import storage
 
-from ..translation import DeferredTranslation
-
 if TYPE_CHECKING:
 	_: Any
 
