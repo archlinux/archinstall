@@ -248,7 +248,7 @@ def post_process_arguments(arguments):
 
 
 # to ensure that cyrillic characters work in the installer
-set_unicode_font()
+# set_unicode_font()
 
 define_arguments()
 arguments = get_arguments()
