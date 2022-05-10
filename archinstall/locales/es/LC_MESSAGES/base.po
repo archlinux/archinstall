@@ -448,7 +448,6 @@ msgstr "El bloqueo de pacman preexistente nunca salió. Limpie cualquier sesión
 msgid "Choose which optional additional repositories to enable"
 msgstr "Elija qué repositorios adicionales opcionales habilitar"
 
-#, fuzzy
 msgid "Add a user"
 msgstr "Añadir un usuario"
 
@@ -586,153 +585,139 @@ msgstr "Defina usuarios con privilegio sudo, por nombre de usuario: "
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {}"
 
-#, fuzzy
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Te gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
+msgstr "¿Le gustaría utilizar subvolúmenes BTRFS con una estructura predeterminada?"
 
-#, fuzzy
 msgid "Would you like to use BTRFS compression?"
-msgstr "¿Te gustaría usar swap en zram?"
+msgstr "¿Te gustaría usar la compresión BTRFS?"
 
-#, fuzzy
 msgid "Would you like to create a separate partition for /home?"
-msgstr "¿Te gustaría usar swap en zram?"
+msgstr "¿Le gustaría crear una partición separada para /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr ""
+msgstr "Las unidades seleccionadas no tienen la capacidad mínima requerida para una sugerencia automática\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "Capacidad mínima para la partición /home: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Capacidad mínima para la partición Arch Linux: {}GB"
 
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 msgid "yes"
-msgstr ""
+msgstr "sí"
 
 msgid "no"
-msgstr ""
+msgstr "no"
 
 msgid "set: {}"
-msgstr ""
+msgstr "establecer: {}"
 
 msgid "Manual configuration setting must be a list"
-msgstr ""
+msgstr "El ajuste de configuración manual debe ser una lista"
 
-#, fuzzy
 msgid "No iface specified for manual configuration"
-msgstr "Guardar configuración de usuario"
+msgstr "No se especificó iface para la configuración manual"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr ""
+msgstr "La configuración manual de la NIC sin DHCP automático requiere una dirección IP"
 
 msgid "Add interface"
-msgstr ""
+msgstr "Añadir interfaz"
 
 msgid "Edit interface"
-msgstr ""
+msgstr "Editar interfaz"
 
-#, fuzzy
 msgid "Delete interface"
-msgstr "Eliminar usuario"
+msgstr "Eliminar intefaz"
 
-#, fuzzy
 msgid "Select interface to add"
-msgstr "Selecciona una interfaz de red para configurar"
+msgstr "Seleccione la interfaz para agregar"
 
-#, fuzzy
 msgid "Manual configuration"
-msgstr "Guardar configuración"
+msgstr "Configuración manual"
 
-#, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Marcar/Desmarcar una partición como encriptada"
+msgstr "Marcar/Desmarcar una partición como comprimida (solo btrfs)"
 
-#, fuzzy
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "La contraseña que está utilizando parece ser débil,"
+msgstr "La contraseña que está utilizando parece ser débil, ¿está seguro de que desea usarla?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr ""
+msgstr "Proporciona una selección de entornos de escritorio y administradores de ventanas en mosaico, p.e. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "Seleccione su entorno de escritorio deseado"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr ""
+msgstr "Una instalación muy básica que te permite personalizar Arch Linux como mejor te parezca."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr ""
+msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation wil be done"
-msgstr ""
+msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Instala un sistema mínimo, así como controladores xorg y gráficos."
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Presione Entrar para continuar."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr ""
+msgstr "¿Le gustaría hacer chroot en la instalación recién creada y realizar la configuración posterior a la instalación?"
 
-#, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr "¿Estás seguro de que quieres usarlo?"
+msgstr "¿Está seguro de que desea restablecer esta configuración?"
 
-#, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Selecciona uno o más discos duros para usar y configurar"
+msgstr "Seleccione uno o más discos duros para usar y configurar\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "¡Cualquier modificación a la configuración existente restablecerá el diseño del disco!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "Si restablece la selección del disco duro, esto también restablecerá el diseño actual del disco. ¿Está seguro?"
 
-#, fuzzy
 msgid "Save and exit"
-msgstr "Confirmar y salir"
+msgstr "Guardar y salir"
 
-#, fuzzy
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
-msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
+msgstr ""
+"{}\n"
+"contiene particiones en cola, esto las eliminará, ¿está seguro?"
 
-#, fuzzy
 msgid "No audio server"
-msgstr "Elige un servidor de audio"
+msgstr "Sin servidor de audio"
 
 msgid "(default)"
-msgstr ""
+msgstr "(predeterminado)"
 
-#, fuzzy
 msgid "Use ESC to skip"
-msgstr "Use ESC para saltar\n"
+msgstr "Use ESC para saltar"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+"Use CTRL+C para restablecer la selección actual\n"
+"\n"
 
-#, fuzzy
 msgid "Copy to: "
-msgstr "Copiar a :"
+msgstr "Copiar a : "
 
-#, fuzzy
 msgid "Edit: "
-msgstr "Editar"
+msgstr "Editar: "
 
 msgid "Key: "
-msgstr ""
+msgstr "Clave: "
 
-#, fuzzy
 msgid "Edit {}: "
-msgstr "Editar :"
+msgstr "Editar {}: "
 
 msgid "Add :"
 msgstr "Añadir :"
