@@ -17,7 +17,7 @@ def select_archinstall_language(preset_value: str) -> Optional[str]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
-	languages = Translation.get_all_names()
+	languages = Translation.get_available_lang()
 	language = Menu(_('Select Archinstall language'), languages, preset_values=preset_value).run()
 	return language.value
 
@@ -306,7 +306,8 @@ class GeneralMenu:
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
 				preview_size=self.preview_size,
-				skip_empty_entries=True
+				skip_empty_entries=True,
+				skip=False
 			).run()
 
 			if selection.type_ == MenuSelectionType.Selection:
