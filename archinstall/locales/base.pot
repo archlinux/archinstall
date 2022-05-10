@@ -715,8 +715,8 @@ msgstr ""
 msgid "Edit {}: "
 msgstr ""
 
-msgid "Add :"
+msgid "Add: "
 msgstr ""
 
-msgid "Value :"
+msgid "Value: "
 msgstr ""
