@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Eine Logdatei wurde erstellt: {} {}"
@@ -397,119 +397,93 @@ msgstr ""
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
 
-#, fuzzy
 msgid "Use ESC to skip\n"
-msgstr ""
-"ESC um zu Überspringen\n"
-"\n"
+msgstr "ESC um zu Überspringen\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
+"\n"
+" Wählen sie ein Object aus der Liste aus und wählen sie anschließend eine Aktion dafür aus "
 
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
-#, fuzzy
 msgid "Confirm and exit"
-msgstr "Netzwerkonfiguration"
+msgstr "Bestätigen und Schließen"
 
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 msgid "Copy"
-msgstr ""
+msgstr "Kopieren"
 
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
-#, fuzzy
 msgid "Select an action for < {} >"
-msgstr ""
-"Bitte wählen Sie eine Aktion aus für\n"
-"{}"
-
-msgid "Add :"
-msgstr ""
-
-msgid "Copy to :"
-msgstr ""
-
-msgid "Edite :"
-msgstr ""
-
-msgid "Key :"
-msgstr ""
-
-msgid "Value :"
-msgstr ""
+msgstr "Wählen sie eine Aktion aus für < {} >"
 
 msgid "Copy to new key:"
-msgstr ""
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr ""
+msgstr "Kopieren nach neuem Schlüssel:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr ""
+msgstr "Nicht erkannter Netzwerinterfacecontroller: {}. Erlaubte Werte {}"
 
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
+"\n"
+"Das ist ihre gewählte Konfiguration:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
+msgstr "Pacman läuft bereits, warten für maximal 10min auf Beendigung."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr ""
+msgstr "Existierendes Pacman lock wurde nicht beendet. Bitte beenden sie existierende Pacman Sessions um archinstall benützen zu können."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr ""
+msgstr "Wählen sie welche zusätzlichen Repositories eingeschaltet werden sollen"
 
 msgid "Add a user"
-msgstr ""
+msgstr "Benutzerkonto hinzufügen"
 
-#, fuzzy
 msgid "Change password"
-msgstr "Passwort eingeben: "
+msgstr "Passwort ändern"
 
 msgid "Promote/Demote user"
-msgstr ""
+msgstr "Benutzerkonto Berechtigen/Einschränken"
 
 msgid "Delete User"
-msgstr ""
+msgstr "Benutzerkonto löschen"
 
 msgid ""
 "\n"
 "Define a new user\n"
 msgstr ""
+"\n"
+"Neues Benutzerkonto anlegen\n"
 
 msgid "User Name : "
-msgstr ""
+msgstr "Benutzername: "
 
-#, fuzzy
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "Soll dieser Benutzer ein superuser sein (sudoer)?"
+msgstr "Soll {} ein superuser sein (sudoer)?"
 
-#, fuzzy
 msgid "Define users with sudo privilege: "
-msgstr "Geben sie einen super-user mit sudo Privilegien an: "
+msgstr "Geben sie super-user mit sudo Privilegien an: "
 
-#, fuzzy
 msgid "No network configuration"
-msgstr "ISO netzwerk Einstellungen in die Installation kopieren"
+msgstr "Keine Netzwerkkonfiguration"
 
-#, fuzzy
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Bitte wählen Sie einen Dateisystemtyp für die Partition aus"
+msgstr "Bitte wählen Sie subvolumes für die Btrfs Partition"
 
-#, fuzzy
 msgid ""
 "{}\n"
 "\n"
@@ -517,237 +491,238 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Bitte wählen sie auf welche Partition ein Dateisystem eingerichtet werden soll"
+"Bitte wählen sie auf welcher Partition subvolumes eingerichtet werden sollen"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr ""
+msgstr "Bearbeiten von Btrfs subvolumes für die aktuelle Partition"
 
 msgid "No configuration"
-msgstr ""
+msgstr "Keine Konfiguration"
 
 msgid "Save user configuration"
-msgstr ""
+msgstr "Benutzerkonfiguration speichern"
 
 msgid "Save user credentials"
-msgstr ""
+msgstr "Benutzeranmeldedaten speichern"
 
-#, fuzzy
 msgid "Save disk layout"
-msgstr "Laufwerke-layout auswählen"
+msgstr "Laufwerke-layout speichern"
 
 msgid "Save all"
-msgstr ""
+msgstr "Alle speichern"
 
-#, fuzzy
 msgid "Choose which configuration to save"
-msgstr "Bitte wählen sie eine lokale Sprache aus"
+msgstr "Bitte wählen sie eine Konfiguration aus welche gespeichert werden soll"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr ""
+msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
 
 msgid "Not a valid directory: {}"
-msgstr ""
+msgstr "Ordner existiert nicht: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr ""
+msgstr "Das gewählte Passwort ist sehr schwach,"
 
-#, fuzzy
 msgid "are you sure you want to use it?"
-msgstr "Wollen Sie wirklich abbrechen?"
+msgstr "wollen sie dieses wirklich verwenden?"
 
-#, fuzzy
 msgid "Additional repositories to enable"
-msgstr "Zus. Packete für die Installation"
+msgstr "Zus. Repositories einzuschalten"
 
 msgid "Save configuration"
-msgstr ""
+msgstr "Konfiguration speichern"
 
 msgid "Missing configurations:\n"
-msgstr ""
+msgstr "Ausständige Konfigurationen:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr ""
+msgstr "Entweder root Passwort oder wenigstens 1 super-user muss konfiguriert sein"
 
-#, fuzzy
 msgid "Manage superuser accounts: "
-msgstr "Superuser Konto wählen"
+msgstr "Superuser Konto bearbeiten: "
 
-#, fuzzy
 msgid "Manage ordinary user accounts: "
-msgstr "Benutzerkonto wählen"
+msgstr "Benutzerkonten bearbeiten: "
 
 msgid " Subvolume :{:16}"
-msgstr ""
+msgstr " Subvolume :{:16}"
 
 msgid " mounted at {:16}"
-msgstr ""
+msgstr " Mounted an {:16}"
 
 msgid " with option {}"
-msgstr ""
+msgstr "mit option {}"
 
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
+"\n"
+" Geben sie die gewünschten Werte für ein neues Subvolumen an \n"
 
 msgid "Subvolume name "
-msgstr ""
+msgstr "Subvolumen name"
 
 msgid "Subvolume mountpoint"
-msgstr ""
+msgstr "Subvolumen mountpunkt"
 
 msgid "Subvolume options"
-msgstr ""
+msgstr "Subvolumen Optionen"
 
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 msgid "Subvolume name :"
-msgstr ""
+msgstr "Subvolumen name :"
 
-#, fuzzy
 msgid "Select a mount point :"
-msgstr "Bitte wählen Sie eine Zeitzone aus"
+msgstr "Bitte wählen Sie einen Mountpunkt aus"
 
 msgid "Select the desired subvolume options "
-msgstr ""
+msgstr "Wählen sie die gewünschte Subvolumen Optionen"
 
-#, fuzzy
 msgid "Define users with sudo privilege, by username: "
-msgstr "Geben sie einen super-user mit sudo Privilegien an: "
+msgstr "Geben sie Benutzer mit sudo Privilegien an: "
 
-#, fuzzy
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Eine Logdatei wurde erstellt: {} {}"
+msgstr "[!] Eine Logdatei wurde erstellt: {}"
 
-#, fuzzy
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Möchten Sie GRUB als bootloader anstelle von system-boot verwenden?"
+msgstr "Möchten sie Btrfs Subvolumen mit vorgebener Struktur?"
 
-#, fuzzy
 msgid "Would you like to use BTRFS compression?"
-msgstr "Möchten Sie swap mit zram verwenden?"
+msgstr "Möchten sie Btrfs kompression?"
 
-#, fuzzy
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Möchten Sie swap mit zram verwenden?"
+msgstr "Möchten sie eine separate Partition für /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr ""
+msgstr "Die ausgewählten Laufwerke haben nicht genug Speicherplatz für eine automatische Vorgabe\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "Minimaler Speicherplatz für /home Partition: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Minimaler Speicherplatz für Arch Linux Partition: {}GB"
 
 msgid "Continue"
-msgstr ""
+msgstr "Weiter"
 
 msgid "yes"
-msgstr ""
+msgstr "ja"
 
 msgid "no"
-msgstr ""
+msgstr "nein"
 
 msgid "set: {}"
-msgstr ""
+msgstr "gewählt: {}"
 
 msgid "Manual configuration setting must be a list"
-msgstr ""
+msgstr "Manuelle Konfiguration muss eine Liste sein"
 
 msgid "No iface specified for manual configuration"
-msgstr ""
+msgstr "Kein Verbindung angegeben für eine manuelle Konfiguration"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr ""
+msgstr "Manuelle Konfiguration für Netzwerverbindung mit keinem auto DHCP benötigt eien IP Addresse"
 
 msgid "Add interface"
-msgstr ""
+msgstr "Verbindung hinzufügen"
 
 msgid "Edit interface"
-msgstr ""
+msgstr "Verbindung bearbeiten"
 
 msgid "Delete interface"
-msgstr ""
+msgstr "Verbindung löschen"
 
-#, fuzzy
 msgid "Select interface to add"
-msgstr "Bitte wählen Sie ein netzwerk zur Konfiguration aus"
+msgstr "Wählen sie eine Verbindung welche hinzugefügt werden soll"
 
-#, fuzzy
 msgid "Manual configuration"
-msgstr "ISO netzwerk Einstellungen in die Installation kopieren"
+msgstr "Manuelle konfiguration"
 
-#, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Markieren welche Partitionen verschlüsselt werden sollen"
+msgstr "Markieren/Unmarkieren Kompression von einer Partition (nur Btrfs) "
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr ""
+msgstr "Das gewählte Passwort ist schwach, möchten sie trotzdem fortfahren?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr ""
+msgstr "Auswahl von Desktopumgebungen und tiling window managern, z.B. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "Wählen sie eine Desktopumgebung aus"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr ""
+msgstr "Eine sehr minimale Installation welche es erlaubt Arch Linux weitgehend anzupassen"
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr ""
+msgstr "Auswahl von Serverpaketen welche installiert werden sollen, z.B. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation wil be done"
-msgstr ""
+msgstr "Wählen sie die gewünschten Server aus welche installiert werden sollen"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Installiert ein minimales System inklusive xorg und Graphiktreibern"
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Drücken sie Enter um fortzufahren."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr ""
+msgstr "Möchten sie chroot in das neu installierte System um noch weitere manuelle Konfigurationen forzunehmen?"
 
-#, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr "Wollen Sie wirklich abbrechen?"
+msgstr "Wollen Sie wirklich diese Konfiguration zurücksetzen?"
 
-#, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen"
+msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "Modifikationen zur momentanen Konfiguration führen zu einem Löschen der Laufwerkskonfiguration!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "Wenn sie die Laufwerkkonfiguration ändern, dann wird die Laufwer-layout zurückgesetzt. Sind sie sicher?"
 
-#, fuzzy
 msgid "Save and exit"
-msgstr "Netzwerkonfiguration"
+msgstr "Speichern und zurück"
 
-#, fuzzy
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
-msgstr "{} enthält Partitionen in der Warteschlange, dies werden damit entfernt, sind sie sicher?"
+msgstr ""
+"{}\n"
+"enthält Partitionen in der Warteschlange, dies werden damit entfernt, sind sie sicher?"
 
-#, fuzzy
 msgid "No audio server"
-msgstr "Bitte wählen Sie einen Audio server aus"
+msgstr "Kein Audio server"
 
 msgid "(default)"
-msgstr ""
+msgstr "(vorgegeben)"
 
-#, fuzzy
 msgid "Use ESC to skip"
-msgstr ""
-"ESC um zu Überspringen\n"
-"\n"
+msgstr "ESC drücken um zu überspringen"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+"Ctrl+C drücken um die Einstellungen zurückzusetzen\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Kopieren nach: "
+
+msgid "Edit: "
+msgstr "Bearbeiten: "
+
+msgid "Key: "
+msgstr "Schlüssel: "
+
+msgid "Edit {}: "
+msgstr "Bearbeiten {}: "
+
+msgid "Add :"
+msgstr "Hinzufügen :"
+
+msgid "Value :"
+msgstr "Wert :"

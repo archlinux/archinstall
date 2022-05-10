@@ -426,27 +426,8 @@ msgstr "Eliminar"
 msgid "Select an action for < {} >"
 msgstr "Seleccione una acción para < {} >"
 
-msgid "Add :"
-msgstr "Añadir :"
-
-msgid "Copy to :"
-msgstr "Copiar a :"
-
-msgid "Edite :"
-msgstr "Editar :"
-
-msgid "Key :"
-msgstr "Clave :"
-
-msgid "Value :"
-msgstr "Valor :"
-
 msgid "Copy to new key:"
 msgstr "Copiar a nueva clave :"
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr "Editar {origkey} :"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Tipo de nic desconocido: {}. Los valores posibles son {}"
@@ -737,3 +718,37 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "Copiar a :"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "Editar"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "Editar :"
+
+msgid "Add :"
+msgstr "Añadir :"
+
+msgid "Value :"
+msgstr "Valor :"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "Editar {origkey} :"
+
+#~ msgid "Copy to :"
+#~ msgstr "Copiar a :"
+
+#~ msgid "Edite :"
+#~ msgstr "Editar :"
+
+#~ msgid "Key :"
+#~ msgstr "Clave :"

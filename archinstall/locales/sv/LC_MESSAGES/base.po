@@ -434,26 +434,7 @@ msgstr ""
 "Välj vad du vill göra med\n"
 "{}"
 
-msgid "Add :"
-msgstr ""
-
-msgid "Copy to :"
-msgstr ""
-
-msgid "Edite :"
-msgstr ""
-
-msgid "Key :"
-msgstr ""
-
-msgid "Value :"
-msgstr ""
-
 msgid "Copy to new key:"
-msgstr ""
-
-#, python-brace-format
-msgid "Edit {origkey} :"
 msgstr ""
 
 msgid "Unknown nic type: {}. Possible values are {}"
@@ -751,4 +732,22 @@ msgstr ""
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
+msgstr ""
+
+msgid "Copy to: "
+msgstr ""
+
+msgid "Edit: "
+msgstr ""
+
+msgid "Key: "
+msgstr ""
+
+msgid "Edit {}: "
+msgstr ""
+
+msgid "Add :"
+msgstr ""
+
+msgid "Value :"
 msgstr ""

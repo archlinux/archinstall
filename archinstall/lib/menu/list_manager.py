@@ -260,14 +260,14 @@ class ListManager:
 				self._data.append(self.target)
 			if self.action == str(_('Copy')):
 				while True:
-					target = TextInput(_('Copy to :'),self.target).run()
+					target = TextInput(_('Copy to: '),self.target).run()
 					if target != self.target:
 						self._data.append(self.target)
 						break
 			elif self.action == str(_('Edit')):
 				tgt = self.target
 				idx = self._data.index(self.target)
-				result = TextInput(_('Edite :'),tgt).run()
+				result = TextInput(_('Edit: '),tgt).run()
 				self._data[idx] = result
 			elif self.action == str(_('Delete')):
 				del self._data[self._data.index(self.target)]
@@ -279,7 +279,7 @@ class ListManager:
 				origkey = None
 				origval = None
 			if self.action == str(_('Add')):
-				key = TextInput(_('Key :'),None).run()
+				key = TextInput(_('Key: '),None).run()
 				value = TextInput(_('Value :'),None).run()
 				self._data[key] = value
 			if self.action == str(_('Copy')):
@@ -289,7 +289,7 @@ class ListManager:
 						self._data[key] = origval
 						break
 			elif self.action == str(_('Edit')):
-				value = TextInput(_(f'Edit {origkey} :'),origval).run()
+				value = TextInput(_('Edit {}: ').format(origkey), origval).run()
 				self._data[origkey] = value
 			elif self.action == str(_('Delete')):
 				del self._data[origkey]

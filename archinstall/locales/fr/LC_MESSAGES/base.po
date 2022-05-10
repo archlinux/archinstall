@@ -428,27 +428,8 @@ msgstr "Supprimer"
 msgid "Select an action for < {} >"
 msgstr "Sélectionner une action pour < {} >"
 
-msgid "Add :"
-msgstr "Ajouter :"
-
-msgid "Copy to :"
-msgstr "Copier :"
-
-msgid "Edite :"
-msgstr "Modifier :"
-
-msgid "Key :"
-msgstr "Clé :"
-
-msgid "Value :"
-msgstr "Valeur :"
-
 msgid "Copy to new key:"
 msgstr "Copier vers une nouvelle clé :"
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr "Modifier {origkey} :"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Type de carte réseau inconnu : {}. Les valeurs possibles sont {}"
@@ -729,3 +710,37 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "Copier :"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "Modifier"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "Modifier :"
+
+msgid "Add :"
+msgstr "Ajouter :"
+
+msgid "Value :"
+msgstr "Valeur :"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "Modifier {origkey} :"
+
+#~ msgid "Copy to :"
+#~ msgstr "Copier :"
+
+#~ msgid "Edite :"
+#~ msgstr "Modifier :"
+
+#~ msgid "Key :"
+#~ msgstr "Clé :"

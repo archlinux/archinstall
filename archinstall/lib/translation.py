@@ -5,14 +5,14 @@ import os
 import gettext
 
 from pathlib import Path
-from typing import List, Dict, Any, TYPE_CHECKING
+from typing import List, Dict, Any, TYPE_CHECKING, Tuple
 from .exceptions import TranslationError
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class Languages:
+class LanguageDefinitions:
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
 
@@ -70,11 +70,12 @@ class Translation:
 	def __init__(self, locales_dir):
 		self._languages = {}
 
-		for name in self.get_all_names():
+		for names in self._get_translation_lang():
 			try:
-				self._languages[name] = gettext.translation('base', localedir=locales_dir, languages=[name])
+				print(names)
+				self._languages[names[0]] = gettext.translation('base', localedir=locales_dir, languages=names)
 			except FileNotFoundError as error:
-				raise TranslationError(f"Could not locate language file for '{name}': {error}")
+				raise TranslationError(f"Could not locate language file for '{names}': {error}")
 
 	def activate(self, name):
 		if language := self._languages.get(name, None):
@@ -94,10 +95,19 @@ class Translation:
 		return locales_dir
 
 	@classmethod
-	def get_all_names(cls) -> List[str]:
+	def _defined_languages(cls) -> List[str]:
 		locales_dir = cls.get_locales_dir()
 		filenames = os.listdir(locales_dir)
-		def_languages = filter(lambda x: len(x) == 2, filenames)
+		return list(filter(lambda x: len(x) == 2, filenames))
 
-		languages = Languages()
+	@classmethod
+	def _get_translation_lang(cls) -> List[Tuple[str, str]]:
+		def_languages = cls._defined_languages()
+		languages = LanguageDefinitions()
+		return [(languages.get_language(lang), lang) for lang in def_languages]
+
+	@classmethod
+	def get_available_lang(cls) -> List[str]:
+		def_languages = cls._defined_languages()
+		languages = LanguageDefinitions()
 		return [languages.get_language(lang) for lang in def_languages]

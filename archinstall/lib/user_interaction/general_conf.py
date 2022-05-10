@@ -119,7 +119,7 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 
 
 def select_archinstall_language(default='English'):
-	languages = Translation.get_all_names()
+	languages = Translation.get_available_lang()
 	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
 	return language
 

@@ -429,27 +429,8 @@ msgstr "Удалить"
 msgid "Select an action for < {} >"
 msgstr "Выберите действие для < {} >"
 
-msgid "Add :"
-msgstr "Добавить:"
-
-msgid "Copy to :"
-msgstr "Копировать в:"
-
-msgid "Edite :"
-msgstr "Редактировать:"
-
-msgid "Key :"
-msgstr "Ключ:"
-
-msgid "Value :"
-msgstr "Значение:"
-
 msgid "Copy to new key:"
 msgstr "Копировать в новый ключ:"
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr "Редактировать {origkey}:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Неизвестный тип сетевого адаптера: {}. Возможные значения: {}"
@@ -730,6 +711,40 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "Копировать в:"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "Редактировать"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "Редактировать:"
+
+msgid "Add :"
+msgstr "Добавить:"
+
+msgid "Value :"
+msgstr "Значение:"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "Редактировать {origkey}:"
+
+#~ msgid "Copy to :"
+#~ msgstr "Копировать в:"
+
+#~ msgid "Edite :"
+#~ msgstr "Редактировать:"
+
+#~ msgid "Key :"
+#~ msgstr "Ключ:"
 
 #~ msgid "Archinstall requires root privileges to run. See --help for more."
 #~ msgstr "Для запуска Archinstall требуются привилегии root. Для получения дополнительной информации смотрите --help."

@@ -427,27 +427,8 @@ msgstr "حذف"
 msgid "Select an action for < {} >"
 msgstr "< {} > کے لیے ایک عمل منتخب کریں"
 
-msgid "Add :"
-msgstr "شامل:"
-
-msgid "Copy to :"
-msgstr "اس میں کاپی :"
-
-msgid "Edite :"
-msgstr "ترمیم:"
-
-msgid "Key :"
-msgstr "کلید:"
-
-msgid "Value :"
-msgstr "قدر:"
-
 msgid "Copy to new key:"
 msgstr "نئی کلید میں کاپی کریں:"
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr "ترمیم {origkey} :"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "نامعلوم nic قسم: {}۔ ممکنہ قدریں ہیں {}"
@@ -742,6 +723,40 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "اس میں کاپی :"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "ترمیم"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "ترمیم:"
+
+msgid "Add :"
+msgstr "شامل:"
+
+msgid "Value :"
+msgstr "قدر:"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "ترمیم {origkey} :"
+
+#~ msgid "Copy to :"
+#~ msgstr "اس میں کاپی :"
+
+#~ msgid "Edite :"
+#~ msgstr "ترمیم:"
+
+#~ msgid "Key :"
+#~ msgstr "کلید:"
 
 #~ msgid "Choose an object from the list"
 #~ msgstr "فہرست سے ایک آبجیکٹ منتخب کریں۔"

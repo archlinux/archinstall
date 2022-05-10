@@ -429,27 +429,8 @@ msgstr "Verwijderen"
 msgid "Select an action for < {} >"
 msgstr "Kies een actie voor < {} >"
 
-msgid "Add :"
-msgstr "Toevoegen:"
-
-msgid "Copy to :"
-msgstr "Kopiëren naar:"
-
-msgid "Edite :"
-msgstr "Bewerken:"
-
-msgid "Key :"
-msgstr "Sleutel:"
-
-msgid "Value :"
-msgstr "Waarde:"
-
 msgid "Copy to new key:"
 msgstr "Kopiëren naar nieuwe sleutel:"
-
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr "{origkey} bewerken:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Onbekend nic-type: {}. Mogelijke waarden zijn {}"
@@ -740,3 +721,37 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "Kopiëren naar:"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "Bewerken"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "Bewerken:"
+
+msgid "Add :"
+msgstr "Toevoegen:"
+
+msgid "Value :"
+msgstr "Waarde:"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "{origkey} bewerken:"
+
+#~ msgid "Copy to :"
+#~ msgstr "Kopiëren naar:"
+
+#~ msgid "Edite :"
+#~ msgstr "Bewerken:"
+
+#~ msgid "Key :"
+#~ msgstr "Sleutel:"
