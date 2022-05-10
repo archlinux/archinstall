@@ -200,7 +200,7 @@ class GlobalMenu(GeneralMenu):
 		missing = len(self._missing_configs())
 		if missing > 0:
 			return _('Install ({} config(s) missing)').format(missing)
-		return 'Install'
+		return _('Install')
 
 	def _prev_network_configuration(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
 		if not cur_value:
