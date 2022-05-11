@@ -133,7 +133,7 @@ class Menu(TerminalMenu):
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
 
-		if any([o for o in options if not isinstance(o, str)]):
+		if any(o for o in options if not isinstance(o, str)):
 			log(" * Menu options must be of type string * ", fg='red')
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires the options to be of type string')
@@ -171,7 +171,7 @@ class Menu(TerminalMenu):
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well
 			default = f'{default_option} {self._default_str}'
-			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
+			self._menu_options = [default, *filter(lambda o: default_option != o, self._menu_options)]
 
 		self._preselection(preset_values,cursor_index)
 
@@ -210,12 +210,12 @@ class Menu(TerminalMenu):
 			return MenuSelection(type_=MenuSelectionType.Ctrl_c)
 
 		def check_default(elem):
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
+			if self._default_option and f'{self._default_option} {self._default_str}' in elem:
 				return self._default_option
 			else:
 				return elem
 
-		if idx is not None:
+		if idx:
 			if isinstance(idx, (list, tuple)):
 				results = []
 				for i in idx:
