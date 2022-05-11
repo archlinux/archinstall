@@ -234,11 +234,8 @@ class ListManager:
 		method to get the data in a format suitable to be shown
 		It is executed once for run loop and processes the whole self._data structure
 		"""
-		if isinstance(data,dict):
-			return {f'{k}: {v}': k for k, v in data.items()}
-		else:
-			return {str(k): k for k in data}
-
+		return {f'{k}: {v}': k for k, v in data.items()} if isinstance(data,dict) else {str(k): k for k in data}
+		
 	def action_list(self):
 		"""
 		can define alternate action list or customize the list  for each item.
@@ -259,11 +256,15 @@ class ListManager:
 				self.target = TextInput(_('Add :'),None).run()
 				self._data.append(self.target)
 			if self.action == str(_('Copy')):
-				while True:
-					target = TextInput(_('Copy to: '),self.target).run()
-					if target != self.target:
-						self._data.append(self.target)
-						break
+				# while True:
+				#	target = TextInput(_('Copy to: '),self.target).run()
+				#	if target != self.target:
+				#		self._data.append(self.target)
+				#		break
+				while target != self.target:
+				     target = TextInput(_('Copy to: '),self.target).run()
+				else:
+				    self._data.append(self.target)
 			elif self.action == str(_('Edit')):
 				tgt = self.target
 				idx = self._data.index(self.target)
@@ -283,11 +284,10 @@ class ListManager:
 				value = TextInput(_('Value :'),None).run()
 				self._data[key] = value
 			if self.action == str(_('Copy')):
-				while True:
+				while key != origkey:
 					key = TextInput(_('Copy to new key:'),origkey).run()
-					if key != origkey:
-						self._data[key] = origval
-						break
+				else:
+					self._data[key] = origval
 			elif self.action == str(_('Edit')):
 				value = TextInput(_('Edit {}: ').format(origkey), origval).run()
 				self._data[origkey] = value
