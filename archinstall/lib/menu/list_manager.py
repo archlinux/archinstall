@@ -236,7 +236,6 @@ class ListManager:
 		"""
 		return {f'{k}: {v}': k for k, v in data.items()} if isinstance(data,dict) else {str(k): k for k in data}
 		
-
 	def action_list(self):
 		"""
 		can define alternate action list or customize the list  for each item.
@@ -284,10 +283,10 @@ class ListManager:
 				self._data[key] = value
 			if self.action == str(_('Copy')):
 				while True:
-					target = TextInput(_('Copy to: '),self.target).run()
-					if target != self.target:
-						self._data.append(self.target)
-						break	
+					key = TextInput(_('Copy to new key:'),origkey).run()
+					if key != origkey:
+						self._data[key] = origval
+						break
 			elif self.action == str(_('Edit')):
 				value = TextInput(_('Edit {}: ').format(origkey), origval).run()
 				self._data[origkey] = value
