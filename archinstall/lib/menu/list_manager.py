@@ -283,8 +283,11 @@ class ListManager:
 				value = TextInput(_('Value :'),None).run()
 				self._data[key] = value
 			if self.action == str(_('Copy')):
-				self._data[key] = filter(lambda x: x!= origkey, TextInput(_('Copy to new key:'),origkey).run())[0]
-					
+				while True:
+					target = TextInput(_('Copy to: '),self.target).run()
+					if target != self.target:
+						self._data.append(self.target)
+						break	
 			elif self.action == str(_('Edit')):
 				value = TextInput(_('Edit {}: ').format(origkey), origval).run()
 				self._data[origkey] = value
