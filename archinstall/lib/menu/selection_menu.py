@@ -147,7 +147,7 @@ class Selector:
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
-		return self._current_selection
+		return bool(self._current_selection)
 
 	def get_selection(self) -> Any:
 		return self._current_selection
