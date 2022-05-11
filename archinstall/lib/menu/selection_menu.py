@@ -366,7 +366,7 @@ class GeneralMenu:
 		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
 		self.post_callback(config_name,result)
 
-		return not exec_ret_val or not self._check_mandatory_status():
+		return not exec_ret_val or not self._check_mandatory_status()
 		
 
 	def _set_kb_language(self):
