@@ -368,7 +368,6 @@ class GeneralMenu:
 
 		return not exec_ret_val or not self._check_mandatory_status()
 		
-
 	def _set_kb_language(self):
 		""" general for ArchInstall"""
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
