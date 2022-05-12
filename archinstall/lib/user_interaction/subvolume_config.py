@@ -1,6 +1,7 @@
-from typing import Dict
+from typing import Dict, List
 
 from ..menu.list_manager import ListManager
+from ..menu.menu import MenuSelectionType
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..menu.text_input import TextInput
 from ..menu import Menu
@@ -25,6 +26,7 @@ class SubvolumeList(ListManager):
 					text += _(" mounted at {:16}").format(value['mountpoint'])
 				else:
 					text += (' ' * 28)
+
 				if value.get('options',[]):
 					text += _(" with option {}").format(', '.join(value['options']))
 			return text
@@ -126,7 +128,17 @@ class SubvolumeMenu(GeneralMenu):
 	def _select_subvolume_mount_point(self,value):
 		return TextInput(str(_("Select a mount point :")),value).run()
 
-	def _select_subvolume_options(self,value):
+	def _select_subvolume_options(self,value) -> List[str]:
 		# def __init__(self, title, p_options, skip=True, multi=False, default_option=None, sort=True):
-		return Menu(str(_("Select the desired subvolume options ")),['nodatacow','compress'],
-			skip=True,preset_values=value,multi=True).run()
+		choice = Menu(
+			str(_("Select the desired subvolume options ")),
+			['nodatacow','compress'],
+			skip=True,
+			preset_values=value,
+			multi=True
+		).run()
+
+		if choice.type_ == MenuSelectionType.Selection:
+			return choice.value
+
+		return []
