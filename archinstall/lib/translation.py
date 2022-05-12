@@ -72,7 +72,6 @@ class Translation:
 
 		for names in self._get_translation_lang():
 			try:
-				print(names)
 				self._languages[names[0]] = gettext.translation('base', localedir=locales_dir, languages=names)
 			except FileNotFoundError as error:
 				raise TranslationError(f"Could not locate language file for '{names}': {error}")
