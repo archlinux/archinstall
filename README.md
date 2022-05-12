@@ -35,7 +35,7 @@ Prequisites:
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # archinstall --config <path to config file or URL>
+    # archinstall --config <path to user config file or URL> --disk-layout <path to disk layout config file or URL> --creds <path to user credentials config file or URL>
 
 # Help?
 
