@@ -1,24 +1,12 @@
 from typing import List
 
 def valid_parted_position(pos :str) -> bool:
-	if not len(pos):
-		return False
-
-	if pos.isdigit():
-		return True
-
-	if pos[-1] == '%' and pos[:-1].isdigit():
-		return True
-
-	if pos[-3:].lower() in ['mib', 'kib', 'b', 'tib'] and pos[:-3].replace(".", "", 1).isdigit():
-		return True
-
-	if pos[-2:].lower() in ['kb', 'mb', 'gb', 'tb'] and pos[:-2].replace(".", "", 1).isdigit():
-		return True
-
-	return False
-
-
+	return len(pos) and \
+		pos.isdigit() and \
+		pos[-1] == '%' and pos[:-1].isdigit() and \
+		pos[-3:].lower() in ['mib', 'kib', 'b', 'tib'] and pos[:-3].replace(".", "", 1).isdigit() and \
+		pos[-2:].lower() in ['kb', 'mb', 'gb', 'tb'] and pos[:-2].replace(".", "", 1).isdigit():
+		
 def fs_types() -> List[str]:
 	# https://www.gnu.org/software/parted/manual/html_node/mkpart.html
 	# Above link doesn't agree with `man parted` /mkpart documentation:
