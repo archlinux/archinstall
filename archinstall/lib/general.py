@@ -546,7 +546,7 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	parsed_url = urllib.parse.urlparse(stream)
 
 	if parsed_url.scheme: # The stream is in fact a URL that should be grabed
-		with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
+		with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
 			target.update(json.loads(response.read()))
 	else:
 		if pathlib.Path(stream).exists():
