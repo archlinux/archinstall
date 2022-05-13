@@ -118,7 +118,7 @@ This installer will perform the following:
 * Installs and configures a bootloader to partition 0 on uefi. On BIOS, it sets the root to partition 0.
 * Install additional packages *(nano, wget, git)*
 
-> **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
+> **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO.
 
 ## Unattended installation based on MAC address
 
