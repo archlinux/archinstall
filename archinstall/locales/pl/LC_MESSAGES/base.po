@@ -732,6 +732,13 @@ msgstr ""
 msgid "Edit {}: "
 msgstr "Edytuj :"
 
+msgid "Add: "
+msgstr ""
+
+#, fuzzy
+msgid "Value: "
+msgstr "Wartość :"
+
 msgid "Add :"
 msgstr "Dodaj :"
 

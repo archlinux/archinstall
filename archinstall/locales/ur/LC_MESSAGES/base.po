@@ -739,6 +739,13 @@ msgstr ""
 msgid "Edit {}: "
 msgstr "ترمیم:"
 
+msgid "Add: "
+msgstr ""
+
+#, fuzzy
+msgid "Value: "
+msgstr "قدر:"
+
 msgid "Add :"
 msgstr "شامل:"
 
