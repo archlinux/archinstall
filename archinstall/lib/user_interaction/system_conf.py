@@ -1,3 +1,5 @@
+import logging
+
 from __future__ import annotations
 
 from typing import List, Any, Dict, TYPE_CHECKING
@@ -8,6 +10,8 @@ from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_in
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..storage import storage
+from ..output import log
+from ..packages import find_package
 
 if TYPE_CHECKING:
 	_: Any
@@ -112,6 +116,12 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 			return arguments.get('gfx_driver')
 
 		arguments['gfx_driver'] = choice.value
+		if choice.value == 'nvidia-open':
+			if (package_info := find_package('nvidia-open')) and package_info[0].repo == 'testing':
+				if 'testing' not in arguments.get('additional-repositories', []):
+					log(f"Enabling repository 'testing' due to nvidia-open being selected and it lives there", fg="orange", logging.WARNING)
+					arguments['additional-repositories'] = arguments.get('additional-repositories', []) + ['testing']
+
 		return options.get(choice.value)
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
