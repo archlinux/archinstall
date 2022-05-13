@@ -119,7 +119,7 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 		if choice.value == 'nvidia-open':
 			if (package_info := find_package('nvidia-open')) and package_info[0].repo == 'testing':
 				if 'testing' not in arguments.get('additional-repositories', []):
-					log(f"Enabling repository 'testing' due to nvidia-open being selected and it lives there", fg="orange", level=logging.WARNING)
+					log(f"Enabling repository 'testing' due to nvidia-open being selected and it lives there", fg="orange", logging.WARNING)
 					arguments['additional-repositories'] = arguments.get('additional-repositories', []) + ['testing']
 
 		return options.get(choice.value)
