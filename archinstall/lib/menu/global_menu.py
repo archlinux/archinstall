@@ -148,7 +148,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Additional repositories to enable'),
 				select_additional_repositories,
-				default=storage['arguments'].get('additional-repositories', []))
+				default=[])
 		self._menu_options['nic'] = \
 			Selector(
 				_('Configure network'),
