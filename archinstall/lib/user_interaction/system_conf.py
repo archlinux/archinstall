@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 import logging
+
+from __future__ import annotations
 
 from typing import List, Any, Dict, TYPE_CHECKING
 
