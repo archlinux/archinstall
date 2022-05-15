@@ -1057,7 +1057,7 @@ class Installer:
 
 	def set_keyboard_language(self, language: str) -> bool:
 		from .systemd import localectl_status
-		
+
 		log(f"Setting keyboard language to {language}", level=logging.INFO)
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
@@ -1080,7 +1080,12 @@ class Installer:
 		# This needs to be explicitly set in some cases due to https://github.com/archlinux/archinstall/issues/596
 		if LANG := localectl_status().get('x11_layout'):
 			with open(f"{self.target}/etc/vconsole.conf", "a") as vconsole:
-				vconsole.write(f"LANG={LANG}\n")
+				with open(f'{self.target}/etc/locale.conf', 'r') as locale:
+					locale_data = locale.read()
+
+				# TODO: A bit of a hack to convert LANG=en_US.UTF-8 into just US.UTF-8
+				locale_and_encoding = locale_data.split('=', 1)[1].split('_', 1)[1].split('.', 1)[0]
+				vconsole.write(f"LANG={LANG}_{locale_and_encoding}\n")
 
 		return True
 
