@@ -1056,6 +1056,8 @@ class Installer:
 		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
+		from .systemd import localectl_status
+		
 		log(f"Setting keyboard language to {language}", level=logging.INFO)
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
