@@ -254,6 +254,10 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('custom-commands', None):
 			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
+		# After certain locale's has been set, this needs
+		# to be re-run to avoid issues such as https://github.com/archlinux/archinstall/issues/596
+		installation.mkinitcpio('-P')
+
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))

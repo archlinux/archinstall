@@ -32,7 +32,11 @@ from .lib.packages.packages import (
 from .lib.profiles import *
 from .lib.services import *
 from .lib.storage import *
-from .lib.systemd import *
+from .lib.systemd import (
+	localectl_status,
+	Boot,
+	Ini
+)
 from .lib.user_interaction import *
 from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager

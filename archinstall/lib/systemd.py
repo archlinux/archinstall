@@ -138,3 +138,11 @@ class Boot:
 			cmd[0] = locate_binary(cmd[0])
 
 		return SysCommandWorker(["systemd-run", f"--machine={self.container_name}", "--pty", *cmd], *args, **kwargs)
+
+def localectl_status():
+	result = {}
+	for line in SysCommand(["localectl", "status"]):
+		key, value = line.strip().decode('UTF-8').split(': ', 1)
+		result[key.lower().replace(' ', '_')] = value
+
+	return result

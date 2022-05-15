@@ -1075,6 +1075,11 @@ class Installer:
 		else:
 			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
+		# This needs to be explicitly set in some cases due to https://github.com/archlinux/archinstall/issues/596
+		if LANG := localectl_status().get('x11_layout'):
+			with open(f"{self.target}/etc/vconsole.conf", "a") as vconsole:
+				vconsole.write(f"LANG={LANG}\n")
+
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
