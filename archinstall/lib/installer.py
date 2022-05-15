@@ -1084,7 +1084,7 @@ class Installer:
 					locale_data = locale.read()
 
 				# TODO: A bit of a hack to convert LANG=en_US.UTF-8 into just US.UTF-8
-				locale_and_encoding = locale_data.split('=', 1)[1].split('_', 1)[1].split('.', 1)[0]
+				locale_and_encoding = locale_data.split('=', 1)[1].split('_', 1)[1]
 				vconsole.write(f"LANG={LANG}_{locale_and_encoding}\n")
 
 		return True
