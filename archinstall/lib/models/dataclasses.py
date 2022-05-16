@@ -110,13 +110,13 @@ class PackageSearchResult:
 		if not isinstance(other, PackageSearchResult):
 			return NotImplemented
 
-		return VersionDef(self.pkgver) == VersionDef(other.pkgver)
+		return self.pkg_version == other.pkg_version
 
 	def __lt__(self, other :object) -> bool:
 		if not isinstance(other, PackageSearchResult):
 			return NotImplemented
 
-		return VersionDef(self.pkgver) < VersionDef(other.pkgver)
+		return self.pkg_version < other.pkg_version
 
 
 @dataclass
@@ -161,10 +161,10 @@ class LocalPackage:
 		if not isinstance(other, LocalPackage):
 			return NotImplemented
 
-		return VersionDef(self.version) == VersionDef(other.version)
+		return self.pkg_version == other.pkg_version
 
 	def __lt__(self, other :object) -> bool:
 		if not isinstance(other, LocalPackage):
 			return NotImplemented
 
-		return VersionDef(self.version) < VersionDef(other.version)
+		return self.pkg_version < other.pkg_version
