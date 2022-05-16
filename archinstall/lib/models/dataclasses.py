@@ -23,7 +23,7 @@ class VersionDef:
 		if len(versions) >= 2:
 			return versions[1]
 
-		return ""
+		return "0"
 
 	def patch(self) -> str:
 		versions = self.parse_version()
@@ -31,7 +31,7 @@ class VersionDef:
 			_, patch_version = versions[-1].split('-', 1)
 			return patch_version
 
-		return ""
+		return "0"
 
 	def __eq__(self, other :object) -> bool:
 		if not isinstance(other, VersionDef):
