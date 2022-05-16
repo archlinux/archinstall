@@ -183,7 +183,7 @@ msgstr "Bitte wählen sie was mit dem ausgewählten Gerät geschehen soll"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dies ist eine Liste von bereits programmierten Profilen, diese ermöglichen es einfacher Desktop Umgebungen einzustellen"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Bitte wählen sie ein Tastaturlayout aus"
 
 msgid "Select one of the regions to download packages from"

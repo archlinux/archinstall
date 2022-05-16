@@ -184,7 +184,7 @@ msgstr "Välj vad du önskar göra med valda hårddiskarna"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare."
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Välj tangentbordslayout"
 
 msgid "Select one of the regions to download packages from"

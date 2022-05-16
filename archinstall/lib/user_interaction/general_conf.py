@@ -79,7 +79,7 @@ def select_language(preset_value: str = None) -> str:
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
 	selected_lang = Menu(
-		_('Choose keyboard layout'),
+		_('Select keyboard layout'),
 		sorted_kb_lang,
 		preset_values=preset_value,
 		sort=False

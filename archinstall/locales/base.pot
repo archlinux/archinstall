@@ -172,7 +172,7 @@ msgid ""
 "install things like desktop environments"
 msgstr ""
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr ""
 
 msgid "Select one of the regions to download packages from"

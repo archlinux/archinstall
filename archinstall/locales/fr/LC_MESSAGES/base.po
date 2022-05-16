@@ -238,7 +238,7 @@ msgstr ""
 "Ceci est une liste de profils préprogrammés, ils pourraient faciliter "
 "l'installation d'outils comme les environnements de bureau"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Sélectionner la disposition du clavier"
 
 msgid "Select one of the regions to download packages from"

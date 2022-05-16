@@ -183,7 +183,7 @@ msgstr "Selecciona qué quieres hacer con los dispositivos de bloque seleccionad
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de perfiles pre-programados, pueden facilitar la instalación de aplicaciones como entornos de escritorio"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Selecciona la distribución del teclado"
 
 msgid "Select one of the regions to download packages from"

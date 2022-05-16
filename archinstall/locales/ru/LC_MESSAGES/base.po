@@ -184,7 +184,7 @@ msgstr "Выберите, что вы хотите сделать с выбра�
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Это список предварительно запрограммированных профилей, они могут облегчить установку таких вещей, как окружения рабочего стола"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Выберите раскладку клавиатуры"
 
 msgid "Select one of the regions to download packages from"

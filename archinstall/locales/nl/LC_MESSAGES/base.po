@@ -184,7 +184,7 @@ msgstr "Geef aan wat er moet worden gedaan met de gekozen blokapparaten"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dit is een vooraf opgestelde lijst met profielen, welke het installeren van zaken als werkomgevingen vereenvoudigt"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "Kies een toetsenbordindeling"
 
 msgid "Select one of the regions to download packages from"

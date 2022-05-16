@@ -183,7 +183,7 @@ msgstr "انتخاب کریں کہ آپ منتخب بلاک ڈیوائسز کے 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "یہ پہلے سے پروگرام شدہ پروفائلز کی فہرست ہے، وہ ڈیسک ٹاپ انسٹالیشن جیسی چیزوں کو آسان بناتے ہیں"
 
-msgid "Choose keyboard layout"
+msgid "Select keyboard layout"
 msgstr "کی بورڈ لے آؤٹ"
 
 msgid "Select one of the regions to download packages from"
