@@ -19,7 +19,12 @@ def configuration_sanity_check():
 				break
 
 		if not found_hsm:
-			raise RequirementError(f"In order to use HSM to pair with the disk encryption, one needs to be accessible through /dev/hidraw* and contain the ID_FIDO_TOKEN identifier. You can check this by running 'udevadm info /dev/hidraw1' for instance.")
+			raise RequirementError(
+				f"In order to use HSM to pair with the disk encryption,"
+				+ f" one needs to be accessible through /dev/hidraw* and contain"
+				+ f" the ID_FIDO_TOKEN identifier. You can check this by running"
+				+ f" 'udevadm info /dev/hidraw1' for instance."
+			)
 
 class ConfigurationOutput:
 	def __init__(self, config: Dict):
