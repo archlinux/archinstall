@@ -45,6 +45,7 @@ from .lib.menu.selection_menu import (
 from .lib.translation import Translation, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
+from .lib.udev import udevadm_info
 parser = ArgumentParser()
 
 __version__ = "2.4.2"
