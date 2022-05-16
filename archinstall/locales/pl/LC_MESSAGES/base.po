@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: MedzikUser <nivua1fn@duck.com>\n"
+"Last-Translator: MicroPanda123 <dawid12345.dawid@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -473,7 +473,7 @@ msgid "User Name : "
 msgstr "Nazwa użytkownika : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "Czy {} powinien być superużytkownikiem (sudoer)?"
+msgstr "Czy {} powinien być superuserem (sudoer)?"
 
 msgid "Define users with sudo privilege: "
 msgstr "Zdefiniuj użytkowników z przywilejem sudo: "
@@ -520,6 +520,7 @@ msgstr "Nie jest to prawidłowy katalog: {}"
 msgid "The password you are using seems to be weak,"
 msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 
+#, problematic, depends on context
 msgid "are you sure you want to use it?"
 msgstr "czy na pewno chcesz go używać?"
 
@@ -584,58 +585,54 @@ msgstr "Określanie użytkowników z uprawnieniami sudo według nazwy użytkowni
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Plik dziennika został zapisany tutaj: {}"
 
-#, fuzzy
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Czy chcesz użyć GRUB-a jako programu rozruchowego zamiast systemd-boot?"
+msgstr "Czy chcesz użyć subwolumenów BTRFS z domyślną strukturą?"
 
-#, fuzzy
 msgid "Would you like to use BTRFS compression?"
-msgstr "Czy chcesz używać swap w zramie?"
+msgstr "Czy chcesz użyć kompresji BTRFS?"
 
-#, fuzzy
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Czy chcesz używać swap w zramie?"
+msgstr "Czy chcesz stworzyć oddzielną partycje dla /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr ""
+msgstr "Wybrane dyski nie mają wymaganej objętości dla automatycznej sugestii"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr ""
+msgstr "Maksymalna objętość dla partycji /home: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr ""
+msgstr "Minimalna objętośc dla partycji Arch Linux: {}GB"
 
 msgid "Continue"
-msgstr ""
+msgstr "Kontynuuj"
 
 msgid "yes"
-msgstr ""
+msgstr "tak"
 
 msgid "no"
-msgstr ""
+msgstr "nie"
 
 msgid "set: {}"
-msgstr ""
+msgstr "ustawienie: {}"
 
 msgid "Manual configuration setting must be a list"
-msgstr ""
+msgstr "Konfiguracja ustawiona manualnie musi być listą"
 
-#, fuzzy
 msgid "No iface specified for manual configuration"
-msgstr "Zapisz konfiguracje użytkownika"
+msgstr "Iface nie zostało ustawione w manualnej konfiguracji"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr ""
 
 msgid "Add interface"
-msgstr ""
+msgstr "Dodaj interfejs"
 
 msgid "Edit interface"
-msgstr ""
+msgstr "Edytuj interfejs"
 
 #, fuzzy
 msgid "Delete interface"
-msgstr "Usuń użytkownika"
+msgstr "Usuń interfejs"
 
 #, fuzzy
 msgid "Select interface to add"
@@ -645,77 +642,79 @@ msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
 msgid "Manual configuration"
 msgstr "Zapisz konfiguracje"
 
-#, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Oznaczanie/odznaczanie partycji jako zaszyfrowanej"
+msgstr "Oznacz/odznacz partycje jako skompresowaną (tylko w btrfs)"
 
-#, fuzzy
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
+msgstr "Używane przez Ciebie hasło wydaje się być słabe, czy na pewno chcesz go użyć?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr ""
+msgstr "Dostarcza wybór środowisk desktopowych oraz tiling window managerów, np. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "Wybierz pożądane środowisko desktopowe"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr ""
+msgstr "Bardzo podstawowa instalacja pozwalająca ci dostosowanie Arch Linuxa do twoich upodobań."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr ""
+msgstr "Dostarcza wybór różnych pakietów serwerowych do zainstalowania i uruchomienia, np. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation wil be done"
-msgstr ""
+msgstr "Wybierz jakie serwery zainstalować, jeżeli żadne, wtedy minimalna instalacja będzie użyta"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Instaluje minimalną wersje systemu z xorg i sterownikami graficznymi."
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Naciśnij Enter aby kontynuować."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr ""
+msgstr "Czy chciałbyś zchrootować do nowostworzonej instalacji i przeprowadzić po-instalacyjną konfiguracje?"
 
-#, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr "czy na pewno chcesz go używać?"
+msgstr "Czy napewno chcesz zresetować to ustawienie?"
 
-#, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je"
+msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "Jakiekolwiek modyfikacje do istniejących ustawień zresetują układ dysków!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr ""
+msgstr "Jeżeli zresetujesz wybór dysków, zresetujesz także obecny układ dysków. Jesteś pewny że chcesz to zrobić?"
 
 #, fuzzy
 msgid "Save and exit"
-msgstr "Potwierdź i wyjdź"
+msgstr "Zapisz i wyjdź"
 
 #, fuzzy
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
-msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
+msgstr "
+"{}\n"
+"zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
+""
+
 
 #, fuzzy
 msgid "No audio server"
-msgstr "Wybierz serwer dźwięku"
+msgstr ""
 
 msgid "(default)"
-msgstr ""
+msgstr "(domyslne)"
 
 #, fuzzy
 msgid "Use ESC to skip"
-msgstr "Kliknij ESC aby pominąć\n"
+msgstr "Kliknij ESC aby pominąć"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
+"Użyj CTRL+C aby zresetować obecny wybór\n"
+"\n"
 
 #, fuzzy
 msgid "Copy to: "
@@ -723,21 +722,21 @@ msgstr "Kopiuj do :"
 
 #, fuzzy
 msgid "Edit: "
-msgstr "Edytuj"
+msgstr "Edytuj: "
 
 msgid "Key: "
 msgstr ""
 
 #, fuzzy
 msgid "Edit {}: "
-msgstr "Edytuj :"
+msgstr "Edytuj {}:"
 
 msgid "Add: "
-msgstr ""
+msgstr "Dodaj: "
 
 #, fuzzy
 msgid "Value: "
-msgstr "Wartość :"
+msgstr "Wartość: "
 
 msgid "Add :"
 msgstr "Dodaj :"
