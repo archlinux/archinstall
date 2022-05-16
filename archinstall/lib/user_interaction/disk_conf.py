@@ -60,7 +60,7 @@ def select_disk_layout(preset: Optional[Dict[str, Any]], block_devices: list, ad
 				return select_individual_blockdevice_usage(block_devices)
 
 
-def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:
+def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:
 	"""
 	Asks the user to select a harddrive from the `dict_o_disks` selection.
 	Usually this is combined with :ref:`archinstall.list_drives`.
@@ -73,19 +73,15 @@ def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:
 	"""
 	drives = sorted(list(dict_o_disks.keys()))
 	if len(drives) >= 1:
-		for index, drive in enumerate(drives):
-			print(
-				f"{index}: {drive} ({dict_o_disks[drive]['size'], dict_o_disks[drive].device, dict_o_disks[drive]['label']})"
-			)
+		title = str(_('You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)')) + '\n'
+		title += str(_('Select one of the disks or skip and use "/mnt" as default"'))
 
-		log("You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)",
-			fg="yellow")
+		choice = Menu(title, drives).run()
 
-		drive = Menu('Select one of the disks or skip and use "/mnt" as default"', drives).run()
-		if not drive:
-			return drive
+		if choice.type_ == MenuSelectionType.Esc:
+			return None
 
-		drive = dict_o_disks[drive]
+		drive = dict_o_disks[choice.value]
 		return drive
 
 	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
