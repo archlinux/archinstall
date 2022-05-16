@@ -39,7 +39,7 @@ msgid "Should this user be a superuser (sudoer)?"
 msgstr "Debería este usuario ser un superusuario (sudoer)?"
 
 msgid "Select a timezone"
-msgstr "Selecciona una zona horaria"
+msgstr "Zona horaria"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
 msgstr "Te gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
@@ -168,8 +168,8 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Escriba el tipo de sistema de archivos que desea para la partición: "
 
-msgid "Select Archinstall language"
-msgstr "Selecciona el idioma de Archinstall"
+msgid "Archinstall language"
+msgstr "Idioma de Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Limpiar todos los discos seleccionados y usar una distribución de particiones por defecto"
@@ -183,7 +183,7 @@ msgstr "Selecciona qué quieres hacer con los dispositivos de bloque seleccionad
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de perfiles pre-programados, pueden facilitar la instalación de aplicaciones como entornos de escritorio"
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr "Selecciona la distribución del teclado"
 
 msgid "Select one of the regions to download packages from"
@@ -240,20 +240,20 @@ msgstr "Error: Enlistar perfiles en la URL \"{}\" resultó en:"
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Error: No se pudo decodificar el resultado \"{}\" como JSON:"
 
-msgid "Select keyboard layout"
-msgstr "Selecciona la distribución del teclado"
+msgid "Keyboard layout"
+msgstr "Distribución del teclado"
 
-msgid "Select mirror region"
-msgstr "Selecciona la región del mirror"
+msgid "Mirror region"
+msgstr "Región del mirror"
 
-msgid "Select locale language"
-msgstr "Selecciona el idioma local"
+msgid "Locale language"
+msgstr "Idioma local"
 
-msgid "Select locale encoding"
-msgstr "Selecciona la codificación local"
+msgid "Locale encoding"
+msgstr "Codificación local"
 
-msgid "Select harddrives"
-msgstr "Selecciona los discos duros"
+msgid "Drives"
+msgstr "Discos duros"
 
 msgid "Select disk layout"
 msgstr "Selecciona la distribución de los discos"
@@ -261,38 +261,38 @@ msgstr "Selecciona la distribución de los discos"
 msgid "Set encryption password"
 msgstr "Establecer la contraseña de cifrado"
 
-msgid "Use swap"
-msgstr "Usar swap"
+msgid "Swap"
+msgstr "Swap"
 
-msgid "Select bootloader"
-msgstr "Selecciona el cargador de arranque"
+msgid "Bootloader"
+msgstr "Cargador de arranque"
 
-msgid "Set root password"
-msgstr "Establecer la contraseña de root"
+msgid "root password"
+msgstr "Contraseña de root"
 
-msgid "Specify superuser account"
-msgstr "Especificar la cuenta de superusuario"
+msgid "Superuser account"
+msgstr "Cuenta de superusuario"
 
-msgid "Specify user account"
-msgstr "Especificar la cuenta de usuario"
+msgid "User account"
+msgstr "Cuenta de usuario"
 
-msgid "Specify profile"
-msgstr "Especificar el perfil"
+msgid "Profile"
+msgstr "Perfil"
 
-msgid "Select audio"
-msgstr "Selecciona el audio"
+msgid "Audio"
+msgstr "Audio"
 
-msgid "Select kernels"
-msgstr "Selecciona los kernels"
+msgid "Kernels"
+msgstr "Kernels"
 
-msgid "Additional packages to install"
-msgstr "Paquetes adicionales a instalar"
+msgid "Additional packages"
+msgstr "Paquetes adicionales"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "Configurar la red"
 
-msgid "Set automatic time sync (NTP)"
-msgstr "Establecer la sincronización automática de hora (NTP)"
+msgid "Automatic time sync (NTP)"
+msgstr "Sincronización automática de hora (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "Instalar ({} ajuste(s) faltantes)"
@@ -338,13 +338,13 @@ msgstr "Establecer el sistema de archivos deseado para una partición"
 msgid "Abort"
 msgstr "Cancelar"
 
-msgid "Specify hostname"
-msgstr "Especificar el nombre del host"
+msgid "Hostname"
+msgstr "Nombre del host"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "No configurado, no disponible a menos que se configure manualmente"
 
-msgid "Select timezone"
+msgid "Timezone"
 msgstr "Selecciona la zona horaria"
 
 msgid "Set/Modify the below options"
@@ -524,8 +524,8 @@ msgstr "La contraseña que está utilizando parece ser débil,"
 msgid "are you sure you want to use it?"
 msgstr "¿Estás seguro de que quieres usarlo?"
 
-msgid "Additional repositories to enable"
-msgstr "Repositorios adicionales para habilitar"
+msgid "Additional repositories"
+msgstr "Repositorios adicionales"
 
 msgid "Save configuration"
 msgstr "Guardar configuración"

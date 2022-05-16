@@ -212,8 +212,8 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Entrer un type de système de fichiers souhaité pour la partition : "
 
-msgid "Select Archinstall language"
-msgstr "Sélectionner la langue d'Archinstall"
+msgid "Archinstall language"
+msgstr "Langue d'Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr ""
@@ -238,7 +238,7 @@ msgstr ""
 "Ceci est une liste de profils préprogrammés, ils pourraient faciliter "
 "l'installation d'outils comme les environnements de bureau"
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr "Sélectionner la disposition du clavier"
 
 msgid "Select one of the regions to download packages from"
@@ -313,20 +313,20 @@ msgstr "Erreur : la liste des profils sur l'URL \"{}\" a entraîné :"
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Erreur : Impossible de décoder le résultat \"{}\" en tant que JSON :"
 
-msgid "Select keyboard layout"
-msgstr "Sélectionner la disposition du clavier"
+msgid "Keyboard layout"
+msgstr "Disposition du clavier"
 
-msgid "Select mirror region"
-msgstr "Sélectionner la région miroir"
+msgid "Mirror region"
+msgstr "Région miroir"
 
-msgid "Select locale language"
-msgstr "Sélectionner la langue locale"
+msgid "Locale language"
+msgstr "Langue locale"
 
-msgid "Select locale encoding"
-msgstr "Sélectionner l'encodage des paramètres régionaux"
+msgid "Locale encoding"
+msgstr "Encodage des paramètres régionaux"
 
-msgid "Select harddrives"
-msgstr "Sélectionner les disques durs"
+msgid "Drives"
+msgstr "Disques durs"
 
 msgid "Select disk layout"
 msgstr "Sélectionner la disposition du disque"
@@ -334,38 +334,38 @@ msgstr "Sélectionner la disposition du disque"
 msgid "Set encryption password"
 msgstr "Définir le mot de passe de chiffrement"
 
-msgid "Use swap"
-msgstr "Utiliser swap (partition d'échange)"
+msgid "Swap"
+msgstr "Swap"
 
-msgid "Select bootloader"
-msgstr "Sélectionner le chargeur de démarrage"
+msgid "Bootloader"
+msgstr "Chargeur de démarrage"
 
-msgid "Set root password"
-msgstr "Définir le mot de passe root"
+msgid "root password"
+msgstr "Mot de passe root"
 
-msgid "Specify superuser account"
-msgstr "Spécifier le compte superutilisateur"
+msgid "Superuser account"
+msgstr "Compte superutilisateur"
 
-msgid "Specify user account"
-msgstr "Spécifier le compte utilisateur"
+msgid "User account"
+msgstr "Compte utilisateur"
 
-msgid "Specify profile"
-msgstr "Spécifier le profil"
+msgid "Profile"
+msgstr "Profil"
 
-msgid "Select audio"
-msgstr "Sélectionner l'audio"
+msgid "Audio"
+msgstr "Audio"
 
-msgid "Select kernels"
-msgstr "Sélectionner les noyaux"
+msgid "Kernels"
+msgstr "Noyaux"
 
-msgid "Additional packages to install"
-msgstr "Packages supplémentaires à installer"
+msgid "Additional packages"
+msgstr "Packages supplémentaires"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "Configurer le réseau"
 
-msgid "Set automatic time sync (NTP)"
-msgstr "Définir la synchronisation automatique de l'heure (NTP)"
+msgid "Automatic time sync (NTP)"
+msgstr "Synchronisation automatique de l'heure (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "Installer ({} configuration(s) manquante(s))"
@@ -413,14 +413,14 @@ msgstr "Définir le système de fichiers souhaité pour une partition"
 msgid "Abort"
 msgstr "Abandonner"
 
-msgid "Specify hostname"
-msgstr "Spécifier le nom d'hôte"
+msgid "Hostname"
+msgstr "Nom d'hôte"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Non configuré, indisponible sauf configuration manuelle"
 
-msgid "Select timezone"
-msgstr "Sélectionner le fuseau horaire"
+msgid "Timezone"
+msgstr "Fuseau horaire"
 
 msgid "Set/Modify the below options"
 msgstr "Définir/Modifier les options ci-dessous"
@@ -623,8 +623,8 @@ msgstr "Le mot de passe que vous utilisez semble faible,"
 msgid "are you sure you want to use it?"
 msgstr "êtes-vous sûr de vouloir l'utiliser ?"
 
-msgid "Additional repositories to enable"
-msgstr "Référentiels supplémentaires à activer"
+msgid "Additional repositories"
+msgstr "Référentiels supplémentaires"
 
 msgid "Save configuration"
 msgstr "Enregistrer la configuration"

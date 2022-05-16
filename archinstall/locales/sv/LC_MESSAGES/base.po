@@ -169,8 +169,8 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Mata in ett önskat filsystem för partitionen: "
 
-msgid "Select Archinstall language"
-msgstr "Välj språk för detta gränssnitt"
+msgid "Archinstall language"
+msgstr "Språk för detta gränssnitt"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Töm alla partitioner och använd en generiskt rekommenderad partitionslayout."
@@ -184,7 +184,7 @@ msgstr "Välj vad du önskar göra med valda hårddiskarna"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare."
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr "Välj tangentbordslayout"
 
 msgid "Select one of the regions to download packages from"
@@ -241,20 +241,20 @@ msgstr "Fel: Listning av profiler på \"{}\" resulterade i: "
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Fel: Kunde inte tyda \"{}\" resultatet som JSON:"
 
-msgid "Select keyboard layout"
-msgstr "Välj en tangentbordslayout"
+msgid "Keyboard layout"
+msgstr "Tangentbordslayout"
 
-msgid "Select mirror region"
-msgstr "Välj en region för paketsynk"
+msgid "Mirror region"
+msgstr "Region för paketsynk"
 
-msgid "Select locale language"
-msgstr "Välj vilket språk du vill använda"
+msgid "Locale language"
+msgstr "Språk du vill använda"
 
-msgid "Select locale encoding"
-msgstr "Välj vilken teckenuppsättning du vill använda"
+msgid "Locale encoding"
+msgstr "Teckenuppsättning du vill använda"
 
-msgid "Select harddrives"
-msgstr "Välj hårddiskar"
+msgid "Drives"
+msgstr "Hårddiskar"
 
 msgid "Select disk layout"
 msgstr "Välj hårddisk-layout"
@@ -262,38 +262,38 @@ msgstr "Välj hårddisk-layout"
 msgid "Set encryption password"
 msgstr "Välj ett krypterings-lösenord"
 
-msgid "Use swap"
-msgstr "Använda 'swap'?"
+msgid "Swap"
+msgstr "Swap"
 
-msgid "Select bootloader"
-msgstr "Välj en boot-loader"
+msgid "Bootloader"
+msgstr "Boot-loader"
 
-msgid "Set root password"
-msgstr "Välj ett root-lösenord"
+msgid "root password"
+msgstr "Root-lösenord"
 
-msgid "Specify superuser account"
-msgstr "Skapa superanvändar-konto"
+msgid "Superuser account"
+msgstr "Superanvändar-konto"
 
-msgid "Specify user account"
-msgstr "Skapa användarkonto"
+msgid "User account"
+msgstr "Användarkonto"
 
-msgid "Specify profile"
-msgstr "Välj en profil"
+msgid "Profile"
+msgstr "Profil"
 
-msgid "Select audio"
-msgstr "Välj ljud mjukvara"
+msgid "Audio"
+msgstr "Ljud mjukvara"
 
-msgid "Select kernels"
-msgstr "Välj Linux-kernel"
+msgid "Kernels"
+msgstr "Linux-kernels"
 
-msgid "Additional packages to install"
-msgstr "Välj extra paket att installera"
+msgid "Additional packages"
+msgstr "Extra paket"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "Konfigurera nätverk"
 
-msgid "Set automatic time sync (NTP)"
-msgstr "Aktivera automatisk tidssynk (NTP)"
+msgid "Automatic time sync (NTP)"
+msgstr "Automatisk tidssynk (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "Installera ({} inställningar saknas)"
@@ -339,14 +339,14 @@ msgstr "Sätt önskat filsystem för partitionen"
 msgid "Abort"
 msgstr "Avbryt"
 
-msgid "Specify hostname"
-msgstr "Sätt ett önskat 'hostname'"
+msgid "Hostname"
+msgstr "Hostname"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Inte konfigurerad, otillgängligt utan manuell konfigurering"
 
-msgid "Select timezone"
-msgstr "Välj en tidszon"
+msgid "Timezone"
+msgstr "Tidszon"
 
 msgid "Set/Modify the below options"
 msgstr "Sätt eller modifiera nedan alternativ"
@@ -538,8 +538,8 @@ msgid "are you sure you want to use it?"
 msgstr "Vill du verkligen avbryta?"
 
 #, fuzzy
-msgid "Additional repositories to enable"
-msgstr "Välj extra paket att installera"
+msgid "Additional repositories"
+msgstr "Extra förråden"
 
 msgid "Save configuration"
 msgstr ""

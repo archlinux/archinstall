@@ -141,7 +141,7 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr ""
 
-msgid "Select Archinstall language"
+msgid "Archinstall language"
 msgstr ""
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
@@ -156,7 +156,7 @@ msgstr ""
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr ""
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr ""
 
 msgid "Select one of the regions to download packages from"
@@ -210,19 +210,19 @@ msgstr ""
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr ""
 
-msgid "Select keyboard layout"
+msgid "Keyboard layout"
 msgstr ""
 
-msgid "Select mirror region"
+msgid "Mirror region"
 msgstr ""
 
-msgid "Select locale language"
+msgid "Locale language"
 msgstr ""
 
-msgid "Select locale encoding"
+msgid "Locale encoding"
 msgstr ""
 
-msgid "Select harddrives"
+msgid "Drives"
 msgstr ""
 
 msgid "Select disk layout"
@@ -231,37 +231,37 @@ msgstr ""
 msgid "Set encryption password"
 msgstr ""
 
-msgid "Use swap"
+msgid "Swap"
 msgstr ""
 
-msgid "Select bootloader"
+msgid "Bootloader"
 msgstr ""
 
-msgid "Set root password"
+msgid "root password"
 msgstr ""
 
-msgid "Specify superuser account"
+msgid "Superuser account"
 msgstr ""
 
-msgid "Specify user account"
+msgid "User account"
 msgstr ""
 
-msgid "Specify profile"
+msgid "Profile"
 msgstr ""
 
-msgid "Select audio"
+msgid "Audio"
 msgstr ""
 
-msgid "Select kernels"
+msgid "Kernels"
 msgstr ""
 
-msgid "Additional packages to install"
+msgid "Additional packages"
 msgstr ""
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr ""
 
-msgid "Set automatic time sync (NTP)"
+msgid "Automatic time sync (NTP)"
 msgstr ""
 
 msgid "Install ({} config(s) missing)"
@@ -304,13 +304,13 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-msgid "Specify hostname"
+msgid "Hostname"
 msgstr ""
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr ""
 
-msgid "Select timezone"
+msgid "Timezone"
 msgstr ""
 
 msgid "Set/Modify the below options"
@@ -479,7 +479,7 @@ msgstr ""
 msgid "are you sure you want to use it?"
 msgstr ""
 
-msgid "Additional repositories to enable"
+msgid "Additional repositories"
 msgstr ""
 
 msgid "Save configuration"

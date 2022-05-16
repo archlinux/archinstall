@@ -168,7 +168,7 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Bitte geben sie einen gewünschten Dateisystemtyp für die Partition ein: "
 
-msgid "Select Archinstall language"
+msgid "Archinstall language"
 msgstr "Sprache für Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
@@ -183,7 +183,7 @@ msgstr "Bitte wählen sie was mit dem ausgewählten Gerät geschehen soll"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dies ist eine Liste von bereits programmierten Profilen, diese ermöglichen es einfacher Desktop Umgebungen einzustellen"
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr "Bitte wählen sie ein Tastaturlayout aus"
 
 msgid "Select one of the regions to download packages from"
@@ -240,20 +240,20 @@ msgstr "Fehler: Auflistung von Profilen mit URL \"{}\":"
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Fehler: \"{}\" konnte nicht in ein JSON format dekodiert werden:"
 
-msgid "Select keyboard layout"
-msgstr "Tastaturlayout auswählen"
+msgid "Keyboard layout"
+msgstr "Tastaturlayout"
 
-msgid "Select mirror region"
-msgstr "Mirror-region auswählen"
+msgid "Mirror region"
+msgstr "Mirror-region"
 
-msgid "Select locale language"
-msgstr "Lokale Sprache auswählen"
+msgid "Locale language"
+msgstr "Lokale Sprache"
 
-msgid "Select locale encoding"
-msgstr "Lokale Kodierung auswählen"
+msgid "Locale encoding"
+msgstr "Lokale Kodierung"
 
-msgid "Select harddrives"
-msgstr "Laufwerke auswählen"
+msgid "Drives"
+msgstr "Laufwerke"
 
 msgid "Select disk layout"
 msgstr "Laufwerke-layout auswählen"
@@ -261,37 +261,37 @@ msgstr "Laufwerke-layout auswählen"
 msgid "Set encryption password"
 msgstr "Verschlüsselungspasswort angeben"
 
-msgid "Use swap"
-msgstr "Swap benützen"
+msgid "Swap"
+msgstr "Swap"
 
-msgid "Select bootloader"
-msgstr "Bootloader auswählen"
+msgid "Bootloader"
+msgstr "Bootloader"
 
-msgid "Set root password"
-msgstr "Root Passwort wählen"
+msgid "root password"
+msgstr "Root Passwort"
 
-msgid "Specify superuser account"
-msgstr "Superuser Konto wählen"
+msgid "Superuser account"
+msgstr "Superuser Konto"
 
-msgid "Specify user account"
-msgstr "Benutzerkonto wählen"
+msgid "User account"
+msgstr "Benutzerkonto"
 
-msgid "Specify profile"
-msgstr "Profile auswählen"
+msgid "Profile"
+msgstr "Profile"
 
-msgid "Select audio"
-msgstr "Audio auswählen"
+msgid "Audio"
+msgstr "Audio"
 
-msgid "Select kernels"
-msgstr "Kernel auswählen"
+msgid "Kernels"
+msgstr "Kernels"
 
-msgid "Additional packages to install"
-msgstr "Zus. Packete für die Installation"
+msgid "Additional packages"
+msgstr "Zus. Packete"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "Netzwerkonfiguration"
 
-msgid "Set automatic time sync (NTP)"
+msgid "Automatic time sync (NTP)"
 msgstr "Autom. Zeitsynchronisierung (NTP)"
 
 msgid "Install ({} config(s) missing)"
@@ -338,14 +338,14 @@ msgstr "Bitte wählen Sie einen Dateisystemtyp für die Partition aus"
 msgid "Abort"
 msgstr "Abbrechen"
 
-msgid "Specify hostname"
-msgstr "Hostnamen wählen"
+msgid "Hostname"
+msgstr "Hostnamen"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Nicht konfiguriert, unverfügbar wenn nicht selber eingestellt"
 
-msgid "Select timezone"
-msgstr "Zeitzone wählen"
+msgid "Timezone"
+msgstr "Zeitzone"
 
 msgid "Set/Modify the below options"
 msgstr "Setzen sie die unten stehenden Einstellungen"
@@ -526,8 +526,8 @@ msgstr "Das gewählte Passwort ist sehr schwach,"
 msgid "are you sure you want to use it?"
 msgstr "wollen sie dieses wirklich verwenden?"
 
-msgid "Additional repositories to enable"
-msgstr "Zus. Repositories einzuschalten"
+msgid "Additional repositories"
+msgstr "Zus. Repositories"
 
 msgid "Save configuration"
 msgstr "Konfiguration speichern"

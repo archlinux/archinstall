@@ -169,8 +169,8 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Voer de naam in van het gewenste bestandssysteem: "
 
-msgid "Select Archinstall language"
-msgstr "Kies een Archinstall-taal"
+msgid "Archinstall language"
+msgstr "Archinstall-taal"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Alle geselecteerde schijven formatteren en best mogelijke partitie-indeling gebruiken"
@@ -184,7 +184,7 @@ msgstr "Geef aan wat er moet worden gedaan met de gekozen blokapparaten"
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Dit is een vooraf opgestelde lijst met profielen, welke het installeren van zaken als werkomgevingen vereenvoudigt"
 
-msgid "Select Keyboard layout"
+msgid "Choose keyboard layout"
 msgstr "Kies een toetsenbordindeling"
 
 msgid "Select one of the regions to download packages from"
@@ -241,20 +241,20 @@ msgstr "Foutmelding: het opsommen van de profielen op {} leidde tot"
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Foutmelding: ‘{}’ kan niet gedecodeerd worden als json:"
 
-msgid "Select keyboard layout"
-msgstr "Kies een toetsenbordindeling"
+msgid "Keyboard layout"
+msgstr "Toetsenbordindeling"
 
-msgid "Select mirror region"
-msgstr "Kies een spiegelserverregio"
+msgid "Mirror region"
+msgstr "Spiegelserverregio"
 
-msgid "Select locale language"
-msgstr "Kies een taal"
+msgid "Locale language"
+msgstr "Taal"
 
-msgid "Select locale encoding"
-msgstr "Kies een taalvariant"
+msgid "Locale encoding"
+msgstr "Taalvariant"
 
-msgid "Select harddrives"
-msgstr "Selecteer de harde schijven"
+msgid "Drives"
+msgstr "Harde schijven"
 
 msgid "Select disk layout"
 msgstr "Kies een schijfindeling"
@@ -262,38 +262,38 @@ msgstr "Kies een schijfindeling"
 msgid "Set encryption password"
 msgstr "Versleutelwachtwoord instellen"
 
-msgid "Use swap"
-msgstr "Wisselgeheugen gebruiken"
+msgid "Swap"
+msgstr "Wisselgeheugen"
 
-msgid "Select bootloader"
-msgstr "Kies een opstartlader"
+msgid "Bootloader"
+msgstr "Opstartlader"
 
-msgid "Set root password"
-msgstr "Rootwachtwoord instellen"
+msgid "root password"
+msgstr "Rootwachtwoord"
 
-msgid "Specify superuser account"
-msgstr "Geef aan welk account superuserrechten dient te hebben"
+msgid "Superuser account"
+msgstr "Superuserrechten"
 
-msgid "Specify user account"
-msgstr "Kies een gebruikersaccount"
+msgid "User account"
+msgstr "Gebruikersaccount"
 
-msgid "Specify profile"
-msgstr "Kies een profiel"
+msgid "Profile"
+msgstr "Profiel"
 
-msgid "Select audio"
-msgstr "Kies audio"
+msgid "Audio"
+msgstr "Audio"
 
-msgid "Select kernels"
-msgstr "Selecteer kernels"
+msgid "Kernels"
+msgstr "Kernels"
 
-msgid "Additional packages to install"
-msgstr "Aanvullende te installeren pakketten"
+msgid "Additional packages"
+msgstr "Aanvullende pakketten"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "Netwerk instellen"
 
-msgid "Set automatic time sync (NTP)"
-msgstr "Automatische tijdsynchronisatie (NTP) gebruiken"
+msgid "Automatic time sync (NTP)"
+msgstr "Automatische tijdsynchronisatie (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "Installeren ({} confirguratie(s) ontbreekt/ontbreken)"
@@ -339,14 +339,14 @@ msgstr "Gewenste bestandssysteem van partitie instellen"
 msgid "Abort"
 msgstr "Afbreken"
 
-msgid "Specify hostname"
-msgstr "Hostnaam opgeven"
+msgid "Hostname"
+msgstr "Hostnaam"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "Niet ingesteld en dus niet beschikbaar, tenzij handmatig ingesteld"
 
-msgid "Select timezone"
-msgstr "Kies een tijdzone"
+msgid "Timezone"
+msgstr "Tijdzone"
 
 msgid "Set/Modify the below options"
 msgstr "Onderstaande opties instellen/aanpassen"
@@ -528,8 +528,8 @@ msgstr "Het gekozen wachtwoord is zwak."
 msgid "are you sure you want to use it?"
 msgstr "Weet u zeker dat u het wilt gebruiken?"
 
-msgid "Additional repositories to enable"
-msgstr "Aanvullende te gebruiken pakketbronnen"
+msgid "Additional repositories"
+msgstr "Aanvullende pakketbronnen"
 
 msgid "Save configuration"
 msgstr "Configuratie vastleggen"
