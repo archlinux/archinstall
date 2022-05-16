@@ -5,6 +5,7 @@ from enum import Enum
 from typing import List, Optional, Dict, Union, Any, TYPE_CHECKING
 
 from ..output import log
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -78,7 +79,7 @@ class NetworkConfigurationHandler:
 					enable_services=True)  # Sources the ISO network configuration to the install medium.
 			elif self._configuration.is_network_manager():
 				installation.add_additional_packages(["networkmanager"])
-				if self._configuration.is_desktop_profile():
+				if (profile := storage['arguments'].get('profile')) and profile.is_desktop_profile:
 					installation.add_additional_packages(["network-manager-applet"])
 				installation.enable_service('NetworkManager.service')
 
