@@ -32,7 +32,7 @@ class BlockDevice:
 		#       I'm placing the encryption password on a BlockDevice level.
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
-		return f"BlockDevice({self.device_or_backfile}, size={self.size}GB, free_space={'+'.join(part[2] for part in self.free_space)}, bus_type={self.bus_type})"
+		return f"BlockDevice({self.device_or_backfile}, size={self._safe_size}GB, free_space={self._safe_free_space}, bus_type={self.bus_type})"
 
 	def __iter__(self) -> Iterator[Partition]:
 		for partition in self.partitions:
@@ -168,6 +168,18 @@ class BlockDevice:
 		return SysCommand(f'blkid -s PTUUID -o value {self.path}').decode('UTF-8')
 
 	@property
+	def _safe_size(self) -> float:
+		from .helpers import convert_size_to_gb
+
+		try:
+			output = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.path}").decode('UTF-8'))
+		except SysCallError:
+			return -1.0
+
+		for device in output['blockdevices']:
+			return convert_size_to_gb(device['size'])
+
+	@property
 	def size(self) -> float:
 		from .helpers import convert_size_to_gb
 
@@ -191,7 +203,14 @@ class BlockDevice:
 			return device['rota'] is True
 
 	@property
-	def free_space(self) -> Tuple[str, str, str]:
+	def _safe_free_space(self) -> Tuple[str, ...]:
+		try:
+			return '+'.join(part[2] for part in self.free_space)
+		except SysCallError:
+			return '?'
+
+	@property
+	def free_space(self) -> Tuple[str, ...]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
 		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
 		# so the free will ignore the ESP partition and just give the "free" space.
