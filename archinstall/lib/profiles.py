@@ -211,6 +211,10 @@ class Profile(Script):
 	def name(self) -> str:
 		return os.path.basename(self.profile)
 
+	@property
+	def is_desktop_profile(self) -> bool:
+		return is_desktop_profile(repr(self))
+
 	def install(self) -> ModuleType:
 		# Before installing, revert any temporary changes to the namespace.
 		# This ensures that the namespace during installation is the original initiation namespace.
