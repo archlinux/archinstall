@@ -5,6 +5,7 @@ from typing import Optional, Dict, Any, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
+	_: Any
 
 from .helpers import sort_block_devices_based_on_performance, select_largest_device, select_disk_larger_than_or_close_to
 from ..hardware import has_uefi
@@ -26,13 +27,13 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	compression = False
 
 	if default_filesystem == 'btrfs':
-		prompt = 'Would you like to use BTRFS subvolumes with a default structure?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
-		using_subvolumes = choice == 'yes'
+		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		using_subvolumes = choice.value == Menu.yes()
 
-		prompt = 'Would you like to use BTRFS compression?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
-		compression = choice == 'yes'
+		prompt = str(_('Would you like to use BTRFS compression?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		compression = choice.value == Menu.yes()
 
 	layout = {
 		block_device.path : {
@@ -87,9 +88,9 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
 
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
-		prompt = 'Would you like to create a separate partition for /home?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
-		using_home_partition = choice == 'yes'
+		prompt = str(_('Would you like to create a separate partition for /home?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		using_home_partition = choice.value == Menu.yes()
 
 	# Set a size for / (/root)
 	if using_subvolumes or block_device.size < MIN_SIZE_TO_ALLOW_HOME_PART or not using_home_partition:
@@ -138,9 +139,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 	return layout
 
 
-def suggest_multi_disk_layout(block_devices :List[BlockDevice],
-	default_filesystem :Optional[str] = None,
-	advanced_options :bool = False) -> Dict[str, Any]:
+def suggest_multi_disk_layout(block_devices :List[BlockDevice], default_filesystem :Optional[str] = None, advanced_options :bool = False):
 
 	if not default_filesystem:
 		from ..user_interaction import ask_for_main_filesystem_format
@@ -158,6 +157,13 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 	home_device = select_largest_device(block_devices, gigabytes=MIN_SIZE_TO_ALLOW_HOME_PART)
 	root_device = select_disk_larger_than_or_close_to(block_devices, gigabytes=ARCH_LINUX_INSTALLED_SIZE, filter_out=[home_device])
 
+	if home_device is None or root_device is None:
+		text = _('The selected drives do not have the minimum capacity required for an automatic suggestion\n')
+		text += _('Minimum capacity for /home partition: {}GB\n').format(MIN_SIZE_TO_ALLOW_HOME_PART)
+		text += _('Minimum capacity for Arch Linux partition: {}GB').format(ARCH_LINUX_INSTALLED_SIZE)
+		Menu(str(text), [str(_('Continue'))], skip=False).run()
+		return None
+
 	compression = False
 
 	if default_filesystem == 'btrfs':
@@ -165,9 +171,9 @@ def suggest_multi_disk_layout(block_devices :List[BlockDevice],
 		# choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
 		# using_subvolumes = choice == 'yes'
 
-		prompt = 'Would you like to use BTRFS compression?'
-		choice = Menu(prompt, ['yes', 'no'], skip=False, default_option='yes').run()
-		compression = choice == 'yes'
+		prompt = str(_('Would you like to use BTRFS compression?'))
+		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+		compression = choice.value == Menu.yes()
 
 	log(f"Suggesting multi-disk-layout using {len(block_devices)} disks, where {root_device} will be /root and {home_device} will be /home", level=logging.DEBUG)
 

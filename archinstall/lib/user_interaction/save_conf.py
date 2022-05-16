@@ -5,6 +5,7 @@ from typing import Any, Dict, TYPE_CHECKING
 
 from ..configuration import ConfigurationOutput
 from ..menu import Menu
+from ..menu.menu import MenuSelectionType
 from ..output import log
 
 if TYPE_CHECKING:
@@ -45,14 +46,16 @@ def save_config(config: Dict):
 		'all': str(_('Save all'))
 	}
 
-	selection = Menu(_('Choose which configuration to save'),
-						list(options.values()),
-						sort=False,
-						skip=True,
-						preview_size=0.75,
-						preview_command=preview).run()
+	choice = Menu(
+		_('Choose which configuration to save'),
+		list(options.values()),
+		sort=False,
+		skip=True,
+		preview_size=0.75,
+		preview_command=preview
+	).run()
 
-	if not selection:
+	if choice.type_ == MenuSelectionType.Esc:
 		return
 
 	while True:
@@ -62,13 +65,13 @@ def save_config(config: Dict):
 			break
 		log(_('Not a valid directory: {}').format(dest_path), fg='red')
 
-	if options['user_config'] == selection:
+	if options['user_config'] == choice.value:
 		config_output.save_user_config(dest_path)
-	elif options['user_creds'] == selection:
+	elif options['user_creds'] == choice.value:
 		config_output.save_user_creds(dest_path)
-	elif options['disk_layout'] == selection:
+	elif options['disk_layout'] == choice.value:
 		config_output.save_disk_layout(dest_path)
-	elif options['all'] == selection:
+	elif options['all'] == choice.value:
 		config_output.save_user_config(dest_path)
 		config_output.save_user_creds(dest_path)
-		config_output.save_disk_layout
+		config_output.save_disk_layout(dest_path)

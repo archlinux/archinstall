@@ -3,7 +3,7 @@ import os
 import time
 
 import archinstall
-from archinstall import ConfigurationOutput
+from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
 if archinstall.arguments.get('help'):
@@ -45,9 +45,8 @@ def ask_user_questions():
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
 
-	if archinstall.arguments.get('advanced', False):
-		global_menu.enable('sys-language', True)
-		global_menu.enable('sys-encoding', True)
+	global_menu.enable('sys-language')
+	global_menu.enable('sys-encoding')
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
@@ -257,9 +256,9 @@ def perform_installation(mountpoint):
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
-			choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-			if choice == 'yes':
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			if choice == Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:
@@ -300,7 +299,7 @@ if archinstall.arguments.get('dry_run'):
 	exit(0)
 
 if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	input(str(_('Press Enter to continue.')))
 
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

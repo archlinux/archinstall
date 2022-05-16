@@ -4,7 +4,7 @@ import logging
 import sys
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
-from .menu import Menu
+from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translation import Translation
@@ -12,13 +12,15 @@ from ..translation import Translation
 if TYPE_CHECKING:
 	_: Any
 
-def select_archinstall_language(default='English'):
+
+def select_archinstall_language(preset_value: str) -> Optional[str]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
-	languages = Translation.get_all_names()
-	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
-	return language
+	languages = Translation.get_available_lang()
+	language = Menu(_('Select Archinstall language'), languages, preset_values=preset_value).run()
+	return language.value
+
 
 class Selector:
 	def __init__(
@@ -91,6 +93,10 @@ class Selector:
 		self._no_store = no_store
 
 	@property
+	def description(self) -> str:
+		return self._description
+
+	@property
 	def dependencies(self) -> List:
 		return self._dependencies
 
@@ -115,7 +121,7 @@ class Selector:
 	def update_description(self, description :str):
 		self._description = description
 
-	def menu_text(self) -> str:
+	def menu_text(self, padding: int = 0) -> str:
 		if self._description == '': # special menu option for __separator__
 			return ''
 
@@ -128,14 +134,14 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(str(self._description))
-			current = ' ' * padding + f'SET: {current}'
+			padding += 5
+			description = str(self._description).ljust(padding, ' ')
+			current = str(_('set: {}').format(current))
+		else:
+			description = self._description
+			current = ''
 
-		return f'{self._description} {current}'
-
-	@property
-	def text(self):
-		return self.menu_text()
+		return f'{description} {current}'
 
 	def set_current_selection(self, current :Optional[str]):
 		self._current_selection = current
@@ -262,8 +268,13 @@ class GeneralMenu:
 			return preview()
 		return None
 
+	def _get_menu_text_padding(self, entries: List[Selector]):
+		return max([len(str(selection.description)) for selection in entries])
+
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		option = [(k, v) for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
+		padding = self._get_menu_text_padding(list(self._menu_options.values()))
+		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
+
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')
 		config_name = option[0][0]
@@ -275,14 +286,18 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
-		self.post_callback  # as all the values can vary i have to exec this callback
+
+		self.post_callback()  # as all the values can vary i have to exec this callback
 		cursor_pos = None
+
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
-			menu_options = [m.text for m in enabled_menus.values()]
+
+			padding = self._get_menu_text_padding(list(enabled_menus.values()))
+			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
 			selection = Menu(
 				_('Set/Modify the below options'),
@@ -291,18 +306,31 @@ class GeneralMenu:
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
 				preview_size=self.preview_size,
-				skip_empty_entries=True
+				skip_empty_entries=True,
+				skip=False
 			).run()
 
-			if selection and self.auto_cursor:
-				cursor_pos = menu_options.index(selection) + 1  # before the strip otherwise fails
-				if cursor_pos >= len(menu_options):
-					cursor_pos = len(menu_options) - 1
-				selection = selection.strip()
-			if selection:
-				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
-				if not self._process_selection(selection):
-					break
+			if selection.type_ == MenuSelectionType.Selection:
+				value = selection.value
+
+				if self.auto_cursor:
+					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
+
+					# in case the new position lands on a "placeholder" we'll skip them as well
+					while True:
+						if cursor_pos >= len(menu_options):
+							cursor_pos = 0
+						if len(menu_options[cursor_pos]) > 0:
+							break
+						cursor_pos += 1
+
+					value = value.strip()
+
+					# if this calls returns false, we exit the menu
+					# we allow for an callback for special processing on realeasing control
+					if not self._process_selection(value):
+						break
+
 		if not self.is_context_mgr:
 			self.__exit__()
 
@@ -423,15 +451,17 @@ class GeneralMenu:
 	def mandatory_overview(self) -> Tuple[int, int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
-		for field in self._menu_options:
-			option = self._menu_options[field]
+		for field, option in self._menu_options.items():
 			if option.is_mandatory():
 				mandatory_fields += 1
 				if not option.has_selection():
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
-	def _select_archinstall_language(self, default_lang):
-		language = select_archinstall_language(default_lang)
-		self._translation.activate(language)
-		return language
+	def _select_archinstall_language(self, preset_value: str) -> str:
+		language = select_archinstall_language(preset_value)
+		if language is not None:
+			self._translation.activate(language)
+			return language
+
+		return preset_value

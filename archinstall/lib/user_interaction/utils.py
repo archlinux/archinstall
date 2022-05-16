@@ -28,12 +28,9 @@ def check_password_strong(passwd: str) -> bool:
 		symbol_count += 40
 
 	if symbol_count**len(passwd) < 10e20:
-
-		prompt = _("The password you are using seems to be weak,")
-		prompt += _("are you sure you want to use it?")
-
-		choice = Menu(prompt, ["yes", "no"], default_option="yes").run()
-		return choice == "yes"
+		prompt = str(_("The password you are using seems to be weak, are you sure you want to use it?"))
+		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+		return choice.value == Menu.yes()
 
 	return True
 
@@ -43,7 +40,6 @@ def get_password(prompt: str = '') -> Optional[str]:
 		prompt = _("Enter a password: ")
 
 	while passwd := getpass.getpass(prompt):
-
 		if len(passwd.strip()) <= 0:
 			break
 
@@ -84,12 +80,13 @@ def do_countdown() -> bool:
 
 		if SIG_TRIGGER:
 			prompt = _('Do you really want to abort?')
-			choice = Menu(prompt, ['yes', 'no'], skip=False).run()
-			if choice == 'yes':
+			choice = Menu(prompt, Menu.yes_no(), skip=False).run()
+			if choice.value == Menu.yes():
 				exit(0)
 
 			if SIG_TRIGGER is False:
 				sys.stdin.read()
+
 			SIG_TRIGGER = False
 			signal.signal(signal.SIGINT, sig_handler)
 

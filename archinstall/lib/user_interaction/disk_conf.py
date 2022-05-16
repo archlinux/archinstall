@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING, Optional
 
 from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
 from ..disk import BlockDevice
 from ..exceptions import DiskError
 from ..menu import Menu
+from ..menu.menu import MenuSelectionType
 from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def ask_for_main_filesystem_format(advanced_options=False):
+def ask_for_main_filesystem_format(advanced_options=False) -> str:
 	options = {'btrfs': 'btrfs', 'ext4': 'ext4', 'xfs': 'xfs', 'f2fs': 'f2fs'}
 
 	advanced = {'ntfs': 'ntfs'}
@@ -22,7 +23,7 @@ def ask_for_main_filesystem_format(advanced_options=False):
 
 	prompt = _('Select which filesystem your main partition should use')
 	choice = Menu(prompt, options, skip=False).run()
-	return choice
+	return choice.value
 
 
 def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
@@ -30,24 +31,33 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 
 	for device in block_devices:
 		layout = manage_new_and_existing_partitions(device)
-
 		result[device.path] = layout
 
 	return result
 
 
-def select_disk_layout(block_devices: list, advanced_options=False) -> Dict[str, Any]:
+def select_disk_layout(preset: Optional[Dict[str, Any]], block_devices: list, advanced_options=False) -> Optional[Dict[str, Any]]:
 	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
 	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custome_mode]
 
-	mode = Menu(_('Select what you wish to do with the selected block devices'), modes).run()
+	warning = str(_('Are you sure you want to reset this setting?'))
 
-	if mode:
-		if mode == wipe_mode:
-			return get_default_partition_layout(block_devices, advanced_options)
-		else:
-			return select_individual_blockdevice_usage(block_devices)
+	choice = Menu(
+		_('Select what you wish to do with the selected block devices'),
+		modes,
+		explode_on_interrupt=True,
+		explode_warning=warning
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Ctrl_c: return None
+		case MenuSelectionType.Selection:
+			if choice.value == wipe_mode:
+				return get_default_partition_layout(block_devices, advanced_options)
+			else:
+				return select_individual_blockdevice_usage(block_devices)
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> BlockDevice:

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable
+import copy
+from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable, Optional
 
 from ..menu import Menu
+from ..menu.menu import MenuSelectionType
 from ..output import log
 
 from ..disk.validators import fs_types
@@ -80,25 +82,32 @@ def _get_partitions(partitions :List[Partition], filter_ :Callable = None) -> Li
 	return partition_indexes
 
 
-def select_partition(title :str, partitions :List[Partition], multiple :bool = False, filter_ :Callable = None) -> Union[int, List[int], None]:
+def select_partition(
+	title :str,
+	partitions :List[Partition],
+	multiple :bool = False,
+	filter_ :Callable = None
+) -> Optional[int, List[int]]:
 	partition_indexes = _get_partitions(partitions, filter_)
 
 	if len(partition_indexes) == 0:
 		return None
 
-	partition = Menu(title, partition_indexes, multi=multiple).run()
+	choice = Menu(title, partition_indexes, multi=multiple).run()
 
-	if partition is not None:
-		if isinstance(partition, list):
-			return [int(p) for p in partition]
-		else:
-			return int(partition)
+	if choice.type_ == MenuSelectionType.Esc:
+		return None
 
-	return None
+	if isinstance(choice.value, list):
+		return [int(p) for p in choice.value]
+	else:
+		return int(choice.value)
 
 
-def get_default_partition_layout(block_devices: Union['BlockDevice', List['BlockDevice']],
-									advanced_options: bool = False) -> Dict[str, Any]:
+def get_default_partition_layout(
+	block_devices: Union['BlockDevice', List['BlockDevice']],
+	advanced_options: bool = False
+) -> Optional[Dict[str, Any]]:
 	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
 
 	if len(block_devices) == 1:
@@ -112,14 +121,15 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 
 	for device in block_devices:
 		layout = manage_new_and_existing_partitions(device)
-
 		result[device.path] = layout
 
 	return result
 
 
-def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]: # noqa: max-complexity: 50
+def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
+	original_layout = copy.deepcopy(block_device_struct)
+
 	# Test code: [part.__dump__() for part in block_device.partitions.values()]
 	# TODO: Squeeze in BTRFS subvolumes here
 
@@ -134,6 +144,8 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
 	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
 	set_btrfs_subvolumes = str(_('Set desired subvolumes on a btrfs partition'))
+	save_and_exit = str(_('Save and exit'))
+	cancel = str(_('Cancel'))
 
 	while True:
 		modes = [new_partition, suggest_partition_layout]
@@ -164,11 +176,15 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 		if len(block_device_struct["partitions"]):
 			title += _current_partition_layout(block_device_struct['partitions']) + '\n'
 
-		task = Menu(title, modes, sort=False).run()
+		modes += [save_and_exit, cancel]
 
-		if not task:
+		task = Menu(title, modes, sort=False, skip=False).run()
+		task = task.value
+
+		if task == cancel:
+			return original_layout
+		elif task == save_and_exit:
 			break
-
 		if task == new_partition:
 			from ..disk import valid_parted_position
 
@@ -177,9 +193,9 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			# 	# https://www.gnu.org/software/parted/manual/html_node/mklabel.html
 			# 	name = input("Enter a desired name for the partition: ").strip()
 
-			fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
+			fs_choice = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
 
-			if not fstype:
+			if fs_choice.type_ == MenuSelectionType.Esc:
 				continue
 
 			prompt = _('Enter the start sector (percentage or block number, default: {}): ').format(
@@ -212,7 +228,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					"mountpoint": None,
 					"wipe": True,
 					"filesystem": {
-						"format": fstype
+						"format": fs_choice.value
 					}
 				})
 			else:
@@ -223,16 +239,13 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			from ..disk import suggest_single_disk_layout
 
 			if len(block_device_struct["partitions"]):
-				prompt = _('{} contains queued partitions, this will remove those, are you sure?').format(block_device)
-				choice = Menu(prompt, ['yes', 'no'], default_option='no').run()
+				prompt = _('{}\ncontains queued partitions, this will remove those, are you sure?').format(block_device)
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
 
-				if choice == 'no':
+				if choice.value == Menu.no():
 					continue
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
-
-		elif task is None:
-			return block_device_struct
 		else:
 			current_layout = _current_partition_layout(block_device_struct['partitions'], with_idx=True)
 
@@ -263,10 +276,8 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
-					print(
-						_(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'))
-					mountpoint = input(
-						_('Select where to mount partition (leave blank to remove mountpoint): ')).strip()
+					print(_(' * Partition mount-points are relative to inside the installation, the boot would be /boot as an example.'))
+					mountpoint = input(_('Select where to mount partition (leave blank to remove mountpoint): ')).strip()
 
 					if len(mountpoint):
 						block_device_struct["partitions"][partition]['mountpoint'] = mountpoint
@@ -288,10 +299,10 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						if not block_device_struct["partitions"][partition].get('filesystem', None):
 							block_device_struct["partitions"][partition]['filesystem'] = {}
 
-						fstype = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
+						fs_choice = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
 
-						if fstype:
-							block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
+						if fs_choice.type_ == MenuSelectionType.Selection:
+							block_device_struct["partitions"][partition]['filesystem']['format'] = fs_choice.value
 
 					# Negate the current wipe marking
 					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
@@ -302,16 +313,16 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 				if partition is not None:
 					# Negate the current encryption marking
-					block_device_struct["partitions"][partition][
-						'encrypted'] = not block_device_struct["partitions"][partition].get('encrypted', False)
+					block_device_struct["partitions"][partition]['encrypted'] = \
+						not block_device_struct["partitions"][partition].get('encrypted', False)
 
 			elif task == mark_bootable:
 				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
 
 				if partition is not None:
-					block_device_struct["partitions"][partition][
-						'boot'] = not block_device_struct["partitions"][partition].get('boot', False)
+					block_device_struct["partitions"][partition]['boot'] = \
+						not block_device_struct["partitions"][partition].get('boot', False)
 
 			elif task == set_filesystem_partition:
 				title = _('{}\n\nSelect which partition to set a filesystem on').format(current_layout)
@@ -322,10 +333,10 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						block_device_struct["partitions"][partition]['filesystem'] = {}
 
 					fstype_title = _('Enter a desired filesystem type for the partition: ')
-					fstype = Menu(fstype_title, fs_types()).run()
+					fs_choice = Menu(fstype_title, fs_types()).run()
 
-					if fstype:
-						block_device_struct["partitions"][partition]['filesystem']['format'] = fstype
+					if fs_choice.type_ == MenuSelectionType.Selection:
+						block_device_struct["partitions"][partition]['filesystem']['format'] = fs_choice.value
 
 			elif task == set_btrfs_subvolumes:
 				from .subvolume_config import SubvolumeList

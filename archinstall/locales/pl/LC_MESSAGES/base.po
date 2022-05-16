@@ -3,108 +3,106 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Last-Translator: MedzikUser <nivua1fn@duck.com>\n"
 "Language-Team: \n"
-"Language: nl\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Er is een logboek aangemaakt: {} {}"
+msgstr "Plik dziennika został stworzony tutaj: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Meld dit voorval (inclusief het logboek) op https://github.com/archlinux/archinstall/issues"
+msgstr "    Proszę zgłosić ten błąd (i plik) pod adresem https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Weet u zeker dat u wilt afbreken?"
+msgstr "Czy napewno chcesz przerwać proces?"
 
 msgid "And one more time for verification: "
-msgstr "Nog eenmaal ter verificatie: "
+msgstr "I jeszcze raz w celu weryfikacji: "
 
 msgid "Would you like to use swap on zram?"
-msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+msgstr "Czy chcesz używać swap w zramie?"
 
 msgid "Desired hostname for the installation: "
-msgstr "Standaard hostnaam van installatie: "
+msgstr "Nazwa hosta użyta do instalacji: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Gebruikersnaam van beheerder met sudo-rechten (vereist): "
+msgstr "Nazwa użytkownika dla wymaganego superużytkownika z uprawnieniami sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Andere toe te voegen gebruikers (laat leeg om niemand toe te voegen): "
+msgstr "Ewentualni użytkownicy do instalacji (pozostaw puste jeśli nie chcesz tworzyć użytkowników): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Moet deze gebruiker beheerder (sudoer) worden?"
+msgstr "Czy użytkownik powinien superużytkownikiem (sudoer)?"
 
 msgid "Select a timezone"
-msgstr "Kies een tijdzone"
+msgstr "Wybierz strefę czasową"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Wilt u GRUB gebruiken als opstartlader in plaats van systemd-boot?"
+msgstr "Czy chcesz użyć GRUB-a jako programu rozruchowego zamiast systemd-boot?"
 
 msgid "Choose a bootloader"
-msgstr "Kies een opstartlader"
+msgstr "Wybierz program rozruchowy"
 
 msgid "Choose an audio server"
-msgstr "Kies een audioserver"
+msgstr "Wybierz serwer dźwięku"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Er worden alleen basispakketten geïnstalleerd, zoals base, base-devel, linux, linux-firmware, efibootmgr en profielpakketten (optioneel)."
+msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Als u een webbrowser wenst, zoals Firefox of Chromium, dan kunt u dit handmatig aangeven."
+msgstr "Jeśli wymagana jest przeglądarka internetowa, taka jak firefox lub chromium, można ją określić w następującym oknie dialogowym"
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Typ de namen van te installeren pakketten (spatiegescheiden - laat leeg om over te slaan): "
+msgstr "Wpisz dodatkowe pakiety do zainstalowania (oddzielone spacjami, pozostaw puste aby pominąć): "
 
 msgid "Copy ISO network configuration to installation"
-msgstr "ISO-netwerkinstellingen overzetten naar fysieke installatie"
+msgstr "Skopiuj ustawienia sieciowe ISO do instalacji"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "NetworkManager gebruiken (benodigd om internetinstellingen grafisch in te stellen in GNOME en KDE)"
+msgstr "Użyj programu NetworkManager (niezbędne do graficznej konfiguracji Internetu w środowiskach GNOME i KDE)"
 
 msgid "Select one network interface to configure"
-msgstr "Kies een in te stellen netwerkkaart"
+msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Geef aan welke modus moet worden gebruikt bij ‘{}’ of sla over om de standaardmodus (‘{}’) te gebruiken"
+msgstr "Wybierz tryb, który ma być skonfigurowany dla \"{}\" lub pomiń, aby użyć trybu domyślnego \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Voer het ip-adres en subnet in van ‘{}’ (voorbeeld: 192.168.0.5/24): "
+msgstr "Wprowadź adres IP i podsieć dla {}. (przykład: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Voer uw eigen gateway-adres (router-ip-adres) in of laag leeg om over te slaan: "
+msgstr "Wprowadź adres IP bramy sieciowej (routera) (pozostaw puste pole w przypadku braku adresu): "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Voer uw eigen dns-servers in (spatiegescheiden - laat leeg om over te slaan): "
+msgstr "Wpisz swoje serwery DNS (oddzielone spacjami, pozostaw puste w przypadku braku): "
 
 msgid "Select which filesystem your main partition should use"
-msgstr "Kies het te gebruiken bestandssysteem van de hoofdpartitie"
+msgstr "Wybierz, który system plików ma być używany na partycji głównej"
 
 msgid "Current partition layout"
-msgstr "Huidige partitie-indeling"
+msgstr "Aktualny układ partycji"
 
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Geef aan wat er moet worden gedaan met\n"
+"Wybierz, co ma być zrobione z\n"
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Kies het gewenste bestandssysteem voor de partitie"
+msgstr "Wprowadź typ systemu plików dla partycji"
 
 msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Voer de eindsector in (percentage of bloknummer - bijvoorbeeld: {}): "
+msgstr "Wprowadź sektor końcowy (procent lub numer bloku, domyślnie: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
+msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
 
 msgid ""
 "{}\n"
@@ -113,7 +111,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecteer te verwijderen partities op indexnummer"
+"Wybierz według indeksu, które partycje mają zostać usunięte"
 
 msgid ""
 "{}\n"
@@ -122,13 +120,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecteer aan te koppelen partities op indexnummer"
+"Wybierz według indeksu, które partycje mają zostać zamontowane"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " *Partitie-aankoppelpunten zijn gekoppeld aan de fysieke installatie. Voorbeeld: ‘boot’ wordt ‘/boot’."
+msgstr " * Punkty montowania partycji są względne w stosunku do wnętrza instalacji, np. partycja startowa to /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Geef aan waar de partitie moet worden aangekoppeld (laat leeg om te verwijderen): "
+msgstr "Wybierz gdzie chcesz zamontować partycję (pozostaw puste, aby usunąć punkt montowania): "
 
 msgid ""
 "{}\n"
@@ -137,7 +135,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kies welke partitie moet worden gemaskeerd alvorens te formatteren"
+"Wybierz partycja która ma zostać sformatowana"
 
 msgid ""
 "{}\n"
@@ -146,7 +144,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kies welke partitie moet worden versleuteld"
+"Wybierz partycja która ma zostać zaszyfrowana"
 
 msgid ""
 "{}\n"
@@ -155,7 +153,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kies welke partitie moet worden aangemerkt als opstartbaar"
+"Wybierz partycja która ma zostać oznaczona jako startowa (rozruchowa/bootowalna)"
 
 msgid ""
 "{}\n"
@@ -164,43 +162,43 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Kies op welke partitie een bestandssysteem moet worden ingesteld"
+"Wybierz partycję, na której ma zostać utworzony system plików"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Voer de naam in van het gewenste bestandssysteem: "
+msgstr "Wprowadź typ systemu plików dla partycji: "
 
 msgid "Select Archinstall language"
-msgstr "Kies een Archinstall-taal"
+msgstr "Wybierz język Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Alle geselecteerde schijven formatteren en best mogelijke partitie-indeling gebruiken"
+msgstr "Wymaż wszystkie wybrane dyski i użyj najlepszego domyślnego układu partycji"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Geef per schijf aan welke actie moet worden uitgevoerd (gevolgd door partitiegebruik)"
+msgstr "Wybierz, co ma być zrobione z każdym dyskiem z osobna (a następnie z wykorzystaniem partycji)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Geef aan wat er moet worden gedaan met de gekozen blokapparaten"
+msgstr "Wybierz, co chcesz zrobić z wybranymi urządzeniami blokowymi"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Dit is een vooraf opgestelde lijst met profielen, welke het installeren van zaken als werkomgevingen vereenvoudigt"
+msgstr "To jest lista wstępnie zaprogramowanych profili, które mogą ułatwić instalację takich rzeczy jak środowiska graficzne"
 
 msgid "Select Keyboard layout"
-msgstr "Kies een toetsenbordindeling"
+msgstr "Wybierz układ klawiatury"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Geef aan uit welke regio pakketten moeten worden opgehaald"
+msgstr "Wybierz jeden z regionów, z których chcesz pobrać pakiety"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Selecteer één of meer in te stellen harde schijven"
+msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Op AMD-hardware is het aanbevolen om alle opensource- of AMD-/ATI-opties te kiezen."
+msgstr "Aby uzyskać najlepszą kompatybilność ze sprzętem AMD, warto skorzystać z opcji całkowicie otawrto źródłowe (open-source) lub AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Op Intel-hardware is het aanbevolen om alle opensource- of Intel-opties te kiezen.\n"
+msgstr "Aby uzyskać najlepszą kompatybilność ze sprzętem Intel, warto skorzystać z opcji całkowicie otawrto źródłowe (open-source) lub Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Op Nvidia-hardware is het aanbevolen om het gesloten Nvidia-stuurprogramma te kiezen.\n"
+msgstr "Aby uzyskać najlepszą kompatybilność ze sprzętem firmy Nvidia, warto skorzystać z firmowego sterownika firmy Nvidia.\n"
 
 msgid ""
 "\n"
@@ -209,94 +207,94 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Kies een grafisch stuurprogramma of laat leeg om alle opensource-stuurprogramma's te installeren"
+"Wybierz sterownik graficzny lub pozostaw puste pole, aby zainstalować wszystkie sterowniki typu open source"
 
 msgid "All open-source (default)"
-msgstr "Alle opensource-stuurprogramma's (standaard)"
+msgstr "Wszystkie otwarto źródłowe (domyślnie)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Kies de te installeren kernels of laat leeg om ‘{}’ te installeren"
+msgstr "Wybierz które jądra mają być używane, lub pozostaw puste dla ustawień domyślnych \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "Kies de te gebruiken taal"
+msgstr "Wybierz które locale języka mają zostać użyte"
 
 msgid "Choose which locale encoding to use"
-msgstr "Kies de te gebruiken taalvariant"
+msgstr "Wybierz które locale kodowania mają zostać użyte"
 
 msgid "Select one of the values shown below: "
-msgstr "Kies één van onderstaande waarden: "
+msgstr "Wybierz jedną z wartości przedstawionych poniżej: "
 
 msgid "Select one or more of the options below: "
-msgstr "Kies één van onderstaande opties: "
+msgstr "Wybierz jedną lub więcej z poniższych opcji: "
 
 msgid "Adding partition...."
-msgstr "Bezig met toevoegen van partitie…"
+msgstr "Dodawanie partycji..."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Voer een geldig bestandssysteemtype in om door te gaan. Bekijk voor meer informatie `man parted`."
+msgstr "Aby kontynuować, musisz podać poprawny typ fs. Zobacz `man parted`, aby poznać prawidłowe typy fs."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Foutmelding: het opsommen van de profielen op {} leidde tot"
+msgstr "Błąd: Lista profili z URL \"{}\":"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Foutmelding: ‘{}’ kan niet gedecodeerd worden als json:"
+msgstr "Błąd: Nie można dekodować \"{}\" jako JSON:"
 
 msgid "Select keyboard layout"
-msgstr "Kies een toetsenbordindeling"
+msgstr "Wybierz układ klawiatury"
 
 msgid "Select mirror region"
-msgstr "Kies een spiegelserverregio"
+msgstr "Wybierz region lustra"
 
 msgid "Select locale language"
-msgstr "Kies een taal"
+msgstr "Wybierz locale języka"
 
 msgid "Select locale encoding"
-msgstr "Kies een taalvariant"
+msgstr "Wybierz locale kodowania"
 
 msgid "Select harddrives"
-msgstr "Selecteer de harde schijven"
+msgstr "Wybierz dyski twarde"
 
 msgid "Select disk layout"
-msgstr "Kies een schijfindeling"
+msgstr "Wybierz układ dysku"
 
 msgid "Set encryption password"
-msgstr "Versleutelwachtwoord instellen"
+msgstr "Ustaw hasło szyfrowania"
 
 msgid "Use swap"
-msgstr "Wisselgeheugen gebruiken"
+msgstr "Użyj swap-u"
 
 msgid "Select bootloader"
-msgstr "Kies een opstartlader"
+msgstr "Wybierz program rozruchowy (bootloader)"
 
 msgid "Set root password"
-msgstr "Rootwachtwoord instellen"
+msgstr "Ustaw hasło administratora"
 
 msgid "Specify superuser account"
-msgstr "Geef aan welk account superuserrechten dient te hebben"
+msgstr "Określ konto superużytkownika"
 
 msgid "Specify user account"
-msgstr "Kies een gebruikersaccount"
+msgstr "Określ konto użytkownika"
 
 msgid "Specify profile"
-msgstr "Kies een profiel"
+msgstr "Określ profil"
 
 msgid "Select audio"
-msgstr "Kies audio"
+msgstr "Wybierz audio"
 
 msgid "Select kernels"
-msgstr "Selecteer kernels"
+msgstr "Wybierz jądra"
 
 msgid "Additional packages to install"
-msgstr "Aanvullende te installeren pakketten"
+msgstr "Dodatkowe pakiety do instalacji"
 
 msgid "Configure network"
-msgstr "Netwerk instellen"
+msgstr "Konfiguracja sieci"
 
 msgid "Set automatic time sync (NTP)"
-msgstr "Automatische tijdsynchronisatie (NTP) gebruiken"
+msgstr "Ustawianie automatycznej synchronizacji czasu (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Installeren ({} confirguratie(s) ontbreekt/ontbreken)"
+msgstr "Zainstaluj ({} brakuje konfiguracji)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -304,302 +302,299 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"U heeft de schijfkeuze overgeslagen.\n"
-"Hierdoor zal de op {} aangekoppelde schijf worden gebruikt (experimenteel).\n"
-"WAARSCHUWING: Archinstall controleert niet of deze schijf geschikt is.\n"
-"Weet u zeker dat u wilt doorgaan?"
+"Zdecydowałeś się pominąć wybór dysku twardego\n"
+"i użyje konfiguracji dysku zamontowanego w {} (eksperymentalne)\n"
+"OSTRZEŻENIE: Archinstall nie sprawdzi przydatności tej konfiguracji\n"
+"Czy chcesz kontynuować?"
 
 msgid "Re-using partition instance: {}"
-msgstr "De partitie op {} wordt hergebruikt"
+msgstr "Ponowne wykorzystanie instancji partycji"
 
 msgid "Create a new partition"
-msgstr "Partitie aanmaken"
+msgstr "Utwórz nową partycję"
 
 msgid "Delete a partition"
-msgstr "Partitie verwijderen"
+msgstr "Usuń partycje"
 
 msgid "Clear/Delete all partitions"
-msgstr "Alle partities verwijderen"
+msgstr "Wyczyść/Usuń wszystkie partycje"
 
 msgid "Assign mount-point for a partition"
-msgstr "Aankoppelpunt toekennen aan partitie"
+msgstr "Przydzielanie punktu montowania dla partycji"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Partitie (de)markeren voor formatteren (alle gegevens worden gewist)"
+msgstr "Zaznacz/odznacz partycję, która ma zostać sformatowana (wymazuje dane)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Partitie (de)markeren voor versleuteling"
+msgstr "Oznaczanie/odznaczanie partycji jako zaszyfrowanej"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Partitie (de)markeren als opstartbaar (automatisch voor /boot)"
+msgstr "Oznaczanie/odznaczanie partycji jako startowe (rozruchowe/bootowalne) (automatyczne dla /boot)"
 
 msgid "Set desired filesystem for a partition"
-msgstr "Gewenste bestandssysteem van partitie instellen"
+msgstr "Ustaw system plików dla partycji"
 
 msgid "Abort"
-msgstr "Afbreken"
+msgstr "Anuluj"
 
 msgid "Specify hostname"
-msgstr "Hostnaam opgeven"
+msgstr "Podaj nazwę hosta"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr "Niet ingesteld en dus niet beschikbaar, tenzij handmatig ingesteld"
+msgstr "Nie skonfigurowana, niedostępna, chyba że zostanie skonfigurowana ręcznie"
 
 msgid "Select timezone"
-msgstr "Kies een tijdzone"
+msgstr "Wybierz strefe czasową"
 
 msgid "Set/Modify the below options"
-msgstr "Onderstaande opties instellen/aanpassen"
+msgstr "Ustaw/zmodyfikuj poniższe opcje"
 
 msgid "Install"
-msgstr "Installeren"
+msgstr "Zainstaluj"
 
 msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"Druk op Esc om over te slaan\n"
+"Użyj ESC aby pominąć\n"
 "\n"
 
 msgid "Suggest partition layout"
-msgstr "Partitie-indeling voorstellen"
+msgstr "Sugerowany układ partycji"
 
 msgid "Enter a password: "
-msgstr "Voer een wachtwoord in: "
+msgstr "Wprowadź hasło: "
 
 msgid "Enter a encryption password for {}"
-msgstr "Voer een versleutelwachtwoord in voor {}"
+msgstr "Wprowadź hasło szyfrowania dla {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Voer een versleutelwachtwoord in voor (laat leeg om niet te versleutelen): "
+msgstr "Wprowadź hasło do szyfrowania dysku (pozostaw puste aby nie ustawiać szyfrowania): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "Beheerder met sudo-rechten toevoegen (vereist): "
+msgstr "Utwórz wymaganego superużytkownika z uprawnieniami sudo: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Voer een beheerderswachtwoord in (laat leeg om uit te schakelen): "
+msgstr "Wprowadź hasło roota (pozostaw puste, aby wyłączyć roota): "
 
 msgid "Password for user \"{}\": "
-msgstr "Wachtwoord van ‘{}’: "
+msgstr "Hasło dla użytkownika \"{}\": "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Bezig met verifiëren van aanvullende pakketten… (dit kan even duren)"
+msgstr "Sprawdzenie, czy istnieją dodatkowe pakiety (może to potrwać kilka sekund)"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "Wilt u automatische tijdsynchronisatie (NTP) met de standaard tijdservers gebruiken?\n"
+msgstr "Czy chcesz korzystać z automatycznej synchronizacji czasu (NTP) z domyślnymi serwerami czasu?\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
-"De hardwarematige tijd en andere gelijkaardige instelstappen kunnen vereist zijn om NTP te gebruiken.\n"
-"Lees voor meer informatie de Arch-wiki."
+"Aby NTP działał, może być wymagany czas sprzętowy i inne kroki po konfiguracji.\n"
+"Aby uzyskać więcej informacji, proszę sprawdzić Arch wiki"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Voer een gebruikersnaam in om een tweede account toe te voegen (laat leeg om over te slaan): "
+msgstr "Wprowadź nazwę użytkownika, aby utworzyć dodatkowego użytkownika (pozostaw puste, aby pominąć): "
 
 msgid "Use ESC to skip\n"
-msgstr "Druk op Esc om over te slaan\n"
+msgstr "Kliknij ESC aby pominąć\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-" Kies een item van de lijst en kies vervolgens een van de beschikbare acties om uit te voeren"
+" Wybierz obiekt z listy, a następnie wybierz jedną z dostępnych akcji do wykonania"
 
 msgid "Cancel"
-msgstr "Annuleren"
+msgstr "Anuluj"
 
 msgid "Confirm and exit"
-msgstr "Bevestigen en afsluiten"
+msgstr "Potwierdź i wyjdź"
 
 msgid "Add"
-msgstr "Toevoegen"
+msgstr "Dodaj"
 
 msgid "Copy"
-msgstr "Kopiëren"
+msgstr "Kopiuj"
 
 msgid "Edit"
-msgstr "Bewerken"
+msgstr "Edytuj"
 
 msgid "Delete"
-msgstr "Verwijderen"
+msgstr "Usuń"
 
 msgid "Select an action for < {} >"
-msgstr "Kies een actie voor < {} >"
+msgstr "Wybierz akcję dla < {} >"
 
 msgid "Copy to new key:"
-msgstr "Kopiëren naar nieuwe sleutel:"
+msgstr "Skopiuj do nowego klucza:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Onbekend nic-type: {}. Mogelijke waarden zijn {}"
+msgstr "Nieznany typ niszy: {}. Możliwe wartości to {}"
 
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Dit is de door u gekozen configuratie:"
+"To jest wybrana konfiguracja:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman is al actief. Er wordt maximaal 10 minuten gewacht alvorens het opnieuw te proberen."
+msgstr "Pacman jest już uruchomiony i czeka maksymalnie 10 minut na zakończenie pracy."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "De eerdere Pacman-vergrendeling is niet opgeheven. Sluit actieve Pacman-sessies af alvorens deze installatiewizard te gebruiken."
+msgstr "Istniejąca wcześniej blokada programu pacman nie została zakończona. Proszę wyczyścić wszystkie istniejące sesje pacmana przed użyciem archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Geef aan welke aanvullende pakketbronnen dienen te worden gebruikt (optioneel)"
+msgstr "Wybierz, które z opcjonalnych dodatkowych repozytoriów mają być włączone"
 
 #, fuzzy
 msgid "Add a user"
-msgstr "Gebruiker toevoegen"
+msgstr "Dodaj użytkownika"
 
 msgid "Change password"
-msgstr "Wachtwoord wijzigen"
+msgstr "Zmień hasło"
 
 msgid "Promote/Demote user"
-msgstr "Gebruiker op-/afwaarderen"
+msgstr "Promuj/usuń użytkownika"
 
 msgid "Delete User"
-msgstr "Gebruiker verwijderen"
+msgstr "Usuń użytkownika"
 
 msgid ""
 "\n"
 "Define a new user\n"
 msgstr ""
 "\n"
-"Stel een nieuwe gebruiker in\n"
+"Zdefiniuj nowego użytkownika\n"
 
 msgid "User Name : "
-msgstr "Gebruikersnaam: "
+msgstr "Nazwa użytkownika : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "Moet {} gebruiker een beheerder (sudoer) worden?"
+msgstr "Czy {} powinien być superużytkownikiem (sudoer)?"
 
 msgid "Define users with sudo privilege: "
-msgstr "Gebruikersnamen van gebruikers met sudo-rechten: "
+msgstr "Zdefiniuj użytkowników z przywilejem sudo: "
 
 msgid "No network configuration"
-msgstr "Geen netwerkconfiguratie"
+msgstr "Brak konfiguracji sieciowej"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Gewenste subvolumes op btrfs-partitie instellen"
+msgstr "Ustawianie żądanych subwoluminów na partycji btrfs"
 
 msgid ""
 "{}\n"
 "\n"
 "Select which partition to set subvolumes on"
-msgstr ""
-"{}\n"
-"\n"
-"Kies op welke partitie de subvolumes dienen te worden ingesteld"
+msgstr "Wybierz partycję, na której mają być ustawione subwoluminów"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Btrfs-subvolumes van huidige partitie beheren"
+msgstr "Zarządzaj subwoluminami btrfs dla bieżącej partycji"
 
 msgid "No configuration"
-msgstr "Geen configuratie"
+msgstr "Brak konfiguracji"
 
 msgid "Save user configuration"
-msgstr "Gebruikersconfiguratie vastleggen"
+msgstr "Zapisz konfiguracje użytkownika"
 
 msgid "Save user credentials"
-msgstr "Aanmeldgegevens vastleggen"
+msgstr "Zapisz dane uwierzytelniające użytkownika"
 
 msgid "Save disk layout"
-msgstr "Schijfindeling vastleggen"
+msgstr "Zapisz układ dysku"
 
 msgid "Save all"
-msgstr "Alles opslaan"
+msgstr "Zapisz wszystko"
 
 msgid "Choose which configuration to save"
-msgstr "Geef aan welke configuratie er moet worden vastgelegd"
+msgstr "Wybierz, która konfiguracja ma zostać zapisana"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Voer de naam in van de map waarin de configuratie(s) moet(en) worden vastgelegd: "
+msgstr "Wprowadź katalog, w którym ma zostać zapisana konfiguracja: "
 
 msgid "Not a valid directory: {}"
-msgstr "Ongeldige map: {}"
+msgstr "Nie jest to prawidłowy katalog: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Het gekozen wachtwoord is zwak."
+msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 
 msgid "are you sure you want to use it?"
-msgstr "Weet u zeker dat u het wilt gebruiken?"
+msgstr "czy na pewno chcesz go używać?"
 
 msgid "Additional repositories to enable"
-msgstr "Aanvullende te gebruiken pakketbronnen"
+msgstr "Dodatkowe repozytoria do włączenia"
 
 msgid "Save configuration"
-msgstr "Configuratie vastleggen"
+msgstr "Zapisz konfiguracje"
 
 msgid "Missing configurations:\n"
-msgstr "Ontbrekende configuraties:\n"
+msgstr "Brak konfiguracji:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Stel een rootwachtwoord of minimaal één beheerder in"
+msgstr "Musi być podane albo hasło root, albo co najmniej jednego superużytkownika"
 
 msgid "Manage superuser accounts: "
-msgstr "Beheerdersaccounts beheren: "
+msgstr "Zarządzaj kontami superużytkowników: "
 
 msgid "Manage ordinary user accounts: "
-msgstr "Beheer reguliere gebruikersaccounts: "
+msgstr "Zarządzaj kontami zwykłych użytkowników: "
 
 msgid " Subvolume :{:16}"
-msgstr " Subvolume :{:16}"
+msgstr " Subwolumin :{:16}"
 
 msgid " mounted at {:16}"
-msgstr " aangekoppeld op {:16}"
+msgstr " zamontowany w {:16}"
 
 msgid " with option {}"
-msgstr " met optie {}"
+msgstr " z opcjami {}"
 
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
 "\n"
-" Voer de gewenste waarden van het nieuwe subvolume in\n"
+" Wypełnij żądane wartości dla nowego subwolumenu \n"
 
 msgid "Subvolume name "
-msgstr "Subvolumenaam "
+msgstr "Nazwa subwolumenu "
 
 msgid "Subvolume mountpoint"
-msgstr "Subvolume-aankoppelpunt"
+msgstr "Punkt montowania subwolumenu"
 
 msgid "Subvolume options"
-msgstr "Subvolume-opties"
+msgstr "Opcje subwolumenu"
 
 msgid "Save"
-msgstr "Opslaan"
+msgstr "Zapisz"
 
 msgid "Subvolume name :"
-msgstr "Subvolumenaam:"
+msgstr "Nazwa subwolumenu :"
 
 msgid "Select a mount point :"
-msgstr "Kies een aankoppelpunt:"
+msgstr "Wybierz punkt montowania :"
 
 msgid "Select the desired subvolume options "
-msgstr "Stel gewenste subvolume-opties in "
+msgstr "Wybierz opcje subwolumenu "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Gebruikersnamen van gebruikers met sudo-rechten: "
+msgstr "Określanie użytkowników z uprawnieniami sudo według nazwy użytkownika: "
 
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Er is een logboek aangemaakt: {} {}"
+msgstr "[!] Plik dziennika został zapisany tutaj: {}"
 
 #, fuzzy
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Wilt u GRUB gebruiken als opstartlader in plaats van systemd-boot?"
+msgstr "Czy chcesz użyć GRUB-a jako programu rozruchowego zamiast systemd-boot?"
 
 #, fuzzy
 msgid "Would you like to use BTRFS compression?"
-msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+msgstr "Czy chcesz używać swap w zramie?"
 
 #, fuzzy
 msgid "Would you like to create a separate partition for /home?"
-msgstr "Wilt u wisselgeheugen i.c.m. zram gebruiken?"
+msgstr "Czy chcesz używać swap w zramie?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
 msgstr ""
@@ -627,7 +622,7 @@ msgstr ""
 
 #, fuzzy
 msgid "No iface specified for manual configuration"
-msgstr "Gebruikersconfiguratie vastleggen"
+msgstr "Zapisz konfiguracje użytkownika"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr ""
@@ -640,23 +635,23 @@ msgstr ""
 
 #, fuzzy
 msgid "Delete interface"
-msgstr "Gebruiker verwijderen"
+msgstr "Usuń użytkownika"
 
 #, fuzzy
 msgid "Select interface to add"
-msgstr "Kies een in te stellen netwerkkaart"
+msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
 
 #, fuzzy
 msgid "Manual configuration"
-msgstr "Configuratie vastleggen"
+msgstr "Zapisz konfiguracje"
 
 #, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Partitie (de)markeren voor versleuteling"
+msgstr "Oznaczanie/odznaczanie partycji jako zaszyfrowanej"
 
 #, fuzzy
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Het gekozen wachtwoord is zwak."
+msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr ""
@@ -684,11 +679,11 @@ msgstr ""
 
 #, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr "Weet u zeker dat u het wilt gebruiken?"
+msgstr "czy na pewno chcesz go używać?"
 
 #, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Selecteer één of meer in te stellen harde schijven"
+msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr ""
@@ -698,24 +693,24 @@ msgstr ""
 
 #, fuzzy
 msgid "Save and exit"
-msgstr "Bevestigen en afsluiten"
+msgstr "Potwierdź i wyjdź"
 
 #, fuzzy
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
-msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
+msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
 
 #, fuzzy
 msgid "No audio server"
-msgstr "Kies een audioserver"
+msgstr "Wybierz serwer dźwięku"
 
 msgid "(default)"
 msgstr ""
 
 #, fuzzy
 msgid "Use ESC to skip"
-msgstr "Druk op Esc om over te slaan\n"
+msgstr "Kliknij ESC aby pominąć\n"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
@@ -724,41 +719,41 @@ msgstr ""
 
 #, fuzzy
 msgid "Copy to: "
-msgstr "Kopiëren naar:"
+msgstr "Kopiuj do :"
 
 #, fuzzy
 msgid "Edit: "
-msgstr "Bewerken"
+msgstr "Edytuj"
 
 msgid "Key: "
 msgstr ""
 
 #, fuzzy
 msgid "Edit {}: "
-msgstr "Bewerken:"
+msgstr "Edytuj :"
 
 msgid "Add: "
 msgstr ""
 
 #, fuzzy
 msgid "Value: "
-msgstr "Waarde:"
+msgstr "Wartość :"
 
 msgid "Add :"
-msgstr "Toevoegen:"
+msgstr "Dodaj :"
 
 msgid "Value :"
-msgstr "Waarde:"
+msgstr "Wartość :"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
-#~ msgstr "{origkey} bewerken:"
+#~ msgstr "Edytuj {origkey} :"
 
 #~ msgid "Copy to :"
-#~ msgstr "Kopiëren naar:"
+#~ msgstr "Kopiuj do :"
 
 #~ msgid "Edite :"
-#~ msgstr "Bewerken:"
+#~ msgstr "Edytuj :"
 
 #~ msgid "Key :"
-#~ msgstr "Sleutel:"
+#~ msgstr "Klucz :"

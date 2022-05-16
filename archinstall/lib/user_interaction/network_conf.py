@@ -4,6 +4,7 @@ import ipaddress
 import logging
 from typing import Any, Optional, TYPE_CHECKING, List, Union
 
+from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
 
@@ -66,8 +67,12 @@ class ManualNetworkConfig(ListManager):
 	def _select_iface(self, existing_ifaces: List[str]) -> Optional[str]:
 		all_ifaces = list_interfaces().values()
 		available = set(all_ifaces) - set(existing_ifaces)
-		iface = Menu(str(_('Select interface to add')), list(available), skip=True).run()
-		return iface
+		choice = Menu(str(_('Select interface to add')), list(available), skip=True).run()
+
+		if choice.type_ == MenuSelectionType.Esc:
+			return None
+
+		return choice.value
 
 	def _edit_iface(self, edit_iface :NetworkConfiguration):
 		iface_name = edit_iface.iface
@@ -75,9 +80,9 @@ class ManualNetworkConfig(ListManager):
 		default_mode = 'DHCP (auto detect)'
 
 		prompt = _('Select which mode to configure for "{}" or skip to use default mode "{}"').format(iface_name, default_mode)
-		mode = Menu(prompt, modes, default_option=default_mode).run()
+		mode = Menu(prompt, modes, default_option=default_mode, skip=False).run()
 
-		if mode == 'IP (static)':
+		if mode.value == 'IP (static)':
 			while 1:
 				prompt = _('Enter the IP and subnet for {} (example: 192.168.0.5/24): ').format(iface_name)
 				ip = TextInput(prompt, edit_iface.ip).run().strip()
@@ -107,6 +112,7 @@ class ManualNetworkConfig(ListManager):
 				display_dns = None
 			dns_input = TextInput(_('Enter your DNS servers (space separated, blank for none): '), display_dns).run().strip()
 
+			dns = []
 			if len(dns_input):
 				dns = dns_input.split(' ')
 
@@ -135,23 +141,28 @@ def ask_to_configure_network(preset: Union[None, NetworkConfiguration, List[Netw
 		elif preset.type == 'network_manager':
 			cursor_idx = 1
 
-	nic = Menu(_(
-		'Select one network interface to configure'),
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	choice = Menu(
+		_('Select one network interface to configure'),
 		list(network_options.values()),
 		cursor_index=cursor_idx,
-		sort=False
+		sort=False,
+		explode_on_interrupt=True,
+		explode_warning=warning
 	).run()
 
-	if not nic:
-		return preset
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Ctrl_c: return None
 
-	if nic == network_options['none']:
+	if choice.value == network_options['none']:
 		return None
-	elif nic == network_options['iso_config']:
+	elif choice.value == network_options['iso_config']:
 		return NetworkConfiguration(NicType.ISO)
-	elif nic == network_options['network_manager']:
+	elif choice.value == network_options['network_manager']:
 		return NetworkConfiguration(NicType.NM)
-	elif nic == network_options['manual']:
+	elif choice.value == network_options['manual']:
 		manual = ManualNetworkConfig('Configure interfaces', preset)
 		return manual.run_manual()
 

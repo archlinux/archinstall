@@ -6,9 +6,8 @@ from ..disk import all_blockdevices
 from ..exceptions import RequirementError
 from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from ..menu import Menu
+from ..menu.menu import MenuSelectionType
 from ..storage import storage
-
-from ..translation import DeferredTranslation
 
 if TYPE_CHECKING:
 	_: Any
@@ -25,13 +24,22 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 	kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 	default_kernel = "linux"
 
-	selected_kernels = Menu(_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
-							kernels,
-							sort=True,
-							multi=True,
-							preset_values=preset,
-							default_option=default_kernel).run()
-	return selected_kernels
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	choice = Menu(
+		_('Choose which kernels to use or leave blank for default "{}"').format(default_kernel),
+		kernels,
+		sort=True,
+		multi=True,
+		preset_values=preset,
+		explode_on_interrupt=True,
+		explode_warning=warning
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Selection: return choice.value
 
 
 def select_harddrives(preset: List[str] = []) -> List[str]:
@@ -49,15 +57,24 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	else:
 		preset_disks = {}
 
-	selected_harddrive = Menu(_('Select one or more hard drives to use and configure'),
-								list(options.keys()),
-								preset_values=list(preset_disks.keys()),
-								multi=True).run()
+	title = str(_('Select one or more hard drives to use and configure\n'))
+	title += str(_('Any modifications to the existing setting will reset the disk layout!'))
 
-	if selected_harddrive and len(selected_harddrive) > 0:
-		return [options[i] for i in selected_harddrive]
+	warning = str(_('If you reset the harddrive selection this will also reset the current disk layout. Are you sure?'))
 
-	return []
+	selected_harddrive = Menu(
+		title,
+		list(options.keys()),
+		preset_values=list(preset_disks.keys()),
+		multi=True,
+		explode_on_interrupt=True,
+		explode_warning=warning
+	).run()
+
+	match selected_harddrive.type_:
+		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection: return [options[i] for i in selected_harddrive.value]
 
 
 def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
@@ -73,71 +90,85 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 
 	if drivers:
 		arguments = storage.get('arguments', {})
-		title = DeferredTranslation('')
+		title = ''
 
 		if has_amd_graphics():
-			title += _(
+			title += str(_(
 				'For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.'
-			) + '\n'
+			)) + '\n'
 		if has_intel_graphics():
-			title += _(
+			title += str(_(
 				'For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'
-			)
+			))
 		if has_nvidia_graphics():
-			title += _(
+			title += str(_(
 				'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
-			)
+			))
 
-		title += _('\n\nSelect a graphics driver or leave blank to install all open-source drivers')
-		arguments['gfx_driver'] = Menu(title, drivers).run()
+		title += str(_('\n\nSelect a graphics driver or leave blank to install all open-source drivers'))
+		choice = Menu(title, drivers).run()
 
-		if arguments.get('gfx_driver', None) is None:
-			arguments['gfx_driver'] = _("All open-source (default)")
+		if choice.type_ != MenuSelectionType.Selection:
+			return arguments.get('gfx_driver')
 
-		return options.get(arguments.get('gfx_driver'))
+		arguments['gfx_driver'] = choice.value
+		return options.get(choice.value)
 
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
 def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> str:
-
 	if preset == 'systemd-bootctl':
-		preset_val = 'systemd-boot' if advanced_options else 'no'
+		preset_val = 'systemd-boot' if advanced_options else Menu.no()
 	elif preset == 'grub-install':
-		preset_val = 'grub' if advanced_options else 'yes'
+		preset_val = 'grub' if advanced_options else Menu.yes()
 	else:
 		preset_val = preset
 
 	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
+
 	if has_uefi():
 		if not advanced_options:
-			bootloader_choice = Menu(_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
-										['yes', 'no'],
-										preset_values=preset_val,
-										default_option='no').run()
+			selection = Menu(
+				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
+				Menu.yes_no(),
+				preset_values=preset_val,
+				default_option=Menu.no()
+			).run()
 
-			if bootloader_choice == "yes":
-				bootloader = "grub-install"
+			match selection.type_:
+				case MenuSelectionType.Esc: return preset
+				case MenuSelectionType.Selection: bootloader = 'grub-install' if selection.value == Menu.yes() else bootloader
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
 			selection = Menu(_('Choose a bootloader'), choices, preset_values=preset_val).run()
-			if selection != "":
-				if selection == 'systemd-boot':
+
+			value = ''
+			match selection.type_:
+				case MenuSelectionType.Esc: value = preset_val
+				case MenuSelectionType.Selection: value = selection.value
+
+			if value != "":
+				if value == 'systemd-boot':
 					bootloader = 'systemd-bootctl'
-				elif selection == 'grub':
+				elif value == 'grub':
 					bootloader = 'grub-install'
 				else:
-					bootloader = selection
+					bootloader = value
 
 	return bootloader
 
 
 def ask_for_swap(preset: bool = True) -> bool:
 	if preset:
-		preset_val = 'yes'
+		preset_val = Menu.yes()
 	else:
-		preset_val = 'no'
+		preset_val = Menu.no()
+
 	prompt = _('Would you like to use swap on zram?')
-	choice = Menu(prompt, ['yes', 'no'], default_option='yes', preset_values=preset_val).run()
-	return False if choice == 'no' else True
+	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), preset_values=preset_val).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection: return False if choice.value == Menu.no() else True

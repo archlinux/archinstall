@@ -55,6 +55,10 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 
+def set_unicode_font():
+	SysCommand('setfont UniCyr_8x16')
+
+
 def define_arguments():
 	"""
 	Define which explicit arguments do we allow.
@@ -145,22 +149,13 @@ def get_arguments() -> Dict[str, Any]:
 	# preprocess the json files.
 	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
-		try:
-			# First, let's check if this is a URL scheme instead of a filename
-			parsed_url = urllib.parse.urlparse(args.config)
+		if not json_stream_to_structure('--config', args.config, config):
+			exit(1)
 
-			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
-				if not json_stream_to_structure('--config',args.config,config):
-					exit(1)
-			else:  # Attempt to load the configuration from the URL.
-				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
-					config.update(json.loads(response.read()))
-		except Exception as e:
-			raise ValueError(f"Could not load --config because: {e}")
-
-		if args.creds is not None:
-			if not json_stream_to_structure('--creds',args.creds,config):
-				exit(1)
+	if args.creds is not None:
+		if not json_stream_to_structure('--creds', args.creds, config):
+			exit(1)
+			
 	# load the parameters. first the known, then the unknowns
 	config.update(vars(args))
 	config.update(parse_unspecified_argument_list(unknowns))
@@ -242,6 +237,9 @@ def post_process_arguments(arguments):
 
 	load_config()
 
+
+# to ensure that cyrillic characters work in the installer
+# set_unicode_font()
 
 define_arguments()
 arguments = get_arguments()

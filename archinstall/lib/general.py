@@ -10,6 +10,9 @@ import string
 import sys
 import time
 import re
+import urllib.parse
+import urllib.request
+import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
@@ -352,7 +355,6 @@ class SysCommandWorker:
 		#   only way to get the traceback without loosing it.
 
 		self.pid, self.child_fd = pty.fork()
-		os.chdir(old_dir)
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
@@ -371,6 +373,9 @@ class SysCommandWorker:
 				log(f"{self.cmd[0]} does not exist.", level=logging.ERROR, fg="red")
 				self.exit_code = 1
 				return False
+		else:
+			# Only parent process moves back to the original working directory
+			os.chdir(old_dir)
 
 		self.started = time.time()
 		self.poll_object.register(self.child_fd, EPOLLIN | EPOLLHUP)
@@ -457,7 +462,14 @@ class SysCommand:
 		if self.session:
 			return self.session
 
-		with SysCommandWorker(self.cmd, callbacks=self._callbacks, peak_output=self.peak_output, environment_vars=self.environment_vars, remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines) as session:
+		with SysCommandWorker(
+			self.cmd,
+			callbacks=self._callbacks,
+			peak_output=self.peak_output,
+			environment_vars=self.environment_vars,
+			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
+			working_directory=self.working_directory) as session:
+
 			if not self.session:
 				self.session = session
 
@@ -523,32 +535,40 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
-def json_stream_to_structure(id : str, stream :str, target :dict) -> bool :
-	""" Function to load a stream (file (as name) or valid JSON string into an existing dictionary
+def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :
+	"""
+	Function to load a stream (file (as name) or valid JSON string into an existing dictionary
 	Returns true if it could be done
 	Return  false if operation could not be executed
-	+id is just a parameter to get meaningful, but not so long messages
+	+configuration_identifier is just a parameter to get meaningful, but not so long messages
 	"""
-	from pathlib import Path
-	if Path(stream).exists():
-		try:
-			with open(Path(stream)) as fh:
-				target.update(json.load(fh))
-		except Exception as e:
-			log(f"{id} = {stream} does not contain a valid JSON format: {e}",level=logging.ERROR)
-			return False
+
+	parsed_url = urllib.parse.urlparse(stream)
+
+	if parsed_url.scheme: # The stream is in fact a URL that should be grabed
+		with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
+			target.update(json.loads(response.read()))
 	else:
-		log(f"{id} = {stream} does not exists in the filesystem. Trying as JSON stream",level=logging.DEBUG)
-		# NOTE: failure of this check doesn't make stream 'real' invalid JSON, just it first level entry is not an object (i.e. dict), so it is not a format we handle.
-		if stream.strip().startswith('{') and stream.strip().endswith('}'):
+		if pathlib.Path(stream).exists():
 			try:
-				target.update(json.loads(stream))
-			except Exception as e:
-				log(f" {id} Contains an invalid JSON format : {e}",level=logging.ERROR)
+				with pathlib.Path(stream).open() as fh:
+					target.update(json.load(fh))
+			except Exception as error:
+				log(f"{configuration_identifier} = {stream} does not contain a valid JSON format: {error}", level=logging.ERROR, fg="red")
 				return False
 		else:
-			log(f" {id} is neither a file nor is a JSON string:",level=logging.ERROR)
-			return False
+			# NOTE: This is a rudimentary check if what we're trying parse is a dict structure.
+			# Which is the only structure we tolerate anyway.
+			if stream.strip().startswith('{') and stream.strip().endswith('}'):
+				try:
+					target.update(json.loads(stream))
+				except Exception as e:
+					log(f" {configuration_identifier} Contains an invalid JSON format : {e}",level=logging.ERROR, fg="red")
+					return False
+			else:
+				log(f" {configuration_identifier} is neither a file nor is a JSON string:",level=logging.ERROR, fg="red")
+				return False
+
 	return True
 
 def secret(x :str):

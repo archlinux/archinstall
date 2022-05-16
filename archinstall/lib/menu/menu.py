@@ -1,4 +1,6 @@
-from typing import Dict, List, Union, Any, TYPE_CHECKING
+from dataclasses import dataclass
+from enum import Enum, auto
+from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 
@@ -12,21 +14,49 @@ import logging
 if TYPE_CHECKING:
 	_: Any
 
+
+class MenuSelectionType(Enum):
+	Selection = auto()
+	Esc = auto()
+	Ctrl_c = auto()
+
+
+@dataclass
+class MenuSelection:
+	type_: MenuSelectionType
+	value: Optional[Union[str, List[str]]] = None
+
+
 class Menu(TerminalMenu):
+
+	@classmethod
+	def yes(cls):
+		return str(_('yes'))
+
+	@classmethod
+	def no(cls):
+		return str(_('no'))
+
+	@classmethod
+	def yes_no(cls):
+		return [cls.yes(), cls.no()]
+
 	def __init__(
 		self,
 		title :str,
 		p_options :Union[List[str], Dict[str, Any]],
 		skip :bool = True,
 		multi :bool = False,
-		default_option :str = None,
+		default_option : Optional[str] = None,
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
-		cursor_index :int = None,
+		cursor_index : Optional[int] = None,
 		preview_command=None,
 		preview_size=0.75,
 		preview_title='Info',
 		header :Union[List[str],str] = None,
+		explode_on_interrupt :bool = False,
+		explode_warning :str = '',
 		**kwargs
 	):
 		"""
@@ -66,8 +96,14 @@ class Menu(TerminalMenu):
 		:param preview_title: Title of the preview window
 		:type preview_title: str
 
-		param: header one or more header lines for the menu
+		param header: one or more header lines for the menu
 		type param: string or list
+
+		param explode_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
+		type param: bool
+
+		param explode_warning: If explode_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		type param: str
 
 		:param kwargs : any SimpleTerminal parameter
 		"""
@@ -84,6 +120,8 @@ class Menu(TerminalMenu):
 			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu",fg="red")
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError("Menu() requires an iterable as option.")
+
+		self._default_str = str(_('(default)'))
 
 		if isinstance(p_options,dict):
 			options = list(p_options.keys())
@@ -103,27 +141,40 @@ class Menu(TerminalMenu):
 		if sort:
 			options = sorted(options)
 
-		self.menu_options = options
-		self.skip = skip
-		self.default_option = default_option
-		self.multi = multi
+		self._menu_options = options
+		self._skip = skip
+		self._default_option = default_option
+		self._multi = multi
+		self._explode_on_interrupt = explode_on_interrupt
+		self._explode_warning = explode_warning
+
 		menu_title = f'\n{title}\n\n'
+
 		if header:
-			separator = '\n  '
 			if not isinstance(header,(list,tuple)):
-				header = [header,]
-			if skip:
-				menu_title += str(_("Use ESC to skip\n"))
-			menu_title += separator + separator.join(header)
-		elif skip:
-			menu_title += str(_("Use ESC to skip\n\n"))
+				header = [header]
+			header = '\n'.join(header)
+			menu_title += f'\n{header}\n'
+
+		action_info = ''
+		if skip:
+			action_info += str(_("Use ESC to skip"))
+
+		if self._explode_on_interrupt:
+			if len(action_info) > 0:
+				action_info += '\n'
+			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
+
+		menu_title += action_info
+
 		if default_option:
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well
-			default = f'{default_option} (default)'
-			self.menu_options = [default] + [o for o in self.menu_options if default_option != o]
+			default = f'{default_option} {self._default_str}'
+			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
 
-		self.preselection(preset_values,cursor_index)
+		self._preselection(preset_values,cursor_index)
+
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
@@ -131,8 +182,9 @@ class Menu(TerminalMenu):
 		kwargs['clear_screen'] = kwargs.get('clear_screen',True)
 		kwargs['show_search_hint'] = kwargs.get('show_search_hint',True)
 		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor',True)
+
 		super().__init__(
-			menu_entries=self.menu_options,
+			menu_entries=self._menu_options,
 			title=menu_title,
 			menu_cursor=cursor,
 			menu_cursor_style=main_menu_cursor_style,
@@ -146,31 +198,46 @@ class Menu(TerminalMenu):
 			preview_command=preview_command,
 			preview_size=preview_size,
 			preview_title=preview_title,
+			explode_on_interrupt=self._explode_on_interrupt,
+			multi_select_select_on_accept=False,
 			**kwargs,
 		)
 
-	def _show(self):
-		idx = self.show()
+	def _show(self) -> MenuSelection:
+		try:
+			idx = self.show()
+		except KeyboardInterrupt:
+			return MenuSelection(type_=MenuSelectionType.Ctrl_c)
+
+		def check_default(elem):
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
+				return self._default_option
+			else:
+				return elem
+
 		if idx is not None:
 			if isinstance(idx, (list, tuple)):
-				return [self.default_option if ' (default)' in self.menu_options[i] else self.menu_options[i] for i in idx]
+				results = []
+				for i in idx:
+					option = check_default(self._menu_options[i])
+					results.append(option)
+				return MenuSelection(type_=MenuSelectionType.Selection, value=results)
 			else:
-				selected = self.menu_options[idx]
-				if ' (default)' in selected and self.default_option:
-					return self.default_option
-				return selected
+				result = check_default(self._menu_options[idx])
+				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
-			if self.default_option:
-				if self.multi:
-					return [self.default_option]
-				else:
-					return self.default_option
-			return None
+			return MenuSelection(type_=MenuSelectionType.Esc)
 
-	def run(self):
+	def run(self) -> MenuSelection:
 		ret = self._show()
 
-		if ret is None and not self.skip:
+		if ret.type_ == MenuSelectionType.Ctrl_c:
+			if self._explode_on_interrupt and len(self._explode_warning) > 0:
+				response = Menu(self._explode_warning, Menu.yes_no(), skip=False).run()
+				if response.value == Menu.no():
+					return self.run()
+
+		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
 			return self.run()
 
 		return ret
@@ -185,15 +252,15 @@ class Menu(TerminalMenu):
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 
-	def preselection(self,preset_values :list = [],cursor_index :int = None):
+	def _preselection(self,preset_values :Union[str, List[str]] = [], cursor_index : Optional[int] = None):
 		def from_preset_to_cursor():
 			if preset_values:
 				# if the value is not extant return 0 as cursor index
 				try:
 					if isinstance(preset_values,str):
-						self.cursor_index = self.menu_options.index(self.preset_values)
+						self.cursor_index = self._menu_options.index(self.preset_values)
 					else:  # should return an error, but this is smoother
-						self.cursor_index = self.menu_options.index(self.preset_values[0])
+						self.cursor_index = self._menu_options.index(self.preset_values[0])
 				except ValueError:
 					self.cursor_index = 0
 
@@ -203,13 +270,13 @@ class Menu(TerminalMenu):
 			return
 
 		self.preset_values = preset_values
-		if self.default_option:
-			if isinstance(preset_values,str) and self.default_option == preset_values:
-				self.preset_values = f"{preset_values} (default)"
-			elif isinstance(preset_values,(list,tuple)) and self.default_option in preset_values:
-				idx = preset_values.index(self.default_option)
-				self.preset_values[idx] = f"{preset_values[idx]} (default)"
-		if cursor_index is None or not self.multi:
+		if self._default_option:
+			if isinstance(preset_values,str) and self._default_option == preset_values:
+				self.preset_values = f"{preset_values} {self._default_str}"
+			elif isinstance(preset_values,(list,tuple)) and self._default_option in preset_values:
+				idx = preset_values.index(self._default_option)
+				self.preset_values[idx] = f"{preset_values[idx]} {self._default_str}"
+		if cursor_index is None or not self._multi:
 			from_preset_to_cursor()
-		if not self.multi: # Not supported by the infraestructure
+		if not self._multi: # Not supported by the infraestructure
 			self.preset_values = None
