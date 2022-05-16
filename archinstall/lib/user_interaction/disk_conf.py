@@ -7,7 +7,6 @@ from ..disk import BlockDevice
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
-from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
@@ -74,7 +73,7 @@ def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:
 	drives = sorted(list(dict_o_disks.keys()))
 	if len(drives) >= 1:
 		title = str(_('You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)')) + '\n'
-		title += str(_('Select one of the disks or skip and use "/mnt" as default"'))
+		title += str(_('Select one of the disks or skip and use /mnt as default'))
 
 		choice = Menu(title, drives).run()
 
