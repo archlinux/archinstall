@@ -728,6 +728,12 @@ msgstr "Добавить: "
 msgid "Value: "
 msgstr "Значение: "
 
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Вы можете не выбирать диск и разметку и использовать любой диск, смонтированный в /mnt (экспериментально)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Выберите один из дисков или пропустите и используйте /mnt по умолчанию"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"
