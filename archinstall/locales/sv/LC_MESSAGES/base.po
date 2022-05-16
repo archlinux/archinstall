@@ -253,7 +253,7 @@ msgstr "Språk du vill använda"
 msgid "Locale encoding"
 msgstr "Teckenuppsättning du vill använda"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "Hårddiskar"
 
 msgid "Select disk layout"

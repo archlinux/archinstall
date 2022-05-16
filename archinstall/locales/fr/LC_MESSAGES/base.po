@@ -325,7 +325,7 @@ msgstr "Langue locale"
 msgid "Locale encoding"
 msgstr "Encodage des paramètres régionaux"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "Disques durs"
 
 msgid "Select disk layout"

@@ -68,7 +68,7 @@ class GlobalMenu(GeneralMenu):
 				default='UTF-8')
 		self._menu_options['harddrives'] = \
 			Selector(
-				_('Drives'),
+				_('Drive(s)'),
 				lambda preset: self._select_harddrives(preset))
 		self._menu_options['disk_layouts'] = \
 			Selector(

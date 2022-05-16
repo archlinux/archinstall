@@ -251,7 +251,7 @@ msgstr "Locale języka"
 msgid "Locale encoding"
 msgstr "Locale kodowania"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "Dyski twarde"
 
 msgid "Select disk layout"

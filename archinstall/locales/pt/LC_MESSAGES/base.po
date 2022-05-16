@@ -251,7 +251,7 @@ msgstr "Idioma de localização"
 msgid "Locale encoding"
 msgstr "Codificação de localização"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "Discos rígidos"
 
 msgid "Select disk layout"

@@ -246,7 +246,7 @@ msgstr ""
 msgid "Locale encoding"
 msgstr ""
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr ""
 
 msgid "Select disk layout"

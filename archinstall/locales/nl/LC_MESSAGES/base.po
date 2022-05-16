@@ -253,7 +253,7 @@ msgstr "Taal"
 msgid "Locale encoding"
 msgstr "Taalvariant"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "Harde schijven"
 
 msgid "Select disk layout"

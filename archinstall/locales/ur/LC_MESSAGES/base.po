@@ -253,7 +253,7 @@ msgstr "مقامی زبان"
 msgid "Locale encoding"
 msgstr "مقامی انکوڈنگ"
 
-msgid "Drives"
+msgid "Drive(s)"
 msgstr "ہارڈ ڈرائیوز"
 
 msgid "Select disk layout"
