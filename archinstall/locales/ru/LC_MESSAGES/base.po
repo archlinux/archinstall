@@ -728,13 +728,6 @@ msgstr "Добавить: "
 msgid "Value: "
 msgstr "Значение: "
 
-msgid "Add :"
-msgstr ""
-
-#, fuzzy
-msgid "Value :"
-msgstr "Значение: "
-
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"
