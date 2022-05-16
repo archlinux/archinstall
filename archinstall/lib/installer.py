@@ -365,15 +365,28 @@ class Installer:
 
 		self.log(f'Installing packages: {packages}', level=logging.INFO)
 
-		if (sync_mirrors := run_pacman('-Syy', default_cmd='/usr/bin/pacman')).exit_code == 0:
-			if (pacstrap := SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True)).exit_code == 0:
-				return True
-			else:
-				self.log(f'Could not strap in packages: {pacstrap}', level=logging.ERROR, fg="red")
-				self.log(f'Could not strap in packages: {pacstrap.exit_code}', level=logging.ERROR, fg="red")
-				raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
-		else:
-			self.log(f'Could not sync mirrors: {sync_mirrors.exit_code}', level=logging.INFO)
+		# TODO: We technically only need to run the -Syy once.
+		try:
+			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
+		except SysCallError as error:
+			self.log(f'Could not sync a new package databse: {error}', level=logging.ERROR, fg="red")
+
+			if storage['arguments'].get('silent', False) is False:
+				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
+					return self.pacstrap(*packages, **kwargs)
+
+			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
+
+		try:
+			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True).exit_code == 0
+		except SysCallError as error:
+			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
+
+			if storage['arguments'].get('silent', False) is False:
+				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
+					return self.pacstrap(*packages, **kwargs)
+			
+			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
 	def set_mirrors(self, mirrors :Mapping[str, Iterator[str]]) -> None:
 		for plugin in plugins.values():
