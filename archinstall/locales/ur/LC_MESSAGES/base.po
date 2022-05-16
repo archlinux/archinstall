@@ -528,7 +528,7 @@ msgstr "آپ جو پاس ورڈ استعمال کر رہے ہیں وہ کمزو�
 msgid "are you sure you want to use it?"
 msgstr "کیا آپ واقعی اسے استعمال کرنا چاہتے ہیں؟"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "اضافی ریپوزٹریز"
 
 msgid "Save configuration"

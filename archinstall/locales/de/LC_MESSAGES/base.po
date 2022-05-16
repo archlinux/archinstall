@@ -526,7 +526,7 @@ msgstr "Das gewählte Passwort ist sehr schwach,"
 msgid "are you sure you want to use it?"
 msgstr "wollen sie dieses wirklich verwenden?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Zus. Repositories"
 
 msgid "Save configuration"

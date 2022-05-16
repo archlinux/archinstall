@@ -528,7 +528,7 @@ msgstr "Het gekozen wachtwoord is zwak."
 msgid "are you sure you want to use it?"
 msgstr "Weet u zeker dat u het wilt gebruiken?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Aanvullende pakketbronnen"
 
 msgid "Save configuration"

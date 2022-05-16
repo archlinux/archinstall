@@ -146,7 +146,7 @@ class GlobalMenu(GeneralMenu):
 				default=[])
 		self._menu_options['additional-repositories'] = \
 			Selector(
-				_('Additional repositories'),
+				_('Optional repositories'),
 				select_additional_repositories,
 				default=[])
 		self._menu_options['nic'] = \

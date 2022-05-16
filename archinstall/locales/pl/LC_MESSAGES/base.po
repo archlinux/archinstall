@@ -523,7 +523,7 @@ msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 msgid "are you sure you want to use it?"
 msgstr "czy na pewno chcesz go używać?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Dodatkowe repozytoria"
 
 msgid "Save configuration"

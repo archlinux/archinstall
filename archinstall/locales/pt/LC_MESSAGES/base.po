@@ -541,7 +541,7 @@ msgid "are you sure you want to use it?"
 msgstr "tens a certeza que quer usar?"
 
 #, fuzzy
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Repositórios adicionais"
 
 msgid "Save configuration"

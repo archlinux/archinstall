@@ -623,7 +623,7 @@ msgstr "Le mot de passe que vous utilisez semble faible,"
 msgid "are you sure you want to use it?"
 msgstr "êtes-vous sûr de vouloir l'utiliser ?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Référentiels supplémentaires"
 
 msgid "Save configuration"

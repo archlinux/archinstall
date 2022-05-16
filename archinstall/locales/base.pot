@@ -511,7 +511,7 @@ msgstr ""
 msgid "are you sure you want to use it?"
 msgstr ""
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr ""
 
 msgid "Save configuration"

@@ -527,7 +527,7 @@ msgstr "Пароль, который вы используете, кажется
 msgid "are you sure you want to use it?"
 msgstr "вы уверены, что хотите его использовать?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Дополнительные репозитории"
 
 msgid "Save configuration"

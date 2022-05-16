@@ -524,7 +524,7 @@ msgstr "La contraseña que está utilizando parece ser débil,"
 msgid "are you sure you want to use it?"
 msgstr "¿Estás seguro de que quieres usarlo?"
 
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Repositorios adicionales"
 
 msgid "Save configuration"

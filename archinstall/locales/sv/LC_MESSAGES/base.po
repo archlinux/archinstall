@@ -538,7 +538,7 @@ msgid "are you sure you want to use it?"
 msgstr "Vill du verkligen avbryta?"
 
 #, fuzzy
-msgid "Additional repositories"
+msgid "Optional repositories"
 msgstr "Extra förråden"
 
 msgid "Save configuration"
