@@ -42,33 +42,33 @@ class GlobalMenu(GeneralMenu):
 		# archinstall.Language will not use preset values
 		self._menu_options['archinstall-language'] = \
 			Selector(
-				_('Select Archinstall language'),
+				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
 				default='English')
 		self._menu_options['keyboard-layout'] = \
 			Selector(
-				_('Select keyboard layout'),
+				_('Keyboard layout'),
 				lambda preset: select_language(preset),
 				default='us')
 		self._menu_options['mirror-region'] = \
 			Selector(
-				_('Select mirror region'),
+				_('Mirror region'),
 				lambda preset: select_mirror_regions(preset),
 				display_func=lambda x: list(x.keys()) if x else '[]',
 				default={})
 		self._menu_options['sys-language'] = \
 			Selector(
-				_('Select locale language'),
+				_('Locale language'),
 				lambda preset: select_locale_lang(preset),
 				default='en_US')
 		self._menu_options['sys-encoding'] = \
 			Selector(
-				_('Select locale encoding'),
+				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
 				default='UTF-8')
 		self._menu_options['harddrives'] = \
 			Selector(
-				_('Select harddrives'),
+				_('Drive(s)'),
 				lambda preset: self._select_harddrives(preset))
 		self._menu_options['disk_layouts'] = \
 			Selector(
@@ -87,28 +87,28 @@ class GlobalMenu(GeneralMenu):
 				dependencies=['harddrives'])
 		self._menu_options['swap'] = \
 			Selector(
-				_('Use swap'),
+				_('Swap'),
 				lambda preset: ask_for_swap(preset),
 				default=True)
 		self._menu_options['bootloader'] = \
 			Selector(
-				_('Select bootloader'),
+				_('Bootloader'),
 				lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False),preset),
 				default="systemd-bootctl" if has_uefi() else "grub-install")
 		self._menu_options['hostname'] = \
 			Selector(
-				_('Specify hostname'),
+				_('Hostname'),
 				ask_hostname,
 				default='archlinux')
 		# root password won't have preset value
 		self._menu_options['!root-password'] = \
 			Selector(
-				_('Set root password'),
+				_('root password'),
 				lambda preset:self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \
 			Selector(
-				_('Specify superuser account'),
+				_('Superuser account'),
 				lambda preset: self._create_superuser_account(),
 				default={},
 				exec_func=lambda n,v:self._users_resynch(),
@@ -116,53 +116,53 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
 			Selector(
-				_('Specify user account'),
+				_('User account'),
 				lambda x: self._create_user_account(),
 				default={},
 				exec_func=lambda n,v:self._users_resynch(),
 				display_func=lambda x: list(x.keys()) if x else '[]')
 		self._menu_options['profile'] = \
 			Selector(
-				_('Specify profile'),
+				_('Profile'),
 				lambda preset: self._select_profile(preset),
 				display_func=lambda x: x if x else 'None')
 		self._menu_options['audio'] = \
 			Selector(
-				_('Select audio'),
+				_('Audio'),
 				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset),
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
 		self._menu_options['kernels'] = \
 			Selector(
-				_('Select kernels'),
+				_('Kernels'),
 				lambda preset: select_kernel(preset),
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
-				_('Additional packages to install'),
+				_('Additional packages'),
 				# lambda x: ask_additional_packages_to_install(storage['arguments'].get('packages', None)),
 				ask_additional_packages_to_install,
 				default=[])
 		self._menu_options['additional-repositories'] = \
 			Selector(
-				_('Additional repositories to enable'),
+				_('Optional repositories'),
 				select_additional_repositories,
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(
-				_('Configure network'),
+				_('Network configuration'),
 				ask_to_configure_network,
 				display_func=lambda x: self._prev_network_configuration(x),
 				default={})
 		self._menu_options['timezone'] = \
 			Selector(
-				_('Select timezone'),
+				_('Timezone'),
 				lambda preset: ask_for_a_timezone(preset),
 				default='UTC')
 		self._menu_options['ntp'] = \
 			Selector(
-				_('Set automatic time sync (NTP)'),
+				_('Automatic time sync (NTP)'),
 				lambda preset: self._select_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
