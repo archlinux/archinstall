@@ -55,7 +55,7 @@ class Filesystem:
 			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
 
 			for device in output['blockdevices']:
-				for index, partition in enumerate(device['children']):
+				for index, partition in enumerate(device.get('children', [])):
 					# But we'll use blkid to reliably grab the PARTUUID for that child device (partition)
 					partition_uuid = SysCommand(f"blkid -s PARTUUID -o value /dev/{partition.get('name')}").decode().strip()
 					if partition_uuid.lower() == uuid.lower():
