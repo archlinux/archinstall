@@ -860,8 +860,15 @@ msgstr "Modifier {} : "
 msgid "Add: "
 msgstr "Ajouter : "
 
+msgid "Add: "
+msgstr ""
+
+#, fuzzy
 msgid "Value: "
-msgstr "Valeur : "
+msgstr "Valeur :"
+
+msgid "Add :"
+msgstr "Ajouter :"
 
 #~ msgid "Add :"
 #~ msgstr "Ajouter :"

@@ -668,6 +668,12 @@ msgstr ""
 msgid "Edit {}: "
 msgstr ""
 
+msgid "Add: "
+msgstr ""
+
+msgid "Value: "
+msgstr ""
+
 msgid "Add :"
 msgstr ""
 

@@ -51,7 +51,8 @@ AVAILABLE_GFX_DRIVERS = {
 		"intel-media-driver",
 		"vulkan-intel",
 	],
-	"Nvidia (open-source)": [
+	"Nvidia (open kernel module for newer GPUs, Turing+)": ["nvidia-open"],
+	"Nvidia (open-source nouveau driver)": [
 		"mesa",
 		"xf86-video-nouveau",
 		"libva-mesa-driver"
