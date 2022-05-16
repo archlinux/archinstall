@@ -160,7 +160,7 @@ class SetupMenu(archinstall.GeneralMenu):
 	def _setup_selection_menu_options(self):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
-				_('Select Archinstall language'),
+				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
 				default='English',
 				enabled=True))
