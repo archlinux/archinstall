@@ -721,8 +721,8 @@ msgstr ""
 msgid "Value: "
 msgstr ""
 
-msgid "Add :"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
 msgstr ""
 
-msgid "Value :"
+msgid "Select one of the disks or skip and use /mnt as default"
 msgstr ""
