@@ -3,6 +3,7 @@ import os
 import json
 import logging
 import time
+from functools import cached_property
 from typing import Optional, Dict, Any, Iterator, Tuple, List, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -32,6 +33,10 @@ class BlockDevice:
 		#       I'm placing the encryption password on a BlockDevice level.
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
+		return self._str_repr
+	
+	@cached_property
+	def _str_repr(self) -> str:
 		return f"BlockDevice({self.device_or_backfile}, size={self._safe_size}GB, free_space={self._safe_free_space}, bus_type={self.bus_type})"
 
 	def __iter__(self) -> Iterator[Partition]:
