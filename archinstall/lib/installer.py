@@ -241,7 +241,6 @@ class Installer:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
 				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
-			# i change a bit the naming conventions for the loop device
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
@@ -251,6 +250,9 @@ class Installer:
 					list_luks_handles.append([luks_handle,partition,password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
+
+			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
+				luks2.fido2_enroll(partition)
 
 		# we manage the btrfs partitions
 		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:

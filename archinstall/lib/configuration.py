@@ -8,22 +8,16 @@ from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log
 from .exceptions import RequirementError
-from .udev import udevadm_info
+from .hsm import get_fido2_devices
 
 def configuration_sanity_check():
 	if storage['arguments'].get('HSM'):
-		found_hsm = False
-		for device in glob.glob('/dev/hidraw*'):
-			if udevadm_info(pathlib.Path(device)).get('id_fido_token'):
-				found_hsm = True
-				break
-
-		if not found_hsm:
+		if not get_fido2_devices():
 			raise RequirementError(
 				f"In order to use HSM to pair with the disk encryption,"
-				+ f" one needs to be accessible through /dev/hidraw* and contain"
-				+ f" the ID_FIDO_TOKEN identifier. You can check this by running"
-				+ f" 'udevadm info /dev/hidraw1' for instance."
+				+ f" one needs to be accessible through /dev/hidraw* and support"
+				+ f" the FIDO2 protocol. You can check this by running"
+				+ f" 'systemd-cryptenroll --fido2-device=list'."
 			)
 
 class ConfigurationOutput:
