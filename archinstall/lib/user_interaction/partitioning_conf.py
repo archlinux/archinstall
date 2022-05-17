@@ -8,7 +8,6 @@ from ..menu.menu import MenuSelectionType
 from ..output import log
 
 from ..disk.validators import fs_types
-from ..disk.helpers import has_mountpoint
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
