@@ -321,11 +321,11 @@ msgstr "Кодировка локали"
 msgid "Drive(s)"
 msgstr "Диски"
 
-msgid "Select disk layout"
-msgstr "Выберите разметку диска"
+msgid "Disk layout"
+msgstr "Разметка диска"
 
-msgid "Set encryption password"
-msgstr "Установите пароль шифрования"
+msgid "Encryption password"
+msgstr "Пароль шифрования"
 
 msgid "Swap"
 msgstr "Подкачка"
@@ -333,7 +333,7 @@ msgstr "Подкачка"
 msgid "Bootloader"
 msgstr "Загрузчик"
 
-msgid "root password"
+msgid "Root password"
 msgstr "Пароль root"
 
 msgid "Superuser account"
@@ -865,9 +865,6 @@ msgstr "Выберите один из дисков или пропустите 
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Выберите, какие разделы следует отметить для форматирования:"
-
-#~ msgid "Password root"
-#~ msgstr "Пароль root"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
