@@ -150,7 +150,7 @@ class Filesystem:
 
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")
-				self.set(self.partuuid_to_index(partition['device_instance'].uuid), 'boot on')
+				self.set(self.partuuid_to_index(partition['device_instance'].part_uuid), 'boot on')
 
 			prev_partition = partition
 
@@ -193,7 +193,7 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		previous_partition_uuids = {partition.uuid for partition in self.blockdevice.partitions.values()}
+		previous_partition_uuids = {partition.part_uuid for partition in self.blockdevice.partitions.values()}
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
@@ -210,7 +210,7 @@ class Filesystem:
 			count = 0
 			while count < 10:
 				new_uuid = None
-				new_uuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
+				new_uuid_set = (previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})
 
 				if len(new_uuid_set) > 0:
 					new_uuid = new_uuid_set.pop()
@@ -236,7 +236,7 @@ class Filesystem:
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
 		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {(previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {(previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:

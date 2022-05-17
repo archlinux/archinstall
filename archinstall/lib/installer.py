@@ -840,21 +840,22 @@ class Installer:
 				if real_device := self.detect_encryption(root_partition):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
 
 					kernel_options = f"options"
 
 					if storage['arguments']['HSM']:
 						kernel_options += f" rd.luks.uuid={real_device.uuid}"
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
-						kernel_options += f" rd.luks.options={real_device.uuid}=tpm2-device=auto,password-echo=no"
+						kernel_options += f" rd.luks.options=tpm2-device=auto,fido2-device=auto,password-echo=no"
+						# kernel_options += f" rd.luks.options={real_device.uuid}=tpm2-device=auto,fido2-device=auto,password-echo=no"
 					else:
-						kernel_options += f" cryptdevice=PARTUUID={real_device.uuid}:luksdev"
+						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
 
 					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
+					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+					entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
 
 		self.helper_flags['bootloader'] = "systemd"
 
@@ -939,11 +940,11 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.part_uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.part_uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 			else:
-				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'root=PARTUUID={root_partition.part_uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 
 			SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
