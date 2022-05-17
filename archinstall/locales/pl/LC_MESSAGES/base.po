@@ -3,12 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: MicroPanda123 <dawid12345.dawid@gmail.com>\n"
+"Last-Translator: Aleksandr Melman <Alexmelman88@gmail.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "Plik dziennika został stworzony tutaj: {} {}"
@@ -53,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Instalowane są tylko pakiety takie jak base, base-devel, linux, linux-firmware, efibootmgr i opcjonalne pakiety profili."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Jeśli wymagana jest przeglądarka internetowa, taka jak firefox lub chromium, można ją określić w następującym oknie dialogowym"
+msgstr "Jeśli wymagana jest przeglądarka internetowa, taka jak firefox lub chromium, można ją określić w następującym oknie dialogowym."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Wpisz dodatkowe pakiety do zainstalowania (oddzielone spacjami, pozostaw puste aby pominąć): "
@@ -254,10 +255,12 @@ msgstr "Locale kodowania"
 msgid "Drive(s)"
 msgstr "Dyski twarde"
 
-msgid "Select disk layout"
-msgstr "Wybierz układ dysku"
+#, fuzzy
+msgid "Disk layout"
+msgstr "Zapisz układ dysku"
 
-msgid "Set encryption password"
+#, fuzzy
+msgid "Encryption password"
 msgstr "Ustaw hasło szyfrowania"
 
 msgid "Swap"
@@ -266,7 +269,8 @@ msgstr "Swap"
 msgid "Bootloader"
 msgstr "Program rozruchowy"
 
-msgid "root password"
+#, fuzzy
+msgid "Root password"
 msgstr "Hasło root"
 
 msgid "Superuser account"
@@ -520,7 +524,6 @@ msgstr "Nie jest to prawidłowy katalog: {}"
 msgid "The password you are using seems to be weak,"
 msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
 
-#, problematic, depends on context
 msgid "are you sure you want to use it?"
 msgstr "czy na pewno chcesz go używać?"
 
@@ -595,7 +598,7 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "Czy chcesz stworzyć oddzielną partycje dla /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Wybrane dyski nie mają wymaganej objętości dla automatycznej sugestii"
+msgstr "Wybrane dyski nie mają wymaganej objętości dla automatycznej sugestii\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
 msgstr "Maksymalna objętość dla partycji /home: {}GB\n"
@@ -692,13 +695,10 @@ msgstr "Zapisz i wyjdź"
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
-msgstr "
+msgstr ""
 "{}\n"
 "zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
-""
 
-
-#, fuzzy
 msgid "No audio server"
 msgstr ""
 
@@ -716,9 +716,8 @@ msgstr ""
 "Użyj CTRL+C aby zresetować obecny wybór\n"
 "\n"
 
-#, fuzzy
 msgid "Copy to: "
-msgstr "Kopiuj do :"
+msgstr "Kopiuj do: "
 
 #, fuzzy
 msgid "Edit: "
@@ -727,9 +726,8 @@ msgstr "Edytuj: "
 msgid "Key: "
 msgstr ""
 
-#, fuzzy
 msgid "Edit {}: "
-msgstr "Edytuj {}:"
+msgstr "Edytuj {}: "
 
 msgid "Add: "
 msgstr "Dodaj: "
@@ -738,11 +736,23 @@ msgstr "Dodaj: "
 msgid "Value: "
 msgstr "Wartość: "
 
-msgid "Add :"
-msgstr "Dodaj :"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
 
-msgid "Value :"
-msgstr "Wartość :"
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Wybierz partycja która ma zostać sformatowana:"
+
+#~ msgid "Select disk layout"
+#~ msgstr "Wybierz układ dysku"
+
+#~ msgid "Add :"
+#~ msgstr "Dodaj :"
+
+#~ msgid "Value :"
+#~ msgstr "Wartość :"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
