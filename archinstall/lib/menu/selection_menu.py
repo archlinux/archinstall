@@ -488,3 +488,5 @@ class GeneralMenu:
 			case MenuSelectionType.Esc: return preset
 			case MenuSelectionType.Selection:
 				return pathlib.Path(list(fido_devices.keys())[int(choice.value.split('|',1)[0])])
+
+		return None
