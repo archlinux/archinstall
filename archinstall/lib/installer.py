@@ -127,7 +127,7 @@ class Installer:
 		self.MODULES = []
 		self.BINARIES = []
 		self.FILES = []
-		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
 		self._zram_enabled = False
@@ -614,6 +614,15 @@ class Installer:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+
+			if not storage['arguments']['HSM']:
+				# For now, if we don't use HSM we revert to the old
+				# way of setting up encryption hooks for mkinitcpio.
+				# This is purely for stability reasons, we're going away from this.
+				# * systemd -> udev
+				# * sd-vconsole -> keymap
+				self.HOOKS = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap') for hook in self.HOOKS]
+
 			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
@@ -648,8 +657,12 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if 'encrypt' not in self.HOOKS:
-					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
+				if storage['arguments']['HSM']:
+					if 'sd-encrypt' not in self.HOOKS:
+						self.HOOKS.insert(self.HOOKS.index('filesystems'), 'sd-encrypt')
+				else:
+					if 'encrypt' not in self.HOOKS:
+						self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
 		if not has_uefi():
 			self.base_packages.append('grub')
@@ -820,7 +833,17 @@ class Installer:
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
+
+					kernel_options = f"options"
+
+					if storage['arguments']['HSM']:
+						kernel_options += f" rd.luks.uuid={real_device.uuid}"
+						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
+						kernel_options += f" rd.luks.options={real_device.uuid}=tpm2-device=auto,password-echo=no"
+					else:
+						kernel_options += f" cryptdevice=PARTUUID={real_device.uuid}:luksdev"
+
+					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 				else:
 					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
 					entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
