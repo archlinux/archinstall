@@ -467,19 +467,6 @@ class GeneralMenu:
 
 		return preset_value
 
-	def _select_hsm(self, preset: bool = True) -> bool:
-		if preset:
-			preset_val = Menu.yes()
-		else:
-			preset_val = Menu.no()
-
-		prompt = _('Would you like to use a HSM to unlock your encrypted drive?')
-		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), preset_values=preset_val).run()
-
-		match choice.type_:
-			case MenuSelectionType.Esc: return preset
-			case MenuSelectionType.Selection: return False if choice.value == Menu.no() else True
-
 	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
 		title = _('Select which partitions to mark for formatting:')
 		title += '\n'
@@ -494,7 +481,7 @@ class GeneralMenu:
 		title += '\n'
 
 		choice = Menu(title, indexes, multi=False).run()
-		
+
 		match choice.type_:
 			case MenuSelectionType.Esc: return preset
 			case MenuSelectionType.Selection:
