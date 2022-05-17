@@ -478,7 +478,7 @@ class GeneralMenu:
 		indexes = []
 		for index, path in enumerate(fido_devices.keys()):
 			title += f"{index}: {path} ({fido_devices[path]['manufacturer']} - {fido_devices[path]['product']})"
-			indexes.append(index)
+			indexes.append(f"{index}|{fido_devices[path]['product']}")
 
 		title += '\n'
 
@@ -487,4 +487,4 @@ class GeneralMenu:
 		match choice.type_:
 			case MenuSelectionType.Esc: return preset
 			case MenuSelectionType.Selection:
-				pathlib.Path(fido_devices.keys()[int(choice.value)])
+				return pathlib.Path(list(fido_devices.keys())[int(choice.value.split('|',1)[0])])

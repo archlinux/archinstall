@@ -57,8 +57,9 @@ def ask_user_questions():
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 
-	# Enables the use of HSM
-	global_menu.enable('HSM')
+	if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
+		# Enables the use of HSM
+		global_menu.enable('HSM')
 
 	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')

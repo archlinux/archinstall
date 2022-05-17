@@ -39,9 +39,9 @@ def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 	return devices
 	
 def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :str) -> bool:
-	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device=/dev/hidraw5 /dev/loop0p3", peak_output=True)
+	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device=/dev/hidraw5 /dev/loop0p2", peak_output=True)
 	pw_inputted = False
 	while worker.is_alive():
-		if pw_inputted is False and b"please enter current passphrase for disk /dev/loop0p3" in worker._trace_log:
+		if pw_inputted is False and b"please enter current passphrase for disk /dev/loop0p2" in worker._trace_log.lower():
 			worker.write(bytes(password, 'UTF-8'))
 			pw_inputted = True
