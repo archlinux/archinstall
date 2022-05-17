@@ -79,7 +79,7 @@ def select_language(preset_value: str = None) -> str:
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
 	selected_lang = Menu(
-		_('Select Keyboard layout'),
+		_('Select keyboard layout'),
 		sorted_kb_lang,
 		preset_values=preset_value,
 		sort=False
@@ -120,7 +120,7 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 
 def select_archinstall_language(default='English'):
 	languages = Translation.get_available_lang()
-	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
+	language = Menu(_('Archinstall language'), languages, default_option=default).run()
 	return language
 
 

@@ -168,8 +168,8 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
 
-msgid "Select Archinstall language"
-msgstr "آرچ انسٹال کے لیے زبان کا انتخاب کریں"
+msgid "Archinstall language"
+msgstr "آرچ انسٹال کے لیے زبان"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "تمام منتخب ڈرائیوز کو صاف کریں اور ایک بہترین ڈیفالٹ پارٹیشن لے آؤٹ استعمال کریں"
@@ -183,8 +183,8 @@ msgstr "انتخاب کریں کہ آپ منتخب بلاک ڈیوائسز کے 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "یہ پہلے سے پروگرام شدہ پروفائلز کی فہرست ہے، وہ ڈیسک ٹاپ انسٹالیشن جیسی چیزوں کو آسان بناتے ہیں"
 
-msgid "Select Keyboard layout"
-msgstr "کی بورڈ لے آؤٹ کو منتخب کریں"
+msgid "Select keyboard layout"
+msgstr "کی بورڈ لے آؤٹ"
 
 msgid "Select one of the regions to download packages from"
 msgstr "پیکیجز ڈاؤن لوڈ کرنے کے لیے علاقوں میں سے ایک کو منتخب کریں"
@@ -241,20 +241,20 @@ msgstr "خرابی: URL \"{}\" پر پروفائلز کی فہرست بنانے 
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "خرابی: \"{}\" نتیجہ کو JSON کے بطور ڈی کوڈ نہیں کیا جا سکا:"
 
-msgid "Select keyboard layout"
+msgid "Keyboard layout"
 msgstr "کی بورڈ لے آؤٹ کو منتخب کریں"
 
-msgid "Select mirror region"
-msgstr "متبادل علاقہ منتخب کریں"
+msgid "Mirror region"
+msgstr "متبادل علاقہ"
 
-msgid "Select locale language"
-msgstr "منتخب کریں کہ کون سی مقامی زبان استعمال کرنی ہے"
+msgid "Locale language"
+msgstr "مقامی زبان"
 
-msgid "Select locale encoding"
-msgstr "منتخب کریں کہ کون سا مقامی انکوڈنگ استعمال کرنا ہے"
+msgid "Locale encoding"
+msgstr "مقامی انکوڈنگ"
 
-msgid "Select harddrives"
-msgstr "ہارڈ ڈرائیوز کو منتخب کریں"
+msgid "Drive(s)"
+msgstr "ہارڈ ڈرائیوز"
 
 msgid "Select disk layout"
 msgstr "ڈسک لے آؤٹ کو منتخب کریں"
@@ -262,38 +262,38 @@ msgstr "ڈسک لے آؤٹ کو منتخب کریں"
 msgid "Set encryption password"
 msgstr "انکرپشن پاس ورڈ سیٹ کریں"
 
-msgid "Use swap"
-msgstr "سواپ کا استعمال کریں"
+msgid "Swap"
+msgstr "سواپ"
 
-msgid "Select bootloader"
-msgstr "بوٹ لوڈرکا انتخاب کریں"
+msgid "Bootloader"
+msgstr "بوٹ لوڈر"
 
-msgid "Set root password"
-msgstr "روٹ پاس ورڈ سیٹ کریں"
+msgid "root password"
+msgstr "روٹ پاس ورڈ"
 
-msgid "Specify superuser account"
-msgstr "سپر یوزر اکاؤنٹ کی وضاحت کریں"
+msgid "Superuser account"
+msgstr "سپر یوزر اکاؤنٹ"
 
-msgid "Specify user account"
-msgstr "یوزر اکاؤنٹ کی وضاحت کریں"
+msgid "User account"
+msgstr "یوزر اکاؤنٹ"
 
-msgid "Specify profile"
-msgstr "پروفائل کی وضاحت کریں"
+msgid "Profile"
+msgstr "پروفائل"
 
-msgid "Select audio"
-msgstr "آڈیو کا انتخاب کریں"
+msgid "Audio"
+msgstr "آڈیو"
 
-msgid "Select kernels"
-msgstr "کرنلز منتخب کریں"
+msgid "Kernels"
+msgstr "کرنلز"
 
-msgid "Additional packages to install"
-msgstr "انسٹال کرنے کے لیے اضافی پیکجز"
+msgid "Additional packages"
+msgstr "اضافی پیکجز"
 
-msgid "Configure network"
+msgid "Network configuration"
 msgstr "نیٹ ورک ترتیب دیں"
 
-msgid "Set automatic time sync (NTP)"
-msgstr "خودکار وقت کی مطابقت  سیٹ کریں (NTP)"
+msgid "Automatic time sync (NTP)"
+msgstr "خودکار وقت کی مطابقت (NTP)"
 
 msgid "Install ({} config(s) missing)"
 msgstr "انسٹال کریں ({} کنفیگریشنز غائب ہیں)"
@@ -339,14 +339,14 @@ msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج ک
 msgid "Abort"
 msgstr "ختم کریں"
 
-msgid "Specify hostname"
-msgstr "میزبان نام کی وضاحت کریں"
+msgid "Hostname"
+msgstr "میزبان نام"
 
 msgid "Not configured, unavailable unless setup manually"
 msgstr "کنفیگر نہیں، دستیاب نہیں جب تک کہ دستی طور پر سیٹ اپ نہ کیا جائے"
 
-msgid "Select timezone"
-msgstr "ٹائم زون کا انتخاب کریں"
+msgid "Timezone"
+msgstr "ٹائم زون"
 
 msgid "Set/Modify the below options"
 msgstr "ذیل کے اختیارات کو سیٹ/ترمیم کریں"
@@ -528,8 +528,8 @@ msgstr "آپ جو پاس ورڈ استعمال کر رہے ہیں وہ کمزو�
 msgid "are you sure you want to use it?"
 msgstr "کیا آپ واقعی اسے استعمال کرنا چاہتے ہیں؟"
 
-msgid "Additional repositories to enable"
-msgstr "اضافی ریپوزٹریزکو فعال"
+msgid "Optional repositories"
+msgstr "اضافی ریپوزٹریز"
 
 msgid "Save configuration"
 msgstr "ترتیب کو محفوظ کریں"
@@ -746,11 +746,24 @@ msgstr ""
 msgid "Value: "
 msgstr "قدر:"
 
-msgid "Add :"
-msgstr "شامل:"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
 
-msgid "Value :"
-msgstr "قدر:"
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"فارمیٹنگ کے لیے کس پارٹیشن کو ماسک کرنا ہے"
+
+#~ msgid "Add :"
+#~ msgstr "شامل:"
+
+#~ msgid "Value :"
+#~ msgstr "قدر:"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

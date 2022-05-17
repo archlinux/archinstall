@@ -256,7 +256,7 @@ class ListManager:
 		# TODO guarantee unicity
 		if isinstance(self._data,list):
 			if self.action == str(_('Add')):
-				self.target = TextInput(_('Add :'),None).run()
+				self.target = TextInput(_('Add: '),None).run()
 				self._data.append(self.target)
 			if self.action == str(_('Copy')):
 				while True:
@@ -280,7 +280,7 @@ class ListManager:
 				origval = None
 			if self.action == str(_('Add')):
 				key = TextInput(_('Key: '),None).run()
-				value = TextInput(_('Value :'),None).run()
+				value = TextInput(_('Value: '),None).run()
 				self._data[key] = value
 			if self.action == str(_('Copy')):
 				while True:
