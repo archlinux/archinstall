@@ -271,6 +271,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						block_device_struct["partitions"][partition]["filesystem"]["mount_options"].append("compress=zstd")
 			elif task == delete_all_partitions:
 				block_device_struct["partitions"] = []
+				block_device_struct["wipe"] = True
 			elif task == assign_mount_point:
 				title = _('{}\n\nSelect by index which partition to mount where').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
@@ -371,18 +372,22 @@ def select_encrypted_partitions(
 	if len(partition_indexes) == 0:
 		return None
 
-	choice = Menu(title, partitions, multi=multiple).run()
+	title = _('Select which partitions to mark for formatting:')
+
+	# show current partition layout:
+	if len(partitions):
+		title += _current_partition_layout(partitions) + '\n'
+
+	choice = Menu(title, partition_indexes, multi=multiple).run()
 
 	if choice.type_ == MenuSelectionType.Esc:
 		return None
 
 	if isinstance(choice.value, list):
-		for partition in choice.value:
-			print(partition)
+		for partition_index in choice.value:
+			yield int(partition_index)
 	else:
-		print(choice.value)
-
-	exit(0)
+		yield (partition_index)
 
 # def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
 # 	for device in block_devices:

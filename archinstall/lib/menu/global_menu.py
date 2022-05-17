@@ -201,7 +201,7 @@ class GlobalMenu(GeneralMenu):
 
 						partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
 						partition['encrypted'] = True
-						partition['!password'] = password
+						partition['!password'] = storage['arguments']['!encryption-password']
 
 	def _install_text(self):
 		missing = len(self._missing_configs())
