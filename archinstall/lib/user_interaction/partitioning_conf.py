@@ -8,7 +8,6 @@ from ..menu.menu import MenuSelectionType
 from ..output import log
 
 from ..disk.validators import fs_types
-from ..disk.helpers import has_mountpoint
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -271,6 +270,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 						block_device_struct["partitions"][partition]["filesystem"]["mount_options"].append("compress=zstd")
 			elif task == delete_all_partitions:
 				block_device_struct["partitions"] = []
+				block_device_struct["wipe"] = True
 			elif task == assign_mount_point:
 				title = _('{}\n\nSelect by index which partition to mount where').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
@@ -360,19 +360,30 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 	return block_device_struct
 
+def select_encrypted_partitions(
+	title :str,
+	partitions :List[Partition],
+	multiple :bool = True,
+	filter_ :Callable = None
+) -> Optional[int, List[int]]:
+	partition_indexes = _get_partitions(partitions, filter_)
 
-def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
-	for device in block_devices:
-		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) != '/boot':
-				partition['encrypted'] = True
-				partition['!password'] = password
+	if len(partition_indexes) == 0:
+		return None
 
-				if not has_mountpoint(partition,'/'):
-					# Tell the upcoming steps to generate a key-file for non root mounts.
-					partition['generate-encryption-key-file'] = True
+	title = _('Select which partitions to mark for formatting:')
 
-	return block_devices
+	# show current partition layout:
+	if len(partitions):
+		title += _current_partition_layout(partitions) + '\n'
 
-	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
-	# Users might want to single out a partition for non-encryption to share between dualboot etc.
+	choice = Menu(title, partition_indexes, multi=multiple).run()
+
+	if choice.type_ == MenuSelectionType.Esc:
+		return None
+
+	if isinstance(choice.value, list):
+		for partition_index in choice.value:
+			yield int(partition_index)
+	else:
+		yield (partition_index)
