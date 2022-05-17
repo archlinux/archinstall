@@ -2,7 +2,6 @@ import typing
 import pathlib
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..disk.partition import Partition
-from ..output import log
 
 def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 	"""
