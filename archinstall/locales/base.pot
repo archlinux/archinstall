@@ -249,10 +249,10 @@ msgstr ""
 msgid "Drive(s)"
 msgstr ""
 
-msgid "Select disk layout"
+msgid "Disk layout"
 msgstr ""
 
-msgid "Set encryption password"
+msgid "Encryption password"
 msgstr ""
 
 msgid "Swap"
@@ -261,7 +261,7 @@ msgstr ""
 msgid "Bootloader"
 msgstr ""
 
-msgid "root password"
+msgid "Root password"
 msgstr ""
 
 msgid "Superuser account"
