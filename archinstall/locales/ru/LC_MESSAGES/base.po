@@ -734,6 +734,13 @@ msgstr "Вы можете не выбирать диск и разметку и 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Выберите один из дисков или пропустите и используйте /mnt по умолчанию"
 
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"Выберите, какой раздел следует отметить для форматирования"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"

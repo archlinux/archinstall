@@ -746,11 +746,24 @@ msgstr ""
 msgid "Value: "
 msgstr "قدر:"
 
-msgid "Add :"
-msgstr "شامل:"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
 
-msgid "Value :"
-msgstr "قدر:"
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"فارمیٹنگ کے لیے کس پارٹیشن کو ماسک کرنا ہے"
+
+#~ msgid "Add :"
+#~ msgstr "شامل:"
+
+#~ msgid "Value :"
+#~ msgstr "قدر:"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

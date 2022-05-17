@@ -728,8 +728,21 @@ msgstr ""
 msgid "Value: "
 msgstr "Wert :"
 
-msgid "Add :"
-msgstr "Hinzufügen :"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
 
-msgid "Value :"
-msgstr "Wert :"
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"Bitte wählen sie welche Partition formatiert werden soll"
+
+#~ msgid "Add :"
+#~ msgstr "Hinzufügen :"
+
+#~ msgid "Value :"
+#~ msgstr "Wert :"
