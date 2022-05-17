@@ -272,7 +272,8 @@ class GeneralMenu:
 		return max([len(str(selection.description)) for selection in entries])
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		padding = self._get_menu_text_padding(list(self._menu_options.values()))
+		enabled_menus = self._menus_to_enable()
+		padding = self._get_menu_text_padding(list(enabled_menus.values()))
 		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
 
 		if len(option) != 1:
