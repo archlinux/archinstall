@@ -722,7 +722,7 @@ class Installer:
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.
-			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf").exists()) is False:
+			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
 				with vconsole.open('w') as fh:
 					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
