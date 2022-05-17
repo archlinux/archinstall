@@ -387,19 +387,3 @@ def select_encrypted_partitions(
 			yield int(partition_index)
 	else:
 		yield (partition_index)
-
-# def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
-# 	for device in block_devices:
-# 		for partition in block_devices[device]['partitions']:
-# 			if partition.get('mountpoint', None) != '/boot':
-# 				partition['encrypted'] = True
-# 				partition['!password'] = password
-
-# 				if not has_mountpoint(partition,'/'):
-# 					# Tell the upcoming steps to generate a key-file for non root mounts.
-# 					partition['generate-encryption-key-file'] = True
-
-# 	return block_devices
-
-# 	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
-# 	# Users might want to single out a partition for non-encryption to share between dualboot etc.
