@@ -726,11 +726,24 @@ msgstr ""
 msgid "Value: "
 msgstr "Valor :"
 
-msgid "Add :"
-msgstr "Añadir :"
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
 
-msgid "Value :"
-msgstr "Valor :"
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"Selecciona la partición a ocultar para formatear"
+
+#~ msgid "Add :"
+#~ msgstr "Añadir :"
+
+#~ msgid "Value :"
+#~ msgstr "Valor :"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
