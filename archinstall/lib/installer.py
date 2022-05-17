@@ -23,6 +23,7 @@ from .profiles import Profile
 from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+from .hsm import fido2_enroll
 
 if TYPE_CHECKING:
 	_: Any
@@ -244,6 +245,7 @@ class Installer:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+			
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
 				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
@@ -252,7 +254,8 @@ class Installer:
 				partition['device_instance'] = unlocked_device
 
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
-				luks2.fido2_enroll(partition)
+				hsm_device_path = storage['arguments']['_hsm_device']
+				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
 		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
