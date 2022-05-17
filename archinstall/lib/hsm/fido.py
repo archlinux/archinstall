@@ -43,6 +43,6 @@ def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :
 	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device_path} {partition.path}", peak_output=True)
 	pw_inputted = False
 	while worker.is_alive():
-		if pw_inputted is False and b"please enter current passphrase for disk /dev/loop0p2" in worker._trace_log.lower():
+		if pw_inputted is False and bytes(f"please enter current passphrase for disk {partition.path}", 'UTF-8') in worker._trace_log.lower():
 			worker.write(bytes(password, 'UTF-8'))
 			pw_inputted = True
