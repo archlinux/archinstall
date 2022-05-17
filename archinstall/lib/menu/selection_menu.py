@@ -9,6 +9,7 @@ from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translation import Translation
+from ..hsm.fido import get_fido2_devices
 
 if TYPE_CHECKING:
 	_: Any

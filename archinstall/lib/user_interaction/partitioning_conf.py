@@ -386,4 +386,4 @@ def select_encrypted_partitions(
 		for partition_index in choice.value:
 			yield int(partition_index)
 	else:
-		yield int(choice.value)
+		yield (partition_index)

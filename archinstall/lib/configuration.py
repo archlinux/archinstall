@@ -1,6 +1,5 @@
 import json
 import logging
-import glob
 import pathlib
 from typing import Optional, Dict
 
