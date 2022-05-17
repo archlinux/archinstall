@@ -360,19 +360,42 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 	return block_device_struct
 
+def select_encrypted_partitions(
+	title :str,
+	partitions :List[Partition],
+	multiple :bool = True,
+	filter_ :Callable = None
+) -> Optional[int, List[int]]:
+	partition_indexes = _get_partitions(partitions, filter_)
 
-def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
-	for device in block_devices:
-		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) != '/boot':
-				partition['encrypted'] = True
-				partition['!password'] = password
+	if len(partition_indexes) == 0:
+		return None
 
-				if not has_mountpoint(partition,'/'):
-					# Tell the upcoming steps to generate a key-file for non root mounts.
-					partition['generate-encryption-key-file'] = True
+	choice = Menu(title, partitions, multi=multiple).run()
 
-	return block_devices
+	if choice.type_ == MenuSelectionType.Esc:
+		return None
 
-	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
-	# Users might want to single out a partition for non-encryption to share between dualboot etc.
+	if isinstance(choice.value, list):
+		for partition in choice.value:
+			print(partition)
+	else:
+		print(choice.value)
+
+	exit(0)
+
+# def select_encrypted_partitions(block_devices: dict, password: str) -> dict:
+# 	for device in block_devices:
+# 		for partition in block_devices[device]['partitions']:
+# 			if partition.get('mountpoint', None) != '/boot':
+# 				partition['encrypted'] = True
+# 				partition['!password'] = password
+
+# 				if not has_mountpoint(partition,'/'):
+# 					# Tell the upcoming steps to generate a key-file for non root mounts.
+# 					partition['generate-encryption-key-file'] = True
+
+# 	return block_devices
+
+# 	# TODO: Next version perhaps we can support mixed multiple encrypted partitions
+# 	# Users might want to single out a partition for non-encryption to share between dualboot etc.
