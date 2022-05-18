@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_archinstall_language(preset_value: str) -> Optional[str]:
+def select_archinstall_language(preset_value: str) -> Optional[Any]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
@@ -487,6 +487,8 @@ class GeneralMenu:
 		match choice.type_:
 			case MenuSelectionType.Esc: return preset
 			case MenuSelectionType.Selection:
-				return pathlib.Path(list(fido_devices.keys())[int(choice.value.split('|',1)[0])])
+				selection: Any = choice.value
+				index = int(selection.split('|',1)[0])
+				return pathlib.Path(list(fido_devices.keys())[index])
 
 		return None

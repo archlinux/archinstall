@@ -89,7 +89,7 @@ from .text_input import TextInput
 from .menu import Menu, MenuSelectionType
 from os import system
 from copy import copy
-from typing import Union, Any, TYPE_CHECKING, Dict
+from typing import Union, Any, TYPE_CHECKING, Dict, Optional
 
 if TYPE_CHECKING:
 	_: Any
@@ -147,7 +147,7 @@ class ListManager:
 		self.base_data = base_list
 		self._data = copy(base_list) # as refs, changes are immediate
 		# default values for the null case
-		self.target = None
+		self.target: Optional[Any] = None
 		self.action = self._null_action
 
 		if len(self._data) == 0 and self._null_action:
