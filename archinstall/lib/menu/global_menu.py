@@ -80,7 +80,7 @@ class GlobalMenu(GeneralMenu):
 		)
 		self._menu_options['disk_layouts'] = \
 			Selector(
-				_('Select disk layout'),
+				_('Disk layout'),
 				lambda preset: select_disk_layout(
 					preset,
 					storage['arguments'].get('harddrives', []),
@@ -91,10 +91,16 @@ class GlobalMenu(GeneralMenu):
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
-				_('Set encryption password'),
+				_('Encryption password'),
 				lambda x: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
+		self._menu_options['HSM'] = Selector(
+			description=_('Use HSM to unlock encrypted drive'),
+			func=lambda preset: self._select_hsm(preset),
+			dependencies=['!encryption-password'],
+			default=None
+		)
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -113,7 +119,7 @@ class GlobalMenu(GeneralMenu):
 		# root password won't have preset value
 		self._menu_options['!root-password'] = \
 			Selector(
-				_('root password'),
+				_('Root password'),
 				lambda preset:self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
 		self._menu_options['!superusers'] = \

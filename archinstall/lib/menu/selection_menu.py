@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import logging
 import sys
+import pathlib
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translation import Translation
+from ..hsm.fido import get_fido2_devices
 
 if TYPE_CHECKING:
 	_: Any
@@ -272,7 +274,8 @@ class GeneralMenu:
 		return max([len(str(selection.description)) for selection in entries])
 
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		padding = self._get_menu_text_padding(list(self._menu_options.values()))
+		enabled_menus = self._menus_to_enable()
+		padding = self._get_menu_text_padding(list(enabled_menus.values()))
 		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
 
 		if len(option) != 1:
@@ -465,3 +468,25 @@ class GeneralMenu:
 			return language
 
 		return preset_value
+
+	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
+		title = _('Select which partitions to mark for formatting:')
+		title += '\n'
+
+		fido_devices = get_fido2_devices()
+
+		indexes = []
+		for index, path in enumerate(fido_devices.keys()):
+			title += f"{index}: {path} ({fido_devices[path]['manufacturer']} - {fido_devices[path]['product']})"
+			indexes.append(f"{index}|{fido_devices[path]['product']}")
+
+		title += '\n'
+
+		choice = Menu(title, indexes, multi=False).run()
+
+		match choice.type_:
+			case MenuSelectionType.Esc: return preset
+			case MenuSelectionType.Selection:
+				return pathlib.Path(list(fido_devices.keys())[int(choice.value.split('|',1)[0])])
+
+		return None
