@@ -4,7 +4,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=2.4.2
+pkgver=2.4.3rc1
 #pkgver=$(git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g')
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
