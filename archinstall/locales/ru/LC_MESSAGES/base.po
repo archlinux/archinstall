@@ -869,6 +869,18 @@ msgstr "Выберите, какие разделы следует отмети�
 msgid "Use HSM to unlock encrypted drive"
 msgstr "Использовать HSM для разблокировки зашифрованного диска"
 
+msgid "Device"
+msgstr "Устройство"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Free space"
+msgstr "Свободное место"
+
+msgid "Bus-type"
+msgstr "Тип шины"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"
