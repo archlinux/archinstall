@@ -11,6 +11,7 @@ jobs:
             - run: python -m pip install --upgrade pip
             - run: pip install fastapi pydantic mypy
             - run: python --version
+            - run: cat archinstall/__init__.py | grep "version"
             - run: mypy --version
             # one day this will be enabled
               # run: mypy --strict --module archinstall || exit 0
