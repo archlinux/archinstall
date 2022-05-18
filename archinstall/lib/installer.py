@@ -254,6 +254,8 @@ class Installer:
 				partition['device_instance'] = unlocked_device
 
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
+				self.pacstrap('libfido2')
+
 				hsm_device_path = storage['arguments']['HSM']
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
@@ -847,8 +849,7 @@ class Installer:
 					if storage['arguments']['HSM']:
 						kernel_options += f" rd.luks.uuid={real_device.uuid}"
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
-						kernel_options += f" rd.luks.options=tpm2-device=auto,fido2-device=auto,password-echo=no"
-						# kernel_options += f" rd.luks.options={real_device.uuid}=tpm2-device=auto,fido2-device=auto,password-echo=no"
+						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
 					else:
 						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
 
