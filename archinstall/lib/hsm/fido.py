@@ -37,7 +37,7 @@ def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 		}
 
 	return devices
-	
+
 def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :str) -> bool:
 	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device_path} {partition.real_device}", peak_output=True)
 	pw_inputted = False

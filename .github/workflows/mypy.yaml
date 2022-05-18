@@ -7,11 +7,10 @@ jobs:
             image: archlinux:latest
         steps:
             - uses: actions/checkout@v2
-            - run: pacman --noconfirm -Syu python python-pip
+            - run: pacman --noconfirm -Syu python mypy python-pip
             - run: python -m pip install --upgrade pip
-            - run: pip install fastapi pydantic mypy
+            - run: pip install fastapi pydantic
             - run: python --version
-            - run: cat archinstall/__init__.py | grep "version"
             - run: mypy --version
             # one day this will be enabled
               # run: mypy --strict --module archinstall || exit 0
