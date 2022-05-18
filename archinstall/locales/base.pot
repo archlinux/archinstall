@@ -734,3 +734,15 @@ msgstr ""
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Free space"
+msgstr ""
+
+msgid "Bus-type"
+msgstr ""
