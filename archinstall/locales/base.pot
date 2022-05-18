@@ -731,3 +731,6 @@ msgstr ""
 
 msgid "Select which partitions to mark for formatting:"
 msgstr ""
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr ""
