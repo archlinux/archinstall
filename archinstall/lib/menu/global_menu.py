@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
 
@@ -33,10 +33,15 @@ from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_additional_repositories
+from ..user_interaction.partitioning_conf import current_partition_layout
+
+if TYPE_CHECKING:
+	_: Any
+
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
-		super().__init__(data_store=data_store, auto_cursor=True)
+		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def _setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
@@ -69,7 +74,10 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Drive(s)'),
-				lambda preset: self._select_harddrives(preset))
+				lambda preset: self._select_harddrives(preset),
+				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
+				preview_func=self._prev_harddrives,
+		)
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Disk layout'),
@@ -78,6 +86,8 @@ class GlobalMenu(GeneralMenu):
 					storage['arguments'].get('harddrives', []),
 					storage['arguments'].get('advanced', False)
 				),
+				preview_func=self._prev_disk_layouts,
+				display_func=lambda x: self._display_disk_layout(x),
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
@@ -131,7 +141,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Profile'),
 				lambda preset: self._select_profile(preset),
-				display_func=lambda x: x if x else 'None')
+				display_func=lambda x: x if x else 'None'
+			)
 		self._menu_options['audio'] = \
 			Selector(
 				_('Audio'),
@@ -189,7 +200,7 @@ class GlobalMenu(GeneralMenu):
 
 	def _update_install_text(self, name :str = None, result :Any = None):
 		text = self._install_text()
-		self._menu_options.get('install').update_description(text)
+		self._menu_options['install'].update_description(text)
 
 	def post_callback(self,name :str = None ,result :Any = None):
 		self._update_install_text(name, result)
@@ -225,6 +236,35 @@ class GlobalMenu(GeneralMenu):
 			else:
 				return str(cur_value)
 
+	def _prev_harddrives(self) -> Optional[str]:
+		selector = self._menu_options['harddrives']
+		if selector.has_selection():
+			drives = selector.current_selection
+			return '\n\n'.join([d.display_info for d in drives])
+		return None
+
+	def _prev_disk_layouts(self) -> Optional[str]:
+		selector = self._menu_options['disk_layouts']
+		if selector.has_selection():
+			layouts: Dict[str, Dict[str, Any]] = selector.current_selection
+
+			output = ''
+			for device, layout in layouts.items():
+				output += f'{_("Device")}: {device}\n\n'
+				output += current_partition_layout(layout['partitions'], with_title=False)
+				output += '\n\n'
+
+			return output.rstrip()
+
+		return None
+
+	def _display_disk_layout(self, current_value: Optional[Dict[str, Any]]) -> str:
+		if current_value:
+			total_partitions = [entry['partitions'] for entry in current_value.values()]
+			total_nr = sum([len(p) for p in total_partitions])
+			return f'{total_nr} {_("Partitions")}'
+		return ''
+
 	def _prev_install_missing_config(self) -> Optional[str]:
 		if missing := self._missing_configs():
 			text = str(_('Missing configurations:\n'))
@@ -247,17 +287,17 @@ class GlobalMenu(GeneralMenu):
 		if not check('harddrives'):
 			missing += ['Hard drives']
 		if check('harddrives'):
-			if not self._menu_options.get('harddrives').is_empty() and not check('disk_layouts'):
+			if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
 				missing += ['Disk layout']
 
 		return missing
 
-	def _set_root_password(self):
+	def _set_root_password(self) -> Optional[str]:
 		prompt = str(_('Enter root password (leave blank to disable root): '))
 		password = get_password(prompt=prompt)
 		return password
 
-	def _select_encrypted_password(self):
+	def _select_encrypted_password(self) -> Optional[str]:
 		if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
 			return passwd
 		else:
@@ -271,7 +311,7 @@ class GlobalMenu(GeneralMenu):
 
 		return ntp
 
-	def _select_harddrives(self, old_harddrives : list) -> list:
+	def _select_harddrives(self, old_harddrives : list) -> List:
 		harddrives = select_harddrives(old_harddrives)
 
 		if len(harddrives) == 0:
@@ -288,7 +328,7 @@ class GlobalMenu(GeneralMenu):
 
 		# in case the harddrives got changed we have to reset the disk layout as well
 		if old_harddrives != harddrives:
-			self._menu_options.get('disk_layouts').set_current_selection(None)
+			self._menu_options['disk_layouts'].set_current_selection(None)
 			storage['arguments']['disk_layouts'] = {}
 
 		return harddrives
@@ -340,11 +380,11 @@ class GlobalMenu(GeneralMenu):
 
 		return ret
 
-	def _create_superuser_account(self):
+	def _create_superuser_account(self) -> Optional[Dict[str, Dict[str, str]]]:
 		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))
 		return superusers if superusers else None
 
-	def _create_user_account(self):
+	def _create_user_account(self) -> Dict[str, Dict[str, str | None]]:
 		users = ask_for_additional_users(str(_('Manage ordinary user accounts: ')))
 		return users
 
@@ -356,7 +396,7 @@ class GlobalMenu(GeneralMenu):
 		else:
 			return list(superusers.keys()) if superusers else ''
 
-	def _users_resynch(self):
+	def _users_resynch(self) -> bool:
 		self.synch('!superusers')
 		self.synch('!users')
 		return False

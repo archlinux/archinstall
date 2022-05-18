@@ -64,7 +64,7 @@ class ManualNetworkConfig(ListManager):
 			elif self.action == self._action_delete:
 				del data[iface_name]
 
-	def _select_iface(self, existing_ifaces: List[str]) -> Optional[str]:
+	def _select_iface(self, existing_ifaces: List[str]) -> Optional[Any]:
 		all_ifaces = list_interfaces().values()
 		available = set(all_ifaces) - set(existing_ifaces)
 		choice = Menu(str(_('Select interface to add')), list(available), skip=True).run()
@@ -94,14 +94,14 @@ class ManualNetworkConfig(ListManager):
 					log("You need to enter a valid IP in IP-config mode.", level=logging.WARNING, fg='red')
 
 			# Implemented new check for correct gateway IP address
+			gateway = None
+
 			while 1:
-				gateway = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
+				gateway_input = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
 									edit_iface.gateway).run().strip()
 				try:
-					if len(gateway) == 0:
-						gateway = None
-					else:
-						ipaddress.ip_address(gateway)
+					if len(gateway_input) > 0:
+						ipaddress.ip_address(gateway_input)
 					break
 				except ValueError:
 					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
