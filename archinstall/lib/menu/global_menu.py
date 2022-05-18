@@ -85,6 +85,12 @@ class GlobalMenu(GeneralMenu):
 				lambda x: self._select_encrypted_password(),
 				display_func=lambda x: secret(x) if x else 'None',
 				dependencies=['harddrives'])
+		self._menu_options['HSM'] = Selector(
+			description=_('Use HSM to unlock encrypted drive'),
+			func=lambda preset: self._select_hsm(preset),
+			dependencies=['!encryption-password'],
+			default=None
+		)
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),

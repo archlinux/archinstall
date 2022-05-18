@@ -275,7 +275,7 @@ class BlockDevice:
 		count = 0
 		while count < 5:
 			for partition_uuid, partition in self.partitions.items():
-				if partition.uuid.lower() == uuid.lower():
+				if partition.part_uuid.lower() == uuid.lower():
 					return partition
 			else:
 				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)

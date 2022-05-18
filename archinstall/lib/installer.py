@@ -23,6 +23,7 @@ from .profiles import Profile
 from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+from .hsm import fido2_enroll
 
 if TYPE_CHECKING:
 	_: Any
@@ -126,7 +127,9 @@ class Installer:
 		self.MODULES = []
 		self.BINARIES = []
 		self.FILES = []
-		self.HOOKS = ["base", "udev", "autodetect", "keyboard", "keymap", "modconf", "block", "filesystems", "fsck"]
+		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
+		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
+		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
 		self._zram_enabled = False
@@ -241,16 +244,20 @@ class Installer:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
 				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
-			# i change a bit the naming conventions for the loop device
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+			
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
 				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
 					list_luks_handles.append([luks_handle,partition,password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
+
+			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
+				hsm_device_path = storage['arguments']['HSM']
+				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
 		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
@@ -609,6 +616,15 @@ class Installer:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+
+			if not storage['arguments']['HSM']:
+				# For now, if we don't use HSM we revert to the old
+				# way of setting up encryption hooks for mkinitcpio.
+				# This is purely for stability reasons, we're going away from this.
+				# * systemd -> udev
+				# * sd-vconsole -> keymap
+				self.HOOKS = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap') for hook in self.HOOKS]
+
 			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
@@ -643,8 +659,15 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if 'encrypt' not in self.HOOKS:
-					self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
+				if storage['arguments']['HSM']:
+					# Required bby mkinitcpio to add support for fido2-device options
+					self.pacstrap('libfido2')
+
+					if 'sd-encrypt' not in self.HOOKS:
+						self.HOOKS.insert(self.HOOKS.index('filesystems'), 'sd-encrypt')
+				else:
+					if 'encrypt' not in self.HOOKS:
+						self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
 
 		if not has_uefi():
 			self.base_packages.append('grub')
@@ -699,6 +722,14 @@ class Installer:
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
+
+		if storage['arguments']['HSM']:
+			# TODO:
+			# A bit of a hack, but we need to get vconsole.conf in there
+			# before running `mkinitcpio` because it expects it in HSM mode.
+			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
+				with vconsole.open('w') as fh:
+					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
 		self.mkinitcpio('-P')
 
@@ -814,11 +845,23 @@ class Installer:
 				if real_device := self.detect_encryption(root_partition):
 					# TODO: We need to detect if the encrypted device is a whole disk encryption,
 					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev {options_entry}')
+					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
+
+					kernel_options = f"options"
+
+					if storage['arguments']['HSM']:
+						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
+						# Note: tpm2-device and fido2-device don't play along very well:
+						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
+					else:
+						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
+
+					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.uuid} {options_entry}')
+					log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+					entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
 
 		self.helper_flags['bootloader'] = "systemd"
 
@@ -903,11 +946,11 @@ class Installer:
 			if real_device := self.detect_encryption(root_partition):
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.part_uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.part_uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 			else:
-				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+				kernel_parameters.append(f'root=PARTUUID={root_partition.part_uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 
 			SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 

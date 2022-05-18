@@ -45,9 +45,14 @@ from .lib.menu.selection_menu import (
 from .lib.translation import Translation, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
+from .lib.udev import udevadm_info
+from .lib.hsm import (
+	get_fido2_devices,
+	fido2_enroll
+)
 parser = ArgumentParser()
 
-__version__ = "2.4.2"
+__version__ = "2.4.3rc1"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
