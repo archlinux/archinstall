@@ -256,8 +256,6 @@ class Installer:
 				partition['device_instance'] = unlocked_device
 
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
-				self.pacstrap('libfido2')
-
 				hsm_device_path = storage['arguments']['HSM']
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
@@ -662,6 +660,9 @@ class Installer:
 
 			if self.detect_encryption(partition):
 				if storage['arguments']['HSM']:
+					# Required bby mkinitcpio to add support for fido2-device options
+					self.pacstrap('libfido2')
+
 					if 'sd-encrypt' not in self.HOOKS:
 						self.HOOKS.insert(self.HOOKS.index('filesystems'), 'sd-encrypt')
 				else:
