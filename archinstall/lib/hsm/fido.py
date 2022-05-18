@@ -1,8 +1,10 @@
 import typing
 import pathlib
 import getpass
+import logging
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..disk.partition import Partition
+from ..general import log
 
 def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 	"""
@@ -48,6 +50,8 @@ def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :
 			worker.write(bytes(password, 'UTF-8'))
 			pw_inputted = True
 
-		elif pin_inputted is False and bytes(f"please enter security token pin") in worker._trace_log.lower():
-			worker.write(bytes(getpass.getpass(), 'UTF-8'))
+		elif pin_inputted is False and bytes(f"please enter security token pin", 'UTF-8') in worker._trace_log.lower():
+			worker.write(bytes(getpass.getpass(" "), 'UTF-8'))
 			pin_inputted = True
+
+			log(f"You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds.", level=logging.INFO, fg="yellow")
