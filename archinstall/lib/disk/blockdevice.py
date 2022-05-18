@@ -34,10 +34,28 @@ class BlockDevice:
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		return self._str_repr
-	
+
 	@cached_property
 	def _str_repr(self) -> str:
 		return f"BlockDevice({self.device_or_backfile}, size={self._safe_size}GB, free_space={self._safe_free_space}, bus_type={self.bus_type})"
+
+	@cached_property
+	def display_info(self) -> str:
+		columns = {
+			str(_('Device')): self.device_or_backfile,
+			str(_('Size')): f'{self._safe_size}GB',
+			str(_('Free space')): f'{self._safe_free_space}',
+			str(_('Bus-type')): f'{self.bus_type}'
+		}
+
+		padding = max([len(k) for k in columns.keys()])
+
+		pretty = ''
+		for k, v in columns.items():
+			k = k.ljust(padding, ' ')
+			pretty += f'{k} = {v}\n'
+
+		return pretty.rstrip()
 
 	def __iter__(self) -> Iterator[Partition]:
 		for partition in self.partitions:
@@ -79,7 +97,7 @@ class BlockDevice:
 		for device in output['blockdevices']:
 			return device['pttype']
 
-	@property
+	@cached_property
 	def device_or_backfile(self) -> str:
 		"""
 		Returns the actual device-endpoint of the BlockDevice.
@@ -162,7 +180,7 @@ class BlockDevice:
 		from .filesystem import GPT
 		return GPT
 
-	@property
+	@cached_property
 	def uuid(self) -> str:
 		log('BlockDevice().uuid is untested!', level=logging.WARNING, fg='yellow')
 		"""
@@ -172,7 +190,7 @@ class BlockDevice:
 		"""
 		return SysCommand(f'blkid -s PTUUID -o value {self.path}').decode('UTF-8')
 
-	@property
+	@cached_property
 	def _safe_size(self) -> float:
 		from .helpers import convert_size_to_gb
 
@@ -184,7 +202,7 @@ class BlockDevice:
 		for device in output['blockdevices']:
 			return convert_size_to_gb(device['size'])
 
-	@property
+	@cached_property
 	def size(self) -> float:
 		from .helpers import convert_size_to_gb
 
@@ -193,28 +211,28 @@ class BlockDevice:
 		for device in output['blockdevices']:
 			return convert_size_to_gb(device['size'])
 
-	@property
+	@cached_property
 	def bus_type(self) -> str:
 		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device['tran']
 
-	@property
+	@cached_property
 	def spinning(self) -> bool:
 		output = json.loads(SysCommand(f"lsblk --json -o+ROTA,TRAN {self.path}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			return device['rota'] is True
 
-	@property
+	@cached_property
 	def _safe_free_space(self) -> Tuple[str, ...]:
 		try:
 			return '+'.join(part[2] for part in self.free_space)
 		except SysCallError:
 			return '?'
 
-	@property
+	@cached_property
 	def free_space(self) -> Tuple[str, ...]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
 		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
@@ -228,7 +246,7 @@ class BlockDevice:
 		except SysCallError as error:
 			log(f"Could not get free space on {self.path}: {error}", level=logging.DEBUG)
 
-	@property
+	@cached_property
 	def largest_free_space(self) -> List[str]:
 		info = []
 		for space_info in self.free_space:
@@ -240,7 +258,7 @@ class BlockDevice:
 					info = space_info
 		return info
 
-	@property
+	@cached_property
 	def first_free_sector(self) -> str:
 		if info := self.largest_free_space:
 			start = info[0]
@@ -248,7 +266,7 @@ class BlockDevice:
 			start = '512MB'
 		return start
 
-	@property
+	@cached_property
 	def first_end_sector(self) -> str:
 		if info := self.largest_free_space:
 			end = info[1]

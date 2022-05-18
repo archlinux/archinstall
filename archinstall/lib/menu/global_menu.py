@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
 
@@ -33,10 +33,15 @@ from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_additional_repositories
+from ..user_interaction.partitioning_conf import current_partition_layout
+
+if TYPE_CHECKING:
+	_: Any
+
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
-		super().__init__(data_store=data_store, auto_cursor=True)
+		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def _setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
@@ -69,7 +74,10 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['harddrives'] = \
 			Selector(
 				_('Drive(s)'),
-				lambda preset: self._select_harddrives(preset))
+				lambda preset: self._select_harddrives(preset),
+				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
+				preview_func=self._prev_harddrives,
+		)
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Select disk layout'),
@@ -78,6 +86,8 @@ class GlobalMenu(GeneralMenu):
 					storage['arguments'].get('harddrives', []),
 					storage['arguments'].get('advanced', False)
 				),
+				preview_func=self._prev_disk_layouts,
+				display_func=lambda x: self._display_disk_layout(x),
 				dependencies=['harddrives'])
 		self._menu_options['!encryption-password'] = \
 			Selector(
@@ -125,7 +135,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Profile'),
 				lambda preset: self._select_profile(preset),
-				display_func=lambda x: x if x else 'None')
+				display_func=lambda x: x if x else 'None'
+			)
 		self._menu_options['audio'] = \
 			Selector(
 				_('Audio'),
@@ -218,6 +229,35 @@ class GlobalMenu(GeneralMenu):
 				return f'Configured ifaces: {ifaces}'
 			else:
 				return str(cur_value)
+
+	def _prev_harddrives(self) -> Optional[str]:
+		selector = self._menu_options.get('harddrives')
+		if selector.has_selection():
+			drives = selector.current_selection
+			return '\n\n'.join([d.display_info for d in drives])
+		return None
+
+	def _prev_disk_layouts(self) -> Optional[str]:
+		selector = self._menu_options.get('disk_layouts')
+		if selector.has_selection():
+			layouts: Dict[str, Dict[str, str]] = selector.current_selection
+
+			output = ''
+			for device, layout in layouts.items():
+				output += f'{_("Device")}: {device}\n\n'
+				output += current_partition_layout(layout['partitions'], with_title=False)
+				output += '\n\n'
+
+			return output.rstrip()
+
+		return None
+
+	def _display_disk_layout(self, current_value: Optional[Dict[str, Any]]) -> str:
+		if current_value:
+			total_partitions = [entry['partitions'] for entry in current_value.values()]
+			total_nr = sum([len(p) for p in total_partitions])
+			return f'{total_nr} {_("Partitions")}'
+		return ''
 
 	def _prev_install_missing_config(self) -> Optional[str]:
 		if missing := self._missing_configs():
