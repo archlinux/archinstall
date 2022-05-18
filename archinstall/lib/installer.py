@@ -127,6 +127,8 @@ class Installer:
 		self.MODULES = []
 		self.BINARIES = []
 		self.FILES = []
+		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
+		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
 
@@ -847,15 +849,17 @@ class Installer:
 					kernel_options = f"options"
 
 					if storage['arguments']['HSM']:
-						kernel_options += f" rd.luks.uuid={real_device.uuid}"
+						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
+						# Note: tpm2-device and fido2-device don't play along very well:
+						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
 					else:
 						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
 
 					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 				else:
-					log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+					log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
 					entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
 
 		self.helper_flags['bootloader'] = "systemd"
