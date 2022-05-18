@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Optional, List
 
@@ -5,7 +7,6 @@ from typing import Optional, List
 class VersionDef:
 	version_string: str
 
-	@classmethod
 	def parse_version(self) -> List[str]:
 		if '.' in self.version_string:
 			versions = self.version_string.split('.')
@@ -14,38 +15,60 @@ class VersionDef:
 
 		return versions
 
-	@classmethod
 	def major(self) -> str:
 		return self.parse_version()[0]
 
-	@classmethod
 	def minor(self) -> str:
 		versions = self.parse_version()
 		if len(versions) >= 2:
 			return versions[1]
 
-	@classmethod
+		return "0"
+
 	def patch(self) -> str:
 		versions = self.parse_version()
 		if '-' in versions[-1]:
 			_, patch_version = versions[-1].split('-', 1)
 			return patch_version
 
-	def __eq__(self, other :'VersionDef') -> bool:
-		if other.major == self.major and \
-			other.minor == self.minor and \
-			other.patch == self.patch:
+		return "0"
+
+	def __eq__(self, other :object) -> bool:
+		if not isinstance(other, VersionDef):
+			return NotImplemented
+
+		if other.major() == self.major() and \
+			other.minor() == self.minor() and \
+			other.patch() == self.patch():
 
 			return True
 		return False
 		
-	def __lt__(self, other :'VersionDef') -> bool:
-		if self.major > other.major:
+	def __lt__(self, other :object) -> bool:
+		if not isinstance(other, VersionDef):
+			return NotImplemented
+
+		if self.major() < other.major():
 			return False
-		elif self.minor and other.minor and self.minor > other.minor:
+		elif self.minor() and other.minor() and self.minor() > other.minor():
 			return False
-		elif self.patch and other.patch and self.patch > other.patch:
+		elif self.patch() and other.patch() and self.patch() > other.patch():
 			return False
+		else:
+			return True
+
+	def __gt__(self, other :object) -> bool:
+		if not isinstance(other, VersionDef):
+			return NotImplemented
+
+		if self.major() < other.major():
+			return False
+		elif self.minor() and other.minor() and self.minor() < other.minor():
+			return False
+		elif self.patch() and other.patch() and self.patch() < other.patch():
+			return False
+		else:
+			return True
 
 	def __str__(self) -> str:
 		return self.version_string
@@ -83,11 +106,18 @@ class PackageSearchResult:
 	def pkg_version(self) -> str:
 		return self.pkgver
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other :object) -> bool:
+		if not isinstance(other, PackageSearchResult):
+			return NotImplemented
+
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other :object) -> bool:
+		if not isinstance(other, PackageSearchResult):
+			return NotImplemented
+
 		return self.pkg_version < other.pkg_version
+
 
 @dataclass
 class PackageSearch:
@@ -98,8 +128,6 @@ class PackageSearch:
 	page: int
 	results: List[PackageSearchResult]
 
-	def __post_init__(self):
-		self.results = [PackageSearchResult(**x) for x in self.results]
 
 @dataclass
 class LocalPackage:
@@ -129,8 +157,14 @@ class LocalPackage:
 	def pkg_version(self) -> str:
 		return self.version
 
-	def __eq__(self, other :'VersionDef') -> bool:
+	def __eq__(self, other :object) -> bool:
+		if not isinstance(other, LocalPackage):
+			return NotImplemented
+
 		return self.pkg_version == other.pkg_version
 
-	def __lt__(self, other :'VersionDef') -> bool:
+	def __lt__(self, other :object) -> bool:
+		if not isinstance(other, LocalPackage):
+			return NotImplemented
+
 		return self.pkg_version < other.pkg_version
