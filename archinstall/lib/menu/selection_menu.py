@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_archinstall_language(preset_value: str) -> Optional[str]:
+def select_archinstall_language(preset_value: str) -> Optional[Any]:
 	"""
 	copied from user_interaction/general_conf.py as a temporary measure
 	"""
