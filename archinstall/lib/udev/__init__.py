@@ -1,0 +1,1 @@
+from .udevadm import udevadm_info
