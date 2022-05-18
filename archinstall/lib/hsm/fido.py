@@ -1,5 +1,6 @@
 import typing
 import pathlib
+import getpass
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..disk.partition import Partition
 
@@ -41,7 +42,12 @@ def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :str) -> bool:
 	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device_path} {partition.real_device}", peak_output=True)
 	pw_inputted = False
+	pin_inputted = False
 	while worker.is_alive():
 		if pw_inputted is False and bytes(f"please enter current passphrase for disk {partition.real_device}", 'UTF-8') in worker._trace_log.lower():
 			worker.write(bytes(password, 'UTF-8'))
 			pw_inputted = True
+
+		elif pin_inputted is False and bytes(f"please enter security token pin") in worker._trace_log.lower():
+			worker.write(bytes(getpass.getpass(), 'UTF-8'))
+			pin_inputted = True
