@@ -667,27 +667,31 @@ msgstr ""
 msgid ""
 "Choose which servers to install, if none then a minimal installation wil be "
 "done"
-msgstr ""
+msgstr 
+"Escolha quais servidores instalar, se nenhum for escolhido então"
+"uma instalação mínima será feita"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Instala um sistema mínimo assim como xorg e drivers de vídeo."
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Tecle Enter para continuar."
 
 msgid ""
 "Would you like to chroot into the newly created installation and perform "
 "post-installation configuration?"
 msgstr ""
+"Deseja mudar para a raiz da nova instalação e realizar"
+"configurações pós-instalação?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr ""
+msgstr "Tem certeza que desejar resetar essa configuração?"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr ""
+msgstr "Selecione uma ou mais unidades para usar e configurar\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr ""
+msgstr "Quaisquer modificações para configurações existentes vão resetar o layout de disco!"
 
 msgid ""
 "If you reset the harddrive selection this will also reset the current disk "
@@ -695,21 +699,24 @@ msgid ""
 msgstr ""
 
 msgid "Save and exit"
-msgstr ""
+msgstr "Salvar e sair"
 
 msgid ""
 "{}\n"
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
+"{}\n"
+"contém partições enfileiradas partitions, isso irá removê-las, tem certeza?"
+
 
 msgid "No audio server"
-msgstr ""
+msgstr "Sem servidor de áudio"
 
 msgid "(default)"
-msgstr ""
+msgstr "(padrão)"
 
 msgid "Use ESC to skip"
-msgstr ""
+msgstr "Use ESC para pular"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
@@ -723,10 +730,10 @@ msgid "Copy to: "
 msgstr "Copiar para: "
 
 msgid "Edit: "
-msgstr "Edit: "
+msgstr "Editar: "
 
 msgid "Key: "
-msgstr "Key: "
+msgstr "Chave: "
 
 msgid "Edit {}: "
 msgstr "Editar {}: "
@@ -741,9 +748,12 @@ msgid ""
 "You can skip selecting a drive and partitioning and use whatever drive-setup "
 "is mounted at /mnt (experimental)"
 msgstr ""
+"Você pode ignorar a seleção de unidade e particionar seja lá o que estiver"
+"montado em /mnt (experimental)"
+
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Selecione um dos discos ou pule e use /mnt como padrão"
+msgstr "Selecione um dos discos ou ignore e use /mnt como padrão"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Selecione quais partições marcar para formatar:"
