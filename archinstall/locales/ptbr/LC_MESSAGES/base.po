@@ -32,7 +32,7 @@ msgid "Username for required superuser with sudo privileges: "
 msgstr "Nome do usuário para superusuário com privilégios sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algum usuário adicional para adicionar (deixe em branco para ignorar): "
+msgstr "Algum outro usuário para adicionar (deixe em branco para ignorar): "
 
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Este usuário deve ser um superusuário? (sudoer)?"
@@ -56,7 +56,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Se deseja um navegador web, como firefox ou chromium, deve especificá-lo na próximo prompt."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para ignorar): "
+msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiar a configuração de rede da ISO para a instalação"
@@ -96,10 +96,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Digite o tipo de sistema de arquivos desejado para a partição"
 
 msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Digite o setor de início (percentagem ou número do bloco, padrão: {}): "
+msgstr "Digite o setor de início (porcentagem ou número do bloco, padrão: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Digite o setor final da partição (percentagem ou número de bloco, ex: {}): "
+msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contém partições em fila, isto irá remover essas, tem certeza?"
@@ -123,7 +123,7 @@ msgstr ""
 "Selecione por índice quais partições montar em"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Os pontos de montagem das partições são relativos à dentro da instalação, o boot seria /boot por exemplo."
+msgstr " * Os pontos de montagem das partições são relativos aos de dentro da instalação, o boot seria /boot por exemplo."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr "Selecione onde montar a partição (deixe em branco para remover o ponto de montagem): "
@@ -131,11 +131,11 @@ msgstr "Selecione onde montar a partição (deixe em branco para remover o ponto
 msgid ""
 "{}\n"
 "\n"
-"Select which partition to mask for formatting"
+"Select which partition to mark for formatting"
 msgstr ""
 "{}\n"
 "\n"
-"Selecione a partição a mascarar para formatar"
+"Selecione qual partição marcar para formatar"
 
 msgid ""
 "{}\n"
@@ -165,7 +165,7 @@ msgstr ""
 "Selecione qual partição definir um sistema de arquivos"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Escreve o tipo de sistema de ficheiros desejado para a partição: "
+msgstr "Digite o tipo de sistema de arquivos desejado para a partição: "
 
 msgid "Archinstall language"
 msgstr "Idioma do Archinstall"
@@ -174,31 +174,31 @@ msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Limpar todos os discos selecionados e usar um esquema de partições padrão de melhor desempenho"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Seleciona o que fazer com cada disco individual (seguido de uso de partição)"
+msgstr "Selecione o que fazer com cada disco individual (seguido de uso de partição)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Seleciona o que desejas fazer com os dispositivos de bloco selecionados"
+msgstr "Selecione o que deseja fazer com os dispositivos de bloco selecionados"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Esta é uma lista de perfis pré-programados, podem facilitar a instalação de ambientes de trabalho"
+msgstr "Esta é uma lista de perfis pré-programados, podem facilitar a instalação de ambientes gráficos"
 
 msgid "Select keyboard layout"
-msgstr "Seleciona o esquema de teclado"
+msgstr "Selecione o layout de teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Seleciona uma das regiões para descarregar pacotes"
+msgstr "Selecione uma das regiões para baixar os pacotes"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Seleciona um ou mais discos rígidos para usar e configurar"
+msgstr "Selecione um ou mais discos rígidos para usar e configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para uma melhor compatibilidade com o teu hardware AMD, poderás querer usar a opção de todos os drivers open-source ou com proprietários da AMD / ATI."
+msgstr "Para uma melhor compatibilidade com o teu hardware AMD, talvez queira usar a opção de todos os drivers open-source ou com proprietários da AMD / ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Para uma melhor compatibilidade com o teu hardware Intel, poderás querer usar a opção de todos os drivers open-source ou com proprietários da Intel.\n"
+msgstr "Para uma melhor compatibilidade com o teu hardware Intel, talvez queira usar a opção de todos os drivers open-source ou com proprietários da Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Para uma melhor compatibilidade com o teu hardware Nvidia, poderás querer usar o driver proprietário da Nvidia.\n"
+msgstr "Para uma melhor compatibilidade com o teu hardware Nvidia, talvez queira usar o driver proprietário da Nvidia.\n"
 
 msgid ""
 "\n"
@@ -207,31 +207,31 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Seleciona um driver de gráficos ou deixa em branco para instalar todos os drivers open-source"
+"Selecione um driver gráfico ou deixe em branco para instalar todos os drivers open-source"
 
 msgid "All open-source (default)"
 msgstr "Todos os drivers open-source (padrão)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Escolhe quais kernels usar ou deixa em branco para o padrão \"{}\""
+msgstr "Escolhe quais kernels usar ou deixe em branco para o kernel padrão \"{}\""
 
 msgid "Choose which locale language to use"
-msgstr "Escolhe qual idioma de localização usar"
+msgstr "Escolha qual idioma de localização usar"
 
 msgid "Choose which locale encoding to use"
-msgstr "Escolhe qual codificação de localização usar"
+msgstr "Escolha qual codificação de localização usar"
 
 msgid "Select one of the values shown below: "
-msgstr "Seleciona uma das opções mostradas abaixo: "
+msgstr "Selecione uma das opções mostradas abaixo: "
 
 msgid "Select one or more of the options below: "
-msgstr "Seleciona uma ou mais opções abaixo: "
+msgstr "Selecione uma ou mais opções abaixo: "
 
 msgid "Adding partition...."
 msgstr "Adicionando partição...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Precisas de colocar um tipo de sistema de ficheiros valido. Consulta o `man parted` para ver as opções validas."
+msgstr "Você precisa colocar um tipo de sistema de arquivo válido. Consulte o `man parted` para ver as opções validas."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "Erro: Listando os perfis em URL \"{}\" resulta em:"
@@ -240,7 +240,7 @@ msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Erro: Não foi possível decodificar \"{}\" como JSON:"
 
 msgid "Keyboard layout"
-msgstr "Esquema do teclado"
+msgstr "Layout do teclado"
 
 msgid "Mirror region"
 msgstr "Região do mirror"
@@ -252,22 +252,22 @@ msgid "Locale encoding"
 msgstr "Codificação de localização"
 
 msgid "Drive(s)"
-msgstr "Discos rígidos"
+msgstr "Unidades de armazenamento"
 
 msgid "Select disk layout"
-msgstr "Seleciona o esquema de disco"
+msgstr "Selecione o esquema de disco"
 
 msgid "Set encryption password"
-msgstr "Define a palavra-passe de encriptação"
+msgstr "Defina a senha de encriptação"
 
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Bootloader"
-msgstr "Carregador de arranque"
+msgstr "Inicializador"
 
 msgid "root password"
-msgstr "Palavra-passe de root"
+msgstr "senha de root"
 
 msgid "Superuser account"
 msgstr "Conta de superusuário"
@@ -302,7 +302,7 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Decidiste ignorar a seleção de disco rígido\n"
+"Você decidiu ignorar a seleção de disco rídigo\n"
 "e usar qualquer configuração de disco rígido montada em {} (experimental)\n"
 "ATENÇÃO: Archinstall não verificar a viabilidade desta configuração\n"
 "Deseja continuar?"
