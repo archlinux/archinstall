@@ -1019,7 +1019,7 @@ class Installer:
 		if type(profile) == str:
 			profile = Profile(self, profile)
 
-		self.log(f'Installing network profile {profile}', level=logging.INFO)
+		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
 		return profile.install()
 
 	def enable_sudo(self, entity: str, group :bool = False) -> bool:
