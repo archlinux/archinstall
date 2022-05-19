@@ -95,6 +95,7 @@ msgid ""
 "Select what to do with\n"
 "{}"
 msgstr "Selecione o que fazer com\n"
+"{}"
 
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Digite o tipo de sistema de arquivos desejado para a partição"
