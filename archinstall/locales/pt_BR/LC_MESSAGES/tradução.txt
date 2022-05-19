@@ -74,7 +74,7 @@ msgstr "Selecione uma interface de rede para configurar"
 
 msgid ""
 "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Selecione qual modo configurar para \"{}\" ou ignore para usar o modo padrão \"{}\"
+msgstr "Selecione qual modo configurar para \"{}\" ou ignore para usar o modo padrão \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Digite o IP e a subrede para {} (exemplo: 192.168.0.5/24): "
