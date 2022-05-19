@@ -483,7 +483,7 @@ msgid ""
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
-{}\n"
+"{}\n"
 "\n"
 "Selecione qual partição definir subvolumes"
 
