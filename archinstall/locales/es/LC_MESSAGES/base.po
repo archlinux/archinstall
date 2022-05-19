@@ -69,13 +69,13 @@ msgid "Select one network interface to configure"
 msgstr "Selecciona una interfaz de red para configurar"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Selecciona el modo para configurar \"{}\" u omitir para usar el modo \"{}\" predeterminado"
+msgstr "Seleccione qué modo configurar para \"{}\" o salte para usar el modo predeterminado \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Escriba la IP y subred para {} (ejemplo: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Escriba la IP de su puerta de enlace (router) o deje en blanco para no usar ninguna: "
+msgstr "Escriba la IP de su puerta de enlace (enrutador) o deje en blanco para no usar ninguna: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "Escriba los servidores DNS (separados por espacios, en blanco para no usar ninguno): "
@@ -94,7 +94,7 @@ msgstr ""
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Escriba el tipo de sistema de archivos que desea para la partición"
+msgstr "Ingrese un tipo de sistema de archivos deseado para la partición"
 
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Escriba el sector de inicio (porcentaje o número de bloque, por defecto: {}): "
@@ -127,7 +127,7 @@ msgid " * Partition mount-points are relative to inside the installation, the bo
 msgstr " * Los puntos de montaje de partición son relativos a la instalación, el arranque sería /boot como ejemplo."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Selecciona dónde montar la partición (deja en blanco para eliminar el punto de montaje): "
+msgstr "Seleccione dónde montar la partición (deja en blanco para eliminar el punto de montaje): "
 
 msgid ""
 "{}\n"
@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a ocultar para formatear"
+"Seleccione qué partición enmascarar para formatear"
 
 msgid ""
 "{}\n"
@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a marcar como encriptada"
+"Seleccione qué partición marcar como encriptada"
 
 msgid ""
 "{}\n"
@@ -154,7 +154,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a marcar como bootable"
+"Seleccione qué partición marcar como de arranque"
 
 msgid ""
 "{}\n"
@@ -163,7 +163,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a configurar con un sistema de archivos"
+"Seleccione en qué partición establecer un sistema de archivos"
 
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Escriba el tipo de sistema de archivos que desea para la partición: "
@@ -172,25 +172,25 @@ msgid "Archinstall language"
 msgstr "Idioma de Archinstall"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Limpiar todos los discos seleccionados y usar una distribución de particiones por defecto"
+msgstr "Borrar todas las unidades seleccionadas y use un diseño de partición predeterminado de mejor esfuerzo"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Selecciona qué hacer con cada disco individual (seguido por el uso de partición)"
+msgstr "Seleccione qué hacer con cada unidad individual (seguido del uso de la partición)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Selecciona qué quieres hacer con los dispositivos de bloque seleccionados"
+msgstr "Seleccione lo que desea hacer con los dispositivos de bloque seleccionados"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de perfiles pre-programados, pueden facilitar la instalación de aplicaciones como entornos de escritorio"
 
 msgid "Select keyboard layout"
-msgstr "Selecciona la distribución del teclado"
+msgstr "Seleccione la distribución del teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Selecciona una de las regiones para descargar paquetes"
+msgstr "Seleccione una de las regiones para descargar paquetes desde"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Selecciona uno o más discos duros para usar y configurar"
+msgstr "Seleccione uno o más discos duros para usar y configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
 msgstr "Para la mejor compatibilidad con tu hardware AMD, puedes querer usar tanto la opción de todo código abierto como la opción AMD / ATI."
@@ -208,10 +208,10 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Selecciona un controlador de gráficos o deja en blanco para instalar todos los controladores de código abierto"
+"Seleccione un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
 
 msgid "All open-source (default)"
-msgstr "Todo código abierto (por defecto)"
+msgstr "Todo de código abierto (predeterminado)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Elige qué kernels usar o deja en blanco para usar los por defecto \"{}\""
@@ -223,10 +223,10 @@ msgid "Choose which locale encoding to use"
 msgstr "Elige qué codificación local usar"
 
 msgid "Select one of the values shown below: "
-msgstr "Selecciona uno de los valores mostrados abajo: "
+msgstr "Seleccione uno de los valores que se muestran a continuación: "
 
 msgid "Select one or more of the options below: "
-msgstr "Selecciona una o más opciones de abajo: "
+msgstr "Seleccione una o más de las siguientes opciones: "
 
 msgid "Adding partition...."
 msgstr "Añadiendo partición..."
@@ -244,7 +244,7 @@ msgid "Keyboard layout"
 msgstr "Distribución del teclado"
 
 msgid "Mirror region"
-msgstr "Región del mirror"
+msgstr "Región del servidor"
 
 msgid "Locale language"
 msgstr "Idioma local"
@@ -253,10 +253,10 @@ msgid "Locale encoding"
 msgstr "Codificación local"
 
 msgid "Drive(s)"
-msgstr "Discos duros"
+msgstr "Disco(s)"
 
 msgid "Select disk layout"
-msgstr "Selecciona la distribución de los discos"
+msgstr "Seleccione el diseño del disco"
 
 msgid "Set encryption password"
 msgstr "Establecer la contraseña de cifrado"
@@ -268,7 +268,7 @@ msgid "Bootloader"
 msgstr "Cargador de arranque"
 
 msgid "root password"
-msgstr "Contraseña de root"
+msgstr "contraseña de root"
 
 msgid "Superuser account"
 msgstr "Cuenta de superusuario"
@@ -295,7 +295,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "Sincronización automática de hora (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Instalar ({} ajuste(s) faltantes)"
+msgstr "Instalar ({} ajuste(s) faltante(s))"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -336,7 +336,7 @@ msgid "Set desired filesystem for a partition"
 msgstr "Establecer el sistema de archivos deseado para una partición"
 
 msgid "Abort"
-msgstr "Cancelar"
+msgstr "Abortar"
 
 msgid "Hostname"
 msgstr "Nombre del host"
@@ -345,7 +345,7 @@ msgid "Not configured, unavailable unless setup manually"
 msgstr "No configurado, no disponible a menos que se configure manualmente"
 
 msgid "Timezone"
-msgstr "Selecciona la zona horaria"
+msgstr "Zona horaria"
 
 msgid "Set/Modify the below options"
 msgstr "Establecer/Modificar las opciones siguientes"
@@ -427,7 +427,7 @@ msgid "Select an action for < {} >"
 msgstr "Seleccione una acción para < {} >"
 
 msgid "Copy to new key:"
-msgstr "Copiar a nueva clave :"
+msgstr "Copiar a nueva clave:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Tipo de nic desconocido: {}. Los valores posibles son {}"
@@ -708,7 +708,7 @@ msgstr ""
 "\n"
 
 msgid "Copy to: "
-msgstr "Copiar a : "
+msgstr "Copiar a: "
 
 msgid "Edit: "
 msgstr "Editar: "
@@ -720,24 +720,19 @@ msgid "Edit {}: "
 msgstr "Editar {}: "
 
 msgid "Add: "
-msgstr ""
+msgstr "Añadir: "
 
-#, fuzzy
 msgid "Value: "
-msgstr "Valor :"
+msgstr "Valor: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr ""
+msgstr "Puede omitir la selección de una unidad y la partición y usar cualquier configuración de unidad que esté montada en /mnt (experimental)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr ""
+msgstr "Seleccione uno de los discos u omita y use /mnt como predeterminado"
 
-#, fuzzy
 msgid "Select which partitions to mark for formatting:"
-msgstr ""
-"{}\n"
-"\n"
-"Selecciona la partición a ocultar para formatear"
+msgstr "Seleccione qué particiones marcar para formatear:"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
