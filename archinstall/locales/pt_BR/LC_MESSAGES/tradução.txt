@@ -12,7 +12,7 @@ msgstr "[!] Um arquivo de log foi criado aqui: {} {}"
 msgid ""
 "    Please submit this issue (and file) to https://github.com/archlinux/"
 "archinstall/issues"
-msgstr "Por favor envie este problema (e o arquivo) para https://github.com/archlinux/archinstall/issues"
+msgstr "    Por favor envie este problema (e o arquivo) para https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
 msgstr "Deseja realmente abortar?"
