@@ -587,7 +587,7 @@ msgid "Subvolume options"
 msgstr "Opções do subvolume"
 
 msgid "Save"
-msgstr "Guardar"
+msgstr "Salvar"
 
 msgid "Subvolume name :"
 msgstr "Nome do subvolume :"
@@ -629,13 +629,13 @@ msgid "Minimum capacity for Arch Linux partition: {}GB"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 msgid "yes"
-msgstr ""
+msgstr "sim"
 
 msgid "no"
-msgstr ""
+msgstr "não"
 
 msgid "set: {}"
 msgstr ""
@@ -651,14 +651,14 @@ msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr ""
 
 msgid "Add interface"
-msgstr ""
+msgstr "Adicionar interface"
 
 msgid "Edit interface"
-msgstr ""
+msgstr "Editar interface"
 
 #, fuzzy
 msgid "Delete interface"
-msgstr "Eliminar Utilizador"
+msgstr "Deletar interface"
 
 #, fuzzy
 msgid "Select interface to add"
@@ -666,7 +666,7 @@ msgstr "Selecione uma interface de rede para configurar"
 
 #, fuzzy
 msgid "Manual configuration"
-msgstr "Guardar configuração"
+msgstr "Configuração manual"
 
 #, fuzzy
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
@@ -680,10 +680,10 @@ msgid "Provides a selection of desktop environments and tiling window managers, 
 msgstr ""
 
 msgid "Select your desired desktop environment"
-msgstr ""
+msgstr "Selecione seu ambiente gráfico desejado"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr ""
+msgstr "Uma instalação básica que permite você customizar o Arch Linux como desejar."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr ""
@@ -692,17 +692,17 @@ msgid "Choose which servers to install, if none then a minimal installation wil 
 msgstr ""
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr ""
+msgstr "Instala um sistema mínimo assim como o xorg e drivers de vídeo"
 
 msgid "Press Enter to continue."
-msgstr ""
+msgstr "Aperte Enter para continuar."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
 msgstr ""
 
 #, fuzzy
 msgid "Are you sure you want to reset this setting?"
-msgstr "tens a certeza que quer usar?"
+msgstr "Tem certeza a certeza que deseja resetar essa configuração?"
 
 #, fuzzy
 msgid "Select one or more hard drives to use and configure\n"
@@ -716,7 +716,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Save and exit"
-msgstr "Configurar e sair"
+msgstr "Salvar e sair"
 
 #, fuzzy
 msgid ""
@@ -726,7 +726,7 @@ msgstr "{} contem partições em fila, isto irá remover essas, tens a certeza?"
 
 #, fuzzy
 msgid "No audio server"
-msgstr "Escolhe um servidor de áudio"
+msgstr "Escolha um servidor de áudio"
 
 msgid "(default)"
 msgstr ""
@@ -734,13 +734,13 @@ msgstr ""
 #, fuzzy
 msgid "Use ESC to skip"
 msgstr ""
-"Usa ESC para saltar\n"
+"Use ESC para pular\n"
 "\n"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
-msgstr ""
+msgstr "Use CTRL+C para resetar a seleção atual"
 
 #, fuzzy
 msgid "Copy to: "
@@ -751,18 +751,18 @@ msgid "Edit: "
 msgstr "Editar :"
 
 msgid "Key: "
-msgstr ""
+msgstr "Chave: "
 
 #, fuzzy
 msgid "Edit {}: "
-msgstr "Editar :"
+msgstr "Editar {}:"
 
 msgid "Add: "
-msgstr ""
+msgstr "Adicionar"
 
 #, fuzzy
 msgid "Value: "
-msgstr "Valor :"
+msgstr "Valor: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
 msgstr ""
