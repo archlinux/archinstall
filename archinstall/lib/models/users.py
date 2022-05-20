@@ -8,16 +8,21 @@ class User:
 	password: str
 	sudo: bool
 
+	@property
+	def display(self) -> str:
+		password = '*' * len(self.password)
+		return f'{_("Username")}: {self.username:16} {_("Password")}: {password:16} sudo: {str(self.sudo)}'
+
 	@classmethod
 	def _parse(cls, config_users: List[Dict[str, str]]) -> List['User']:
 		users = []
 
 		for entry in config_users:
 			username = entry.get('username', None)
-			password = entry.get('!password', None)
+			password = entry.get('!password', '')
 			sudo = entry.get('sudo', False)
 
-			if username is None or password is None:
+			if username is None:
 				continue
 
 			user = User(username, password, sudo)

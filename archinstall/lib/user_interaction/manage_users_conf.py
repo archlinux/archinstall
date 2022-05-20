@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import logging
 import re
-from dataclasses import dataclass
-from typing import Any, Dict, TYPE_CHECKING, List
+from typing import Any, Dict, TYPE_CHECKING, List, Optional
 
+from .utils import get_password
 from ..menu import Menu
 from ..menu.list_manager import ListManager
-from ..output import log
-from ..storage import storage
-from .utils import get_password
 from ..models.users import User
 
 if TYPE_CHECKING:
@@ -37,113 +33,75 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, self._actions, self._actions[0])
 
-	def reformat(self, data: List) -> Dict:
-		def format_element(elem :str):
-			# secret gives away the length of the password
-			if data[elem].get('!password'):
-				pwd = '*' * 16
-			else:
-				pwd = ''
-			if data[elem].get('sudoer'):
-				super_user = 'Superuser'
-			else:
-				super_user = ' '
-			return f"{elem:16}: password {pwd:16} {super_user}"
-
-		return {format_element(e): e for e in data}
+	def reformat(self, data: List[User]) -> Dict[str, User]:
+		return {e.display: e for e in data}
 
 	def action_list(self):
-		if self.target:
-			active_user = list(self.target.keys())[0]
-		else:
-			active_user = None
-		sudoer = self.target[active_user].get('sudoer', False)
-		if self.sudo is None:
-			return self._actions
-		if self.sudo and sudoer:
-			return self._actions
-		elif self.sudo and not sudoer:
-			return [self._actions[2]]
-		elif not self.sudo and sudoer:
-			return [self._actions[2]]
-		else:
-			return self._actions
+		active_user = self.target if self.target else None
 
-	def exec_action(self, data: Any):
+		if active_user is None:
+			return [self._actions[0]]
+		else:
+			return self._actions[1:]
+
+	def exec_action(self, data: List[User]) -> List[User]:
 		if self.target:
-			active_user = list(self.target.keys())[0]
+			active_user = self.target
 		else:
 			active_user = None
 
 		if self.action == self._actions[0]:  # add
-			new_user = self.add_user()
-			# no unicity check, if exists will be replaced
-			data.update(new_user)
+			new_user = self._add_user()
+			if new_user is not None:
+				# in case a user with the same username as an existing user
+				# was created we'll replace the existing one
+				data = [d for d in data if d.username != new_user.username]
+				data += [new_user]
 		elif self.action == self._actions[1]:  # change password
-			data[active_user]['!password'] = get_password(
-				prompt=str(_('Password for user "{}": ').format(active_user)))
+			prompt = str(_('Password for user "{}": ').format(active_user.username))
+			new_password = get_password(prompt=prompt)
+			if new_password:
+				user = next(filter(lambda x: x == active_user, data), 1)
+				user.password = new_password
 		elif self.action == self._actions[2]:  # promote/demote
-			data[active_user]['sudoer'] = not data[active_user]['sudoer']
+			user = next(filter(lambda x: x == active_user, data), 1)
+			user.sudo = False if user.sudo else True
 		elif self.action == self._actions[3]:  # delete
-			del data[active_user]
+			data = [d for d in data if d != active_user]
+
+		return data
 
 	def _check_for_correct_username(self, username: str) -> bool:
 		if re.match(r'^[a-z_][a-z0-9_-]*\$?$', username) and len(username) <= 32:
 			return True
-		log("The username you entered is invalid. Try again", level=logging.WARNING, fg='red')
 		return False
 
-	def add_user(self):
+	def _add_user(self) -> Optional[User]:
 		print(_('\nDefine a new user\n'))
-		prompt = str(_("User Name : "))
+		prompt = str(_('Enter username (leave blank to skip): '))
+
 		while True:
-			userid = input(prompt).strip(' ')
-			if not userid:
-				return {}  # end
-			if not self._check_for_correct_username(userid):
-				pass
+			username = input(prompt).strip(' ')
+			if not username:
+				return None
+			if not self._check_for_correct_username(username):
+				prompt = str(_("The username you entered is invalid. Try again")) + '\n' + prompt
 			else:
 				break
-		if self.sudo:
-			sudoer = True
-		elif self.sudo is not None and not self.sudo:
-			sudoer = False
-		else:
-			sudoer = False
-			sudo_choice = Menu(str(_('Should {} be a superuser (sudoer)?')).format(userid), Menu.yes_no(),
-								skip=False,
-								preset_values=Menu.yes() if sudoer else Menu.no(),
-								default_option=Menu.no()).run()
-			sudoer = True if sudo_choice == Menu.yes() else False
 
-		password = get_password(prompt=str(_('Password for user "{}": ').format(userid)))
+		password = get_password(prompt=str(_('Password for user "{}": ').format(username)))
 
-		return {userid: {"!password": password, "sudoer": sudoer}}
+		choice = Menu(
+			str(_('Should "{}" be a superuser (sudo)?')).format(username), Menu.yes_no(),
+			skip=False,
+			default_option=Menu.no()
+		).run()
 
-
-def _manage_users(prompt: str, defined_users: List[User] = []) -> List[User]:
-	lusers = UserList(prompt, defined_users).run()
-
-	# return data
-	superusers = {
-		uid: {
-			'!password': lusers[uid].get('!password')
-		}
-		for uid in lusers if lusers[uid].get('sudoer', False)
-	}
-	users = {uid: {'!password': lusers[uid].get('!password')} for uid in lusers if not lusers[uid].get('sudoer', False)}
-	storage['arguments']['!superusers'] = superusers
-	storage['arguments']['!users'] = users
-	return superusers, users
-
-
-# def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
-# 	prompt = prompt if prompt else str(_('Define users with sudo privilege, by username: '))
-# 	superusers, dummy = manage_users(prompt, sudo=True)
-# 	return superusers
+		sudo = True if choice.value == Menu.yes() else False
+		return User(username, password, sudo)
 
 
 def ask_for_additional_users(prompt: str = '', defined_users: List[User] = []) -> List[User]:
 	prompt = prompt if prompt else _('Enter username (leave blank to skip): ')
-	dummy, users = _manage_users(prompt, defined_users=defined_users)
+	users = UserList(prompt, defined_users).run()
 	return users

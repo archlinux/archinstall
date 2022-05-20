@@ -142,7 +142,6 @@ def select_profile(preset) -> Optional[Profile]:
 		options[option] = profile
 
 	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
-
 	warning = str(_('Are you sure you want to reset this setting?'))
 
 	selection = Menu(

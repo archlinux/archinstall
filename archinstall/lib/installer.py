@@ -1020,7 +1020,7 @@ class Installer:
 		if type(profile) == str:
 			profile = Profile(self, profile)
 
-		self.log(f'Installing network profile {profile}', level=logging.INFO)
+		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
 		return profile.install()
 
 	def enable_sudo(self, entity: str, group :bool = False) -> bool:
@@ -1055,18 +1055,15 @@ class Installer:
 
 		return True
 
-	# def user_create(self, user :str, password :Optional[str] = None, groups :Optional[str] = None, sudo :bool = False) -> None:
 	def user_create(self, users: List[User]) -> None:
-		if groups is None:
-			groups = []
-
 		# This plugin hook allows for the plugin to handle the creation of the user.
 		# Password and Group management is still handled by user_create()
-		handled_by_plugin = False
+		handled_by_plugin = {}
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_create'):
-				if result := plugin.on_user_create(self, user):
-					handled_by_plugin = result
+				for user in users:
+					if result := plugin.on_user_create(self, user.username):
+						handled_by_plugin[user] = result
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)

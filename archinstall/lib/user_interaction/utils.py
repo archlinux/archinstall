@@ -52,6 +52,7 @@ def get_password(prompt: str = '') -> Optional[str]:
 			continue
 
 		return passwd
+
 	return None
 
 

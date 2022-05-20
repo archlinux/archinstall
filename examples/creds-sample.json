@@ -7,7 +7,7 @@
 			"sudo": false
 		},
 		{
-			"username": "<USERNAME>",
+			"username": "<SUDO_USERNAME>",
 			"!password": "<PASSWORD>",
 			"sudo": true
 		}

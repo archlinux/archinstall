@@ -262,8 +262,12 @@ class MyMenu(archinstall.GlobalMenu):
 		def check(s):
 			return self.option(s).has_selection()
 
+		def has_superuser() -> bool:
+			users = self._menu_options['!users'].current_selection
+			return any([u.sudo for u in users])
+
 		_, missing = self.mandatory_overview()
-		if mode in ('full','only_os') and (not check('!root-password') and not check('!superusers')):
+		if mode in ('full','only_os') and (not check('!root-password') and not has_superuser()):
 			missing += 1
 		if mode in ('full', 'only_hd') and check('harddrives'):
 			if not self.option('harddrives').is_empty() and not check('disk_layouts'):

@@ -20,9 +20,9 @@ def partition_overlap(partitions: list, start: str, end: str) -> bool:
 	return False
 
 
-def _current_partition_layout(partitions: List[Partition], with_idx: bool = False) -> str:
+def current_partition_layout(partitions: List[Dict[str, Any]], with_idx: bool = False, with_title: bool = True) -> str:
 
-	def do_padding(name, max_len):
+	def do_padding(name: str, max_len: int):
 		spaces = abs(len(str(name)) - max_len) + 2
 		pad_left = int(spaces / 2)
 		pad_right = spaces - pad_left
@@ -62,8 +62,11 @@ def _current_partition_layout(partitions: List[Partition], with_idx: bool = Fals
 
 		current_layout += f'{row[:-1]}\n'
 
-	title = str(_('Current partition layout'))
-	return f'\n\n{title}:\n\n{current_layout}'
+	if with_title:
+		title = str(_('Current partition layout'))
+		return f'\n\n{title}:\n\n{current_layout}'
+
+	return current_layout
 
 
 def _get_partitions(partitions :List[Partition], filter_ :Callable = None) -> List[str]:
@@ -173,7 +176,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 		# show current partition layout:
 		if len(block_device_struct["partitions"]):
-			title += _current_partition_layout(block_device_struct['partitions']) + '\n'
+			title += current_partition_layout(block_device_struct['partitions']) + '\n'
 
 		modes += [save_and_exit, cancel]
 
@@ -246,7 +249,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			block_device_struct.update(suggest_single_disk_layout(block_device)[block_device.path])
 		else:
-			current_layout = _current_partition_layout(block_device_struct['partitions'], with_idx=True)
+			current_layout = current_partition_layout(block_device_struct['partitions'], with_idx=True)
 
 			if task == delete_partition:
 				title = _('{}\n\nSelect by index which partitions to delete').format(current_layout)
@@ -375,7 +378,7 @@ def select_encrypted_partitions(
 
 	# show current partition layout:
 	if len(partitions):
-		title += _current_partition_layout(partitions) + '\n'
+		title += current_partition_layout(partitions) + '\n'
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 
