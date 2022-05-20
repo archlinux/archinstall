@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
+from dataclasses import dataclass
 from typing import Any, Dict, TYPE_CHECKING, List
 
 from ..menu import Menu
@@ -9,6 +10,7 @@ from ..menu.list_manager import ListManager
 from ..output import log
 from ..storage import storage
 from .utils import get_password
+from ..models.users import User
 
 if TYPE_CHECKING:
 	_: Any
@@ -19,7 +21,7 @@ class UserList(ListManager):
 	subclass of ListManager for the managing of user accounts
 	"""
 
-	def __init__(self, prompt: str, lusers: dict, sudo: bool = None):
+	def __init__(self, prompt: str, lusers: List[User]):
 		"""
 		param: prompt
 		type: str
@@ -27,14 +29,13 @@ class UserList(ListManager):
 		type: Dict
 		param: sudo. boolean to determine if we handle superusers or users. If None handles both types
 		"""
-		self.sudo = sudo
-		self.actions = [
+		self._actions = [
 			str(_('Add a user')),
 			str(_('Change password')),
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
 		]
-		super().__init__(prompt, lusers, self.actions, self.actions[0])
+		super().__init__(prompt, lusers, self._actions, self._actions[0])
 
 	def reformat(self, data: List) -> Dict:
 		def format_element(elem :str):
@@ -58,15 +59,15 @@ class UserList(ListManager):
 			active_user = None
 		sudoer = self.target[active_user].get('sudoer', False)
 		if self.sudo is None:
-			return self.actions
+			return self._actions
 		if self.sudo and sudoer:
-			return self.actions
+			return self._actions
 		elif self.sudo and not sudoer:
-			return [self.actions[2]]
+			return [self._actions[2]]
 		elif not self.sudo and sudoer:
-			return [self.actions[2]]
+			return [self._actions[2]]
 		else:
-			return self.actions
+			return self._actions
 
 	def exec_action(self, data: Any):
 		if self.target:
@@ -74,16 +75,16 @@ class UserList(ListManager):
 		else:
 			active_user = None
 
-		if self.action == self.actions[0]:  # add
+		if self.action == self._actions[0]:  # add
 			new_user = self.add_user()
 			# no unicity check, if exists will be replaced
 			data.update(new_user)
-		elif self.action == self.actions[1]:  # change password
+		elif self.action == self._actions[1]:  # change password
 			data[active_user]['!password'] = get_password(
 				prompt=str(_('Password for user "{}": ').format(active_user)))
-		elif self.action == self.actions[2]:  # promote/demote
+		elif self.action == self._actions[2]:  # promote/demote
 			data[active_user]['sudoer'] = not data[active_user]['sudoer']
-		elif self.action == self.actions[3]:  # delete
+		elif self.action == self._actions[3]:  # delete
 			del data[active_user]
 
 	def _check_for_correct_username(self, username: str) -> bool:
@@ -120,27 +121,9 @@ class UserList(ListManager):
 		return {userid: {"!password": password, "sudoer": sudoer}}
 
 
-def manage_users(prompt: str, sudo: bool) -> tuple[dict, dict]:
-	# TODO Filtering and some kind of simpler code
-	lusers = {}
-	if storage['arguments'].get('!superusers', {}):
-		lusers.update({
-			uid: {
-				'!password': storage['arguments']['!superusers'][uid].get('!password'),
-				'sudoer': True
-			}
-			for uid in storage['arguments'].get('!superusers', {})
-		})
-	if storage['arguments'].get('!users', {}):
-		lusers.update({
-			uid: {
-				'!password': storage['arguments']['!users'][uid].get('!password'),
-				'sudoer': False
-			}
-			for uid in storage['arguments'].get('!users', {})
-		})
-	# processing
-	lusers = UserList(prompt, lusers, sudo).run()
+def _manage_users(prompt: str, defined_users: List[User] = []) -> List[User]:
+	lusers = UserList(prompt, defined_users).run()
+
 	# return data
 	superusers = {
 		uid: {
@@ -154,13 +137,13 @@ def manage_users(prompt: str, sudo: bool) -> tuple[dict, dict]:
 	return superusers, users
 
 
-def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
-	prompt = prompt if prompt else str(_('Define users with sudo privilege, by username: '))
-	superusers, dummy = manage_users(prompt, sudo=True)
-	return superusers
+# def ask_for_superuser_account(prompt: str) -> Dict[str, Dict[str, str]]:
+# 	prompt = prompt if prompt else str(_('Define users with sudo privilege, by username: '))
+# 	superusers, dummy = manage_users(prompt, sudo=True)
+# 	return superusers
 
 
-def ask_for_additional_users(prompt: str = '') -> Dict[str, Dict[str, str | None]]:
-	prompt = prompt if prompt else _('Any additional users to install (leave blank for no users): ')
-	dummy, users = manage_users(prompt, sudo=False)
+def ask_for_additional_users(prompt: str = '', defined_users: List[User] = []) -> List[User]:
+	prompt = prompt if prompt else _('Enter username (leave blank to skip): ')
+	dummy, users = _manage_users(prompt, defined_users=defined_users)
 	return users

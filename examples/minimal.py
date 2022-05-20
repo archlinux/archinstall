@@ -1,6 +1,8 @@
 import archinstall
 
 # Select a harddrive and a disk password
+from archinstall import User
+
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")
 
@@ -28,7 +30,7 @@ def install_on(mountpoint):
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 			installation.install_profile('minimal')
 
-			installation.user_create('devel', 'devel')
+			installation.user_create([User('devel', 'devel', False)])
 			installation.user_set_pw('root', 'airoot')
 
 	# Once this is done, we output some useful information to the user

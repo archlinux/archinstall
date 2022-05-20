@@ -72,7 +72,6 @@ def ask_user_questions():
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	global_menu.enable('!root-password')
 
-	global_menu.enable('!superusers')
 	global_menu.enable('!users')
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
@@ -220,13 +219,8 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			if archinstall.arguments.get('!users',{}):
-				for user, user_info in archinstall.arguments.get('!users', {}).items():
-					installation.user_create(user, user_info["!password"], sudo=False)
-
-			if archinstall.arguments.get('!superusers',{}):
-				for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-					installation.user_create(superuser, user_info["!password"], sudo=True)
+			if users := archinstall.arguments.get('!users', None):
+				installation.user_create(users)
 
 			if timezone := archinstall.arguments.get('timezone', None):
 				installation.set_timezone(timezone)

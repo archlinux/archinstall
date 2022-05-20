@@ -21,7 +21,6 @@ from ..user_interaction import ask_hostname
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_to_configure_network
-from ..user_interaction import ask_for_superuser_account
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import select_language
 from ..user_interaction import select_mirror_regions
@@ -33,6 +32,8 @@ from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_additional_repositories
+from ..models.users import User
+
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
@@ -112,21 +113,13 @@ class GlobalMenu(GeneralMenu):
 				_('Root password'),
 				lambda preset:self._set_root_password(),
 				display_func=lambda x: secret(x) if x else 'None')
-		self._menu_options['!superusers'] = \
-			Selector(
-				_('Superuser account'),
-				lambda preset: self._create_superuser_account(),
-				default={},
-				exec_func=lambda n,v:self._users_resynch(),
-				dependencies_not=['!root-password'],
-				display_func=lambda x: self._display_superusers())
 		self._menu_options['!users'] = \
 			Selector(
 				_('User account'),
-				lambda x: self._create_user_account(),
+				lambda x: self._create_user_account(x),
 				default={},
-				exec_func=lambda n,v:self._users_resynch(),
-				display_func=lambda x: list(x.keys()) if x else '[]')
+				display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else None,
+				preview_func=self._prev_users)
 		self._menu_options['profile'] = \
 			Selector(
 				_('Profile'),
@@ -233,6 +226,9 @@ class GlobalMenu(GeneralMenu):
 			return text[:-1]  # remove last new line
 		return None
 
+	def _prev_users(self) -> Optional[str]:
+		return 'USERS'
+
 	def _missing_configs(self) -> List[str]:
 		def check(s):
 			return self._menu_options.get(s).has_selection()
@@ -242,8 +238,8 @@ class GlobalMenu(GeneralMenu):
 			missing += ['Bootloader']
 		if not check('hostname'):
 			missing += ['Hostname']
-		if not check('!root-password') and not check('!superusers'):
-			missing += [str(_('Either root-password or at least 1 superuser must be specified'))]
+		# if not check('!root-password') and not check('!superusers'):
+		# 	missing += [str(_('Either root-password or at least 1 superuser must be specified'))]
 		if not check('harddrives'):
 			missing += ['Hard drives']
 		if check('harddrives'):
@@ -340,23 +336,19 @@ class GlobalMenu(GeneralMenu):
 
 		return ret
 
-	def _create_superuser_account(self):
-		superusers = ask_for_superuser_account(str(_('Manage superuser accounts: ')))
-		return superusers if superusers else None
-
-	def _create_user_account(self):
-		users = ask_for_additional_users(str(_('Manage ordinary user accounts: ')))
+	def _create_user_account(self, defined_users: List[User]) -> List[User]:
+		users = ask_for_additional_users(defined_users=defined_users)
 		return users
 
-	def _display_superusers(self):
-		superusers = self._data_store.get('!superusers', {})
-
-		if self._menu_options.get('!root-password').has_selection():
-			return list(superusers.keys()) if superusers else '[]'
-		else:
-			return list(superusers.keys()) if superusers else ''
-
-	def _users_resynch(self):
-		self.synch('!superusers')
-		self.synch('!users')
-		return False
+	# def _display_superusers(self):
+	# 	superusers = self._data_store.get('!superusers', {})
+	#
+	# 	if self._menu_options.get('!root-password').has_selection():
+	# 		return list(superusers.keys()) if superusers else '[]'
+	# 	else:
+	# 		return list(superusers.keys()) if superusers else ''
+	#
+	# def _users_resynch(self):
+	# 	self.synch('!superusers')
+	# 	self.synch('!users')
+	# 	return False
