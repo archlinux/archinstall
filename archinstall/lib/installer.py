@@ -1023,7 +1023,7 @@ class Installer:
 		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
 		return profile.install()
 
-	def enable_sudo(self, entity: str, group :bool = False) -> bool:
+	def enable_sudo(self, entity: str, group :bool = False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
@@ -1053,37 +1053,36 @@ class Installer:
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
-		return True
-
 	def user_create(self, users: List[User]) -> None:
-		# This plugin hook allows for the plugin to handle the creation of the user.
-		# Password and Group management is still handled by user_create()
-		handled_by_plugin = {}
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_user_create'):
-				for user in users:
+		for user in users:
+			handled_by_plugin = False
+
+			# This plugin hook allows for the plugin to handle the creation of the user.
+			# Password and Group management is still handled by user_create()
+			for plugin in plugins.values():
+				if hasattr(plugin, 'on_user_create'):
 					if result := plugin.on_user_create(self, user.username):
-						handled_by_plugin[user] = result
+						handled_by_plugin = result
 
-		if not handled_by_plugin:
-			self.log(f'Creating user {user}', level=logging.INFO)
-			if not (output := SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')).exit_code == 0:
-				raise SystemError(f"Could not create user inside installation: {output}")
+			if not handled_by_plugin:
+				self.log(f'Creating user {user.username}', level=logging.INFO)
+				if not (output := SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user.username}')).exit_code == 0:
+					raise SystemError(f"Could not create user inside installation: {output}")
 
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_user_created'):
-				if result := plugin.on_user_created(self, user):
-					handled_by_plugin = result
+			for plugin in plugins.values():
+				if hasattr(plugin, 'on_user_created'):
+					plugin.on_user_created(self, user.username)
 
-		if password:
-			self.user_set_pw(user, password)
+			if user.password:
+				self.user_set_pw(user.username, user.password)
 
-		if groups:
-			for group in groups:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user} {group}')
+			if user.groups :
+				for group in user.groups:
+					SysCommand(f'/usr/bin/arch-chroot {self.target} gpasswd -a {user.username} {group}')
 
-		if sudo and self.enable_sudo(user):
-			self.helper_flags['user'] = True
+			if user.sudo:
+				self.enable_sudo(user.username)
+				self.helper_flags['user'] = True
 
 	def user_set_pw(self, user :str, password :str) -> bool:
 		self.log(f'Setting password for {user}', level=logging.INFO)

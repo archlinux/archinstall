@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 
 @dataclass
@@ -7,6 +7,7 @@ class User:
 	username: str
 	password: str
 	sudo: bool
+	groups: Optional[str] = None
 
 	@property
 	def display(self) -> str:
