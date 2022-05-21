@@ -167,7 +167,15 @@
         },
         {
             "required": [
-                "!superusers"
+                "!users": {
+                    "description": "User account",
+                    "type": "object",
+                    "properties": {
+                        "username": "string",
+                        "!password": "string",
+                        "sudo": "boolean"
+                    }
+                }
             ]
         }
     ]
