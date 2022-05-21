@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import dataclasses
 import hashlib
 import json
 import logging
@@ -137,6 +139,8 @@ class JsonEncoder:
 			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
 		elif isinstance(obj, (pathlib.Path)):
 			return str(obj)
+		elif dataclasses.is_dataclass(obj):
+			return dataclasses.asdict(obj)
 		else:
 			return obj
 
@@ -158,6 +162,7 @@ class JsonEncoder:
 			return copy
 		else:
 			return JsonEncoder._encode(obj)
+
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""

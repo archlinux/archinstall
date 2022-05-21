@@ -7,7 +7,12 @@ class User:
 	username: str
 	password: str
 	sudo: bool
-	groups: Optional[str] = None
+
+	@property
+	def groups(self) -> List[str]:
+		# this property should be transferred into a class attr instead
+		# if it's every going to be used
+		return []
 
 	@property
 	def display(self) -> str:
