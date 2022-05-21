@@ -775,7 +775,9 @@ class Installer:
 		# And in which case we should do some clean up.
 
 		# Install the boot loader
-		if SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install').exit_code != 0:
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
+		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
 
