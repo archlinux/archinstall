@@ -14,6 +14,13 @@ class User:
 		# if it's every going to be used
 		return []
 
+	def json(self) -> Dict[str, str]:
+		return {
+			'username': self.username,
+			'!password': self.password,
+			'sudo': self.sudo
+		}
+
 	@property
 	def display(self) -> str:
 		password = '*' * len(self.password)
