@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Last-Translator: @Cain-dev (cain-dev.github.io)\n"
-"Language: pt-BR\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -144,7 +144,7 @@ msgid ""
 " * Partition mount-points are relative to inside the installation, the boot "
 "would be /boot as an example."
 msgstr ""
-"* Os pontos de montagem das partições são relativos aos de dentro da instalação, boot "
+" * Os pontos de montagem das partições são relativos aos de dentro da instalação, boot "
 "por exemplo seria /boot."
 
 
