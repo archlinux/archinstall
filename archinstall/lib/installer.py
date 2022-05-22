@@ -234,7 +234,8 @@ class Installer:
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
 		from .luks import luks2
 		from .disk.btrfs import setup_subvolumes
-		
+		from .disk.partition import Partition
+
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
@@ -263,10 +264,16 @@ class Installer:
 
 		# we manage the btrfs partitions
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition in btrfs_subvolumes:
+				print(partition)
+				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
+					installation.mount(partition_instance, "/", options=mount_options)
+				else:
+					installation.mount(partition_instance, "/")
+
 			list_part.extend(
 				setup_subvolumes(
 					installation=self, 
-					partition_instance=partition['device_instance'],
 					subvolume_struct=btrfs_subvolumes
 				)
 			)
