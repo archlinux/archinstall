@@ -55,6 +55,8 @@ def mount_subvolume_struct(installation, partition_dict):
 	})
 	"""
 
+	print('Mounting btrfs stuff:', partition_dict)
+
 	for name, right_hand in sorted(partition_dict['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
 		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use

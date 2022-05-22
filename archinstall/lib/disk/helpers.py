@@ -314,7 +314,7 @@ def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recur
 def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
 	import traceback
 
-	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing. Please change at: {''.join(traceback.format_stack())}")
+	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing. Please change at:\n{''.join(traceback.format_stack())}")
 	device_path, bind_path = split_bind_name(path)
 	output = {}
 
