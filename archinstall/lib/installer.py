@@ -303,8 +303,6 @@ class Installer:
 					partition_dict=partition
 				)
 
-		exit(0)
-
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
 			ppath = handle[1]['device_instance'].path
