@@ -273,7 +273,7 @@ class Installer:
 			list_part.extend(
 				setup_subvolumes(
 					installation=self, 
-					partition_dict=btrfs_subvolumes
+					partitions_with_subvolumes=btrfs_subvolumes
 				)
 			)
 
