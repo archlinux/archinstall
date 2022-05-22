@@ -97,7 +97,7 @@ class Partition:
 		try:
 			data = json.loads(SysCommand(f"findmnt --json -R {self.path}").decode())
 			for filesystem in data['filesystems']:
-				return filesystem.get('target')
+				return pathlib.Path(filesystem.get('target'))
 
 		except SysCallError as error:
 			# Not mounted anywhere most likely

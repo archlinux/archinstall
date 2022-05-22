@@ -12,7 +12,8 @@ if TYPE_CHECKING:
 from .btrfs_helpers import (
 	get_subvolumes_from_findmnt as get_subvolumes_from_findmnt,
 	subvolume_info_from_path as subvolume_info_from_path,
-	find_parent_subvolume as find_parent_subvolume
+	find_parent_subvolume as find_parent_subvolume,
+	setup_subvolumes as setup_subvolumes
 )
 from .btrfssubvolume import BtrfsSubvolume as BtrfsSubvolume
 from .btrfspartition import BTRFSPartition as BTRFSPartition

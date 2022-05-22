@@ -260,21 +260,14 @@ class Installer:
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
-		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
-			if partition.get('filesystem',{}).get('mount_options',[]):
-				mount_options = ','.join(partition['filesystem']['mount_options'])
-				self.mount(partition['device_instance'], "/", options=mount_options)
-			else:
-				self.mount(partition['device_instance'], "/")
-			try:
-				new_mountpoints = manage_btrfs_subvolumes(self,partition)
-			except Exception as e:
-				# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
-				partition['device_instance'].unmount()
-				raise e
-			partition['device_instance'].unmount()
-			if new_mountpoints:
-				list_part.extend(new_mountpoints)
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			list_part.extend(
+				setup_subvolumes(
+					installation=self, 
+					partition_instance=partition['device_instance'],
+					subvolume_struct=btrfs_subvolumes
+				)
+			)
 
 		# we mount. We need to sort by mountpoint to get a good working order
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):

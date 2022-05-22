@@ -1,10 +1,13 @@
 import glob
 import pathlib
 import re
+import logging
 from typing import Optional, TYPE_CHECKING
 
 from ...exceptions import DiskError
 from ...storage import storage
+from ...output import log
+from ...general import SysCommand
 from ..partition import Partition
 from ..helpers import get_mount_info, findmnt
 from .btrfs_helpers import (
@@ -14,14 +17,27 @@ from .btrfs_helpers import (
 
 if TYPE_CHECKING:
 	from ...installer import Installer
+	from .btrfssubvolume import BtrfsSubvolume
 
 class BTRFSPartition(Partition):
 	def __init__(self, *args, **kwargs):
 		Partition.__init__(self, *args, **kwargs)
 
+	def __repr__(self, *args :str, **kwargs :str) -> str:
+		mount_repr = ''
+		if self.mountpoint:
+			mount_repr = f", mounted={self.mountpoint}"
+		elif self.target_mountpoint:
+			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
+
+		if self._encrypted:
+			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+		else:
+			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
+
 	@property
 	def subvolumes(self):
-		for filesystem in findmnt(pathlib.Path(self.path)).get('filesystems', []):
+		for filesystem in findmnt(pathlib.Path(self.path), recurse=True).get('filesystems', []):
 			if '[' in filesystem.get('source', ''):
 				yield subvolume_info_from_path(filesystem['target'])
 
@@ -30,10 +46,13 @@ class BTRFSPartition(Partition):
 					if '[' in child.get('source', ''):
 						yield subvolume_info_from_path(child['target'])
 
+					for sub_child in iterate_children(child):
+						yield sub_child
+
 			for child in iterate_children(filesystem):
 				yield child
 
-	def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None):
+	def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None) -> 'BtrfsSubvolume':
 		"""
 		Subvolumes have to be created within a mountpoint.
 		This means we need to get the current installation target.
@@ -48,8 +67,8 @@ class BTRFSPartition(Partition):
 		# Determain if the path given, is an absolute path or a releative path.
 		# We do this by checking if the path contains a known mountpoint.
 		if str(subvolume)[0] == '/':
-			if found_mount := get_mount_info(str(subvolume), traverse=True):
-				if found_mount['target'] != '/' and str(subvolume).startswith(found_mount['target']):
+			if filesystems := findmnt(subvolume, traverse=True).get('filesystems'):
+				if (target := filesystems[0].get('target')) and target != '/' and str(subvolume).startswith(target):
 					# Path starts with a known mountpoint which isn't /
 					# Which means it's an absolut path to a mounted location.
 					pass
@@ -60,51 +79,40 @@ class BTRFSPartition(Partition):
 					subvolume = subvolume.relative_to(subvolume.anchor)
 		# else: We don't need to do anything about relative paths, they should be appendable to installation.target as-is.
 
-		# If the subvolume is not absolute, and we are lacking an ongoing installation.
-		# We need to warn the user that such setup is not supported.
-		if str(subvolume)[0] != '/' and installation is None:
-			raise DiskError("When creating a subvolume on BTRFSPartition()'s, you need to either initiate a archinstall.Installer() or give absolute paths when creating the subvoulme.")
-		elif str(subvolume)[0] != '/':
-			ongoing_installation_destination = installation.target
-			if type(ongoing_installation_destination) == str:
-				ongoing_installation_destination = pathlib.Path(ongoing_installation_destination)
+		# If the subvolume is not absolute, then we do two checks:
+		#  1. Check if the partition itself is mounted somewhere, and use that as a root
+		#  2. Use an active Installer().target as the root, assuming it's filesystem is btrfs
+		# If both above fail, we need to warn the user that such setup is not supported.
+		if str(subvolume)[0] != '/':
+			if self.mountpoint is None and installation is None:
+				raise DiskError("When creating a subvolume on BTRFSPartition()'s, you need to either initiate a archinstall.Installer() or give absolute paths when creating the subvoulme.")
+			elif self.mountpoint:
+				subvolume = self.mountpoint / subvolume
+			elif installation:
+				ongoing_installation_destination = installation.target
+				if type(ongoing_installation_destination) == str:
+					ongoing_installation_destination = pathlib.Path(ongoing_installation_destination)
 
-			subvolume = ongoing_installation_destination / subvolume
+				subvolume = ongoing_installation_destination / subvolume
 
 		subvolume.parent.mkdir(parents=True, exist_ok=True)
 
+		# <!--
 		# We perform one more check from the given absolute position.
 		# And we traverse backwards in order to locate any if possible subvolumes above
 		# our new btrfs subvolume. This is because it needs to be mounted under it to properly
 		# function.
-		if btrfs_parent := find_parent_subvolume(subvolume):
-			print('Found parent:', btrfs_parent)
+		# if btrfs_parent := find_parent_subvolume(subvolume):
+		# 	print('Found parent:', btrfs_parent)
+		# -->
 
-		print('Attempting to create subvolume at:', subvolume)
+		log(f'Attempting to create subvolume at {subvolume}', level=logging.DEBUG, fg="grey")
 
-		if glob.glob(str(subvolume.parent / '*')):
+		if glob.glob(str(subvolume / '*')):
 			raise DiskError(f"Cannot create subvolume at {subvolume} because it contains data (non-empty folder target is not supported by BTRFS)")
+		elif subvolinfo := subvolume_info_from_path(subvolume):
+			raise DiskError(f"Destination {subvolume} is already a subvolume: {subvolinfo}")
 
-		# if type(installation_mountpoint) == str:
-		# 	installation_mountpoint = pathlib.Path(installation_mountpoint)
-		# # Set up the required physical structure
-		# if type(subvolume_location) == str:
-		# 	subvolume_location = pathlib.Path(subvolume_location)
+		SysCommand(f"btrfs subvolume create {subvolume}")
 
-		# target = installation_mountpoint / subvolume_location.relative_to(subvolume_location.anchor)
-
-		# # Difference from mount_subvolume:
-		# #  We only check if the parent exists, since we'll run in to "target path already exists" otherwise
-		# if not target.parent.exists():
-		# 	target.parent.mkdir(parents=True)
-
-		# if glob.glob(str(target / '*')):
-		# 	raise DiskError(f"Cannot create subvolume at {target} because it contains data (non-empty folder target)")
-
-		# # Remove the target if it exists
-		# if target.exists():
-		# 	target.rmdir()
-
-		# log(f"Creating a subvolume on {target}", level=logging.INFO)
-		# if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
-		# 	raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
+		return subvolume_info_from_path(subvolume)

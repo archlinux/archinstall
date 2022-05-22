@@ -162,14 +162,23 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			unlocked_partition = Partition(
+			if filesystems := findmnt(self.mapdev).get('filesystems'):
+				if filesystems[0]['fstype'] == 'btrfs':
+					BTRFSPartition(
+						self.mapdev,
+						block_device=MapperDev(mountpoint).partition.block_device,
+						encrypted=True,
+						filesystem='btrfs',
+						autodetect_filesystem=False
+					)
+
+			return Partition(
 				self.mapdev,
 				block_device=MapperDev(mountpoint).partition.block_device,
 				encrypted=True,
 				filesystem=get_filesystem_type(self.mapdev),
 				autodetect_filesystem=False
 			)
-			return unlocked_partition
 
 	def close(self, mountpoint :Optional[str] = None) -> bool:
 		if not mountpoint:
