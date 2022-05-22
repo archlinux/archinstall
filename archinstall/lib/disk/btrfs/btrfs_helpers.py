@@ -76,14 +76,13 @@ def mount_subvolume_struct(installation, partition_dict):
 				continue
 
 		mountpoint = pathlib.Path(mountpoint)
-		mountpoint.mkdir(parents=True, exist_ok=True)
 
 		installation_target = installation.target
 		if type(installation_target) == str:
 			installation_target = pathlib.Path(installation_target)
 
-		print(installation_target, mountpoint.relative_to(mountpoint.anchor))
 		mountpoint = installation_target / mountpoint.relative_to(mountpoint.anchor)
+		mountpoint.mkdir(parents=True, exist_ok=True)
 
 		SysCommand(f"mount {partition_dict['device_instance'].path} {mountpoint} -o subvol={name}")
 
