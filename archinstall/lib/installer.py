@@ -266,9 +266,9 @@ class Installer:
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for partition in btrfs_subvolumes:
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
-					installation.mount(partition['device_instance'], "/", options=mount_options)
+					self.mount(partition['device_instance'], "/", options=mount_options)
 				else:
-					installation.mount(partition['device_instance'], "/")
+					self.mount(partition['device_instance'], "/")
 
 			list_part.extend(
 				setup_subvolumes(
