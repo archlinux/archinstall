@@ -84,6 +84,7 @@ def mount_subvolume_struct(installation, partition_dict):
 		mountpoint = installation_target / mountpoint.relative_to(mountpoint.anchor)
 		mountpoint.mkdir(parents=True, exist_ok=True)
 
+		log(f"Mounting subvolume {name} on {partition_dict['device_instance']} to {mountpoint}", level=logging.INFO, fg="gray")
 		SysCommand(f"mount {partition_dict['device_instance'].path} {mountpoint} -o subvol={name}")
 
 
