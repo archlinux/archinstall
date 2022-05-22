@@ -20,7 +20,6 @@ from .storage import storage
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
-from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .hsm import fido2_enroll
@@ -270,12 +269,14 @@ class Installer:
 				else:
 					self.mount(partition['device_instance'], "/")
 
-			list_part.extend(
-				setup_subvolumes(
-					installation=self, 
-					partitions_with_subvolumes=btrfs_subvolumes
+				list_part.extend(
+					setup_subvolume(
+						installation=self, 
+						partition_dict=partition
+					)
 				)
-			)
+
+				partition['device_instance'].unmount()
 
 		# we mount. We need to sort by mountpoint to get a good working order
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
