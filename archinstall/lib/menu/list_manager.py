@@ -84,12 +84,12 @@ The contents in the base class of this methods serve for a very basic usage, and
 ```
 
 """
+import copy
+from os import system
+from typing import Union, Any, TYPE_CHECKING, Dict, Optional
 
 from .text_input import TextInput
 from .menu import Menu
-from os import system
-from copy import copy
-from typing import Union, Any, TYPE_CHECKING, Dict, Optional
 
 if TYPE_CHECKING:
 	_: Any
@@ -144,8 +144,8 @@ class ListManager:
 		self.bottom_list = [self.confirm_action,self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
-		self._original_data = copy(base_list)
-		self._data = copy(base_list) # as refs, changes are immediate
+		self._original_data = copy.deepcopy(base_list)
+		self._data = copy.deepcopy(base_list) # as refs, changes are immediate
 		# default values for the null case
 		self.target: Optional[Any] = None
 		self.action = self._null_action
