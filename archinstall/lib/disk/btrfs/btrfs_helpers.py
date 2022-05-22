@@ -71,7 +71,7 @@ def mount_subvolume_struct(installation, partition_dict):
 				mountpoint = right_hand.get('mountpoint', None)
 				subvol_options = right_hand.get('options', [])
 
-		installation.mount(partition_dict['device_instance'], "/", options=[f"subvol={name}"])
+		installation.mount(partition_dict['device_instance'], "/", options=f"subvol={name}")
 
 
 def setup_subvolume(installation, partition_dict):
