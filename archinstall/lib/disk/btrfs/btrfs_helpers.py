@@ -65,8 +65,10 @@ def setup_subvolumes(installation, partitions_with_subvolumes):
 					subvol_options = right_hand.get('options', [])
 
 
-			# we create the subvolume
-			create_subvolume(installation, name)
+			# We create the subvolume using the BTRFSPartition instance.
+			# That way we ensure not only easy access, but also accurate mount locations etc.
+			partition_dict['device_instance'].create_subvolume(name, installation=installation)
+
 			# Make the nodatacow processing now
 			# It will be the main cause of creation of subvolumes which are not to be mounted
 			# it is not an options which can be established by subvolume (but for whole file systems), and can be
