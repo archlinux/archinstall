@@ -21,7 +21,6 @@ class User:
 			'sudo': self.sudo
 		}
 
-	@property
 	def display(self) -> str:
 		password = '*' * len(self.password)
 		return f'{_("Username")}: {self.username:16} {_("Password")}: {password:16} sudo: {str(self.sudo)}'

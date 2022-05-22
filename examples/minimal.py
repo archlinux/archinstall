@@ -30,8 +30,8 @@ def install_on(mountpoint):
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 			installation.install_profile('minimal')
 
-			installation.user_create([User('devel', 'devel', False)])
-			installation.user_set_pw('root', 'airoot')
+			user = User('devel', 'devel', False)
+			installation.create_users(user)
 
 	# Once this is done, we output some useful information to the user
 	# And the installation is complete.

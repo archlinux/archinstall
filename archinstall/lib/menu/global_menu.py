@@ -34,7 +34,7 @@ from ..user_interaction import select_profile
 from ..user_interaction import select_additional_repositories
 from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
-from ..output import OutputFormat
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -270,7 +270,7 @@ class GlobalMenu(GeneralMenu):
 		selector = self._menu_options['!users']
 		if selector.has_selection():
 			users: List[User] = selector.current_selection
-			return OutputFormat.as_table(users)
+			return FormattedOutput.as_table(users)
 		return None
 
 	def _missing_configs(self) -> List[str]:

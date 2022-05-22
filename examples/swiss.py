@@ -425,7 +425,7 @@ def os_setup(installation):
 			installation.install_profile(archinstall.arguments.get('profile', None))
 
 		if users := archinstall.arguments.get('!users', None):
-			installation.user_create(users)
+			installation.create_users(users)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)

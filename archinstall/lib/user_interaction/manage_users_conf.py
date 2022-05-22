@@ -34,7 +34,7 @@ class UserList(ListManager):
 		super().__init__(prompt, lusers, self._actions, self._actions[0])
 
 	def reformat(self, data: List[User]) -> Dict[str, User]:
-		return {e.display: e for e in data}
+		return {e.display(): e for e in data}
 
 	def action_list(self):
 		active_user = self.target if self.target else None
