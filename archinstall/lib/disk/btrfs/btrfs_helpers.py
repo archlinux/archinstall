@@ -75,6 +75,8 @@ def mount_subvolume_struct(installation, partition_dict):
 			case _:
 				continue
 
+		mountpoint = pathlib.Path(mountpoint)
+
 		installation_target = installation.target
 		if type(installation_target) == str:
 			installation_target = pathlib.Path(installation_target)
