@@ -291,14 +291,35 @@ def find_mountpoint(device_path :str) -> Dict[str, Any]:
 	except SysCallError:
 		return {}
 
+def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recurse :bool = True) -> Dict[str, Any]:
+	for traversal in list(map(str, [str(path)] + list(path.parents))):
+		if traversal in ignore:
+			continue
+
+		try:
+			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
+			if (output := SysCommand(f"/usr/bin/findmnt --json {'--submounts' if recurse else ''} {traversal}").decode('UTF-8')):
+				return json.loads(output)
+
+		except SysCallError as error:
+			log(f"Could not get mount information on {path} but continuing and ignoring: {error}", level=logging.INFO, fg="gray")
+			pass
+
+		if not traverse:
+			break
+
+	raise DiskError(f"Could not get mount information for path {path}")
+
+
 def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
+	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing.")
 	device_path, bind_path = split_bind_name(path)
 	output = {}
 
 	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
 		if traversal in ignore:
 			continue
-			
+
 		try:
 			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
 			if (output := SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')):

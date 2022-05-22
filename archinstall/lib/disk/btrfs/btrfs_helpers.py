@@ -45,7 +45,7 @@ def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 				# allows for hooking in a pre-processor to do this we have to do it here:
 				result[key.lower().replace(' ', '_').replace('(s)', 's')] = value.strip()
 
-		return BtrfsSubvolume(**result)
+		return BtrfsSubvolume(**{'full_path' : path, **result})
 
 	except SysCallError:
 		pass

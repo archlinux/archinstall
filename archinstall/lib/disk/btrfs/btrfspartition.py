@@ -1,12 +1,16 @@
 import glob
 import pathlib
+import re
 from typing import Optional, TYPE_CHECKING
 
 from ...exceptions import DiskError
 from ...storage import storage
 from ..partition import Partition
-from ..helpers import get_mount_info
-from .btrfs_helpers import find_parent_subvolume
+from ..helpers import get_mount_info, findmnt
+from .btrfs_helpers import (
+	find_parent_subvolume,
+	subvolume_info_from_path
+)
 
 if TYPE_CHECKING:
 	from ...installer import Installer
@@ -17,7 +21,17 @@ class BTRFSPartition(Partition):
 
 	@property
 	def subvolumes(self):
-		pass
+		for filesystem in findmnt(pathlib.Path(self.path)).get('filesystems', []):
+			if '[' in filesystem.get('source', ''):
+				yield subvolume_info_from_path(filesystem['target'])
+
+			def iterate_children(struct):
+				for child in struct.get('children', []):
+					if '[' in child.get('source', ''):
+						yield subvolume_info_from_path(child['target'])
+
+			for child in iterate_children(filesystem):
+				yield child
 
 	def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None):
 		"""
