@@ -65,6 +65,7 @@ class Filesystem:
 
 	def load_layout(self, layout :Dict[str, Any]) -> None:
 		from ..luks import luks2
+		from .btrfs import BTRFSPartition
 
 		# If the layout tells us to wipe the drive, we do so
 		if layout.get('wipe', False):
