@@ -13,7 +13,8 @@ from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
-from .btrfs import get_subvolumes_from_findmnt, BtrfsSubvolume
+from .btrfs.btrfs_helpers import get_subvolumes_from_findmnt
+from .btrfs.btrfssubvolume import BtrfsSubvolume
 
 class Partition:
 	def __init__(self,

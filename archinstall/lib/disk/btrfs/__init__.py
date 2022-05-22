@@ -4,11 +4,19 @@ import glob
 import logging
 import re
 from typing import Union, Dict, TYPE_CHECKING, Any, Iterator
-from dataclasses import dataclass
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
 	from ...installer import Installer
+
+from .btrfs_helpers import (
+	get_subvolumes_from_findmnt as get_subvolumes_from_findmnt,
+	subvolume_info_from_path as subvolume_info_from_path,
+	find_parent_subvolume as find_parent_subvolume
+)
+from .btrfssubvolume import BtrfsSubvolume as BtrfsSubvolume
+from .btrfspartition import BTRFSPartition as BTRFSPartition
+
 from ..helpers import get_mount_info
 from ...exceptions import DiskError
 from ...general import SysCommand
