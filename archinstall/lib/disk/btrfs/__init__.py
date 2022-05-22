@@ -8,40 +8,12 @@ from dataclasses import dataclass
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
-	from ..installer import Installer
-from .helpers import get_mount_info
-from ..exceptions import DiskError
-from ..general import SysCommand
-from ..output import log
-from ..exceptions import SysCallError
-
-@dataclass
-class BtrfsSubvolume:
-	target :str
-	source :str
-	fstype :str
-	name :str
-	options :str
-	root :bool = False
-
-def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
-	if '[' in struct['source']:
-		subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
-		struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
-		yield BtrfsSubvolume(
-			target=struct['target'],
-			source=struct['source'],
-			fstype=struct['fstype'],
-			name=subvolume,
-			options=struct['options'],
-			root=index == 0
-		)
-		index += 1
-
-		for child in struct.get('children', []):
-			for item in get_subvolumes_from_findmnt(child, index=index):
-				yield item
-				index += 1
+	from ...installer import Installer
+from ..helpers import get_mount_info
+from ...exceptions import DiskError
+from ...general import SysCommand
+from ...output import log
+from ...exceptions import SysCallError
 
 def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
 	try:
