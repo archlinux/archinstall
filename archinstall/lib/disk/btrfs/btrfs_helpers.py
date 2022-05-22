@@ -32,8 +32,6 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 	# 			index += 1
 
 def setup_subvolume(installation, partition_dict):
-		
-	mountpoints = []
 	"""
 	Taken from: ..user_guides.py
 
@@ -89,38 +87,36 @@ def setup_subvolume(installation, partition_dict):
 			# entry is deleted so compress doesn't propagate to the mount options
 			del subvol_options[subvol_options.index('compress')]
 		
-		## TODO: Re-work this logic
-		# END compress processing.
-		# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
-		if not partition_dict['mountpoint'] and mountpoint is not None:
-			# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
-			# the primary partition. We make a deepcopy to avoid altering the original content in any case
-			fake_partition = deepcopy(partition_dict)
-			# we start to modify entries in the "fake partition" to match the needs of the subvolumes
-			# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
-			del fake_partition['btrfs']
-			fake_partition['encrypted'] = False
-			fake_partition['generate-encryption-key-file'] = False
-			# Mount destination. As of now the right hand part
-			fake_partition['mountpoint'] = mountpoint
-			# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
-			fake_partition['subvolume'] = name
-			# here we add the special mount options for the subvolume, if any.
-			# if the original partition['options'] is not a list might give trouble
-			if fake_partition.get('filesystem',{}).get('mount_options',[]):
-				fake_partition['filesystem']['mount_options'].extend(subvol_options)
-			else:
-				fake_partition['filesystem']['mount_options'] = subvol_options
-			# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
-			# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
-			# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
-			fake_partition['device_instance'].path = f"{partition_dict['device_instance'].path}[/{name}]"
-
-			# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
-			# as "normal" ones
-			mountpoints.append(fake_partition)
-
-	return mountpoints
+	# 	## TODO: Re-work this logic
+	# 	# END compress processing.
+	# 	# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
+	# 	if not partition_dict['mountpoint'] and mountpoint is not None:
+	# 		# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
+	# 		# the primary partition. We make a deepcopy to avoid altering the original content in any case
+	# 		fake_partition = deepcopy(partition_dict)
+	# 		# we start to modify entries in the "fake partition" to match the needs of the subvolumes
+	# 		# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
+	# 		del fake_partition['btrfs']
+	# 		fake_partition['encrypted'] = False
+	# 		fake_partition['generate-encryption-key-file'] = False
+	# 		# Mount destination. As of now the right hand part
+	# 		fake_partition['mountpoint'] = mountpoint
+	# 		# we load the name in an attribute called subvolume, but i think it is not needed anymore, 'cause the mount logic uses a different path.
+	# 		fake_partition['subvolume'] = name
+	# 		# here we add the special mount options for the subvolume, if any.
+	# 		# if the original partition['options'] is not a list might give trouble
+	# 		if fake_partition.get('filesystem',{}).get('mount_options',[]):
+	# 			fake_partition['filesystem']['mount_options'].extend(subvol_options)
+	# 		else:
+	# 			fake_partition['filesystem']['mount_options'] = subvol_options
+	# 		# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
+	# 		# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
+	# 		# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
+	# 		fake_partition['device_instance'].path = f"{partition_dict['device_instance'].path}[/{name}]"
+	
+	# 		# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
+	# 		# as "normal" ones
+	# 		mountpoints.append(fake_partition)
 
 def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 	try:

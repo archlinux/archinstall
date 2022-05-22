@@ -269,32 +269,35 @@ class Installer:
 				else:
 					self.mount(partition['device_instance'], "/")
 
-				list_part.extend(
-					setup_subvolume(
-						installation=self, 
-						partition_dict=partition
-					)
+				setup_subvolume(
+					installation=self, 
+					partition_dict=partition
 				)
 
 				partition['device_instance'].unmount()
 
 		# we mount. We need to sort by mountpoint to get a good working order
-		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
-			mountpoint = partition['mountpoint']
-			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
+			print(partition)
 
-			if partition.get('filesystem',{}).get('mount_options',[]):
-				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
-			else:
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
-			time.sleep(1)
+			# mountpoint = partition['mountpoint']
+			# log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
 
-			try:
-				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
-			except DiskError:
-				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
+			# if partition.get('filesystem',{}).get('mount_options',[]):
+			# 	mount_options = ','.join(partition['filesystem']['mount_options'])
+			# 	partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+			# else:
+			# 	partition['device_instance'].mount(f"{self.target}{mountpoint}")
+
+			# time.sleep(1)
+
+			# try:
+			# 	get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			# except DiskError:
+			# 	raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
+
+		exit(0)
 
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
