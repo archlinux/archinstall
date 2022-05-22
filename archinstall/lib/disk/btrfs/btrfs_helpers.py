@@ -72,10 +72,17 @@ def mount_subvolume_struct(installation, partition_dict):
 			case dict():
 				mountpoint = right_hand.get('mountpoint', None)
 				subvol_options = right_hand.get('options', [])
+			case _:
+				continue
 
-		print(f'Dealing with: {name} --> {mountpoint}')
+		installation_target = installation.target
+		if type(installation_target) == str:
+			installation_target = pathlib.Path(installation_target)
 
-		installation.mount(partition_dict['device_instance'], "/", options=f"subvol={name}")
+		mountpoint = installation_target / mountpoint
+
+
+		SysCommand(f"mount {partition_dict['device_instance'].path} {mountpoint} -o subvol={name}")
 
 
 def setup_subvolume(installation, partition_dict):
