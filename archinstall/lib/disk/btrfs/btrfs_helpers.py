@@ -47,6 +47,7 @@ def setup_subvolumes(installation, partition_dict):
 	"""
 		
 	mountpoints = []
+	print(partition_dict)
 	for name, right_hand in partition_dict['btrfs']['subvolumes'].items():
 		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
