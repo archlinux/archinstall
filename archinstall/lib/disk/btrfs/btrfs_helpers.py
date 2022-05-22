@@ -31,7 +31,7 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 	# 			yield item
 	# 			index += 1
 
-def setup_subvolumes(installation, partition_dict):
+def setup_subvolume(installation, partition_dict):
 		
 	mountpoints = []
 	"""
