@@ -86,7 +86,7 @@ The contents in the base class of this methods serve for a very basic usage, and
 """
 
 from .text_input import TextInput
-from .menu import Menu, MenuSelectionType
+from .menu import Menu
 from os import system
 from copy import copy
 from typing import Union, Any, TYPE_CHECKING, Dict, Optional
