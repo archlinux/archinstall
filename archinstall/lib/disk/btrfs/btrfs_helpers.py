@@ -31,7 +31,7 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 	# 			yield item
 	# 			index += 1
 
-def setup_subvolumes(installation, subvolume_struct):
+def setup_subvolumes(installation, partition_dict):
 	"""
 	Taken from: ..user_guides.py
 
@@ -47,7 +47,7 @@ def setup_subvolumes(installation, subvolume_struct):
 	"""
 		
 	mountpoints = []
-	for name, right_hand in partition['btrfs']['subvolumes'].items():
+	for name, right_hand in partition_dict['btrfs']['subvolumes'].items():
 		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 		name = name.lstrip('/')
@@ -81,17 +81,17 @@ def setup_subvolumes(installation, subvolume_struct):
 		# in this way only zstd compression is activaded
 		# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
 		if 'compress' in subvol_options:
-			if not _has_option('compress',partition.get('filesystem',{}).get('mount_options',[])):
+			if not _has_option('compress', partition_dict.get('filesystem', {}).get('mount_options', [])):
 				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 			# entry is deleted so compress doesn't propagate to the mount options
 			del subvol_options[subvol_options.index('compress')]
 		# END compress processing.
 		# we do not mount if THE basic partition will be mounted or if we exclude explicitly this subvolume
-		if not partition['mountpoint'] and mountpoint is not None:
+		if not partition_dict['mountpoint'] and mountpoint is not None:
 			# we begin to create a fake partition entry. First we copy the original -the one that corresponds to
 			# the primary partition. We make a deepcopy to avoid altering the original content in any case
-			fake_partition = deepcopy(partition)
+			fake_partition = deepcopy(partition_dict)
 			# we start to modify entries in the "fake partition" to match the needs of the subvolumes
 			# to avoid any chance of entering in a loop (not expected) we delete the list of subvolumes in the copy
 			del fake_partition['btrfs']
@@ -110,7 +110,7 @@ def setup_subvolumes(installation, subvolume_struct):
 			# Here comes the most exotic part. The dictionary attribute 'device_instance' contains an instance of Partition. This instance will be queried along the mount process at the installer.
 			# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
 			# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
-			fake_partition['device_instance'].path = f"{partition['device_instance'].path}[/{name}]"
+			fake_partition['device_instance'].path = f"{partition_dict['device_instance'].path}[/{name}]"
 
 			# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 			# as "normal" ones
