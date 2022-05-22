@@ -276,26 +276,32 @@ class Installer:
 
 				partition['device_instance'].unmount()
 
-		# we mount. We need to sort by mountpoint to get a good working order
+		# We mount ordinary partitions, and we sort them by the mountpoint
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
-			print(partition)
+			mountpoint = partition['mountpoint']
+			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
 
+			if partition.get('filesystem',{}).get('mount_options',[]):
+				mount_options = ','.join(partition['filesystem']['mount_options'])
+				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+			else:
+				partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
-			# mountpoint = partition['mountpoint']
-			# log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+			time.sleep(1)
 
-			# if partition.get('filesystem',{}).get('mount_options',[]):
-			# 	mount_options = ','.join(partition['filesystem']['mount_options'])
-			# 	partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
-			# else:
-			# 	partition['device_instance'].mount(f"{self.target}{mountpoint}")
+			try:
+				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+			except DiskError:
+				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-			# time.sleep(1)
-
-			# try:
-			# 	get_mount_info(f"{self.target}{mountpoint}", traverse=False)
-			# except DiskError:
-			# 	raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
+		# We then handle any special cases, such as btrfs
+		# we manage the btrfs partitions. Sorting is done inside mount_subvolume_struct()
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition in btrfs_subvolumes:
+				mount_subvolume_struct(
+					installation=self,
+					partition_dict=partition
+				)
 
 		exit(0)
 

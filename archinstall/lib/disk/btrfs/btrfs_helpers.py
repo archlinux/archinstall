@@ -31,6 +31,49 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 	# 			yield item
 	# 			index += 1
 
+def mount_subvolume_struct(installation, partition_dict):
+	"""
+	partition_dict = {
+		"type" : "primary",
+		"start" : "206MiB",
+		"encrypted" : False,
+		"wipe" : True,
+		"mountpoint" : None,
+		"filesystem" : {
+			"format" : "btrfs",
+			"mount_options" : ["compress=zstd"] if compression else []
+		},
+		"btrfs" : {
+			"subvolumes" : {
+				"@":"/",
+				"@home": "/home",
+				"@log": "/var/log",
+				"@pkg": "/var/cache/pacman/pkg",
+				"@.snapshots": "/.snapshots"
+			}
+		}
+	})
+	"""
+
+	for name, right_hand in sorted(partition_dict['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
+		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
+		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
+		name = name.lstrip('/')
+
+		# renormalize the right hand.
+		mountpoint = None
+		subvol_options = []
+
+		match right_hand:
+			case str(): # backwards-compatability
+				mountpoint = right_hand
+			case dict():
+				mountpoint = right_hand.get('mountpoint', None)
+				subvol_options = right_hand.get('options', [])
+
+		installation.mount(partition_dict['device_instance'], "/", options=[f"subvol={name}"])
+
+
 def setup_subvolume(installation, partition_dict):
 	"""
 	Taken from: ..user_guides.py
@@ -113,7 +156,7 @@ def setup_subvolume(installation, partition_dict):
 	# 		# As the rest will query there the path of the "partition" to be mounted, we feed it with the bind name needed to mount subvolumes
 	# 		# As we made a deepcopy we have a fresh instance of this object we can manipulate problemless
 	# 		fake_partition['device_instance'].path = f"{partition_dict['device_instance'].path}[/{name}]"
-	
+
 	# 		# Well, now that this "fake partition" is ready, we add it to the list of the ones which are to be mounted,
 	# 		# as "normal" ones
 	# 		mountpoints.append(fake_partition)
