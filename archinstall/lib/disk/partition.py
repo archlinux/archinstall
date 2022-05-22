@@ -443,6 +443,7 @@ class Partition:
 			if retry is True:
 				log(f"Retrying in {storage.get('DISK_TIMEOUTS', 1)} seconds.", level=logging.WARNING, fg="orange")
 				time.sleep(storage.get('DISK_TIMEOUTS', 1))
+				
 				return self.format(filesystem, path, log_formatting, options, retry=False)
 
 		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':

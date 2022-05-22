@@ -154,7 +154,7 @@ class Filesystem:
 						# We upgrade the device instance to a BTRFSPartition if we format it as such.
 						# This is so that we can gain access to more features than otherwise available in Partition()
 						partition['device_instance'] = BTRFSPartition(
-							self.mapdev,
+							partition['device_instance'].path,
 							block_device=partition['device_instance'].block_device,
 							encrypted=False,
 							filesystem='btrfs',
