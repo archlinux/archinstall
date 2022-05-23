@@ -996,7 +996,7 @@ class Installer:
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-a
+
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
 
