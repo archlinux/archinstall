@@ -241,6 +241,8 @@ class Installer:
 		for blockdevice in layouts:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
+		# TODO: Implement a proper mount-queue system that does not depend on return values.
+
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
@@ -994,7 +996,6 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			print('994@installer.py:', partition.mountpoint == self.target, partition, [partition.mountpoint], 'vs', [self.target])
 			if partition.mountpoint == self.target / 'boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
