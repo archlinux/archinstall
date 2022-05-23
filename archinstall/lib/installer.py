@@ -988,11 +988,14 @@ class Installer:
 				if plugin.on_add_bootloader(self):
 					return True
 
+		if type(self.target) == str:
+			self.target = pathlib.Path(self.target)
+
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
 			print('994@installer.py:', partition.mountpoint == self.target, partition, [partition.mountpoint], 'vs', [self.target])
-			if partition.mountpoint == os.path.join(self.target, 'boot'):
+			if partition.mountpoint == self.target / 'boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
