@@ -991,12 +991,12 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			print('994@installer.py:', partition)
+			print('994@installer.py:', partition, partition.mountpoint, 'vs', [self.target])
 			if partition.mountpoint == os.path.join(self.target, 'boot'):
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
-
+a
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
 
