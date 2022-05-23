@@ -13,7 +13,7 @@ msgstr ""
 "X-Generator: Poedit 3.0.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Buraya bir günlük oluşturuldu: {} {}"
+msgstr "[!] Buraya bir günlük dosyası oluşturuldu: {} {}"
 
 msgid ""
 "    Please submit this issue (and file) to https://github.com/archlinux/"
@@ -35,14 +35,14 @@ msgid "Desired hostname for the installation: "
 msgstr "Kurulum için tercih edilen bilgisayar ismi: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Sudo yetkilerine sahip gerekli süper kullanıcı için kullanıcı adı: "
+msgstr "Sudo yetkilerine sahip, gerekli süper kullanıcı için kullanıcı adı: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr ""
 "Herhangi ek kurulacak kullanıcılar (kullanıcı kurulmaması için boş bırak): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Bu kullanıcı süper kullanıcı (sudoer) olmalı mı?"
+msgstr "Bu kullanıcı bir süper kullanıcı (sudoer) olmalı mı?"
 
 msgid "Select a timezone"
 msgstr "Bir saat dilimi seç"
@@ -99,7 +99,7 @@ msgstr "{} için IP ve altağ gir (örnek: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr ""
-"Ağ geçidi (yönlendirici) IP adresinizi gir ya da kullanılmaması için boş "
+"Ağ geçidi (yönlendirici) IP adresini gir ya da kullanılmaması için boş "
 "bırak: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
@@ -120,7 +120,7 @@ msgstr ""
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Disk bölümü için arzu edilen bir dosya sistem tipi gir"
+msgstr "Disk bölümü için arzu edilen bir dosya systemi tipi gir"
 
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Başlangıç kesimini gir (yüzde ya da blok numarası, varsayılan: {}): "
@@ -151,19 +151,19 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Dizinden hangi disk bölümünün nereye mount edileceğini seç"
+"Dizinden hangi disk bölümünün nereye mount edileceğini (bağlanacağını) seç"
 
 msgid ""
 " * Partition mount-points are relative to inside the installation, the boot "
 "would be /boot as an example."
 msgstr ""
-" * Disk bölümü mount-noktaları iç kurulumla ilişkilidir, örnek olarak boot, /"
-"boot olacaktır."
+" * Disk bölümü mount (bağlama) noktaları iç kurulumla ilişkilidir, örnek "
+"olarak boot, /boot olacaktır."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
 msgstr ""
-"Disk bölümünün nereye mount edileceğini seç (mount-noktasını kaldırmak için "
-"bırakın): "
+"Disk bölümünün nereye mount edileceğini (bağlanacağını) seç (mount (bağlama) "
+"noktasını kaldırmak için boş bırakın): "
 
 msgid ""
 "{}\n"
@@ -202,7 +202,7 @@ msgstr ""
 "Hangi disk bölümüne dosya sistemi kurulacağını seç"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Disk bölümü için arzu edilen bir dosya sistemi gir: "
+msgstr "Disk bölümü için arzu edilen bir dosya sistemi tipi gir: "
 
 msgid "Archinstall language"
 msgstr "Archinstall dili"
@@ -228,7 +228,7 @@ msgstr ""
 "gibi şeyler kurmayı kolaylaştırabilir"
 
 msgid "Select keyboard layout"
-msgstr "Bir klavye düzeni seç"
+msgstr "Klavye düzeni seç"
 
 msgid "Select one of the regions to download packages from"
 msgstr "Paketleri indirmek için bölgelerden birini seç"
@@ -264,7 +264,8 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Bir grafik sürücüsü seç ya da tam açık-kaynak sürücüler için boş bırak"
+"Bir grafik sürücüsü seç ya da bütün açık-kaynak sürücüleri kurmak için boş "
+"bırak"
 
 msgid "All open-source (default)"
 msgstr "Tam açık-kaynak (varsayılan)"
@@ -274,12 +275,15 @@ msgstr ""
 "Hangi çekirdekleri kullanmak istediğini seç ya da varsayılan \"{}\" için boş "
 "bırak"
 
+# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Choose which locale language to use"
 msgstr "Hangi dilin kullanılacağını seç"
 
+# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Choose which locale encoding to use"
 msgstr "Hangi yerel dil kod şemasının kullanılacağını seç"
 
+# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Select one of the values shown below: "
 msgstr "Aşağıda gösterilen değerlerden birini seç: "
 
@@ -308,14 +312,16 @@ msgstr "Klavye düzeni"
 msgid "Mirror region"
 msgstr "İndirme sunucusu bölgesi"
 
+# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Locale language"
 msgstr "Yerel dil"
 
+# Burada "locale" hesaba özgü yani profil içinde yerel anlamına geliyor olabilir. Kurulumda ilgili metin ile karşılaşmadığımdan karar veremiyorum.
 msgid "Locale encoding"
 msgstr "Yerel dil kod şeması"
 
 msgid "Drive(s)"
-msgstr "Sürücü(ler)"
+msgstr "Disk(ler)"
 
 msgid "Disk layout"
 msgstr "Disk şeması"
@@ -324,7 +330,7 @@ msgid "Encryption password"
 msgstr "Şifreleme şifresi"
 
 msgid "Swap"
-msgstr "Swap"
+msgstr "Swap (değişim)"
 
 msgid "Bootloader"
 msgstr "Önyükleyici"
@@ -357,7 +363,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "Otomatik zaman eşzamanlaması (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Kur ({} yapılandırma(lar) eksik)"
+msgstr "Kur ({} adet yapılandırma(lar) eksik)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -365,8 +371,8 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Sabit disk seçimini geçmeye karar verdin\n"
-"ve {}'e ne mount edilmişse onu kullanacaksın (deneysel)\n"
+"Sabit disk seçimini geçmeye karar verdin ve\n"
+"{}'e ne mount edilmişse (bağlanmışsa) onu kullanacaksın (deneysel)\n"
 "UYARI: Archinstall bu kurulumun uygunluğunu konrol etmeyecek\n"
 "Devam etmek istiyor musun?"
 
@@ -383,7 +389,7 @@ msgid "Clear/Delete all partitions"
 msgstr "Bütün disk bölümlerini temizle/sil"
 
 msgid "Assign mount-point for a partition"
-msgstr "Bir disk bölümü için mount-noktası ata"
+msgstr "Bir disk bölümü için mount (bağlama) noktası ata"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr ""
@@ -461,7 +467,7 @@ msgid ""
 "for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
-"NTP'nin çalışması için donanım zamanı ve diğer yapılandırma sonrası adımları "
+"NTP'nin çalışması için donanım zamanı ve diğer yapılandırma sonrası adımlar "
 "gerekebilir.\n"
 "Daha fazla bilgi için, lütfen Arch wikiye göz at"
 
@@ -629,7 +635,7 @@ msgid " Subvolume :{:16}"
 msgstr " alt disk bölümü :{:16}"
 
 msgid " mounted at {:16}"
-msgstr "  {:16}'da mount edildi"
+msgstr "  {:16}'da mount edildi (bağlandı)"
 
 msgid " with option {}"
 msgstr " {} seçeneğiyle"
@@ -645,7 +651,7 @@ msgid "Subvolume name "
 msgstr "Alt disk bölümü ismi "
 
 msgid "Subvolume mountpoint"
-msgstr "Alt disk bölümü mount-noktası"
+msgstr "Alt disk bölümü mount (bağlantı) noktası"
 
 msgid "Subvolume options"
 msgstr "Alt dizin bölümü seçenekleri"
@@ -657,7 +663,7 @@ msgid "Subvolume name :"
 msgstr "Alt disk bölümü ismi :"
 
 msgid "Select a mount point :"
-msgstr "Bir mount-noktası seç :"
+msgstr "Bir mount (bağlantı) noktası seç :"
 
 msgid "Select the desired subvolume options "
 msgstr "Arzu edilen alt dizin bölümü ayarlarını seç "
@@ -843,7 +849,7 @@ msgid ""
 "is mounted at /mnt (experimental)"
 msgstr ""
 "Disk seçmeyi ve disk bölümlendirmeyi geçebilir ve disk kurulumu /mnt "
-"dizininde neye mount ediliyse onun kullanabilirsin (deneysel)"
+"dizininde neye mount ediliyse (bağlıysa) onu kullanabilirsin (deneysel)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr ""
