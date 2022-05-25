@@ -184,7 +184,7 @@ class Partition:
 			return device['pttype']
 
 	@property
-	def part_uuid(self) -> Optional[str]:
+	def part_uuid(self) -> str:
 		"""
 		Returns the PARTUUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -194,7 +194,7 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			if not self.partprobe():
 				raise DiskError(f"Could not perform partprobe on {self.device_path}")
-				
+
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			partuuid = self._safe_part_uuid
