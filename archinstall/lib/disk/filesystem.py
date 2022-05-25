@@ -206,9 +206,11 @@ class Filesystem:
 
 		log(f"Adding partition using the following parted command: {parted_string}", level=logging.DEBUG)
 
+		log('DOING PARTED', level=logging.DEBUG)
 		if self.parted(parted_string):
 			count = 0
 			while count < 10:
+				log('RUNNING' + str(count), level=logging.DEBUG)
 				new_uuid = None
 				new_uuid_set = (previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})
 
