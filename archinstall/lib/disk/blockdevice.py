@@ -121,7 +121,7 @@ class BlockDevice:
 		}
 
 	def _call_lsblk(self, path: str) -> Dict[str, Any]:
-		output = SysCommand( f'lsblk --json -b -o+SIZE,PTTYPE,ROTA,TRAN,PTUUID {self._path}').decode('UTF-8')
+		output = SysCommand(f'lsblk --json -b -o+SIZE,PTTYPE,ROTA,TRAN,PTUUID {self._path}').decode('UTF-8')
 		if output:
 			lsblk_info = json.loads(output)
 			return lsblk_info
