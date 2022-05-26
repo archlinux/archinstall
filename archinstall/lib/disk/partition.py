@@ -305,9 +305,25 @@ class Partition:
 
 	@property
 	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
+		from .helpers import findmnt
+		
+		def iterate_children_recursively(information):
+			for child in information.get('children', []):
+				if target := child.get('target'):
+					if subvolume := subvolume_info_from_path(pathlib.Path(target)):
+						yield subvolume
+
+					if child.get('children'):
+						for subchild in iterate_children_recursively(child):
+							yield subchild
+
 		for mountpoint in self.mount_information:
-			for result in subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
-				yield result
+			for filesystem in findmnt(pathlib.Path(mountpoint['target'])):
+				if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
+					yield subvolume
+
+				for child in iterate_children_recursively(filesystem):
+					yield child
 
 	def partprobe(self) -> bool:
 		try:
