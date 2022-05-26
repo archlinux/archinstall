@@ -208,7 +208,12 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		previous_partition_uuids = {partition.uuid for partition in self.blockdevice.partitions.values()}
+		previous_partition_uuids = []
+		for partition in self.blockdevice.partitions.values():
+			try:
+				previous_partition_uuids.append(partition.uuid)
+			except DiskError:
+				pass
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
@@ -225,7 +230,13 @@ class Filesystem:
 			count = 0
 			while count < 10:
 				new_partuuid = None
-				new_partuuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
+				new_partition_uuids = []
+				for partition in self.blockdevice.partitions.values():
+					try:
+						new_partition_uuids.append(partition.uuid)
+					except DiskError:
+						pass
+				new_partuuid_set = (set(previous_partition_uuids) ^ set(new_partition_uuids))
 
 				if len(new_partuuid_set) > 0:
 					new_partuuid = new_partuuid_set.pop()
