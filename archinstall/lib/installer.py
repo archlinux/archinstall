@@ -315,16 +315,17 @@ class Installer:
 			else:
 				mount_queue[mountpoint] = lambda: partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
+
+		# We mount everything by sorting on the mountpoint itself.
+		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
+			frozen_func()
+			
 			time.sleep(1)
 
 			try:
 				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
-
-		# We mount everything by sorting on the mountpoint itself.
-		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
-			frozen_func()
 
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
