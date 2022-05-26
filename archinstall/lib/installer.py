@@ -265,6 +265,7 @@ class Installer:
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
+		print([entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})])
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for partition in btrfs_subvolumes:
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
