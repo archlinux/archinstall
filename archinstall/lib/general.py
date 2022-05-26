@@ -363,7 +363,7 @@ class SysCommandWorker:
 			try:
 				try:
 					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
-						cmd_log.write(f"{' '.join(self.cmd)}\n")
+						cmd_log.write(f"{self.cmd}\n")
 				except PermissionError:
 					pass
 
