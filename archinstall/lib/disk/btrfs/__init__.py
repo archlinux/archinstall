@@ -14,7 +14,7 @@ from .btrfs_helpers import (
 	subvolume_info_from_path as subvolume_info_from_path,
 	find_parent_subvolume as find_parent_subvolume,
 	setup_subvolume as setup_subvolume,
-	mount_subvolume_struct as mount_subvolume_struct
+	mount_subvolume as mount_subvolume
 )
 from .btrfssubvolume import BtrfsSubvolume as BtrfsSubvolume
 from .btrfspartition import BTRFSPartition as BTRFSPartition
