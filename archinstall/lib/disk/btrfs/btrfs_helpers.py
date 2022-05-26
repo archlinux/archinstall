@@ -112,8 +112,8 @@ def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 
 		return BtrfsSubvolume(**{'full_path' : path, 'name' : subvolume_name, **result})
 
-	except SysCallError:
-		pass
+	except SysCallError as error:
+		log(f"Could not retrieve subvolume information from {path}: {error}", level=logging.WARNING, fg="orange")
 
 	return None
 
