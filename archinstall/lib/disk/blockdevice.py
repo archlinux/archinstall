@@ -303,9 +303,9 @@ class BlockDevice:
 				elif partuuid and partition.part_uuid.lower() == partuuid.lower():
 					print(f'Found PARTUUID: {partition}')
 					return partition
-				else:
-					log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
-					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
+
+			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
+			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 				
 		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries",level=logging.INFO)
 		print(f"Cache: {self.part_cache}")
