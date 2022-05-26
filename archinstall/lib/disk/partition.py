@@ -319,8 +319,8 @@ class Partition:
 							yield subchild
 
 		for mountpoint in self.mount_information:
-			if filesystem := findmnt(pathlib.Path(mountpoint['target'])):
-				for result in filesystem['filesystem']:
+			if result := findmnt(pathlib.Path(mountpoint['target'])):
+				for filesystem in filesystem.get('filesystems', []):
 					if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
 						yield subvolume
 
