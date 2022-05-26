@@ -97,7 +97,7 @@ class Filesystem:
 				print(_("Re-using partition instance: {}").format(partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
-				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found"., fg="yellow", level=logging.WARNING)
+				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
 				continue
 		#		raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
