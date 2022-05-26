@@ -82,6 +82,7 @@ class Filesystem:
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
+			print(partition)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
 				print(_("Adding partition...."))
 				start = partition.get('start') or (
