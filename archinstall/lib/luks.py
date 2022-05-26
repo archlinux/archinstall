@@ -165,15 +165,19 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			if filesystems := findmnt(pathlib.Path(self.mapdev)).get('filesystems'):
-				if filesystems[0]['fstype'] == 'btrfs':
-					BTRFSPartition(
-						self.mapdev,
-						block_device=MapperDev(mountpoint).partition.block_device,
-						encrypted=True,
-						filesystem='btrfs',
-						autodetect_filesystem=False
-					)
+			try:
+				if filesystems := findmnt(pathlib.Path(self.mapdev)).get('filesystems'):
+					if filesystems[0]['fstype'] == 'btrfs':
+						BTRFSPartition(
+							self.mapdev,
+							block_device=MapperDev(mountpoint).partition.block_device,
+							encrypted=True,
+							filesystem='btrfs',
+							autodetect_filesystem=False
+						)
+			except DiskError:
+				# Either it's not yet mounted, or it's lacking a filesystem that we support custom handling for.
+				pass
 
 			return Partition(
 				self.mapdev,
