@@ -97,9 +97,8 @@ class Boot:
 			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')
 		except SysCallError as error:
 			shutdown_exit_code = error.exit_code
-
-			if error.exit_code == 256:
-				pass
+			# if error.exit_code == 256:
+			# 	pass
 
 		while self.session.is_alive():
 			time.sleep(0.25)
@@ -110,7 +109,7 @@ class Boot:
 		if self.session.exit_code == 0 or shutdown_exit_code == 0:
 			storage['active_boot'] = None
 		else:
-			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {shutdown}", exit_code=next(filter(bool, [self.session.exit_code, shutdown_exit_code])))
+			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {self.session.exit_code}/{shutdown_exit_code}", exit_code=next(filter(bool, [self.session.exit_code, shutdown_exit_code])))
 
 	def __iter__(self) -> Iterator[str]:
 		if self.session:
