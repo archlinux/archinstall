@@ -229,7 +229,7 @@ class Filesystem:
 		if self.parted(parted_string):
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
 				self.partprobe()
-				
+
 				new_partition_uuids = []
 				for partition in self.blockdevice.partitions.values():
 					try:
@@ -239,7 +239,7 @@ class Filesystem:
 
 				new_partuuid_set = (set(previous_partition_uuids) ^ set(new_partition_uuids))
 
-				print(previous_partition_uuids, new_partuuid_set)
+				print(previous_partition_uuids, new_partition_uuids, new_partuuid_set)
 
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
