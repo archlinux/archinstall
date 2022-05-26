@@ -12,26 +12,6 @@ from ...output import log
 from ..helpers import get_mount_info
 from .btrfssubvolume import BtrfsSubvolume
 
-def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[BtrfsSubvolume]:
-	# TODO: Find all usages and convert
-	pass
-	# if '[' in struct['source']:
-	# 	subvolume = re.findall(r'\[.*?\]', struct['source'])[0][1:-1]
-	# 	struct['source'] = struct['source'].replace(f"[{subvolume}]", "")
-	# 	yield BtrfsSubvolume(
-	# 		target=struct['target'],
-	# 		source=struct['source'],
-	# 		fstype=struct['fstype'],
-	# 		name=subvolume,
-	# 		options=struct['options'],
-	# 		root=index == 0
-	# 	)
-	# 	index += 1
-
-	# 	for child in struct.get('children', []):
-	# 		for item in get_subvolumes_from_findmnt(child, index=index):
-	# 			yield item
-	# 			index += 1
 
 def mount_subvolume(installation, device, name, subvolume_information):
 	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
