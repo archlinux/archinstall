@@ -15,7 +15,7 @@ from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
-from .disk.helpers import findmnt, get_filesystem_type
+from .disk.helpers import get_filesystem_type
 from .disk.mapperdev import MapperDev
 from .disk.btrfs import BTRFSPartition
 
@@ -164,12 +164,12 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			if (filesystems := get_filesystem_type(pathlib.Path(self.mapdev))) == 'btrfs':
+			if (filesystem_type := get_filesystem_type(pathlib.Path(self.mapdev))) == 'btrfs':
 				return BTRFSPartition(
 					self.mapdev,
 					block_device=MapperDev(mountpoint).partition.block_device,
 					encrypted=True,
-					filesystem='btrfs',
+					filesystem=filesystem_type,
 					autodetect_filesystem=False
 				)
 
