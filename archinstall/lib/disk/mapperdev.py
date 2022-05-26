@@ -78,9 +78,7 @@ class MapperDev:
 	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
 		from .btrfs import subvolume_info_from_path
 
-		print(self.mount_information)
-		
 		for mountpoint in self.mount_information:
 			if target := mountpoint.get('target'):
-				if subvolume := subvolume_info_from_path(target):
+				if subvolume := subvolume_info_from_path(pathlib.Path(target)):
 					yield subvolume
