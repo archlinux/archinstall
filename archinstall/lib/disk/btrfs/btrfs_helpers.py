@@ -62,6 +62,7 @@ def mount_subvolume(installation, device, name, subvolume_information):
 
 
 def setup_subvolumes(installation, partition_dict):
+	print('YES!')
 	"""
 	Taken from: ..user_guides.py
 
