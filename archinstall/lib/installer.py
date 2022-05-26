@@ -281,9 +281,8 @@ class Installer:
 
 		# We then handle any special cases, such as btrfs
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
-			for btrfs_struct in btrfs_subvolumes:
-				print(btrfs_struct)
-				for name, mountpoint in sorted(btrfs_struct['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
+			for partition_information in btrfs_subvolumes:
+				for name, mountpoint in sorted(partition_information['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
 					btrfs_subvolume_information = {}
 
 					match mountpoint:
@@ -300,6 +299,7 @@ class Installer:
 						# We cache the mount call for later
 						mount_queue[mountpoint_parsed] = lambda: mount_subvolume(
 							installation=self,
+							device=partition_information['device_instance'],
 							name=name,
 							subvolume_information=btrfs_subvolume_information
 						)
@@ -319,7 +319,7 @@ class Installer:
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
 			frozen_func()
-			
+
 			time.sleep(1)
 
 			try:

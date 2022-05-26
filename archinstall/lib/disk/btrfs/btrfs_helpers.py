@@ -33,7 +33,7 @@ def get_subvolumes_from_findmnt(struct :Dict[str, Any], index=0) -> Iterator[Btr
 	# 			yield item
 	# 			index += 1
 
-def mount_subvolume(installation, name, subvolume_information):
+def mount_subvolume(installation, device, name, subvolume_information):
 	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 	name = name.lstrip('/')
@@ -57,8 +57,8 @@ def mount_subvolume(installation, name, subvolume_information):
 	if not any('subvol=' in x for x in mount_options):
 		mount_options += f'subvol={name}'
 
-	log(f"Mounting subvolume {name} on {partition_dict['device_instance']} to {mountpoint}", level=logging.INFO, fg="gray")
-	SysCommand(f"mount {partition_dict['device_instance'].path} {mountpoint} -o {','.join(mount_options)}")
+	log(f"Mounting subvolume {name} on {device} to {mountpoint}", level=logging.INFO, fg="gray")
+	SysCommand(f"mount {device.path} {mountpoint} -o {','.join(mount_options)}")
 
 
 def setup_subvolume(installation, partition_dict):
