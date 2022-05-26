@@ -881,6 +881,22 @@ msgstr "Свободное место"
 msgid "Bus-type"
 msgstr "Тип шины"
 
+msgid ""
+"Either root-password or at least 1 user with sudo privileges must be "
+"specified"
+msgstr ""
+"Должен быть указан либо пароль root, либо хотя бы 1 пользователь с "
+"привилегиями sudo"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Введите имя пользователя (оставьте пустым, чтобы пропустить): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Введенное вами имя пользователя недействительно. Попробуйте еще раз"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Должен ли \"{}\" быть суперпользователем (sudo)?"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"
