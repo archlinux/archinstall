@@ -319,12 +319,13 @@ class Partition:
 							yield subchild
 
 		for mountpoint in self.mount_information:
-			for filesystem in findmnt(pathlib.Path(mountpoint['target'])):
-				if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
-					yield subvolume
+			if filesystem := findmnt(pathlib.Path(mountpoint['target'])):
+				for result in filesystem['filesystem']:
+					if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
+						yield subvolume
 
-				for child in iterate_children_recursively(filesystem):
-					yield child
+					for child in iterate_children_recursively(filesystem):
+						yield child
 
 	def partprobe(self) -> bool:
 		try:
