@@ -293,6 +293,7 @@ class BlockDevice:
 		count = 0
 		while count < 5:
 			for partition_uuid, partition in self.partitions.items():
+				print('Comparing:', [partition.part_uuid.lower(), uuid.lower()])
 				if partition.part_uuid.lower() == uuid.lower():
 					return partition
 			else:
