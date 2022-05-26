@@ -97,9 +97,11 @@ def stylize_output(text: str, *opts :str, **kwargs) -> str:
 		'magenta' : '5',
 		'cyan' : '6',
 		'white' : '7',
-		'orange' : '8;5;208',    # Extended 256-bit colors (not always supported)
-		'darkorange' : '8;5;202',# https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'teal' : '8;5;109',      # Extended 256-bit colors (not always supported)
+		'orange' : '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'darkorange' : '8;5;202',
 		'gray' : '8;5;246',
+		'grey' : '8;5;246',
 		'darkgray' : '8;5;240',
 		'lightgray' : '8;5;256'
 	}
