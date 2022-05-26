@@ -62,7 +62,6 @@ def mount_subvolume(installation, device, name, subvolume_information):
 
 
 def setup_subvolumes(installation, partition_dict):
-	print('YES!')
 	"""
 	Taken from: ..user_guides.py
 
@@ -118,8 +117,6 @@ def setup_subvolumes(installation, partition_dict):
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 			# entry is deleted so compress doesn't propagate to the mount options
 			del subvol_options[subvol_options.index('compress')]
-		
-		yield BtrfsSubvolume()
 
 def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 	try:
