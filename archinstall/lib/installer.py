@@ -260,8 +260,9 @@ class Installer:
 				partition['device_instance'] = unlocked_device
 
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
-				hsm_device_path = storage['arguments']['HSM']
-				fido2_enroll(hsm_device_path, partition['device_instance'], password)
+				if storage['arguments'].get('HSM'):
+					hsm_device_path = storage['arguments']['HSM']
+					fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
