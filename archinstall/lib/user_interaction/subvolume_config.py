@@ -57,6 +57,8 @@ class SubvolumeList(ListManager):
 
 			data.update(self.target)
 
+		return data
+
 
 class SubvolumeMenu(GeneralMenu):
 	def __init__(self,parameters,action=None):

@@ -1,7 +1,4 @@
 """Arch Linux installer - guided, templates etc."""
-import urllib.error
-import urllib.parse
-import urllib.request
 from argparse import ArgumentParser
 
 from .lib.disk import *
@@ -13,6 +10,7 @@ from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
 from .lib.models.network_configuration import NetworkConfigurationHandler
+from .lib.models.users import User
 from .lib.networking import *
 from .lib.output import *
 from .lib.models.dataclasses import (
@@ -160,7 +158,7 @@ def get_arguments() -> Dict[str, Any]:
 	if args.creds is not None:
 		if not json_stream_to_structure('--creds', args.creds, config):
 			exit(1)
-			
+
 	# load the parameters. first the known, then the unknowns
 	config.update(vars(args))
 	config.update(parse_unspecified_argument_list(unknowns))
@@ -211,6 +209,11 @@ def load_config():
 		handler = NetworkConfigurationHandler()
 		handler.parse_arguments(arguments.get('nic'))
 		arguments['nic'] = handler.configuration
+	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
+		users = arguments.get('!users', None)
+		superusers = arguments.get('!superusers', None)
+		arguments['!users'] = User.parse_arguments(users, superusers)
+
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
