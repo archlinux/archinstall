@@ -242,7 +242,7 @@ class Installer:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
 		# TODO: Implement a proper mount-queue system that does not depend on return values.
-		mount_queue = []
+		mount_queue = {}
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
@@ -279,28 +279,6 @@ class Installer:
 
 				partition['device_instance'].unmount()
 
-		"""
-		partition_dict = {
-			"type" : "primary",
-			"start" : "206MiB",
-			"encrypted" : False,
-			"wipe" : True,
-			"mountpoint" : None,
-			"filesystem" : {
-				"format" : "btrfs",
-				"mount_options" : ["compress=zstd"] if compression else []
-			},
-			"btrfs" : {
-				"subvolumes" : {
-					"@":"/",
-					"@home": "/home",
-					"@log": "/var/log",
-					"@pkg": "/var/cache/pacman/pkg",
-					"@.snapshots": "/.snapshots"
-				}
-			}
-		})
-		"""
 		# We then handle any special cases, such as btrfs
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for btrfs_struct in btrfs_subvolumes:
