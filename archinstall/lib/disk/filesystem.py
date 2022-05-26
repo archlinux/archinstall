@@ -227,23 +227,21 @@ class Filesystem:
 		log(f"Adding partition using the following parted command: {parted_string}", level=logging.DEBUG)
 
 		if self.parted(parted_string):
-			count = 0
-			while count < 10:
-				new_partuuid = None
+			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
 				new_partition_uuids = []
 				for partition in self.blockdevice.partitions.values():
 					try:
 						new_partition_uuids.append(partition.uuid)
 					except DiskError:
 						pass
+
 				new_partuuid_set = (set(previous_partition_uuids) ^ set(new_partition_uuids))
 
-				if len(new_partuuid_set) > 0:
-					new_partuuid = new_partuuid_set.pop()
+				print(previous_partition_uuids, new_partuuid_set)
 
-				if new_partuuid:
+				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
-						return self.blockdevice.get_partition(partuuid=new_partuuid)
+						return self.blockdevice.get_partition(uuid=new_partuuid)
 					except Exception as err:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
@@ -252,9 +250,8 @@ class Filesystem:
 						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
-					count += 1
-					log(f"Could not get UUID for partition. Waiting before retry attempt {count} of 10 ...",level=logging.DEBUG)
-					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
+					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
+					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 			else:
 				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
