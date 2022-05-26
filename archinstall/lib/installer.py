@@ -510,7 +510,7 @@ class Installer:
 
 		from .systemd import Boot
 		with Boot(self) as session:
-			print(session._trace_log)
+			print(session.session._trace_log)
 			session.SysCommand(["timedatectl", "set-ntp", 'true'])
 
 	def enable_espeakup(self) -> None:
