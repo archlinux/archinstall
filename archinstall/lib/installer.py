@@ -282,6 +282,8 @@ class Installer:
 					partition_dict=partition
 				)
 
+				print("Nope..")
+
 				partition['device_instance'].unmount()
 
 		# We then handle any special cases, such as btrfs
