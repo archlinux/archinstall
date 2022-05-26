@@ -297,8 +297,7 @@ class Installer:
 
 					if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
 						# We cache the mount call for later
-						mount_queue[mountpoint_parsed] = lambda \
-							device=partition_information['device_instance'],
+						mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'],
 							name=name,
 							subvolume_information=btrfs_subvolume_information: \
 								mount_subvolume(
