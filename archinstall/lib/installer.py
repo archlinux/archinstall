@@ -299,13 +299,12 @@ class Installer:
 						# We cache the mount call for later
 						mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'], \
 							name=name, \
-							subvolume_information=btrfs_subvolume_information:
-								mount_subvolume(
-									installation=self,
-									device=device,
-									name=name,
-									subvolume_information=subvolume_information
-								)
+							subvolume_information=btrfs_subvolume_information: mount_subvolume(
+								installation=self,
+								device=device,
+								name=name,
+								subvolume_information=subvolume_information
+							)
 
 		# We mount ordinary partitions, and we sort them by the mountpoint
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
