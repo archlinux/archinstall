@@ -299,7 +299,7 @@ class BlockDevice:
 				if uuid and partition.uuid.lower() == uuid.lower():
 					print(f'Found UUID: {partition}')
 					return partition
-				elif partuuid and partition.part_uuid.lower() == uuid.lower()::
+				elif partuuid and partition.part_uuid.lower() == uuid.lower():
 					print(f'Found PARTUUID: {partition}')
 					return partition
 				else:
