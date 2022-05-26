@@ -15,7 +15,7 @@ from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
-from .disk.helpers import findmnt
+from .disk.helpers import findmnt, get_filesystem_type
 from .disk.mapperdev import MapperDev
 from .disk.btrfs import BTRFSPartition
 
@@ -152,7 +152,6 @@ class luks2:
 		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
 		:type mountpoint: str
 		"""
-		from .disk import get_filesystem_type
 
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
@@ -165,19 +164,14 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			try:
-				if filesystems := findmnt(pathlib.Path(self.mapdev)).get('filesystems'):
-					if filesystems[0]['fstype'] == 'btrfs':
-						BTRFSPartition(
-							self.mapdev,
-							block_device=MapperDev(mountpoint).partition.block_device,
-							encrypted=True,
-							filesystem='btrfs',
-							autodetect_filesystem=False
-						)
-			except DiskError:
-				# Either it's not yet mounted, or it's lacking a filesystem that we support custom handling for.
-				pass
+			if (filesystems := get_filesystem_type(pathlib.Path(self.mapdev))) == 'btrfs':
+				return BTRFSPartition(
+					self.mapdev,
+					block_device=MapperDev(mountpoint).partition.block_device,
+					encrypted=True,
+					filesystem='btrfs',
+					autodetect_filesystem=False
+				)
 
 			return Partition(
 				self.mapdev,
