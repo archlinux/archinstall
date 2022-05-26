@@ -317,6 +317,7 @@ class Installer:
 
 
 		# We mount everything by sorting on the mountpoint itself.
+		print(list(sorted(mount_queue.items(), key=lambda item: item[0])))
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
 			frozen_func()
 
