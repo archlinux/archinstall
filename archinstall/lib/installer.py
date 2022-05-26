@@ -265,9 +265,9 @@ class Installer:
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
-		print([entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})])
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for partition in btrfs_subvolumes:
+				print('-- Dealing with partitioninfo:', partition)
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
 					self.mount(partition['device_instance'], "/", options=mount_options)
 				else:
@@ -320,9 +320,7 @@ class Installer:
 
 
 		# We mount everything by sorting on the mountpoint itself.
-		print(list(sorted(mount_queue.items(), key=lambda item: item[0])))
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
-			print('-- MOUNTPOINT:', mountpoint, name, btrfs_subvolume_information)
 			frozen_func()
 
 			time.sleep(1)
