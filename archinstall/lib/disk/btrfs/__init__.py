@@ -13,7 +13,7 @@ from .btrfs_helpers import (
 	get_subvolumes_from_findmnt as get_subvolumes_from_findmnt,
 	subvolume_info_from_path as subvolume_info_from_path,
 	find_parent_subvolume as find_parent_subvolume,
-	setup_subvolume as setup_subvolume,
+	setup_subvolumes as setup_subvolumes,
 	mount_subvolume as mount_subvolume
 )
 from .btrfssubvolume import BtrfsSubvolume as BtrfsSubvolume

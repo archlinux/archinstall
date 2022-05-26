@@ -61,7 +61,7 @@ def mount_subvolume(installation, device, name, subvolume_information):
 	SysCommand(f"mount {device.path} {mountpoint} -o {','.join(mount_options)}")
 
 
-def setup_subvolume(installation, partition_dict):
+def setup_subvolumes(installation, partition_dict):
 	"""
 	Taken from: ..user_guides.py
 
@@ -75,6 +75,7 @@ def setup_subvolume(installation, partition_dict):
 		}
 	}
 	"""
+	log(f"Setting up subvolumes: {partition_dict['btrfs']['subvolumes']}", level=logging.INFO, fg="gray")
 	for name, right_hand in partition_dict['btrfs']['subvolumes'].items():
 		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
