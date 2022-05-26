@@ -49,3 +49,7 @@ class PackageError(BaseException):
 
 class TranslationError(BaseException):
 	pass
+
+
+class Deprecated(BaseException):
+	pass

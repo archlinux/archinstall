@@ -15,7 +15,10 @@ from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
+from .disk.helpers import findmnt
 from .disk.mapperdev import MapperDev
+from .disk.btrfs import BTRFSPartition
+
 
 class luks2:
 	def __init__(self,

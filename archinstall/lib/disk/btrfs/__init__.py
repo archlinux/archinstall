@@ -19,7 +19,7 @@ from .btrfssubvolume import BtrfsSubvolume as BtrfsSubvolume
 from .btrfspartition import BTRFSPartition as BTRFSPartition
 
 from ..helpers import get_mount_info
-from ...exceptions import DiskError
+from ...exceptions import DiskError, Deprecated
 from ...general import SysCommand
 from ...output import log
 from ...exceptions import SysCallError
@@ -77,13 +77,18 @@ def _has_option(option :str,options :list) -> bool:
 	"""
 	if not options:
 		return False
+
 	for item in options:
 		if option in item:
 			return True
+
 	return False
 
 def manage_btrfs_subvolumes(installation :Installer,
 	partition :Dict[str, str],) -> list:
+
+	raise Deprecated("Use setup_subvolumes() instead.")
+
 	from copy import deepcopy
 	""" we do the magic with subvolumes in a centralized place
 	parameters:

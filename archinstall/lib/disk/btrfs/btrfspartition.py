@@ -1,6 +1,5 @@
 import glob
 import pathlib
-import re
 import logging
 from typing import Optional, TYPE_CHECKING
 
@@ -9,9 +8,8 @@ from ...storage import storage
 from ...output import log
 from ...general import SysCommand
 from ..partition import Partition
-from ..helpers import get_mount_info, findmnt
+from ..helpers import findmnt
 from .btrfs_helpers import (
-	find_parent_subvolume,
 	subvolume_info_from_path
 )
 

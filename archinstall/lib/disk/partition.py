@@ -374,7 +374,7 @@ class Partition:
 		handle = luks2(self, None, None)
 		return handle.encrypt(self, *args, **kwargs)
 
-	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = [], retry = True) -> bool:
+	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = [], retry :bool = True) -> bool:
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.

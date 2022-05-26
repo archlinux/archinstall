@@ -1,12 +1,8 @@
-import re
 import pathlib
 import logging
-from typing import Dict, Any, Iterator, TYPE_CHECKING, Optional
+from typing import Optional
 
-if TYPE_CHECKING:
-	from ...installer import Installer
-
-from ...exceptions import SysCallError
+from ...exceptions import SysCallError, DiskError
 from ...general import SysCommand
 from ...output import log
 from ..helpers import get_mount_info
@@ -62,16 +58,15 @@ def setup_subvolumes(installation, partition_dict):
 		name = name.lstrip('/')
 
 		# renormalize the right hand.
-		mountpoint = None
+		# mountpoint = None
 		subvol_options = []
 
 		match right_hand:
-			case str(): # backwards-compatability
-				mountpoint = right_hand
+			# case str(): # backwards-compatability
+			# 	mountpoint = right_hand
 			case dict():
-				mountpoint = right_hand.get('mountpoint', None)
+				# mountpoint = right_hand.get('mountpoint', None)
 				subvol_options = right_hand.get('options', [])
-
 
 		# We create the subvolume using the BTRFSPartition instance.
 		# That way we ensure not only easy access, but also accurate mount locations etc.
@@ -91,8 +86,9 @@ def setup_subvolumes(installation, partition_dict):
 		# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
 		# in this way only zstd compression is activaded
 		# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
+
 		if 'compress' in subvol_options:
-			if not _has_option('compress', partition_dict.get('filesystem', {}).get('mount_options', [])):
+			if not any(['compress' in filesystem_option for filesystem_option in partition_dict.get('filesystem', {}).get('mount_options', [])]):
 				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 			# entry is deleted so compress doesn't propagate to the mount options
@@ -114,7 +110,7 @@ def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 				# allows for hooking in a pre-processor to do this we have to do it here:
 				result[key.lower().replace(' ', '_').replace('(s)', 's')] = value.strip()
 
-		return BtrfsSubvolume(**{'full_path' : path, **result})
+		return BtrfsSubvolume(**{'full_path' : path, 'name' : subvolume_name, **result})
 
 	except SysCallError:
 		pass
@@ -129,9 +125,8 @@ def find_parent_subvolume(path :pathlib.Path, filters=[]):
 	if found_mount := get_mount_info(str(path.parent), traverse=True, ignore=filters):
 		if not (subvolume := subvolume_info_from_path(found_mount['target'])):
 			if found_mount['target'] == '/':
-				return None 
+				return None
 
 			return find_parent_subvolume(path.parent, traverse=True, filters=[*filters, found_mount['target']])
 
 		return subvolume
-

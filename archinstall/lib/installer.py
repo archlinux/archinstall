@@ -233,7 +233,6 @@ class Installer:
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
 		from .luks import luks2
 		from .disk.btrfs import setup_subvolumes, mount_subvolume
-		from .disk.partition import Partition
 
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
@@ -274,7 +273,7 @@ class Installer:
 					self.mount(partition['device_instance'], "/")
 
 				setup_subvolumes(
-					installation=self, 
+					installation=self,
 					partition_dict=partition
 				)
 
@@ -291,8 +290,8 @@ class Installer:
 							btrfs_subvolume_information['mountpoint'] = mountpoint
 							btrfs_subvolume_information['options'] = []
 						case dict():
-							btrfs_subvolume_information['mountpoint'] = right_hand.get('mountpoint', None)
-							btrfs_subvolume_information['options'] = right_hand.get('options', [])
+							btrfs_subvolume_information['mountpoint'] = mountpoint.get('mountpoint', None)
+							btrfs_subvolume_information['options'] = mountpoint.get('options', [])
 						case _:
 							continue
 
@@ -317,7 +316,6 @@ class Installer:
 				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}", options=mount_options: partition['device_instance'].mount(target, options)
 			else:
 				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}": partition['device_instance'].mount(target)
-
 
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):

@@ -5,11 +5,11 @@ import string
 import random
 import shutil
 from dataclasses import dataclass
-from typing import Union, Optional, List, TYPE_CHECKING
+from typing import Optional, List# , TYPE_CHECKING
 from functools import cached_property
 
-if TYPE_CHECKING:
-	from ..blockdevice import BlockDevice
+# if TYPE_CHECKING:
+# 	from ..blockdevice import BlockDevice
 
 from ...exceptions import DiskError
 from ...general import SysCommand
@@ -64,6 +64,8 @@ class BtrfsSubvolume:
 
 	@property
 	def root(self) -> bool:
+		from .btrfs_helpers import subvolume_info_from_path
+
 		if volume := subvolume_info_from_path(self.full_path):
 			return self.full_path == volume.full_path
 
