@@ -320,7 +320,7 @@ class Partition:
 
 		for mountpoint in self.mount_information:
 			if result := findmnt(pathlib.Path(mountpoint['target'])):
-				for filesystem in filesystem.get('filesystems', []):
+				for filesystem in result.get('filesystems', []):
 					if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
 						yield subvolume
 
