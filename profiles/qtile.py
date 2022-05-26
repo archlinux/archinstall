@@ -11,7 +11,6 @@ __packages__ = [
 	'alacritty',
 	'lightdm-gtk-greeter',
 	'lightdm',
-	'dmenu'
 ]
 
 def _prep_function(*args, **kwargs):
