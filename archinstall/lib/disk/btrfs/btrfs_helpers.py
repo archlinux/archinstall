@@ -55,7 +55,7 @@ def mount_subvolume(installation, device, name, subvolume_information):
 
 	mount_options = subvolume_information.get('options', [])
 	if not any('subvol=' in x for x in mount_options):
-		mount_options += f'subvol={name}'
+		mount_options += [f'subvol={name}']
 
 	log(f"Mounting subvolume {name} on {device} to {mountpoint}", level=logging.INFO, fg="gray")
 	SysCommand(f"mount {device.path} {mountpoint} -o {','.join(mount_options)}")
