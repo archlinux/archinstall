@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 	from ...installer import Installer
 
 from .btrfs_helpers import (
-	get_subvolumes_from_findmnt as get_subvolumes_from_findmnt,
 	subvolume_info_from_path as subvolume_info_from_path,
 	find_parent_subvolume as find_parent_subvolume,
 	setup_subvolumes as setup_subvolumes,
