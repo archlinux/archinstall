@@ -208,10 +208,10 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		previous_partition_uuids = []
+		previous_partuuids = []
 		for partition in self.blockdevice.partitions.values():
 			try:
-				previous_partition_uuids.append(partition.uuid)
+				previous_partuuids.append(partition.part_uuid)
 			except DiskError:
 				pass
 
@@ -233,17 +233,17 @@ class Filesystem:
 				new_partition_uuids = []
 				for partition in self.blockdevice.partitions.values():
 					try:
-						new_partition_uuids.append(partition.uuid)
+						new_partition_uuids.append(partition.part_uuid)
 					except DiskError:
 						pass
 
-				new_partuuid_set = (set(previous_partition_uuids) ^ set(new_partition_uuids))
+				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
 
-				print(previous_partition_uuids, new_partition_uuids, new_partuuid_set)
+				print(previous_partuuids, new_partition_uuids, new_partuuid_set)
 
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
-						return self.blockdevice.get_partition(uuid=new_partuuid)
+						return self.blockdevice.get_partition(partuuid=new_partuuid)
 					except Exception as err:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
@@ -260,8 +260,8 @@ class Filesystem:
 
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
-		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {(previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
+		log(f"Previous partitions: {previous_partuuids}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {(previous_partuuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
