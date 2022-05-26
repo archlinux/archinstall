@@ -208,7 +208,7 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		previous_partition_uuids = {partition.part_uuid for partition in self.blockdevice.partitions.values()}
+		previous_partition_uuids = {partition.uuid for partition in self.blockdevice.partitions.values()}
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
@@ -224,20 +224,20 @@ class Filesystem:
 		if self.parted(parted_string):
 			count = 0
 			while count < 10:
-				new_uuid = None
-				new_uuid_set = (previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})
+				new_partuuid = None
+				new_partuuid_set = (previous_partition_uuids ^ {partition.uuid for partition in self.blockdevice.partitions.values()})
 
-				if len(new_uuid_set) > 0:
-					new_uuid = new_uuid_set.pop()
+				if len(new_partuuid_set) > 0:
+					new_partuuid = new_partuuid_set.pop()
 
-				if new_uuid:
+				if new_partuuid:
 					try:
-						return self.blockdevice.get_partition(new_uuid)
+						return self.blockdevice.get_partition(partuuid=new_partuuid)
 					except Exception as err:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
-						log(f'Partition set: {new_uuid_set}', level=logging.ERROR, fg="red")
-						log(f'New UUID: {[new_uuid]}', level=logging.ERROR, fg="red")
+						log(f'Partition set: {new_partuuid_set}', level=logging.ERROR, fg="red")
+						log(f'New UUID: {[new_partuuid]}', level=logging.ERROR, fg="red")
 						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
