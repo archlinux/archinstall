@@ -93,7 +93,7 @@ class Filesystem:
 				# TODO: device_instance some times become None
 				# print('Device instance:', partition['device_instance'])
 
-			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
+			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(partuuid=partition_uuid)):
 				print(_("Re-using partition instance: {}").format(partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
