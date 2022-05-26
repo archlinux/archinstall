@@ -228,6 +228,8 @@ class Filesystem:
 
 		if self.parted(parted_string):
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
+				self.partprobe()
+				
 				new_partition_uuids = []
 				for partition in self.blockdevice.partitions.values():
 					try:
