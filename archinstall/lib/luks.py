@@ -165,7 +165,7 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			if filesystems := findmnt(self.mapdev).get('filesystems'):
+			if filesystems := findmnt(pathlib.Path(self.mapdev)).get('filesystems'):
 				if filesystems[0]['fstype'] == 'btrfs':
 					BTRFSPartition(
 						self.mapdev,
