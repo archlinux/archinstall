@@ -232,7 +232,7 @@ class Installer:
 
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
 		from .luks import luks2
-		from .disk.btrfs import setup_subvolume, mount_subvolume_struct
+		from .disk.btrfs import setup_subvolume, mount_subvolume
 		from .disk.partition import Partition
 
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
