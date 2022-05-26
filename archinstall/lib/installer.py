@@ -304,9 +304,10 @@ class Installer:
 		# We then handle any special cases, such as btrfs
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for btrfs_struct in btrfs_subvolumes:
+				print(btrfs_struct)
 				for name, mountpoint in sorted(btrfs_struct.items(), key=lambda item: item[1]):
 					btrfs_subvolume_information = {}
-					
+
 					match mountpoint:
 						case str(): # backwards-compatability
 							btrfs_subvolume_information['mountpoint'] = mountpoint
