@@ -37,7 +37,7 @@ class ConfigurationOutput:
 		self._user_creds_file = "user_credentials.json"
 		self._disk_layout_file = "user_disk_layout.json"
 
-		self._sensitive = ['!users', '!superusers', '!encryption-password']
+		self._sensitive = ['!users', '!encryption-password']
 		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()

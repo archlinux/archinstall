@@ -105,7 +105,8 @@ with archinstall.Installer('/mnt') as installation:
         # In this case, we install a minimal profile that is empty
         installation.install_profile('minimal')
 
-        installation.user_create('devel', 'devel')
+        user = User('devel', 'devel', False)
+        installation.create_users(user)
         installation.user_set_pw('root', 'airoot')
 ```
 

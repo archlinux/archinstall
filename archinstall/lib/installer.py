@@ -23,6 +23,7 @@ from .profiles import Profile
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .hsm import fido2_enroll
+from .models.users import User
 
 if TYPE_CHECKING:
 	_: Any
@@ -251,7 +252,7 @@ class Installer:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
-			
+
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
 				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
@@ -426,7 +427,7 @@ class Installer:
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
 					return self.pacstrap(*packages, **kwargs)
-			
+
 			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
 	def set_mirrors(self, mirrors :Mapping[str, Iterator[str]]) -> None:
@@ -1062,7 +1063,7 @@ class Installer:
 		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
 		return profile.install()
 
-	def enable_sudo(self, entity: str, group :bool = False) -> bool:
+	def enable_sudo(self, entity: str, group :bool = False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
@@ -1092,9 +1093,14 @@ class Installer:
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
-		return True
+	def create_users(self, users: Union[User, List[User]]):
+		if not isinstance(users, list):
+			users = [users]
 
-	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[str] = None, sudo :bool = False) -> None:
+		for user in users:
+			self.user_create(user.username, user.password, user.groups, user.sudo)
+
+	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[List[str]] = None, sudo :bool = False) -> None:
 		if groups is None:
 			groups = []
 

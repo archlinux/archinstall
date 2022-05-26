@@ -2,9 +2,45 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Union, List, Any
 
 from .storage import storage
+
+
+class FormattedOutput:
+
+	@classmethod
+	def values(cls, o: Any) -> Dict[str, Any]:
+		if hasattr(o, 'json'):
+			return o.json()
+		else:
+			return o.__dict__
+
+	@classmethod
+	def as_table(cls, obj: List[Any]) -> str:
+		column_width: Dict[str, int] = {}
+		for o in obj:
+			for k, v in cls.values(o).items():
+				column_width.setdefault(k, 0)
+				column_width[k] = max([column_width[k], len(str(v)), len(k)])
+
+		output = ''
+		for key, width in column_width.items():
+			key = key.replace('!', '')
+			output += key.ljust(width) + ' | '
+
+		output = output[:-3] + '\n'
+		output += '-' * len(output) + '\n'
+
+		for o in obj:
+			for k, v in cls.values(o).items():
+				if '!' in k:
+					v = '*' * len(str(v))
+				output += str(v).ljust(column_width[k]) + ' | '
+			output = output[:-3]
+			output += '\n'
+
+		return output
 
 
 class Journald:

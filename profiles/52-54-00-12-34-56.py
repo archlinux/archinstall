@@ -40,7 +40,8 @@ with archinstall.Filesystem(harddrive) as fs:
 				installation.add_additional_packages(__packages__)
 				installation.install_profile('awesome')
 
-				installation.user_create('devel', 'devel')
+				user = User('devel', 'devel', False)
+				installation.create_users(user)
 				installation.user_set_pw('root', 'toor')
 
 				print(f'Submitting {archinstall.__version__}: success')
