@@ -20,7 +20,6 @@ from .storage import storage
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
-from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .hsm import fido2_enroll
@@ -233,11 +232,16 @@ class Installer:
 
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
 		from .luks import luks2
+		from .disk.btrfs import setup_subvolumes, mount_subvolume
+
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
 		for blockdevice in layouts:
 			list_part.extend(layouts[blockdevice]['partitions'])
+
+		# TODO: Implement a proper mount-queue system that does not depend on return values.
+		mount_queue = {}
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
@@ -260,32 +264,61 @@ class Installer:
 				fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
-		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
-			if partition.get('filesystem',{}).get('mount_options',[]):
-				mount_options = ','.join(partition['filesystem']['mount_options'])
-				self.mount(partition['device_instance'], "/", options=mount_options)
-			else:
-				self.mount(partition['device_instance'], "/")
-			try:
-				new_mountpoints = manage_btrfs_subvolumes(self,partition)
-			except Exception as e:
-				# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
-				partition['device_instance'].unmount()
-				raise e
-			partition['device_instance'].unmount()
-			if new_mountpoints:
-				list_part.extend(new_mountpoints)
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition in btrfs_subvolumes:
+				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
+					self.mount(partition['device_instance'], "/", options=mount_options)
+				else:
+					self.mount(partition['device_instance'], "/")
 
-		# we mount. We need to sort by mountpoint to get a good working order
-		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
+				setup_subvolumes(
+					installation=self,
+					partition_dict=partition
+				)
+
+				partition['device_instance'].unmount()
+
+		# We then handle any special cases, such as btrfs
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition_information in btrfs_subvolumes:
+				for name, mountpoint in sorted(partition_information['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
+					btrfs_subvolume_information = {}
+
+					match mountpoint:
+						case str(): # backwards-compatability
+							btrfs_subvolume_information['mountpoint'] = mountpoint
+							btrfs_subvolume_information['options'] = []
+						case dict():
+							btrfs_subvolume_information['mountpoint'] = mountpoint.get('mountpoint', None)
+							btrfs_subvolume_information['options'] = mountpoint.get('options', [])
+						case _:
+							continue
+
+					if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
+						# We cache the mount call for later
+						mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'], \
+							name=name, \
+							subvolume_information=btrfs_subvolume_information: mount_subvolume(
+								installation=self,
+								device=device,
+								name=name,
+								subvolume_information=subvolume_information
+							)
+
+		# We mount ordinary partitions, and we sort them by the mountpoint
+		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}", options=mount_options: partition['device_instance'].mount(target, options)
 			else:
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
+				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}": partition['device_instance'].mount(target)
+
+		# We mount everything by sorting on the mountpoint itself.
+		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
+			frozen_func()
 
 			time.sleep(1)
 
@@ -979,10 +1012,14 @@ class Installer:
 				if plugin.on_add_bootloader(self):
 					return True
 
+		if type(self.target) == str:
+			self.target = pathlib.Path(self.target)
+
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			if partition.mountpoint == os.path.join(self.target, 'boot'):
+			print(partition, [partition.mountpoint], [self.target])
+			if partition.mountpoint == self.target / 'boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
