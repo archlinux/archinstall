@@ -306,8 +306,7 @@ class Partition:
 	@property
 	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
 		for mountpoint in self.mount_information:
-			print(mountpoint)
-			for result in subvolume_info_from_path(pathlib.Path(mountpoint)):
+			for result in subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
 				yield result
 
 	def partprobe(self) -> bool:
