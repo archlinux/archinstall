@@ -273,6 +273,7 @@ class Installer:
 				else:
 					self.mount(partition['device_instance'], "/")
 
+				print('** Setting up subvolumes:', setup_subvolumes)
 				setup_subvolumes(
 					installation=self, 
 					partition_dict=partition
