@@ -65,6 +65,7 @@ class Filesystem:
 
 	def load_layout(self, layout :Dict[str, Any]) -> None:
 		from ..luks import luks2
+		from .btrfs import BTRFSPartition
 
 		# If the layout tells us to wipe the drive, we do so
 		if layout.get('wipe', False):
@@ -142,11 +143,23 @@ class Filesystem:
 										break
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
+
 				elif partition.get('wipe', False):
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
 
 					partition['device_instance'].format(partition['filesystem']['format'], options=format_options)
+
+					if partition['filesystem']['format'] == 'btrfs':
+						# We upgrade the device instance to a BTRFSPartition if we format it as such.
+						# This is so that we can gain access to more features than otherwise available in Partition()
+						partition['device_instance'] = BTRFSPartition(
+							partition['device_instance'].path,
+							block_device=partition['device_instance'].block_device,
+							encrypted=False,
+							filesystem='btrfs',
+							autodetect_filesystem=False
+						)
 
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")
