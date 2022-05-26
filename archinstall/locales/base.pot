@@ -746,3 +746,17 @@ msgstr ""
 
 msgid "Bus-type"
 msgstr ""
+
+msgid ""
+"Either root-password or at least 1 user with sudo privileges must be "
+"specified"
+msgstr ""
+
+msgid "Enter username (leave blank to skip): "
+msgstr ""
+
+msgid "The username you entered is invalid. Try again"
+msgstr ""
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr ""
