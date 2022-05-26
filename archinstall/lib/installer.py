@@ -297,12 +297,16 @@ class Installer:
 
 					if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
 						# We cache the mount call for later
-						mount_queue[mountpoint_parsed] = lambda: mount_subvolume(
-							installation=self,
+						mount_queue[mountpoint_parsed] = lambda \
 							device=partition_information['device_instance'],
 							name=name,
-							subvolume_information=btrfs_subvolume_information
-						)
+							subvolume_information=btrfs_subvolume_information: \
+								mount_subvolume(
+									installation=self,
+									device=device,
+									name=name,
+									subvolume_information=subvolume_information
+								)
 
 		# We mount ordinary partitions, and we sort them by the mountpoint
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
@@ -311,9 +315,9 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				mount_queue[mountpoint] = lambda: partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}", options=mount_options: partition['device_instance'].mount(target, options)
 			else:
-				mount_queue[mountpoint] = lambda: partition['device_instance'].mount(f"{self.target}{mountpoint}")
+				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}": partition['device_instance'].mount(target)
 
 
 		# We mount everything by sorting on the mountpoint itself.
