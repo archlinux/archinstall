@@ -868,8 +868,10 @@ class Installer:
 				else:
 					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 
+				print('Root partition:', root_partition)
+
 				for subvolume in root_partition.subvolumes:
-					print(subvolume, subvolume.root)
+					print('Subvolume:', subvolume, subvolume.root)
 					if subvolume.root is True:
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
