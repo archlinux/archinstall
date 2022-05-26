@@ -242,6 +242,7 @@ class Installer:
 			list_part.extend(layouts[blockdevice]['partitions'])
 
 		# TODO: Implement a proper mount-queue system that does not depend on return values.
+		mount_queue = []
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
@@ -278,6 +279,28 @@ class Installer:
 
 				partition['device_instance'].unmount()
 
+		# We then handle any special cases, such as btrfs
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for name, mountpoint in sorted(btrfs_subvolumes.items(), key=lambda item: item[1]):
+				btrfs_subvolume_information = {}
+				match mountpoint:
+					case str(): # backwards-compatability
+						btrfs_subvolume_information['mountpoint'] = mountpoint
+						btrfs_subvolume_information['options'] = []
+					case dict():
+						btrfs_subvolume_information['mountpoint'] = right_hand.get('mountpoint', None)
+						btrfs_subvolume_information['options'] = right_hand.get('options', [])
+					case _:
+						continue
+
+				if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
+					# We cache the mount call for later
+					mount_queue[mountpoint_parsed] = lambda: mount_subvolume(
+						installation=self,
+						name=name,
+						subvolume_information=btrfs_subvolume_information
+					)
+
 		# We mount ordinary partitions, and we sort them by the mountpoint
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
@@ -285,9 +308,9 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				mount_queue[mountpoint] = lambda: partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
 			else:
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
+				mount_queue[mountpoint] = lambda: partition['device_instance'].mount(f"{self.target}{mountpoint}")
 
 			time.sleep(1)
 
@@ -296,14 +319,9 @@ class Installer:
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
-		# We then handle any special cases, such as btrfs
-		# we manage the btrfs partitions. Sorting is done inside mount_subvolume_struct()
-		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
-			for partition in btrfs_subvolumes:
-				mount_subvolume_struct(
-					installation=self,
-					partition_dict=partition
-				)
+		# We mount everything by sorting on the mountpoint itself.
+		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
+			frozen_func()
 
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
