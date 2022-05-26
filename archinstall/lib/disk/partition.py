@@ -13,7 +13,7 @@ from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
-from .btrfs.btrfs_helpers import get_subvolumes_from_findmnt
+from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolume import BtrfsSubvolume
 
 class Partition:
