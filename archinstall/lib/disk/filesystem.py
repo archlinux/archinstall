@@ -82,7 +82,6 @@ class Filesystem:
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
-			print(partition)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
 				print(_("Adding partition...."))
 				start = partition.get('start') or (
@@ -98,7 +97,9 @@ class Filesystem:
 				print(_("Re-using partition instance: {}").format(partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
-				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
+				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found"., fg="yellow", level=logging.WARNING)
+				continue
+		#		raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
 			if partition.get('filesystem', {}).get('format', False):
 

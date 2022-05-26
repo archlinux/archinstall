@@ -290,6 +290,9 @@ class BlockDevice:
 		self.part_cache = {}
 
 	def get_partition(self, uuid :str) -> Partition:
+		if not uuid:
+			return None
+			
 		print(f'Looking for {uuid}')
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_uuid, partition in self.partitions.items():
