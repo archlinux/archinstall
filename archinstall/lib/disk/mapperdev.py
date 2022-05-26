@@ -81,5 +81,6 @@ class MapperDev:
 		print(self.mount_information)
 		
 		for mountpoint in self.mount_information:
-			if subvolume := subvolume_info_from_path(mountpoint):
-				yield subvolume
+			if target := mountpoint.get('target'):
+				if subvolume := subvolume_info_from_path(target):
+					yield subvolume
