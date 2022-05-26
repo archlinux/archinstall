@@ -291,7 +291,7 @@ class BlockDevice:
 
 	def get_partition(self, uuid :str) -> Partition:
 		print(f'Looking for {uuid}')
-		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5))
+		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_uuid, partition in self.partitions.items():
 				if partition.uuid.lower() == uuid.lower():
 					print(f'Found: {partition}')
