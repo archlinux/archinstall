@@ -290,16 +290,15 @@ class BlockDevice:
 		self.part_cache = {}
 
 	def get_partition(self, uuid :str) -> Partition:
-		count = 0
-		while count < 5:
+		print(f'Looking for {uuid}')
+		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5))
 			for partition_uuid, partition in self.partitions.items():
-				print('Comparing:', [partition.part_uuid.lower(), uuid.lower()])
 				if partition.uuid.lower() == uuid.lower():
+					print(f'Found: {partition}')
 					return partition
 			else:
-				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)
-				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
-				count += 1
+				log(f"uuid {uuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
+				time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 				
 		log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
 		print(f"Cache: {self.part_cache}")
