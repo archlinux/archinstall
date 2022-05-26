@@ -62,6 +62,13 @@ class BtrfsSubvolume:
 
 		return find_parent_subvolume(self.full_path)
 
+	@property
+	def root(self) -> bool:
+		if volume := subvolume_info_from_path(self.full_path):
+			return self.full_path == volume.full_path
+
+		return False
+
 	@cached_property
 	def partition(self):
 		from ..helpers import findmnt, get_parent_of_partition, all_blockdevices
