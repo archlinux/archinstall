@@ -79,5 +79,5 @@ class MapperDev:
 		from .btrfs import subvolume_info_from_path
 		
 		for mountpoint in self.mount_information:
-			for result in subvolume_info_from_path(mountpoint):
-				yield result
+			if subvolume := subvolume_info_from_path(mountpoint):
+				yield subvolume
