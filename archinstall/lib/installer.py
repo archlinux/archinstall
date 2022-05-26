@@ -273,7 +273,10 @@ class Installer:
 				else:
 					self.mount(partition['device_instance'], "/")
 
+				import traceback
 				print('** Setting up subvolumes:', setup_subvolumes)
+				print(''.join(traceback.format_stack()))
+
 				setup_subvolumes(
 					installation=self, 
 					partition_dict=partition
