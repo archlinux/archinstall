@@ -66,7 +66,11 @@ class BtrfsSubvolume:
 	def root(self) -> bool:
 		from .btrfs_helpers import subvolume_info_from_path
 
-		if volume := subvolume_info_from_path(self.full_path):
+		# TODO: Make this function traverse storage['MOUNT_POINT'] and find the first
+		# occurance of a mountpoint that is a btrfs volume instead of lazy assume / is a subvolume.
+		# It would also be nice if it could use findmnt(self.full_path) and traverse backwards
+		# finding the last occurance of a subvolume which 'self' belongs to.
+		if volume := subvolume_info_from_path(storage['MOUNT_POINT']):
 			return self.full_path == volume.full_path
 
 		return False
