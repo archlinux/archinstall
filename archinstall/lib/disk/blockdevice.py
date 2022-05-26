@@ -289,19 +289,22 @@ class BlockDevice:
 	def flush_cache(self) -> None:
 		self.part_cache = {}
 
-	def get_partition(self, uuid :str) -> Partition:
-		if not uuid:
-			return None
-			
+	def get_partition(self, uuid :Optional[str] = None, partuuid :Optional[str] = None) -> Partition:
+		if not uuid and not partuuid:
+			raise ValueError(f"BlockDevice.get_partition() requires either a UUID or a PARTUUID for lookups.")
+
 		print(f'Looking for {uuid}')
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
-			for partition_uuid, partition in self.partitions.items():
-				if partition.uuid.lower() == uuid.lower():
-					print(f'Found: {partition}')
+			for partition_index, partition in self.partitions.items():
+				if uuid and partition.uuid.lower() == uuid.lower():
+					print(f'Found UUID: {partition}')
 					return partition
-			else:
-				log(f"uuid {uuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
-				time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
+				elif partuuid and partition.part_uuid.lower() == uuid.lower()::
+					print(f'Found PARTUUID: {partition}')
+					return partition
+				else:
+					log(f"uuid {uuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
+					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 				
 		log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
 		print(f"Cache: {self.part_cache}")
