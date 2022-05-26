@@ -296,13 +296,19 @@ class BlockDevice:
 		print(f'Looking for {uuid}/{partuuid}')
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
-				print(partition, partition.uuid.lower(), partition.part_uuid.lower())
-				if uuid and partition.uuid.lower() == uuid.lower():
-					print(f'Found UUID: {partition}')
-					return partition
-				elif partuuid and partition.part_uuid.lower() == partuuid.lower():
-					print(f'Found PARTUUID: {partition}')
-					return partition
+				try:
+					print(partition, partition.uuid.lower(), partition.part_uuid.lower())
+					if uuid and partition.uuid.lower() == uuid.lower():
+						print(f'Found UUID: {partition}')
+						return partition
+					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
+						print(f'Found PARTUUID: {partition}')
+						return partition
+				except DiskError as error:
+					# Most likely a blockdevice that doesn't support or use UUID's
+					# (like Microsoft recovery partition)
+					log(f"Could not get UUID/PARTUUID of {partition}: {error}", level=logging.INFO, fg="gray")
+					pass
 
 			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
 			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
