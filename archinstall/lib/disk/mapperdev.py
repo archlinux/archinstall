@@ -51,11 +51,11 @@ class MapperDev:
 		raise ValueError(f"Could not convert {self.mappername} to a real dm-crypt device")
 
 	@property
-	def mountpoint(self) -> Optional[str]:
+	def mountpoint(self) -> Optional[pathlib.Path]:
 		try:
 			data = json.loads(SysCommand(f"findmnt --json -R {self.path}").decode())
 			for filesystem in data['filesystems']:
-				return filesystem.get('target')
+				return pathlib.Path(filesystem.get('target'))
 
 		except SysCallError as error:
 			# Not mounted anywhere most likely
