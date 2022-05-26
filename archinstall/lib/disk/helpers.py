@@ -411,9 +411,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 
 
 def get_filesystem_type(path :str) -> Optional[str]:
-	device_name, bind_name = split_bind_name(path)
 	try:
-		return SysCommand(f"blkid -o value -s TYPE {device_name}").decode('UTF-8').strip()
+		return SysCommand(f"blkid -o value -s TYPE {path}").decode('UTF-8').strip()
 	except SysCallError:
 		return None
 

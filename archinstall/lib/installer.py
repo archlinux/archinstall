@@ -266,7 +266,6 @@ class Installer:
 		# we manage the btrfs partitions
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
 			for partition in btrfs_subvolumes:
-				print('-- Dealing with partitioninfo:', partition)
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
 					self.mount(partition['device_instance'], "/", options=mount_options)
 				else:

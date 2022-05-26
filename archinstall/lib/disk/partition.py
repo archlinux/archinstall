@@ -308,7 +308,6 @@ class Partition:
 		from .helpers import findmnt
 		
 		def iterate_children_recursively(information):
-			print('XX - Information:', information)
 			for child in information.get('children', []):
 				if target := child.get('target'):
 					if subvolume := subvolume_info_from_path(pathlib.Path(target)):
