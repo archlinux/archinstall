@@ -77,29 +77,33 @@ class Filesystem:
 					raise KeyError(f"Could not create a MSDOS label on {self}")
 
 			self.blockdevice.flush_cache()
+			time.sleep(3)
 
 		prev_partition = None
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-				print(_("Adding partition...."))
 				start = partition.get('start') or (
 					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=start,
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
-				# TODO: device_instance some times become None
-				# print('Device instance:', partition['device_instance'])
 
-			elif (partition_uuid := partition.get('PARTUUID')) and (partition_instance := self.blockdevice.get_partition(uuid=partition_uuid)):
-				print(_("Re-using partition instance: {}").format(partition_instance))
-				partition['device_instance'] = partition_instance
+			elif (partition_uuid := partition.get('PARTUUID')):
+				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
+				# We should re-name or separate this logi based on partition.get('PARTUUID') and partition.get('UUID')
+				# but for now, lets just attempt to deal with both.
+				try:
+					partition['device_instance'] = self.blockdevice.get_partition(uuid=partition_uuid)
+				except DiskError:
+					partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
+				
+				log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
 			else:
 				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
 				continue
-				# raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
 			if partition.get('filesystem', {}).get('format', False):
 
@@ -140,7 +144,7 @@ class Filesystem:
 									while True:
 										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
 										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-											print(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
+											log(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
 											continue
 										break
 
@@ -208,6 +212,18 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
+		if len(self.blockdevice.partitions) == 0:
+			# If it's a completely empty drive, and we're about to add partitions to it
+			# we need to make sure there's a filesystem label.
+			if self.mode == GPT:
+				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
+					raise KeyError(f"Could not create a GPT label on {self}")
+			elif self.mode == MBR:
+				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+					raise KeyError(f"Could not create a MSDOS label on {self}")
+
+			self.blockdevice.flush_cache()
+
 		previous_partuuids = []
 		for partition in self.blockdevice.partitions.values():
 			try:
@@ -239,8 +255,6 @@ class Filesystem:
 
 				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
 
-				print(previous_partuuids, new_partition_uuids, new_partuuid_set)
-
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
 						return self.blockdevice.get_partition(partuuid=new_partuuid)
@@ -254,9 +268,6 @@ class Filesystem:
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
-			else:
-				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
-				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
