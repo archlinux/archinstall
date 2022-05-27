@@ -306,7 +306,7 @@ class BlockDevice:
 				except DiskError as error:
 					# Most likely a blockdevice that doesn't support or use UUID's
 					# (like Microsoft recovery partition)
-					log(f"Could not get UUID/PARTUUID of {partition}: {error}", level=logging.INFO, fg="gray")
+					log(f"Could not get UUID/PARTUUID of {partition}: {error}", level=logging.DEBUG, fg="gray")
 					pass
 
 			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)

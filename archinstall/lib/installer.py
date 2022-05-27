@@ -318,6 +318,8 @@ class Installer:
 			else:
 				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}": partition['device_instance'].mount(target)
 
+		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
+
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
 			frozen_func()

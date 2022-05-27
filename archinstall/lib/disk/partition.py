@@ -101,7 +101,7 @@ class Partition:
 
 		except SysCallError as error:
 			# Not mounted anywhere most likely
-			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG)
+			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG, fg="grey")
 			pass
 
 		return None
