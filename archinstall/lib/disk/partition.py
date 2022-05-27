@@ -36,6 +36,7 @@ class Partition:
 		self.path = path
 		self.part_id = part_id
 		self.target_mountpoint = mountpoint
+		print('*****', self.filesystem)
 		self.filesystem = filesystem
 		self._encrypted = None
 		self.encrypted = encrypted
