@@ -50,7 +50,7 @@ from .lib.hsm import (
 )
 parser = ArgumentParser()
 
-__version__ = "2.4.3rc1"
+__version__ = "2.5.0"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the

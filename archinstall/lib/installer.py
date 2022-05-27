@@ -327,7 +327,7 @@ class Installer:
 			time.sleep(1)
 
 			try:
-				findmnt(f"{self.target}{mountpoint}", traverse=False)
+				findmnt(pathlib.Path(f"{self.target}{mountpoint}"), traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
