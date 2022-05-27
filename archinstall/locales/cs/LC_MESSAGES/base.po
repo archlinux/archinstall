@@ -212,7 +212,7 @@ msgid "All open-source (default)"
 msgstr "Vše open-source (výchozí)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Zvolte jádra, která mají být použita nebo ponechte prázdné pro výchozí \"{}\""
+msgstr "Zvolte jádra, která mají být použita, nebo ponechte prázdné pro výchozí \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Zvolte jazyk lokalizace, který chcete používat"
@@ -646,13 +646,13 @@ msgid "Provides a selection of desktop environments and tiling window managers, 
 msgstr "Nabízí výběr desktopových prostředí a tiling správců oken, např. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Zvolte si vaše požadované desktopové prostředí"
+msgstr "Zvolte si požadované desktopové prostředí"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Základní instalace, která umožňuje si upravit Arch Linux jakkoliv si budete přát."
+msgstr "Základní instalace, která vám umožní si nastavit Arch Linux jakkoliv si budete přát."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Nabízí výběr různých serverových balíčků k instalaci a povolení, např. httpd, nginx, mariadb"
+msgstr "Nabízí výběr různých serverových balíčků k instalaci a aktivaci, např. httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation wil be done"
 msgstr "Vyberte servery, které mají být nainstalovány, pokud nezvolíte žádné, bude provedena jen základní instalace"
