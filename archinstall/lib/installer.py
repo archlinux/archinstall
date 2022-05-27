@@ -13,7 +13,7 @@ from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .disk.helpers import get_mount_info
+from .disk.helpers import findmnt
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
@@ -327,7 +327,7 @@ class Installer:
 			time.sleep(1)
 
 			try:
-				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+				findmnt(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
