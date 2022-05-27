@@ -293,15 +293,12 @@ class BlockDevice:
 		if not uuid and not partuuid:
 			raise ValueError(f"BlockDevice.get_partition() requires either a UUID or a PARTUUID for lookups.")
 
-		print(f'Looking for {uuid}/{partuuid}')
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
 				try:
 					if uuid and partition.uuid.lower() == uuid.lower():
-						print(f'Found UUID: {partition}')
 						return partition
 					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
-						print(f'Found PARTUUID: {partition}')
 						return partition
 				except DiskError as error:
 					# Most likely a blockdevice that doesn't support or use UUID's
@@ -312,7 +309,7 @@ class BlockDevice:
 			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
 			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 				
-		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries",level=logging.INFO)
-		print(f"Cache: {self.part_cache}")
-		print(f"Partitions: {self.partitions.items()}")
+		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries", level=logging.INFO)
+		log(f"Cache: {self.part_cache}")
+		log(f"Partitions: {self.partitions.items()}")
 		raise DiskError(f"New partition {uuid}/{partuuid} never showed up after adding new partition on {self}")
