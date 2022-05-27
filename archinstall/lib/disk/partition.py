@@ -481,6 +481,7 @@ class Partition:
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
+			print('-----', fs)
 			if not fs:
 				if not self.filesystem:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')

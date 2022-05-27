@@ -90,7 +90,7 @@ class Filesystem:
 																	start=start,
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
-																	skip_mklabel=layout.get('wipe', False) is False)
+																	skip_mklabel=layout.get('wipe', False) is not False)
 
 			elif (partition_uuid := partition.get('PARTUUID')):
 				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
