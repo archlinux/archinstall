@@ -36,7 +36,6 @@ class Partition:
 		self.path = path
 		self.part_id = part_id
 		self.target_mountpoint = mountpoint
-		print('*****', filesystem)
 		self.filesystem = filesystem
 		self._encrypted = None
 		self.encrypted = encrypted
@@ -55,8 +54,6 @@ class Partition:
 
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
-
-		print('*****', self.filesystem)
 
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
@@ -490,6 +487,7 @@ class Partition:
 				fs = self.filesystem
 
 			fs_type = get_mount_fs_type(fs)
+			print('**** fstype:', fs_type)
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
