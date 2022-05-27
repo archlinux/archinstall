@@ -319,7 +319,7 @@ msgid "Locale encoding"
 msgstr "Кодировка локали"
 
 msgid "Drive(s)"
-msgstr "Диски"
+msgstr "Диск(и)"
 
 msgid "Disk layout"
 msgstr "Разметка диска"
