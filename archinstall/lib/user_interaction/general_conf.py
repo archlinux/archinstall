@@ -172,7 +172,7 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	def read_packages(already_defined: list = []) -> list:
 		display = ' '.join(already_defined)
-		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().trim()
+		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
 		return input_packages.split() if input_packages else []
 
 	pre_set_packages = pre_set_packages if pre_set_packages else []
