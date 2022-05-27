@@ -314,9 +314,11 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}", options=mount_options: partition['device_instance'].mount(target, options)
+				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options)
 			else:
-				mount_queue[mountpoint] = lambda target=f"{self.target}{mountpoint}": partition['device_instance'].mount(target)
+				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
+
+		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
 
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):

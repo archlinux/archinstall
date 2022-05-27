@@ -97,7 +97,9 @@ class Filesystem:
 				print(_("Re-using partition instance: {}").format(partition_instance))
 				partition['device_instance'] = partition_instance
 			else:
-				raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
+				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
+				continue
+				# raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
 			if partition.get('filesystem', {}).get('format', False):
 
@@ -206,7 +208,12 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		previous_partition_uuids = {partition.part_uuid for partition in self.blockdevice.partitions.values()}
+		previous_partuuids = []
+		for partition in self.blockdevice.partitions.values():
+			try:
+				previous_partuuids.append(partition.part_uuid)
+			except DiskError:
+				pass
 
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
@@ -220,36 +227,41 @@ class Filesystem:
 		log(f"Adding partition using the following parted command: {parted_string}", level=logging.DEBUG)
 
 		if self.parted(parted_string):
-			count = 0
-			while count < 10:
-				new_uuid = None
-				new_uuid_set = (previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})
+			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
+				self.partprobe()
 
-				if len(new_uuid_set) > 0:
-					new_uuid = new_uuid_set.pop()
-
-				if new_uuid:
+				new_partition_uuids = []
+				for partition in self.blockdevice.partitions.values():
 					try:
-						return self.blockdevice.get_partition(new_uuid)
+						new_partition_uuids.append(partition.part_uuid)
+					except DiskError:
+						pass
+
+				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
+
+				print(previous_partuuids, new_partition_uuids, new_partuuid_set)
+
+				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
+					try:
+						return self.blockdevice.get_partition(partuuid=new_partuuid)
 					except Exception as err:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
-						log(f'Partition set: {new_uuid_set}', level=logging.ERROR, fg="red")
-						log(f'New UUID: {[new_uuid]}', level=logging.ERROR, fg="red")
+						log(f'Partition set: {new_partuuid_set}', level=logging.ERROR, fg="red")
+						log(f'New UUID: {[new_partuuid]}', level=logging.ERROR, fg="red")
 						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
-					count += 1
-					log(f"Could not get UUID for partition. Waiting before retry attempt {count} of 10 ...",level=logging.DEBUG)
-					time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
+					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
+					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 			else:
 				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
 				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
-		log(f"Previous partitions: {previous_partition_uuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {(previous_partition_uuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
+		log(f"Previous partitions: {previous_partuuids}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {(previous_partuuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
