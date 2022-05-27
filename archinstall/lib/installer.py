@@ -13,7 +13,7 @@ from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .disk.helpers import get_mount_info
+from .disk.helpers import findmnt
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
@@ -314,7 +314,7 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options)
+				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options=options)
 			else:
 				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
 
@@ -327,7 +327,7 @@ class Installer:
 			time.sleep(1)
 
 			try:
-				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+				findmnt(f"{self.target}{mountpoint}", traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 

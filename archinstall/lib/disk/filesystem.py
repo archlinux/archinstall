@@ -89,7 +89,8 @@ class Filesystem:
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=start,
 																	end=partition.get('size', '100%'),
-																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
+																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
+																	skip_mklabel=layout.get('wipe', False) is not False)
 
 			elif (partition_uuid := partition.get('PARTUUID')):
 				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
@@ -209,10 +210,10 @@ class Filesystem:
 		# TODO: Implement this with declarative profiles instead.
 		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
-	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
+	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None, skip_mklabel :bool = False) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
-		if len(self.blockdevice.partitions) == 0:
+		if len(self.blockdevice.partitions) == 0 and skip_mklabel is False:
 			# If it's a completely empty drive, and we're about to add partitions to it
 			# we need to make sure there's a filesystem label.
 			if self.mode == GPT:
