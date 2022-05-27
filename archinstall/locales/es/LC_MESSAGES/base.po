@@ -255,11 +255,11 @@ msgstr "Codificación local"
 msgid "Drive(s)"
 msgstr "Disco(s)"
 
-msgid "Select disk layout"
-msgstr "Seleccione el diseño del disco"
+msgid "Disk layout"
+msgstr "Diseño del disco"
 
-msgid "Set encryption password"
-msgstr "Establecer la contraseña de cifrado"
+msgid "Encryption password"
+msgstr "Contraseña de cifrado"
 
 msgid "Swap"
 msgstr "Swap"
@@ -267,8 +267,8 @@ msgstr "Swap"
 msgid "Bootloader"
 msgstr "Cargador de arranque"
 
-msgid "root password"
-msgstr "contraseña de root"
+msgid "Root password"
+msgstr "Contraseña de root"
 
 msgid "Superuser account"
 msgstr "Cuenta de superusuario"
@@ -289,7 +289,7 @@ msgid "Additional packages"
 msgstr "Paquetes adicionales"
 
 msgid "Network configuration"
-msgstr "Configurar la red"
+msgstr "Configuración de la red"
 
 msgid "Automatic time sync (NTP)"
 msgstr "Sincronización automática de hora (NTP)"
@@ -733,6 +733,36 @@ msgstr "Seleccione uno de los discos u omita y use /mnt como predeterminado"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Seleccione qué particiones marcar para formatear:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Utilice HSM para desbloquear la unidad cifrada"
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Free space"
+msgstr "Espacio libre"
+
+msgid "Bus-type"
+msgstr "Tipo de bus"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Se debe especificar una contraseña de root o al menos 1 usuario con privilegios sudo"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "El nombre de usuario que ingresó no es válido. Intente nuevamente"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
+
+#~ msgid "Select disk layout"
+#~ msgstr "Seleccione el diseño del disco"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
