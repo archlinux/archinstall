@@ -208,6 +208,18 @@ class Filesystem:
 	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
+		if len(self.blockdevice.partitions) == 0:
+			# If it's a completely empty drive, and we're about to add partitions to it
+			# we need to make sure there's a filesystem label.
+			if self.mode == GPT:
+				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
+					raise KeyError(f"Could not create a GPT label on {self}")
+			elif self.mode == MBR:
+				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+					raise KeyError(f"Could not create a MSDOS label on {self}")
+
+			self.blockdevice.flush_cache()
+
 		previous_partuuids = []
 		for partition in self.blockdevice.partitions.values():
 			try:
