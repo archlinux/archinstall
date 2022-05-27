@@ -481,7 +481,7 @@ class Partition:
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
-			if 'compressed=zstd' in fs:
+			if 'compress=zstd' in fs:
 				raise ValueError(f"what?")
 
 			if not fs:
