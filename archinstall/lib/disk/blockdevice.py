@@ -312,4 +312,4 @@ class BlockDevice:
 		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries", level=logging.INFO)
 		log(f"Cache: {self.part_cache}")
 		log(f"Partitions: {self.partitions.items()}")
-		raise DiskError(f"New partition {uuid}/{partuuid} never showed up after adding new partition on {self}")
+		raise DiskError(f"Partition {uuid}/{partuuid} was never found on {self} despite several attempts.")
