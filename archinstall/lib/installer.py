@@ -314,6 +314,7 @@ class Installer:
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
+				print('****', mount_options)
 				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options)
 			else:
 				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
