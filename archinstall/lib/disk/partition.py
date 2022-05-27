@@ -101,7 +101,7 @@ class Partition:
 
 		except SysCallError as error:
 			# Not mounted anywhere most likely
-			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG)
+			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG, fg="grey")
 			pass
 
 		return None
@@ -216,7 +216,7 @@ class Partition:
 			if not self.partprobe():
 				raise DiskError(f"Could not perform partprobe on {self.device_path}")
 
-			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
+			time.sleep(storage.get('DISK_TIMEOUTS', 1) * i)
 
 			partuuid = self._safe_uuid
 			if partuuid:
