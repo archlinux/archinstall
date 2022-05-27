@@ -77,6 +77,7 @@ class Filesystem:
 					raise KeyError(f"Could not create a MSDOS label on {self}")
 
 			self.blockdevice.flush_cache()
+			time.sleep(3)
 
 		prev_partition = None
 		# We then iterate the partitions in order
