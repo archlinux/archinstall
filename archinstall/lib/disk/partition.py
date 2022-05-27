@@ -486,6 +486,7 @@ class Partition:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
+			print('**** fs:', fs)
 			fs_type = get_mount_fs_type(fs)
 			print('**** fstype:', fs_type)
 
