@@ -84,15 +84,12 @@ class Filesystem:
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-				print(_("Adding partition...."))
 				start = partition.get('start') or (
 					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=start,
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'))
-				# TODO: device_instance some times become None
-				# print('Device instance:', partition['device_instance'])
 
 			elif (partition_uuid := partition.get('PARTUUID')):
 				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
@@ -107,7 +104,6 @@ class Filesystem:
 			else:
 				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
 				continue
-				# raise ValueError(f"{self}.load_layout() doesn't know how to continue without a new partition definition or a UUID ({partition.get('PARTUUID')}) on the device ({self.blockdevice.get_partition(uuid=partition.get('PARTUUID'))}).")
 
 			if partition.get('filesystem', {}).get('format', False):
 
@@ -148,7 +144,7 @@ class Filesystem:
 									while True:
 										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
 										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-											print(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
+											log(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
 											continue
 										break
 
@@ -258,8 +254,6 @@ class Filesystem:
 						pass
 
 				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
-
-				print(previous_partuuids, new_partition_uuids, new_partuuid_set)
 
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
