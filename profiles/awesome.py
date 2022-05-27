@@ -49,7 +49,3 @@ if __name__ == 'awesome':
 		fh.write(awesome_lua)
 
 	# TODO: Configure the right-click-menu to contain the above packages that were installed. (as a user config)
-
-	# Remove some interfering nemo settings
-	archinstall.storage['installation_session'].arch_chroot("gsettings set org.nemo.desktop show-desktop-icons false")
-	archinstall.storage['installation_session'].arch_chroot("xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search")
