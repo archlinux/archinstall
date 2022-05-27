@@ -56,6 +56,8 @@ class Partition:
 		if self.filesystem == 'crypto_LUKS':
 			self.encrypted = True
 
+		print('*****', self.filesystem)
+
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
