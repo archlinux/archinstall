@@ -267,9 +267,6 @@ class Filesystem:
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
-			else:
-				log("Add partition is exiting due to excessive wait time", level=logging.ERROR, fg="red")
-				raise DiskError(f"New partition never showed up after adding new partition on {self}.")
 
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
