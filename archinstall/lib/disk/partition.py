@@ -481,15 +481,15 @@ class Partition:
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self.mountpoint:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
-			print('-----', fs)
+			if 'compressed=zstd' in fs:
+				raise ValueError(f"what?")
+
 			if not fs:
 				if not self.filesystem:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self.filesystem
 
-			print('**** fs:', fs)
 			fs_type = get_mount_fs_type(fs)
-			print('**** fstype:', fs_type)
 
 			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
 
