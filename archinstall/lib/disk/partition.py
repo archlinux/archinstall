@@ -310,8 +310,9 @@ class Partition:
 		def iterate_children_recursively(information):
 			for child in information.get('children', []):
 				if target := child.get('target'):
-					if subvolume := subvolume_info_from_path(pathlib.Path(target)):
-						yield subvolume
+					if child.get('fstype') == 'btrfs':
+						if subvolume := subvolume_info_from_path(pathlib.Path(target)):
+							yield subvolume
 
 					if child.get('children'):
 						for subchild in iterate_children_recursively(child):
@@ -320,8 +321,9 @@ class Partition:
 		for mountpoint in self.mount_information:
 			if result := findmnt(pathlib.Path(mountpoint['target'])):
 				for filesystem in result.get('filesystems', []):
-					if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
-						yield subvolume
+					if mountpoint.get('fstype') == 'btrfs':
+						if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
+							yield subvolume
 
 					for child in iterate_children_recursively(filesystem):
 						yield child
