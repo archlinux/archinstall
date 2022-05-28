@@ -244,7 +244,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
-			elif path_info.get('TYPE') == 'squashfs':
+			elif path_info.get('TYPE') in ('squashfs', 'erofs'):
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
