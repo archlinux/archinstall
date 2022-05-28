@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: tajnymag\n"
+"Last-Translator: walken <walken@centrum.cz>\n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -51,10 +51,10 @@ msgid "Choose an audio server"
 msgstr "Zvolte audio server"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Bude nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
+msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například firefox nebo chromium, můžete jej zadat do následujícího pole."
+msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Zadejte další balíčky k instalaci (odělené mezerou, ponechte prázdné k přeskočení): "
@@ -272,7 +272,7 @@ msgid "Superuser account"
 msgstr "Účet superuživatele"
 
 msgid "User account"
-msgstr "Uživatelský úšet"
+msgstr "Uživatelský účet"
 
 msgid "Profile"
 msgstr "Profil"
@@ -374,7 +374,7 @@ msgid "Create a required super-user with sudo privileges: "
 msgstr "Vytvořte povinný účet superuživatele s oprávněními sudo: "
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "Zadejte heslo uživatele root (ponechte prázdné k zakázání uživatele root)"
+msgstr "Zadejte heslo uživatele root (ponechte prázdné k zakázání uživatele root): "
 
 msgid "Password for user \"{}\": "
 msgstr "Heslo pro uživatele \"{}\": "
@@ -390,7 +390,7 @@ msgid ""
 "For more information, please check the Arch wiki"
 msgstr ""
 "Pro fungování NTP může být vyžadován hardwarový čas a další kroky po konfiguraci.\n"
-"Pro další informace navštivte Arch Wiki."
+"Pro další informace navštivte Arch Wiki"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Zadejte uživatelské jméno k přidání dalšího uživatele (ponechte prázdné k přeskočení): "
@@ -540,13 +540,13 @@ msgid "Manage ordinary user accounts: "
 msgstr "Spravovat běžné účty: "
 
 msgid " Subvolume :{:16}"
-msgstr "Podsvazek :{:16}"
+msgstr " Podsvazek :{:16}"
 
 msgid " mounted at {:16}"
-msgstr "připojen na :{:16}"
+msgstr " připojen na :{:16}"
 
 msgid " with option {}"
-msgstr "s přepínačem {}"
+msgstr " s přepínačem {}"
 
 msgid ""
 "\n"
@@ -556,7 +556,7 @@ msgstr ""
 "Zadejte požadované hodnoty pro nový podsvazek \n"
 
 msgid "Subvolume name "
-msgstr "Název podsvazku"
+msgstr "Název podsvazku "
 
 msgid "Subvolume mountpoint"
 msgstr "Přípojný bod podsvazku"
@@ -568,16 +568,16 @@ msgid "Save"
 msgstr "Uložit"
 
 msgid "Subvolume name :"
-msgstr "Název podsvazku"
+msgstr "Název podsvazku:"
 
 msgid "Select a mount point :"
 msgstr "Zvolte přípojný bod:"
 
 msgid "Select the desired subvolume options "
-msgstr "Zvolte požadované přepínače podsvazku"
+msgstr "Zvolte požadované přepínače podsvazku "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Specifikace uživatelů s oprávněními sudo, pomocí uživatelského jména:"
+msgstr "Specifikace uživatelů s oprávněními sudo, pomocí uživatelského jména: "
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] Soubor s protokoly byl uložen zde: {}"
@@ -703,13 +703,13 @@ msgid ""
 msgstr "Pomocí CTRL+C zrušíte stávající výběr\n"
 
 msgid "Copy to: "
-msgstr "Zkopírovat do:"
+msgstr "Zkopírovat do: "
 
 msgid "Edit: "
-msgstr "Upravit:"
+msgstr "Upravit: "
 
 msgid "Key: "
-msgstr "Klíč:"
+msgstr "Klíč: "
 
 msgid "Edit {}: "
 msgstr "Upravit {}: "
