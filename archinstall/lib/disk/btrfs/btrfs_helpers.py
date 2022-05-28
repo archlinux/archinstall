@@ -95,9 +95,6 @@ def setup_subvolumes(installation, partition_dict):
 			del subvol_options[subvol_options.index('compress')]
 
 def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
-	if '/boot' in str(path):
-		raise ValueError(f"moo")
-
 	try:
 		subvolume_name = None
 		result = {}
