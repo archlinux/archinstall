@@ -206,7 +206,8 @@ class GlobalMenu(GeneralMenu):
 				for blockdevice in storage['arguments']['disk_layouts']:
 					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
 						for partition_index in select_encrypted_partitions(
-								title="Select which partitions to encrypt:",
+								title=_('Select which partitions to encrypt:'),
+							    # TODO: Figure out how to subtract off /boot here.
 								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions']
 							):
 
