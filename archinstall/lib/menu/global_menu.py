@@ -207,8 +207,7 @@ class GlobalMenu(GeneralMenu):
 					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
 						for partition_index in select_encrypted_partitions(
 								title=_('Select which partitions to encrypt:'),
-							    # TODO: Figure out how to subtract off /boot here.
-								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions']
+								partitions=list(filter(lambda p: p.mountpoint != '/boot'), storage['arguments']['disk_layouts'][blockdevice]['partitions']))
 							):
 
 							partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
