@@ -434,6 +434,7 @@ def disk_layouts() -> Optional[Dict[str, Any]]:
 
 def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
 	for blockdevice in blockdevices:
+		print(blockdevice)
 		for partition in blockdevice.get('partitions', []).values():
 			if partition.get('encrypted', False):
 				yield partition
