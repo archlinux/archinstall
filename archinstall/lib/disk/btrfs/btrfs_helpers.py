@@ -95,6 +95,9 @@ def setup_subvolumes(installation, partition_dict):
 			del subvol_options[subvol_options.index('compress')]
 
 def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
+	if '/boot' in str(path):
+		raise ValueError(f"moo")
+
 	try:
 		subvolume_name = None
 		result = {}
@@ -114,8 +117,6 @@ def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 
 	except SysCallError as error:
 		log(f"Could not retrieve subvolume information from {path}: {error}", level=logging.WARNING, fg="orange")
-		if '@' in str(path):
-			raise ValueError(f"mooo")
 
 	return None
 
