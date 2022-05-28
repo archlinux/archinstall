@@ -202,6 +202,7 @@ class GlobalMenu(GeneralMenu):
 		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
 			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
+			print('****', storage['arguments'].get('disk_layouts', []))
 			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
 				for blockdevice in storage['arguments']['disk_layouts']:
 					for partition_index in select_encrypted_partitions(
