@@ -376,7 +376,7 @@ def select_encrypted_partitions(
 
 	# show current partition layout:
 	if len(partitions):
-		title += current_partition_layout(partitions) + '\n'
+		title += current_partition_layout(partitions, with_idx=True) + '\n'
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 
