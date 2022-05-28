@@ -57,7 +57,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Zadejte další balíčky k instalaci (odělené mezerou, ponechte prázdné k přeskočení): "
+msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Zkopírovat do instalace konfiguraci sítě z ISO"
@@ -66,7 +66,7 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Select one network interface to configure"
-msgstr "Zvolte zařízení, které konfigurovat"
+msgstr "Zvolte zařízení ke konfiguraci"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Zvolte který režim má být nastaven pro \"{}\" nebo přeskočte pro použití výchozího režimu \"{}\""
@@ -185,7 +185,7 @@ msgid "Select keyboard layout"
 msgstr "Zvolte rozložení klávesnice"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Zvolte jeden z regionů ze kterého stahovat balíčky"
+msgstr "Zvolte region ze kterého se budou stahovat balíčky"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"
