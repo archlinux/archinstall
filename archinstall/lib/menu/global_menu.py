@@ -204,14 +204,15 @@ class GlobalMenu(GeneralMenu):
 			# Then we need to identify which partitions to encrypt. This will default to / (root).
 			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
 				for blockdevice in storage['arguments']['disk_layouts']:
-					for partition_index in select_encrypted_partitions(
-							title="Select which partitions to encrypt:",
-							partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions']
-						):
+					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
+						for partition_index in select_encrypted_partitions(
+								title="Select which partitions to encrypt:",
+								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions']
+							):
 
-						partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
-						partition['encrypted'] = True
-						partition['!password'] = storage['arguments']['!encryption-password']
+							partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
+							partition['encrypted'] = True
+							partition['!password'] = storage['arguments']['!encryption-password']
 
 	def _install_text(self):
 		missing = len(self._missing_configs())

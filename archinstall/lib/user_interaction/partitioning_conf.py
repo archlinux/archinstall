@@ -374,8 +374,6 @@ def select_encrypted_partitions(
 	if len(partition_indexes) == 0:
 		return None
 
-	title = _('Select which partitions to mark for formatting:')
-
 	# show current partition layout:
 	if len(partitions):
 		title += current_partition_layout(partitions) + '\n'
