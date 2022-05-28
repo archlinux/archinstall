@@ -433,9 +433,10 @@ def disk_layouts() -> Optional[Dict[str, Any]]:
 
 
 def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
-	for partition in blockdevices.values():
-		if partition.get('encrypted', False):
-			yield partition
+	for blockdevice in blockdevices:
+		for partition in blockdevices[blockdevice].values():
+			if partition.get('encrypted', False):
+				yield partition
 
 def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
 	for device in block_devices:
