@@ -110,9 +110,13 @@ class BTRFSPartition(Partition):
 
 		if glob.glob(str(subvolume / '*')):
 			raise DiskError(f"Cannot create subvolume at {subvolume} because it contains data (non-empty folder target is not supported by BTRFS)")
-		elif subvolinfo := subvolume_info_from_path(subvolume):
-			raise DiskError(f"Destination {subvolume} is already a subvolume: {subvolinfo}")
+		# Ideally we would like to check if the destination is already a subvolume.
+		# But then we would need the mount-point at this stage as well.
+		# So we'll comment out this check:
+		# elif subvolinfo := subvolume_info_from_path(subvolume):
+		# 	raise DiskError(f"Destination {subvolume} is already a subvolume: {subvolinfo}")
 
+		# And deal with it here:
 		SysCommand(f"btrfs subvolume create {subvolume}")
 
 		return subvolume_info_from_path(subvolume)
