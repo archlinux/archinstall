@@ -54,7 +54,7 @@ The default implementation can handle simple lists and a key:value dictionary. T
 A sample of basic usage is included at the end of the source.
 
 More sophisticaded uses can be achieved by
-* changing the action list and the null_action during intialization
+* changing the action list and the null_action during initialization
 ```
 	opciones = ListManager('Vamos alla',opciones,[str(_('Add')),str(_('Delete'))],_('Add')).run()
 ```
@@ -198,7 +198,7 @@ class ListManager:
 			else:
 				self.target = self._data[data_formatted[target.value]]
 
-			# Possible enhacement. If run_actions returns false a message line indicating the failure
+			# Possible enhancement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target.value)
 
 		if target.value == self.cancel_action:  # TODO dubious

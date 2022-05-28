@@ -115,7 +115,7 @@ Options for ``--config``
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 | hostname             | any                                                    | Hostname of machine after installation. Default will be ``archinstall``                     | No                                            |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc                             | Atleast 1                                     |
+| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc                             | At least 1                                     |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 | keyboard-language    | Any valid layout given by ``localectl list-keymaps``   | eg: ``us``, ``de`` or ``de-latin1`` etc. Defaults to ``us``                                 | No                                            |
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
@@ -149,7 +149,7 @@ Options for ``--config``
 +----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
 
 .. note::
-    [1] If no entires are found in ``harddrives``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall``.
+    [1] If no entries are found in ``harddrives``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall``.
 
 Options for ``--creds``
 -----------------------

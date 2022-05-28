@@ -10,7 +10,7 @@ from .btrfssubvolume import BtrfsSubvolume
 
 
 def mount_subvolume(installation, device, name, subvolume_information):
-	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
+	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 	name = name.lstrip('/')
 
@@ -53,7 +53,7 @@ def setup_subvolumes(installation, partition_dict):
 	"""
 	log(f"Setting up subvolumes: {partition_dict['btrfs']['subvolumes']}", level=logging.INFO, fg="gray")
 	for name, right_hand in partition_dict['btrfs']['subvolumes'].items():
-		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load.
+		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 		name = name.lstrip('/')
 

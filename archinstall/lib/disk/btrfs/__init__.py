@@ -73,7 +73,7 @@ def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.
 
 def _has_option(option :str,options :list) -> bool:
 	""" auxiliary routine to check if an option is present in a list.
-	we check if the string appears in one of the options, 'cause it can appear in severl forms (option, option=val,...)
+	we check if the string appears in one of the options, 'cause it can appear in several forms (option, option=val,...)
 	"""
 	if not options:
 		return False
@@ -110,7 +110,7 @@ def manage_btrfs_subvolumes(installation :Installer,
 	subvolumes = partition['btrfs']['subvolumes']
 	for name, right_hand in subvolumes.items():
 		try:
-			# we normalize the subvolume name (getting rid of slash at the start if exists. In our implemenation has no semantic load - every subvolume is created from the top of the hierarchy- and simplifies its further use
+			# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load - every subvolume is created from the top of the hierarchy- and simplifies its further use
 			if name.startswith('/'):
 				name = name[1:]
 			# renormalize the right hand.

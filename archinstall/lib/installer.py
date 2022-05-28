@@ -195,7 +195,7 @@ class Installer:
 		return True
 
 	def _create_keyfile(self,luks_handle , partition :dict, password :str):
-		""" roiutine to create keyfiles, so it can be moved elsewere
+		""" roiutine to create keyfiles, so it can be moved elsewhere
 		"""
 		if partition.get('generate-encryption-key-file'):
 			if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
@@ -413,7 +413,7 @@ class Installer:
 		try:
 			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
 		except SysCallError as error:
-			self.log(f'Could not sync a new package databse: {error}', level=logging.ERROR, fg="red")
+			self.log(f'Could not sync a new package database: {error}', level=logging.ERROR, fg="red")
 
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
