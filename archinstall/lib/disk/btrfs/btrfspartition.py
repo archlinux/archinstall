@@ -62,6 +62,8 @@ class BTRFSPartition(Partition):
 		if not installation:
 			installation = storage.get('installation_session')
 
+		print('Creating:', subvolume)
+
 		# Determain if the path given, is an absolute path or a releative path.
 		# We do this by checking if the path contains a known mountpoint.
 		if str(subvolume)[0] == '/':
