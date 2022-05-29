@@ -738,7 +738,7 @@ msgstr ""
 "como por exemplo httpd, nginx, mariadb"
 
 msgid ""
-"Choose which servers to install, if none then a minimal installation wil be "
+"Choose which servers to install, if none then a minimal installation will be "
 "done"
 msgstr ""
 "Selecione quais servidores instalar, se há nenhum uma instalação mínima será "
