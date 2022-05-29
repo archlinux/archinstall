@@ -652,7 +652,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose which servers to install, if none then a minimal installation wil be "
+"Choose which servers to install, if none then a minimal installation will be "
 "done"
 msgstr ""
 
