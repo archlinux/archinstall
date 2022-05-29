@@ -660,7 +660,7 @@ msgstr "En väldigt minimal installation som möjliggör konfigurering av Arch L
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Erbjuder ett urval av olika server-packeteringar, t.ex. httpd, nginx och mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Välj vilka servrar du vill installera, en minimal installation sker om du hoppar över detta"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
