@@ -253,8 +253,8 @@ class Installer:
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
-				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
-					list_luks_handles.append([luks_handle,partition,password])
+				if partition.get('generate-encryption-key-file', False) and not self._has_root(partition):
+					list_luks_handles.append([luks_handle, partition, password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
 
