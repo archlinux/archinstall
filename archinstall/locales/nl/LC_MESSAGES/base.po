@@ -670,7 +670,7 @@ msgstr ""
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr ""
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr ""
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
