@@ -33,7 +33,7 @@ def _prep_function(*args, **kwargs):
 	before continuing any further.
 	"""
 	choice = Menu(str(_(
-		'Choose which servers to install, if none then a minimal installation wil be done')),
+		'Choose which servers to install, if none then a minimal installation will be done')),
 		available_servers,
 		preset_values=kwargs['servers'],
 		multi=True

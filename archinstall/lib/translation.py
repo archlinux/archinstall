@@ -28,7 +28,7 @@ class LanguageDefinitions:
 			if entry['abbr'] == abbr:
 				return entry['lang']
 
-		raise ValueError(f'No language with abbrevation "{abbr}" found')
+		raise ValueError(f'No language with abbreviation "{abbr}" found')
 
 
 class DeferredTranslation:

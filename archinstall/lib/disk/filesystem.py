@@ -74,7 +74,7 @@ class Filesystem:
 					raise KeyError(f"Could not create a GPT label on {self}")
 			elif self.mode == MBR:
 				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
-					raise KeyError(f"Could not create a MSDOS label on {self}")
+					raise KeyError(f"Could not create a MS-DOS label on {self}")
 
 			self.blockdevice.flush_cache()
 			time.sleep(3)
@@ -221,7 +221,7 @@ class Filesystem:
 					raise KeyError(f"Could not create a GPT label on {self}")
 			elif self.mode == MBR:
 				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
-					raise KeyError(f"Could not create a MSDOS label on {self}")
+					raise KeyError(f"Could not create a MS-DOS label on {self}")
 
 			self.blockdevice.flush_cache()
 

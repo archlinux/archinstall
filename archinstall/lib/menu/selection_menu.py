@@ -219,7 +219,7 @@ class GeneralMenu:
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
-			Menu options can be defined here in a subclass or done per progam calling self.set_option()
+			Menu options can be defined here in a subclass or done per program calling self.set_option()
 		"""
 		return
 
@@ -347,7 +347,7 @@ class GeneralMenu:
 		return self.exec_option(config_name, selector)
 
 	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
-		""" processes the exection of a given menu entry
+		""" processes the execution of a given menu entry
 		- pre process callback
 		- selection function
 		- post process callback

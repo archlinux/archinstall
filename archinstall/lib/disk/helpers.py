@@ -112,7 +112,7 @@ def cleanup_bash_escapes(data :str) -> str:
 
 def blkid(cmd :str) -> Dict[str, Any]:
 	if '-o' in cmd and '-o export' not in cmd:
-		raise ValueError(f"blkid() requires '-o export' to be used and can therefor not continue reliably.")
+		raise ValueError(f"blkid() requires '-o export' to be used and can therefore not continue reliably.")
 	elif '-o' not in cmd:
 		cmd += ' -o export'
 
@@ -133,7 +133,7 @@ def blkid(cmd :str) -> Dict[str, Any]:
 		key, val = line.split('=', 1)
 		if key.lower() == 'devname':
 			devname = val
-			# Lowercase for backwards compatability with all_disks() previous use cases
+			# Lowercase for backwards compatibility with all_disks() previous use cases
 			result[devname] = {
 				"path": devname,
 				"PATH": devname
@@ -244,7 +244,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
-			elif path_info.get('TYPE') == 'squashfs':
+			elif path_info.get('TYPE') in ('squashfs', 'erofs'):
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
@@ -475,7 +475,7 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 
 	Input parms:
 	:parm partition the partition we check
-	:type Either a Partition object or a dict with the contents of a partition definiton in the disk_layouts schema
+	:type Either a Partition object or a dict with the contents of a partition definition in the disk_layouts schema
 
 	:parm target (a string representing a mount path we want to check for.
 	:type str

@@ -206,8 +206,9 @@ class GlobalMenu(GeneralMenu):
 				for blockdevice in storage['arguments']['disk_layouts']:
 					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
 						for partition_index in select_encrypted_partitions(
-								title="Select which partitions to encrypt:",
-								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions']
+								title=_('Select which partitions to encrypt:'),
+								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions'],
+								filter_=(lambda p: p['mountpoint'] != '/boot')
 							):
 
 							partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]

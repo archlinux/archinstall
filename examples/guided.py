@@ -253,6 +253,8 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('custom-commands', None):
 			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
+		installation.genfstab()
+
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
