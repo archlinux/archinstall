@@ -227,7 +227,7 @@ class GeneralMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selector_name :str, value :Any):
+	def post_callback(self, selection_name: str = None, value: Any = None):
 		""" will be called after each action in the menu """
 		return True
 
