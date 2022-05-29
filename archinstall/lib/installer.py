@@ -158,8 +158,6 @@ class Installer:
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise args[1]
 
-		self.genfstab()
-
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
 			self.sync_log_to_install_medium()
