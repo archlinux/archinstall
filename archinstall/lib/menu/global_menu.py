@@ -215,6 +215,11 @@ class GlobalMenu(GeneralMenu):
 							partition['encrypted'] = True
 							partition['!password'] = storage['arguments']['!encryption-password']
 
+							# We make sure generate-encryption-key-file is set on additional partitions
+							# other than the root partition. Otherwise they won't unlock properly #1279
+							if partition['mountpoint'] != '/':
+								partition['generate-encryption-key-file'] = True
+
 	def _install_text(self):
 		missing = len(self._missing_configs())
 		if missing > 0:
