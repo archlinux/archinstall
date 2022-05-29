@@ -160,16 +160,6 @@ class Partition:
 	def boot(self) -> bool:
 		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
 
-		# Get the bootable flag from the sfdisk output:
-		# {
-		#    "partitiontable": {
-		#       "device":"/dev/loop0",
-		#       "partitions": [
-		#          {"node":"/dev/loop0p1", "start":2048, "size":10483712, "type":"83", "bootable":true}
-		#       ]
-		#    }
-		# }
-
 		for partition in output.get('partitiontable', {}).get('partitions', []):
 			if partition['node'] == self.path:
 				# first condition is for MBR disks, second for GPT disks

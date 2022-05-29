@@ -80,24 +80,33 @@ class SubvolumeMenu(GeneralMenu):
 		super().__init__(data_store=self.ds)
 
 	def _setup_selection_menu_options(self):
-		# [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
-		self._menu_options['name'] = Selector(str(_('Subvolume name ')),
-			self._select_subvolume_name if not self.action or self.action in (str(_('Add')),str(_('Copy'))) else None,
+		self._menu_options['name'] = Selector(
+			str(_('Subvolume name ')),
+			self._select_subvolume_name if not self.action or self.action in (str(_('Add')), str(_('Copy'))) else None,
 			mandatory=True,
 			enabled=True)
-		self._menu_options['mountpoint'] = Selector(str(_('Subvolume mountpoint')),
+
+		self._menu_options['mountpoint'] = Selector(
+			str(_('Subvolume mountpoint')),
 			self._select_subvolume_mount_point if not self.action or self.action in (str(_('Add')),str(_('Edit'))) else None,
 			enabled=True)
-		self._menu_options['options'] = Selector(str(_('Subvolume options')),
+
+		self._menu_options['options'] = Selector(
+			str(_('Subvolume options')),
 			self._select_subvolume_options if not self.action or self.action in (str(_('Add')),str(_('Edit'))) else None,
 			enabled=True)
-		self._menu_options['save'] = Selector(str(_('Save')),
-													exec_func=lambda n,v:True,
-													enabled=True)
-		self._menu_options['cancel'] = Selector(str(_('Cancel')),
-													# func = lambda pre:True,
-													exec_func=lambda n,v:self.fast_exit(n),
-													enabled=True)
+
+		self._menu_options['save'] = Selector(
+			str(_('Save')),
+			exec_func=lambda n,v:True,
+			enabled=True)
+
+		self._menu_options['cancel'] = Selector(
+			str(_('Cancel')),
+			# func = lambda pre:True,
+			exec_func=lambda n,v:self.fast_exit(n),
+			enabled=True)
+
 		self.cancel_action = 'cancel'
 		self.save_action = 'save'
 		self.bottom_list = [self.save_action,self.cancel_action]
