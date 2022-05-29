@@ -115,7 +115,7 @@ class Menu(TerminalMenu):
 		# We check that the options are iterable. If not we abort. Else we copy them to lists
 		# it options is a dictionary we use the values as entries of the list
 		# if options is a string object, each character becomes an entry
-		# if options is a list, we implictily build a copy to mantain immutability
+		# if options is a list, we implictily build a copy to maintain immutability
 		if not isinstance(p_options,Iterable):
 			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu",fg="red")
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)

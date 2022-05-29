@@ -1,14 +1,14 @@
 """
 
 Script swiss (army knife)
-Designed to make different workflows for the installation process. Which is controled by  the argument --mode
+Designed to make different workflows for the installation process. Which is controlled by  the argument --mode
 mode full  guides the full process of installation
 mode only_hd only proceeds to the creation of the disk infraestructure (partition, mount points, encryption)
 mode only_os processes only the installation of Archlinux and software at --mountpoint (or /mnt/archinstall)
 mode minimal (still not implemented)
 mode lineal. Instead of a menu, shows a sequence of selection screens (eq. to the old mode for guided.py)
 
-When using the argument --advanced. an aditional menu for several special parameters needed during installation appears
+When using the argument --advanced. an additional menu for several special parameters needed during installation appears
 
 This script respects the --dry_run argument
 
@@ -180,7 +180,7 @@ class SetupMenu(archinstall.GeneralMenu):
 			self.set_option(item,
 				archinstall.Selector(
 					f'{get_locale_mode_text(item)} locale',
-					lambda x,item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
+					lambda x,item=item: select_installed_locale(item),   # the parameter is needed for the lambda in the loop
 					enabled=True,
 					dependencies_not=['LC_ALL'] if item != 'LC_ALL' else []))
 		self.option('LC_ALL').set_enabled(True)
@@ -286,7 +286,7 @@ class MyMenu(archinstall.GlobalMenu):
 
 
 """
-Instalation general subroutines
+Installation general subroutines
 """
 
 def get_current_status():

@@ -88,7 +88,7 @@ class Boot:
 
 		if len(args) >= 2 and args[1]:
 			log(args[1], level=logging.ERROR, fg='red')
-			log(f"The error above occured in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
+			log(f"The error above occurred in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
 		shutdown = None
 		shutdown_exit_code = -1

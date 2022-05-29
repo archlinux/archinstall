@@ -64,13 +64,13 @@ class User:
 	) -> List['User']:
 		users = []
 
-		# backwards compability
+		# backwards compatibility
 		if isinstance(config_users, dict):
 			users += cls._parse_backwards_compatible(config_users, False)
 		else:
 			users += cls._parse(config_users)
 
-		# backwards compability
+		# backwards compatibility
 		if isinstance(config_superusers, dict):
 			users += cls._parse_backwards_compatible(config_superusers, True)
 

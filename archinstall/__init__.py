@@ -91,7 +91,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 		--argument=value
 		--argument = value
 		--argument   (boolean as default)
-	the optional paramters to the function alter a bit its behaviour:
+	the optional parameters to the function alter a bit its behaviour:
 	* multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
 	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
 
@@ -104,7 +104,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 	key = None
 	last_key = None
 	while tmp_list:
-		element = tmp_list.pop(0)			  # retreive an element of the list
+		element = tmp_list.pop(0)			  # retrieve an element of the list
 		if element.startswith('--'):		   # is an argument ?
 			if '=' in element:				 # uses the arg=value syntax ?
 				key, value = [x.strip() for x in element[2:].split('=', 1)]

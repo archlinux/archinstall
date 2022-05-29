@@ -62,13 +62,13 @@ class BTRFSPartition(Partition):
 		if not installation:
 			installation = storage.get('installation_session')
 
-		# Determain if the path given, is an absolute path or a releative path.
+		# Determain if the path given, is an absolute path or a relative path.
 		# We do this by checking if the path contains a known mountpoint.
 		if str(subvolume)[0] == '/':
 			if filesystems := findmnt(subvolume, traverse=True).get('filesystems'):
 				if (target := filesystems[0].get('target')) and target != '/' and str(subvolume).startswith(target):
 					# Path starts with a known mountpoint which isn't /
-					# Which means it's an absolut path to a mounted location.
+					# Which means it's an absolute path to a mounted location.
 					pass
 				else:
 					# Since it's not an absolute position with a known start.
