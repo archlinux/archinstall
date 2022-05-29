@@ -327,12 +327,12 @@ class GeneralMenu:
 							break
 						cursor_pos += 1
 
-					value = value.strip()
+				value = value.strip()
 
-					# if this calls returns false, we exit the menu
-					# we allow for an callback for special processing on realeasing control
-					if not self._process_selection(value):
-						break
+				# if this calls returns false, we exit the menu
+				# we allow for an callback for special processing on realeasing control
+				if not self._process_selection(value):
+					break
 
 		if not self.is_context_mgr:
 			self.__exit__()
