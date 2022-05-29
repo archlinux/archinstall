@@ -657,7 +657,7 @@ msgstr "Una instalación muy básica que te permite personalizar Arch Linux como
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
