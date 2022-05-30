@@ -11,7 +11,9 @@ class FormattedOutput:
 
 	@classmethod
 	def values(cls, o: Any) -> Dict[str, Any]:
-		if hasattr(o, 'json'):
+		if hasattr(o, 'as_json'):
+			return o.as_json()
+		elif hasattr(o, 'json'):
 			return o.json()
 		else:
 			return o.__dict__

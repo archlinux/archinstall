@@ -184,7 +184,6 @@ class Partition:
 		"""
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			if not self.partprobe():
-				log('WEIRD')
 				raise DiskError(f"Could not perform partprobe on {self.device_path}")
 
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
@@ -400,7 +399,7 @@ class Partition:
 
 			elif filesystem == 'vfat':
 				options = ['-F32'] + options
-
+				log(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")
 				if (handle := SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 				self.filesystem = filesystem

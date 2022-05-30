@@ -247,16 +247,10 @@ class Filesystem:
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
 				self.partprobe()
 
-				log('0000')
-				log(len(self.blockdevice.partitions))
-
 				new_partition_uuids = []
 				for partition in self.blockdevice.partitions.values():
 					try:
-						log('1111')
-						log(partition)
 						new_partition_uuids.append(partition.part_uuid)
-						log('2222')
 					except DiskError:
 						pass
 

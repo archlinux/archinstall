@@ -67,23 +67,13 @@ class BlockDevice:
 	def _str_repr(self) -> str:
 		return f"BlockDevice({self._device_or_backfile}, size={self.size}GB, free_space={self._safe_free_space()}, bus_type={self.bus_type})"
 
-	@property
-	def display_info(self) -> str:
-		columns = {
+	def as_json(self) -> Dict[str, Any]:
+		return {
 			str(_('Device')): self._device_or_backfile,
 			str(_('Size')): f'{self.size}GB',
 			str(_('Free space')): f'{self._safe_free_space()}',
 			str(_('Bus-type')): f'{self.bus_type}'
 		}
-
-		padding = max([len(k) for k in columns.keys()])
-
-		pretty = ''
-		for k, v in columns.items():
-			k = k.ljust(padding, ' ')
-			pretty += f'{k} = {v}\n'
-
-		return pretty.rstrip()
 
 	def __iter__(self) -> Iterator['Partition']:
 		for partition in self.partitions:
@@ -139,7 +129,7 @@ class BlockDevice:
 			root = f'/dev/{device["name"]}'
 			for child in children:
 				part_id = child['name'].removeprefix(device['name'])
-				self._partitions[part_id] = Partition(root, block_device=self, part_id=part_id)
+				self._partitions[part_id] = Partition(root + part_id, block_device=self, part_id=part_id)
 
 	def _get_free_space(self) -> Optional[List[BlockSizeInfo]]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
