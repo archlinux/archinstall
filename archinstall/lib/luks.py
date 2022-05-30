@@ -15,7 +15,10 @@ from .general import SysCommand, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
+from .disk.helpers import get_filesystem_type
 from .disk.mapperdev import MapperDev
+from .disk.btrfs import BTRFSPartition
+
 
 class luks2:
 	def __init__(self,
@@ -149,7 +152,6 @@ class luks2:
 		:param mountpoint: The name without absolute path, for instance "luksdev" will point to /dev/mapper/luksdev
 		:type mountpoint: str
 		"""
-		from .disk import get_filesystem_type
 
 		if '/' in mountpoint:
 			os.path.basename(mountpoint)  # TODO: Raise exception instead?
@@ -162,14 +164,22 @@ class luks2:
 		if os.path.islink(f'/dev/mapper/{mountpoint}'):
 			self.mapdev = f'/dev/mapper/{mountpoint}'
 
-			unlocked_partition = Partition(
+			if (filesystem_type := get_filesystem_type(pathlib.Path(self.mapdev))) == 'btrfs':
+				return BTRFSPartition(
+					self.mapdev,
+					block_device=MapperDev(mountpoint).partition.block_device,
+					encrypted=True,
+					filesystem=filesystem_type,
+					autodetect_filesystem=False
+				)
+
+			return Partition(
 				self.mapdev,
 				block_device=MapperDev(mountpoint).partition.block_device,
 				encrypted=True,
 				filesystem=get_filesystem_type(self.mapdev),
 				autodetect_filesystem=False
 			)
-			return unlocked_partition
 
 	def close(self, mountpoint :Optional[str] = None) -> bool:
 		if not mountpoint:

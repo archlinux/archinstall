@@ -224,7 +224,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					continue
 
 				block_device_struct["partitions"].append({
-					"type": "primary",  # Strictly only allowed under MSDOS, but GPT accepts it so it's "safe" to inject
+					"type": "primary",  # Strictly only allowed under MS-DOS, but GPT accepts it so it's "safe" to inject
 					"start": start,
 					"size": end,
 					"mountpoint": None,
@@ -374,11 +374,9 @@ def select_encrypted_partitions(
 	if len(partition_indexes) == 0:
 		return None
 
-	title = _('Select which partitions to mark for formatting:')
-
 	# show current partition layout:
 	if len(partitions):
-		title += current_partition_layout(partitions) + '\n'
+		title += current_partition_layout(partitions, with_idx=True) + '\n'
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 

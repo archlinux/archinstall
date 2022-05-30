@@ -619,7 +619,7 @@ class TerminalMenu:
                 else:
                     unit_separated_entry = escaped_separator_pattern.sub("|", separator_pattern.sub("\\1\x1F", entry))
                     match_obj = menu_entry_pattern.match(unit_separated_entry)
-                    # this is none in case the entry was an emtpy string which
+                    # this is none in case the entry was an empty string which
                     # will be interpreted as a separator
                     assert match_obj is not None
                     shortcut_key = match_obj.group(1)

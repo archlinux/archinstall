@@ -64,6 +64,8 @@ class ManualNetworkConfig(ListManager):
 			elif self.action == self._action_delete:
 				del data[iface_name]
 
+		return data
+
 	def _select_iface(self, existing_ifaces: List[str]) -> Optional[Any]:
 		all_ifaces = list_interfaces().values()
 		available = set(all_ifaces) - set(existing_ifaces)

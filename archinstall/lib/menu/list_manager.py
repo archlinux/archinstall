@@ -54,7 +54,7 @@ The default implementation can handle simple lists and a key:value dictionary. T
 A sample of basic usage is included at the end of the source.
 
 More sophisticaded uses can be achieved by
-* changing the action list and the null_action during intialization
+* changing the action list and the null_action during initialization
 ```
 	opciones = ListManager('Vamos alla',opciones,[str(_('Add')),str(_('Delete'))],_('Add')).run()
 ```
@@ -84,12 +84,12 @@ The contents in the base class of this methods serve for a very basic usage, and
 ```
 
 """
+import copy
+from os import system
+from typing import Union, Any, TYPE_CHECKING, Dict, Optional
 
 from .text_input import TextInput
-from .menu import Menu, MenuSelectionType
-from os import system
-from copy import copy
-from typing import Union, Any, TYPE_CHECKING, Dict, Optional
+from .menu import Menu
 
 if TYPE_CHECKING:
 	_: Any
@@ -144,14 +144,14 @@ class ListManager:
 		self.bottom_list = [self.confirm_action,self.cancel_action]
 		self.bottom_item = [self.cancel_action]
 		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
-		self.base_data = base_list
-		self._data = copy(base_list) # as refs, changes are immediate
+		self._original_data = copy.deepcopy(base_list)
+		self._data = copy.deepcopy(base_list) # as refs, changes are immediate
 		# default values for the null case
 		self.target: Optional[Any] = None
 		self.action = self._null_action
 
 		if len(self._data) == 0 and self._null_action:
-			self.exec_action(self._data)
+			self._data = self.exec_action(self._data)
 
 	def run(self):
 		while True:
@@ -175,11 +175,9 @@ class ListManager:
 				clear_screen=False,
 				clear_menu_on_exit=False,
 				header=self.header,
-				skip_empty_entries=True
+				skip_empty_entries=True,
+				skip=False
 			).run()
-
-			if target.type_ == MenuSelectionType.Esc:
-				return self.run()
 
 			if not target.value or target.value in self.bottom_list:
 				self.action = target
@@ -188,21 +186,23 @@ class ListManager:
 			if target.value and target.value in self._default_action:
 				self.action = target.value
 				self.target = None
-				self.exec_action(self._data)
+				self._data = self.exec_action(self._data)
 				continue
 
 			if isinstance(self._data,dict):
 				data_key = data_formatted[target.value]
 				key = self._data[data_key]
 				self.target = {data_key: key}
+			elif isinstance(self._data, list):
+				self.target = [d for d in self._data if d == data_formatted[target.value]][0]
 			else:
 				self.target = self._data[data_formatted[target.value]]
 
-			# Possible enhacement. If run_actions returns false a message line indicating the failure
+			# Possible enhancement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target.value)
 
-		if not target or target == self.cancel_action:  # TODO dubious
-			return self.base_data  # return the original list
+		if target.value == self.cancel_action:  # TODO dubious
+			return self._original_data  # return the original list
 		else:
 			return self._data
 
@@ -221,10 +221,9 @@ class ListManager:
 
 		self.action = choice.value
 
-		if not self.action or self.action == self.cancel_action:
-			return False
-		else:
-			return self.exec_action(self._data)
+		if self.action and self.action != self.cancel_action:
+			self._data = self.exec_action(self._data)
+
 	"""
 	The following methods are expected to be overwritten by the user if the needs of the list are beyond the simple case
 	"""
@@ -293,3 +292,5 @@ class ListManager:
 				self._data[origkey] = value
 			elif self.action == str(_('Delete')):
 				del self._data[origkey]
+
+		return self._data

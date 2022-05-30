@@ -1,7 +1,4 @@
 """Arch Linux installer - guided, templates etc."""
-import urllib.error
-import urllib.parse
-import urllib.request
 from argparse import ArgumentParser
 
 from .lib.disk import *
@@ -13,6 +10,7 @@ from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
 from .lib.models.network_configuration import NetworkConfigurationHandler
+from .lib.models.users import User
 from .lib.networking import *
 from .lib.output import *
 from .lib.models.dataclasses import (
@@ -52,7 +50,7 @@ from .lib.hsm import (
 )
 parser = ArgumentParser()
 
-__version__ = "2.4.3rc1"
+__version__ = "2.5.0"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -93,7 +91,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 		--argument=value
 		--argument = value
 		--argument   (boolean as default)
-	the optional paramters to the function alter a bit its behaviour:
+	the optional parameters to the function alter a bit its behaviour:
 	* multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
 	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
 
@@ -106,7 +104,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 	key = None
 	last_key = None
 	while tmp_list:
-		element = tmp_list.pop(0)			  # retreive an element of the list
+		element = tmp_list.pop(0)			  # retrieve an element of the list
 		if element.startswith('--'):		   # is an argument ?
 			if '=' in element:				 # uses the arg=value syntax ?
 				key, value = [x.strip() for x in element[2:].split('=', 1)]
@@ -160,7 +158,7 @@ def get_arguments() -> Dict[str, Any]:
 	if args.creds is not None:
 		if not json_stream_to_structure('--creds', args.creds, config):
 			exit(1)
-			
+
 	# load the parameters. first the known, then the unknowns
 	config.update(vars(args))
 	config.update(parse_unspecified_argument_list(unknowns))
@@ -211,6 +209,11 @@ def load_config():
 		handler = NetworkConfigurationHandler()
 		handler.parse_arguments(arguments.get('nic'))
 		arguments['nic'] = handler.configuration
+	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
+		users = arguments.get('!users', None)
+		superusers = arguments.get('!superusers', None)
+		arguments['!users'] = User.parse_arguments(users, superusers)
+
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments

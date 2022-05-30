@@ -112,7 +112,7 @@ def cleanup_bash_escapes(data :str) -> str:
 
 def blkid(cmd :str) -> Dict[str, Any]:
 	if '-o' in cmd and '-o export' not in cmd:
-		raise ValueError(f"blkid() requires '-o export' to be used and can therefor not continue reliably.")
+		raise ValueError(f"blkid() requires '-o export' to be used and can therefore not continue reliably.")
 	elif '-o' not in cmd:
 		cmd += ' -o export'
 
@@ -133,7 +133,7 @@ def blkid(cmd :str) -> Dict[str, Any]:
 		key, val = line.split('=', 1)
 		if key.lower() == 'devname':
 			devname = val
-			# Lowercase for backwards compatability with all_disks() previous use cases
+			# Lowercase for backwards compatibility with all_disks() previous use cases
 			result[devname] = {
 				"path": devname,
 				"PATH": devname
@@ -244,7 +244,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
-			elif path_info.get('TYPE') == 'squashfs':
+			elif path_info.get('TYPE') in ('squashfs', 'erofs'):
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
@@ -291,11 +291,37 @@ def find_mountpoint(device_path :str) -> Dict[str, Any]:
 	except SysCallError:
 		return {}
 
-def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False) -> Dict[str, Any]:
+def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recurse :bool = True) -> Dict[str, Any]:
+	for traversal in list(map(str, [str(path)] + list(path.parents))):
+		if traversal in ignore:
+			continue
+
+		try:
+			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
+			if (output := SysCommand(f"/usr/bin/findmnt --json {'--submounts' if recurse else ''} {traversal}").decode('UTF-8')):
+				return json.loads(output)
+
+		except SysCallError as error:
+			log(f"Could not get mount information on {path} but continuing and ignoring: {error}", level=logging.INFO, fg="gray")
+			pass
+
+		if not traverse:
+			break
+
+	raise DiskError(f"Could not get mount information for path {path}")
+
+
+def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
+	import traceback
+
+	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing. Please change at:\n{''.join(traceback.format_stack())}")
 	device_path, bind_path = split_bind_name(path)
 	output = {}
 
 	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
+		if traversal in ignore:
+			continue
+
 		try:
 			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
 			if (output := SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')):
@@ -385,9 +411,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 
 
 def get_filesystem_type(path :str) -> Optional[str]:
-	device_name, bind_name = split_bind_name(path)
 	try:
-		return SysCommand(f"blkid -o value -s TYPE {device_name}").decode('UTF-8').strip()
+		return SysCommand(f"blkid -o value -s TYPE {path}").decode('UTF-8').strip()
 	except SysCallError:
 		return None
 
@@ -408,9 +433,10 @@ def disk_layouts() -> Optional[Dict[str, Any]]:
 
 
 def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
-	for partition in blockdevices.values():
-		if partition.get('encrypted', False):
-			yield partition
+	for blockdevice in blockdevices.values():
+		for partition in blockdevice.get('partitions', []):
+			if partition.get('encrypted', False):
+				yield partition
 
 def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
 	for device in block_devices:
@@ -449,7 +475,7 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 
 	Input parms:
 	:parm partition the partition we check
-	:type Either a Partition object or a dict with the contents of a partition definiton in the disk_layouts schema
+	:type Either a Partition object or a dict with the contents of a partition definition in the disk_layouts schema
 
 	:parm target (a string representing a mount path we want to check for.
 	:type str

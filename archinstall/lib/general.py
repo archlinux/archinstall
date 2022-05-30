@@ -207,7 +207,7 @@ class SysCommandWorker:
 		self.cmd = cmd
 		self.callbacks = callbacks
 		self.peak_output = peak_output
-		# define the standard locale for command outputs. For now the C ascii one. Can be overriden
+		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
 		self.working_directory = working_directory
@@ -354,7 +354,7 @@ class SysCommandWorker:
 		# Note: If for any reason, we get a Python exception between here
 		#   and until os.close(), the traceback will get locked inside
 		#   stdout of the child_fd object. `os.read(self.child_fd, 8192)` is the
-		#   only way to get the traceback without loosing it.
+		#   only way to get the traceback without losing it.
 
 		self.pid, self.child_fd = pty.fork()
 
@@ -363,7 +363,7 @@ class SysCommandWorker:
 			try:
 				try:
 					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
-						cmd_log.write(f"{' '.join(self.cmd)}\n")
+						cmd_log.write(f"{self.cmd}\n")
 				except PermissionError:
 					pass
 
@@ -547,7 +547,7 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 
 	parsed_url = urllib.parse.urlparse(stream)
 
-	if parsed_url.scheme: # The stream is in fact a URL that should be grabed
+	if parsed_url.scheme: # The stream is in fact a URL that should be grabbed
 		with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
 			target.update(json.loads(response.read()))
 	else:

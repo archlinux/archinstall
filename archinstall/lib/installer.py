@@ -13,17 +13,17 @@ from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
-from .disk.helpers import get_mount_info
+from .disk.helpers import findmnt
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
 # from .user_interaction import *
 from .output import log
 from .profiles import Profile
-from .disk.btrfs import manage_btrfs_subvolumes
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .hsm import fido2_enroll
+from .models.users import User
 
 if TYPE_CHECKING:
 	_: Any
@@ -158,8 +158,6 @@ class Installer:
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
 			raise args[1]
 
-		self.genfstab()
-
 		if not (missing_steps := self.post_install_check()):
 			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
 			self.sync_log_to_install_medium()
@@ -195,7 +193,7 @@ class Installer:
 		return True
 
 	def _create_keyfile(self,luks_handle , partition :dict, password :str):
-		""" roiutine to create keyfiles, so it can be moved elsewere
+		""" roiutine to create keyfiles, so it can be moved elsewhere
 		"""
 		if partition.get('generate-encryption-key-file'):
 			if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
@@ -233,11 +231,16 @@ class Installer:
 
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
 		from .luks import luks2
+		from .disk.btrfs import setup_subvolumes, mount_subvolume
+
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
 		for blockdevice in layouts:
 			list_part.extend(layouts[blockdevice]['partitions'])
+
+		# TODO: Implement a proper mount-queue system that does not depend on return values.
+		mount_queue = {}
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
@@ -247,50 +250,82 @@ class Installer:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
-			
+
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
-				if partition.get('generate-encryption-key-file',False) and not self._has_root(partition):
-					list_luks_handles.append([luks_handle,partition,password])
+				if partition.get('generate-encryption-key-file', False) and not self._has_root(partition):
+					list_luks_handles.append([luks_handle, partition, password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
 
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
-				hsm_device_path = storage['arguments']['HSM']
-				fido2_enroll(hsm_device_path, partition['device_instance'], password)
+				if storage['arguments'].get('HSM'):
+					hsm_device_path = storage['arguments']['HSM']
+					fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
-		for partition in [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]:
-			if partition.get('filesystem',{}).get('mount_options',[]):
-				mount_options = ','.join(partition['filesystem']['mount_options'])
-				self.mount(partition['device_instance'], "/", options=mount_options)
-			else:
-				self.mount(partition['device_instance'], "/")
-			try:
-				new_mountpoints = manage_btrfs_subvolumes(self,partition)
-			except Exception as e:
-				# every exception unmounts the physical volume. Otherwise we let the system in an unstable state
-				partition['device_instance'].unmount()
-				raise e
-			partition['device_instance'].unmount()
-			if new_mountpoints:
-				list_part.extend(new_mountpoints)
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition in btrfs_subvolumes:
+				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
+					self.mount(partition['device_instance'], "/", options=mount_options)
+				else:
+					self.mount(partition['device_instance'], "/")
 
-		# we mount. We need to sort by mountpoint to get a good working order
-		for partition in sorted([entry for entry in list_part if entry.get('mountpoint',False)],key=lambda part: part['mountpoint']):
+				setup_subvolumes(
+					installation=self,
+					partition_dict=partition
+				)
+
+				partition['device_instance'].unmount()
+
+		# We then handle any special cases, such as btrfs
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+			for partition_information in btrfs_subvolumes:
+				for name, mountpoint in sorted(partition_information['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
+					btrfs_subvolume_information = {}
+
+					match mountpoint:
+						case str(): # backwards-compatability
+							btrfs_subvolume_information['mountpoint'] = mountpoint
+							btrfs_subvolume_information['options'] = []
+						case dict():
+							btrfs_subvolume_information['mountpoint'] = mountpoint.get('mountpoint', None)
+							btrfs_subvolume_information['options'] = mountpoint.get('options', [])
+						case _:
+							continue
+
+					if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
+						# We cache the mount call for later
+						mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'], \
+							name=name, \
+							subvolume_information=btrfs_subvolume_information: mount_subvolume(
+								installation=self,
+								device=device,
+								name=name,
+								subvolume_information=subvolume_information
+							)
+
+		# We mount ordinary partitions, and we sort them by the mountpoint
+		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
 			mountpoint = partition['mountpoint']
 			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
 
 			if partition.get('filesystem',{}).get('mount_options',[]):
 				mount_options = ','.join(partition['filesystem']['mount_options'])
-				partition['device_instance'].mount(f"{self.target}{mountpoint}", options=mount_options)
+				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options=options)
 			else:
-				partition['device_instance'].mount(f"{self.target}{mountpoint}")
+				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
+
+		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
+
+		# We mount everything by sorting on the mountpoint itself.
+		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
+			frozen_func()
 
 			time.sleep(1)
 
 			try:
-				get_mount_info(f"{self.target}{mountpoint}", traverse=False)
+				findmnt(pathlib.Path(f"{self.target}{mountpoint}"), traverse=False)
 			except DiskError:
 				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
 
@@ -376,7 +411,7 @@ class Installer:
 		try:
 			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
 		except SysCallError as error:
-			self.log(f'Could not sync a new package databse: {error}', level=logging.ERROR, fg="red")
+			self.log(f'Could not sync a new package database: {error}', level=logging.ERROR, fg="red")
 
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
@@ -392,7 +427,7 @@ class Installer:
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
 					return self.pacstrap(*packages, **kwargs)
-			
+
 			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
 	def set_mirrors(self, mirrors :Mapping[str, Iterator[str]]) -> None:
@@ -979,10 +1014,14 @@ class Installer:
 				if plugin.on_add_bootloader(self):
 					return True
 
+		if type(self.target) == str:
+			self.target = pathlib.Path(self.target)
+
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			if partition.mountpoint == os.path.join(self.target, 'boot'):
+			print(partition, [partition.mountpoint], [self.target])
+			if partition.mountpoint == self.target / 'boot':
 				boot_partition = partition
 			elif partition.mountpoint == self.target:
 				root_partition = partition
@@ -1024,7 +1063,7 @@ class Installer:
 		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
 		return profile.install()
 
-	def enable_sudo(self, entity: str, group :bool = False) -> bool:
+	def enable_sudo(self, entity: str, group :bool = False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
@@ -1054,9 +1093,14 @@ class Installer:
 		# Guarantees sudoer conf file recommended perms
 		os.chmod(pathlib.Path(rule_file_name), 0o440)
 
-		return True
+	def create_users(self, users: Union[User, List[User]]):
+		if not isinstance(users, list):
+			users = [users]
 
-	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[str] = None, sudo :bool = False) -> None:
+		for user in users:
+			self.user_create(user.username, user.password, user.groups, user.sudo)
+
+	def user_create(self, user :str, password :Optional[str] = None, groups :Optional[List[str]] = None, sudo :bool = False) -> None:
 		if groups is None:
 			groups = []
 

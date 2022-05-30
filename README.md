@@ -30,7 +30,7 @@ Some additional options that are not needed by most users are hidden behind the 
 
 ## Running from a declarative configuration file or URL
 
-Prequisites:
+Prerequisites:
    1. Edit the [configuration file](https://github.com/archlinux/archinstall/blob/master/examples/config-sample.json) according to your requirements.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
@@ -55,7 +55,7 @@ The guided installer itself is also optional to use if so desired and not forced
 Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
 This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
 
-Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compability after notifying about such changes.
+Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
 
 # Scripting your own installation
 
@@ -105,7 +105,8 @@ with archinstall.Installer('/mnt') as installation:
         # In this case, we install a minimal profile that is empty
         installation.install_profile('minimal')
 
-        installation.user_create('devel', 'devel')
+        user = User('devel', 'devel', False)
+        installation.create_users(user)
         installation.user_set_pw('root', 'airoot')
 ```
 

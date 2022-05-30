@@ -283,18 +283,27 @@ class BlockDevice:
 	def flush_cache(self) -> None:
 		self._load_partitions()
 
-	def get_partition(self, uuid :str) -> 'Partition':
-		count = 0
-		while count < 5:
-			for partition_uuid, partition in self.partitions.items():
-				if partition.part_uuid.lower() == uuid.lower():
-					return partition
-			else:
-				log(f"uuid {uuid} not found. Waiting for {count +1} time",level=logging.DEBUG)
-				time.sleep(float(storage['arguments'].get('disk-sleep', 0.2)))
-				count += 1
-		else:
-			log(f"Could not find {uuid} in disk after 5 retries",level=logging.INFO)
-			print(f"Partitions: {self.partitions.items()}")
-			print(f"UUID: {[uuid]}")
-			raise DiskError(f"New partition {uuid} never showed up after adding new partition on {self}")
+	def get_partition(self, uuid :Optional[str] = None, partuuid :Optional[str] = None) -> Partition:
+		if not uuid and not partuuid:
+			raise ValueError(f"BlockDevice.get_partition() requires either a UUID or a PARTUUID for lookups.")
+
+		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
+			for partition_index, partition in self.partitions.items():
+				try:
+					if uuid and partition.uuid.lower() == uuid.lower():
+						return partition
+					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
+						return partition
+				except DiskError as error:
+					# Most likely a blockdevice that doesn't support or use UUID's
+					# (like Microsoft recovery partition)
+					log(f"Could not get UUID/PARTUUID of {partition}: {error}", level=logging.DEBUG, fg="gray")
+					pass
+
+			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
+			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
+
+		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries", level=logging.INFO)
+		log(f"Cache: {self.part_cache}")
+		log(f"Partitions: {self.partitions.items()}")
+		raise DiskError(f"Partition {uuid}/{partuuid} was never found on {self} despite several attempts.")
