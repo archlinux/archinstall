@@ -280,7 +280,7 @@ class BlockDevice:
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
 				try:
-					if uuid and partition.uuid.lower() == uuid.lower():
+					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
 						return partition
 					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
 						return partition
@@ -294,6 +294,6 @@ class BlockDevice:
 			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 
 		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries", level=logging.INFO)
-		log(f"Cache: {self.part_cache}")
+		log(f"Cache: {self._partitions}")
 		log(f"Partitions: {self.partitions.items()}")
 		raise DiskError(f"Partition {uuid}/{partuuid} was never found on {self} despite several attempts.")
