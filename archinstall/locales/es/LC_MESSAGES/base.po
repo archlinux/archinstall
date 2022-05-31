@@ -33,7 +33,7 @@ msgid "Username for required superuser with sudo privileges: "
 msgstr "Nombre de usuario para el superusuario con privilegios sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algún usuario adicional a instalar (deje en blanco para no agregar ninguno): "
+msgstr "Algún usuario adicional a instalar (déjelo en blanco para no agregar ninguno): "
 
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Debería este usuario ser un superusuario (sudoer)?"
@@ -75,7 +75,7 @@ msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Escriba la IP y subred para {} (ejemplo: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Escriba la IP de su puerta de enlace (enrutador) o deje en blanco para no usar ninguna: "
+msgstr "Escriba la IP de su puerta de enlace (enrutador) o déjelo en blanco para no usar ninguna: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "Ingrese sus servidores DNS (separados por espacios, en blanco para ninguno): "
