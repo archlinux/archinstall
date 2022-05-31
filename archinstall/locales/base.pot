@@ -652,7 +652,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose which servers to install, if none then a minimal installation wil be "
+"Choose which servers to install, if none then a minimal installation will be "
 "done"
 msgstr ""
 
@@ -759,4 +759,7 @@ msgid "The username you entered is invalid. Try again"
 msgstr ""
 
 msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr ""
+
+msgid "Select which partitions to encrypt:"
 msgstr ""
