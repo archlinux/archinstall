@@ -16,8 +16,9 @@ from ...general import SysCommand
 from ...output import log
 from ...storage import storage
 
+
 @dataclass
-class BtrfsSubvolume:
+class BtrfsSubvolumeInfo:
 	full_path :pathlib.Path
 	name :str
 	uuid :str

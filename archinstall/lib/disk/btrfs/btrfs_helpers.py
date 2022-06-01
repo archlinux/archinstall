@@ -1,15 +1,15 @@
 import pathlib
 import logging
-from typing import Optional
+from typing import Optional, Dict
 
 from ...exceptions import SysCallError, DiskError
 from ...general import SysCommand
 from ...output import log
 from ..helpers import get_mount_info
-from .btrfssubvolume import BtrfsSubvolume
+from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 
-def mount_subvolume(installation, device, name, subvolume_information):
+def mount_subvolume(installation, device: str, name: str, subvolume_information: Dict[str, str]):
 	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 	name = name.lstrip('/')
@@ -42,31 +42,21 @@ def setup_subvolumes(installation, partition_dict):
 	Taken from: ..user_guides.py
 
 	partition['btrfs'] = {
-		"subvolumes" : {
-			"@":           "/",
-			"@home":       "/home",
-			"@log":        "/var/log",
-			"@pkg":        "/var/cache/pacman/pkg",
-			"@.snapshots": "/.snapshots"
-		}
+		'subvolumnes': [
+			Subvolume('@', '/'),
+			Subvolume('@home', '/home'),
+			Subvolume('@log', '/var/log'),
+			Subvolume('@pkg', '/var/cache/pacman/pkg'),
+			Subvolume('@.snapshots', '/.snapshots')
+		]
 	}
 	"""
 	log(f"Setting up subvolumes: {partition_dict['btrfs']['subvolumes']}", level=logging.INFO, fg="gray")
-	for name, right_hand in partition_dict['btrfs']['subvolumes'].items():
+
+	for subvolume in partition_dict['btrfs']['subvolumes']:
 		# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 		# Every subvolume is created from the top of the hierarchy- and simplifies its further use
-		name = name.lstrip('/')
-
-		# renormalize the right hand.
-		# mountpoint = None
-		subvol_options = []
-
-		match right_hand:
-			# case str(): # backwards-compatability
-			# 	mountpoint = right_hand
-			case dict():
-				# mountpoint = right_hand.get('mountpoint', None)
-				subvol_options = right_hand.get('options', [])
+		name = subvolume.name.lstrip('/')
 
 		# We create the subvolume using the BTRFSPartition instance.
 		# That way we ensure not only easy access, but also accurate mount locations etc.
@@ -76,25 +66,23 @@ def setup_subvolumes(installation, partition_dict):
 		# It will be the main cause of creation of subvolumes which are not to be mounted
 		# it is not an options which can be established by subvolume (but for whole file systems), and can be
 		# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
-		if 'nodatacow' in subvol_options:
+		if subvolume.nodatacow:
 			if (cmd := SysCommand(f"chattr +C {installation.target}/{name}")).exit_code != 0:
 				raise DiskError(f"Could not set  nodatacow attribute at {installation.target}/{name}: {cmd}")
-			# entry is deleted so nodatacow doesn't propagate to the mount options
-			del subvol_options[subvol_options.index('nodatacow')]
+
 		# Make the compress processing now
 		# it is not an options which can be established by subvolume (but for whole file systems), and can be
 		# set up via a simple attribute change in a directory (if empty). And here the directories are brand new
 		# in this way only zstd compression is activaded
 		# TODO WARNING it is not clear if it should be a standard feature, so it might need to be deactivated
 
-		if 'compress' in subvol_options:
+		if subvolume.compress:
 			if not any(['compress' in filesystem_option for filesystem_option in partition_dict.get('filesystem', {}).get('mount_options', [])]):
 				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
-			# entry is deleted so compress doesn't propagate to the mount options
-			del subvol_options[subvol_options.index('compress')]
 
-def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
+
+def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolumeInfo]:
 	try:
 		subvolume_name = None
 		result = {}
@@ -110,14 +98,14 @@ def subvolume_info_from_path(path :pathlib.Path) -> Optional[BtrfsSubvolume]:
 				# allows for hooking in a pre-processor to do this we have to do it here:
 				result[key.lower().replace(' ', '_').replace('(s)', 's')] = value.strip()
 
-		return BtrfsSubvolume(**{'full_path' : path, 'name' : subvolume_name, **result})
-
+		return BtrfsSubvolumeInfo(**{'full_path' : path, 'name' : subvolume_name, **result})
 	except SysCallError as error:
 		log(f"Could not retrieve subvolume information from {path}: {error}", level=logging.WARNING, fg="orange")
 
 	return None
 
-def find_parent_subvolume(path :pathlib.Path, filters=[]):
+
+def find_parent_subvolume(path :pathlib.Path, filters=[]) -> Optional[BtrfsSubvolumeInfo]:
 	# A root path cannot have a parent
 	if str(path) == '/':
 		return None
@@ -130,3 +118,5 @@ def find_parent_subvolume(path :pathlib.Path, filters=[]):
 			return find_parent_subvolume(path.parent, traverse=True, filters=[*filters, found_mount['target']])
 
 		return subvolume
+
+	return None

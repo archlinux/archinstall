@@ -14,7 +14,7 @@ from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
-from .btrfs.btrfssubvolume import BtrfsSubvolume
+from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 class Partition:
 	def __init__(self,
@@ -185,7 +185,7 @@ class Partition:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
 			if not self.partprobe():
 				raise DiskError(f"Could not perform partprobe on {self.device_path}")
-				
+
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			partuuid = self._safe_part_uuid
@@ -294,9 +294,9 @@ class Partition:
 		return bind_name
 
 	@property
-	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
+	def subvolumes(self) -> Iterator[BtrfsSubvolumeInfo]:
 		from .helpers import findmnt
-		
+
 		def iterate_children_recursively(information):
 			for child in information.get('children', []):
 				if target := child.get('target'):
@@ -452,7 +452,7 @@ class Partition:
 			if retry is True:
 				log(f"Retrying in {storage.get('DISK_TIMEOUTS', 1)} seconds.", level=logging.WARNING, fg="orange")
 				time.sleep(storage.get('DISK_TIMEOUTS', 1))
-				
+
 				return self.format(filesystem, path, log_formatting, options, retry=False)
 
 		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':

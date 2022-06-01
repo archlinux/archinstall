@@ -264,7 +264,7 @@ class Installer:
 					fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		# we manage the btrfs partitions
-		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]):
 			for partition in btrfs_subvolumes:
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):
 					self.mount(partition['device_instance'], "/", options=mount_options)
@@ -279,31 +279,21 @@ class Installer:
 				partition['device_instance'].unmount()
 
 		# We then handle any special cases, such as btrfs
-		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', {})]):
+		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]):
 			for partition_information in btrfs_subvolumes:
-				for name, mountpoint in sorted(partition_information['btrfs']['subvolumes'].items(), key=lambda item: item[1]):
-					btrfs_subvolume_information = {}
+				subvolumes: List[Subvolume] = partition_information['btrfs']['subvolumes']
+				for subvolume in sorted(subvolumes, key=lambda item: item.mountpoint):
+					btrfs_subvolume_information = {'mountpoint': subvolume.mountpoint, 'options': subvolume.options}
 
-					match mountpoint:
-						case str(): # backwards-compatability
-							btrfs_subvolume_information['mountpoint'] = mountpoint
-							btrfs_subvolume_information['options'] = []
-						case dict():
-							btrfs_subvolume_information['mountpoint'] = mountpoint.get('mountpoint', None)
-							btrfs_subvolume_information['options'] = mountpoint.get('options', [])
-						case _:
-							continue
-
-					if mountpoint_parsed := btrfs_subvolume_information.get('mountpoint'):
-						# We cache the mount call for later
-						mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'], \
-							name=name, \
-							subvolume_information=btrfs_subvolume_information: mount_subvolume(
-								installation=self,
-								device=device,
-								name=name,
-								subvolume_information=subvolume_information
-							)
+					# We cache the mount call for later
+					mount_queue[mountpoint_parsed] = lambda device=partition_information['device_instance'], \
+						name=name, \
+						subvolume_information=btrfs_subvolume_information: mount_subvolume(
+							installation=self,
+							device=device,
+							name=name,
+							subvolume_information=subvolume_information
+						)
 
 		# We mount ordinary partitions, and we sort them by the mountpoint
 		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
