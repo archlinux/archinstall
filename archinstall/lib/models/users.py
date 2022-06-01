@@ -25,7 +25,7 @@ class User:
 		}
 
 	def display(self) -> str:
-		password = '*' * len(self.password)
+		password = '*' * len(self.password) if self.password else 0
 		return f'{_("Username")}: {self.username:16} {_("Password")}: {password:16} sudo: {str(self.sudo)}'
 
 	@classmethod

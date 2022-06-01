@@ -20,21 +20,7 @@ from .btrfspartition import BTRFSPartition as BTRFSPartition
 from ...exceptions import DiskError, Deprecated
 from ...general import SysCommand
 from ...output import log
-from ...exceptions import SysCallError
 
-def get_subvolume_info(path :pathlib.Path) -> Dict[str, Any]:
-	try:
-		output = SysCommand(f"btrfs subvol show {path}").decode()
-	except SysCallError as error:
-		print('Error:', error)
-
-	result = {}
-	for line in output.replace('\r\n', '\n').split('\n'):
-		if ':' in line:
-			key, val = line.replace('\t', '').split(':', 1)
-			result[key.strip().lower().replace(' ', '_')] = val.strip()
-
-	return result
 
 def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
 	"""
@@ -68,20 +54,6 @@ def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.
 	log(f"Creating a subvolume on {target}", level=logging.INFO)
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
-
-
-def _has_option(option :str,options :list) -> bool:
-	""" auxiliary routine to check if an option is present in a list.
-	we check if the string appears in one of the options, 'cause it can appear in several forms (option, option=val,...)
-	"""
-	if not options:
-		return False
-
-	for item in options:
-		if option in item:
-			return True
-
-	return False
 
 
 def manage_btrfs_subvolumes(installation :Installer, partition :Dict[str, str]) -> list:
