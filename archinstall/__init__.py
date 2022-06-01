@@ -240,7 +240,7 @@ def post_process_arguments(arguments):
 						partition['wipe'] = partition['format']
 						del partition['format']
 					elif 'btrfs' in partition:
-						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partion['btrfs']['subvolumes'])
+						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
 
 			arguments['disk_layouts'] = layout_storage
 

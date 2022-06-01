@@ -109,7 +109,7 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		layout[block_device.path]['partitions'][1]['btrfs'] = {
-			'subvolumnes': [
+			'subvolumes': [
 				Subvolume('@', '/'),
 				Subvolume('@home', '/home'),
 				Subvolume('@log', '/var/log'),

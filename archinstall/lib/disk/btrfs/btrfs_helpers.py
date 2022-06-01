@@ -42,7 +42,7 @@ def setup_subvolumes(installation, partition_dict):
 	Taken from: ..user_guides.py
 
 	partition['btrfs'] = {
-		'subvolumnes': [
+		'subvolumes': [
 			Subvolume('@', '/'),
 			Subvolume('@home', '/home'),
 			Subvolume('@log', '/var/log'),

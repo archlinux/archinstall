@@ -263,7 +263,19 @@ class Installer:
 					hsm_device_path = storage['arguments']['HSM']
 					fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
-		# we manage the btrfs partitions
+		# # we manage the btrfs partitions
+		# for entry in list_part:
+		# 	btrfs = entry.get('btrfs', {})
+		# 	mount_options = ','.join(entry.get('filesystem', {}).get('mount_options', []))
+		# 	subvolumes = btrfs.get('subvolumes', [])
+		#
+		# 	for subvolume in subvolumes:
+		# 		if mount_options:
+		# 			self.mount(partition['device_instance'], "/", options=mount_options)
+
+		log('@@@@@@@@@@@@@@@@@@@')
+		log(list_part)
+
 		if any(btrfs_subvolumes := [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]):
 			for partition in btrfs_subvolumes:
 				if mount_options := ','.join(partition.get('filesystem',{}).get('mount_options',[])):

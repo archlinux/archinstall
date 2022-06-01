@@ -49,11 +49,20 @@ class Subvolume:
 
 	@classmethod
 	def _parse_backwards_compatible(cls, config_subvolumes) -> List['Subvolume']:
-		
+		subvolumes = []
+		for name, mountpoint in config_subvolumes.items():
+			if not name or not mountpoint:
+				continue
+
+			subvolumes.append(Subvolume(name, mountpoint))
+
+		return subvolumes
 
 	@classmethod
 	def parse_arguments(cls, config_subvolumes: Any) -> List['Subvolume']:
 		if isinstance(config_subvolumes, list):
 			return cls._parse(config_subvolumes)
-		else:
+		elif isinstance(config_subvolumes, dict):
 			return cls._parse_backwards_compatible(config_subvolumes)
+
+		raise ValueError('Unknown disk layout btrfs subvolume format')
