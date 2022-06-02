@@ -1,4 +1,5 @@
 import logging
+import pathlib
 import urllib.error
 import urllib.request
 from typing import Union, Mapping, Iterable, Dict, Any, List
@@ -159,7 +160,7 @@ def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 			return regions
 
 		mirrorlist = response.read()
-		
+
 	if sort_order:
 		mirrorlist = sort_mirrorlist(mirrorlist, sort_order=sort_order)
 
