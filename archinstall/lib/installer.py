@@ -1,4 +1,3 @@
-import copy
 import time
 import logging
 import os
@@ -25,6 +24,7 @@ from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .hsm import fido2_enroll
 from .models.users import User
+from .models.subvolume import Subvolume
 
 if TYPE_CHECKING:
 	_: Any

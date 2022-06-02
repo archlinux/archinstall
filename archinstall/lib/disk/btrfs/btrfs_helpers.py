@@ -1,6 +1,6 @@
 import pathlib
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from ...models.subvolume import Subvolume
 from ...exceptions import SysCallError, DiskError
@@ -9,13 +9,16 @@ from ...output import log
 from ..helpers import get_mount_info
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
+if TYPE_CHECKING:
+	from .btrfspartition import BTRFSPartition
+
 
 def mount_subvolume(installation, device: 'BTRFSPartition', subvolume: Subvolume):
 	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 	name = subvolume.name.lstrip('/')
 	mountpoint = pathlib.Path(subvolume.mountpoint)
-	
+
 	installation_target = installation.target
 
 	if type(installation_target) == str:
