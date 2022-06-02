@@ -1,7 +1,8 @@
 import pathlib
 import logging
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
+from ...models.subvolume import Subvolume
 from ...exceptions import SysCallError, DiskError
 from ...general import SysCommand
 from ...output import log
@@ -9,18 +10,11 @@ from ..helpers import get_mount_info
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 
-def mount_subvolume(installation, device: str, name: str, subvolume_information: Dict[str, str]):
+def mount_subvolume(installation, device: 'BTRFSPartition', subvolume: Subvolume):
 	# we normalize the subvolume name (getting rid of slash at the start if exists. In our implementation has no semantic load.
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
-	name = name.lstrip('/')
-
-	# renormalize the right hand.
-	mountpoint = subvolume_information.get('mountpoint', None)
-	if not mountpoint:
-		return None
-
-	if type(mountpoint) == str:
-		mountpoint = pathlib.Path(mountpoint)
+	name = subvolume.name.lstrip('/')
+	mountpoint = pathlib.Path(subvolume.mountpoint)
 
 	installation_target = installation.target
 	if type(installation_target) == str:
@@ -28,29 +22,13 @@ def mount_subvolume(installation, device: str, name: str, subvolume_information:
 
 	mountpoint = installation_target / mountpoint.relative_to(mountpoint.anchor)
 	mountpoint.mkdir(parents=True, exist_ok=True)
-
-	mount_options = subvolume_information.get('options', [])
-	if not any('subvol=' in x for x in mount_options):
-		mount_options += [f'subvol={name}']
+	mount_options = subvolume.options + [f'subvol={name}']
 
 	log(f"Mounting subvolume {name} on {device} to {mountpoint}", level=logging.INFO, fg="gray")
 	SysCommand(f"mount {device.path} {mountpoint} -o {','.join(mount_options)}")
 
 
-def setup_subvolumes(installation, partition_dict):
-	"""
-	Taken from: ..user_guides.py
-
-	partition['btrfs'] = {
-		'subvolumes': [
-			Subvolume('@', '/'),
-			Subvolume('@home', '/home'),
-			Subvolume('@log', '/var/log'),
-			Subvolume('@pkg', '/var/cache/pacman/pkg'),
-			Subvolume('@.snapshots', '/.snapshots')
-		]
-	}
-	"""
+def setup_subvolumes(installation, partition_dict: Dict[str, Any]):
 	log(f"Setting up subvolumes: {partition_dict['btrfs']['subvolumes']}", level=logging.INFO, fg="gray")
 
 	for subvolume in partition_dict['btrfs']['subvolumes']:

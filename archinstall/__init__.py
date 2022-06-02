@@ -241,7 +241,6 @@ def post_process_arguments(arguments):
 						del partition['format']
 					elif 'btrfs' in partition:
 						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
-
 			arguments['disk_layouts'] = layout_storage
 
 	load_config()

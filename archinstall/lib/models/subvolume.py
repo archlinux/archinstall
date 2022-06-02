@@ -33,7 +33,7 @@ class Subvolume:
 	def _parse(cls, config_subvolumes: List[Dict[str, Any]]) -> List['Subvolume']:
 		subvolumes = []
 		for entry in config_subvolumes:
-			if not entry.get('name', None) or entry.get('mountpoint', None):
+			if not entry.get('name', None) or not entry.get('mountpoint', None):
 				continue
 
 			subvolumes.append(
