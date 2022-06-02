@@ -15,8 +15,9 @@ def mount_subvolume(installation, device: 'BTRFSPartition', subvolume: Subvolume
 	# Every subvolume is created from the top of the hierarchy- and simplifies its further use
 	name = subvolume.name.lstrip('/')
 	mountpoint = pathlib.Path(subvolume.mountpoint)
-
+	
 	installation_target = installation.target
+
 	if type(installation_target) == str:
 		installation_target = pathlib.Path(installation_target)
 
