@@ -1,3 +1,4 @@
+import copy
 import time
 import logging
 import os
@@ -277,10 +278,10 @@ class Installer:
 			subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
 			for subvolume in sorted(subvolumes, key=lambda item: item.mountpoint):
 				# We cache the mount call for later
-				mount_queue[subvolume.mountpoint] = lambda: mount_subvolume(
+				mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
 						installation=self,
-						device=partition['device_instance'],
-						subvolume=subvolume
+						device=device,
+						subvolume=sub_vol
 					)
 
 		# We mount ordinary partitions, and we sort them by the mountpoint
