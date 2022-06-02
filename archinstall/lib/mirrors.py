@@ -5,6 +5,7 @@ from typing import Union, Mapping, Iterable, Dict, Any, List
 
 from .general import SysCommand
 from .output import log
+from .storage import storage
 
 def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	"""
@@ -144,16 +145,21 @@ def re_rank_mirrors(
 
 
 def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
-	url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
-	regions = {}
+	if storage['arguments']['offline']:
+		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fh:
+			mirrorlist = fh.read()
+	else:
+		url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
+		regions = {}
 
-	try:
-		response = urllib.request.urlopen(url)
-	except urllib.error.URLError as err:
-		log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="orange")
-		return regions
+		try:
+			response = urllib.request.urlopen(url)
+		except urllib.error.URLError as err:
+			log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="orange")
+			return regions
 
-	mirrorlist = response.read()
+		mirrorlist = response.read()
+		
 	if sort_order:
 		mirrorlist = sort_mirrorlist(mirrorlist, sort_order=sort_order)
 
