@@ -147,7 +147,7 @@ def re_rank_mirrors(
 
 def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 	if storage['arguments']['offline']:
-		with pathlib.Path('/etc/pacman.d/mirrorlist').open('r') as fh:
+		with pathlib.Path('/etc/pacman.d/mirrorlist').open('rb') as fh:
 			mirrorlist = fh.read()
 	else:
 		url = "https://archlinux.org/mirrorlist/?protocol=https&protocol=http&ip_version=4&ip_version=6&use_mirror_status=on"
