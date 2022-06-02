@@ -81,6 +81,8 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--offline", action="store_true", default=False, help="Disabled online upstream services such as package search and key-ring auto update.")
+	parser.add_argument("--no-pkg-lookups", action="store_true", default=False, help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
@@ -172,6 +174,7 @@ def get_arguments() -> Dict[str, Any]:
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
+
 	return config
 
 def load_config():
