@@ -147,7 +147,7 @@ def re_rank_mirrors(
 
 def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 	regions = {}
-	
+
 	if storage['arguments']['offline']:
 		with pathlib.Path('/etc/pacman.d/mirrorlist').open('rb') as fh:
 			mirrorlist = fh.read()
@@ -177,6 +177,11 @@ def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 			regions.setdefault(region, {})
 
 			url = line.lstrip('#Server = ')
+			regions[region][url] = True
+		elif line.startswith('Server = '):
+			regions.setdefault(region, {})
+
+			url = line.lstrip('Server = ')
 			regions[region][url] = True
 
 	return regions
