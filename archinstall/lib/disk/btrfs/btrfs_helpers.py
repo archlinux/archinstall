@@ -78,7 +78,7 @@ def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:
 				# allows for hooking in a pre-processor to do this we have to do it here:
 				result[key.lower().replace(' ', '_').replace('(s)', 's')] = value.strip()
 
-		return BtrfsSubvolumeInfo(path, subvolume_name, **result)  # type: ignore
+		return BtrfsSubvolumeInfo(**{'full_path' : path, 'name' : subvolume_name, **result})  # type: ignore
 	except SysCallError as error:
 		log(f"Could not retrieve subvolume information from {path}: {error}", level=logging.WARNING, fg="orange")
 
