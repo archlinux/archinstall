@@ -158,7 +158,7 @@ class Menu(TerminalMenu):
 
 		action_info = ''
 		if skip:
-			action_info += str(_("Use ESC to skip"))
+			action_info += str(_("Use ESC to skip\n"))
 
 		if self._explode_on_interrupt:
 			if len(action_info) > 0:
