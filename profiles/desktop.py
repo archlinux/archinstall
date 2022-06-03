@@ -52,7 +52,7 @@ def _prep_function(*args, **kwargs) -> bool:
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	choice = Menu(str(_('Select your desired desktop environment')), __supported__, True).run()
+	choice = Menu(str(_('Select your desired desktop environment')), __supported__).run()
 
 	if choice.type_ != MenuSelectionType.Selection:
 		return False
