@@ -13,6 +13,7 @@ __packages__ = [
 	"sddm",
 	"plasma-wayland-session",
 	"egl-wayland",
+	"packagekit-qt5",
 ]
 
 
