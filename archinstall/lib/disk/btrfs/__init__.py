@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 import glob
 import logging
-from typing import Union, Dict, TYPE_CHECKING, Any
+from typing import Union, Dict, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ from ...general import SysCommand
 from ...output import log
 
 
-def create_subvolume(installation :Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
+def create_subvolume(installation: Installer, subvolume_location :Union[pathlib.Path, str]) -> bool:
 	"""
 	This function uses btrfs to create a subvolume.
 
