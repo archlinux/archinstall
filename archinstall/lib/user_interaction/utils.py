@@ -7,6 +7,7 @@ import time
 from typing import Any, Optional, TYPE_CHECKING
 
 from ..menu import Menu
+from ..models.password_strength import PasswordStrength
 from ..output import log
 
 if TYPE_CHECKING:
@@ -16,42 +17,23 @@ if TYPE_CHECKING:
 SIG_TRIGGER = None
 
 
-def check_password_strong(passwd: str) -> bool:
-	symbol_count = 0
-	if any(character.isdigit() for character in passwd):
-		symbol_count += 10
-	if any(character.isupper() for character in passwd):
-		symbol_count += 26
-	if any(character.islower() for character in passwd):
-		symbol_count += 26
-	if any(not character.isalnum() for character in passwd):
-		symbol_count += 40
-
-	if symbol_count**len(passwd) < 10e20:
-		prompt = str(_("The password you are using seems to be weak, are you sure you want to use it?"))
-		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-		return choice.value == Menu.yes()
-
-	return True
-
-
 def get_password(prompt: str = '') -> Optional[str]:
 	if not prompt:
 		prompt = _("Enter a password: ")
 
-	while passwd := getpass.getpass(prompt):
-		if len(passwd.strip()) <= 0:
+	while password := getpass.getpass(prompt):
+		if len(password.strip()) <= 0:
 			break
 
-		if not check_password_strong(passwd):
-			continue
+		strength = PasswordStrength.strength(password)
+		log(f'Password strength: {strength.value}', fg=strength.color())
 
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
-		if passwd != passwd_verification:
+		if password != passwd_verification:
 			log(' * Passwords did not match * ', fg='red')
 			continue
 
-		return passwd
+		return password
 
 	return None
 
