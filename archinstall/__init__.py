@@ -58,10 +58,6 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 
-def set_unicode_font():
-	SysCommand('setfont UniCyr_8x16')
-
-
 def define_arguments():
 	"""
 	Define which explicit arguments do we allow.
@@ -230,8 +226,6 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		# if 'disk_layouts' not in storage:
-		# 	storage['disk_layouts'] = {}
 		layout_storage = {}
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
@@ -240,17 +234,16 @@ def post_process_arguments(arguments):
 				arguments['harddrives'] = [disk for disk in layout_storage]
 			# backward compatibility. Change partition.format for partition.wipe
 			for disk in layout_storage:
-				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):
+				for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
 					if 'format' in partition:
 						partition['wipe'] = partition['format']
 						del partition['format']
+					elif 'btrfs' in partition:
+						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
 			arguments['disk_layouts'] = layout_storage
 
 	load_config()
 
-
-# to ensure that cyrillic characters work in the installer
-# set_unicode_font()
 
 define_arguments()
 arguments = get_arguments()

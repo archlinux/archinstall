@@ -325,22 +325,23 @@ class GlobalMenu(GeneralMenu):
 	def _select_harddrives(self, old_harddrives : list) -> List:
 		harddrives = select_harddrives(old_harddrives)
 
-		if len(harddrives) == 0:
-			prompt = _(
-				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
-				"WARNING: Archinstall won't check the suitability of this setup\n"
-				"Do you wish to continue?"
-			).format(storage['MOUNT_POINT'])
+		if harddrives:
+			if len(harddrives) == 0:
+				prompt = _(
+					"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
+					"WARNING: Archinstall won't check the suitability of this setup\n"
+					"Do you wish to continue?"
+				).format(storage['MOUNT_POINT'])
 
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
 
-			if choice.value == Menu.no():
-				return self._select_harddrives(old_harddrives)
+				if choice.value == Menu.no():
+					return self._select_harddrives(old_harddrives)
 
-		# in case the harddrives got changed we have to reset the disk layout as well
-		if old_harddrives != harddrives:
-			self._menu_options['disk_layouts'].set_current_selection(None)
-			storage['arguments']['disk_layouts'] = {}
+			# in case the harddrives got changed we have to reset the disk layout as well
+			if old_harddrives != harddrives:
+				self._menu_options['disk_layouts'].set_current_selection(None)
+				storage['arguments']['disk_layouts'] = {}
 
 		return harddrives
 
