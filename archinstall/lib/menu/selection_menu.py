@@ -456,7 +456,6 @@ class GeneralMenu:
 		from ... import select_archinstall_language
 		language = select_archinstall_language(preset_value)
 		if language is not None:
-			print(language)
 			self._translation.activate(language)
 			return language
 

@@ -19,7 +19,7 @@ class LanguageDefinitions:
 
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
-		self._cyrillic_languages = self._cyrillic_languages()
+		self._cyrillic_languages = self._get_cyrillic_languages()
 
 	def is_cyrillic(self, language: str) -> bool:
 		return language in self._cyrillic_languages
@@ -38,7 +38,7 @@ class LanguageDefinitions:
 
 		raise ValueError(f'No language with abbreviation "{abbr}" found')
 
-	def _cyrillic_languages(self) -> List[str]:
+	def _get_cyrillic_languages(self) -> List[str]:
 		locales_dir = Translation.get_locales_dir()
 		languages = Path.joinpath(locales_dir, self._cyrillic)
 
