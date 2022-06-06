@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import gettext
 
@@ -13,12 +14,19 @@ if TYPE_CHECKING:
 
 
 class LanguageDefinitions:
+	_languages = 'languages.json'
+	_cyrillic = 'cyrillic.json'
+
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
+		self._cyrillic_languages = self._cyrillic_languages()
+
+	def is_cyrillic(self, language: str) -> bool:
+		return language in self._cyrillic_languages
 
 	def _get_language_mappings(self) -> List[Dict[str, str]]:
 		locales_dir = Translation.get_locales_dir()
-		languages = Path.joinpath(locales_dir, 'languages.json')
+		languages = Path.joinpath(locales_dir, self._languages)
 
 		with open(languages, 'r') as fp:
 			return json.load(fp)
@@ -29,6 +37,14 @@ class LanguageDefinitions:
 				return entry['lang']
 
 		raise ValueError(f'No language with abbreviation "{abbr}" found')
+
+	def _cyrillic_languages(self) -> List[str]:
+		locales_dir = Translation.get_locales_dir()
+		languages = Path.joinpath(locales_dir, self._cyrillic)
+
+		with open(languages, 'r') as fp:
+			data = json.load(fp)
+			return data['languages']
 
 
 class DeferredTranslation:
@@ -78,9 +94,25 @@ class Translation:
 
 	def activate(self, name):
 		if language := self._languages.get(name, None):
+			languages = LanguageDefinitions()
+
+			if languages.is_cyrillic(name):
+				self._set_font('UniCyr_8x16')
+			else:
+				# this will reset a possible previously set font to a default font
+				self._set_font('')
+
 			language.install()
 		else:
 			raise ValueError(f'Language not supported: {name}')
+
+	def _set_font(self, font: str):
+		from archinstall import SysCommand, log
+		try:
+			log(f'Setting new font: {font}', level=logging.DEBUG)
+			SysCommand(f'setfont {font}')
+		except Exception:
+			log(f'Unable to set font {font}', level=logging.ERROR)
 
 	@classmethod
 	def load_nationalization(cls) -> Translation:

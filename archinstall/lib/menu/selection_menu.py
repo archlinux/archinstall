@@ -15,15 +15,6 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def select_archinstall_language(preset_value: str) -> Optional[Any]:
-	"""
-	copied from user_interaction/general_conf.py as a temporary measure
-	"""
-	languages = Translation.get_available_lang()
-	language = Menu(_('Archinstall language'), languages, preset_values=preset_value).run()
-	return language.value
-
-
 class Selector:
 	def __init__(
 		self,
@@ -462,8 +453,10 @@ class GeneralMenu:
 		return mandatory_fields, mandatory_waiting
 
 	def _select_archinstall_language(self, preset_value: str) -> str:
+		from ... import select_archinstall_language
 		language = select_archinstall_language(preset_value)
 		if language is not None:
+			print(language)
 			self._translation.activate(language)
 			return language
 

@@ -118,10 +118,13 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
-def select_archinstall_language(default='English'):
+def select_archinstall_language(preset_values: str):
 	languages = Translation.get_available_lang()
-	language = Menu(_('Archinstall language'), languages, default_option=default).run()
-	return language
+	choice = Menu(_('Archinstall language'), languages, default_option=preset_values).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset_values
+		case MenuSelectionType.Selection: return choice.value
 
 
 def select_profile(preset) -> Optional[Profile]:
