@@ -27,8 +27,10 @@ class User:
 		}
 
 	def display(self) -> str:
-		strength = PasswordStrength.strength(self.password)
-		password = '*' * len(self.password) + f' ({strength.value})'
+		password = '*' * (len(self.password) if self.password else 0)
+		if password:
+			strength = PasswordStrength.strength(self.password)
+			password += f' ({strength.value})'
 		return f'{_("Username")}: {self.username:16} {_("Password")}: {password:20} sudo: {str(self.sudo)}'
 
 	@classmethod

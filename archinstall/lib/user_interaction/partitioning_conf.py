@@ -351,17 +351,15 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				if partition is not None:
 					if not block_device_struct["partitions"][partition].get('btrfs', {}):
 						block_device_struct["partitions"][partition]['btrfs'] = {}
-					if not block_device_struct["partitions"][partition]['btrfs'].get('subvolumes', {}):
-						block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = {}
+					if not block_device_struct["partitions"][partition]['btrfs'].get('subvolumes', []):
+						block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = []
 
 					prev = block_device_struct["partitions"][partition]['btrfs']['subvolumes']
-					result = SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()
-					if result:
-						block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = result
-					else:
-						del block_device_struct["partitions"][partition]['btrfs']
+					result = SubvolumeList(_("Manage btrfs subvolumes for current partition"), prev).run()
+					block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = result
 
 	return block_device_struct
+
 
 def select_encrypted_partitions(
 	title :str,

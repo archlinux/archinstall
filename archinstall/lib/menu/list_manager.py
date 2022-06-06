@@ -137,34 +137,35 @@ class ListManager:
 		else:
 			self._default_action = [str(default_action),]
 
-		self.header = header if header else None
-		self.cancel_action = str(_('Cancel'))
-		self.confirm_action = str(_('Confirm and exit'))
-		self.separator = ''
-		self.bottom_list = [self.confirm_action,self.cancel_action]
-		self.bottom_item = [self.cancel_action]
-		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
+		self._header = header if header else None
+		self._cancel_action = str(_('Cancel'))
+		self._confirm_action = str(_('Confirm and exit'))
+		self._separator = ''
+		self._bottom_list = [self._confirm_action, self._cancel_action]
+		self._bottom_item = [self._cancel_action]
+		self._base_actions = base_actions if base_actions else [str(_('Add')), str(_('Copy')), str(_('Edit')), str(_('Delete'))]
 		self._original_data = copy.deepcopy(base_list)
 		self._data = copy.deepcopy(base_list) # as refs, changes are immediate
+
 		# default values for the null case
 		self.target: Optional[Any] = None
 		self.action = self._null_action
-
-		if len(self._data) == 0 and self._null_action:
-			self._data = self.exec_action(self._data)
 
 	def run(self):
 		while True:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
+
 			data_formatted = self.reformat(self._data)
 			options = list(data_formatted.keys())
-			options.append(self.separator)
+
+			if len(options) > 0:
+				options.append(self._separator)
 
 			if self._default_action:
 				options += self._default_action
 
-			options += self.bottom_list
+			options += self._bottom_list
 
 			system('clear')
 
@@ -174,12 +175,12 @@ class ListManager:
 				sort=False,
 				clear_screen=False,
 				clear_menu_on_exit=False,
-				header=self.header,
+				header=self._header,
 				skip_empty_entries=True,
 				skip=False
 			).run()
 
-			if not target.value or target.value in self.bottom_list:
+			if not target.value or target.value in self._bottom_list:
 				self.action = target
 				break
 
@@ -201,13 +202,13 @@ class ListManager:
 			# Possible enhancement. If run_actions returns false a message line indicating the failure
 			self.run_actions(target.value)
 
-		if target.value == self.cancel_action:  # TODO dubious
+		if target.value == self._cancel_action:  # TODO dubious
 			return self._original_data  # return the original list
 		else:
 			return self._data
 
 	def run_actions(self,prompt_data=None):
-		options = self.action_list() + self.bottom_item
+		options = self.action_list() + self._bottom_item
 		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
 		choice = Menu(
 			prompt,
@@ -215,13 +216,13 @@ class ListManager:
 			sort=False,
 			clear_screen=False,
 			clear_menu_on_exit=False,
-			preset_values=self.bottom_item,
+			preset_values=self._bottom_item,
 			show_search_hint=False
 		).run()
 
 		self.action = choice.value
 
-		if self.action and self.action != self.cancel_action:
+		if self.action and self.action != self._cancel_action:
 			self._data = self.exec_action(self._data)
 
 	"""
@@ -243,7 +244,7 @@ class ListManager:
 		can define alternate action list or customize the list  for each item.
 		Executed after any item is selected, contained in self.target
 		"""
-		return self.base_actions
+		return self._base_actions
 
 	def exec_action(self, data: Any):
 		"""

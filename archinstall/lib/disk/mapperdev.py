@@ -10,7 +10,7 @@ from ..general import SysCommand
 from ..output import log
 
 if TYPE_CHECKING:
-	from .btrfs import BtrfsSubvolume
+	from .btrfs import BtrfsSubvolumeInfo
 
 @dataclass
 class MapperDev:
@@ -37,12 +37,12 @@ class MapperDev:
 
 				for slave in glob.glob(f"/sys/class/block/{dm_device.name}/slaves/*"):
 					partition_belonging_to_dmcrypt_device = pathlib.Path(slave).name
-					
+
 					try:
 						uevent_data = SysCommand(f"blkid -o export /dev/{partition_belonging_to_dmcrypt_device}").decode()
 					except SysCallError as error:
 						log(f"Could not get information on device /dev/{partition_belonging_to_dmcrypt_device}: {error}", level=logging.ERROR, fg="red")
-					
+
 					information = uevent(uevent_data)
 					block_device = BlockDevice(get_parent_of_partition('/dev/' / pathlib.Path(information['DEVNAME'])))
 
@@ -75,7 +75,7 @@ class MapperDev:
 		return get_filesystem_type(self.path)
 
 	@property
-	def subvolumes(self) -> Iterator['BtrfsSubvolume']:
+	def subvolumes(self) -> Iterator['BtrfsSubvolumeInfo']:
 		from .btrfs import subvolume_info_from_path
 
 		for mountpoint in self.mount_information:
