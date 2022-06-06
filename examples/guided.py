@@ -274,7 +274,7 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not archinstall.arguments.get('offline', False):
+if not archinstall.arguments['offline']:
 	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
 
 	# If we want to check for keyring updates
