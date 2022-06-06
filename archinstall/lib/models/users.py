@@ -27,7 +27,7 @@ class User:
 		}
 
 	def display(self) -> str:
-		password = '*' * len(self.password) if self.password else 0
+		password = '*' * (len(self.password) if self.password else 0)
 		if password:
 			strength = PasswordStrength.strength(self.password)
 			password += f' ({strength.value})'
