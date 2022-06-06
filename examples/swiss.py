@@ -255,7 +255,7 @@ class MyMenu(archinstall.GlobalMenu):
 				self.option(entry).set_enabled(False)
 		self._update_install_text()
 
-	def post_callback(self,option,value=None):
+	def post_callback(self,option=None,value=None):
 		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
