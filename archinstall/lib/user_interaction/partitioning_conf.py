@@ -5,7 +5,7 @@ from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable, Optional
 
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
-from ..output import log
+from ..output import log, FormattedOutput
 
 from ..disk.validators import fs_types
 
@@ -28,16 +28,31 @@ def current_partition_layout(partitions: List[Dict[str, Any]], with_idx: bool = 
 		pad_right = spaces - pad_left
 		return f'{pad_right * " "}{name}{pad_left * " "}|'
 
+	def flatten_data(data: Dict[str, Any]) -> Dict[str, Any]:
+		flattened = {}
+		for k, v in data.items():
+			if k == 'filesystem':
+				flat = flatten_data(v)
+				flattened.update(flat)
+			elif k == 'btrfs':
+				# we're going to create a separate table for the btrfs subvolumes
+				pass
+			else:
+				flattened[k] = v
+		return flattened
+
+	display_data: List[Dict[str, Any]] = [flatten_data(entry) for entry in partitions]
+
 	column_names = {}
 
 	# this will add an initial index to the table for each partition
 	if with_idx:
-		column_names['index'] = max([len(str(len(partitions))), len('index')])
+		column_names['index'] = max([len(str(len(display_data))), len('index')])
 
 	# determine all attribute names and the max length
-	# of the value among all partitions to know the width
+	# of the value among all display_data to know the width
 	# of the table cells
-	for p in partitions:
+	for p in display_data:
 		for attribute, value in p.items():
 			if attribute in column_names.keys():
 				column_names[attribute] = max([column_names[attribute], len(str(value)), len(attribute)])
@@ -50,7 +65,7 @@ def current_partition_layout(partitions: List[Dict[str, Any]], with_idx: bool = 
 
 	current_layout = f'{current_layout[:-1]}\n{"-" * len(current_layout)}\n'
 
-	for idx, p in enumerate(partitions):
+	for idx, p in enumerate(display_data):
 		row = ''
 		for name, max_len in column_names.items():
 			if name == 'index':
@@ -61,6 +76,13 @@ def current_partition_layout(partitions: List[Dict[str, Any]], with_idx: bool = 
 				row += ' ' * (max_len + 2) + '|'
 
 		current_layout += f'{row[:-1]}\n'
+
+	# we'll create a separate table for the btrfs subvolumes
+	btrfs_subvolumes = [partition['btrfs']['subvolumes'] for partition in partitions if partition.get('btrfs', None)]
+	if len(btrfs_subvolumes) > 0:
+		for subvolumes in btrfs_subvolumes:
+			output = FormattedOutput.as_table(subvolumes)
+			current_layout += f'\n{output}'
 
 	if with_title:
 		title = str(_('Current partition layout'))
