@@ -240,7 +240,7 @@ class GlobalMenu(GeneralMenu):
 		selector = self._menu_options['harddrives']
 		if selector.has_selection():
 			drives = selector.current_selection
-			return '\n\n'.join([d.display_info for d in drives])
+			return FormattedOutput.as_table(drives)
 		return None
 
 	def _prev_disk_layouts(self) -> Optional[str]:

@@ -175,7 +175,7 @@ class Partition:
 			return device['pttype']
 
 	@property
-	def part_uuid(self) -> Optional[str]:
+	def part_uuid(self) -> str:
 		"""
 		Returns the PARTUUID as returned by lsblk.
 		This is more reliable than relying on /dev/disk/by-partuuid as
@@ -222,7 +222,7 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		if not self.partprobe():
-			if self.block_device.info.get('TYPE') == 'iso9660':
+			if self.block_device.partition_type == 'iso9660':
 				return None
 
 			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
@@ -230,7 +230,7 @@ class Partition:
 		try:
 			return SysCommand(f'blkid -s UUID -o value {self.device_path}').decode('UTF-8').strip()
 		except SysCallError as error:
-			if self.block_device.info.get('TYPE') == 'iso9660':
+			if self.block_device.partition_type == 'iso9660':
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
 				return None
 
@@ -244,15 +244,15 @@ class Partition:
 		For instance when you want to get a __repr__ of the class.
 		"""
 		if not self.partprobe():
-			if self.block_device.info.get('TYPE') == 'iso9660':
+			if self.block_device.partition_type == 'iso9660':
 				return None
 
 			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
 
 		try:
-			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
+			return self.block_device.uuid
 		except SysCallError as error:
-			if self.block_device.info.get('TYPE') == 'iso9660':
+			if self.block_device.partition_type == 'iso9660':
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
 				return None
 
@@ -399,7 +399,7 @@ class Partition:
 
 			elif filesystem == 'vfat':
 				options = ['-F32'] + options
-
+				log(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")
 				if (handle := SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 				self.filesystem = filesystem

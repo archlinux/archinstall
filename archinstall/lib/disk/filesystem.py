@@ -100,7 +100,7 @@ class Filesystem:
 					partition['device_instance'] = self.blockdevice.get_partition(uuid=partition_uuid)
 				except DiskError:
 					partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
-				
+
 				log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
 			else:
 				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
