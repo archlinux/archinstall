@@ -643,7 +643,7 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self, testing=False, multilib=False) -> bool:
+	def minimal_installation(self, testing=False, multilib=False, copy_over_pacman_conf=False) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
@@ -717,7 +717,8 @@ class Installer:
 		self.helper_flags['base-strapped'] = True
 
 		# This handles making sure that the repositories we enabled persist on the installed system
-		if multilib or testing:
+		if multilib or testing or copy_over_pacman_conf:
+			self.log(f"Copy pacman.conf to the target system")
 			shutil.copy2("/etc/pacman.conf", f"{self.target}/etc/pacman.conf")
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst

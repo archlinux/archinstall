@@ -1,5 +1,6 @@
 import json
 import ssl
+import re
 from typing import Dict, Any, Tuple, List
 from urllib.error import HTTPError
 from urllib.parse import urlencode
@@ -58,8 +59,41 @@ def package_search(package :str) -> PackageSearch:
 	return PackageSearch(**json.loads(data))
 
 
+def pacman_package_search(package :str) -> PackageSearch:
+	results = []
+	regex = r"(?P<repo>[^/]+)/(?P<pkgname>[^\s]+)\s(?P<pkgver>[^-\s]*)-(?P<pkgrel>\d)"
+	try:
+		line_iter = iter(run_pacman(f"-Ss '{package}'"))
+		for line in line_iter:
+			decoded_line = line.decode()
+			try:
+				decoded_next_line = next(line_iter)
+			except StopIteration:
+				pass
+			if re.match(regex, decoded_line):
+				matches = re.search(regex, decoded_line.strip())
+				if matches:
+					pkgname = matches.group('pkgname')
+					repo = matches.group('repo')
+					pkgver = matches.group('pkgver')
+					pkgrel = matches.group('pkgrel')
+					pkgdesc = decoded_next_line.strip()
+					results.append({"pkgname": pkgname, "pkgbase": '', "repo": repo, "arch": '', 'pkgver': pkgver,
+									"pkgrel": pkgrel, 'pkgdesc': pkgdesc, 'epoch': '', 'url': '',
+									'filename': '', 'compressed_size': '', 'installed_size': '', 'build_date': '',
+									'last_update': '', 'flag_date': '', 'maintainers': '', 'packager': '', 'groups': '',
+									'licenses': '', 'conflicts': '', 'provides': '', 'replaces': '', 'depends': '',
+									'optdepends': '', 'makedepends': '', 'checkdepends': ''})
+	except SysCallError:
+		pass
+
+	search = PackageSearch(2, len(results), True, 1, 1, results)
+
+	return search
+
+
 def find_package(package :str) -> List[PackageSearchResult]:
-	data = package_search(package)
+	data = pacman_package_search(package)
 	results = []
 
 	for result in data.results:

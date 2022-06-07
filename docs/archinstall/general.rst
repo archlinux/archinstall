@@ -39,6 +39,8 @@ Mirrors
 
 .. autofunction:: archinstall.add_custom_mirrors
 
+.. autofunction:: archinstall.add_custom_repository
+
 .. autofunction:: archinstall.insert_mirrors
 
 .. autofunction:: archinstall.use_mirrors

@@ -80,6 +80,14 @@ def define_arguments():
 	parser.add_argument("--offline", action="store_true", default=False, help="Disabled online upstream services such as package search and key-ring auto update.")
 	parser.add_argument("--no-pkg-lookups", action="store_true", default=False, help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
+	parser.add_argument("--mirrors", nargs="+", type=str, help="Add custom mirrors. Use the following format: "
+															   "'<REPO_NAME>,<INDEX>@<REPO_URL>'"
+															   ". Replace <REPO_NAME> with the name of "
+															   "the repository (This will create a new section in "
+															   "/etc/pacman.conf). Use <INDEX> to specify the order of the "
+															   "repos in pacman.conf (repositories listed first will take precedence "
+															   "over those listed later). After the @ character follows"
+															   " the repo url <REPO_URL>.")
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").

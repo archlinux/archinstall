@@ -38,7 +38,7 @@ class VersionDef:
 
 			return True
 		return False
-		
+
 	def __lt__(self, other :'VersionDef') -> bool:
 		if self.major > other.major:
 			return False
@@ -134,3 +134,10 @@ class LocalPackage:
 
 	def __lt__(self, other :'VersionDef') -> bool:
 		return self.pkg_version < other.pkg_version
+
+@dataclass
+class PackageRepository:
+	include: str
+	server: str
+	sig_level: str
+	usage: str

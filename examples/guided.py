@@ -1,10 +1,12 @@
 import logging
 import os
+import re
 import time
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu
+from archinstall import ConfigurationOutput, Menu, PackageRepository, add_custom_repository
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
+from archinstall.lib.pacman import PacmanConfBackup
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -183,8 +185,9 @@ def perform_installation(mountpoint):
 		# Retrieve list of additional repositories and set boolean values appropriately
 		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
 		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		has_custom_mirrors = archinstall.arguments.get('mirrors', None)
 
-		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
+		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib, copy_over_pacman_conf=has_custom_mirrors):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
 			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
@@ -269,39 +272,53 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
-if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
+with PacmanConfBackup():
+
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
-	exit(1)
+	if archinstall.arguments.get('mirrors'):
+		mirrors = archinstall.arguments.get('mirrors')
+		regex = r"(?P<repo>[^,]+),(?P<index>\d+)@(?P<url>.*)"
+		for mirror in mirrors:
+			matches = re.search(regex, mirror.strip())
+			repo = matches.group('repo')
+			index = matches.group('index')
+			url = matches.group('url')
+			add_custom_repository(repo, int(index), PackageRepository(server=url, include='', sig_level='Optional TrustedOnly', usage=''))
+			archinstall.log(f"Added custom mirror '{repo}' ({url}).", level=logging.INFO)
 
-if not archinstall.arguments['offline']:
-	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
+	if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
+		archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+		exit(1)
 
-	# If we want to check for keyring updates
-	# and the installed package version is lower than the upstream version
-	if archinstall.arguments.get('skip-keyring-update', False) is False and \
-		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
+	if not archinstall.arguments['offline']:
+		if archinstall.arguments.get('skip-keyring-update', False) is False:
+			latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')] or [""])
 
-		# Then we update the keyring in the ISO environment
-		if not archinstall.update_keyring():
-			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
-			exit(1)
+			if not latest_version_archlinux_keyring:
+				archinstall.log(
+					f"Failed to search for latest version of 'archlinux-keyring'. Please check your internet connection and the log file '{log_file}'.",
+					level=logging.INFO, fg="red")
+				exit(1)
+			elif archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
+				# Then we update the keyring in the ISO environment
+				if not archinstall.update_keyring():
+					archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+					exit(1)
 
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
-config_output.save()
+	config_output = ConfigurationOutput(archinstall.arguments)
+	if not archinstall.arguments.get('silent'):
+		config_output.show()
+	config_output.save()
 
-if archinstall.arguments.get('dry_run'):
-	exit(0)
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
 
-if not archinstall.arguments.get('silent'):
-	input(str(_('Press Enter to continue.')))
+	if not archinstall.arguments.get('silent'):
+		input(str(_('Press Enter to continue.')))
 
-archinstall.configuration_sanity_check()
-perform_filesystem_operations()
-perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+	archinstall.configuration_sanity_check()
+	perform_filesystem_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
