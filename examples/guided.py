@@ -277,14 +277,19 @@ with PacmanConfBackup():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	if archinstall.arguments.get('mirrors'):
 		mirrors = archinstall.arguments.get('mirrors')
-		regex = r"(?P<repo>[^,]+),(?P<index>\d+)@(?P<url>.*)"
 		for mirror in mirrors:
-			matches = re.search(regex, mirror.strip())
-			repo = matches.group('repo')
-			index = matches.group('index')
-			url = matches.group('url')
-			add_custom_repository(repo, int(index), PackageRepository(server=url, include='', sig_level='Optional TrustedOnly', usage=''))
-			archinstall.log(f"Added custom mirror '{repo}' ({url}).", level=logging.INFO)
+			match = re.search(r"(?P<repo>[^,]+),(?P<index>\d+)@(?P<url>.*)", mirror.strip())
+			if match:
+				repo = match.group('repo')
+				index = match.group('index')
+				url = match.group('url')
+				if add_custom_repository(repo, int(index), PackageRepository(server=url, include='', sig_level='Optional TrustedOnly', usage='')):
+					archinstall.log(f"Added custom mirror '{repo}' ({url}).", level=logging.INFO)
+			else:
+				archinstall.log(
+					"Invalid format for --mirrors argument. See --help for more information.",
+					level=logging.INFO, fg="red")
+				exit(1)
 
 	if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
 		archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
