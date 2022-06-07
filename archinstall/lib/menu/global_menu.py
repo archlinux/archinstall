@@ -296,10 +296,10 @@ class GlobalMenu(GeneralMenu):
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
 		if not check('harddrives'):
-			missing += ['Hard drives']
+			missing += [str(_('Drive(s)'))]
 		if check('harddrives'):
 			if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
-				missing += ['Disk layout']
+				missing += [str(_('Disk layout'))]
 
 		return missing
 
