@@ -15,7 +15,7 @@ from .btrfs_helpers import (
 
 if TYPE_CHECKING:
 	from ...installer import Installer
-	from .btrfssubvolume import BtrfsSubvolume
+	from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 class BTRFSPartition(Partition):
 	def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class BTRFSPartition(Partition):
 			for child in iterate_children(filesystem):
 				yield child
 
-	def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None) -> 'BtrfsSubvolume':
+	def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None) -> 'BtrfsSubvolumeInfo':
 		"""
 		Subvolumes have to be created within a mountpoint.
 		This means we need to get the current installation target.

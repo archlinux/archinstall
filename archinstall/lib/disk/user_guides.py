@@ -3,6 +3,8 @@ import logging
 from typing import Optional, Dict, Any, List, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
+from ..models.subvolume import Subvolume
+
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
 	_: Any
@@ -107,17 +109,14 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		layout[block_device.path]['partitions'][1]['btrfs'] = {
-			"subvolumes" : {
-				"@":"/",
-				"@home": "/home",
-				"@log": "/var/log",
-				"@pkg": "/var/cache/pacman/pkg",
-				"@.snapshots": "/.snapshots"
-			}
+			'subvolumes': [
+				Subvolume('@', '/'),
+				Subvolume('@home', '/home'),
+				Subvolume('@log', '/var/log'),
+				Subvolume('@pkg', '/var/cache/pacman/pkg'),
+				Subvolume('@.snapshots', '/.snapshots')
+			]
 		}
-		# else:
-		# 	pass # ... implement a guided setup
-
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..

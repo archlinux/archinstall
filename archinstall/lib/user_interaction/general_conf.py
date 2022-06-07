@@ -3,8 +3,6 @@ from __future__ import annotations
 import logging
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-import archinstall
-
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 
@@ -16,6 +14,8 @@ from ..mirrors import list_mirrors
 
 from ..translation import Translation
 from ..packages.packages import validate_package_list
+
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -118,10 +118,13 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
-def select_archinstall_language(default='English'):
+def select_archinstall_language(preset_values: str):
 	languages = Translation.get_available_lang()
-	language = Menu(_('Archinstall language'), languages, default_option=default).run()
-	return language
+	choice = Menu(_('Archinstall language'), languages, default_option=preset_values).run()
+
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset_values
+		case MenuSelectionType.Selection: return choice.value
 
 
 def select_profile(preset) -> Optional[Profile]:
@@ -155,11 +158,11 @@ def select_profile(preset) -> Optional[Profile]:
 		case MenuSelectionType.Selection:
 			return options[selection.value] if selection.value is not None else None
 		case MenuSelectionType.Ctrl_c:
-			archinstall.storage['profile_minimal'] = False
-			archinstall.storage['_selected_servers'] = []
-			archinstall.storage['_desktop_profile'] = None
-			archinstall.arguments['desktop-environment'] = None
-			archinstall.arguments['gfx_driver_packages'] = None
+			storage['profile_minimal'] = False
+			storage['_selected_servers'] = []
+			storage['_desktop_profile'] = None
+			storage['arguments']['desktop-environment'] = None
+			storage['arguments']['gfx_driver_packages'] = None
 			return None
 		case MenuSelectionType.Esc:
 			return None
@@ -178,17 +181,18 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 	pre_set_packages = pre_set_packages if pre_set_packages else []
 	packages = read_packages(pre_set_packages)
 
-	while True:
-		if len(packages):
-			# Verify packages that were given
-			print(_("Verifying that additional packages exist (this might take a few seconds)"))
-			valid, invalid = validate_package_list(packages)
+	if not storage['arguments']['offline'] and not storage['arguments']['no_pkg_lookups']:
+		while True:
+			if len(packages):
+				# Verify packages that were given
+				print(_("Verifying that additional packages exist (this might take a few seconds)"))
+				valid, invalid = validate_package_list(packages)
 
-			if invalid:
-				log(f"Some packages could not be found in the repository: {invalid}", level=logging.WARNING, fg='red')
-				packages = read_packages(valid)
-				continue
-		break
+				if invalid:
+					log(f"Some packages could not be found in the repository: {invalid}", level=logging.WARNING, fg='red')
+					packages = read_packages(valid)
+					continue
+			break
 
 	return packages
 

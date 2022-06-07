@@ -58,10 +58,6 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 
-def set_unicode_font():
-	SysCommand('setfont UniCyr_8x16')
-
-
 def define_arguments():
 	"""
 	Define which explicit arguments do we allow.
@@ -81,6 +77,8 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--offline", action="store_true", default=False, help="Disabled online upstream services such as package search and key-ring auto update.")
+	parser.add_argument("--no-pkg-lookups", action="store_true", default=False, help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
@@ -172,6 +170,7 @@ def get_arguments() -> Dict[str, Any]:
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
+
 	return config
 
 def load_config():
@@ -227,8 +226,6 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		# if 'disk_layouts' not in storage:
-		# 	storage['disk_layouts'] = {}
 		layout_storage = {}
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
@@ -237,17 +234,16 @@ def post_process_arguments(arguments):
 				arguments['harddrives'] = [disk for disk in layout_storage]
 			# backward compatibility. Change partition.format for partition.wipe
 			for disk in layout_storage:
-				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):
+				for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
 					if 'format' in partition:
 						partition['wipe'] = partition['format']
 						del partition['format']
+					elif 'btrfs' in partition:
+						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
 			arguments['disk_layouts'] = layout_storage
 
 	load_config()
 
-
-# to ensure that cyrillic characters work in the installer
-# set_unicode_font()
 
 define_arguments()
 arguments = get_arguments()

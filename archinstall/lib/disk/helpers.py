@@ -8,6 +8,8 @@ import time
 import glob
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from ..models.subvolume import Subvolume
+
 if TYPE_CHECKING:
 	from .partition import Partition
 
@@ -469,6 +471,7 @@ def convert_device_to_uuid(path :str) -> str:
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
 
+
 def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, strict: bool = True) -> bool:
 	""" Determine if a certain partition is mounted (or has a mountpoint) as specific target (path)
 	Coded for clarity rather than performance
@@ -485,10 +488,12 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 	"""
 	# we create the mountpoint list
 	if isinstance(partition,dict):
-		subvols = partition.get('btrfs',{}).get('subvolumes',{})
-		mountpoints = [partition.get('mountpoint'),] + [subvols[subvol] if isinstance(subvols[subvol],str) or not subvols[subvol] else subvols[subvol].get('mountpoint') for subvol in subvols]
+		subvolumes: List[Subvolume] = partition.get('btrfs',{}).get('subvolumes', [])
+		mountpoints = [partition.get('mountpoint')]
+		mountpoints += [volume.mountpoint for volume in subvolumes]
 	else:
 		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
+
 	# we check
 	if strict or target == '/':
 		if target in mountpoints:

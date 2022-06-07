@@ -14,7 +14,7 @@ from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
-from .btrfs.btrfssubvolume import BtrfsSubvolume
+from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 class Partition:
 	def __init__(self,
@@ -294,7 +294,7 @@ class Partition:
 		return bind_name
 
 	@property
-	def subvolumes(self) -> Iterator[BtrfsSubvolume]:
+	def subvolumes(self) -> Iterator[BtrfsSubvolumeInfo]:
 		from .helpers import findmnt
 
 		def iterate_children_recursively(information):
