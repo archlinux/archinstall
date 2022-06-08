@@ -128,6 +128,7 @@
  {"abbr": "pi", "lang": "Pali"},
  {"abbr": "pl", "lang": "Polish"},
  {"abbr": "pt", "lang": "Portuguese"},
+ {"abbr": "pt_BR", "lang": "Brazilian Portuguese"},
  {"abbr": "ps", "lang": "Pushto"},
  {"abbr": "qu", "lang": "Quechua"},
  {"abbr": "rm", "lang": "Romansh"},
@@ -180,5 +181,6 @@
  {"abbr": "yi", "lang": "Yiddish"},
  {"abbr": "yo", "lang": "Yoruba"},
  {"abbr": "za", "lang": "Zhuang"},
- {"abbr": "zh", "lang": "Chinese"},
+ {"abbr": "zh-TW", "lang": "Traditional Chinese"},
+ {"abbr": "zh-CN", "lang": "Simplified Chinese"},
  {"abbr": "zu", "lang": "Zulu"}]

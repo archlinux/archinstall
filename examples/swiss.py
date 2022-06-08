@@ -1,14 +1,14 @@
 """
 
 Script swiss (army knife)
-Designed to make different workflows for the installation process. Which is controled by  the argument --mode
+Designed to make different workflows for the installation process. Which is controlled by  the argument --mode
 mode full  guides the full process of installation
 mode only_hd only proceeds to the creation of the disk infraestructure (partition, mount points, encryption)
 mode only_os processes only the installation of Archlinux and software at --mountpoint (or /mnt/archinstall)
 mode minimal (still not implemented)
 mode lineal. Instead of a menu, shows a sequence of selection screens (eq. to the old mode for guided.py)
 
-When using the argument --advanced. an aditional menu for several special parameters needed during installation appears
+When using the argument --advanced. an additional menu for several special parameters needed during installation appears
 
 This script respects the --dry_run argument
 
@@ -17,9 +17,13 @@ import logging
 import os
 import time
 import pathlib
+from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput
+from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
+
+if TYPE_CHECKING:
+	_: Any
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -34,8 +38,8 @@ TODO exec con return parameter
 """
 def select_activate_NTP():
 	prompt = "Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: "
-	choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-	if choice == 'yes':
+	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+	if choice == Menu.yes():
 		return True
 	else:
 		return False
@@ -156,8 +160,8 @@ class SetupMenu(archinstall.GeneralMenu):
 	def _setup_selection_menu_options(self):
 		self.set_option('archinstall-language',
 			archinstall.Selector(
-				_('Select Archinstall language'),
-				lambda x: self._select_archinstall_language('English'),
+				_('Archinstall language'),
+				lambda x: self._select_archinstall_language(x),
 				default='English',
 				enabled=True))
 		self.set_option('ntp',
@@ -176,7 +180,7 @@ class SetupMenu(archinstall.GeneralMenu):
 			self.set_option(item,
 				archinstall.Selector(
 					f'{get_locale_mode_text(item)} locale',
-					lambda x,item=item: select_installed_locale(item),   # the parmeter is needed for the lambda in the loop
+					lambda x,item=item: select_installed_locale(item),   # the parameter is needed for the lambda in the loop
 					enabled=True,
 					dependencies_not=['LC_ALL'] if item != 'LC_ALL' else []))
 		self.option('LC_ALL').set_enabled(True)
@@ -215,7 +219,7 @@ class MyMenu(archinstall.GlobalMenu):
 		if self._execution_mode in ('full','lineal'):
 			options_list = ['keyboard-layout', 'mirror-region', 'harddrives', 'disk_layouts',
 					'!encryption-password','swap', 'bootloader', 'hostname', '!root-password',
-					'!superusers', '!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
+					'!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
 					'timezone', 'ntp']
 			if archinstall.arguments.get('advanced',False):
 				options_list.extend(['sys-language','sys-encoding'])
@@ -225,7 +229,7 @@ class MyMenu(archinstall.GlobalMenu):
 			mandatory_list = ['harddrives']
 		elif self._execution_mode == 'only_os':
 			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
-					'!root-password', '!superusers', '!users', 'profile', 'audio', 'kernels',
+					'!root-password', '!users', 'profile', 'audio', 'kernels',
 					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp']
 			mandatory_list = ['hostname']
 			if archinstall.arguments.get('advanced',False):
@@ -251,15 +255,19 @@ class MyMenu(archinstall.GlobalMenu):
 				self.option(entry).set_enabled(False)
 		self._update_install_text()
 
-	def post_callback(self,option,value=None):
+	def post_callback(self,option=None,value=None):
 		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
 		def check(s):
 			return self.option(s).has_selection()
 
+		def has_superuser() -> bool:
+			users = self._menu_options['!users'].current_selection
+			return any([u.sudo for u in users])
+
 		_, missing = self.mandatory_overview()
-		if mode in ('full','only_os') and (not check('!root-password') and not check('!superusers')):
+		if mode in ('full','only_os') and (not check('!root-password') and not has_superuser()):
 			missing += 1
 		if mode in ('full', 'only_hd') and check('harddrives'):
 			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
@@ -278,7 +286,7 @@ class MyMenu(archinstall.GlobalMenu):
 
 
 """
-Instalation general subroutines
+Installation general subroutines
 """
 
 def get_current_status():
@@ -397,7 +405,8 @@ def os_setup(installation):
 		network_config = archinstall.arguments.get('nic', None)
 
 		if network_config:
-			network_config.config_installer(installation)
+			handler = NetworkConfigurationHandler(network_config)
+			handler.config_installer(installation)
 
 		if archinstall.arguments.get('audio', None) is not None:
 			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)
@@ -415,13 +424,8 @@ def os_setup(installation):
 		if archinstall.arguments.get('profile', None):
 			installation.install_profile(archinstall.arguments.get('profile', None))
 
-		if archinstall.arguments.get('!users',{}):
-			for user, user_info in archinstall.arguments.get('!users', {}).items():
-				installation.user_create(user, user_info["!password"], sudo=False)
-
-		if archinstall.arguments.get('!superusers',{}):
-			for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-				installation.user_create(superuser, user_info["!password"], sudo=True)
+		if users := archinstall.arguments.get('!users', None):
+			installation.create_users(users)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -475,8 +479,8 @@ def perform_installation(mountpoint, mode):
 			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 			if not archinstall.arguments.get('silent'):
 				prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
-				choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-				if choice == 'yes':
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+				if choice == Menu.yes():
 					try:
 						installation.drop_to_shell()
 					except:

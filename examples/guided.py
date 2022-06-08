@@ -3,7 +3,8 @@ import os
 import time
 
 import archinstall
-from archinstall import ConfigurationOutput
+from archinstall import ConfigurationOutput, Menu
+from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -35,17 +36,17 @@ def ask_user_questions():
 	# the default value specified in the menu options; in
 	# case it will be changed by the user we'll also update
 	# the system immediately
-	archinstall.SysCommand('timedatectl set-ntp true')
-
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+
+	global_menu.enable('archinstall-language')
+
 	global_menu.enable('keyboard-layout')
 
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
 
-	if archinstall.arguments.get('advanced', False):
-		global_menu.enable('sys-language', True)
-		global_menu.enable('sys-encoding', True)
+	global_menu.enable('sys-language')
+	global_menu.enable('sys-encoding')
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
@@ -55,6 +56,10 @@ def ask_user_questions():
 
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
+
+	if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
+		# Enables the use of HSM
+		global_menu.enable('HSM')
 
 	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
@@ -67,7 +72,6 @@ def ask_user_questions():
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	global_menu.enable('!root-password')
 
-	global_menu.enable('!superusers')
 	global_menu.enable('!users')
 
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
@@ -89,6 +93,12 @@ def ask_user_questions():
 	global_menu.enable('ntp')
 
 	global_menu.enable('additional-repositories')
+
+	global_menu.enable('__separator__')
+
+	global_menu.enable('save_config')
+	global_menu.enable('install')
+	global_menu.enable('abort')
 
 	global_menu.run()
 
@@ -123,6 +133,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
@@ -142,6 +153,28 @@ def perform_installation(mountpoint):
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while archinstall.service_state('reflector') not in ('dead', 'failed'):
 			time.sleep(1)
+
+		# If we've activated NTP, make sure it's active in the ISO too and
+		# make sure at least one time-sync finishes before we continue with the installation
+		if archinstall.arguments.get('ntp', False):
+			# Activate NTP in the ISO
+			archinstall.SysCommand('timedatectl set-ntp true')
+
+			# TODO: This block might be redundant, but this service is not activated unless
+			# `timedatectl set-ntp true` is executed.
+			logged = False
+			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
+				if not logged:
+					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
+					logged = True
+				time.sleep(1)
+
+			logged = False
+			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
+				if not logged:
+					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
+					logged = True
+				time.sleep(1)
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
@@ -167,7 +200,8 @@ def perform_installation(mountpoint):
 			network_config = archinstall.arguments.get('nic', None)
 
 			if network_config:
-				network_config.config_installer(installation)
+				handler = NetworkConfigurationHandler(network_config)
+				handler.config_installer(installation)
 
 			if archinstall.arguments.get('audio', None) is not None:
 				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
@@ -185,13 +219,8 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
-			if archinstall.arguments.get('!users',{}):
-				for user, user_info in archinstall.arguments.get('!users', {}).items():
-					installation.user_create(user, user_info["!password"], sudo=False)
-
-			if archinstall.arguments.get('!superusers',{}):
-				for superuser, user_info in archinstall.arguments.get('!superusers', {}).items():
-					installation.user_create(superuser, user_info["!password"], sudo=True)
+			if users := archinstall.arguments.get('!users', None):
+				installation.create_users(users)
 
 			if timezone := archinstall.arguments.get('timezone', None):
 				installation.set_timezone(timezone)
@@ -224,11 +253,13 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('custom-commands', None):
 			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
+		installation.genfstab()
+
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 		if not archinstall.arguments.get('silent'):
-			prompt = 'Would you like to chroot into the newly created installation and perform post-installation configuration?'
-			choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='yes').run()
-			if choice == 'yes':
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			if choice == Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:
@@ -243,7 +274,7 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not archinstall.arguments.get('offline', False):
+if not archinstall.arguments['offline']:
 	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
 
 	# If we want to check for keyring updates
@@ -269,7 +300,8 @@ if archinstall.arguments.get('dry_run'):
 	exit(0)
 
 if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+	input(str(_('Press Enter to continue.')))
 
+archinstall.configuration_sanity_check()
 perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

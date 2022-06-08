@@ -1,7 +1,4 @@
 """Arch Linux installer - guided, templates etc."""
-import urllib.error
-import urllib.parse
-import urllib.request
 from argparse import ArgumentParser
 
 from .lib.disk import *
@@ -12,6 +9,8 @@ from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
+from .lib.models.network_configuration import NetworkConfigurationHandler
+from .lib.models.users import User
 from .lib.networking import *
 from .lib.output import *
 from .lib.models.dataclasses import (
@@ -44,9 +43,14 @@ from .lib.menu.selection_menu import (
 from .lib.translation import Translation, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
+from .lib.udev import udevadm_info
+from .lib.hsm import (
+	get_fido2_devices,
+	fido2_enroll
+)
 parser = ArgumentParser()
 
-__version__ = "2.4.0.RC2"
+__version__ = "2.5.0"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -73,6 +77,8 @@ def define_arguments():
 	parser.add_argument("--script", default="guided", nargs="?", help="Script to run for installation", type=str)
 	parser.add_argument("--mount-point","--mount_point", nargs="?", type=str, help="Define an alternate mount point for installation")
 	parser.add_argument("--debug", action="store_true", default=False, help="Adds debug info into the log")
+	parser.add_argument("--offline", action="store_true", default=False, help="Disabled online upstream services such as package search and key-ring auto update.")
+	parser.add_argument("--no-pkg-lookups", action="store_true", default=False, help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
@@ -83,7 +89,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 		--argument=value
 		--argument = value
 		--argument   (boolean as default)
-	the optional paramters to the function alter a bit its behaviour:
+	the optional parameters to the function alter a bit its behaviour:
 	* multiple allows multivalued arguments, each value separated by whitespace. They're returned as a list
 	* error. If set any non correctly specified argument-value pair to raise an exception. Else, simply notifies the existence of a problem and continues processing.
 
@@ -96,7 +102,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 	key = None
 	last_key = None
 	while tmp_list:
-		element = tmp_list.pop(0)			  # retreive an element of the list
+		element = tmp_list.pop(0)			  # retrieve an element of the list
 		if element.startswith('--'):		   # is an argument ?
 			if '=' in element:				 # uses the arg=value syntax ?
 				key, value = [x.strip() for x in element[2:].split('=', 1)]
@@ -144,22 +150,13 @@ def get_arguments() -> Dict[str, Any]:
 	# preprocess the json files.
 	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
-		try:
-			# First, let's check if this is a URL scheme instead of a filename
-			parsed_url = urllib.parse.urlparse(args.config)
+		if not json_stream_to_structure('--config', args.config, config):
+			exit(1)
 
-			if not parsed_url.scheme:  # The Profile was not a direct match on a remote URL, it must be a local file.
-				if not json_stream_to_structure('--config',args.config,config):
-					exit(1)
-			else:  # Attempt to load the configuration from the URL.
-				with urllib.request.urlopen(urllib.request.Request(args.config, headers={'User-Agent': 'ArchInstall'})) as response:
-					config.update(json.loads(response.read()))
-		except Exception as e:
-			raise ValueError(f"Could not load --config because: {e}")
+	if args.creds is not None:
+		if not json_stream_to_structure('--creds', args.creds, config):
+			exit(1)
 
-		if args.creds is not None:
-			if not json_stream_to_structure('--creds',args.creds,config):
-				exit(1)
 	# load the parameters. first the known, then the unknowns
 	config.update(vars(args))
 	config.update(parse_unspecified_argument_list(unknowns))
@@ -173,6 +170,7 @@ def get_arguments() -> Dict[str, Any]:
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
 		del config['dry-run']
+
 	return config
 
 def load_config():
@@ -207,7 +205,14 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 	if arguments.get('nic', None) is not None:
-		arguments['nic'] = NetworkConfiguration.parse_arguments(arguments.get('nic'))
+		handler = NetworkConfigurationHandler()
+		handler.parse_arguments(arguments.get('nic'))
+		arguments['nic'] = handler.configuration
+	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
+		users = arguments.get('!users', None)
+		superusers = arguments.get('!superusers', None)
+		arguments['!users'] = User.parse_arguments(users, superusers)
+
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
@@ -221,8 +226,6 @@ def post_process_arguments(arguments):
 		load_plugin(arguments['plugin'])
 
 	if arguments.get('disk_layouts', None) is not None:
-		# if 'disk_layouts' not in storage:
-		# 	storage['disk_layouts'] = {}
 		layout_storage = {}
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
@@ -231,10 +234,12 @@ def post_process_arguments(arguments):
 				arguments['harddrives'] = [disk for disk in layout_storage]
 			# backward compatibility. Change partition.format for partition.wipe
 			for disk in layout_storage:
-				for i,partition in enumerate(layout_storage[disk].get('partitions',[])):
+				for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
 					if 'format' in partition:
 						partition['wipe'] = partition['format']
 						del partition['format']
+					elif 'btrfs' in partition:
+						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
 			arguments['disk_layouts'] = layout_storage
 
 	load_config()

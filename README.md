@@ -30,12 +30,12 @@ Some additional options that are not needed by most users are hidden behind the 
 
 ## Running from a declarative configuration file or URL
 
-Prequisites:
+Prerequisites:
    1. Edit the [configuration file](https://github.com/archlinux/archinstall/blob/master/examples/config-sample.json) according to your requirements.
 
 Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
-    # archinstall --config <path to config file or URL>
+    # archinstall --config <path to user config file or URL> --disk-layout <path to disk layout config file or URL> --creds <path to user credentials config file or URL>
 
 # Help?
 
@@ -55,7 +55,7 @@ The guided installer itself is also optional to use if so desired and not forced
 Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
 This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
 
-Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compability after notifying about such changes.
+Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
 
 # Scripting your own installation
 
@@ -105,7 +105,8 @@ with archinstall.Installer('/mnt') as installation:
         # In this case, we install a minimal profile that is empty
         installation.install_profile('minimal')
 
-        installation.user_create('devel', 'devel')
+        user = User('devel', 'devel', False)
+        installation.create_users(user)
         installation.user_set_pw('root', 'airoot')
 ```
 
@@ -118,7 +119,7 @@ This installer will perform the following:
 * Installs and configures a bootloader to partition 0 on uefi. On BIOS, it sets the root to partition 0.
 * Install additional packages *(nano, wget, git)*
 
-> **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO or use a pre-built [guided ISO](https://hvornum.se/archiso/) to skip the python installation step, or to create auto-installing ISO templates. Further down are examples and cheat sheets on how to create different live ISO's.
+> **Creating your own ISO with this script on it:** Follow [ArchISO](https://wiki.archlinux.org/index.php/archiso)'s guide on how to create your own ISO.
 
 ## Unattended installation based on MAC address
 

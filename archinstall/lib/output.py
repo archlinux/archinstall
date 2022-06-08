@@ -2,9 +2,47 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Union, List, Any
 
 from .storage import storage
+
+
+class FormattedOutput:
+
+	@classmethod
+	def values(cls, o: Any) -> Dict[str, Any]:
+		if hasattr(o, 'as_json'):
+			return o.as_json()
+		elif hasattr(o, 'json'):
+			return o.json()
+		else:
+			return o.__dict__
+
+	@classmethod
+	def as_table(cls, obj: List[Any]) -> str:
+		column_width: Dict[str, int] = {}
+		for o in obj:
+			for k, v in cls.values(o).items():
+				column_width.setdefault(k, 0)
+				column_width[k] = max([column_width[k], len(str(v)), len(k)])
+
+		output = ''
+		for key, width in column_width.items():
+			key = key.replace('!', '')
+			output += key.ljust(width) + ' | '
+
+		output = output[:-3] + '\n'
+		output += '-' * len(output) + '\n'
+
+		for o in obj:
+			for k, v in cls.values(o).items():
+				if '!' in k:
+					v = '*' * len(str(v))
+				output += str(v).ljust(column_width[k]) + ' | '
+			output = output[:-3]
+			output += '\n'
+
+		return output
 
 
 class Journald:
@@ -61,9 +99,11 @@ def stylize_output(text: str, *opts :str, **kwargs) -> str:
 		'magenta' : '5',
 		'cyan' : '6',
 		'white' : '7',
-		'orange' : '8;5;208',    # Extended 256-bit colors (not always supported)
-		'darkorange' : '8;5;202',# https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'teal' : '8;5;109',      # Extended 256-bit colors (not always supported)
+		'orange' : '8;5;208',    # https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+		'darkorange' : '8;5;202',
 		'gray' : '8;5;246',
+		'grey' : '8;5;246',
 		'darkgray' : '8;5;240',
 		'lightgray' : '8;5;256'
 	}

@@ -1,24 +1,19 @@
 from __future__ import annotations
-import sys
-import logging
 
+import logging
+import sys
+import pathlib
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
-from .menu import Menu
+from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translation import Translation
+from ..hsm.fido import get_fido2_devices
 
 if TYPE_CHECKING:
 	_: Any
 
-def select_archinstall_language(default='English'):
-	"""
-	copied from user_interaction/general_conf.py as a temporary measure
-	"""
-	languages = Translation.get_all_names()
-	language = Menu(_('Select Archinstall language'), languages, default_option=default).run()
-	return language
 
 class Selector:
 	def __init__(
@@ -91,6 +86,10 @@ class Selector:
 		self._no_store = no_store
 
 	@property
+	def description(self) -> str:
+		return self._description
+
+	@property
 	def dependencies(self) -> List:
 		return self._dependencies
 
@@ -115,7 +114,7 @@ class Selector:
 	def update_description(self, description :str):
 		self._description = description
 
-	def menu_text(self) -> str:
+	def menu_text(self, padding: int = 0) -> str:
 		if self._description == '': # special menu option for __separator__
 			return ''
 
@@ -128,20 +127,20 @@ class Selector:
 				current = str(self._current_selection)
 
 		if current:
-			padding = 35 - len(str(self._description))
-			current = ' ' * padding + f'SET: {current}'
+			padding += 5
+			description = str(self._description).ljust(padding, ' ')
+			current = str(_('set: {}').format(current))
+		else:
+			description = self._description
+			current = ''
 
-		return f'{self._description} {current}'
-
-	@property
-	def text(self):
-		return self.menu_text()
+		return f'{description} {current}'
 
 	def set_current_selection(self, current :Optional[str]):
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
-		if self._current_selection is None:
+		if not self._current_selection:
 			return False
 		return True
 
@@ -181,6 +180,7 @@ class GeneralMenu:
 		;type preview_size: float (range 0..1)
 
 		"""
+		self._enabled_order :List[str] = []
 		self._translation = Translation.load_nationalization()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
@@ -210,7 +210,7 @@ class GeneralMenu:
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
-			Menu options can be defined here in a subclass or done per progam calling self.set_option()
+			Menu options can be defined here in a subclass or done per program calling self.set_option()
 		"""
 		return
 
@@ -218,7 +218,7 @@ class GeneralMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selector_name :str, value :Any):
+	def post_callback(self, selection_name: str = None, value: Any = None):
 		""" will be called after each action in the menu """
 		return True
 
@@ -239,10 +239,15 @@ class GeneralMenu:
 		if arg is not None:
 			self._menu_options[selector_name].set_current_selection(arg)
 
+	def _update_enabled_order(self, selector_name: str):
+		self._enabled_order.append(selector_name)
+
 	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
 		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
+			self._update_enabled_order(selector_name)
+
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
 			self.synch(selector_name,omit_if_set)
@@ -256,8 +261,14 @@ class GeneralMenu:
 			return preview()
 		return None
 
+	def _get_menu_text_padding(self, entries: List[Selector]):
+		return max([len(str(selection.description)) for selection in entries])
+
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
-		option = [(k, v) for k, v in self._menu_options.items() if v.text.strip() == selection_name.strip()]
+		enabled_menus = self._menus_to_enable()
+		padding = self._get_menu_text_padding(list(enabled_menus.values()))
+		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
+
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')
 		config_name = option[0][0]
@@ -269,14 +280,18 @@ class GeneralMenu:
 		# we synch all the options just in case
 		for item in self.list_options():
 			self.synch(item)
-		self.post_callback  # as all the values can vary i have to exec this callback
+
+		self.post_callback()  # as all the values can vary i have to exec this callback
 		cursor_pos = None
+
 		while True:
 			# Before continuing, set the preferred keyboard layout/language in the current terminal.
 			# 	This will just help the user with the next following questions.
 			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
-			menu_options = [m.text for m in enabled_menus.values()]
+
+			padding = self._get_menu_text_padding(list(enabled_menus.values()))
+			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
 			selection = Menu(
 				_('Set/Modify the below options'),
@@ -285,18 +300,31 @@ class GeneralMenu:
 				cursor_index=cursor_pos,
 				preview_command=self._preview_display,
 				preview_size=self.preview_size,
-				skip_empty_entries=True
+				skip_empty_entries=True,
+				skip=False
 			).run()
 
-			if selection and self.auto_cursor:
-				cursor_pos = menu_options.index(selection) + 1  # before the strip otherwise fails
-				if cursor_pos >= len(menu_options):
-					cursor_pos = len(menu_options) - 1
-				selection = selection.strip()
-			if selection:
-				# if this calls returns false, we exit the menu. We allow for an callback for special processing on realeasing control
-				if not self._process_selection(selection):
+			if selection.type_ == MenuSelectionType.Selection:
+				value = selection.value
+
+				if self.auto_cursor:
+					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
+
+					# in case the new position lands on a "placeholder" we'll skip them as well
+					while True:
+						if cursor_pos >= len(menu_options):
+							cursor_pos = 0
+						if len(menu_options[cursor_pos]) > 0:
+							break
+						cursor_pos += 1
+
+				value = value.strip()
+
+				# if this calls returns false, we exit the menu
+				# we allow for an callback for special processing on realeasing control
+				if not self._process_selection(value):
 					break
+
 		if not self.is_context_mgr:
 			self.__exit__()
 
@@ -310,7 +338,7 @@ class GeneralMenu:
 		return self.exec_option(config_name, selector)
 
 	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
-		""" processes the exection of a given menu entry
+		""" processes the execution of a given menu entry
 		- pre process callback
 		- selection function
 		- post process callback
@@ -372,7 +400,15 @@ class GeneralMenu:
 			if self._verify_selection_enabled(name):
 				enabled_menus[name] = selection
 
-		return enabled_menus
+		# sort the enabled menu by the order we enabled them in
+		# we'll add the entries that have been enabled via the selector constructor at the top
+		enabled_keys = [i for i in enabled_menus.keys() if i not in self._enabled_order]
+		# and then we add the ones explicitly enabled by the enable function
+		enabled_keys += [i for i in self._enabled_order if i in enabled_menus.keys()]
+
+		ordered_menus = {k: enabled_menus[k] for k in enabled_keys}
+
+		return ordered_menus
 
 	def option(self,name :str) -> Selector:
 		# TODO check inexistent name
@@ -409,15 +445,42 @@ class GeneralMenu:
 	def mandatory_overview(self) -> Tuple[int, int]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
-		for field in self._menu_options:
-			option = self._menu_options[field]
+		for field, option in self._menu_options.items():
 			if option.is_mandatory():
 				mandatory_fields += 1
 				if not option.has_selection():
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
-	def _select_archinstall_language(self, default_lang):
-		language = select_archinstall_language(default_lang)
-		self._translation.activate(language)
-		return language
+	def _select_archinstall_language(self, preset_value: str) -> str:
+		from ... import select_archinstall_language
+		language = select_archinstall_language(preset_value)
+		if language is not None:
+			self._translation.activate(language)
+			return language
+
+		return preset_value
+
+	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
+		title = _('Select which partitions to mark for formatting:')
+		title += '\n'
+
+		fido_devices = get_fido2_devices()
+
+		indexes = []
+		for index, path in enumerate(fido_devices.keys()):
+			title += f"{index}: {path} ({fido_devices[path]['manufacturer']} - {fido_devices[path]['product']})"
+			indexes.append(f"{index}|{fido_devices[path]['product']}")
+
+		title += '\n'
+
+		choice = Menu(title, indexes, multi=False).run()
+
+		match choice.type_:
+			case MenuSelectionType.Esc: return preset
+			case MenuSelectionType.Selection:
+				selection: Any = choice.value
+				index = int(selection.split('|',1)[0])
+				return pathlib.Path(list(fido_devices.keys())[index])
+
+		return None

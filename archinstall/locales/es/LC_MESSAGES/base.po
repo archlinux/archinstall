@@ -3,6 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -10,131 +11,100 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: lib/installer.py:144 lib/installer.py:152
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Un archivo de registro ha sido creado aquí: {} {}"
+msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
 
-#: lib/installer.py:145 lib/installer.py:153
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "    Por favor envíe este problema (y archivo) a https://github.com/archlinux/archinstall/issues"
 
-#: lib/user_interaction.py:83 lib/user_interaction/utils.py:86
 msgid "Do you really want to abort?"
-msgstr "Realmente desea abortar?"
+msgstr "¿Realmente desea abortar?"
 
-#: lib/user_interaction.py:101 lib/user_interaction.py:104 lib/user_interaction/utils.py:53
 msgid "And one more time for verification: "
-msgstr "Una última vez para verificación: "
+msgstr "Una vez más para verificar: "
 
-#: lib/user_interaction.py:272 lib/user_interaction.py:275 lib/user_interaction/system_conf.py:142
 msgid "Would you like to use swap on zram?"
-msgstr "Te gustaría usar swap en zram?"
+msgstr "¿Te gustaría usar swap en zram?"
 
-#: lib/user_interaction.py:285 lib/user_interaction.py:288 lib/user_interaction/general_conf.py:33
 msgid "Desired hostname for the installation: "
-msgstr "Hostname deseado para la instalación: "
+msgstr "Nombre de host deseado para la instalación: "
 
-#: lib/user_interaction.py:290 lib/user_interaction.py:293
 msgid "Username for required superuser with sudo privileges: "
 msgstr "Nombre de usuario para el superusuario con privilegios sudo: "
 
-#: lib/user_interaction.py:310 lib/user_interaction.py:313 lib/user_interaction/manage_users_conf.py:167
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algún usuario adicional a instalar (deje en blanco para no agregar ninguno): "
+msgstr "Algún usuario adicional a instalar (déjelo en blanco para no agregar ninguno): "
 
-#: lib/user_interaction.py:324 lib/user_interaction.py:327
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Debería este usuario ser un superusuario (sudoer)?"
 
-#: lib/user_interaction.py:340 lib/user_interaction.py:343 lib/user_interaction.py:346 lib/user_interaction/general_conf.py:41
 msgid "Select a timezone"
-msgstr "Selecciona una zona horaria"
+msgstr "Zona horaria"
 
-#: lib/user_interaction.py:354 lib/user_interaction.py:357 lib/user_interaction.py:360 lib/user_interaction.py:359 lib/user_interaction/system_conf.py:115
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
 msgstr "Te gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
 
-#: lib/user_interaction.py:364 lib/user_interaction.py:367 lib/user_interaction.py:370 lib/user_interaction.py:369 lib/user_interaction/system_conf.py:125
 msgid "Choose a bootloader"
-msgstr "Elige un gestor de arranque"
+msgstr "Elija un gestor de arranque"
 
-#: lib/user_interaction.py:380 lib/user_interaction.py:383 lib/user_interaction.py:386 lib/user_interaction.py:385 lib/user_interaction/general_conf.py:53
 msgid "Choose an audio server"
-msgstr "Elige un servidor de audio"
+msgstr "Elija un servidor de audio"
 
-#: lib/user_interaction.py:391 lib/user_interaction.py:394 lib/user_interaction.py:397 lib/user_interaction.py:396 lib/user_interaction/general_conf.py:138
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
-#: lib/user_interaction.py:392 lib/user_interaction.py:395 lib/user_interaction.py:398 lib/user_interaction.py:397 lib/user_interaction/general_conf.py:139
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
 msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente diálogo."
 
-#: lib/user_interaction.py:396 lib/user_interaction.py:399 lib/user_interaction.py:402 lib/user_interaction.py:401 lib/user_interaction/general_conf.py:143
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Escriba paquetes adicionales para instalar (separados por espacios, deja en blanco para omitir): "
 
-#: lib/user_interaction.py:419 lib/user_interaction.py:422 lib/user_interaction.py:425 lib/user_interaction.py:424 lib/user_interaction/network_conf.py:25
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiar la configuración de red ISO a la instalación"
 
-#: lib/user_interaction.py:420 lib/user_interaction.py:423 lib/user_interaction.py:426 lib/user_interaction.py:425 lib/user_interaction/network_conf.py:26
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
 
-#: lib/user_interaction.py:428 lib/user_interaction.py:431 lib/user_interaction.py:434 lib/user_interaction.py:433 lib/user_interaction/network_conf.py:43
 msgid "Select one network interface to configure"
-msgstr "Selecciona una interfaz de red para configurar"
+msgstr "Seleccione una interfaz de red para configurar"
 
-#: lib/user_interaction.py:441 lib/user_interaction.py:444 lib/user_interaction.py:447 lib/user_interaction.py:446 lib/user_interaction/network_conf.py:70
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Selecciona el modo para configurar \"{}\" u omitir para usar el modo \"{}\" predeterminado"
+msgstr "Seleccione qué modo configurar para \"{}\" o salte para usar el modo predeterminado \"{}\""
 
-#: lib/user_interaction.py:446 lib/user_interaction.py:449 lib/user_interaction.py:452 lib/user_interaction.py:451 lib/user_interaction/network_conf.py:75
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Escriba la IP y subred para {} (ejemplo: 192.168.0.5/24): "
 
-#: lib/user_interaction.py:461 lib/user_interaction.py:464 lib/user_interaction.py:467 lib/user_interaction.py:466 lib/user_interaction/network_conf.py:86
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Escriba la IP de su puerta de enlace (router) o deje en blanco para no usar ninguna: "
+msgstr "Escriba la IP de su puerta de enlace (enrutador) o déjelo en blanco para no usar ninguna: "
 
-#: lib/user_interaction.py:476 lib/user_interaction.py:479 lib/user_interaction.py:482 lib/user_interaction.py:481 lib/user_interaction/network_conf.py:102
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Escriba los servidores DNS (separados por espacios, en blanco para no usar ninguno): "
+msgstr "Ingrese sus servidores DNS (separados por espacios, en blanco para ninguno): "
 
-#: lib/user_interaction.py:510 lib/user_interaction.py:513 lib/user_interaction.py:516 lib/user_interaction.py:515 lib/user_interaction/disk_conf.py:23
 msgid "Select which filesystem your main partition should use"
-msgstr "Selecciona el sistema de archivos que su partición principal debe usar"
+msgstr "Seleccione qué sistema de archivos debe usar su partición principal"
 
-#: lib/user_interaction.py:556 lib/user_interaction.py:559 lib/user_interaction.py:562 lib/user_interaction.py:561 lib/user_interaction/partitioning_conf.py:64 lib/user_interaction/partitioning_conf.py:63
 msgid "Current partition layout"
 msgstr "Distribución actual de las particiones"
 
-#: lib/user_interaction.py:607 lib/user_interaction.py:614 lib/user_interaction.py:617 lib/user_interaction.py:620 lib/user_interaction.py:619 lib/user_interaction/partitioning_conf.py:145 lib/user_interaction/partitioning_conf.py:146
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Selecciona qué hacer con\n"
+"Seleccione qué hacer con\n"
 "{}"
 
-#: lib/user_interaction.py:624 lib/user_interaction.py:709 lib/user_interaction.py:631 lib/user_interaction.py:716 lib/user_interaction.py:634 lib/user_interaction.py:719 lib/user_interaction.py:637 lib/user_interaction.py:722 lib/user_interaction.py:636 lib/user_interaction.py:721 lib/user_interaction/partitioning_conf.py:162 lib/user_interaction/partitioning_conf.py:255 lib/user_interaction/partitioning_conf.py:165 lib/user_interaction/partitioning_conf.py:260
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Escriba el tipo de sistema de archivos que desea para la partición"
+msgstr "Ingrese un tipo de sistema de archivos deseado para la partición"
 
-#: lib/user_interaction.py:626 lib/user_interaction.py:633 lib/user_interaction.py:636 lib/user_interaction.py:639 lib/user_interaction.py:638 lib/user_interaction/partitioning_conf.py:164 lib/user_interaction/partitioning_conf.py:167
 msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Escriba el sector de inicio (porcentaje o número de bloque, por defecto: {}): "
+msgstr "Introduzca el sector de inicio (porcentaje o número de bloque, predeterminado: {}): "
 
-#: lib/user_interaction.py:635 lib/user_interaction.py:642 lib/user_interaction.py:645 lib/user_interaction.py:648 lib/user_interaction.py:647 lib/user_interaction/partitioning_conf.py:174 lib/user_interaction/partitioning_conf.py:177
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Escriba el sector final de la partición (porcentaje o número de bloque, ej: {}): "
+msgstr "Ingrese el sector final de la partición (porcentaje o número de bloque, ej: {}): "
 
-#: lib/user_interaction.py:661 lib/user_interaction.py:668 lib/user_interaction.py:671 lib/user_interaction.py:674 lib/user_interaction.py:673 lib/user_interaction/partitioning_conf.py:203 lib/user_interaction/partitioning_conf.py:208
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
 
-#: lib/user_interaction.py:674 lib/user_interaction.py:681 lib/user_interaction.py:684 lib/user_interaction.py:687 lib/user_interaction.py:686 lib/user_interaction/partitioning_conf.py:216 lib/user_interaction/partitioning_conf.py:221
 msgid ""
 "{}\n"
 "\n"
@@ -142,9 +112,8 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona por índice las particiones a eliminar"
+"Seleccione por índice qué particiones eliminar"
 
-#: lib/user_interaction.py:682 lib/user_interaction.py:689 lib/user_interaction.py:692 lib/user_interaction.py:695 lib/user_interaction.py:694 lib/user_interaction/partitioning_conf.py:226 lib/user_interaction/partitioning_conf.py:231
 msgid ""
 "{}\n"
 "\n"
@@ -152,17 +121,14 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona por índice la ubicación de la partición a montar"
+"Seleccione por índice la ubicación de la partición a montar"
 
-#: lib/user_interaction.py:686 lib/user_interaction.py:693 lib/user_interaction.py:696 lib/user_interaction.py:699 lib/user_interaction.py:698 lib/user_interaction/partitioning_conf.py:231 lib/user_interaction/partitioning_conf.py:236
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Los puntos de montaje de partición son relativos a la instalación, el arranque sería /boot como ejemplo."
 
-#: lib/user_interaction.py:687 lib/user_interaction.py:694 lib/user_interaction.py:697 lib/user_interaction.py:700 lib/user_interaction.py:699 lib/user_interaction/partitioning_conf.py:233 lib/user_interaction/partitioning_conf.py:238
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Selecciona dónde montar la partición (deja en blanco para eliminar el punto de montaje): "
+msgstr "Seleccione dónde montar la partición (déjelo en blanco para eliminar el punto de montaje): "
 
-#: lib/user_interaction.py:698 lib/user_interaction.py:705 lib/user_interaction.py:708 lib/user_interaction.py:711 lib/user_interaction.py:710 lib/user_interaction/partitioning_conf.py:244 lib/user_interaction/partitioning_conf.py:249
 msgid ""
 "{}\n"
 "\n"
@@ -170,9 +136,8 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a ocultar para formatear"
+"Seleccione qué partición enmascarar para formatear"
 
-#: lib/user_interaction.py:717 lib/user_interaction.py:724 lib/user_interaction.py:727 lib/user_interaction.py:730 lib/user_interaction.py:729 lib/user_interaction/partitioning_conf.py:265 lib/user_interaction/partitioning_conf.py:270
 msgid ""
 "{}\n"
 "\n"
@@ -180,9 +145,8 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a marcar como encriptada"
+"Seleccione qué partición marcar como encriptada"
 
-#: lib/user_interaction.py:725 lib/user_interaction.py:732 lib/user_interaction.py:735 lib/user_interaction.py:738 lib/user_interaction.py:737 lib/user_interaction/partitioning_conf.py:274 lib/user_interaction/partitioning_conf.py:279
 msgid ""
 "{}\n"
 "\n"
@@ -190,9 +154,8 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a marcar como bootable"
+"Seleccione qué partición marcar como de arranque"
 
-#: lib/user_interaction.py:732 lib/user_interaction.py:739 lib/user_interaction.py:742 lib/user_interaction.py:745 lib/user_interaction.py:744 lib/user_interaction/partitioning_conf.py:282 lib/user_interaction/partitioning_conf.py:287
 msgid ""
 "{}\n"
 "\n"
@@ -200,57 +163,44 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a configurar con un sistema de archivos"
+"Seleccione en qué partición establecer un sistema de archivos"
 
-#: lib/user_interaction.py:739 lib/user_interaction.py:746 lib/user_interaction.py:749 lib/user_interaction.py:752 lib/user_interaction.py:751 lib/user_interaction/partitioning_conf.py:289 lib/user_interaction/partitioning_conf.py:294
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Escriba el tipo de sistema de archivos que desea para la partición: "
+msgstr "Ingrese un tipo de sistema de archivos deseado para la partición: "
 
-#: lib/user_interaction.py:760 lib/menu/selection_menu.py:141 lib/user_interaction.py:767 lib/menu/selection_menu.py:139 lib/menu/selection_menu.py:143 lib/user_interaction.py:770 lib/user_interaction.py:773 lib/user_interaction.py:772 lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:17 lib/user_interaction/general_conf.py:105 lib/user_interaction/global_menu.py:43 lib/menu/selection_menu.py:53 lib/menu/selection_menu.py:463 lib/menu/global_menu.py:43
-msgid "Select Archinstall language"
-msgstr "Selecciona el idioma de Archinstall"
+msgid "Archinstall language"
+msgstr "Idioma de Archinstall"
 
-#: lib/user_interaction.py:765 lib/user_interaction.py:772 lib/user_interaction.py:775 lib/user_interaction.py:778 lib/user_interaction.py:777 lib/user_interaction/disk_conf.py:40
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Limpiar todos los discos seleccionados y usar una distribución de particiones por defecto"
+msgstr "Borrar todas las unidades seleccionadas y use un diseño de partición predeterminado de mejor esfuerzo"
 
-#: lib/user_interaction.py:766 lib/user_interaction.py:773 lib/user_interaction.py:776 lib/user_interaction.py:779 lib/user_interaction.py:778 lib/user_interaction/disk_conf.py:41
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Selecciona qué hacer con cada disco individual (seguido por el uso de partición)"
+msgstr "Seleccione qué hacer con cada unidad individual (seguido del uso de la partición)"
 
-#: lib/user_interaction.py:769 lib/user_interaction.py:770 lib/user_interaction.py:777 lib/user_interaction.py:780 lib/user_interaction.py:783 lib/user_interaction.py:782 lib/user_interaction/disk_conf.py:45
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Selecciona qué quieres hacer con los dispositivos de bloque seleccionados"
+msgstr "Seleccione lo que desea hacer con los dispositivos de bloque seleccionados"
 
-#: lib/user_interaction.py:822 lib/user_interaction.py:823 lib/user_interaction.py:830 lib/user_interaction.py:833 lib/user_interaction.py:836 lib/user_interaction.py:835 lib/user_interaction/general_conf.py:126
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de perfiles pre-programados, pueden facilitar la instalación de aplicaciones como entornos de escritorio"
 
-#: lib/user_interaction.py:846 lib/user_interaction.py:847 lib/user_interaction.py:854 lib/user_interaction.py:857 lib/user_interaction.py:860 lib/user_interaction.py:859 lib/user_interaction/general_conf.py:71
-msgid "Select Keyboard layout"
-msgstr "Selecciona la distribución del teclado"
+msgid "Select keyboard layout"
+msgstr "Seleccione la distribución del teclado"
 
-#: lib/user_interaction.py:861 lib/user_interaction.py:862 lib/user_interaction.py:869 lib/user_interaction.py:872 lib/user_interaction.py:875 lib/user_interaction.py:874 lib/user_interaction/general_conf.py:92
 msgid "Select one of the regions to download packages from"
-msgstr "Selecciona una de las regiones para descargar paquetes"
+msgstr "Seleccione una de las regiones para descargar paquetes desde"
 
-#: lib/user_interaction.py:883 lib/user_interaction.py:884 lib/user_interaction.py:891 lib/user_interaction.py:894 lib/user_interaction.py:897 lib/user_interaction.py:896 lib/user_interaction/system_conf.py:52
 msgid "Select one or more hard drives to use and configure"
-msgstr "Selecciona uno o más discos duros para usar y configurar"
+msgstr "Seleccione uno o más discos duros para usar y configurar"
 
-#: lib/user_interaction.py:910 lib/user_interaction.py:911 lib/user_interaction.py:918 lib/user_interaction.py:921 lib/user_interaction.py:924 lib/user_interaction.py:923 lib/user_interaction/system_conf.py:80
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para la mejor compatibilidad con tu hardware AMD, puedes querer usar tanto la opción de todo código abierto como la opción AMD / ATI."
+msgstr "Para obtener la mejor compatibilidad con su hardware AMD, es posible que desee utilizar las opciones de código abierto o AMD/ATI."
 
-#: lib/user_interaction.py:912 lib/user_interaction.py:913 lib/user_interaction.py:920 lib/user_interaction.py:923 lib/user_interaction.py:926 lib/user_interaction.py:925 lib/user_interaction/system_conf.py:84
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Para la mejor compatibilidad con tu hardware Intel, puedes querer usar tanto la opción de todo código abierto como la opción Intel.\n"
+msgstr "Para obtener la mejor compatibilidad con su hardware Intel, es posible que desee utilizar las opciones de código abierto o de Intel.\n"
 
-#: lib/user_interaction.py:914 lib/user_interaction.py:915 lib/user_interaction.py:922 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:927 lib/user_interaction/system_conf.py:88
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Para la mejor compatibilidad con tu hardware Nvidia, puedes querer usar el controlador propietario Nvidia.\n"
+msgstr "Para obtener la mejor compatibilidad con su hardware de Nvidia, es posible que desee utilizar el controlador patentado de Nvidia.\n"
 
-#: lib/user_interaction.py:917 lib/user_interaction.py:918 lib/user_interaction.py:925 lib/user_interaction.py:928 lib/user_interaction.py:931 lib/user_interaction.py:930 lib/user_interaction/system_conf.py:92
 msgid ""
 "\n"
 "\n"
@@ -258,125 +208,95 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Selecciona un controlador de gráficos o deja en blanco para instalar todos los controladores de código abierto"
+"Seleccione un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
 
-#: lib/user_interaction.py:921 lib/user_interaction.py:922 lib/user_interaction.py:929 lib/user_interaction.py:932 lib/user_interaction.py:935 lib/user_interaction.py:934 lib/user_interaction/system_conf.py:96
 msgid "All open-source (default)"
-msgstr "Todo código abierto (por defecto)"
+msgstr "Todos de código abierto (predeterminado)"
 
-#: lib/user_interaction.py:940 lib/user_interaction.py:941 lib/user_interaction.py:948 lib/user_interaction.py:951 lib/user_interaction.py:954 lib/user_interaction.py:953 lib/user_interaction/system_conf.py:28
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Elige qué kernels usar o deja en blanco para usar los por defecto \"{}\""
+msgstr "Elija qué kernel usar o déjelo en blanco para usar el kernel \"{}\" predeterminado"
 
-#: lib/user_interaction.py:954 lib/user_interaction.py:955 lib/user_interaction.py:962 lib/user_interaction.py:965 lib/user_interaction.py:968 lib/user_interaction.py:967 lib/user_interaction/locale_conf.py:16
 msgid "Choose which locale language to use"
-msgstr "Elige qué idioma local usar"
+msgstr "Elija qué idioma local usar"
 
-#: lib/user_interaction.py:968 lib/user_interaction.py:969 lib/user_interaction.py:976 lib/user_interaction.py:979 lib/user_interaction.py:982 lib/user_interaction.py:981 lib/user_interaction/locale_conf.py:29
 msgid "Choose which locale encoding to use"
-msgstr "Elige qué codificación local usar"
+msgstr "Elija qué codificación local usar"
 
-#: lib/user_interaction.py:1009 lib/user_interaction.py:1010 lib/user_interaction.py:1017 lib/user_interaction.py:1020 lib/user_interaction.py:1023 lib/user_interaction.py:1022 lib/user_interaction/backwards_compatible_conf.py:49
 msgid "Select one of the values shown below: "
-msgstr "Selecciona uno de los valores mostrados abajo: "
+msgstr "Seleccione uno de los valores que se muestran a continuación: "
 
-#: lib/user_interaction.py:1050 lib/user_interaction.py:1051 lib/user_interaction.py:1058 lib/user_interaction.py:1061 lib/user_interaction.py:1064 lib/user_interaction.py:1063 lib/user_interaction/backwards_compatible_conf.py:88
 msgid "Select one or more of the options below: "
-msgstr "Selecciona una o más opciones de abajo: "
+msgstr "Seleccione una o más de las siguientes opciones: "
 
-#: lib/disk/filesystem.py:86 lib/disk/filesystem.py:87
 msgid "Adding partition...."
 msgstr "Añadiendo partición..."
 
-#: lib/disk/filesystem.py:139 lib/disk/filesystem.py:141 lib/disk/filesystem.py:142
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Necesitas ingresar un tip de filesystem valido para continuar. Vea `man parted` para tipos de sistemas de archivos válidos."
+msgstr "Debe ingresar un tipo de fs válido para continuar. Consulte `man parted` para conocer los tipos de fs válidos."
 
-#: lib/profiles.py:89 lib/profiles.py:90
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "Error: Enlistar perfiles en la URL \"{}\" resultó en:"
 
-#: lib/profiles.py:92 lib/profiles.py:93
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "Error: No se pudo decodificar el resultado \"{}\" como JSON:"
 
-#: lib/menu/selection_menu.py:146 lib/menu/selection_menu.py:144 lib/menu/selection_menu.py:148 lib/menu/selection_menu.py:412 lib/menu/selection_menu.py:420 lib/user_interaction/global_menu.py:48 lib/menu/selection_menu.py:468 lib/menu/global_menu.py:48
-msgid "Select keyboard layout"
-msgstr "Selecciona la distribución del teclado"
+msgid "Keyboard layout"
+msgstr "Distribución del teclado"
 
-#: lib/menu/selection_menu.py:149 lib/menu/selection_menu.py:147 lib/menu/selection_menu.py:151 lib/menu/selection_menu.py:415 lib/menu/selection_menu.py:423 lib/user_interaction/global_menu.py:51 lib/menu/selection_menu.py:471 lib/menu/global_menu.py:51
-msgid "Select mirror region"
-msgstr "Selecciona la región del mirror"
+msgid "Mirror region"
+msgstr "Región del servidor"
 
-#: lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:152 lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:420 lib/menu/selection_menu.py:428 lib/user_interaction/global_menu.py:56 lib/menu/selection_menu.py:476 lib/menu/global_menu.py:56
-msgid "Select locale language"
-msgstr "Selecciona el idioma local"
+msgid "Locale language"
+msgstr "Idioma local"
 
-#: lib/menu/selection_menu.py:156 lib/menu/selection_menu.py:154 lib/menu/selection_menu.py:158 lib/menu/selection_menu.py:422 lib/menu/selection_menu.py:430 lib/user_interaction/global_menu.py:58 lib/menu/selection_menu.py:478 lib/menu/global_menu.py:58
-msgid "Select locale encoding"
-msgstr "Selecciona la codificación local"
+msgid "Locale encoding"
+msgstr "Codificación local"
 
-#: lib/menu/selection_menu.py:159 lib/menu/selection_menu.py:157 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:425 lib/menu/selection_menu.py:433 lib/user_interaction/global_menu.py:61 lib/menu/selection_menu.py:481 lib/menu/global_menu.py:61
-msgid "Select harddrives"
-msgstr "Selecciona los discos duros"
+msgid "Drive(s)"
+msgstr "Disco(s)"
 
-#: lib/menu/selection_menu.py:163 lib/menu/selection_menu.py:161 lib/menu/selection_menu.py:165 lib/menu/selection_menu.py:429 lib/menu/selection_menu.py:437 lib/user_interaction/global_menu.py:65 lib/menu/selection_menu.py:485 lib/menu/global_menu.py:65
-msgid "Select disk layout"
-msgstr "Selecciona la distribución de los discos"
+msgid "Disk layout"
+msgstr "Diseño del disco"
 
-#: lib/menu/selection_menu.py:171 lib/menu/selection_menu.py:169 lib/menu/selection_menu.py:173 lib/menu/selection_menu.py:437 lib/menu/selection_menu.py:445 lib/user_interaction/global_menu.py:73 lib/menu/selection_menu.py:493 lib/menu/global_menu.py:73
-msgid "Set encryption password"
-msgstr "Establecer la contraseña de cifrado"
+msgid "Encryption password"
+msgstr "Contraseña de cifrado"
 
-#: lib/menu/selection_menu.py:177 lib/menu/selection_menu.py:175 lib/menu/selection_menu.py:179 lib/menu/selection_menu.py:443 lib/menu/selection_menu.py:451 lib/user_interaction/global_menu.py:79 lib/menu/selection_menu.py:499 lib/menu/global_menu.py:79
-msgid "Use swap"
-msgstr "Usar swap"
+msgid "Swap"
+msgstr "Swap"
 
-#: lib/menu/selection_menu.py:182 lib/menu/selection_menu.py:180 lib/menu/selection_menu.py:184 lib/menu/selection_menu.py:448 lib/menu/selection_menu.py:456 lib/user_interaction/global_menu.py:84 lib/menu/selection_menu.py:504 lib/menu/global_menu.py:84
-msgid "Select bootloader"
-msgstr "Selecciona el cargador de arranque"
+msgid "Bootloader"
+msgstr "Gestor de arranque"
 
-#: lib/menu/selection_menu.py:188 lib/menu/selection_menu.py:186 lib/menu/selection_menu.py:190 lib/menu/selection_menu.py:454 lib/menu/selection_menu.py:462 lib/user_interaction/global_menu.py:95 lib/menu/selection_menu.py:515 lib/menu/global_menu.py:95
-msgid "Set root password"
-msgstr "Establecer la contraseña de root"
+msgid "Root password"
+msgstr "Contraseña de root"
 
-#: lib/menu/selection_menu.py:193 lib/menu/selection_menu.py:191 lib/menu/selection_menu.py:195 lib/menu/selection_menu.py:459 lib/menu/selection_menu.py:467 lib/user_interaction/global_menu.py:100 lib/menu/selection_menu.py:520 lib/menu/global_menu.py:100
-msgid "Specify superuser account"
-msgstr "Especificar la cuenta de superusuario"
+msgid "Superuser account"
+msgstr "Cuenta de superusuario"
 
-#: lib/menu/selection_menu.py:199 lib/menu/selection_menu.py:197 lib/menu/selection_menu.py:201 lib/menu/selection_menu.py:465 lib/menu/selection_menu.py:473 lib/user_interaction/global_menu.py:107 lib/menu/selection_menu.py:528 lib/menu/global_menu.py:107
-msgid "Specify user account"
-msgstr "Especificar la cuenta de usuario"
+msgid "User account"
+msgstr "Cuenta de usuario"
 
-#: lib/menu/selection_menu.py:205 lib/menu/selection_menu.py:203 lib/menu/selection_menu.py:207 lib/menu/selection_menu.py:471 lib/menu/selection_menu.py:479 lib/user_interaction/global_menu.py:114 lib/menu/selection_menu.py:535 lib/menu/global_menu.py:114
-msgid "Specify profile"
-msgstr "Especificar el perfil"
+msgid "Profile"
+msgstr "Perfil"
 
-#: lib/menu/selection_menu.py:210 lib/menu/selection_menu.py:208 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:476 lib/menu/selection_menu.py:484 lib/user_interaction/global_menu.py:119 lib/menu/selection_menu.py:540 lib/menu/global_menu.py:119
-msgid "Select audio"
-msgstr "Selecciona el audio"
+msgid "Audio"
+msgstr "Audio"
 
-#: lib/menu/selection_menu.py:214 lib/menu/selection_menu.py:212 lib/menu/selection_menu.py:216 lib/menu/selection_menu.py:480 lib/menu/selection_menu.py:488 lib/user_interaction/global_menu.py:123 lib/menu/selection_menu.py:544 lib/menu/global_menu.py:123
-msgid "Select kernels"
-msgstr "Selecciona los kernels"
+msgid "Kernels"
+msgstr "Kernels"
 
-#: lib/menu/selection_menu.py:219 lib/menu/selection_menu.py:217 lib/menu/selection_menu.py:221 lib/menu/selection_menu.py:485 lib/menu/selection_menu.py:493 lib/user_interaction/global_menu.py:128 lib/menu/selection_menu.py:549 lib/menu/global_menu.py:128
-msgid "Additional packages to install"
-msgstr "Paquetes adicionales a instalar"
+msgid "Additional packages"
+msgstr "Paquetes adicionales"
 
-#: lib/menu/selection_menu.py:224 lib/menu/selection_menu.py:222 lib/menu/selection_menu.py:226 lib/menu/selection_menu.py:490 lib/menu/selection_menu.py:498 lib/user_interaction/global_menu.py:139 lib/menu/selection_menu.py:560 lib/menu/global_menu.py:139
-msgid "Configure network"
-msgstr "Configurar la red"
+msgid "Network configuration"
+msgstr "Configuración de la red"
 
-#: lib/menu/selection_menu.py:232 lib/menu/selection_menu.py:230 lib/menu/selection_menu.py:234 lib/menu/selection_menu.py:498 lib/menu/selection_menu.py:506 lib/user_interaction/global_menu.py:150 lib/menu/selection_menu.py:571 lib/menu/global_menu.py:150
-msgid "Set automatic time sync (NTP)"
-msgstr "Establecer la sincronización automática de hora (NTP)"
+msgid "Automatic time sync (NTP)"
+msgstr "Sincronización automática de hora (NTP)"
 
-#: lib/menu/selection_menu.py:310 lib/menu/selection_menu.py:308 lib/menu/selection_menu.py:315 lib/menu/selection_menu.py:527 lib/menu/selection_menu.py:535 lib/user_interaction/global_menu.py:187 lib/menu/selection_menu.py:608 lib/menu/global_menu.py:187
 msgid "Install ({} config(s) missing)"
-msgstr "Instalar ({} ajuste(s) faltantes)"
+msgstr "Instalar ({} ajuste(s) faltante(s))"
 
-#: lib/menu/selection_menu.py:373 lib/menu/selection_menu.py:371 lib/menu/selection_menu.py:378 lib/menu/selection_menu.py:591 lib/menu/selection_menu.py:599 lib/user_interaction/global_menu.py:249 lib/menu/selection_menu.py:669 lib/menu/global_menu.py:249
 msgid ""
 "You decided to skip harddrive selection\n"
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
@@ -388,67 +308,51 @@ msgstr ""
 "ADVERTENCIA: Archinstall no verificará la idoneidad de esta configuración\n"
 "¿Desea continuar?"
 
-#: lib/disk/filesystem.py:97 lib/disk/filesystem.py:98
 msgid "Re-using partition instance: {}"
 msgstr "Reutilizando instancia de partición: {}"
 
-#: lib/user_interaction.py:590 lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:595 lib/user_interaction/partitioning_conf.py:119 lib/user_interaction/partitioning_conf.py:120
 msgid "Create a new partition"
 msgstr "Crear una nueva partición"
 
-#: lib/user_interaction.py:592 lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:597 lib/user_interaction/partitioning_conf.py:121 lib/user_interaction/partitioning_conf.py:122
 msgid "Delete a partition"
 msgstr "Eliminar una partición"
 
-#: lib/user_interaction.py:593 lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:598 lib/user_interaction/partitioning_conf.py:122 lib/user_interaction/partitioning_conf.py:123
 msgid "Clear/Delete all partitions"
 msgstr "Limpiar/Eliminar todas las particiones"
 
-#: lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:599 lib/user_interaction/partitioning_conf.py:123 lib/user_interaction/partitioning_conf.py:124
 msgid "Assign mount-point for a partition"
 msgstr "Asignar punto de montaje para una partición"
 
-#: lib/user_interaction.py:595 lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:600 lib/user_interaction/partitioning_conf.py:124 lib/user_interaction/partitioning_conf.py:125
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "Marcar/Desmarcar una partición para ser formateada (borra los datos)"
 
-#: lib/user_interaction.py:596 lib/user_interaction.py:599 lib/user_interaction.py:602 lib/user_interaction.py:601 lib/user_interaction/partitioning_conf.py:125 lib/user_interaction/partitioning_conf.py:126
 msgid "Mark/Unmark a partition as encrypted"
 msgstr "Marcar/Desmarcar una partición como encriptada"
 
-#: lib/user_interaction.py:597 lib/user_interaction.py:600 lib/user_interaction.py:603 lib/user_interaction.py:602 lib/user_interaction/partitioning_conf.py:126 lib/user_interaction/partitioning_conf.py:127
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
 msgstr "Marcar/Desmarcar una partición como bootable (automática para /boot)"
 
-#: lib/user_interaction.py:598 lib/user_interaction.py:601 lib/user_interaction.py:604 lib/user_interaction.py:603 lib/user_interaction/partitioning_conf.py:127 lib/user_interaction/partitioning_conf.py:128
 msgid "Set desired filesystem for a partition"
 msgstr "Establecer el sistema de archivos deseado para una partición"
 
-#: lib/menu/selection_menu.py:239 lib/menu/selection_menu.py:237 lib/menu/selection_menu.py:241 lib/menu/selection_menu.py:270 lib/menu/selection_menu.py:507 lib/menu/selection_menu.py:515 lib/user_interaction/global_menu.py:167 lib/menu/selection_menu.py:588 lib/menu/global_menu.py:167
 msgid "Abort"
-msgstr "Cancelar"
+msgstr "Abortar"
 
-#: lib/menu/selection_menu.py:183 lib/menu/selection_menu.py:187 lib/menu/selection_menu.py:451 lib/menu/selection_menu.py:459 lib/user_interaction/global_menu.py:89 lib/menu/selection_menu.py:509 lib/menu/global_menu.py:89
-msgid "Specify hostname"
-msgstr "Especificar el nombre del host"
+msgid "Hostname"
+msgstr "Nombre del host"
 
-#: lib/menu/selection_menu.py:228 lib/menu/selection_menu.py:492 lib/menu/selection_menu.py:500 lib/user_interaction/global_menu.py:141 lib/menu/selection_menu.py:562 lib/menu/global_menu.py:141
 msgid "Not configured, unavailable unless setup manually"
 msgstr "No configurado, no disponible a menos que se configure manualmente"
 
-#: lib/menu/selection_menu.py:231 lib/menu/selection_menu.py:495 lib/menu/selection_menu.py:503 lib/user_interaction/global_menu.py:145 lib/menu/selection_menu.py:566 lib/menu/global_menu.py:145
-msgid "Select timezone"
-msgstr "Selecciona la zona horaria"
+msgid "Timezone"
+msgstr "Zona horaria"
 
-#: lib/menu/selection_menu.py:266 lib/menu/selection_menu.py:276 lib/menu/selection_menu.py:312
 msgid "Set/Modify the below options"
 msgstr "Establecer/Modificar las opciones siguientes"
 
-#: lib/menu/selection_menu.py:272
 msgid "Install"
 msgstr "Instalar"
 
-#: lib/menu/menu.py:68 lib/menu/menu.py:75 lib/menu/menu.py:119
 msgid ""
 "Use ESC to skip\n"
 "\n"
@@ -456,197 +360,128 @@ msgstr ""
 "Usar ESC para saltar\n"
 "\n"
 
-#: lib/user_interaction.py:591 lib/user_interaction.py:594 lib/user_interaction.py:597 lib/user_interaction.py:596 lib/user_interaction/partitioning_conf.py:120 lib/user_interaction/partitioning_conf.py:121
 msgid "Suggest partition layout"
 msgstr "Sugerir el diseño de partición"
 
-#: lib/user_interaction.py:101 lib/user_interaction/utils.py:43
 msgid "Enter a password: "
 msgstr "Introduzca una contraseña: "
 
-#: lib/disk/filesystem.py:117 lib/disk/filesystem.py:118
 msgid "Enter a encryption password for {}"
 msgstr "Introduzca una contraseña de cifrado para {}"
 
-#: lib/menu/selection_menu.py:174 lib/menu/selection_menu.py:567 lib/menu/selection_menu.py:575 lib/user_interaction/global_menu.py:225 lib/menu/selection_menu.py:646 lib/menu/global_menu.py:225
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Introduzca la contraseña de cifrado de disco (dejar en blanco para no cifrar): "
 
-#: lib/menu/selection_menu.py:407 lib/menu/selection_menu.py:617 lib/menu/selection_menu.py:625
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Crear un super-usuario requerido con privilegios sudo: "
 
-#: lib/menu/selection_menu.py:347 lib/menu/selection_menu.py:554 lib/menu/selection_menu.py:562 lib/user_interaction/global_menu.py:220 lib/menu/selection_menu.py:641 lib/menu/global_menu.py:220
 msgid "Enter root password (leave blank to disable root): "
 msgstr "Introduzca la contraseña de root (dejar en blanco para desactivar root): "
 
-#: lib/user_interaction.py:307 lib/user_interaction.py:324 lib/user_interaction/manage_users_conf.py:86 lib/user_interaction/manage_users_conf.py:121
 msgid "Password for user \"{}\": "
 msgstr "Contraseña para el usuario “{}”: "
 
-#: lib/user_interaction.py:405 lib/user_interaction.py:408 lib/user_interaction.py:407 lib/user_interaction/general_conf.py:152
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Verificando que los paquetes adicionales existen (esto puede tardar unos segundos)"
 
-#: lib/user_interaction.py:281 lib/user_interaction/general_conf.py:22
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
 msgstr "Te gustaría utilizar la sincronización automática de hora (NTP) con los servidores de hora predeterminados?\n"
 
-#: lib/user_interaction.py:282 lib/user_interaction/general_conf.py:23
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr "La hora del hardware y otros pasos post-configuración pueden ser necesarios para que NTP funcione. Para más información, por favor, consulte la wiki de Arch"
 
-#: lib/menu/selection_menu.py:411 lib/menu/selection_menu.py:621 lib/menu/selection_menu.py:629
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Introduzca un nombre de usuario para crear un usuario adicional (dejar en blanco para saltar): "
 
-#: lib/menu/menu.py:116
-#, fuzzy
 msgid "Use ESC to skip\n"
-msgstr ""
-"Usar ESC para saltar\n"
-"\n"
+msgstr "Use ESC para saltar\n"
 
-#: lib/menu/list_manager.py:117
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
+"\n"
+"Elija un objeto de la lista y seleccione una de las acciones disponibles para que se ejecute"
 
-#: lib/menu/list_manager.py:130 lib/user_interaction/subvolume_config.py:90
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
-#: lib/menu/list_manager.py:131
-#, fuzzy
 msgid "Confirm and exit"
-msgstr "Configurar la red"
+msgstr "Confirmar y salir"
 
-#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:228 lib/menu/list_manager.py:251 lib/menu/list_manager.py:276 lib/user_interaction/subvolume_config.py:12 lib/user_interaction/subvolume_config.py:44 lib/user_interaction/subvolume_config.py:78 lib/user_interaction/subvolume_config.py:82 lib/user_interaction/subvolume_config.py:85
 msgid "Add"
-msgstr ""
+msgstr "Añadir"
 
-#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:231 lib/menu/list_manager.py:255 lib/user_interaction/subvolume_config.py:78
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
-#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:237 lib/menu/list_manager.py:261 lib/user_interaction/subvolume_config.py:82 lib/user_interaction/subvolume_config.py:85
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
-#: lib/menu/list_manager.py:135 lib/menu/list_manager.py:242 lib/menu/list_manager.py:264 lib/user_interaction/subvolume_config.py:40
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
-#: lib/menu/list_manager.py:185
-#, fuzzy
 msgid "Select an action for < {} >"
-msgstr ""
-"Selecciona qué hacer con\n"
-"{}"
+msgstr "Seleccione una acción para < {} >"
 
-#: lib/menu/list_manager.py:229
-msgid "Add :"
-msgstr ""
-
-#: lib/menu/list_manager.py:233
-msgid "Copy to :"
-msgstr ""
-
-#: lib/menu/list_manager.py:240
-msgid "Edite :"
-msgstr ""
-
-#: lib/menu/list_manager.py:252
-msgid "Key :"
-msgstr ""
-
-#: lib/menu/list_manager.py:253
-msgid "Value :"
-msgstr ""
-
-#: lib/menu/list_manager.py:257
 msgid "Copy to new key:"
-msgstr ""
+msgstr "Copiar a nueva clave:"
 
-#: lib/menu/list_manager.py:262
-#, python-brace-format
-msgid "Edit {origkey} :"
-msgstr ""
-
-#: lib/models/network_configuration.py:53 lib/models/network_configuration.py:74
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr ""
+msgstr "Tipo de nic desconocido: {}. Los valores posibles son {}"
 
-#: lib/configuration.py:75
 msgid ""
 "\n"
 "This is your chosen configuration:"
 msgstr ""
+"\n"
+"Esta es su configuración elegida:"
 
-#: lib/pacman.py:18
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
+msgstr "Pacman ya se está ejecutando, esperando un máximo de 10 minutos para que finalice."
 
-#: lib/pacman.py:25
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr ""
+msgstr "El bloqueo de pacman preexistente nunca salió. Limpie cualquier sesión de pacman existente antes de usar archinstall."
 
-#: lib/user_interaction/general_conf.py:174
 msgid "Choose which optional additional repositories to enable"
-msgstr ""
+msgstr "Elija qué repositorios adicionales opcionales habilitar"
 
-#: lib/user_interaction/manage_users_conf.py:32
-msgid "Add an user"
-msgstr ""
+msgid "Add a user"
+msgstr "Añadir un usuario"
 
-#: lib/user_interaction/manage_users_conf.py:33
-#, fuzzy
 msgid "Change password"
-msgstr "Introduzca una contraseña: "
+msgstr "Cambiar contraseña"
 
-#: lib/user_interaction/manage_users_conf.py:34
 msgid "Promote/Demote user"
-msgstr ""
+msgstr "Promocionar/Degradar usuario"
 
-#: lib/user_interaction/manage_users_conf.py:35
 msgid "Delete User"
-msgstr ""
+msgstr "Eliminar usuario"
 
-#: lib/user_interaction/manage_users_conf.py:99
 msgid ""
 "\n"
 "Define a new user\n"
 msgstr ""
+"\n"
+"Definir un nuevo usuario\n"
 
-#: lib/user_interaction/manage_users_conf.py:100
 msgid "User Name : "
-msgstr ""
+msgstr "Nombre de usuario : "
 
-#: lib/user_interaction/manage_users_conf.py:115
-#, fuzzy
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "Debería este usuario ser un superusuario (sudoer)?"
+msgstr "¿Debe {} ser un superusuario (sudoer)?"
 
-#: lib/user_interaction/manage_users_conf.py:161
-#, fuzzy
 msgid "Define users with sudo privilege: "
-msgstr "Crear un super-usuario requerido con privilegios sudo: "
+msgstr "Defina usuarios con privilegio sudo: "
 
-#: lib/user_interaction/network_conf.py:24
-#, fuzzy
 msgid "No network configuration"
-msgstr "Copiar la configuración de red ISO a la instalación"
+msgstr "Sin configuración de red"
 
-#: lib/user_interaction/partitioning_conf.py:128 lib/user_interaction/partitioning_conf.py:129
-#, fuzzy
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Establecer el sistema de archivos deseado para una partición"
+msgstr "Establecer los subvolúmenes deseados en una partición btrfs"
 
-#: lib/user_interaction/partitioning_conf.py:296 lib/user_interaction/partitioning_conf.py:303
-#, fuzzy
 msgid ""
 "{}\n"
 "\n"
@@ -654,135 +489,299 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecciona la partición a configurar con un sistema de archivos"
+"Seleccione en qué partición configurar los subvolúmenes"
 
-#: lib/user_interaction/partitioning_conf.py:305 lib/user_interaction/partitioning_conf.py:312
 msgid "Manage btrfs subvolumes for current partition"
-msgstr ""
+msgstr "Administrar subvolúmenes btrfs para la partición actual"
 
-#: lib/user_interaction/save_conf.py:24 lib/user_interaction/save_conf.py:29
 msgid "No configuration"
-msgstr ""
+msgstr "Sin configuración"
 
-#: lib/user_interaction/save_conf.py:42
 msgid "Save user configuration"
-msgstr ""
+msgstr "Guardar configuración de usuario"
 
-#: lib/user_interaction/save_conf.py:43
 msgid "Save user credentials"
-msgstr ""
+msgstr "Guardar credenciales de usuario"
 
-#: lib/user_interaction/save_conf.py:44
-#, fuzzy
 msgid "Save disk layout"
-msgstr "Selecciona la distribución de los discos"
+msgstr "Guardar diseño de disco"
 
-#: lib/user_interaction/save_conf.py:45
 msgid "Save all"
-msgstr ""
+msgstr "Guardar todo"
 
-#: lib/user_interaction/save_conf.py:48
-#, fuzzy
 msgid "Choose which configuration to save"
-msgstr "Elige qué idioma local usar"
+msgstr "Elija qué configuración guardar"
 
-#: lib/user_interaction/save_conf.py:59
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr ""
+msgstr "Introduzca un directorio para guardar la(s) configuración(es): "
 
-#: lib/user_interaction/save_conf.py:63
 msgid "Not a valid directory: {}"
-msgstr ""
+msgstr "No es un directorio válido: {}"
 
-#: lib/user_interaction/utils.py:32
 msgid "The password you are using seems to be weak,"
-msgstr ""
+msgstr "La contraseña que está utilizando parece ser débil,"
 
-#: lib/user_interaction/utils.py:33
-#, fuzzy
 msgid "are you sure you want to use it?"
-msgstr "Realmente desea abortar?"
+msgstr "¿Estás seguro de que quieres usarlo?"
 
-#: lib/user_interaction/global_menu.py:134 lib/menu/selection_menu.py:555 lib/menu/global_menu.py:134
-#, fuzzy
-msgid "Additional repositories to enable"
-msgstr "Paquetes adicionales a instalar"
+msgid "Optional repositories"
+msgstr "Repositorios adicionales"
 
-#: lib/user_interaction/global_menu.py:155 lib/menu/selection_menu.py:576 lib/menu/global_menu.py:155
 msgid "Save configuration"
-msgstr ""
+msgstr "Guardar configuración"
 
-#: lib/user_interaction/global_menu.py:192 lib/menu/selection_menu.py:613 lib/menu/global_menu.py:192
 msgid "Missing configurations:\n"
-msgstr ""
+msgstr "Configuraciones que faltan:\n"
 
-#: lib/user_interaction/global_menu.py:210 lib/menu/selection_menu.py:631 lib/menu/global_menu.py:210
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr ""
+msgstr "Se debe especificar una contraseña raíz o al menos 1 superusuario"
 
-#: lib/user_interaction/global_menu.py:275 lib/menu/selection_menu.py:695 lib/menu/global_menu.py:275
-#, fuzzy
 msgid "Manage superuser accounts: "
-msgstr "Especificar la cuenta de superusuario"
+msgstr "Administrar cuentas de superusuario: "
 
-#: lib/user_interaction/global_menu.py:279 lib/menu/selection_menu.py:699 lib/menu/global_menu.py:279
-#, fuzzy
 msgid "Manage ordinary user accounts: "
-msgstr "Especificar la cuenta de usuario"
+msgstr "Administrar cuentas de usuario ordinarias: "
 
-#: lib/user_interaction/subvolume_config.py:17
 msgid " Subvolume :{:16}"
-msgstr ""
+msgstr " Subvolumen :{:16}"
 
-#: lib/user_interaction/subvolume_config.py:19 lib/user_interaction/subvolume_config.py:22
 msgid " mounted at {:16}"
-msgstr ""
+msgstr " montado en {:16}"
 
-#: lib/user_interaction/subvolume_config.py:26
 msgid " with option {}"
-msgstr ""
+msgstr " con opción {}"
 
-#: lib/user_interaction/subvolume_config.py:46
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
+"\n"
+"Rellene los valores deseados para un nuevo subvolumen\n"
 
-#: lib/user_interaction/subvolume_config.py:77
 msgid "Subvolume name "
-msgstr ""
+msgstr "Nombre del subvolumen "
 
-#: lib/user_interaction/subvolume_config.py:81
 msgid "Subvolume mountpoint"
-msgstr ""
+msgstr "Punto de montaje de subvolumen"
 
-#: lib/user_interaction/subvolume_config.py:84
 msgid "Subvolume options"
-msgstr ""
+msgstr "Opciones de subvolumen"
 
-#: lib/user_interaction/subvolume_config.py:87
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
-#: lib/user_interaction/subvolume_config.py:121
 msgid "Subvolume name :"
-msgstr ""
+msgstr "Nombre del subvolumen :"
 
-#: lib/user_interaction/subvolume_config.py:124
-#, fuzzy
 msgid "Select a mount point :"
-msgstr "Selecciona una zona horaria"
+msgstr "Seleccione un punto de montaje :"
 
-#: lib/user_interaction/subvolume_config.py:128
 msgid "Select the desired subvolume options "
-msgstr ""
+msgstr "Seleccione las opciones de subvolumen deseadas "
 
-#: lib/user_interaction/manage_users_conf.py:161
-#, fuzzy
 msgid "Define users with sudo privilege, by username: "
-msgstr "Crear un super-usuario requerido con privilegios sudo: "
+msgstr "Defina usuarios con privilegio sudo, por nombre de usuario: "
 
-#: lib/installer.py:152
-#, fuzzy
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Un archivo de registro ha sido creado aquí: {} {}"
+msgstr "[!] Se ha creado un archivo de registro aquí: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "¿Le gustaría utilizar subvolúmenes BTRFS con una estructura predeterminada?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "¿Te gustaría usar la compresión BTRFS?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "¿Le gustaría crear una partición separada para /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Las unidades seleccionadas no tienen la capacidad mínima requerida para una sugerencia automática\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Capacidad mínima para la partición /home: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Capacidad mínima para la partición Arch Linux: {}GB"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "yes"
+msgstr "sí"
+
+msgid "no"
+msgstr "no"
+
+msgid "set: {}"
+msgstr "establecer: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "El ajuste de configuración manual debe ser una lista"
+
+msgid "No iface specified for manual configuration"
+msgstr "No se especificó iface para la configuración manual"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "La configuración manual de la NIC sin DHCP automático requiere una dirección IP"
+
+msgid "Add interface"
+msgstr "Añadir interfaz"
+
+msgid "Edit interface"
+msgstr "Editar interfaz"
+
+msgid "Delete interface"
+msgstr "Eliminar intefaz"
+
+msgid "Select interface to add"
+msgstr "Seleccione la interfaz para agregar"
+
+msgid "Manual configuration"
+msgstr "Configuración manual"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Marcar/Desmarcar una partición como comprimida (solo btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "La contraseña que está utilizando parece ser débil, ¿está seguro de que desea usarla?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Proporciona una selección de entornos de escritorio y administradores de ventanas en mosaico, p.e. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Seleccione su entorno de escritorio deseado"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Una instalación muy básica que te permite personalizar Arch Linux como mejor te parezca."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Instala un sistema mínimo, así como controladores xorg y gráficos."
+
+msgid "Press Enter to continue."
+msgstr "Presione Entrar para continuar."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "¿Le gustaría hacer chroot en la instalación recién creada y realizar la configuración posterior a la instalación?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "¿Está seguro de que desea restablecer esta configuración?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Seleccione uno o más discos duros para usar y configurar\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "¡Cualquier modificación a la configuración existente restablecerá el diseño del disco!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Si restablece la selección del disco duro, esto también restablecerá el diseño actual del disco. ¿Está seguro?"
+
+msgid "Save and exit"
+msgstr "Guardar y salir"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"contiene particiones en cola, esto las eliminará, ¿está seguro?"
+
+msgid "No audio server"
+msgstr "Sin servidor de audio"
+
+msgid "(default)"
+msgstr "(predeterminado)"
+
+msgid "Use ESC to skip"
+msgstr "Use ESC para saltar"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Use CTRL+C para restablecer la selección actual\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Copiar a: "
+
+msgid "Edit: "
+msgstr "Editar: "
+
+msgid "Key: "
+msgstr "Clave: "
+
+msgid "Edit {}: "
+msgstr "Editar {}: "
+
+msgid "Add: "
+msgstr "Añadir: "
+
+msgid "Value: "
+msgstr "Valor: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Puede omitir la selección de una unidad y la partición y usar cualquier configuración de unidad que esté montada en /mnt (experimental)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Seleccione uno de los discos u omita y use /mnt como predeterminado"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Seleccione qué particiones marcar para formatear:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Utilice HSM para desbloquear la unidad cifrada"
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Free space"
+msgstr "Espacio libre"
+
+msgid "Bus-type"
+msgstr "Tipo de bus"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Se debe especificar una contraseña de root o al menos 1 usuario con privilegios sudo"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "El nombre de usuario que ingresó no es válido. Intente nuevamente"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
+
+msgid "Select which partitions to encrypt:"
+msgstr "Seleccione qué particiones cifrar:"
+
+#~ msgid "Select disk layout"
+#~ msgstr "Seleccione el diseño del disco"
+
+#~ msgid "Add :"
+#~ msgstr "Añadir :"
+
+#~ msgid "Value :"
+#~ msgstr "Valor :"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "Editar {origkey} :"
+
+#~ msgid "Copy to :"
+#~ msgstr "Copiar a :"
+
+#~ msgid "Edite :"
+#~ msgstr "Editar :"
+
+#~ msgid "Key :"
+#~ msgstr "Clave :"

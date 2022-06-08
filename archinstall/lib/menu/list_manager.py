@@ -54,7 +54,7 @@ The default implementation can handle simple lists and a key:value dictionary. T
 A sample of basic usage is included at the end of the source.
 
 More sophisticaded uses can be achieved by
-* changing the action list and the null_action during intialization
+* changing the action list and the null_action during initialization
 ```
 	opciones = ListManager('Vamos alla',opciones,[str(_('Add')),str(_('Delete'))],_('Add')).run()
 ```
@@ -84,15 +84,26 @@ The contents in the base class of this methods serve for a very basic usage, and
 ```
 
 """
+import copy
+from os import system
+from typing import Union, Any, TYPE_CHECKING, Dict, Optional
 
 from .text_input import TextInput
 from .menu import Menu
-from os import system
-from copy import copy
-from typing import Union
+
+if TYPE_CHECKING:
+	_: Any
+
 
 class ListManager:
-	def __init__(self,prompt :str, base_list :Union[list,dict] ,base_actions :list = None,null_action :str = None, default_action :Union[str,list] = None, header :Union[str,list] = None):
+	def __init__(
+		self,
+		prompt :str,
+		base_list :Union[list,dict] ,
+		base_actions :list = None,
+		null_action :str = None,
+		default_action :Union[str,list] = None,
+		header :Union[str,list] = None):
 		"""
 		param :prompt  Text which will appear at the header
 		type param: string | DeferredTranslation
@@ -115,135 +126,152 @@ class ListManager:
 		"""
 
 		explainer = str(_('\n Choose an object from the list, and select one of the available actions for it to execute'))
-		self.prompt = prompt + explainer if prompt else explainer
+		self._prompt = prompt + explainer if prompt else explainer
 
-		self.null_action = str(null_action) if null_action else None
+		self._null_action = str(null_action) if null_action else None
 
 		if not default_action:
-			self.default_action = [self.null_action,]
+			self._default_action = [self._null_action]
 		elif isinstance(default_action,(list,tuple)):
-			self.default_action = default_action
+			self._default_action = default_action
 		else:
-			self.default_action = [str(default_action),]
+			self._default_action = [str(default_action),]
 
-		self.header = header if header else None
-		self.cancel_action = str(_('Cancel'))
-		self.confirm_action = str(_('Confirm and exit'))
-		self.separator = ''
-		self.bottom_list = [self.confirm_action,self.cancel_action]
-		self.bottom_item = [self.cancel_action]
-		self.base_actions = base_actions if base_actions else [str(_('Add')),str(_('Copy')),str(_('Edit')),str(_('Delete'))]
+		self._header = header if header else None
+		self._cancel_action = str(_('Cancel'))
+		self._confirm_action = str(_('Confirm and exit'))
+		self._separator = ''
+		self._bottom_list = [self._confirm_action, self._cancel_action]
+		self._bottom_item = [self._cancel_action]
+		self._base_actions = base_actions if base_actions else [str(_('Add')), str(_('Copy')), str(_('Edit')), str(_('Delete'))]
+		self._original_data = copy.deepcopy(base_list)
+		self._data = copy.deepcopy(base_list) # as refs, changes are immediate
 
-		self.base_data = base_list
-		self.data = copy(base_list) # as refs, changes are immediate
 		# default values for the null case
-		self.target = None
-		self.action = self.null_action
-		if len(self.data) == 0 and self.null_action:
-			self.exec_action()
+		self.target: Optional[Any] = None
+		self.action = self._null_action
 
 	def run(self):
 		while True:
-			self.data_formatted = self.reformat()
-			options = self.data_formatted + [self.separator]
-			if self.default_action:
-				options += self.default_action
-			options += self.bottom_list
+			# this will return a dictionary with the key as the menu entry to be displayed
+			# and the value is the original value from the self._data container
+
+			data_formatted = self.reformat(self._data)
+			options = list(data_formatted.keys())
+
+			if len(options) > 0:
+				options.append(self._separator)
+
+			if self._default_action:
+				options += self._default_action
+
+			options += self._bottom_list
+
 			system('clear')
-			target = Menu(self.prompt,
+
+			target = Menu(
+				self._prompt,
 				options,
 				sort=False,
 				clear_screen=False,
 				clear_menu_on_exit=False,
-				header=self.header,
-				skip_empty_entries=True).run()
+				header=self._header,
+				skip_empty_entries=True,
+				skip=False
+			).run()
 
-			if not target or target in self.bottom_list:
+			if not target.value or target.value in self._bottom_list:
 				self.action = target
 				break
-			if target and target == self.separator:
-				continue
-			if target and target in self.default_action:
-				self.action = target
-				target = None
-				self.target = None
-				self.exec_action()
-				continue
-			if isinstance(self.data,dict):
-				key = list(self.data.keys())[self.data_formatted.index(target)]
-				self.target = {key: self.data[key]}
-			else:
-				self.target = self.data[self.data_formatted.index(target)]
-			# Possible enhacement. If run_actions returns false a message line indicating the failure
-			self.run_actions(target)
 
-		if not target or target == self.cancel_action:  # TODO dubious
-			return self.base_data  # return the original list
+			if target.value and target.value in self._default_action:
+				self.action = target.value
+				self.target = None
+				self._data = self.exec_action(self._data)
+				continue
+
+			if isinstance(self._data,dict):
+				data_key = data_formatted[target.value]
+				key = self._data[data_key]
+				self.target = {data_key: key}
+			elif isinstance(self._data, list):
+				self.target = [d for d in self._data if d == data_formatted[target.value]][0]
+			else:
+				self.target = self._data[data_formatted[target.value]]
+
+			# Possible enhancement. If run_actions returns false a message line indicating the failure
+			self.run_actions(target.value)
+
+		if target.value == self._cancel_action:  # TODO dubious
+			return self._original_data  # return the original list
 		else:
-			return self.data
+			return self._data
 
 	def run_actions(self,prompt_data=None):
-		options = self.action_list() + self.bottom_item
+		options = self.action_list() + self._bottom_item
 		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
-		self.action = Menu(prompt,
-				options,
-				sort=False,
-				skip=False,
-				clear_screen=False,
-				clear_menu_on_exit=False,
-				preset_values=self.bottom_item,
-				show_search_hint=False).run()
-		if self.action == self.cancel_action:
-			return False
-		else:
-			return self.exec_action()
+		choice = Menu(
+			prompt,
+			options,
+			sort=False,
+			clear_screen=False,
+			clear_menu_on_exit=False,
+			preset_values=self._bottom_item,
+			show_search_hint=False
+		).run()
+
+		self.action = choice.value
+
+		if self.action and self.action != self._cancel_action:
+			self._data = self.exec_action(self._data)
+
 	"""
 	The following methods are expected to be overwritten by the user if the needs of the list are beyond the simple case
 	"""
 
-	def reformat(self):
+	def reformat(self, data: Any) -> Dict[str, Any]:
 		"""
 		method to get the data in a format suitable to be shown
-		It is executed once for run loop and processes the whole self.data structure
+		It is executed once for run loop and processes the whole self._data structure
 		"""
-		if isinstance(self.data,dict):
-			return list(map(lambda x:f"{x} : {self.data[x]}",self.data))
+		if isinstance(data,dict):
+			return {f'{k}: {v}': k for k, v in data.items()}
 		else:
-			return list(map(lambda x:str(x),self.data))
+			return {str(k): k for k in data}
 
 	def action_list(self):
 		"""
 		can define alternate action list or customize the list  for each item.
 		Executed after any item is selected, contained in self.target
 		"""
-		return self.base_actions
+		return self._base_actions
 
-	def exec_action(self):
+	def exec_action(self, data: Any):
 		"""
 		what's executed one an item (self.target) and one action (self.action) is selected.
 		Should be overwritten by the user
-		The result is expected to update self.data in this routine, else it is ignored
+		The result is expected to update self._data in this routine, else it is ignored
 		The basic code is useful for simple lists and dictionaries (key:value pairs, both strings)
 		"""
 		# TODO guarantee unicity
-		if isinstance(self.data,list):
+		if isinstance(self._data,list):
 			if self.action == str(_('Add')):
-				self.target = TextInput(_('Add :'),None).run()
-				self.data.append(self.target)
+				self.target = TextInput(_('Add: '),None).run()
+				self._data.append(self.target)
 			if self.action == str(_('Copy')):
 				while True:
-					target = TextInput(_('Copy to :'),self.target).run()
+					target = TextInput(_('Copy to: '),self.target).run()
 					if target != self.target:
-						self.data.append(self.target)
+						self._data.append(self.target)
 						break
 			elif self.action == str(_('Edit')):
 				tgt = self.target
-				idx = self.data.index(self.target)
-				result = TextInput(_('Edite :'),tgt).run()
-				self.data[idx] = result
+				idx = self._data.index(self.target)
+				result = TextInput(_('Edit: '),tgt).run()
+				self._data[idx] = result
 			elif self.action == str(_('Delete')):
-				del self.data[self.data.index(self.target)]
-		elif isinstance(self.data,dict):
+				del self._data[self._data.index(self.target)]
+		elif isinstance(self._data,dict):
 			# allows overwrites
 			if self.target:
 				origkey,origval = list(self.target.items())[0]
@@ -251,29 +279,19 @@ class ListManager:
 				origkey = None
 				origval = None
 			if self.action == str(_('Add')):
-				key = TextInput(_('Key :'),None).run()
-				value = TextInput(_('Value :'),None).run()
-				self.data[key] = value
+				key = TextInput(_('Key: '),None).run()
+				value = TextInput(_('Value: '),None).run()
+				self._data[key] = value
 			if self.action == str(_('Copy')):
 				while True:
 					key = TextInput(_('Copy to new key:'),origkey).run()
 					if key != origkey:
-						self.data[key] = origval
+						self._data[key] = origval
 						break
 			elif self.action == str(_('Edit')):
-				value = TextInput(_(f'Edit {origkey} :'),origval).run()
-				self.data[origkey] = value
+				value = TextInput(_('Edit {}: ').format(origkey), origval).run()
+				self._data[origkey] = value
 			elif self.action == str(_('Delete')):
-				del self.data[origkey]
+				del self._data[origkey]
 
-		return True
-
-
-if __name__ == "__main__":
-	# opciones = ['uno','dos','tres','cuatro']
-	# opciones = archinstall.list_mirrors()
-	opciones = {'uno':1,'dos':2,'tres':3,'cuatro':4}
-	acciones = ['editar','borrar','añadir']
-	cabecera = ["En Jaen Donde Resido","Vive don Lope de Sosa"]
-	opciones = ListManager('Vamos alla',opciones,None,_('Add'),default_action=acciones,header=cabecera).run()
-	print(opciones)
+		return self._data

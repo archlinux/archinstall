@@ -6,7 +6,7 @@ from archinstall.lib.hardware import __packages__ as __hwd__packages__
 
 is_top_level_profile = True
 
-__description__ = 'Installs a minimal system as well as xorg and graphics drivers.'
+__description__ = str(_('Installs a minimal system as well as xorg and graphics drivers.'))
 
 __packages__ = [
 	'dkms',
@@ -25,12 +25,16 @@ def _prep_function(*args, **kwargs):
 	for more input before any other installer steps start.
 	"""
 
-	archinstall.storage["gfx_driver_packages"] = archinstall.select_driver()
+	driver = archinstall.select_driver()
+
+	if driver:
+		archinstall.storage["gfx_driver_packages"] = driver
+		return True
 
 	# TODO: Add language section and/or merge it with the locale selected
 	#       earlier in for instance guided.py installer.
 
-	return True
+	return False
 
 
 # Ensures that this code only gets executed if executed

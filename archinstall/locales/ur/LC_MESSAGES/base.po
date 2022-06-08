@@ -1,0 +1,782 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] یہاں ایک لاگ فائل بنائی گئی ہے: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    براہ کرم یہ مسئلہ (اور فائل) https://github.com/archlinux/archinstall/issues پراپلوڈکریں"
+
+msgid "Do you really want to abort?"
+msgstr "کیا آپ واقعی بند کرنا چاہتے ہیں؟"
+
+msgid "And one more time for verification: "
+msgstr "تصدیق کے لیے ایک بار اور:"
+
+msgid "Would you like to use swap on zram?"
+msgstr "کیا آپ زی ریم پر سواپ استعمال کرنا چاہیں گے؟"
+
+msgid "Desired hostname for the installation: "
+msgstr "انسٹالیشن کے لیے منتخب ہوسٹ کا نام:"
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "sudo  کے ساتھ مطلوبہ سپر یوزر کے لیے صارف نام:"
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "انسٹال کے لیے کوئی اضافی صارف (نہ ہونے کی صورت میں خالی چھوڑ دیں):"
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "کیا اس صارف کو سپر یوزر (sudoer) ہونا چاہیے؟"
+
+msgid "Select a timezone"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "کیا آپ GRUB کو systemd-boot کے بجائے بوٹ لوڈر کے طور پر استعمال کرنا چاہیں گے؟"
+
+msgid "Choose a bootloader"
+msgstr "بوٹ لوڈرکا انتخاب کریں"
+
+msgid "Choose an audio server"
+msgstr "آڈیو سرور کا انتخاب کریں"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "صرف پیکیج جیسے کہ بیس، بیس ڈیول، لینکس، لینکس فرم ویئر، efibootmgr اور اختیاری پروفائل پیکجز انسٹال ہیں۔"
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "اگر آپ ویب براؤزر جیسےکہ فائر فاکس یا کرومیم چاہتے ہیں، تو آپ اسے اگلے پرامپٹ میں بتا سکتے ہیں۔"
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (الگ الگ لیکھیں، نہیں کی صورت میں خالی چھوڑیں):"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "آئی ایس او نیٹ ورک کنفیگریشن کو انسٹالیشن میں کاپی کریں"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
+
+msgid "Select one network interface to configure"
+msgstr "کنفیگر کرنے کے لیے ایک نیٹ ورک انٹرفیس منتخب کریں"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "منتخب کریں کہ کون سا موڈ \"{}\" کے لیے کنفیگر کرنا ہے یا ڈیفالٹ موڈ \"{}\" استعمال کرنے کے لیےخالی چھوڑ دیں۔"
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "{} کے لیے IP اور ذیلی نیٹ درج کریں (مثلاً: 192.168.0.5/24):"
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "اپنےگیٹ وے (راؤٹر) آئی پی ایڈریس درج کریں یا نہیں کی صورت میں خالی چھوڑیں:"
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "اپنےڈی این ایس سرورز درج کریں (الگ الگ لیکھیں،نہیں کی صورت میں خالی چھوڑیں):"
+
+msgid "Select which filesystem your main partition should use"
+msgstr "اپنے مین پارٹیشن کیلیے فائل سسٹم کا انتخاب کریں"
+
+msgid "Current partition layout"
+msgstr "موجودہ پارٹیشن کی ترتیب"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"منتخب کریں کہ اس کا کیا کرنا ہے۔\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"انڈیکس کے ذریعہ منتخب کریں کہ کون سے پارٹیشنز کو حذف کرنا ہے"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"انڈیکس کے ذریعہ منتخب کریں کہ کون سا پارٹیشن کہاں ماؤنٹ کرنا ہے"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "* پارٹیشن ماؤنٹ پوائنٹس انسٹالیشن کی نسبت سے ہیں، بوٹ مثال کے طور /boot پرہوگا۔"
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "منتخب کریں کہ پارٹیشن کہاں ماؤنٹ کرنا ہے (ماؤنٹ پوائنٹ کو ہٹانے کے لیے جگہ خالی چھوڑیں):"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"فارمیٹنگ کے لیے کس پارٹیشن کو ماسک کرنا ہے"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"منتخب کریں کہ کس پارٹیشن کو بوٹ ایبل رکھنا ہے"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"فائل سسٹم کو کس پارٹیشن پر سیٹ کرنا ہے"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+msgid "Archinstall language"
+msgstr "آرچ انسٹال کے لیے زبان"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "تمام منتخب ڈرائیوز کو صاف کریں اور ایک بہترین ڈیفالٹ پارٹیشن لے آؤٹ استعمال کریں"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "منتخب کریں کہ ہر انفرادی ڈرائیو کے ساتھ کیا کرنا ہے (اس کے بعد پارٹیشن کا استعمال)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "انتخاب کریں کہ آپ منتخب بلاک ڈیوائسز کے ساتھ کیا کرنا چاہتے ہیں"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "یہ پہلے سے پروگرام شدہ پروفائلز کی فہرست ہے، وہ ڈیسک ٹاپ انسٹالیشن جیسی چیزوں کو آسان بناتے ہیں"
+
+msgid "Select keyboard layout"
+msgstr "کی بورڈ لے آؤٹ"
+
+msgid "Select one of the regions to download packages from"
+msgstr "پیکیجز ڈاؤن لوڈ کرنے کے لیے علاقوں میں سے ایک کو منتخب کریں"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "اپنے AMD ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ یا تو تمام اوپن سورس یا AMD/ATI آپشنز استعمال کرنا چاہیں گے"
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "اپنے intel ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ یا تو تمام اوپن سورس یا intel آپشنز استعمال کرنا چاہیں گے۔\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "اپنے Nvidia ہارڈویئر کے ساتھ بہترین مطابقت کے لیے، آپ Nvidia کے ملکیتی ڈرائیور کو استعمال کرنا چاہیں گے۔\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"\n"
+"ایک گرافکس ڈرائیور منتخب کریں یا تمام اوپن سورس ڈرائیورز کو انسٹال کرنے کے لیے خالی چھوڑ دیں"
+
+msgid "All open-source (default)"
+msgstr "سبھی اوپن سورس (ڈیفالٹ)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "منتخب کریں کہ کن کنلز کو استعمال کرنا ہے یا ڈیفالٹ \"{}\" کے لیے خالی چھوڑ دیں"
+
+msgid "Choose which locale language to use"
+msgstr "منتخب کریں کہ کون سی مقامی زبان استعمال کرنی ہے"
+
+msgid "Choose which locale encoding to use"
+msgstr "منتخب کریں کہ کون سا مقامی انکوڈنگ استعمال کرنا ہے"
+
+msgid "Select one of the values shown below: "
+msgstr "ذیل میں دکھائی گئی قدروں میں سے ایک کو منتخب کریں:"
+
+msgid "Select one or more of the options below: "
+msgstr "ذیل میں سے ایک یا زیادہ اختیارات کو منتخب کریں:"
+
+msgid "Adding partition...."
+msgstr "پارٹیشن شامل ہو رہی ہے..."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "جاری رکھنے کے لیے آپ کو ایک درست fs-typeدرج کرنے کی ضرورت ہے۔ درست fs-types کے لیے 'man parted' دیکھیں۔"
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "خرابی: URL \"{}\" پر پروفائلز کی فہرست بنانے کا نتیجہ یہ ہوا:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "خرابی: \"{}\" نتیجہ کو JSON کے بطور ڈی کوڈ نہیں کیا جا سکا:"
+
+msgid "Keyboard layout"
+msgstr "کی بورڈ لے آؤٹ کو منتخب کریں"
+
+msgid "Mirror region"
+msgstr "متبادل علاقہ"
+
+msgid "Locale language"
+msgstr "مقامی زبان"
+
+msgid "Locale encoding"
+msgstr "مقامی انکوڈنگ"
+
+msgid "Drive(s)"
+msgstr "ہارڈ ڈرائیوز"
+
+msgid "Select disk layout"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Set encryption password"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+msgid "Swap"
+msgstr "سواپ"
+
+msgid "Bootloader"
+msgstr "بوٹ لوڈر"
+
+msgid "root password"
+msgstr "روٹ پاس ورڈ"
+
+msgid "Superuser account"
+msgstr "سپر یوزر اکاؤنٹ"
+
+msgid "User account"
+msgstr "یوزر اکاؤنٹ"
+
+msgid "Profile"
+msgstr "پروفائل"
+
+msgid "Audio"
+msgstr "آڈیو"
+
+msgid "Kernels"
+msgstr "کرنلز"
+
+msgid "Additional packages"
+msgstr "اضافی پیکجز"
+
+msgid "Network configuration"
+msgstr "نیٹ ورک ترتیب دیں"
+
+msgid "Automatic time sync (NTP)"
+msgstr "خودکار وقت کی مطابقت (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "انسٹال کریں ({} کنفیگریشنز غائب ہیں)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"آپ نے ہارڈ ڈرائیو کا انتخاب چھوڑنے کا فیصلہ کیا۔\n"
+"اور جو بھی ڈرائیو سیٹ اپ {} (تجرباتی) پر ماؤنٹ کیا گیا ہے اسے استعمال کرے گا۔\n"
+"انتباہ: آرچ انسٹال اس سیٹ اپ کی مناسبیت کی جانچ نہیں کرے گا۔\n"
+"کیا آپ جاری رکھنا چاہتے ہیں؟"
+
+msgid "Re-using partition instance: {}"
+msgstr "پارٹیشن کو دوبارہ استعمال کرنا: {}"
+
+msgid "Create a new partition"
+msgstr "ایک نیا پارٹیشن بنائیں"
+
+msgid "Delete a partition"
+msgstr "ایک پارٹیشن کو حذف کریں"
+
+msgid "Clear/Delete all partitions"
+msgstr "تمام پارٹیشنز کو صاف/حذف کریں"
+
+msgid "Assign mount-point for a partition"
+msgstr "پارٹیشن کے لیے ماؤنٹ پوائنٹ تفویض کریں"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "فارمیٹ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں (ڈیٹا صاف کرتا ہے)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "انکرپٹڈ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "بوٹ ایبل کرنے کے لیے پارٹیشن کو مارک​​/ انمارک کریں(/boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+msgid "Abort"
+msgstr "ختم کریں"
+
+msgid "Hostname"
+msgstr "میزبان نام"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "کنفیگر نہیں، دستیاب نہیں جب تک کہ دستی طور پر سیٹ اپ نہ کیا جائے"
+
+msgid "Timezone"
+msgstr "ٹائم زون"
+
+msgid "Set/Modify the below options"
+msgstr "ذیل کے اختیارات کو سیٹ/ترمیم کریں"
+
+msgid "Install"
+msgstr "انسٹال"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"چھوڑنے کے لیے ESC استعمال کریں\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "پارٹیشن لے آؤٹ تجویز کریں"
+
+msgid "Enter a password: "
+msgstr "پاس ورڈ درج کریں:"
+
+msgid "Enter a encryption password for {}"
+msgstr "{} کے لیے ایک انکرپشن پاس ورڈ درج کریں"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "ڈسک انکرپشن پاس ورڈ درج کریں (انکرپشن کو غیر فعال کرنے کے لیے خالی چھوڑ دیں):"
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "sudo مراعات کے ساتھ ایک مطلوبہ سپر صارف بنائیں:"
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "روٹ پاس ورڈ درج کریں (روٹ کو غیر فعال کرنے کے لیے خالی چھوڑ دیں):"
+
+msgid "Password for user \"{}\": "
+msgstr "صارف \"{}\" کے لیے پاس ورڈ:"
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "اس بات کی تصدیق ہو رہی ہےکہ اضافی پیکجز موجود ہیں (اس میں چند سیکنڈ لگ سکتے ہیں)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "کیا آپ ڈیفالٹ ٹائم سرورز کے ساتھ آٹومیٹک ٹائم سنکرونائزیشن (NTP) استعمال کرنا چاہیں گے؟\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP کے کام کرنے کے لیے ہارڈ ویئر کا وقت اور کنفیگریشن کے بعد کے دیگر اقدامات درکار ہو سکتے ہیں۔\n"
+"مزید معلومات کے لیے، براہ کرم آرک ویکی کو دیکھیں"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+msgid "Use ESC to skip\n"
+msgstr "چھوڑنے کے لیے ESC استعمال کریں\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+
+msgid "Cancel"
+msgstr "منسوخ کریں"
+
+msgid "Confirm and exit"
+msgstr "تصدیق کریں اور باہر نکلیں"
+
+msgid "Add"
+msgstr "شامل"
+
+msgid "Copy"
+msgstr "کاپی"
+
+msgid "Edit"
+msgstr "ترمیم"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Select an action for < {} >"
+msgstr "< {} > کے لیے ایک عمل منتخب کریں"
+
+msgid "Copy to new key:"
+msgstr "نئی کلید میں کاپی کریں:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "نامعلوم nic قسم: {}۔ ممکنہ قدریں ہیں {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"یہ آپ کی منتخب کردہ ترتیب ہے:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman پہلے ہی چل رہا ہے، اس کے ختم ہونے کے لیے زیادہ سے زیادہ 10 منٹ انتظار "
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "پہلے سے موجود پیک مین لاک کبھی نہیں نکلا۔ براہ کرم archinstall استعمال کرنے سے پہلے کسی بھی موجودہ pacman سیشن کو صاف کریں۔"
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "منتخب کریں کہ کون سے اختیاری اضافی ریپوزیٹریز کو فعال کرنا ہے"
+
+#, fuzzy
+msgid "Add a user"
+msgstr "ایک صارف شامل کریں"
+
+msgid "Change password"
+msgstr "پاس ورڈ تبدیل کریں"
+
+msgid "Promote/Demote user"
+msgstr "صارف کو پروموٹ/ڈیموٹ کریں"
+
+msgid "Delete User"
+msgstr "صارف کو حذف کریں"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"ایک نئے صارف کی وضاحت کریں۔\n"
+
+msgid "User Name : "
+msgstr "صارف کا نام:"
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "کیا {} کو سپر یوزر (sudoer) ہونا چاہیے؟"
+
+msgid "Define users with sudo privilege: "
+msgstr "sudo استحقاق کے ساتھ صارفین کی وضاحت کریں:"
+
+msgid "No network configuration"
+msgstr "کوئی نیٹ ورک کنفیگریشن نہیں ہے"
+
+#, fuzzy
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
+
+#, fuzzy
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"فائل سسٹم کو کس پارٹیشن پر سیٹ کرنا ہے"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr ""
+
+msgid "No configuration"
+msgstr "کوئی کنفیگریشن نہیں"
+
+msgid "Save user configuration"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+msgid "Save user credentials"
+msgstr "صارف کی اسناد کو محفوظ کریں"
+
+msgid "Save disk layout"
+msgstr "ڈسک لے آؤٹ کو محفوظ کریں"
+
+msgid "Save all"
+msgstr "سب کو محفوظ کریں"
+
+msgid "Choose which configuration to save"
+msgstr "منتخب کریں کہ کون سی کنفیگریشن محفوظ کرنی ہے"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+msgid "Not a valid directory: {}"
+msgstr "درست ڈائریکٹری نہیں ہے: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "آپ جو پاس ورڈ استعمال کر رہے ہیں وہ کمزور لگ رہا ہے،"
+
+msgid "are you sure you want to use it?"
+msgstr "کیا آپ واقعی اسے استعمال کرنا چاہتے ہیں؟"
+
+msgid "Optional repositories"
+msgstr "اضافی ریپوزٹریز"
+
+msgid "Save configuration"
+msgstr "ترتیب کو محفوظ کریں"
+
+msgid "Missing configurations:\n"
+msgstr "لاپتہ کنفیگریشنز:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "روٹ پاس ورڈ یا کم از کم ۱ سپر یوزر کی وضاحت ہونی چاہیے"
+
+msgid "Manage superuser accounts: "
+msgstr "سپر یوزر اکاؤنٹس کا نظم کریں:"
+
+msgid "Manage ordinary user accounts: "
+msgstr "عام صارف اکاؤنٹس کا نظم کریں:"
+
+msgid " Subvolume :{:16}"
+msgstr ""
+
+msgid " mounted at {:16}"
+msgstr ""
+
+msgid " with option {}"
+msgstr ""
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+
+msgid "Subvolume name "
+msgstr ""
+
+msgid "Subvolume mountpoint"
+msgstr ""
+
+msgid "Subvolume options"
+msgstr ""
+
+#, fuzzy
+msgid "Save"
+msgstr "سب کو محفوظ کریں"
+
+msgid "Subvolume name :"
+msgstr ""
+
+#, fuzzy
+msgid "Select a mount point :"
+msgstr "ٹائم زون کا انتخاب کریں"
+
+msgid "Select the desired subvolume options "
+msgstr ""
+
+#, fuzzy
+msgid "Define users with sudo privilege, by username: "
+msgstr "sudo استحقاق کے ساتھ صارفین کی وضاحت کریں:"
+
+#, fuzzy
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] یہاں ایک لاگ فائل بنائی گئی ہے: {} {}"
+
+#, fuzzy
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "کیا آپ GRUB کو systemd-boot کے بجائے بوٹ لوڈر کے طور پر استعمال کرنا چاہیں گے؟"
+
+#, fuzzy
+msgid "Would you like to use BTRFS compression?"
+msgstr "کیا آپ زی ریم پر سواپ استعمال کرنا چاہیں گے؟"
+
+#, fuzzy
+msgid "Would you like to create a separate partition for /home?"
+msgstr "کیا آپ زی ریم پر سواپ استعمال کرنا چاہیں گے؟"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr ""
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr ""
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "set: {}"
+msgstr ""
+
+msgid "Manual configuration setting must be a list"
+msgstr ""
+
+#, fuzzy
+msgid "No iface specified for manual configuration"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr ""
+
+msgid "Add interface"
+msgstr ""
+
+msgid "Edit interface"
+msgstr ""
+
+#, fuzzy
+msgid "Delete interface"
+msgstr "صارف کو حذف کریں"
+
+#, fuzzy
+msgid "Select interface to add"
+msgstr "کنفیگر کرنے کے لیے ایک نیٹ ورک انٹرفیس منتخب کریں"
+
+#, fuzzy
+msgid "Manual configuration"
+msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "انکرپٹڈ کرنے کے لیے پارٹیشن کو مارک​​ /انمارک کریں"
+
+#, fuzzy
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "آپ جو پاس ورڈ استعمال کر رہے ہیں وہ کمزور لگ رہا ہے،"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr ""
+
+msgid "Select your desired desktop environment"
+msgstr ""
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr ""
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr ""
+
+msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgstr ""
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr ""
+
+msgid "Press Enter to continue."
+msgstr ""
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr ""
+
+#, fuzzy
+msgid "Are you sure you want to reset this setting?"
+msgstr "کیا آپ واقعی اسے استعمال کرنا چاہتے ہیں؟"
+
+#, fuzzy
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr ""
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr ""
+
+#, fuzzy
+msgid "Save and exit"
+msgstr "تصدیق کریں اور باہر نکلیں"
+
+#, fuzzy
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
+
+#, fuzzy
+msgid "No audio server"
+msgstr "آڈیو سرور کا انتخاب کریں"
+
+msgid "(default)"
+msgstr ""
+
+#, fuzzy
+msgid "Use ESC to skip"
+msgstr "چھوڑنے کے لیے ESC استعمال کریں\n"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+
+#, fuzzy
+msgid "Copy to: "
+msgstr "اس میں کاپی :"
+
+#, fuzzy
+msgid "Edit: "
+msgstr "ترمیم"
+
+msgid "Key: "
+msgstr ""
+
+#, fuzzy
+msgid "Edit {}: "
+msgstr "ترمیم:"
+
+msgid "Add: "
+msgstr ""
+
+#, fuzzy
+msgid "Value: "
+msgstr "قدر:"
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr ""
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr ""
+
+#, fuzzy
+msgid "Select which partitions to mark for formatting:"
+msgstr ""
+"{}\n"
+"\n"
+"فارمیٹنگ کے لیے کس پارٹیشن کو ماسک کرنا ہے"
+
+#~ msgid "Add :"
+#~ msgstr "شامل:"
+
+#~ msgid "Value :"
+#~ msgstr "قدر:"
+
+#, python-brace-format
+#~ msgid "Edit {origkey} :"
+#~ msgstr "ترمیم {origkey} :"
+
+#~ msgid "Copy to :"
+#~ msgstr "اس میں کاپی :"
+
+#~ msgid "Edite :"
+#~ msgstr "ترمیم:"
+
+#~ msgid "Key :"
+#~ msgstr "کلید:"
+
+#~ msgid "Choose an object from the list"
+#~ msgstr "فہرست سے ایک آبجیکٹ منتخب کریں۔"

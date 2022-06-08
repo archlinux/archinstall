@@ -1,5 +1,6 @@
 # A desktop environment using "Sway"
 import archinstall
+from archinstall import Menu
 
 is_top_level_profile = False
 
@@ -18,10 +19,13 @@ __packages__ = [
 
 
 def _check_driver() -> bool:
-	if "nvidia" in archinstall.storage.get("gfx_driver_packages", None):
+	packages = archinstall.storage.get("gfx_driver_packages", [])
+
+	if packages and "nvidia" in packages:
 		prompt = 'The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'
-		choice = archinstall.Menu(prompt, ['yes', 'no'], default_option='no').run()
-		if choice == 'no':
+		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
+
+		if choice.value == Menu.no():
 			return False
 
 	return True
@@ -34,11 +38,15 @@ def _prep_function(*args, **kwargs):
 	other code in this stage. So it's a safe way to ask the user
 	for more input before any other installer steps start.
 	"""
-	archinstall.storage["gfx_driver_packages"] = archinstall.select_driver(force_ask=True)
-	if not _check_driver():
-		return _prep_function(args, kwargs)
+	driver = archinstall.select_driver()
 
-	return True
+	if driver:
+		archinstall.storage["gfx_driver_packages"] = driver
+		if not _check_driver():
+			return _prep_function(args, kwargs)
+		return True
+
+	return False
 
 
 # Ensures that this code only gets executed if executed

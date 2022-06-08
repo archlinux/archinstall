@@ -1,12 +1,23 @@
 import json
 import logging
-from pathlib import Path
+import pathlib
 from typing import Optional, Dict
 
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log
+from .exceptions import RequirementError
+from .hsm import get_fido2_devices
 
+def configuration_sanity_check():
+	if storage['arguments'].get('HSM'):
+		if not get_fido2_devices():
+			raise RequirementError(
+				f"In order to use HSM to pair with the disk encryption,"
+				+ f" one needs to be accessible through /dev/hidraw* and support"
+				+ f" the FIDO2 protocol. You can check this by running"
+				+ f" 'systemd-cryptenroll --fido2-device=list'."
+			)
 
 class ConfigurationOutput:
 	def __init__(self, config: Dict):
@@ -21,12 +32,12 @@ class ConfigurationOutput:
 		self._user_credentials = {}
 		self._disk_layout = None
 		self._user_config = {}
-		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
+		self._default_save_path = pathlib.Path(storage.get('LOG_PATH', '.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
 		self._disk_layout_file = "user_disk_layout.json"
 
-		self._sensitive = ['!users', '!superusers', '!encryption-password']
+		self._sensitive = ['!users', '!encryption-password']
 		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()
@@ -84,7 +95,7 @@ class ConfigurationOutput:
 
 		print()
 
-	def _is_valid_path(self, dest_path :Path) -> bool:
+	def _is_valid_path(self, dest_path :pathlib.Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
 			log(
 				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
@@ -93,26 +104,26 @@ class ConfigurationOutput:
 			return False
 		return True
 
-	def save_user_config(self, dest_path :Path = None):
+	def save_user_config(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
 			with open(dest_path / self._user_config_file, 'w') as config_file:
 				config_file.write(self.user_config_to_json())
 
-	def save_user_creds(self, dest_path :Path = None):
+	def save_user_creds(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
 				with open(target, 'w') as config_file:
 					config_file.write(user_creds)
 
-	def save_disk_layout(self, dest_path :Path = None):
+	def save_disk_layout(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
 			if disk_layout := self.disk_layout_to_json():
 				target = dest_path / self._disk_layout_file
 				with target.open('w') as config_file:
 					config_file.write(disk_layout)
 
-	def save(self, dest_path :Path = None):
+	def save(self, dest_path :pathlib.Path = None):
 		if not dest_path:
 			dest_path = self._default_save_path
 

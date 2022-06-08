@@ -1,8 +1,9 @@
 # Used to do a minimal install
+import archinstall
 
 is_top_level_profile = True
 
-__description__ = 'A very basic installation that allows you to customize Arch Linux as you see fit.'
+__description__ = str(_('A very basic installation that allows you to customize Arch Linux as you see fit.'))
 
 
 def _prep_function(*args, **kwargs):
@@ -12,6 +13,7 @@ def _prep_function(*args, **kwargs):
 	we don't need to do anything special here, but it
 	needs to exist and return True.
 	"""
+	archinstall.storage['profile_minimal'] = True
 	return True  # Do nothing and just return True
 
 

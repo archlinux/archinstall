@@ -8,6 +8,8 @@ import time
 import glob
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from ..models.subvolume import Subvolume
+
 if TYPE_CHECKING:
 	from .partition import Partition
 
@@ -112,7 +114,7 @@ def cleanup_bash_escapes(data :str) -> str:
 
 def blkid(cmd :str) -> Dict[str, Any]:
 	if '-o' in cmd and '-o export' not in cmd:
-		raise ValueError(f"blkid() requires '-o export' to be used and can therefor not continue reliably.")
+		raise ValueError(f"blkid() requires '-o export' to be used and can therefore not continue reliably.")
 	elif '-o' not in cmd:
 		cmd += ' -o export'
 
@@ -133,7 +135,7 @@ def blkid(cmd :str) -> Dict[str, Any]:
 		key, val = line.split('=', 1)
 		if key.lower() == 'devname':
 			devname = val
-			# Lowercase for backwards compatability with all_disks() previous use cases
+			# Lowercase for backwards compatibility with all_disks() previous use cases
 			result[devname] = {
 				"path": devname,
 				"PATH": devname
@@ -221,10 +223,8 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
-
-		# TODO: No idea why F841 is raised here:
-		except SysCallError as error: # noqa: F841
-			if error.exit_code in (512, 2):
+		except SysCallError as ex:
+			if ex.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -234,7 +234,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				except SysCallError:
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
-				raise error
+				raise ex
 
 		information = enrich_blockdevice_information(information)
 
@@ -243,10 +243,10 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if partitions:
-					instances[path] = Partition(path, BlockDevice(get_parent_of_partition(pathlib.Path(path))))
+					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
-			elif path_info.get('TYPE') == 'squashfs':
+			elif path_info.get('TYPE') in ('squashfs', 'erofs'):
 				# We can ignore squashfs devices (usually /dev/loop0 on Arch ISO)
 				continue
 			else:
@@ -293,11 +293,37 @@ def find_mountpoint(device_path :str) -> Dict[str, Any]:
 	except SysCallError:
 		return {}
 
-def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False) -> Dict[str, Any]:
+def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recurse :bool = True) -> Dict[str, Any]:
+	for traversal in list(map(str, [str(path)] + list(path.parents))):
+		if traversal in ignore:
+			continue
+
+		try:
+			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
+			if (output := SysCommand(f"/usr/bin/findmnt --json {'--submounts' if recurse else ''} {traversal}").decode('UTF-8')):
+				return json.loads(output)
+
+		except SysCallError as error:
+			log(f"Could not get mount information on {path} but continuing and ignoring: {error}", level=logging.INFO, fg="gray")
+			pass
+
+		if not traverse:
+			break
+
+	raise DiskError(f"Could not get mount information for path {path}")
+
+
+def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
+	import traceback
+
+	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing. Please change at:\n{''.join(traceback.format_stack())}")
 	device_path, bind_path = split_bind_name(path)
 	output = {}
 
 	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
+		if traversal in ignore:
+			continue
+
 		try:
 			log(f"Getting mount information for device path {traversal}", level=logging.DEBUG)
 			if (output := SysCommand(f'/usr/bin/findmnt --json {traversal}').decode('UTF-8')):
@@ -387,9 +413,8 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 
 
 def get_filesystem_type(path :str) -> Optional[str]:
-	device_name, bind_name = split_bind_name(path)
 	try:
-		return SysCommand(f"blkid -o value -s TYPE {device_name}").decode('UTF-8').strip()
+		return SysCommand(f"blkid -o value -s TYPE {path}").decode('UTF-8').strip()
 	except SysCallError:
 		return None
 
@@ -410,9 +435,10 @@ def disk_layouts() -> Optional[Dict[str, Any]]:
 
 
 def encrypted_partitions(blockdevices :Dict[str, Any]) -> bool:
-	for partition in blockdevices.values():
-		if partition.get('encrypted', False):
-			yield partition
+	for blockdevice in blockdevices.values():
+		for partition in blockdevice.get('partitions', []):
+			if partition.get('encrypted', False):
+				yield partition
 
 def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
 	for device in block_devices:
@@ -420,16 +446,20 @@ def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_moun
 			if partition.get('mountpoint', None) == relative_mountpoint:
 				return partition
 
-def partprobe() -> bool:
-	if SysCommand(f'bash -c "partprobe"').exit_code == 0:
-		time.sleep(5) # TODO: Remove, we should be relying on blkid instead of lsblk
-		return True
+def partprobe(path :str = '') -> bool:
+	try:
+		if SysCommand(f'bash -c "partprobe {path}"').exit_code == 0:
+			return True
+	except SysCallError:
+		pass
 	return False
 
 def convert_device_to_uuid(path :str) -> str:
 	device_name, bind_name = split_bind_name(path)
+
 	for i in range(storage['DISK_RETRY_ATTEMPTS']):
-		partprobe()
+		partprobe(device_name)
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
 
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
@@ -439,9 +469,8 @@ def convert_device_to_uuid(path :str) -> str:
 			if (dev_uuid := device.get('uuid', None)):
 				return dev_uuid
 
-		time.sleep(storage['DISK_TIMEOUTS'])
-
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
+
 
 def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, strict: bool = True) -> bool:
 	""" Determine if a certain partition is mounted (or has a mountpoint) as specific target (path)
@@ -449,8 +478,7 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 
 	Input parms:
 	:parm partition the partition we check
-	:type Either a Partition object or a dict with the contents of a partition definiton in the disk_layouts schema
-
+	:type Either a Partition object or a dict with the contents of a partition definition in the disk_layouts schema
 	:parm target (a string representing a mount path we want to check for.
 	:type str
 
@@ -459,8 +487,9 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 	"""
 	# we create the mountpoint list
 	if isinstance(partition,dict):
-		subvols = partition.get('btrfs',{}).get('subvolumes',{})
-		mountpoints = [partition.get('mountpoint'),] + [subvols[subvol] if isinstance(subvols[subvol],str) or not subvols[subvol] else subvols[subvol].get('mountpoint') for subvol in subvols]
+		subvolumes: List[Subvolume] = partition.get('btrfs',{}).get('subvolumes', [])
+		mountpoints = [partition.get('mountpoint')]
+		mountpoints += [volume.mountpoint for volume in subvolumes]
 	else:
 		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
 	# we check

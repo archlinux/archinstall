@@ -1,0 +1,745 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: walken <walken@centrum.cz>\n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Prosím, informujte nás o této chybě (spolu se souborem) na https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Skutečně chcete proces přerušit?"
+
+msgid "And one more time for verification: "
+msgstr "Ještě jednou pro ověření: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Přejete si použít swap na zram?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Název počítače k instalaci: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Uživatelské jméno pro superuživatele s oprávněními sudo: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Další uživatelé, kteří mají být nainstalováni (ponechte prázdné pro žádné uživatele): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Má být tento uživatel superuživatelem (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "Zvolte časovou zónu"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Přejete si použít GRUB jako hlavní zavaděč namísto systemd-boot?"
+
+msgid "Choose a bootloader"
+msgstr "Zvolte zavaděč"
+
+msgid "Choose an audio server"
+msgstr "Zvolte audio server"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Budou nainstalovány pouze balíčky jako base, base-devel, linux, linux-firmware, efibootmgr a volitelné balíčky profilu."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Pokud si přejete nainstalovat webový prohlížeč, jako je například Firefox nebo Chromium, můžete jej zadat do následujícího pole."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Zadejte další balíčky k instalaci (oddělené mezerou, ponechte prázdné k přeskočení): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Zkopírovat do instalace konfiguraci sítě z ISO"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
+
+msgid "Select one network interface to configure"
+msgstr "Zvolte zařízení ke konfiguraci"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Zvolte který režim má být nastaven pro \"{}\" nebo přeskočte pro použití výchozího režimu \"{}\""
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Zadejte IP a podsíť pro {} (např. 192.168.0.5/24) "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Zadejte IP vaší brány (routeru) nebo ponechte prázdné pro žádnou: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Zadejte vaše DNS servery (oddělené mezerou, ponechte prázdné pro žádné): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Zvolte souborový systém, který se má použít pro váš hlavní oddíl"
+
+msgid "Current partition layout"
+msgstr "Aktuální rozdělení disku"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr "Zvolte co dělat s {}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Zadejte požadovaný souborový systém pro oddíl"
+
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, např. {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"Vyberte podle indexu, které oddíly chcete odstranit"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"Vyberte podle indexu, který oddíl se má připojit kam"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Přípojné body diskových oddílů jsou relativní uvnitř instalace, například spouštěcí bod by byl /boot."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Zvolte kam připojit oddíl (ponechte prázdné pro odstranění přípojného bodu): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Zvolte oddíl, který bude označen ke zformátování"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"Zvolte oddíl, který bude označen jako šifrovaný"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"Zvolte oddíl, který bude označen jako spouštěcí"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"Zvolte oddíl, na kterém bude souborový systém"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Zadejte požadovaný typ souborového systému pro oddíl: "
+
+msgid "Archinstall language"
+msgstr "Jazyk pro Archinstall"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Vymazat všechny vybrané disky a použít chytré výchozí rozdělení oddílů"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Zvolte, co se má udělat s jednotlivými disky (následováno použitím oddílu)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Zvolte, co si přejete udělat s vybranými blokovými zařízeními"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "Toto je seznam před-programovaných profilů, které by mohly usnadnit instalaci věcí jako jsou desktopová prostředí"
+
+msgid "Select keyboard layout"
+msgstr "Zvolte rozložení klávesnice"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Zvolte region ze kterého se budou stahovat balíčky"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Pro nejlepší kompatibilitu s vaším hardwarem AMD můžete použít buď možnost vše open-source nebo AMD / ATI."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Pro nejlepší kompatibilitu s vaším hardwarem Intel můžete použít buď možnost vše open-source nebo Intel.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Pro nejlepší kompatibilitu s vaším hardwarem Nvidia můžete použít buď možnost vše open-source nebo proprietární ovladač Nvidia.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Zvolte ovladač grafické karty nebo ponechte prázdné k instalaci všech open-source ovladačů"
+
+msgid "All open-source (default)"
+msgstr "Vše open-source (výchozí)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Zvolte jádra, která mají být použita, nebo ponechte prázdné pro výchozí \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Zvolte jazyk lokalizace, který chcete používat"
+
+msgid "Choose which locale encoding to use"
+msgstr "Zvolte kódování lokalizace, které chcete používat"
+
+msgid "Select one of the values shown below: "
+msgstr "Zvolte jednu z hodnot zobrazenou níže: "
+
+msgid "Select one or more of the options below: "
+msgstr "Zvolte jednu nebo více možností níže: "
+
+msgid "Adding partition...."
+msgstr "Přidávání nového oddílu..."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Chcete-li pokračovat, musíte zvolit platný typ souborového systému. Seznam validních typů najdete například ve výstupu `man parted`."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Chyba: Výpis profilů z URL \"{}\" skončilo výstupem:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Chyba: Nepodařilo se dekódovat výsledek \"{}\" jako JSON:"
+
+msgid "Keyboard layout"
+msgstr "Rozložení klávesnice"
+
+msgid "Mirror region"
+msgstr "Oblast zrcadla"
+
+msgid "Locale language"
+msgstr "Místní jazyk"
+
+msgid "Locale encoding"
+msgstr "Kódování místního jazyka"
+
+msgid "Drive(s)"
+msgstr "Disk(y)"
+
+msgid "Disk layout"
+msgstr "Rozdělení disku"
+
+msgid "Encryption password"
+msgstr "Šifrovací heslo"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Zavaděč"
+
+msgid "Root password"
+msgstr "Heslo správce (root)"
+
+msgid "Superuser account"
+msgstr "Účet superuživatele"
+
+msgid "User account"
+msgstr "Uživatelský účet"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Kernels"
+msgstr "Jádra"
+
+msgid "Additional packages"
+msgstr "Dodatečné balíčky"
+
+msgid "Network configuration"
+msgstr "Konfigurace sítě"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automatická synchronizace času (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Instalovat ({} konfigurace chybí)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Rozhodli jste se přeskočit výběr pevného disku\n"
+"a použijete jakýkoli disk, který je připojen na {} (experimentální)\n"
+"VAROVÁNÍ: Archinstall nezkontroluje korektnost takové instalace\n"
+"Přejete si pokračovat?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Použití existující instance oddílu: {}"
+
+msgid "Create a new partition"
+msgstr "Vytvořit nový oddíl"
+
+msgid "Delete a partition"
+msgstr "Smazat oddíl"
+
+msgid "Clear/Delete all partitions"
+msgstr "Vyčistit/Smazat všechny oddíly"
+
+msgid "Assign mount-point for a partition"
+msgstr "Přiřaďte přípojný bod k oddílu"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Označení/Odznačení oddílu ke zformátování (vymaže data)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Označení/Odznačení oddílu jako šifrovaného"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Označení/Odznačení oddílu jako spouštěcího (automatické pro /boot)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Zvolte požadovaný souborový systém pro oddíl"
+
+msgid "Abort"
+msgstr "Přerušit"
+
+msgid "Hostname"
+msgstr "Název počítače"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Nenakonfigurováno, nedostupné mimo ruční instalaci"
+
+msgid "Timezone"
+msgstr "Časová zóna"
+
+msgid "Set/Modify the below options"
+msgstr "Nastavte/Upravte možnosti níže"
+
+msgid "Install"
+msgstr "Instalovat"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Pomocí ESC přeskočíte\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Navrhnout rozdělení oddílů"
+
+msgid "Enter a password: "
+msgstr "Zadejte heslo: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Zadejte šifrovací heslo pro {}"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Zadejte šifrovací heslo celého disku (ponechte prázdné pro nepoužití šifrování): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Vytvořte povinný účet superuživatele s oprávněními sudo: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Zadejte heslo uživatele root (ponechte prázdné k zakázání uživatele root): "
+
+msgid "Password for user \"{}\": "
+msgstr "Heslo pro uživatele \"{}\": "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Kontrola existence dodatečných balíčků (to může trvat několik sekund)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Přejete si použít automatickou synchronizaci času (NTP) pomocí výchozích serverů?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"Pro fungování NTP může být vyžadován hardwarový čas a další kroky po konfiguraci.\n"
+"Pro další informace navštivte Arch Wiki"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno k přidání dalšího uživatele (ponechte prázdné k přeskočení): "
+
+msgid "Use ESC to skip\n"
+msgstr "Pomocí ESC přeskočíte\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"Vyberte objekt ze seznamu a zvolte k němu jednu z možných akcí"
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+msgid "Confirm and exit"
+msgstr "Potvrdit a ukončit"
+
+msgid "Add"
+msgstr "Přidat"
+
+msgid "Copy"
+msgstr "Kopírovat"
+
+msgid "Edit"
+msgstr "Upravit"
+
+msgid "Delete"
+msgstr "Smazat"
+
+msgid "Select an action for < {} >"
+msgstr "Zvolte akci pro < {} >"
+
+msgid "Copy to new key:"
+msgstr "Zkopírovat k novému klíči:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Neznámý typ nic: {}. Možné hodnoty jsou {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"Toto je vaše konfigurace:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman je již spuštěn, po 10 minutách bude vynuceno jeho ukončení."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Nalezen zámek předchozí instance pacman. Před používáním archinstall, prosím, vyčistěte všechna existující sezení pacman."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Vyberte, které dodatečné balíčky mají být povoleny"
+
+msgid "Add a user"
+msgstr "Přidat uživatele"
+
+msgid "Change password"
+msgstr "Změnit heslo"
+
+msgid "Promote/Demote user"
+msgstr "Udělení/Odebrání práv uživatele"
+
+msgid "Delete User"
+msgstr "Smazat uživatele"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Vytvořit nového uživatele\n"
+
+msgid "User Name : "
+msgstr "Uživatelské jméno: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Má být {} superuživatelem (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Specifikovat uživatele s oprávněními sudo: "
+
+msgid "No network configuration"
+msgstr "Žádná konfigurace sítě"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Nastavení požadované podsvazky na oddílu btrfs"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr "{} Zvolte oddíl, na kterém budou podsvazky nastaveny"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Spravovat podsvazky pro aktuální oddíl"
+
+msgid "No configuration"
+msgstr "Žádná konfigurace"
+
+msgid "Save user configuration"
+msgstr "Uložit uživatelskou konfiguraci"
+
+msgid "Save user credentials"
+msgstr "Uložit přihlašovací údaje"
+
+msgid "Save disk layout"
+msgstr "Uložit rozdělení disku"
+
+msgid "Save all"
+msgstr "Uložit vše"
+
+msgid "Choose which configuration to save"
+msgstr "Vyberte, které konfigurace mají být uloženy"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+
+msgid "Not a valid directory: {}"
+msgstr "Adresář není validní: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Vaše heslo se zdá být slabé,"
+
+msgid "are you sure you want to use it?"
+msgstr "přejete si ho skutečně použít?"
+
+msgid "Optional repositories"
+msgstr "Volitelné repozitáře"
+
+msgid "Save configuration"
+msgstr "Uložit konfiguraci"
+
+msgid "Missing configurations:\n"
+msgstr "Chybějící konfigurace:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Musí být zadáno heslo správce (root) nebo musí existovat alespoň jeden superuživatel"
+
+msgid "Manage superuser accounts: "
+msgstr "Spravovat účty superuživatele: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Spravovat běžné účty: "
+
+msgid " Subvolume :{:16}"
+msgstr " Podsvazek :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " připojen na :{:16}"
+
+msgid " with option {}"
+msgstr " s přepínačem {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+"Zadejte požadované hodnoty pro nový podsvazek \n"
+
+msgid "Subvolume name "
+msgstr "Název podsvazku "
+
+msgid "Subvolume mountpoint"
+msgstr "Přípojný bod podsvazku"
+
+msgid "Subvolume options"
+msgstr "Přepínače podsvazku"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "Subvolume name :"
+msgstr "Název podsvazku:"
+
+msgid "Select a mount point :"
+msgstr "Zvolte přípojný bod:"
+
+msgid "Select the desired subvolume options "
+msgstr "Zvolte požadované přepínače podsvazku "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Specifikace uživatelů s oprávněními sudo, pomocí uživatelského jména: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Soubor s protokoly byl uložen zde: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Přejete si použít výchozí strukturu BTRFS podsvazků?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Přejete si použít BTRFS kompresi?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Přejete si vytvořit oddělený oddíl pro /home?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Vybrané disky nemají dostatečnou kapacitu potřebnou k automatickému návrhu\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Minimální kapacita pro oddíl /home: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Minimální kapacita pro oddíl s Arch Linux: {}GB"
+
+msgid "Continue"
+msgstr "Pokračovat"
+
+msgid "yes"
+msgstr "ano"
+
+msgid "no"
+msgstr "ne"
+
+msgid "set: {}"
+msgstr "nastavit: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Ruční konfigurace musí být seznam"
+
+msgid "No iface specified for manual configuration"
+msgstr "Pro ruční konfiguraci nebyl vybrán žádný iface"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Ruční konfigurace nic bez automatického DHCP vyžaduje IP adresu"
+
+msgid "Add interface"
+msgstr "Přidat rozhraní"
+
+msgid "Edit interface"
+msgstr "Upravit rozhraní"
+
+msgid "Delete interface"
+msgstr "Smazat rozhraní"
+
+msgid "Select interface to add"
+msgstr "Zvolit rozhraní k přidání"
+
+msgid "Manual configuration"
+msgstr "Ruční konfigurace"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Označit/Odznačit oddíl s kompresí (jen pro btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Vaše heslo se zdá být slabé, chcete ho skutečně použít?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Nabízí výběr desktopových prostředí a tiling správců oken, např. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Zvolte si požadované desktopové prostředí"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Základní instalace, která vám umožní si nastavit Arch Linux jakkoliv si budete přát."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Nabízí výběr různých serverových balíčků k instalaci a aktivaci, např. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgstr "Vyberte servery, které mají být nainstalovány, pokud nezvolíte žádné, bude provedena jen základní instalace"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Nainstaluje minimalistický systém spolu s xorg a ovladači grafiky."
+
+msgid "Press Enter to continue."
+msgstr "Stiskněte ENTER pro pokračování."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Přejete si vlézt skrze chroot do své nově vytvořené instalace a provést závěrečnou konfiguraci?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Skutečně si přejete resetovat toto nastavení?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Jakékoliv úpravy stávajícího nastavení resetuje rozdělení disku!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Pokud resetujete výběr disku, také tím resetujete stávající rozdělení. Přejete si pokračovat?"
+
+msgid "Save and exit"
+msgstr "Uložit a ukončit"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
+
+msgid "No audio server"
+msgstr "Žádný audio server"
+
+msgid "(default)"
+msgstr "(výchozí)"
+
+msgid "Use ESC to skip"
+msgstr "Pomocí ESC přeskočíte"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr "Pomocí CTRL+C zrušíte stávající výběr\n"
+
+msgid "Copy to: "
+msgstr "Zkopírovat do: "
+
+msgid "Edit: "
+msgstr "Upravit: "
+
+msgid "Key: "
+msgstr "Klíč: "
+
+msgid "Edit {}: "
+msgstr "Upravit {}: "
+
+msgid "Add: "
+msgstr "Přidat: "
+
+msgid "Value: "
+msgstr "Hodnota: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Výběr disku a tvorbu oddílů můžete přeskočit a použít jakýkoliv setup, který je připojen na /mnt (experimentální)"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Zvolte jeden z disků nebo přeskočte a použijte /mnt jako výchozí"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Zvolte oddíly, které mají být označeny ke zformátování:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Použít HSM k odemykání zašifrovaného disku"
+
+msgid "Device"
+msgstr "Zařízení"
+
+msgid "Size"
+msgstr "Velikost"
+
+msgid "Free space"
+msgstr "Volné místo"
+
+msgid "Bus-type"
+msgstr "Typ sběrnice"

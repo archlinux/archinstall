@@ -1,7 +1,7 @@
 [flake8]
 count = True
 # Several of the following could be autofixed or improved by running the code through psf/black
-ignore = E126,E128,E203,E231,E261,E302,E402,E722,F541,W191,W292,W293
+ignore = E123,E126,E128,E203,E231,E261,E302,E402,E722,F541,W191,W292,W293,W503
 max-complexity = 40
 max-line-length = 236
 show-source = True

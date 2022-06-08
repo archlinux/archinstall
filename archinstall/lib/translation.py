@@ -1,24 +1,32 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import gettext
 
 from pathlib import Path
-from typing import List, Dict, Any, TYPE_CHECKING
+from typing import List, Dict, Any, TYPE_CHECKING, Tuple
 from .exceptions import TranslationError
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class Languages:
+class LanguageDefinitions:
+	_languages = 'languages.json'
+	_cyrillic = 'cyrillic.json'
+
 	def __init__(self):
 		self._mappings = self._get_language_mappings()
+		self._cyrillic_languages = self._get_cyrillic_languages()
+
+	def is_cyrillic(self, language: str) -> bool:
+		return language in self._cyrillic_languages
 
 	def _get_language_mappings(self) -> List[Dict[str, str]]:
 		locales_dir = Translation.get_locales_dir()
-		languages = Path.joinpath(locales_dir, 'languages.json')
+		languages = Path.joinpath(locales_dir, self._languages)
 
 		with open(languages, 'r') as fp:
 			return json.load(fp)
@@ -28,7 +36,15 @@ class Languages:
 			if entry['abbr'] == abbr:
 				return entry['lang']
 
-		raise ValueError(f'No language with abbrevation "{abbr}" found')
+		raise ValueError(f'No language with abbreviation "{abbr}" found')
+
+	def _get_cyrillic_languages(self) -> List[str]:
+		locales_dir = Translation.get_locales_dir()
+		languages = Path.joinpath(locales_dir, self._cyrillic)
+
+		with open(languages, 'r') as fp:
+			data = json.load(fp)
+			return data['languages']
 
 
 class DeferredTranslation:
@@ -70,17 +86,33 @@ class Translation:
 	def __init__(self, locales_dir):
 		self._languages = {}
 
-		for name in self.get_all_names():
+		for names in self._get_translation_lang():
 			try:
-				self._languages[name] = gettext.translation('base', localedir=locales_dir, languages=[name])
+				self._languages[names[0]] = gettext.translation('base', localedir=locales_dir, languages=names)
 			except FileNotFoundError as error:
-				raise TranslationError(f"Could not locate language file for '{name}': {error}")
+				raise TranslationError(f"Could not locate language file for '{names}': {error}")
 
 	def activate(self, name):
 		if language := self._languages.get(name, None):
+			languages = LanguageDefinitions()
+
+			if languages.is_cyrillic(name):
+				self._set_font('UniCyr_8x16')
+			else:
+				# this will reset a possible previously set font to a default font
+				self._set_font('')
+
 			language.install()
 		else:
 			raise ValueError(f'Language not supported: {name}')
+
+	def _set_font(self, font: str):
+		from archinstall import SysCommand, log
+		try:
+			log(f'Setting new font: {font}', level=logging.DEBUG)
+			SysCommand(f'setfont {font}')
+		except Exception:
+			log(f'Unable to set font {font}', level=logging.ERROR)
 
 	@classmethod
 	def load_nationalization(cls) -> Translation:
@@ -94,10 +126,19 @@ class Translation:
 		return locales_dir
 
 	@classmethod
-	def get_all_names(cls) -> List[str]:
+	def _defined_languages(cls) -> List[str]:
 		locales_dir = cls.get_locales_dir()
 		filenames = os.listdir(locales_dir)
-		def_languages = filter(lambda x: len(x) == 2, filenames)
+		return list(filter(lambda x: len(x) == 2, filenames))
 
-		languages = Languages()
+	@classmethod
+	def _get_translation_lang(cls) -> List[Tuple[str, str]]:
+		def_languages = cls._defined_languages()
+		languages = LanguageDefinitions()
+		return [(languages.get_language(lang), lang) for lang in def_languages]
+
+	@classmethod
+	def get_available_lang(cls) -> List[str]:
+		def_languages = cls._defined_languages()
+		languages = LanguageDefinitions()
 		return [languages.get_language(lang) for lang in def_languages]
