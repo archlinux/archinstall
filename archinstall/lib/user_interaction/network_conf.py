@@ -23,11 +23,6 @@ class ManualNetworkConfig(ListManager):
 	"""
 
 	def __init__(self, prompt: str, ifaces: List[NetworkConfiguration]):
-		# if ifaces is not None and isinstance(ifaces, list):
-		# 	display_values = {iface.iface: iface for iface in ifaces}
-		# else:
-		# 	display_values = {}
-
 		self._actions = [
 			str(_('Add interface')),
 			str(_('Edit interface')),

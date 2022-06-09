@@ -64,12 +64,6 @@ class Menu(TerminalMenu):
 		clear_menu_on_exit: bool = True,
 		skip_empty_entries: bool = False
 	):
-		# log('!!!!')
-		# log(title)
-		# log('@@@@')
-		# log(header)
-		# log('?????')
-
 		"""
 		Creates a new menu
 
