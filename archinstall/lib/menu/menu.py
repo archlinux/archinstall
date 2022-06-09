@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
@@ -57,7 +58,11 @@ class Menu(TerminalMenu):
 		header :Union[List[str],str] = None,
 		explode_on_interrupt :bool = False,
 		explode_warning :str = '',
-		**kwargs
+		clear_screen: bool = True,
+		show_search_hint: bool = True,
+		cycle_cursor: bool = True,
+		clear_menu_on_exit: bool = True,
+		skip_empty_entries: bool = False
 	):
 		"""
 		Creates a new menu
@@ -153,8 +158,7 @@ class Menu(TerminalMenu):
 		if header:
 			if not isinstance(header,(list,tuple)):
 				header = [header]
-			header = '\n'.join(header)
-			menu_title += f'\n{header}\n'
+			menu_title += '\n'.join(header)
 
 		action_info = ''
 		if skip:
@@ -178,10 +182,6 @@ class Menu(TerminalMenu):
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
-		# defaults that can be changed up the stack
-		kwargs['clear_screen'] = kwargs.get('clear_screen',True)
-		kwargs['show_search_hint'] = kwargs.get('show_search_hint',True)
-		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor',True)
 
 		super().__init__(
 			menu_entries=self._menu_options,
@@ -200,7 +200,11 @@ class Menu(TerminalMenu):
 			preview_title=preview_title,
 			explode_on_interrupt=self._explode_on_interrupt,
 			multi_select_select_on_accept=False,
-			**kwargs,
+			clear_screen=clear_screen,
+			show_search_hint=show_search_hint,
+			cycle_cursor=cycle_cursor,
+			clear_menu_on_exit=clear_menu_on_exit,
+			skip_empty_entries=skip_empty_entries
 		)
 
 	def _show(self) -> MenuSelection:
@@ -238,6 +242,7 @@ class Menu(TerminalMenu):
 					return self.run()
 
 		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
+			system('clear')
 			return self.run()
 
 		return ret

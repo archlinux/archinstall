@@ -5,6 +5,7 @@ from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 from ..menu import Menu
 from ..models.subvolume import Subvolume
+from ... import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -19,16 +20,23 @@ class SubvolumeList(ListManager):
 		]
 		super().__init__(prompt, current_volumes, self._actions, self._actions[0])
 
-	def reformat(self, data: List[Subvolume]) -> Dict[str, Subvolume]:
-		return {e.display(): e for e in data}
+	def reformat(self, data: List[Subvolume]) -> Dict[str, Optional[Subvolume]]:
+		table = FormattedOutput.as_table(data)
+		rows = table.split('\n')
 
-	def action_list(self):
-		active_user = self.target if self.target else None
+		# these are the header rows of the table and do not map to any User obviously
+		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
+		# the selectable rows so the header has to be aligned
+		display_data: Dict[str, Optional[Subvolume]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
-		if active_user is None:
-			return [self._actions[0]]
-		else:
-			return self._actions[1:]
+		for row, subvol in zip(rows[2:], data):
+			row = row.replace('|', '\\|')
+			display_data[row] = subvol
+
+		return display_data
+
+	def selected_action_display(self, subvolume: Subvolume) -> str:
+		return subvolume.name
 
 	def _prompt_options(self, editing: Optional[Subvolume] = None) -> List[str]:
 		preset_options = []

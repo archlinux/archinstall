@@ -39,8 +39,22 @@ class NetworkConfiguration:
 		else:
 			return 'Unknown type'
 
-	# for json serialization when calling json.dumps(...) on this class
-	def json(self):
+	def as_json(self) -> Dict:
+		exclude_fields = ['type']
+		data = {}
+		for k, v in self.__dict__.items():
+			if k not in exclude_fields:
+				if isinstance(v, list) and len(v) == 0:
+					v = ''
+				elif v is None:
+					v = ''
+
+				data[k] = v
+
+		return data
+
+	def json(self) -> Dict:
+		# for json serialization when calling json.dumps(...) on this class
 		return self.__dict__
 
 	def is_iso(self) -> bool:
@@ -111,19 +125,10 @@ class NetworkConfigurationHandler:
 		else:  # not recognized
 			return None
 
-	def _parse_manual_config(self, config: Dict[str, Any]) -> Union[None, List[NetworkConfiguration]]:
-		manual_configs: List = config.get('config', [])
-
-		if not manual_configs:
-			return None
-
-		if not isinstance(manual_configs, list):
-			log(_('Manual configuration setting must be a list'))
-			exit(1)
-
+	def _parse_manual_config(self, configs: List[Dict[str, Any]]) -> Optional[List[NetworkConfiguration]]:
 		configurations = []
 
-		for manual_config in manual_configs:
+		for manual_config in configs:
 			iface = manual_config.get('iface', None)
 
 			if iface is None:
@@ -135,7 +140,7 @@ class NetworkConfigurationHandler:
 					NetworkConfiguration(NicType.MANUAL, iface=iface)
 				)
 			else:
-				ip = config.get('ip', '')
+				ip = manual_config.get('ip', '')
 				if not ip:
 					log(_('Manual nic configuration with no auto DHCP requires an IP address'), fg='red')
 					exit(1)
@@ -145,32 +150,34 @@ class NetworkConfigurationHandler:
 						NicType.MANUAL,
 						iface=iface,
 						ip=ip,
-						gateway=config.get('gateway', ''),
-						dns=config.get('dns', []),
+						gateway=manual_config.get('gateway', ''),
+						dns=manual_config.get('dns', []),
 						dhcp=False
 					)
 				)
 
 		return configurations
 
-	def parse_arguments(self, config: Any):
-		nic_type = config.get('type', None)
-
-		if not nic_type:
-			# old style definitions
-			network_config = self._backwards_compability_config(config)
-			if network_config:
-				return network_config
-			return None
-
+	def _parse_nic_type(self, nic_type: str) -> NicType:
 		try:
-			type_ = NicType(nic_type)
+			return NicType(nic_type)
 		except ValueError:
 			options = [e.value for e in NicType]
 			log(_('Unknown nic type: {}. Possible values are {}').format(nic_type, options), fg='red')
 			exit(1)
 
-		if type_ != NicType.MANUAL:
-			self._configuration = NetworkConfiguration(type_)
-		else:  # manual configuration settings
+	def parse_arguments(self, config: Any):
+		if isinstance(config, list):  # new data format
 			self._configuration = self._parse_manual_config(config)
+		elif nic_type := config.get('type', None):  # new data format
+			type_ = self._parse_nic_type(nic_type)
+
+			if type_ != NicType.MANUAL:
+				self._configuration = NetworkConfiguration(type_)
+			else:  # manual configuration settings
+				self._configuration = self._parse_manual_config([config])
+		else:  # old style definitions
+			network_config = self._backwards_compability_config(config)
+			if network_config:
+				return network_config
+			return None

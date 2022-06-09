@@ -163,7 +163,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Network configuration'),
 				ask_to_configure_network,
-				display_func=lambda x: self._prev_network_configuration(x),
+				display_func=lambda x: self._display_network_conf(x),
+				preview_func=self._prev_network_config,
 				default={})
 		self._menu_options['timezone'] = \
 			Selector(
@@ -226,15 +227,22 @@ class GlobalMenu(GeneralMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return _('Install')
 
-	def _prev_network_configuration(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
+	def _display_network_conf(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
 		if not cur_value:
 			return _('Not configured, unavailable unless setup manually')
 		else:
 			if isinstance(cur_value, list):
-				ifaces = [x.iface for x in cur_value]
-				return f'Configured ifaces: {ifaces}'
+				return str(_('Configured {} interfaces')).format(len(cur_value))
 			else:
 				return str(cur_value)
+
+	def _prev_network_config(self) -> Optional[str]:
+		selector = self._menu_options['nic']
+		if selector.has_selection():
+			ifaces = selector.current_selection
+			if isinstance(ifaces, list):
+				return FormattedOutput.as_table(ifaces)
+		return None
 
 	def _prev_harddrives(self) -> Optional[str]:
 		selector = self._menu_options['harddrives']

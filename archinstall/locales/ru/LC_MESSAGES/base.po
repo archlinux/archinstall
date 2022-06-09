@@ -508,8 +508,8 @@ msgstr "Редактировать"
 msgid "Delete"
 msgstr "Удалить"
 
-msgid "Select an action for < {} >"
-msgstr "Выберите действие для < {} >"
+msgid "Select an action for '{}'"
+msgstr "Выберите действие для '{}'"
 
 msgid "Copy to new key:"
 msgstr "Копировать в новый ключ:"

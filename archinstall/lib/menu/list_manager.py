@@ -86,7 +86,7 @@ The contents in the base class of this methods serve for a very basic usage, and
 """
 import copy
 from os import system
-from typing import Union, Any, TYPE_CHECKING, Dict, Optional
+from typing import Union, Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
 from .text_input import TextInput
 from .menu import Menu
@@ -135,9 +135,9 @@ class ListManager:
 		elif isinstance(default_action,(list,tuple)):
 			self._default_action = default_action
 		else:
-			self._default_action = [str(default_action),]
+			self._default_action = [str(default_action)]
 
-		self._header = header if header else None
+		self._header = header if header else ''
 		self._cancel_action = str(_('Cancel'))
 		self._confirm_action = str(_('Confirm and exit'))
 		self._separator = ''
@@ -155,61 +155,81 @@ class ListManager:
 		while True:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
-
 			data_formatted = self.reformat(self._data)
-			options = list(data_formatted.keys())
+			options, header = self._prepare_selection(data_formatted)
 
-			if len(options) > 0:
-				options.append(self._separator)
+			menu_header = self._header
 
-			if self._default_action:
-				options += self._default_action
-
-			options += self._bottom_list
+			if header:
+				menu_header += header
 
 			system('clear')
 
-			target = Menu(
+			choice = Menu(
 				self._prompt,
 				options,
 				sort=False,
 				clear_screen=False,
 				clear_menu_on_exit=False,
-				header=self._header,
+				header=header,
 				skip_empty_entries=True,
-				skip=False
+				skip=False,
+				show_search_hint=False
 			).run()
 
-			if not target.value or target.value in self._bottom_list:
-				self.action = target
+			if not choice.value or choice.value in self._bottom_list:
+				self.action = choice
 				break
 
-			if target.value and target.value in self._default_action:
-				self.action = target.value
+			if choice.value and choice.value in self._default_action:
+				self.action = choice.value
 				self.target = None
 				self._data = self.exec_action(self._data)
 				continue
 
-			if isinstance(self._data,dict):
-				data_key = data_formatted[target.value]
+			if isinstance(self._data, dict):
+				data_key = data_formatted[choice.value]
 				key = self._data[data_key]
 				self.target = {data_key: key}
 			elif isinstance(self._data, list):
-				self.target = [d for d in self._data if d == data_formatted[target.value]][0]
+				self.target = [d for d in self._data if d == data_formatted[choice.value]][0]
 			else:
-				self.target = self._data[data_formatted[target.value]]
+				self.target = self._data[data_formatted[choice.value]]
 
 			# Possible enhancement. If run_actions returns false a message line indicating the failure
-			self.run_actions(target.value)
+			self.run_actions(choice.value)
 
-		if target.value == self._cancel_action:  # TODO dubious
+		if choice.value == self._cancel_action:
 			return self._original_data  # return the original list
 		else:
 			return self._data
 
-	def run_actions(self,prompt_data=None):
+	def _prepare_selection(self, data_formatted: Dict[str, Any]) -> Tuple[List[str], str]:
+		# header rows are mapped to None so make sure
+		# to exclude those from the selectable data
+		options: List[str] = [key for key, val in data_formatted.items() if val is not None]
+		header = ''
+
+		if len(options) > 0:
+			table_header = [key for key, val in data_formatted.items() if val is None]
+			header = '\n'.join(table_header)
+
+		if len(options) > 0:
+			options.append(self._separator)
+
+		if self._default_action:
+			# done only for mypy -> todo fix the self._default_action declaration
+			options += [action for action in self._default_action if action]
+
+		options += self._bottom_list
+		return options, header
+
+	def run_actions(self,prompt_data=''):
 		options = self.action_list() + self._bottom_item
-		prompt = _("Select an action for < {} >").format(prompt_data if prompt_data else self.target)
+		display_value = self.selected_action_display(self.target) if self.target else prompt_data
+
+		prompt = _("Select an action for '{}'").format(display_value)
+
 		choice = Menu(
 			prompt,
 			options,
@@ -225,26 +245,28 @@ class ListManager:
 		if self.action and self.action != self._cancel_action:
 			self._data = self.exec_action(self._data)
 
-	"""
-	The following methods are expected to be overwritten by the user if the needs of the list are beyond the simple case
-	"""
+	def selected_action_display(self, selection: Any) -> str:
+		# this will return the value to be displayed in the
+		# "Select an action for '{}'" string
+		raise NotImplementedError('Please implement me in the child class')
 
-	def reformat(self, data: Any) -> Dict[str, Any]:
-		"""
-		method to get the data in a format suitable to be shown
-		It is executed once for run loop and processes the whole self._data structure
-		"""
-		if isinstance(data,dict):
-			return {f'{k}: {v}': k for k, v in data.items()}
-		else:
-			return {str(k): k for k in data}
+	def reformat(self, data: List[Any]) -> Dict[str, Any]:
+		# this should return a dictionary of display string to actual data entry
+		# mapping; if the value for a given display string is None it will be used
+		# in the header value (useful when displaying tables)
+		raise NotImplementedError('Please implement me in the child class')
 
 	def action_list(self):
 		"""
 		can define alternate action list or customize the list  for each item.
 		Executed after any item is selected, contained in self.target
 		"""
-		return self._base_actions
+		active_entry = self.target if self.target else None
+
+		if active_entry is None:
+			return [self._base_actions[0]]
+		else:
+			return self._base_actions[1:]
 
 	def exec_action(self, data: Any):
 		"""
