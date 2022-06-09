@@ -134,7 +134,7 @@ class ManualNetworkConfig(ListManager):
 
 def ask_to_configure_network(
 	preset: Union[NetworkConfiguration, List[NetworkConfiguration]]
-) -> Any:
+) -> Optional[NetworkConfiguration | List[NetworkConfiguration]]:
 	"""
 		Configure the network on the newly installed system
 	"""
@@ -176,7 +176,6 @@ def ask_to_configure_network(
 		return NetworkConfiguration(NicType.NM)
 	elif choice.value == network_options['manual']:
 		preset_ifaces = preset if isinstance(preset, list) else []
-		ifaces = ManualNetworkConfig('Configure interfaces', preset_ifaces).run()
-		return {iface.iface: iface for iface in ifaces}
+		return ManualNetworkConfig('Configure interfaces', preset_ifaces).run()
 
 	return preset

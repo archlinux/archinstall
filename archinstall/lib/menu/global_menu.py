@@ -231,8 +231,8 @@ class GlobalMenu(GeneralMenu):
 		if not cur_value:
 			return _('Not configured, unavailable unless setup manually')
 		else:
-			if isinstance(cur_value, dict):
-				return str(_('Configured {} interfaces')).format(len(cur_value.keys()))
+			if isinstance(cur_value, list):
+				return str(_('Configured {} interfaces')).format(len(cur_value))
 			else:
 				return str(cur_value)
 
@@ -240,8 +240,8 @@ class GlobalMenu(GeneralMenu):
 		selector = self._menu_options['nic']
 		if selector.has_selection():
 			ifaces = selector.current_selection
-			if isinstance(ifaces, dict):
-				return FormattedOutput.as_table(list(ifaces.values()))
+			if isinstance(ifaces, list):
+				return FormattedOutput.as_table(ifaces)
 		return None
 
 	def _prev_harddrives(self) -> Optional[str]:
