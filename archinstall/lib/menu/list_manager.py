@@ -85,7 +85,6 @@ The contents in the base class of this methods serve for a very basic usage, and
 
 """
 import copy
-import logging
 from os import system
 from typing import Union, Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
