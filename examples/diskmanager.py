@@ -189,7 +189,9 @@ def create_global_block_map(disks=None):
 	def list_subvols(object):
 		subvol_info = {}
 		for subvol in object.subvolumes:
-			subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
+			#BAND-AID
+			#subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
+			subvol_info[subvol.name] = {'mountpoint':subvol.partition.mountpoint, 'options':None}
 		return subvol_info
 
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -858,6 +860,8 @@ class PartitionMenu(archinstall.GeneralMenu):
 			prev = {}
 		return SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()
 
+# BAND-AID
+# self.data -> self._data
 class DevList(archinstall.ListManager):
 	def __init__(self,prompt,list):
 		self.ObjectActions = [
@@ -914,7 +918,9 @@ class DevList(archinstall.ListManager):
 				if isinstance(subvolumes[subvol],str):
 					mountlist.append(subvolumes[subvol])
 				elif subvolumes[subvol].get('mountpoint'):
-					mountlist.append(subvolumes[subvol]['mountpoint'])
+					#BAND-AID
+					#mountlist.append(subvolumes[subvol]['mountpoint'])
+					mountlist.append(str(subvolumes[subvol]['mountpoint']))
 			if mountlist:
 				amount = f"//HOST({', '.join(mountlist):15.15})..."
 			else:
@@ -924,8 +930,9 @@ class DevList(archinstall.ListManager):
 		else:
 			amount = blank
 		return amount
-
-	def reformat(self):
+	#BAND-AID
+	#def reformat(self):
+	def reformat(self,data):
 		blank = ''
 		bar = r'\|'
 
@@ -997,7 +1004,7 @@ class DevList(archinstall.ListManager):
 						f"{bar}{mount:19.19}"                                                              # 74
 						f"{bar}{'IN USE' if amount or entry.get('uuid') else blank:6}")
 		self.reorder_data()
-		return list(map(lambda x:pretty_disk(x,self.data[x]) if self.data[x]['class'] == 'disk' else pretty_part(x,self.data[x]),self.data))
+		return list(map(lambda x:pretty_disk(x,self._data[x]) if self._data[x]['class'] == 'disk' else pretty_part(x,self._data[x]),self._data))
 		# ... beautfy the output of the list
 
 	def action_list(self):
@@ -1019,12 +1026,12 @@ class DevList(archinstall.ListManager):
 
 	def exec_action(self):
 		def ripple_delete(identifier,head=False):
-			keys = list(self.data.keys())
+			keys = list(self._data.keys())
 			for entry in keys:
 				if entry == identifier and not head:
 					continue
 				if entry.startswith(identifier):
-					del self.data[entry]
+					del self._data[entry]
 			keys = list(self.partitions_to_delete.keys())
 			for entry in keys:
 				if entry.startswith(identifier):
@@ -1042,7 +1049,7 @@ class DevList(archinstall.ListManager):
 			disk = None
 		# reset
 		if self.action == self.ObjectDefaultAction:
-			self.data = self.base_data
+			self._data = self.base_data
 			self.partitions_to_delete = {}
 		# Add disk to installation set',          # 0
 		elif self.action == self.ObjectActions[0]:
@@ -1052,7 +1059,7 @@ class DevList(archinstall.ListManager):
 		# Add partition',                         # 1
 		elif self.action == self.ObjectActions[1]:
 			# check if empty disk. A bit complex now. TODO sumplify
-			if len([key for key in self.data if key.startswith(disk) and self.data[key]['class'] == 'partition']) == 0:
+			if len([key for key in self._data if key.startswith(disk) and self._data[key]['class'] == 'partition']) == 0:
 				is_empty_disk = True
 			else:
 				is_empty_disk = False
@@ -1080,13 +1087,13 @@ class DevList(archinstall.ListManager):
 				part_data['type'] = 'primary'
 				part_data['wipe'] = True
 				part_data['parent'] = disk
-				self.data.update({key:part_data})
+				self._data.update({key:part_data})
 				if is_empty_disk:
-					self.data[disk]['wipe'] = True
+					self._data[disk]['wipe'] = True
 				# TODO size comes in strange format
 		# Clear disk (delete disk contents)',     # 2
 		elif self.action == self.ObjectActions[2]:
-			self.data[key]['wipe'] = True
+			self._data[key]['wipe'] = True
 			# no need to delete partitions in this disk
 			ripple_delete(key,head=False)
 		# Clear Partition & edit attributes',     # 3
@@ -1094,11 +1101,11 @@ class DevList(archinstall.ListManager):
 			PartitionMenu(value,disk,self).run()
 			if value:
 				value['wipe'] = True
-				self.data.update({key:value})
+				self._data.update({key:value})
 		# Edit partition attributes',             # 4
 		elif self.action == self.ObjectActions[4]:
 			PartitionMenu(value,disk,self).run()
-			self.data.update({key:value})
+			self._data.update({key:value})
 		# Exclude disk from installation set',    # 5
 		elif self.action == self.ObjectActions[5]:
 			ripple_delete(key,head=True)
@@ -1113,7 +1120,7 @@ class DevList(archinstall.ListManager):
 				return
 			elif value.get('uuid'):
 				self.partitions_to_delete.update(self.target)
-			del self.data[key]
+			del self._data[key]
 
 	def gap_map(self,block_device):
 		gap_list = []
@@ -1121,7 +1128,7 @@ class DevList(archinstall.ListManager):
 			disk = block_device.path
 		else:
 			disk = block_device
-		tmp_gaps = [value for part,value in sorted(self.data.items()) if value.get('parent') == disk and value['class'] == 'gap']
+		tmp_gaps = [value for part,value in sorted(self._data.items()) if value.get('parent') == disk and value['class'] == 'gap']
 		for gap in tmp_gaps:
 			# and the off by one ¿?
 			gap_list.append([gap['start'],gap['size'] + gap['start'] - 1 ,gap['size']])
@@ -1130,13 +1137,13 @@ class DevList(archinstall.ListManager):
 
 	def reorder_data(self):
 		new_struct = {}
-		tmp_disks = [disk for disk in sorted(list(self.data.keys())) if self.data[disk].get('class') == 'disk']
+		tmp_disks = [disk for disk in sorted(list(self._data.keys())) if self._data[disk].get('class') == 'disk']
 		for disk in tmp_disks:
-			new_struct.update({disk:self.data[disk]})
-			tmp_parts = [value for part,value in sorted(self.data.items()) if value.get('parent') == disk and value['class'] == 'partition']
+			new_struct.update({disk:self._data[disk]})
+			tmp_parts = [value for part,value in sorted(self._data.items()) if value.get('parent') == disk and value['class'] == 'partition']
 			new_parts = create_gaps(tmp_parts,disk,GLOBAL_BLOCK_MAP[disk]['size'])
 			new_struct[disk]['partitions'] = new_parts
-		self.data = from_general_dict_to_display(new_struct)
+		self._data = from_general_dict_to_display(new_struct)
 
 
 """
@@ -1163,6 +1170,8 @@ def frontpage():
 		]
 		result = archinstall.Menu(prompt,options,skip=True,sort=False).run()
 		if result:
+			#BAND-AID
+			harddrives = []
 			if result == options[0]:
 				# TODO should we check if the directory exists as a mountpoint ?
 				arguments['harddrives'] = []

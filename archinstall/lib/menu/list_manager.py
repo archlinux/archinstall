@@ -157,7 +157,11 @@ class ListManager:
 			# and the value is the original value from the self._data container
 
 			data_formatted = self.reformat(self._data)
-			options = list(data_formatted.keys())
+			#BAND-AID
+			if isinstance(data_formatted,dict):
+				options = list(data_formatted.keys())
+			else:
+				options = data_formatted
 
 			if len(options) > 0:
 				options.append(self._separator)
