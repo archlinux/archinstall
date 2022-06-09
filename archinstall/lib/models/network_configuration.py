@@ -39,8 +39,22 @@ class NetworkConfiguration:
 		else:
 			return 'Unknown type'
 
-	# for json serialization when calling json.dumps(...) on this class
-	def json(self):
+	def as_json(self) -> Dict:
+		exclude_fields = ['type']
+		data = {}
+		for k, v in self.__dict__.items():
+			if k not in exclude_fields:
+				if isinstance(v, list) and len(v) == 0:
+					v = ''
+				elif v is None:
+					v = ''
+
+				data[k] = v
+
+		return data
+
+	def json(self) -> Dict:
+		# for json serialization when calling json.dumps(...) on this class
 		return self.__dict__
 
 	def is_iso(self) -> bool:
