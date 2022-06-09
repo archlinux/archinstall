@@ -210,7 +210,8 @@ class Menu(TerminalMenu):
 			show_search_hint=show_search_hint,
 			cycle_cursor=cycle_cursor,
 			clear_menu_on_exit=clear_menu_on_exit,
-			skip_empty_entries=skip_empty_entries		)
+			skip_empty_entries=skip_empty_entries
+		)
 
 	def _show(self) -> MenuSelection:
 		try:

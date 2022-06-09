@@ -20,14 +20,14 @@ class SubvolumeList(ListManager):
 		]
 		super().__init__(prompt, current_volumes, self._actions, self._actions[0])
 
-	def reformat(self, data: List[Subvolume]) -> Dict[str, Subvolume]:
+	def reformat(self, data: List[Subvolume]) -> Dict[str, Optional[Subvolume]]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[Subvolume]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
 		for row, subvol in zip(rows[2:], data):
 			row = row.replace('|', '\\|')

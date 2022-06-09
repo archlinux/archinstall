@@ -36,14 +36,14 @@ class ManualNetworkConfig(ListManager):
 
 		super().__init__(prompt, ifaces, self._actions, self._actions[0])
 
-	def reformat(self, data: List[NetworkConfiguration]) -> Dict[str, NetworkConfiguration]:
+	def reformat(self, data: List[NetworkConfiguration]) -> Dict[str, Optional[NetworkConfiguration]]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[NetworkConfiguration]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
 		for row, iface in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
@@ -52,7 +52,7 @@ class ManualNetworkConfig(ListManager):
 		return display_data
 
 	def selected_action_display(self, iface: NetworkConfiguration) -> str:
-		return iface.iface
+		return iface.iface if iface.iface else ''
 
 	def exec_action(self, data: List[NetworkConfiguration]):
 		active_iface: Optional[NetworkConfiguration] = self.target if self.target else None
@@ -63,11 +63,12 @@ class ManualNetworkConfig(ListManager):
 				iface = NetworkConfiguration(NicType.MANUAL, iface=iface_name)
 				iface = self._edit_iface(iface)
 				data += [iface]
-		elif self.action == self._actions[1]:  # edit interface
-			data = [d for d in data if d.iface != active_iface.iface]
-			data.append(self._edit_iface(active_iface))
-		elif self.action == self._actions[2]:  # delete
-			data = [d for d in data if d != active_iface]
+		elif active_iface:
+			if self.action == self._actions[1]:  # edit interface
+				data = [d for d in data if d.iface != active_iface.iface]
+				data.append(self._edit_iface(active_iface))
+			elif self.action == self._actions[2]:  # delete
+				data = [d for d in data if d != active_iface]
 
 		return data
 

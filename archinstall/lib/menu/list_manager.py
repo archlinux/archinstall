@@ -135,7 +135,7 @@ class ListManager:
 		elif isinstance(default_action,(list,tuple)):
 			self._default_action = default_action
 		else:
-			self._default_action = [str(default_action),]
+			self._default_action = [str(default_action)]
 
 		self._header = header if header else ''
 		self._cancel_action = str(_('Cancel'))
@@ -207,10 +207,10 @@ class ListManager:
 	def _prepare_selection(self, data_formatted: Dict[str, Any]) -> Tuple[List[str], str]:
 		# header rows are mapped to None so make sure
 		# to exclude those from the selectable data
-		options = [key for key, val in data_formatted.items() if val is not None]
+		options: List[str] = [key for key, val in data_formatted.items() if val is not None]
 		header = ''
 
-		if options:
+		if len(options) > 0:
 			table_header = [key for key, val in data_formatted.items() if val is None]
 			header = '\n'.join(table_header)
 
@@ -218,10 +218,10 @@ class ListManager:
 			options.append(self._separator)
 
 		if self._default_action:
-			options += self._default_action
+			# done only for mypy -> todo fix the self._default_action declaration
+			options += [action for action in self._default_action if action]
 
 		options += self._bottom_list
-
 		return options, header
 
 	def run_actions(self,prompt_data=''):
