@@ -518,8 +518,8 @@ msgstr "Introduzca un directorio para guardar la(s) configuración(es): "
 msgid "Not a valid directory: {}"
 msgstr "No es un directorio válido: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "La contraseña que está utilizando parece ser débil,"
+msgid "The password you are using seems to be weak, "
+msgstr "La contraseña que está utilizando parece ser débil, "
 
 msgid "are you sure you want to use it?"
 msgstr "¿Estás seguro de que quieres usarlo?"
