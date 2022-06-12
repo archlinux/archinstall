@@ -525,8 +525,8 @@ msgstr "Voer de naam in van de map waarin de configuratie(s) moet(en) worden vas
 msgid "Not a valid directory: {}"
 msgstr "Ongeldige map: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Het gekozen wachtwoord is zwak."
+msgid "The password you are using seems to be weak, "
+msgstr "Het gekozen wachtwoord is zwak. "
 
 msgid "are you sure you want to use it?"
 msgstr "Weet u zeker dat u het wilt gebruiken?"
