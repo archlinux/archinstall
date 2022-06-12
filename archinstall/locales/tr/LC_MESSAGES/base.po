@@ -524,8 +524,8 @@ msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
 msgid "Not a valid directory: {}"
 msgstr "Geçerli bir dizin değil: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Kullandığınız şifre zayıf gözüküyor,"
+msgid "The password you are using seems to be weak, "
+msgstr "Kullandığınız şifre zayıf gözüküyor, "
 
 msgid "are you sure you want to use it?"
 msgstr "kullanmak istediğinize emin misiniz?"
