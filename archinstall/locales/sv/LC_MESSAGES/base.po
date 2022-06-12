@@ -524,8 +524,8 @@ msgstr "Välj vilken mapp du vill spara konfigurerationerna till: "
 msgid "Not a valid directory: {}"
 msgstr "Inte en giltig mapp: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Lösenordet du angav verkar svagt,"
+msgid "The password you are using seems to be weak, "
+msgstr "Lösenordet du angav verkar svagt, "
 
 msgid "are you sure you want to use it?"
 msgstr "Vill du verkligen använda det?"
