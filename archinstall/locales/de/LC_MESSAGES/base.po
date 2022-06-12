@@ -523,8 +523,8 @@ msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden solle
 msgid "Not a valid directory: {}"
 msgstr "Ordner existiert nicht: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Das gewählte Passwort ist sehr schwach,"
+msgid "The password you are using seems to be weak, "
+msgstr "Das gewählte Passwort ist sehr schwach, "
 
 msgid "are you sure you want to use it?"
 msgstr "wollen sie dieses wirklich verwenden?"
