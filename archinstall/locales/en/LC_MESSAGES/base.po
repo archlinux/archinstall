@@ -480,7 +480,7 @@ msgstr ""
 msgid "Not a valid directory: {}"
 msgstr ""
 
-msgid "The password you are using seems to be weak,"
+msgid "The password you are using seems to be weak, "
 msgstr ""
 
 msgid "are you sure you want to use it?"
