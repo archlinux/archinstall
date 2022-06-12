@@ -521,8 +521,8 @@ msgstr "Wprowadź katalog, w którym ma zostać zapisana konfiguracja: "
 msgid "Not a valid directory: {}"
 msgstr "Nie jest to prawidłowy katalog: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Używane przez Ciebie hasło wydaje się być słabe,"
+msgid "The password you are using seems to be weak, "
+msgstr "Używane przez Ciebie hasło wydaje się być słabe, "
 
 msgid "are you sure you want to use it?"
 msgstr "czy na pewno chcesz go używać?"
