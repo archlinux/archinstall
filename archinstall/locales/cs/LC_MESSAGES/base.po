@@ -515,8 +515,8 @@ msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
 msgid "Not a valid directory: {}"
 msgstr "Adresář není validní: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Vaše heslo se zdá být slabé,"
+msgid "The password you are using seems to be weak, "
+msgstr "Vaše heslo se zdá být slabé, "
 
 msgid "are you sure you want to use it?"
 msgstr "přejete si ho skutečně použít?"
