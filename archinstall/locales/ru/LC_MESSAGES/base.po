@@ -609,8 +609,8 @@ msgstr "Введите каталог для сохранения конфигу
 msgid "Not a valid directory: {}"
 msgstr "Недействительный каталог: {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Пароль, который вы используете, кажется слабым,"
+msgid "The password you are using seems to be weak, "
+msgstr "Пароль, который вы используете, кажется слабым, "
 
 msgid "are you sure you want to use it?"
 msgstr "вы уверены, что хотите его использовать?"
