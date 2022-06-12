@@ -520,8 +520,8 @@ msgstr "Saisir un répertoire pour la ou les configuration(s) à enregistrer : "
 msgid "Not a valid directory: {}"
 msgstr "Répertoire non valide : {}"
 
-msgid "The password you are using seems to be weak,"
-msgstr "Le mot de passe que vous utilisez semble faible,"
+msgid "The password you are using seems to be weak, "
+msgstr "Le mot de passe que vous utilisez semble faible, "
 
 msgid "are you sure you want to use it?"
 msgstr "êtes-vous sûr de vouloir l'utiliser ?"
