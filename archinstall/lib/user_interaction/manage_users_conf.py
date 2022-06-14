@@ -25,7 +25,7 @@ class UserList(ListManager):
 			str(_('Promote/Demote user')),
 			str(_('Delete User'))
 		]
-		super().__init__(prompt, lusers, self._actions, self._actions[0])
+		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
 	def reformat(self, data: List[User]) -> Dict[str, User]:
 		table = FormattedOutput.as_table(data)
@@ -45,27 +45,25 @@ class UserList(ListManager):
 	def selected_action_display(self, user: User) -> str:
 		return user.username
 
-	def exec_action(self, data: List[User]) -> List[User]:
-		active_user = self.target if self.target else None
-
-		if self.action == self._actions[0]:  # add
+	def handle_action(self, action: str, entry: Optional[User], data: List[User]) -> List[User]:
+		if action == self._actions[0]:  # add
 			new_user = self._add_user()
 			if new_user is not None:
 				# in case a user with the same username as an existing user
 				# was created we'll replace the existing one
 				data = [d for d in data if d.username != new_user.username]
 				data += [new_user]
-		elif self.action == self._actions[1]:  # change password
-			prompt = str(_('Password for user "{}": ').format(active_user.username))
+		elif action == self._actions[1]:  # change password
+			prompt = str(_('Password for user "{}": ').format(entry.username))
 			new_password = get_password(prompt=prompt)
 			if new_password:
-				user = next(filter(lambda x: x == active_user, data), 1)
+				user = next(filter(lambda x: x == entry, data), 1)
 				user.password = new_password
-		elif self.action == self._actions[2]:  # promote/demote
-			user = next(filter(lambda x: x == active_user, data), 1)
+		elif action == self._actions[2]:  # promote/demote
+			user = next(filter(lambda x: x == entry, data), 1)
 			user.sudo = False if user.sudo else True
-		elif self.action == self._actions[3]:  # delete
-			data = [d for d in data if d != active_user]
+		elif action == self._actions[3]:  # delete
+			data = [d for d in data if d != entry]
 
 		return data
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable, Optional
 
+from .PartitionManager import PartitionManager
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log, FormattedOutput
@@ -151,11 +152,12 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 
 
 def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50
+	prompt = str(_('Manage partition layout'))
+	test = PartitionManager(prompt, block_device.partitions.values())
+	test.run()
+
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
 	original_layout = copy.deepcopy(block_device_struct)
-
-	# Test code: [part.__dump__() for part in block_device.partitions.values()]
-	# TODO: Squeeze in BTRFS subvolumes here
 
 	new_partition = str(_('Create a new partition'))
 	suggest_partition_layout = str(_('Suggest partition layout'))
@@ -209,6 +211,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			return original_layout
 		elif task == save_and_exit:
 			break
+
 		if task == new_partition:
 			from ..disk import valid_parted_position
 
@@ -222,8 +225,9 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			if fs_choice.type_ == MenuSelectionType.Esc:
 				continue
 
-			prompt = _('Enter the start sector (percentage or block number, default: {}): ').format(
-				block_device.first_free_sector)
+			prompt = str(_('Enter the start sector (percentage or block number, default: {}): ')).format(
+				block_device.first_free_sector
+			)
 			start = input(prompt).strip()
 
 			if not start.strip():
@@ -232,8 +236,9 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			else:
 				end_suggested = '100%'
 
-			prompt = _('Enter the end sector of the partition (percentage or block number, ex: {}): ').format(
-				end_suggested)
+			prompt = str(_('Enter the end sector of the partition (percentage or block number, ex: {}): ')).format(
+				end_suggested
+			)
 			end = input(prompt).strip()
 
 			if not end.strip():
