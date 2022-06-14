@@ -29,7 +29,7 @@ class ManualNetworkConfig(ListManager):
 			str(_('Delete interface'))
 		]
 
-		super().__init__(prompt, ifaces, self._actions, self._actions[0])
+		super().__init__(prompt, ifaces, [self._actions[0]], self._actions[1:])
 
 	def reformat(self, data: List[NetworkConfiguration]) -> Dict[str, Optional[NetworkConfiguration]]:
 		table = FormattedOutput.as_table(data)
@@ -49,21 +49,19 @@ class ManualNetworkConfig(ListManager):
 	def selected_action_display(self, iface: NetworkConfiguration) -> str:
 		return iface.iface if iface.iface else ''
 
-	def exec_action(self, data: List[NetworkConfiguration]):
-		active_iface: Optional[NetworkConfiguration] = self.target if self.target else None
-
-		if self.action == self._actions[0]:  # add
+	def handle_action(self, action: str, entry: Optional[NetworkConfiguration], data: List[NetworkConfiguration]):
+		if action == self._actions[0]:  # add
 			iface_name = self._select_iface(data)
 			if iface_name:
 				iface = NetworkConfiguration(NicType.MANUAL, iface=iface_name)
 				iface = self._edit_iface(iface)
 				data += [iface]
-		elif active_iface:
-			if self.action == self._actions[1]:  # edit interface
-				data = [d for d in data if d.iface != active_iface.iface]
-				data.append(self._edit_iface(active_iface))
-			elif self.action == self._actions[2]:  # delete
-				data = [d for d in data if d != active_iface]
+		elif entry:
+			if action == self._actions[1]:  # edit interface
+				data = [d for d in data if d.iface != entry.iface]
+				data.append(self._edit_iface(entry))
+			elif action == self._actions[2]:  # delete
+				data = [d for d in data if d != entry]
 
 		return data
 
