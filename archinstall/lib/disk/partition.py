@@ -5,6 +5,7 @@ import logging
 import json
 import os
 import hashlib
+from dataclasses import dataclass
 from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
@@ -15,17 +16,48 @@ from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
+from ..models.subvolume import Subvolume
+
+
+@dataclass
+class VirtualPartition:
+	start: int
+	size: int
+	mountpoint: str
+	filesystem: str
+	encrypted: bool
+	wipe: bool = False
+	btrfs: List[Subvolume] = None
+	type: str = 'primary'
+
+	@classmethod
+	def from_dict(cls, entries: List[Dict[str, Any]]) -> List['VirtualPartition']:
+		partitions = []
+		for entry in entries:
+			partition = VirtualPartition(
+				start=entry.get('start', 0),
+				size=entry.get('size', 0),
+				encrypted=entry.get('encrypted', False),
+				mountpoint=entry.get('mountpoint', None),
+				filesystem=entry['filesystem']['format'],
+				wipe=entry['wipe']
+			)
+			partitions.append(partition)
+
+		return partitions
 
 
 class Partition:
-	def __init__(self,
+	def __init__(
+		self,
 		path: str,
 		block_device: BlockDevice,
 		part_id :Optional[str] = None,
 		filesystem :Optional[str] = None,
 		mountpoint :Optional[str] = None,
 		encrypted :bool = False,
-		autodetect_filesystem :bool = True):
+		autodetect_filesystem :bool = True
+	):
 
 		if not part_id:
 			part_id = os.path.basename(path)
@@ -96,25 +128,25 @@ class Partition:
 
 		return partition_info
 
-	# def __dump__(self) -> Dict[str, Any]:
-	# 	# TODO remove this in favour of as_json
-	#
-	# 	log(get_filesystem_type(self.path))
-	#
-	# 	return {
-	# 		'type': 'primary',
-	# 		'PARTUUID': self._safe_uuid,
-	# 		'wipe': self.allow_formatting,
-	# 		'boot': self.boot,
-	# 		'ESP': self.boot,
-	# 		'mountpoint': self.target_mountpoint,
-	# 		'encrypted': self._encrypted,
-	# 		'start': self.start,
-	# 		'size': self.end,
-	# 		'filesystem': {
-	# 			'format': self.filesystem_type
-	# 		}
-	# 	}
+	def __dump__(self) -> Dict[str, Any]:
+		# TODO remove this in favour of as_json
+
+		log(get_filesystem_type(self.path))
+
+		return {
+			'type': 'primary',
+			'PARTUUID': self._safe_uuid,
+			'wipe': self.allow_formatting,
+			'boot': self.boot,
+			'ESP': self.boot,
+			'mountpoint': self.target_mountpoint,
+			'encrypted': self._encrypted,
+			'start': self.start,
+			'size': self.end,
+			'filesystem': {
+				'format': self.filesystem_type
+			}
+		}
 
 	@property
 	def filesystem_type(self) -> Optional[str]:

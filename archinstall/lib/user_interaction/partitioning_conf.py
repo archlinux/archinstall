@@ -153,7 +153,7 @@ def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
 
 def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50
 	prompt = str(_('Manage partition layout'))
-	test = PartitionManager(prompt, block_device.partitions.values())
+	test = PartitionManager(prompt, block_device)
 	test.run()
 
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}

@@ -414,7 +414,6 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 
 def get_filesystem_type(path :str) -> Optional[str]:
 	try:
-		log(f'blkid -o value -s TYPE {path}')
 		return SysCommand(f"blkid -o value -s TYPE {path}").decode('UTF-8').strip()
 	except SysCallError:
 		return None
