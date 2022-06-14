@@ -18,35 +18,6 @@ from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 from ..models.subvolume import Subvolume
 
-
-@dataclass
-class VirtualPartition:
-	start: int
-	size: int
-	mountpoint: str
-	filesystem: str
-	encrypted: bool
-	wipe: bool = False
-	btrfs: List[Subvolume] = None
-	type: str = 'primary'
-
-	@classmethod
-	def from_dict(cls, entries: List[Dict[str, Any]]) -> List['VirtualPartition']:
-		partitions = []
-		for entry in entries:
-			partition = VirtualPartition(
-				start=entry.get('start', 0),
-				size=entry.get('size', 0),
-				encrypted=entry.get('encrypted', False),
-				mountpoint=entry.get('mountpoint', None),
-				filesystem=entry['filesystem']['format'],
-				wipe=entry['wipe']
-			)
-			partitions.append(partition)
-
-		return partitions
-
-
 class Partition:
 	def __init__(
 		self,
