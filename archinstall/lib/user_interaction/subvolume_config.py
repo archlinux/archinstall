@@ -84,14 +84,15 @@ class SubvolumeList(ListManager):
 				# was created we'll replace the existing one
 				data = [d for d in data if d.name != new_subvolume.name]
 				data += [new_subvolume]
-		elif action == self._actions[1]:  # edit subvolume
-			new_subvolume = self._add_subvolume(entry)
+		elif entry is not None:
+			if action == self._actions[1]:  # edit subvolume
+				new_subvolume = self._add_subvolume(entry)
 
-			if new_subvolume is not None:
-				# we'll remove the original subvolume and add the modified version
-				data = [d for d in data if d.name != entry.name and d.name != new_subvolume.name]
-				data += [new_subvolume]
-		elif action == self._actions[2]:  # delete
-			data = [d for d in data if d != entry]
+				if new_subvolume is not None:
+					# we'll remove the original subvolume and add the modified version
+					data = [d for d in data if d.name != entry.name and d.name != new_subvolume.name]
+					data += [new_subvolume]
+			elif action == self._actions[2]:  # delete
+				data = [d for d in data if d != entry]
 
 		return data

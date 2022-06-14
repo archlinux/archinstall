@@ -5,7 +5,6 @@ import logging
 import json
 import os
 import hashlib
-from dataclasses import dataclass
 from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
@@ -16,7 +15,6 @@ from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
-from ..models.subvolume import Subvolume
 
 class Partition:
 	def __init__(

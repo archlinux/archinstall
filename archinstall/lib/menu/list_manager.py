@@ -1,6 +1,6 @@
 import copy
 from os import system
-from typing import Union, Any, TYPE_CHECKING, Dict, Optional, Tuple, List
+from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
 from .menu import Menu
 
@@ -14,7 +14,7 @@ class ListManager:
 		prompt: str,
 		entries: List[Any],
 		base_actions: List[str],
-		sub_menu_actions: List[str] = None
+		sub_menu_actions: List[str]
 	):
 		"""
 		:param prompt:  Text which will appear at the header
@@ -125,7 +125,7 @@ class ListManager:
 		# in the header value (useful when displaying tables)
 		raise NotImplementedError('Please implement me in the child class')
 
-	def handle_action(self, action: str, entry: Optional[Any], data: List[Any]) -> List[Any]:
+	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
 		# this function is called when a base action or
 		# a specific action for an entry is triggered
 		raise NotImplementedError('Please implement me in the child class')
