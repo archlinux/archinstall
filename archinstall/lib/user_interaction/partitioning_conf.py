@@ -140,16 +140,6 @@ def get_default_partition_layout(
 		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 
-def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
-	result = {}
-
-	for device in block_devices:
-		layout = manage_new_and_existing_partitions(device)
-		result[device.path] = layout
-
-	return result
-
-
 def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50
 	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
 	original_layout = copy.deepcopy(block_device_struct)
