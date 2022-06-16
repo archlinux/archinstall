@@ -277,7 +277,6 @@ class BlockDevice:
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
 				try:
-					log(partition)
 					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
 						return partition
 					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
