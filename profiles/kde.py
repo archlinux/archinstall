@@ -12,8 +12,7 @@ __packages__ = [
 	"ark",
 	"sddm",
 	"plasma-wayland-session",
-	"egl-wayland",
-	"packagekit-qt5",
+	"egl-wayland"
 ]
 
 

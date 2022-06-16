@@ -17,14 +17,16 @@ from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 class Partition:
-	def __init__(self,
+	def __init__(
+		self,
 		path: str,
 		block_device: BlockDevice,
 		part_id :Optional[str] = None,
 		filesystem :Optional[str] = None,
 		mountpoint :Optional[str] = None,
 		encrypted :bool = False,
-		autodetect_filesystem :bool = True):
+		autodetect_filesystem :bool = True
+	):
 
 		if not part_id:
 			part_id = os.path.basename(path)
@@ -76,7 +78,30 @@ class Partition:
 		else:
 			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
 
+	def as_json(self) -> Dict[str, Any]:
+		"""
+		this is used for the table representation of the partition (see FormattedOutput)
+		"""
+		partition_info = {
+			'type': 'primary',
+			'PARTUUID': self._safe_uuid,
+			'wipe': self.allow_formatting,
+			'boot': self.boot,
+			'ESP': self.boot,
+			'mountpoint': self.target_mountpoint,
+			'encrypted': self._encrypted,
+			'start': self.start,
+			'size': self.end,
+			'filesystem': self.filesystem_type
+		}
+
+		return partition_info
+
 	def __dump__(self) -> Dict[str, Any]:
+		# TODO remove this in favour of as_json
+
+		log(get_filesystem_type(self.path))
+
 		return {
 			'type': 'primary',
 			'PARTUUID': self._safe_uuid,
@@ -88,9 +113,13 @@ class Partition:
 			'start': self.start,
 			'size': self.end,
 			'filesystem': {
-				'format': get_filesystem_type(self.path)
+				'format': self.filesystem_type
 			}
 		}
+
+	@property
+	def filesystem_type(self) -> Optional[str]:
+		return get_filesystem_type(self.path)
 
 	@property
 	def mountpoint(self) -> Optional[str]:

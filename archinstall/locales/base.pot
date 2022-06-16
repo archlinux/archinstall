@@ -414,7 +414,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-msgid "Select an action for < {} >"
+msgid "Select an action for '{}'"
 msgstr ""
 
 msgid "Copy to new key:"
