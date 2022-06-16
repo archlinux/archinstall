@@ -1,10 +1,11 @@
 import glob
-import pathlib
 import time
 import logging
 import json
 import os
 import hashlib
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
@@ -16,6 +17,20 @@ from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
+
+@dataclass
+class PartitionInfo:
+	pttype: str
+	partuuid: str
+	uuid: str
+	mountpoint: Path
+	start: Optional[int]
+	end: Optional[int]
+	bootable: bool
+	size: float
+	sector_size: int
+
+
 class Partition:
 	def __init__(
 		self,
@@ -25,26 +40,32 @@ class Partition:
 		filesystem :Optional[str] = None,
 		mountpoint :Optional[str] = None,
 		encrypted :bool = False,
-		autodetect_filesystem :bool = True
+		autodetect_filesystem :bool = True,
 	):
-
 		if not part_id:
 			part_id = os.path.basename(path)
 
-		self.block_device = block_device
-		if type(self.block_device) is str:
+		if type(block_device) is str:
 			raise ValueError(f"Partition()'s 'block_device' parameter has to be a archinstall.BlockDevice() instance!")
 
+		self.block_device = block_device
 		self.path = path
 		self.part_id = part_id
 		self.target_mountpoint = mountpoint
 		self.filesystem = filesystem
 		self._encrypted = None
 		self.encrypted = encrypted
-		self.allow_formatting = False
+		self._wipe = False
+		self._type = 'primary'
+
+		self._filesystem_type = get_filesystem_type(self.path)
 
 		if mountpoint:
 			self.mount(mountpoint)
+
+		self._mountpoint = self._get_mountpoint()
+
+		self._partition_info = self._fetch_information()
 
 		try:
 			self.mount_information = list(find_mountpoint(self.path))
@@ -74,38 +95,35 @@ class Partition:
 			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
 
 		if self._encrypted:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
 		else:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self.filesystem}{mount_repr})'
 
 	def as_json(self) -> Dict[str, Any]:
 		"""
 		this is used for the table representation of the partition (see FormattedOutput)
 		"""
 		partition_info = {
-			'type': 'primary',
-			'PARTUUID': self._safe_uuid,
-			'wipe': self.allow_formatting,
+			'type': self._type,
+			'PARTUUID': self.part_uuid,
+			'wipe': self._wipe,
 			'boot': self.boot,
 			'ESP': self.boot,
 			'mountpoint': self.target_mountpoint,
 			'encrypted': self._encrypted,
 			'start': self.start,
 			'size': self.end,
-			'filesystem': self.filesystem_type
+			'filesystem': self._filesystem_type
 		}
 
 		return partition_info
 
 	def __dump__(self) -> Dict[str, Any]:
 		# TODO remove this in favour of as_json
-
-		log(get_filesystem_type(self.path))
-
 		return {
-			'type': 'primary',
-			'PARTUUID': self._safe_uuid,
-			'wipe': self.allow_formatting,
+			'type': self._type,
+			'PARTUUID': self.part_uuid,
+			'wipe': self._wipe,
 			'boot': self.boot,
 			'ESP': self.boot,
 			'mountpoint': self.target_mountpoint,
@@ -113,21 +131,15 @@ class Partition:
 			'start': self.start,
 			'size': self.end,
 			'filesystem': {
-				'format': self.filesystem_type
+				'format': self._filesystem_type
 			}
 		}
 
-	@property
-	def filesystem_type(self) -> Optional[str]:
-		return get_filesystem_type(self.path)
-
-	@property
-	def mountpoint(self) -> Optional[str]:
+	def _get_mountpoint(self) -> Optional[Path]:
 		try:
 			data = json.loads(SysCommand(f"findmnt --json -R {self.path}").decode())
 			for filesystem in data['filesystems']:
-				return pathlib.Path(filesystem.get('target'))
-
+				return Path(filesystem.get('target'))
 		except SysCallError as error:
 			# Not mounted anywhere most likely
 			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG, fg="grey")
@@ -135,157 +147,87 @@ class Partition:
 
 		return None
 
-	@property
-	def sector_size(self) -> Optional[int]:
-		output = json.loads(SysCommand(f"lsblk --json -o+LOG-SEC {self.device_path}").decode('UTF-8'))
+	def _call_lsblk(self) -> Dict[str, Any]:
+		self.partprobe()
+		output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID {self.device_path}").decode('UTF-8')
 
-		for device in output['blockdevices']:
-			return device.get('log-sec', None)
+		if output:
+			lsblk_info = json.loads(output)
+			return lsblk_info
+
+		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
+
+	def _call_sfdisk(self) -> Dict[str, Any]:
+		output = SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8')
+
+		if output:
+			sfdisk_info = json.loads(output)
+			partitions = sfdisk_info.get('partitiontable', {}).get('partitions', [])
+			return next(filter(lambda x: x['node'] == self.path, partitions))
+
+		raise DiskError(f'Failed to read disk "{self.block_device.path}" with sfdisk')
+
+	def _is_bootable(self, sfdisk_info: Dict[str, Any]) -> bool:
+		return sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
+
+	def _fetch_information(self) -> PartitionInfo:
+		lsblk_info = self._call_lsblk()
+		sfdisk_info = self._call_sfdisk()
+		device = lsblk_info['blockdevices'][0]
+
+		return PartitionInfo(
+			pttype=device['pttype'],
+			partuuid=device['partuuid'],
+			uuid=device['uuid'],
+			sector_size=device['log-sec'],
+			size=convert_size_to_gb(device['size']),
+			start=sfdisk_info['start'],
+			end=sfdisk_info['size'],
+			bootable=self._is_bootable(sfdisk_info),
+			mountpoint=self._get_mountpoint()
+		)
+
+	@property
+	def mountpoint(self) -> Optional[Path]:
+		return self._mountpoint
+
+	@property
+	def sector_size(self) -> int:
+		return self._partition_info.sector_size
 
 	@property
 	def start(self) -> Optional[str]:
-		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
-
-		for partition in output.get('partitiontable', {}).get('partitions', []):
-			if partition['node'] == self.path:
-				return partition['start']  # * self.sector_size
+		return self._partition_info.start
 
 	@property
-	def end(self) -> Optional[str]:
-		# TODO: actually this is size in sectors unit
-		# TODO: Verify that the logic holds up, that 'size' is the size without 'start' added to it.
-		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
-
-		for partition in output.get('partitiontable', {}).get('partitions', []):
-			if partition['node'] == self.path:
-				return partition['size']  # * self.sector_size
+	def end(self) -> int:
+		return self._partition_info.end
 
 	@property
-	def end_sectors(self) -> Optional[str]:
-		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
-
-		for partition in output.get('partitiontable', {}).get('partitions', []):
-			if partition['node'] == self.path:
-				return partition['start'] + partition['size']
+	def end_sectors(self) -> int:
+		start = self._partition_info.start
+		end = self._partition_info.end
+		return start + end
 
 	@property
 	def size(self) -> Optional[float]:
-		for i in range(storage['DISK_RETRY_ATTEMPTS']):
-			self.partprobe()
-			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
-
-			try:
-				lsblk = json.loads(SysCommand(f"lsblk --json -b -o+SIZE {self.device_path}").decode())
-
-				for device in lsblk['blockdevices']:
-					return convert_size_to_gb(device['size'])
-			except SysCallError as error:
-				if error.exit_code == 8192:
-					return None
-				else:
-					raise error
+		return self._partition_info.size
 
 	@property
 	def boot(self) -> bool:
-		output = json.loads(SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8'))
-
-		for partition in output.get('partitiontable', {}).get('partitions', []):
-			if partition['node'] == self.path:
-				# first condition is for MBR disks, second for GPT disks
-				return partition.get('bootable', False) or partition.get('type','') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
-
-		return False
+		return self._partition_info.bootable
 
 	@property
 	def partition_type(self) -> Optional[str]:
-		lsblk = json.loads(SysCommand(f"lsblk --json -o+PTTYPE {self.device_path}").decode('UTF-8'))
-
-		for device in lsblk['blockdevices']:
-			return device['pttype']
+		return self._partition_info.pttype
 
 	@property
 	def part_uuid(self) -> str:
-		"""
-		Returns the PARTUUID as returned by lsblk.
-		This is more reliable than relying on /dev/disk/by-partuuid as
-		it doesn't seam to be able to detect md raid partitions.
-		For bind mounts all the subvolumes share the same uuid
-		"""
-		for i in range(storage['DISK_RETRY_ATTEMPTS']):
-			if not self.partprobe():
-				raise DiskError(f"Could not perform partprobe on {self.device_path}")
-
-			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
-
-			partuuid = self._safe_part_uuid
-			if partuuid:
-				return partuuid
-
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
+		return self._partition_info.partuuid
 
 	@property
 	def uuid(self) -> Optional[str]:
-		"""
-		Returns the UUID as returned by lsblk for the **partition**.
-		This is more reliable than relying on /dev/disk/by-uuid as
-		it doesn't seam to be able to detect md raid partitions.
-		For bind mounts all the subvolumes share the same uuid
-		"""
-		for i in range(storage['DISK_RETRY_ATTEMPTS']):
-			if not self.partprobe():
-				raise DiskError(f"Could not perform partprobe on {self.device_path}")
-
-			time.sleep(storage.get('DISK_TIMEOUTS', 1) * i)
-
-			partuuid = self._safe_uuid
-			if partuuid:
-				return partuuid
-
-		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
-
-	@property
-	def _safe_uuid(self) -> Optional[str]:
-		"""
-		A near copy of self.uuid but without any delays.
-		This function should only be used where uuid is not crucial.
-		For instance when you want to get a __repr__ of the class.
-		"""
-		if not self.partprobe():
-			if self.block_device.partition_type == 'iso9660':
-				return None
-
-			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
-
-		try:
-			return SysCommand(f'blkid -s UUID -o value {self.device_path}').decode('UTF-8').strip()
-		except SysCallError as error:
-			if self.block_device.partition_type == 'iso9660':
-				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
-				return None
-
-			log(f"Could not get PARTUUID of partition using 'blkid -s UUID -o value {self.device_path}': {error}")
-
-	@property
-	def _safe_part_uuid(self) -> Optional[str]:
-		"""
-		A near copy of self.uuid but without any delays.
-		This function should only be used where uuid is not crucial.
-		For instance when you want to get a __repr__ of the class.
-		"""
-		if not self.partprobe():
-			if self.block_device.partition_type == 'iso9660':
-				return None
-
-			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
-
-		try:
-			return self.block_device.uuid
-		except SysCallError as error:
-			if self.block_device.partition_type == 'iso9660':
-				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
-				return None
-
-			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
+		return self._partition_info.uuid
 
 	@property
 	def encrypted(self) -> Union[bool, None]:
@@ -309,7 +251,7 @@ class Partition:
 
 	@property
 	def device_path(self) -> str:
-		""" for bind mounts returns the phisical path of the partition
+		""" for bind mounts returns the physical path of the partition
 		"""
 		device_path, bind_name = split_bind_name(self.path)
 		return device_path
@@ -330,7 +272,7 @@ class Partition:
 			for child in information.get('children', []):
 				if target := child.get('target'):
 					if child.get('fstype') == 'btrfs':
-						if subvolume := subvolume_info_from_path(pathlib.Path(target)):
+						if subvolume := subvolume_info_from_path(Path(target)):
 							yield subvolume
 
 					if child.get('children'):
@@ -338,10 +280,10 @@ class Partition:
 							yield subchild
 
 		for mountpoint in self.mount_information:
-			if result := findmnt(pathlib.Path(mountpoint['target'])):
+			if result := findmnt(Path(mountpoint['target'])):
 				for filesystem in result.get('filesystems', []):
 					if mountpoint.get('fstype') == 'btrfs':
-						if subvolume := subvolume_info_from_path(pathlib.Path(mountpoint['target'])):
+						if subvolume := subvolume_info_from_path(Path(mountpoint['target'])):
 							yield subvolume
 
 					for child in iterate_children_recursively(filesystem):
@@ -372,7 +314,7 @@ class Partition:
 			return False
 
 		temporary_mountpoint = '/tmp/' + hashlib.md5(bytes(f"{time.time()}", 'UTF-8') + os.urandom(12)).hexdigest()
-		temporary_path = pathlib.Path(temporary_mountpoint)
+		temporary_path = Path(temporary_mountpoint)
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
 		if (handle := SysCommand(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
@@ -412,7 +354,7 @@ class Partition:
 
 		# To avoid "unable to open /dev/x: No such file or directory"
 		start_wait = time.time()
-		while pathlib.Path(path).exists() is False and time.time() - start_wait < 10:
+		while Path(path).exists() is False and time.time() - start_wait < 10:
 			time.sleep(0.025)
 
 		if log_formatting:
@@ -510,7 +452,7 @@ class Partition:
 
 			fs_type = get_mount_fs_type(fs)
 
-			pathlib.Path(target).mkdir(parents=True, exist_ok=True)
+			Path(target).mkdir(parents=True, exist_ok=True)
 
 			if self.bind_name:
 				device_path = self.device_path

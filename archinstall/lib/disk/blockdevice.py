@@ -88,9 +88,6 @@ class BlockDevice:
 
 		raise KeyError(f'{self.info} does not contain information: "{key}"')
 
-	def __len__(self) -> int:
-		return len(self.partitions)
-
 	def __lt__(self, left_comparitor :'BlockDevice') -> bool:
 		return self._path < left_comparitor.path
 
@@ -280,6 +277,7 @@ class BlockDevice:
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
 				try:
+					log(partition)
 					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
 						return partition
 					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
