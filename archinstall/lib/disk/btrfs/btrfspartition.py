@@ -22,18 +22,6 @@ class BTRFSPartition(Partition):
 	def __init__(self, *args, **kwargs):
 		Partition.__init__(self, *args, **kwargs)
 
-	def __repr__(self, *args :str, **kwargs :str) -> str:
-		mount_repr = ''
-		if self.mountpoint:
-			mount_repr = f", mounted={self.mountpoint}"
-		elif self.target_mountpoint:
-			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
-
-		if self._encrypted:
-			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
-		else:
-			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self.filesystem}{mount_repr})'
-
 	@property
 	def subvolumes(self):
 		for filesystem in findmnt(pathlib.Path(self.path), recurse=True).get('filesystems', []):

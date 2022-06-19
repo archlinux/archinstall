@@ -90,10 +90,12 @@ class Partition:
 		elif self._target_mountpoint:
 			mount_repr = f", rel_mountpoint={self._target_mountpoint}"
 
+		classname = self.__class__.__name__
+
 		if self._encrypted:
-			return f'Partition(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self._partition_info.filesystem_type}{mount_repr})'
+			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self._partition_info.filesystem_type}{mount_repr})'
 		else:
-			return f'Partition(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self._partition_info.filesystem_type}{mount_repr})'
+			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self._partition_info.filesystem_type}{mount_repr})'
 
 	def as_json(self) -> Dict[str, Any]:
 		"""
@@ -450,8 +452,6 @@ class Partition:
 			log(f'Mounting {self} to {target}', level=logging.INFO)
 
 			if not fs:
-				if not self._partition_info.filesystem_type:
-					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
 				fs = self._partition_info.filesystem_type
 
 			fs_type = get_mount_fs_type(fs)
@@ -468,6 +468,14 @@ class Partition:
 			else:
 				device_path = self._path
 			try:
+
+				print('!!!!!!!!!!!!!!!1')
+				print(options)
+				print(fs)
+				print(fs_type)
+				print(device_path)
+				print(target)
+				
 				if options:
 					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 				else:

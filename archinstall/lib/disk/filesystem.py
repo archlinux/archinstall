@@ -274,7 +274,7 @@ class Filesystem:
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 
 		total_partitions = set([partition.part_uuid for partition in self.blockdevice.partitions.values()])
-		total_partitions.update(old_partitions)
+		total_partitions.update(previous_partuuids)
 
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
