@@ -468,14 +468,6 @@ class Partition:
 			else:
 				device_path = self._path
 			try:
-
-				print('!!!!!!!!!!!!!!!1')
-				print(options)
-				print(fs)
-				print(fs_type)
-				print(device_path)
-				print(target)
-				
 				if options:
 					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
 				else:
