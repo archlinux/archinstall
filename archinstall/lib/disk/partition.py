@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List, Union, Iterator
 
 from .blockdevice import BlockDevice
-from .helpers import find_mountpoint, get_filesystem_type, convert_size_to_gb, split_bind_name
+from .helpers import get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
 from ..exceptions import DiskError, SysCallError, UnknownFilesystemFormat
 from ..output import log
@@ -23,12 +23,18 @@ class PartitionInfo:
 	pttype: str
 	partuuid: str
 	uuid: str
-	mountpoint: Path
 	start: Optional[int]
 	end: Optional[int]
 	bootable: bool
 	size: float
 	sector_size: int
+	filesystem_type: str
+	mountpoints: List[Path]
+
+	def get_first_mountpoint(self) -> Optional[Path]:
+		if len(self.mountpoints) > 0:
+			return self.mountpoints[0]
+		return None
 
 
 class Partition:
@@ -49,34 +55,24 @@ class Partition:
 			raise ValueError(f"Partition()'s 'block_device' parameter has to be a archinstall.BlockDevice() instance!")
 
 		self.block_device = block_device
-		self.path = path
-		self.part_id = part_id
-		self.target_mountpoint = mountpoint
-		self.filesystem = filesystem
+		self._path = path
+		self._part_id = part_id
+		self._target_mountpoint = mountpoint
 		self._encrypted = None
-		self.encrypted = encrypted
+		self._encrypted = encrypted
 		self._wipe = False
 		self._type = 'primary'
-
-		self._filesystem_type = get_filesystem_type(self.path)
 
 		if mountpoint:
 			self.mount(mountpoint)
 
-		self._mountpoint = self._get_mountpoint()
-
 		self._partition_info = self._fetch_information()
 
-		try:
-			self.mount_information = list(find_mountpoint(self.path))
-		except DiskError:
-			self.mount_information = [{}]
+		if not autodetect_filesystem:
+			self._partition_info.filesystem_type = filesystem
 
-		if not self.filesystem and autodetect_filesystem:
-			self.filesystem = get_filesystem_type(path)
-
-		if self.filesystem == 'crypto_LUKS':
-			self.encrypted = True
+		if self._partition_info.filesystem_type == 'crypto_LUKS':
+			self._encrypted = True
 
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
@@ -85,19 +81,19 @@ class Partition:
 			left_comparitor = str(left_comparitor)
 
 		# The goal is to check if /dev/nvme0n1p1 comes before /dev/nvme0n1p5
-		return self.path < left_comparitor
+		return self._path < left_comparitor
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		mount_repr = ''
-		if self.mountpoint:
-			mount_repr = f", mounted={self.mountpoint}"
-		elif self.target_mountpoint:
-			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
+		if mountpoint := self._partition_info.get_first_mountpoint():
+			mount_repr = f", mounted={mountpoint}"
+		elif self._target_mountpoint:
+			mount_repr = f", rel_mountpoint={self._target_mountpoint}"
 
 		if self._encrypted:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self._partition_info.filesystem_type}{mount_repr})'
 		else:
-			return f'Partition(path={self.path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self.filesystem}{mount_repr})'
+			return f'Partition(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self._partition_info.filesystem_type}{mount_repr})'
 
 	def as_json(self) -> Dict[str, Any]:
 		"""
@@ -109,11 +105,11 @@ class Partition:
 			'wipe': self._wipe,
 			'boot': self.boot,
 			'ESP': self.boot,
-			'mountpoint': self.target_mountpoint,
+			'mountpoint': self._target_mountpoint,
 			'encrypted': self._encrypted,
 			'start': self.start,
 			'size': self.end,
-			'filesystem': self._filesystem_type
+			'filesystem': self._partition_info.filesystem_type
 		}
 
 		return partition_info
@@ -126,30 +122,18 @@ class Partition:
 			'wipe': self._wipe,
 			'boot': self.boot,
 			'ESP': self.boot,
-			'mountpoint': self.target_mountpoint,
+			'mountpoint': self._target_mountpoint,
 			'encrypted': self._encrypted,
 			'start': self.start,
 			'size': self.end,
 			'filesystem': {
-				'format': self._filesystem_type
+				'format': self._partition_info.filesystem_type
 			}
 		}
 
-	def _get_mountpoint(self) -> Optional[Path]:
-		try:
-			data = json.loads(SysCommand(f"findmnt --json -R {self.path}").decode())
-			for filesystem in data['filesystems']:
-				return Path(filesystem.get('target'))
-		except SysCallError as error:
-			# Not mounted anywhere most likely
-			log(f"Could not locate mount information for {self.path}: {error}", level=logging.DEBUG, fg="grey")
-			pass
-
-		return None
-
 	def _call_lsblk(self) -> Dict[str, Any]:
 		self.partprobe()
-		output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID {self.device_path}").decode('UTF-8')
+		output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 
 		if output:
 			lsblk_info = json.loads(output)
@@ -163,17 +147,22 @@ class Partition:
 		if output:
 			sfdisk_info = json.loads(output)
 			partitions = sfdisk_info.get('partitiontable', {}).get('partitions', [])
-			return next(filter(lambda x: x['node'] == self.path, partitions))
+			node = list(filter(lambda x: x['node'] == self._path, partitions))
+
+			if len(node) > 0:
+				return node[0]
+
+			return {}
 
 		raise DiskError(f'Failed to read disk "{self.block_device.path}" with sfdisk')
-
-	def _is_bootable(self, sfdisk_info: Dict[str, Any]) -> bool:
-		return sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
 
 	def _fetch_information(self) -> PartitionInfo:
 		lsblk_info = self._call_lsblk()
 		sfdisk_info = self._call_sfdisk()
 		device = lsblk_info['blockdevices'][0]
+
+		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
+		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
 
 		return PartitionInfo(
 			pttype=device['pttype'],
@@ -181,15 +170,34 @@ class Partition:
 			uuid=device['uuid'],
 			sector_size=device['log-sec'],
 			size=convert_size_to_gb(device['size']),
-			start=sfdisk_info['start'],
-			end=sfdisk_info['size'],
-			bootable=self._is_bootable(sfdisk_info),
-			mountpoint=self._get_mountpoint()
+			start=sfdisk_info.get('start', None),
+			end=sfdisk_info.get('size', None),
+			bootable=bootable,
+			filesystem_type=device['fstype'],
+			mountpoints=mountpoints
 		)
 
 	@property
+	def target_mountpoint(self) -> str:
+		return self._target_mountpoint
+
+	@property
+	def path(self) -> str:
+		return self._path
+
+	@property
+	def filesystem(self) -> str:
+		return self._partition_info.filesystem_type
+
+	@property
 	def mountpoint(self) -> Optional[Path]:
-		return self._mountpoint
+		if len(self.mountpoints) > 0:
+			return self.mountpoints[0]
+		return None
+
+	@property
+	def mountpoints(self) -> List[Path]:
+		return self._partition_info.mountpoints
 
 	@property
 	def sector_size(self) -> int:
@@ -233,10 +241,6 @@ class Partition:
 	def encrypted(self) -> Union[bool, None]:
 		return self._encrypted
 
-	@encrypted.setter
-	def encrypted(self, value: bool) -> None:
-		self._encrypted = value
-
 	@property
 	def parent(self) -> str:
 		return self.real_device
@@ -247,13 +251,13 @@ class Partition:
 			if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
 				return f"/dev/{parent}"
 		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
-		return self.path
+		return self._path
 
 	@property
 	def device_path(self) -> str:
 		""" for bind mounts returns the physical path of the partition
 		"""
-		device_path, bind_name = split_bind_name(self.path)
+		device_path, bind_name = split_bind_name(self._path)
 		return device_path
 
 	@property
@@ -261,7 +265,7 @@ class Partition:
 		""" for bind mounts returns the bind name (subvolume path).
 		Returns none if this property does not exist
 		"""
-		device_path, bind_name = split_bind_name(self.path)
+		device_path, bind_name = split_bind_name(self._path)
 		return bind_name
 
 	@property
@@ -279,22 +283,22 @@ class Partition:
 						for subchild in iterate_children_recursively(child):
 							yield subchild
 
-		for mountpoint in self.mount_information:
-			if result := findmnt(Path(mountpoint['target'])):
-				for filesystem in result.get('filesystems', []):
-					if mountpoint.get('fstype') == 'btrfs':
-						if subvolume := subvolume_info_from_path(Path(mountpoint['target'])):
+		if self._partition_info.filesystem_type == 'btrfs':
+			for mountpoint in self._partition_info.mountpoints:
+				if result := findmnt(mountpoint):
+					for filesystem in result.get('filesystems', []):
+						if subvolume := subvolume_info_from_path(mountpoint):
 							yield subvolume
 
-					for child in iterate_children_recursively(filesystem):
-						yield child
+						for child in iterate_children_recursively(filesystem):
+							yield child
 
 	def partprobe(self) -> bool:
 		try:
 			if self.block_device:
 				return 0 == SysCommand(f'partprobe {self.block_device.device}').exit_code
 		except SysCallError as error:
-			log(f"Unreliable results might be given for {self.path} due to partprobe error: {error}", level=logging.DEBUG)
+			log(f"Unreliable results might be given for {self._path} due to partprobe error: {error}", level=logging.DEBUG)
 
 		return False
 
@@ -309,7 +313,7 @@ class Partition:
 			return None
 
 	def has_content(self) -> bool:
-		fs_type = get_filesystem_type(self.path)
+		fs_type = self._partition_info.filesystem_type
 		if not fs_type or "swap" in fs_type:
 			return False
 
@@ -317,8 +321,8 @@ class Partition:
 		temporary_path = Path(temporary_mountpoint)
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
-		if (handle := SysCommand(f'/usr/bin/mount {self.path} {temporary_mountpoint}')).exit_code != 0:
-			raise DiskError(f'Could not mount and check for content on {self.path} because: {b"".join(handle)}')
+		if (handle := SysCommand(f'/usr/bin/mount {self._path} {temporary_mountpoint}')).exit_code != 0:
+			raise DiskError(f'Could not mount and check for content on {self._path} because: {b"".join(handle)}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		iterations = 0
@@ -344,10 +348,10 @@ class Partition:
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
 		if filesystem is None:
-			filesystem = self.filesystem
+			filesystem = self._partition_info.filesystem_type
 
 		if path is None:
-			path = self.path
+			path = self._path
 
 		# This converts from fat32 -> vfat to unify filesystem names
 		filesystem = get_mount_fs_type(filesystem)
@@ -366,55 +370,55 @@ class Partition:
 
 				if 'UUID:' not in (mkfs := SysCommand(f"/usr/bin/mkfs.btrfs {' '.join(options)} {path}").decode('UTF-8')):
 					raise DiskError(f'Could not format {path} with {filesystem} because: {mkfs}')
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'vfat':
 				options = ['-F32'] + options
 				log(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")
 				if (handle := SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'ext4':
 				options = ['-F'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.ext4 {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'ext2':
 				options = ['-F'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.ext2 {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
-				self.filesystem = 'ext2'
+				self._partition_info.filesystem_type = 'ext2'
 
 			elif filesystem == 'xfs':
 				options = ['-f'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.xfs {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'f2fs':
 				options = ['-f'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.f2fs {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'ntfs3':
 				options = ['-f'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.ntfs -Q {' '.join(options)} {path}")).exit_code != 0:
 					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			elif filesystem == 'crypto_LUKS':
 				# 	from ..luks import luks2
 				# 	encrypted_partition = luks2(self, None, None)
 				# 	encrypted_partition.format(path)
-				self.filesystem = filesystem
+				self._partition_info.filesystem_type = filesystem
 
 			else:
 				raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
@@ -427,9 +431,9 @@ class Partition:
 				return self.format(filesystem, path, log_formatting, options, retry=False)
 
 		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':
-			self.encrypted = True
+			self._encrypted = True
 		else:
-			self.encrypted = False
+			self._encrypted = False
 
 		return True
 
@@ -442,13 +446,13 @@ class Partition:
 					return parent
 
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
-		if not self.mountpoint:
+		if not self._partition_info.get_first_mountpoint():
 			log(f'Mounting {self} to {target}', level=logging.INFO)
 
 			if not fs:
-				if not self.filesystem:
+				if not self._partition_info.filesystem_type:
 					raise DiskError(f'Need to format (or define) the filesystem on {self} before mounting.')
-				fs = self.filesystem
+				fs = self._partition_info.filesystem_type
 
 			fs_type = get_mount_fs_type(fs)
 
@@ -462,7 +466,7 @@ class Partition:
 				else:
 					options = f"subvol={self.bind_name}"
 			else:
-				device_path = self.path
+				device_path = self._path
 			try:
 				if options:
 					mnt_handle = SysCommand(f"/usr/bin/mount -t {fs_type} -o {options} {device_path} {target}")
@@ -471,7 +475,7 @@ class Partition:
 
 				# TODO: Should be redundant to check for exit_code
 				if mnt_handle.exit_code != 0:
-					raise DiskError(f"Could not mount {self.path} to {target} using options {options}")
+					raise DiskError(f"Could not mount {self._path} to {target} using options {options}")
 			except SysCallError as err:
 				raise err
 
@@ -480,18 +484,15 @@ class Partition:
 		return False
 
 	def unmount(self) -> bool:
-		worker = SysCommand(f"/usr/bin/umount {self.path}")
+		worker = SysCommand(f"/usr/bin/umount {self._path}")
 
 		# Without to much research, it seams that low error codes are errors.
 		# And above 8k is indicators such as "/dev/x not mounted.".
 		# So anything in between 0 and 8k are errors (?).
 		if 0 < worker.exit_code < 8000:
-			raise SysCallError(f"Could not unmount {self.path} properly: {worker}", exit_code=worker.exit_code)
+			raise SysCallError(f"Could not unmount {self._path} properly: {worker}", exit_code=worker.exit_code)
 
 		return True
-
-	def umount(self) -> bool:
-		return self.unmount()
 
 	def filesystem_supported(self) -> bool:
 		"""
@@ -501,7 +502,7 @@ class Partition:
 			2. UnknownFilesystemFormat that indicates that we don't support the given filesystem type
 		"""
 		try:
-			self.format(self.filesystem, '/dev/null', log_formatting=False, allow_formatting=True)
+			self.format(self._partition_info.filesystem_type, '/dev/null', log_formatting=False)
 		except (SysCallError, DiskError):
 			pass  # We supported it, but /dev/null is not formattable as expected so the mkfs call exited with an error code
 		except UnknownFilesystemFormat as err:

@@ -118,6 +118,8 @@ class BlockDevice:
 	def _load_partitions(self):
 		from .partition import Partition
 
+		self._partitions.clear()
+
 		lsblk_info = self._call_lsblk(self._path)
 		device = lsblk_info['blockdevices'][0]
 		self._partitions.clear()
@@ -230,8 +232,6 @@ class BlockDevice:
 
 	@property
 	def partitions(self) -> Dict[str, 'Partition']:
-		self._partprobe()
-		self._load_partitions()
 		return OrderedDict(sorted(self._partitions.items()))
 
 	@property
@@ -279,7 +279,7 @@ class BlockDevice:
 				try:
 					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
 						return partition
-					elif partuuid and partition.part_uuid.lower() == partuuid.lower():
+					elif partuuid and partition.part_uuid and partition.part_uuid.lower() == partuuid.lower():
 						return partition
 				except DiskError as error:
 					# Most likely a blockdevice that doesn't support or use UUID's
@@ -288,6 +288,7 @@ class BlockDevice:
 					pass
 
 			log(f"uuid {uuid} or {partuuid} not found. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s for next attempt",level=logging.DEBUG)
+			self.flush_cache()
 			time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 
 		log(f"Could not find {uuid}/{partuuid} in disk after 5 retries", level=logging.INFO)

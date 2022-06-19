@@ -370,7 +370,7 @@ def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict
 
 	return filters
 
-def get_partitions_in_use(mountpoint :str) -> List[Partition]:
+def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 	from .partition import Partition
 
 	try:
@@ -393,8 +393,12 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		if not type(blockdev) in (Partition, MapperDev):
 			continue
 
-		for blockdev_mountpoint in blockdev.mount_information:
-			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
+		if isinstance(blockdev, Partition):
+			for blockdev_mountpoint in blockdev.mountpoints:
+				block_devices_mountpoints[blockdev_mountpoint] = blockdev
+		else:
+			for blockdev_mountpoint in blockdev.mount_information:
+				block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
