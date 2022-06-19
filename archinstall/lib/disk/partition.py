@@ -4,6 +4,7 @@ import logging
 import json
 import os
 import hashlib
+import typing
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Union, Iterator
@@ -68,12 +69,15 @@ class Partition:
 
 		self._partition_info = self._fetch_information()
 
-		if not autodetect_filesystem:
+		if not autodetect_filesystem and filesystem:
 			self._partition_info.filesystem_type = filesystem
 
 		if self._partition_info.filesystem_type == 'crypto_LUKS':
 			self._encrypted = True
 
+	# I hate doint this but I'm currently unsure where this
+	# is acutally used to be able to fix the typing issues properly
+	@typing.no_type_check
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
@@ -180,7 +184,7 @@ class Partition:
 		)
 
 	@property
-	def target_mountpoint(self) -> str:
+	def target_mountpoint(self) -> Optional[str]:
 		return self._target_mountpoint
 
 	@property
@@ -206,18 +210,20 @@ class Partition:
 		return self._partition_info.sector_size
 
 	@property
-	def start(self) -> Optional[str]:
+	def start(self) -> Optional[int]:
 		return self._partition_info.start
 
 	@property
-	def end(self) -> int:
+	def end(self) -> Optional[int]:
 		return self._partition_info.end
 
 	@property
-	def end_sectors(self) -> int:
+	def end_sectors(self) -> Optional[int]:
 		start = self._partition_info.start
 		end = self._partition_info.end
-		return start + end
+		if start and end:
+			return start + end
+		return None
 
 	@property
 	def size(self) -> Optional[float]:
@@ -249,11 +255,15 @@ class Partition:
 
 	@property
 	def real_device(self) -> str:
-		for blockdevice in json.loads(SysCommand('lsblk -J').decode('UTF-8'))['blockdevices']:
-			if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
-				return f"/dev/{parent}"
-		# 	raise DiskError(f'Could not find appropriate parent for encrypted partition {self}')
-		return self._path
+		output = SysCommand('lsblk -J').decode('UTF-8')
+
+		if output:
+			for blockdevice in json.loads(output)['blockdevices']:
+				if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
+					return f"/dev/{parent}"
+			return self._path
+
+		raise DiskError('Unable to get disk information for command "lsblk -J"')
 
 	@property
 	def device_path(self) -> str:
@@ -312,7 +322,8 @@ class Partition:
 			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
 				return unlocked_device.filesystem
 		except SysCallError:
-			return None
+			pass
+		return None
 
 	def has_content(self) -> bool:
 		fs_type = self._partition_info.filesystem_type
@@ -324,7 +335,7 @@ class Partition:
 
 		temporary_path.mkdir(parents=True, exist_ok=True)
 		if (handle := SysCommand(f'/usr/bin/mount {self._path} {temporary_mountpoint}')).exit_code != 0:
-			raise DiskError(f'Could not mount and check for content on {self._path} because: {b"".join(handle)}')
+			raise DiskError(f'Could not mount and check for content on {self._path} because: {handle}')
 
 		files = len(glob.glob(f"{temporary_mountpoint}/*"))
 		iterations = 0
@@ -335,14 +346,14 @@ class Partition:
 
 		return True if files > 0 else False
 
-	def encrypt(self, *args :str, **kwargs :str) -> str:
+	def encrypt(self, password: Optional[str] = None) -> str:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
 		from ..luks import luks2
 
 		handle = luks2(self, None, None)
-		return handle.encrypt(self, *args, **kwargs)
+		return handle.encrypt(self, password=password)
 
 	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = [], retry :bool = True) -> bool:
 		"""
@@ -370,7 +381,8 @@ class Partition:
 			if filesystem == 'btrfs':
 				options = ['-f'] + options
 
-				if 'UUID:' not in (mkfs := SysCommand(f"/usr/bin/mkfs.btrfs {' '.join(options)} {path}").decode('UTF-8')):
+				mkfs = SysCommand(f"/usr/bin/mkfs.btrfs {' '.join(options)} {path}").decode('UTF-8')
+				if mkfs and 'UUID:' not in mkfs:
 					raise DiskError(f'Could not format {path} with {filesystem} because: {mkfs}')
 				self._partition_info.filesystem_type = filesystem
 
@@ -392,9 +404,8 @@ class Partition:
 				options = ['-F'] + options
 
 				if (handle := SysCommand(f"/usr/bin/mkfs.ext2 {' '.join(options)} {path}")).exit_code != 0:
-					raise DiskError(f'Could not format {path} with {filesystem} because: {b"".join(handle)}')
+					raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
 				self._partition_info.filesystem_type = 'ext2'
-
 			elif filesystem == 'xfs':
 				options = ['-f'] + options
 
@@ -447,6 +458,8 @@ class Partition:
 				if parent := self.find_parent_of(child, name, parent=data['name']):
 					return parent
 
+		return None
+
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self._partition_info.get_first_mountpoint():
 			log(f'Mounting {self} to {target}', level=logging.INFO)
@@ -485,12 +498,13 @@ class Partition:
 
 	def unmount(self) -> bool:
 		worker = SysCommand(f"/usr/bin/umount {self._path}")
+		exit_code = worker.exit_code
 
 		# Without to much research, it seams that low error codes are errors.
 		# And above 8k is indicators such as "/dev/x not mounted.".
 		# So anything in between 0 and 8k are errors (?).
-		if 0 < worker.exit_code < 8000:
-			raise SysCallError(f"Could not unmount {self._path} properly: {worker}", exit_code=worker.exit_code)
+		if exit_code and 0 < exit_code < 8000:
+			raise SysCallError(f"Could not unmount {self._path} properly: {worker}", exit_code=exit_code)
 
 		return True
 
