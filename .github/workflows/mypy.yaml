@@ -71,7 +71,6 @@ jobs:
                   --exclude "archinstall/lib/models/dataclasses.py"
                   --exclude "archinstall/lib/models/pydantic.py"
                   --exclude "archinstall/__init__.py"
-                  --exclude "examples/unattended.py"
                   --exclude "examples/minimal.py"
                   --exclude "examples/guided.py"
                   --exclude "examples/__init__.py"

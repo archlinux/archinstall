@@ -16,6 +16,8 @@ for name, info in archinstall.list_profiles().items():
 			print(f'{i}...')
 			time.sleep(1)
 
-		profile = archinstall.Profile(None, info['path'])
-		profile.install()
-		break
+		path = info['path']
+		if isinstance(path, str):
+			profile = archinstall.Profile(None, path)
+			profile.install()
+			break
