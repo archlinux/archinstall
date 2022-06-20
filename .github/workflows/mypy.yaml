@@ -96,7 +96,6 @@ jobs:
                   --exclude "profiles/deepin.py"
                   --exclude "profiles/i3.py"
                   --exclude "profiles/bspwm.py"
-                  --exclude "profiles/sway.py"
                   --exclude "profiles/xorg.py"
                   --exclude "profiles/__init__.py"
                   --exclude "profiles/gnome.py"
