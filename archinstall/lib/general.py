@@ -532,7 +532,7 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
 
-		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
+		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
