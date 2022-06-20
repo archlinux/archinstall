@@ -820,6 +820,9 @@ msgstr ""
 msgid "Delete subvolume"
 msgstr "Gebruiker verwijderen"
 
+msgid "Configured {} interfaces"
+msgstr ""
+
 #~ msgid "Select disk layout"
 #~ msgstr "Kies een schijfindeling"
 

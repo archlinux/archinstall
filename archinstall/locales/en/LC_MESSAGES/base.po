@@ -740,3 +740,6 @@ msgstr ""
 
 msgid "Delete subvolume"
 msgstr ""
+
+msgid "Configured {} interfaces"
+msgstr ""

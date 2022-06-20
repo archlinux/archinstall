@@ -789,3 +789,6 @@ msgstr ""
 #, fuzzy
 msgid "Delete subvolume"
 msgstr "Smazat uživatele"
+
+msgid "Configured {} interfaces"
+msgstr ""
