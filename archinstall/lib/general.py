@@ -534,7 +534,6 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 
 		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
-		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :

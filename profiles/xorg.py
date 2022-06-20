@@ -1,10 +1,15 @@
 # A system with "xorg" installed
+from typing import TYPE_CHECKING, Any
 
 import archinstall
 import logging
 from archinstall.lib.hardware import __packages__ as __hwd__packages__
 
 is_top_level_profile = True
+
+if TYPE_CHECKING:
+	_: Any
+
 
 __description__ = str(_('Installs a minimal system as well as xorg and graphics drivers.'))
 
@@ -17,7 +22,7 @@ __packages__ = [
 ]
 
 
-def _prep_function(*args, **kwargs):
+def _prep_function(*args, **kwargs) -> bool:
 	"""
 	Magic function called by the importing installer
 	before continuing any further. It also avoids executing any
