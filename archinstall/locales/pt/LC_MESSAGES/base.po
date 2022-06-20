@@ -840,6 +840,9 @@ msgstr ""
 msgid "Delete subvolume"
 msgstr "Eliminar Utilizador"
 
+msgid "Configured {} interfaces"
+msgstr ""
+
 #~ msgid "Select disk layout"
 #~ msgstr "Seleciona o esquema de disco"
 

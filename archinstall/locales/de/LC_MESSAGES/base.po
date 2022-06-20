@@ -805,6 +805,9 @@ msgstr ""
 msgid "Delete subvolume"
 msgstr "Benutzerkonto löschen"
 
+msgid "Configured {} interfaces"
+msgstr ""
+
 #~ msgid "Select disk layout"
 #~ msgstr "Laufwerke-layout auswählen"
 
