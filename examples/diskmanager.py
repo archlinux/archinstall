@@ -2,12 +2,12 @@ import archinstall
 import pathlib
 import os
 from pprint import pprint
-from pudb import set_trace
+# from pudb import set_trace
 import logging
 from copy import deepcopy, copy
 import re
 
-from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
+from typing import Any, TYPE_CHECKING, Dict, Optional, List
 
 if TYPE_CHECKING:
 	_: Any
@@ -194,8 +194,8 @@ def create_global_block_map(disks=None):
 	def list_subvols(object):
 		subvol_info = {}
 		for subvol in object.subvolumes:
-			#BAND-AID
-			#subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
+			# BAND-AID
+			# subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
 			subvol_info[subvol.name] = {'mountpoint':subvol.partition.mountpoint, 'options':None}
 		return subvol_info
 
@@ -309,8 +309,8 @@ def normalize_from_layout(partition_list,disk):
 		if subvol_info:
 			for subvol in subvol_info:
 				if isinstance(subvol,archinstall.Subvolume):
-					norm_subvol.append({ "name":subvol.name,"mountpoint":subvol.mountpoint,"compress":subvol.compress,"nodatacow":subvol.nodatacow })
-				""" band aid. i might need it
+					norm_subvol.append({"name":subvol.name,"mountpoint":subvol.mountpoint,"compress":subvol.compress,"nodatacow":subvol.nodatacow})
+				""" BAND-AID. i might need it
 				elif subvol_info[subvol] is None:
 					norm_subvol[subvol] = {}
 				elif isinstance(subvol_info[subvol],str):
@@ -900,7 +900,7 @@ class DevList(archinstall.ListManager):
 		result_list = super().run()
 		# TODO there is no self.action by now
 		# if not self.action or self.action == self._cancel_action:
-		#	self.partitions_to_delete = {}
+		# 	self.partitions_to_delete = {}
 		return result_list, self.partitions_to_delete
 
 	def selected_action_display(self, selection: Any) -> str:
@@ -912,13 +912,12 @@ class DevList(archinstall.ListManager):
 		else:
 			text = 'slot {}, type {}'.format(selection,self._data[selection]['class'])
 		return text
-		#raise NotImplementedError('Please implement me in the child class')
 
 	def reformat(self, data: List[Any]) -> Dict[str, Any]:
 		# this should return a dictionary of display string to actual data entry
 		# mapping; if the value for a given display string is None it will be used
 		# in the header value (useful when displaying tables)
-		raw_result = self._header() | { self._prettify(key,value):key for key,value in data.items() }
+		raw_result = self._header() | {self._prettify(key,value):key for key,value in data.items()}
 		return raw_result
 
 	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
@@ -952,7 +951,7 @@ class DevList(archinstall.ListManager):
 						f"{bar}{'mount at':^19}"
 						f"{bar}{'used':^6}"),
 						f"{'-' * 18}{bar}{'-'*5}{bar}{'-'*5}{bar}{'-'*7}{bar}{'-'*9}{bar}{'-'*8}{bar}{'-'*19}{bar}{'-'*6}")
-		return { "  " + head:None for head in header}
+		return {"  " + head:None for head in header}
 
 	def _prettify(self,entry_key,entry):
 		blank = ''
@@ -1043,8 +1042,8 @@ class DevList(archinstall.ListManager):
 				if isinstance(subvolumes[subvol],str):
 					mountlist.append(subvolumes[subvol])
 				elif subvolumes[subvol].get('mountpoint'):
-					#BAND-AID
-					#mountlist.append(subvolumes[subvol]['mountpoint'])
+					# BAND-AID
+					# mountlist.append(subvolumes[subvol]['mountpoint'])
 					mountlist.append(str(subvolumes[subvol]['mountpoint']))
 			if mountlist:
 				amount = f"//HOST({', '.join(mountlist):15.15})..."
@@ -1146,10 +1145,10 @@ class DevList(archinstall.ListManager):
 			# TODO size comes in strange format
 		return data
 
-	def _action_clear_disk(key,value,disk,data):
+	def _action_clear_disk(self,key,value,disk,data):
 		data[key]['wipe'] = True
-			# no need to delete partitions in this disk
-		ripple_delete(key,head=False)
+		# no need to delete partitions in this disk
+		self.ripple_delete(key,head=False)
 		return data
 
 	def _action_clear_partition(self,key,value,disk,data):
@@ -1165,7 +1164,7 @@ class DevList(archinstall.ListManager):
 		return data
 
 	def _action_exclude_disk(self,key,value,disk,data):
-		ripple_delete(key,head=True)
+		self.ripple_delete(key,head=True)
 		return data
 
 	def _action_delete_partition(self,key,value,disk,data):
@@ -1176,6 +1175,10 @@ class DevList(archinstall.ListManager):
 			self.partitions_to_delete.update(self.target)
 		del data[key]
 		return data
+
+	def ripple_delete(self,key,head):
+		# placeholder
+		return
 
 	def _sort_data(self,data):
 		return data
@@ -1236,8 +1239,8 @@ class OldDevList(archinstall.ListManager):
 				if isinstance(subvolumes[subvol],str):
 					mountlist.append(subvolumes[subvol])
 				elif subvolumes[subvol].get('mountpoint'):
-					#BAND-AID
-					#mountlist.append(subvolumes[subvol]['mountpoint'])
+					# BAND-AID
+					#   mountlist.append(subvolumes[subvol]['mountpoint'])
 					mountlist.append(str(subvolumes[subvol]['mountpoint']))
 			if mountlist:
 				amount = f"//HOST({', '.join(mountlist):15.15})..."
@@ -1248,8 +1251,7 @@ class OldDevList(archinstall.ListManager):
 		else:
 			amount = blank
 		return amount
-	#BAND-AID
-	#def reformat(self):
+
 	def reformat(self,data):
 		blank = ''
 		bar = r'\|'
@@ -1488,7 +1490,7 @@ def frontpage():
 		]
 		result = archinstall.Menu(prompt,options,skip=True,sort=False).run()
 		if result:
-			#BAND-AID
+			# BAND-AID
 			harddrives = []
 			if result.value == options[0]:
 				# TODO should we check if the directory exists as a mountpoint ?
