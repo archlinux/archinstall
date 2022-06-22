@@ -899,8 +899,8 @@ class DevList(archinstall.ListManager):
 	def run(self):
 		result_list = super().run()
 		# TODO there is no self.action by now
-		# if not self.action or self.action == self._cancel_action:
-		# 	self.partitions_to_delete = {}
+		if self.last_choice.value != self._confirm_action:
+			self.partitions_to_delete = {}
 		return result_list, self.partitions_to_delete
 
 	def selected_action_display(self, selection: Any) -> str:
@@ -926,6 +926,23 @@ class DevList(archinstall.ListManager):
 		# final sort has to be done here
 		return self._sort_data(self._exec_action(action,entry,data))
 		raise NotImplementedError('Please implement me in the child class')
+
+	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
+		# filter which actions to show for an specific selection
+		target = self._data[selection]
+		disk_actions = (0,1,2,5)
+		part_actions = (3,4,7)  # BUG hide partition disallowed for the time being (3,4,6,7)
+		if target.get('class') == 'disk':
+			return [options[i] for i in disk_actions]
+		elif target.get('class') == 'gap':
+			return [options[1]]
+		elif target.get('class') == 'partition':
+			return [options[i] for i in part_actions]
+		else:
+			return options
+		# ... if you need some changes to the action list based on self.target
+
+		return options
 
 	def _header(self):
 		bar = r'|'
@@ -1056,8 +1073,6 @@ class DevList(archinstall.ListManager):
 		return amount
 
 	def _exec_action(self,action,entry,data):
-		print(action,entry)
-		input('yep')
 		if entry:
 			key = entry
 			value = data[entry]
