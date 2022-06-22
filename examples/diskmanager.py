@@ -305,15 +305,19 @@ def normalize_from_layout(partition_list,disk):
 
 	def subvol_normalize(part):
 		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
-		norm_subvol = {}
+		norm_subvol = []
 		if subvol_info:
 			for subvol in subvol_info:
-				if subvol_info[subvol] is None:
+				if isinstance(subvol,archinstall.Subvolume):
+					norm_subvol.append({ "name":subvol.name,"mountpoint":subvol.mountpoint,"compress":subvol.compress,"nodatacow":subvol.nodatacow })
+				""" band aid. i might need it
+				elif subvol_info[subvol] is None:
 					norm_subvol[subvol] = {}
 				elif isinstance(subvol_info[subvol],str):
 					norm_subvol[subvol] = {'mountpoint':subvol_info[subvol]}
 				else:
 					norm_subvol[subvol] = subvol_info[subvol]
+				"""
 		return norm_subvol
 
 	def size_normalize(part,disk):
@@ -675,7 +679,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		else:
 			base_value = 'no'
 		response = archinstall.Menu(prompt,['yes','no'], preset_values=base_value).run()
-		if response == 'yes':
+		if response.value == 'yes':
 			return True
 		else:
 			return False
@@ -700,9 +704,9 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def _select_filesystem(self,prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
-		if fstype != self.data.get('filesystem',{}).get('format') and self.data.get('uuid'): # changed FS means reformat if the disk exists
+		if fstype.value != self.data.get('filesystem',{}).get('format') and self.data.get('uuid'): # changed FS means reformat if the disk exists
 			self.ds['wipe'] = True
-		if fstype == 'btrfs':
+		if fstype.value == 'btrfs':
 			self.option('subvolumes').set_enabled(True)
 		else:
 			self.option('subvolumes').set_enabled(False)
@@ -859,10 +863,13 @@ class PartitionMenu(archinstall.GeneralMenu):
 
 	def _manage_subvolumes(self,prev):
 		if self.option('fs').get_selection() != 'btrfs':
-			return {}
+			return []
 		# TODO partition reference if possible
+		# band-aid
 		if prev is None:
-			prev = {}
+			prev = []
+		else:
+			prev = list(map(lambda x:archinstall.Subvolume(x.get('name'),x.get('mountpoint'),x.get('compress',False),x.get('nodatacow',False)) if not isinstance(x,archinstall.Subvolume) else x,prev))
 		return SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()
 
 # BAND-AID
@@ -978,10 +985,13 @@ class DevList(archinstall.ListManager):
 				subvolumes = entry['subvolumes']
 				mountlist = []
 				for subvol in subvolumes:
-					if isinstance(subvolumes[subvol],str):
-						mountlist.append(subvolumes[subvol])
-					elif subvolumes[subvol].get('mountpoint'):
-						mountlist.append(subvolumes[subvol]['mountpoint'])
+					# band aid
+					if isinstance(subvol,archinstall.Subvolume):
+						mountlist.append(subvol.mountpoint)
+					elif isinstance(subvol,str):
+						mountlist.append(subvol)
+					elif subvol.get('mountpoint'):
+						mountlist.append(subvol['mountpoint'])
 				if mountlist:
 					mount = f"{', '.join(mountlist):15.15}..."
 				else:
@@ -1480,13 +1490,13 @@ def frontpage():
 		if result:
 			#BAND-AID
 			harddrives = []
-			if result == options[0]:
+			if result.value == options[0]:
 				# TODO should we check if the directory exists as a mountpoint ?
 				arguments['harddrives'] = []
 				if 'disk_layout' in arguments:
 					del arguments['disk_layout']
 				return "direct" # patch, odious patch
-			elif result in (options[1],options[2]):
+			elif result.value in (options[1],options[2]):
 				old_harddrives = arguments.get('harddrives', [])
 				harddrives = archinstall.select_harddrives(old_harddrives)
 				if not harddrives:
@@ -1496,12 +1506,12 @@ def frontpage():
 				# TODO is that needed now ?
 				if old_harddrives != harddrives:
 					arguments['disk_layouts'] = {}
-				if result == options[1]:
+				if result.value == options[1]:
 					# we will create an standard layout, but will left open, editing it
 					layout = get_default_partition_layout(harddrives) # TODO advanced options
 				# elif result == options[2]:
 					# layout = navigate_structure(arguments['harddrives'])
-			elif result == options[3]:
+			elif result.value == options[3]:
 				harddrives = []
 				# layout = navigate_structure()
 			else:
