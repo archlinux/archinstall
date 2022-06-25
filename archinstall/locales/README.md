@@ -31,3 +31,10 @@ msgstr "Wollen sie wirklich abbrechen?"
 
 After the translations have been written, run the script once more `./locales_generator.sh` and it will auto-generate the `base.mo` file with the included translations.
 After that you're all ready to go and enjoy Archinstall in the new language :)
+
+To display the language inside Archinstall in your own tongue, please edit the file `languages.json` and 
+add a `translated_lang` entry to the respective language, e.g. 
+
+```
+ {"abbr": "pl", "lang": "Polish", "translated_lang": "Polskie"}
+```

@@ -57,6 +57,30 @@ This library is in turn used by the provided guided installer but is also for an
 
 Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
 
+# Available Languages
+
+Archinstall is available in different languages which have been contributed and are maintained by the community.  
+Current translations are listed below and vary in the amount of translations per language
+```
+English                                                                                                                                       
+Deutsch
+Española                                                                                                                                                 
+Française                                                                                                                                                
+Italiano                                                                                                                                                 
+Nederlands
+Polskie                                                                                                                                            
+Portugues do Brasil                                                                                                                                      
+Português                                                                                                                                                
+Svenska                                                                                                                                                  
+Türk                                                                                                                                                     
+čeština                                                                                                                                                  
+русский
+اردو
+```
+
+Any contributions to the translations are more than welcome, and to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
+
+
 # Scripting your own installation
 
 You could just copy [guided.py](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) as a starting point.
