@@ -37,26 +37,6 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
     # archinstall --config <path to user config file or URL> --disk-layout <path to disk layout config file or URL> --creds <path to user credentials config file or URL>
 
-# Help?
-
-Submit an issue here on GitHub, or submit a post in the discord help channel.<br>
-When doing so, attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
-
-# Mission Statement
-
-Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows
-the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
-
-The guided installer will provide user-friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone.
-The guided installer itself is also optional to use if so desired and not forced upon anyone.
-
----
-
-Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
-This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
-
-Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
-
 # Available Languages
 
 Archinstall is available in different languages which have been contributed and are maintained by the community.  
@@ -79,6 +59,26 @@ Türk
 ```
 
 Any contributions to the translations are more than welcome, and to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
+
+# Help?
+
+Submit an issue here on GitHub, or submit a post in the discord help channel.<br>
+When doing so, attach the `/var/log/archinstall/install.log` to the issue ticket. This helps us help you!
+
+# Mission Statement
+
+Archinstall promises to ship a [guided installer](https://github.com/archlinux/archinstall/blob/master/examples/guided.py) that follows
+the [Arch Principles](https://wiki.archlinux.org/index.php/Arch_Linux#Principles) as well as a library to manage services, packages and other Arch Linux aspects.
+
+The guided installer will provide user-friendly options along the way, but the keyword here is options, they are optional and will never be forced upon anyone.
+The guided installer itself is also optional to use if so desired and not forced upon anyone.
+
+---
+
+Archinstall has one fundamental function which is to be a flexible library to manage services, packages and other aspects inside the installed system.
+This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
+
+Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
 
 
 # Scripting your own installation
