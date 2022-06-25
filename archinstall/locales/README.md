@@ -5,7 +5,7 @@ Archinstall supports multiple languages, which depend on translations coming fro
 New languages can be added simply by creating a new folder with the proper language abbrevation (see list `languages.json` if unsure).  
 Run the following command to create a new template for a language
 ```
-    mkdir -p <abbr>/LC_MESSAGES/ && touch <abbr>/LC_MESSAGES/base.po
+mkdir -p <abbr>/LC_MESSAGES/ && touch <abbr>/LC_MESSAGES/base.po
 ```
 
 After that run the script `./locales_generator.sh` it will automatically populate the new `base.po` file with the strings that 
