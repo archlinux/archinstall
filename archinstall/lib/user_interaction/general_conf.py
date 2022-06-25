@@ -12,7 +12,7 @@ from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 
-from ..translationhandler import TranslationHandler, Language
+from ..translationhandler import Language
 from ..packages.packages import validate_package_list
 
 from ..storage import storage

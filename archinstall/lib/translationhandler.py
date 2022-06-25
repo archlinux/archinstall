@@ -113,7 +113,7 @@ class TranslationHandler:
 	def get_language(self, abbr: str) -> Language:
 		try:
 			return next(filter(lambda x: x.abbr == abbr, self._translated_languages), 1)
-		except Exception as e:
+		except Exception:
 			raise ValueError(f'No language with abbreviation "{abbr}" found')
 
 	def activate(self, language: Language):
