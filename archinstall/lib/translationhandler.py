@@ -60,7 +60,7 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings), 1)
+			mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
@@ -96,10 +96,10 @@ class TranslationHandler:
 		with open(languages, 'r') as fp:
 			return json.load(fp)
 
-	def _get_catalog_size(self, translation: gettext.GNUTranslations) -> int:
+	def _get_catalog_size(self, translation: gettext.NullTranslations) -> int:
 		# this is a ery naughty way of retrieving the data but
 		# there's no alternative method exposed unfortunately
-		catalog = translation._catalog
+		catalog = translation._catalog  # type: ignore
 		messages = {k: v for k, v in catalog.items() if k and v}
 		return len(messages)
 
@@ -112,7 +112,7 @@ class TranslationHandler:
 
 	def get_language(self, abbr: str) -> Language:
 		try:
-			return next(filter(lambda x: x.abbr == abbr, self._translated_languages), 1)
+			return next(filter(lambda x: x.abbr == abbr, self._translated_languages))
 		except Exception:
 			raise ValueError(f'No language with abbreviation "{abbr}" found')
 
