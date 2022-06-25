@@ -60,7 +60,7 @@ class TranslationHandler:
 		languages = []
 
 		for short_form in defined_languages:
-			mapping_entry = next(filter(lambda x: x['abbr'] == short_form, mappings), 1)
+			mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings), 1)
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
