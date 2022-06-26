@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
-import pathlib
+from pathlib import Path
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
@@ -461,7 +461,7 @@ class GeneralMenu:
 
 		return preset_value
 
-	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
+	def _select_hsm(self, preset :Optional[Path] = None) -> Optional[Path]:
 		title = _('Select which partitions to mark for formatting:')
 		title += '\n'
 
@@ -481,6 +481,6 @@ class GeneralMenu:
 			case MenuSelectionType.Selection:
 				selection: Any = choice.value
 				index = int(selection.split('|',1)[0])
-				return pathlib.Path(list(fido_devices.keys())[index])
+				return Path(list(fido_devices.keys())[index])
 
 		return None
