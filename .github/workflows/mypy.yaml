@@ -14,5 +14,7 @@ jobs:
             - run: mypy --version
             - name: run mypy non-strict
               run: mypy --config-file mypy.ini
-            - name: run mypy strict
-              run: mypy --config mypy-strict.ini
+# some files have to be made compliant with the strict mode first otherwise mypy wil throw an error:
+# "There are no .py[i] files in directory 'archinstall'"
+#            - name: run mypy strict
+#              run: mypy --config mypy-strict.ini
