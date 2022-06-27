@@ -247,8 +247,8 @@ class Installer:
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)):
-				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
 			else:
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
