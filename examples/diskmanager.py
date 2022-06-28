@@ -597,6 +597,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# TODO ensure unicity
 		self._menu_options['mountpoint'] = archinstall.Selector(str(_("Mount Point")),
 							lambda prev: self._generic_string_editor(str(_('Edit Mount Point :')),prev),
+
 							dependencies=['fs'],enabled=True)
 		self._menu_options['fs'] = archinstall.Selector(str(_("File System Type")),
 							self._select_filesystem,
@@ -710,7 +711,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 			self.option('subvolumes').set_enabled(True)
 		else:
 			self.option('subvolumes').set_enabled(False)
-		return fstype
+		return fstype.value
 
 	def _select_physical(self,prev):
 		# TODO check if IDs have to change when you modify a partition, and if it is allowed
@@ -875,10 +876,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 # BAND-AID
 # self.data -> self._data
 # TODO
-#    ripple_delete
-#    gap_map
+#    * ripple_delete
+#    * gap_map
 #    reorder_data
-#    action list
+#    action list -> filter_option
 class DevList(archinstall.ListManager):
 	def __init__(self,prompt,data_list):
 		self.ObjectActions = [
@@ -1134,10 +1135,12 @@ class DevList(archinstall.ListManager):
 		if value.get('class') == 'gap':
 			part_data['start'] = value.get('start')
 			part_data['size'] = value.get('size')
+
 		with PartitionMenu(part_data,disk,self) as add_menu:
 			exit_menu = False
 			for option in add_menu.list_options():
 				if option in ('location','mountpoint','fs','subvolumes','boot','encrypted'):
+					add_menu.synch(option)
 					add_menu.exec_option(option)
 					# broke execution there
 					if option == 'location' and add_menu.option('location').get_selection() is None:
@@ -1147,6 +1150,7 @@ class DevList(archinstall.ListManager):
 				add_menu.run()
 			else:
 				add_menu.exec_option(add_menu.cancel_action)
+
 		if part_data:
 			key = f"{disk} {part_data.get('start'):>15}"
 			part_data['id'] = key
@@ -1187,275 +1191,22 @@ class DevList(archinstall.ListManager):
 			print('Can not delete partition, because it is in use')  # TODO it doesn't show actually
 			return
 		elif value.get('uuid'):
-			self.partitions_to_delete.update(self.target)
+			self.partitions_to_delete.update({key:value})
 		del data[key]
 		return data
 
 	def ripple_delete(self,key,head):
+		keys = list(self._data.keys())
+		for entry in keys:
+			if entry == key and not head:
+				continue
+			if entry.startswith(key):
+				del self._data[entry]
+		keys = list(self.partitions_to_delete.keys())
+		for entry in keys:
+			if entry.startswith(key):
+				del self.partitions_to_delete[entry]
 		# placeholder
-		return
-
-	def _sort_data(self,data):
-		return data
-
-class OldDevList(archinstall.ListManager):
-	def __init__(self,prompt,list):
-		self.ObjectActions = [
-			'Add disk to installation set',          # 0
-			'Add partition',                         # 1
-			'Clear disk (delete disk contents)',     # 2
-			'Clear Partition & edit attributes',     # 3
-			'Edit partition attributes',             # 4
-			'Exclude disk from installation set',    # 5
-			'Exclude partition from installation set', # 6
-			'Delete partition'                       # 7
-		]
-		self.ObjectNullAction = None
-		self.ObjectDefaultAction = 'Reset'
-		self.partitions_to_delete = {}
-		super().__init__(prompt,list,self.ObjectActions,self.ObjectNullAction,self.ObjectDefaultAction)
-		bar = r'\|'
-		if archinstall.arguments.get('long_form'):
-			self.header = ((f"  {'identifier':^16}"
-						f"{bar}{'wipe':^5}"
-						f"{bar}{'boot':^5}"
-						f"{bar}{'encrypted':^7.7}"
-						f"{bar}{'start':^12}"
-						f"{bar}{'size (sectors def.)':^12.12} "
-						f"{bar}{'filesystem':^12}"
-						f"{bar}{'mount at':^19}"
-						f"{bar}{'currently mounted':^19}"
-						f"{bar}{'uuid':^24}"),
-						f"{'-' * 18}{bar}{'-'*5}{bar}{'-'*5}{bar}{'-'*7}{bar}{'-'*12}{bar}{'-'*13}{bar}{'-'*12}{bar}{'-'*19}{bar}{'-'*19}{bar}{'-'*24}")
-		else:
-			self.header = ((f"  {'identifier':^16}"
-						f"{bar}{'wipe':^5}"
-						f"{bar}{'boot':^5}"
-						f"{bar}{'encrypted':^7.7}"
-						f"{bar}{'s. (GiB)':^8.8} "
-						f"{bar}{'fs':^8}"
-						f"{bar}{'mount at':^19}"
-						f"{bar}{'used':^6}"),
-						f"{'-' * 18}{bar}{'-'*5}{bar}{'-'*5}{bar}{'-'*7}{bar}{'-'*9}{bar}{'-'*8}{bar}{'-'*19}{bar}{'-'*6}")
-
-	# i need this overload because i have another parameter to return (partitions to delete)
-	def run(self):
-		result_list = super().run()
-		if not self.action or self.action == self.cancel_action:
-			self.partitions_to_delete = {}
-		return result_list, self.partitions_to_delete
-
-	def amount(self,entry):
-		blank = ''
-		if entry.get('actual_subvolumes'):
-			subvolumes = entry['actual_subvolumes']
-			mountlist = []
-			for subvol in subvolumes:
-				if isinstance(subvolumes[subvol],str):
-					mountlist.append(subvolumes[subvol])
-				elif subvolumes[subvol].get('mountpoint'):
-					# BAND-AID
-					#   mountlist.append(subvolumes[subvol]['mountpoint'])
-					mountlist.append(str(subvolumes[subvol]['mountpoint']))
-			if mountlist:
-				amount = f"//HOST({', '.join(mountlist):15.15})..."
-			else:
-				amount = blank
-		elif entry.get('actual_mountpoint'):
-			amount = f"//HOST{entry['actual_mountpoint']}"
-		else:
-			amount = blank
-		return amount
-
-	def reformat(self,data):
-		blank = ''
-		bar = r'\|'
-
-		def pretty_disk(entry_key,entry):
-			# TODO from disk_layout it misses size,
-			# TODO both miss free storage
-			if archinstall.arguments.get('long_form'):
-				return (f"{entry_key:18}"
-						f"{bar}{'WIPE' if entry.get('wipe') else blank:^5}"
-						f"{bar}{blank:^5}"
-						f"{bar}{blank:^7}"
-						f"{bar}{blank:^12}"
-						f"{bar}{int(entry['size']) if entry.get('size') else 0 :<12,}")
-			else:
-				return (f"{entry_key:18}"
-						f"{bar}{'WIPE' if entry.get('wipe') else blank:^5}"
-						f"{bar}{blank:^5}"
-						f"{bar}{blank:^7}"
-						f"{bar}{convert_units(entry['size'],'GiB','s') if entry.get('size') else 0.0 :<8,.1f}")
-
-		def pretty_part(entry_key,entry):
-			# TODO normalize size
-			# TODO normalize start
-			# TODO get actual_mountpoint
-			if entry.get('mountpoint'):
-				mount = f"{entry['mountpoint']}"
-			elif entry.get('subvolumes'):
-				subvolumes = entry['subvolumes']
-				mountlist = []
-				for subvol in subvolumes:
-					if isinstance(subvolumes[subvol],str):
-						mountlist.append(subvolumes[subvol])
-					elif subvolumes[subvol].get('mountpoint'):
-						mountlist.append(subvolumes[subvol]['mountpoint'])
-				if mountlist:
-					mount = f"{', '.join(mountlist):15.15}..."
-				else:
-					mount = blank
-			else:
-				mount = blank
-
-			amount = self.amount(entry)
-
-			# UUID for manual layout
-			if entry.get('path'):
-				identifier = entry['path']
-			elif entry['class'] == 'gap':
-				identifier = blank
-			else:
-				identifier = ' (new)'
-			if archinstall.arguments.get('long_form',False):
-				return (f"  └─{identifier:14}"
-						f"{bar}{'WIPE' if entry.get('wipe') else blank:^5}"
-						f"{bar}{'BOOT' if entry.get('boot') else blank:^5}"
-						f"{bar}{'CRYPT' if entry.get('encrypted') else blank:^7}"
-						f"{bar}{entry['start'] if entry.get('start') else 0 :>12}"
-						f"{bar}{entry['sizeG'] if entry.get('sizeG') else entry.get('size'):>12} "
-						f"{bar}{entry['filesystem'].get('format') if entry.get('filesystem') else blank:12}"
-						f"{bar}{mount:19.19}"
-						f"{bar}{amount:19.19}"
-						f"{bar}{entry['uuid'] if entry.get('uuid') else blank} ")
-			else:
-				return (f"  └─{identifier:14}"                                                               # 16
-						f"{bar}{'WIPE' if entry.get('wipe') else blank:^5}"                                # 22
-						f"{bar}{'BOOT' if entry.get('boot') else blank:^5}"                                # 28
-						f"{bar}{'CRYPT' if entry.get('encrypted') else blank:^7}"                          # 36
-						f"{bar}{convert_units(entry.get('size',0),'GiB','s'):>8} "                     # 45
-						f"{bar}{entry['filesystem'].get('format') if entry.get('filesystem') else blank:8.8}"# 54
-						f"{bar}{mount:19.19}"                                                              # 74
-						f"{bar}{'IN USE' if amount or entry.get('uuid') else blank:6}")
-		self.reorder_data()
-		return list(map(lambda x:pretty_disk(x,self._data[x]) if self._data[x]['class'] == 'disk' else pretty_part(x,self._data[x]),self._data))
-		# ... beautfy the output of the list
-
-	def action_list(self):
-		disk_actions = (0,1,2,5)
-		part_actions = (3,4,7)  # BUG hide partition disallowed for the time being (3,4,6,7)
-		if self.target:
-			key,value = list(self.target.items())[0]
-		else:
-			key = None
-		if self.target[key].get('class') == 'disk':
-			return [self.base_actions[i] for i in disk_actions]
-		elif self.target[key].get('class') == 'gap':
-			return [self.base_actions[1]]
-		elif self.target[key].get('class') == 'partition':
-			return [self.base_actions[i] for i in part_actions]
-		else:
-			return self.base_actions
-		# ... if you need some changes to the action list based on self.target
-
-	def exec_action(self):
-		def ripple_delete(identifier,head=False):
-			keys = list(self._data.keys())
-			for entry in keys:
-				if entry == identifier and not head:
-					continue
-				if entry.startswith(identifier):
-					del self._data[entry]
-			keys = list(self.partitions_to_delete.keys())
-			for entry in keys:
-				if entry.startswith(identifier):
-					del self.partitions_to_delete[entry]
-
-		if self.target:
-			key,value = list(self.target.items())[0]
-			if value.get('class') == 'disk':
-				disk = key
-			else:
-				disk = value.get('parent')
-		else:
-			key = None
-			value = None
-			disk = None
-		# reset
-		if self.action == self.ObjectDefaultAction:
-			self._data = self.base_data
-			self.partitions_to_delete = {}
-		# Add disk to installation set',          # 0
-		elif self.action == self.ObjectActions[0]:
-			# select harddrive still not on set
-			# load its info and partitions into the list
-			pass
-		# Add partition',                         # 1
-		elif self.action == self.ObjectActions[1]:
-			# check if empty disk. A bit complex now. TODO sumplify
-			if len([key for key in self._data if key.startswith(disk) and self._data[key]['class'] == 'partition']) == 0:
-				is_empty_disk = True
-			else:
-				is_empty_disk = False
-			part_data = {}
-			if value.get('class') == 'gap':
-				part_data['start'] = value.get('start')
-				part_data['size'] = value.get('size')
-			with PartitionMenu(part_data,disk,self) as add_menu:
-				exit_menu = False
-				for option in add_menu.list_options():
-					if option in ('location','mountpoint','fs','subvolumes','boot','encrypted'):
-						add_menu.exec_option(option)
-						# broke execution there
-						if option == 'location' and add_menu.option('location').get_selection() is None:
-							exit_menu = True
-							break
-				if not exit_menu:
-					add_menu.run()
-				else:
-					add_menu.exec_option(add_menu.cancel_action)
-			if part_data:
-				key = f"{disk} {part_data.get('start'):>15}"
-				part_data['id'] = key
-				part_data['class'] = 'partition'
-				part_data['type'] = 'primary'
-				part_data['wipe'] = True
-				part_data['parent'] = disk
-				self._data.update({key:part_data})
-				if is_empty_disk:
-					self._data[disk]['wipe'] = True
-				# TODO size comes in strange format
-		# Clear disk (delete disk contents)',     # 2
-		elif self.action == self.ObjectActions[2]:
-			self._data[key]['wipe'] = True
-			# no need to delete partitions in this disk
-			ripple_delete(key,head=False)
-		# Clear Partition & edit attributes',     # 3
-		elif self.action == self.ObjectActions[3]:
-			PartitionMenu(value,disk,self).run()
-			if value:
-				value['wipe'] = True
-				self._data.update({key:value})
-		# Edit partition attributes',             # 4
-		elif self.action == self.ObjectActions[4]:
-			PartitionMenu(value,disk,self).run()
-			self._data.update({key:value})
-		# Exclude disk from installation set',    # 5
-		elif self.action == self.ObjectActions[5]:
-			ripple_delete(key,head=True)
-		# Exclude partition from installation set', # 6
-		elif self.action == self.ObjectActions[6]:
-			# BUG for the time being disallowed. Current implementation is faulty
-			pass
-		# Delete partition'                       # 7
-		elif self.action == self.ObjectActions[7]:
-			if self.amount(value):
-				print('Can not delete partition, because it is in use')  # TODO it doesn't show actually
-				return
-			elif value.get('uuid'):
-				self.partitions_to_delete.update(self.target)
-			del self._data[key]
 
 	def gap_map(self,block_device):
 		gap_list = []
@@ -1470,20 +1221,21 @@ class OldDevList(archinstall.ListManager):
 		# the return values are meant to be compatible with list_free_space.
 		return GLOBAL_BLOCK_MAP[disk]['size'],GLOBAL_BLOCK_MAP[disk]['sector_size'],gap_list
 
-	def reorder_data(self):
+	def _sort_data(self,data):
 		new_struct = {}
-		tmp_disks = [disk for disk in sorted(list(self._data.keys())) if self._data[disk].get('class') == 'disk']
+		tmp_disks = [disk for disk in sorted(list(data.keys())) if data[disk].get('class') == 'disk']
 		for disk in tmp_disks:
-			new_struct.update({disk:self._data[disk]})
-			tmp_parts = [value for part,value in sorted(self._data.items()) if value.get('parent') == disk and value['class'] == 'partition']
+			new_struct.update({disk:data[disk]})
+			tmp_parts = [value for part,value in sorted(data.items()) if value.get('parent') == disk and value['class'] == 'partition']
 			new_parts = create_gaps(tmp_parts,disk,GLOBAL_BLOCK_MAP[disk]['size'])
 			new_struct[disk]['partitions'] = new_parts
-		self._data = from_general_dict_to_display(new_struct)
+		return from_general_dict_to_display(new_struct)
 
 
 """
 Navigator
 """
+
 def frontpage():
 	create_global_block_map()
 	arguments = archinstall.arguments
