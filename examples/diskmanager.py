@@ -194,9 +194,7 @@ def create_global_block_map(disks=None):
 	def list_subvols(object):
 		subvol_info = {}
 		for subvol in object.subvolumes:
-			# BAND-AID
-			# subvol_info[subvol.name] = {'mountpoint':subvol.target, 'options':None}
-			subvol_info[subvol.name] = {'mountpoint':subvol.partition.mountpoint, 'options':None}
+			subvol_info[subvol.name] = {'mountpoint':str(subvol.full_path)}
 		return subvol_info
 
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -306,18 +304,25 @@ def normalize_from_layout(partition_list,disk):
 	def subvol_normalize(part):
 		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
 		norm_subvol = []
-		if subvol_info:
+		if subvol_info and isinstance(subvol_info,dict): # old syntax
+			for subvol in subvol_info:
+				if subvol_info[subvol] is None:
+					norm_subvol.append({"name":subvol})
+				elif isinstance(subvol_info[subvol],str):
+					norm_subvol.append({"name":subvol,'mountpoint':subvol_info[subvol]})
+				else:
+					# TODO compress and nodatacow in this case
+					mi_compress = True if 'compress' in subvol_info.get('options',[]) else False
+					mi_nodatacow = True if 'nodatacow' in subvol_info.get('options',[]) else False
+					norm_subvol.append({"name":subvol,"mountpoint":subvol_info[subvol].get('mountpoint'),"compress":mi_compress,"nodatacow":mi_nodatacow})
+		elif subvol_info:
 			for subvol in subvol_info:
 				if isinstance(subvol,archinstall.Subvolume):
 					norm_subvol.append({"name":subvol.name,"mountpoint":subvol.mountpoint,"compress":subvol.compress,"nodatacow":subvol.nodatacow})
-				""" BAND-AID. i might need it
-				elif subvol_info[subvol] is None:
-					norm_subvol[subvol] = {}
-				elif isinstance(subvol_info[subvol],str):
-					norm_subvol[subvol] = {'mountpoint':subvol_info[subvol]}
 				else:
-					norm_subvol[subvol] = subvol_info[subvol]
-				"""
+					norm_subvol.append({"name":subvol.get('name'),"mountpoint":subvol.get('mountpoint'),"compress":subvol.get('compress',False),"nodatacow":subvol.get('nodatacow',False)})
+				# BAND-AID. i might need it
+
 		return norm_subvol
 
 	def size_normalize(part,disk):
@@ -1003,7 +1008,7 @@ class DevList(archinstall.ListManager):
 				mountlist = []
 				for subvol in subvolumes:
 					# band aid
-					if isinstance(subvol,archinstall.Subvolume):
+					if isinstance(subvol,archinstall.Subvolume) and subvol.mountpoint:
 						mountlist.append(subvol.mountpoint)
 					elif isinstance(subvol,str):
 						mountlist.append(subvol)
@@ -1363,8 +1368,9 @@ def ask_user_questions():
 			exit()  # this routine does nothing in this case
 		else:
 			# pprint(list_layout)
-			result,partitions_to_delete = DevList('*** Disk Layout ***',list_layout).run()
-			if not result:
+			dl = DevList('*** Disk Layout ***',list_layout)
+			result,partitions_to_delete = dl.run()
+			if not result or dl.last_choice.value != dl._confirm_action:
 				exit()
 			archinstall.arguments['disk_layouts'] = convert_to_disk_layout(result)
 			archinstall.arguments['harddrives'] = [archinstall.BlockDevice(key) for key in archinstall.arguments['disk_layouts']]
@@ -1421,7 +1427,6 @@ if not archinstall.arguments.get('silent'):
 	config_output.show()
 config_output.save()
 # DEBUG exits always. Now it is so unstable
-exit(0)
 if archinstall.arguments.get('dry_run'):
 	exit(0)
 if not archinstall.arguments.get('silent'):
