@@ -192,7 +192,7 @@ def create_gaps(structure,disk,disk_size):
 
 def create_global_block_map(disks=None):
 	def list_subvols(object):
-		subvol_info = [ archinstall.Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
+		subvol_info = [archinstall.Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
 		return subvol_info
 
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -298,6 +298,7 @@ def create_global_block_map(disks=None):
 
 def normalize_from_layout(partition_list,disk):
 	last_sector = GLOBAL_BLOCK_MAP[disk]['size'] - 1
+
 	def subvol_normalize(part):
 		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
 		norm_subvol = []
@@ -864,8 +865,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# band-aid
 		if prev is None:
 			prev = []
-		#else:
-			#prev = list(map(lambda x:archinstall.Subvolume(x.get('name'),x.get('mountpoint'),x.get('compress',False),x.get('nodatacow',False)) if not isinstance(x,archinstall.Subvolume) else x,prev))
 		return SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()
 
 # BAND-AID
@@ -1000,10 +999,6 @@ class DevList(archinstall.ListManager):
 					# band aid
 					if isinstance(subvol,archinstall.Subvolume) and subvol.mountpoint:
 						mountlist.append(subvol.mountpoint)
-					#elif isinstance(subvol,str):
-						#mountlist.append(subvol)
-					#elif subvol.get('mountpoint'):
-						#mountlist.append(subvol['mountpoint'])
 				if mountlist:
 					mount = f"{', '.join(mountlist):15.15}..."
 				else:
