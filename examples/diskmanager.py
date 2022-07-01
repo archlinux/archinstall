@@ -192,9 +192,7 @@ def create_gaps(structure,disk,disk_size):
 
 def create_global_block_map(disks=None):
 	def list_subvols(object):
-		subvol_info = {}
-		for subvol in object.subvolumes:
-			subvol_info[subvol.name] = {'mountpoint':str(subvol.full_path)}
+		subvol_info = [ archinstall.Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
 		return subvol_info
 
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -261,7 +259,7 @@ def create_global_block_map(disks=None):
 					"partnr": device_info['PART_ENTRY_NUMBER'],
 					"path": device_info['PATH'],
 					"actual_subvolumes": subvol_info,
-					"subvolumes":{}
+					"subvolumes":[]
 				}
 				disk_layout[result[res].parent]['structure'].append(partition)
 			except KeyError as e:
@@ -320,30 +318,6 @@ def normalize_from_layout(partition_list,disk):
 					norm_subvol.append(subvol)
 				else:
 					norm_subvol.append(archinstall.Subvolume(subvol.get('name'),subvol.get('mountpoint'),subvol.get('compress',False),subvol.get('nodatacow',False)))
-		return norm_subvol
-
-	def subvol_normalize_old(part):
-		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
-		norm_subvol = []
-		if subvol_info and isinstance(subvol_info,dict): # old syntax
-			for subvol in subvol_info:
-				if subvol_info[subvol] is None:
-					norm_subvol.append({"name":subvol})
-				elif isinstance(subvol_info[subvol],str):
-					norm_subvol.append({"name":subvol,'mountpoint':subvol_info[subvol]})
-				else:
-					# TODO compress and nodatacow in this case
-					mi_compress = True if 'compress' in subvol_info.get('options',[]) else False
-					mi_nodatacow = True if 'nodatacow' in subvol_info.get('options',[]) else False
-					norm_subvol.append({"name":subvol,"mountpoint":subvol_info[subvol].get('mountpoint'),"compress":mi_compress,"nodatacow":mi_nodatacow})
-		elif subvol_info:
-			for subvol in subvol_info:
-				if isinstance(subvol,archinstall.Subvolume):
-					norm_subvol.append({"name":subvol.name,"mountpoint":subvol.mountpoint,"compress":subvol.compress,"nodatacow":subvol.nodatacow})
-				else:
-					norm_subvol.append({"name":subvol.get('name'),"mountpoint":subvol.get('mountpoint'),"compress":subvol.get('compress',False),"nodatacow":subvol.get('nodatacow',False)})
-				# BAND-AID. i might need it
-
 		return norm_subvol
 
 	def size_normalize(part,disk):
@@ -485,8 +459,8 @@ def convert_to_disk_layout(list_layout :dict) -> dict:
 		""" has mountpoint """
 		if value.get('mountpoint'):
 			return True
-		for subvolume in value.get('btrfs',{}).get('subvolumes',{}):  # expect normalized contents
-			if 'mountpoint' in value['btrfs']['subvolumes'][subvolume]:
+		for subvolume in value.get('btrfs',{}).get('subvolumes',[]):  # expect normalized contents
+			if subvolume.mountpoint:
 				return True
 		# TODO if i reuse a btrfs volume. How I do it
 
@@ -600,9 +574,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 			self.ds['location'] = {'start':self.ds.get('start'), 'size':self.ds.get('size'), 'sizeG':self.ds.get('sizeG')}
 			del self.ds['start']
 			del self.ds['size']
-		# if 'btrfs' in self.ds: # TODO this might be not needed anymore
-			# self.ds['subvolumes'] = self.ds.get('btrfs',{}).get('subvolumes',{})
-			# del self.ds['btrfs']
 		if 'filesystem' in self.ds:
 			self.ds['fs'] = self.ds['filesystem'].get('format')
 			self.ds['fs_fmt_options'] = ','.join(self.ds['filesystem'].get('format_options',[]))
@@ -685,8 +656,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 				self.data['start'] = self.ds[item].get('start')
 				self.data['size'] = self.ds[item].get('size')
 				self.data['sizeG'] = self.ds[item].get('sizeG')
-			# elif item == 'subvolumes' and self.ds.get(item): # TODO this might not be needed anymore
-				# self.data['btrfs']['subvolumes'] = self.ds[item]
 			elif item == 'fs' and self.ds.get(item):
 				self.data['filesystem'] = {}
 				self.data['filesystem']['format'] = self.ds[item]
@@ -895,8 +864,8 @@ class PartitionMenu(archinstall.GeneralMenu):
 		# band-aid
 		if prev is None:
 			prev = []
-		else:
-			prev = list(map(lambda x:archinstall.Subvolume(x.get('name'),x.get('mountpoint'),x.get('compress',False),x.get('nodatacow',False)) if not isinstance(x,archinstall.Subvolume) else x,prev))
+		#else:
+			#prev = list(map(lambda x:archinstall.Subvolume(x.get('name'),x.get('mountpoint'),x.get('compress',False),x.get('nodatacow',False)) if not isinstance(x,archinstall.Subvolume) else x,prev))
 		return SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()
 
 # BAND-AID
@@ -1031,10 +1000,10 @@ class DevList(archinstall.ListManager):
 					# band aid
 					if isinstance(subvol,archinstall.Subvolume) and subvol.mountpoint:
 						mountlist.append(subvol.mountpoint)
-					elif isinstance(subvol,str):
-						mountlist.append(subvol)
-					elif subvol.get('mountpoint'):
-						mountlist.append(subvol['mountpoint'])
+					#elif isinstance(subvol,str):
+						#mountlist.append(subvol)
+					#elif subvol.get('mountpoint'):
+						#mountlist.append(subvol['mountpoint'])
 				if mountlist:
 					mount = f"{', '.join(mountlist):15.15}..."
 				else:
@@ -1083,12 +1052,7 @@ class DevList(archinstall.ListManager):
 			subvolumes = entry['actual_subvolumes']
 			mountlist = []
 			for subvol in subvolumes:
-				if isinstance(subvolumes[subvol],str):
-					mountlist.append(subvolumes[subvol])
-				elif subvolumes[subvol].get('mountpoint'):
-					# BAND-AID
-					# mountlist.append(subvolumes[subvol]['mountpoint'])
-					mountlist.append(str(subvolumes[subvol]['mountpoint']))
+				mountlist.append(subvol.mountpoint)
 			if mountlist:
 				amount = f"//HOST({', '.join(mountlist):15.15})..."
 			else:
