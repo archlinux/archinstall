@@ -300,8 +300,29 @@ def create_global_block_map(disks=None):
 
 def normalize_from_layout(partition_list,disk):
 	last_sector = GLOBAL_BLOCK_MAP[disk]['size'] - 1
-
 	def subvol_normalize(part):
+		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
+		norm_subvol = []
+		if subvol_info and isinstance(subvol_info,dict): # old syntax
+			for subvol in subvol_info:
+				if subvol_info[subvol] is None:
+					norm_subvol.append(archinstall.Subvolume(subvol))
+				elif isinstance(subvol_info[subvol],str):
+					norm_subvol.append(archinstall.Subvolume(subvol,subvol_info[subvol]))
+				else:
+					# TODO compress and nodatacow in this case
+					mi_compress = True if 'compress' in subvol_info.get('options',[]) else False
+					mi_nodatacow = True if 'nodatacow' in subvol_info.get('options',[]) else False
+					norm_subvol.append(archinstall.Subvolue(subvol,subvol_info[subvol].get('mountpoint'),mi_compress,mi_nodatacow))
+		elif subvol_info:
+			for subvol in subvol_info:
+				if isinstance(subvol,archinstall.Subvolume):
+					norm_subvol.append(subvol)
+				else:
+					norm_subvol.append(archinstall.Subvolume(subvol.get('name'),subvol.get('mountpoint'),subvol.get('compress',False),subvol.get('nodatacow',False)))
+		return norm_subvol
+
+	def subvol_normalize_old(part):
 		subvol_info = part.get('btrfs',{}).get('subvolumes',{})
 		norm_subvol = []
 		if subvol_info and isinstance(subvol_info,dict): # old syntax

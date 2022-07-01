@@ -27,7 +27,7 @@
                     "format": "btrfs"
                 },
                 "wipe": true,
-                "mountpoint": "/",
+                "mountpoint": null,
                 "size": "100%",
                 "start": "518MB",
                 "type": "primary"
