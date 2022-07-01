@@ -154,8 +154,8 @@ def ask_to_configure_network(
 		list(network_options.values()),
 		cursor_index=cursor_idx,
 		sort=False,
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match choice.type_:

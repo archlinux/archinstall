@@ -65,7 +65,7 @@ __author__ = "Ingo Meyer"
 __email__ = "i.meyer@fz-juelich.de"
 __copyright__ = "Copyright © 2021 Forschungszentrum Jülich GmbH. All rights reserved."
 __license__ = "MIT"
-__version_info__ = (1, 4, 1)
+__version_info__ = (1, 5, 0)
 __version__ = ".".join(map(str, __version_info__))
 
 
@@ -86,6 +86,7 @@ DEFAULT_MULTI_SELECT_SELECT_ON_ACCEPT = True
 DEFAULT_PREVIEW_BORDER = True
 DEFAULT_PREVIEW_SIZE = 0.25
 DEFAULT_PREVIEW_TITLE = "preview"
+DEFAULT_QUIT_KEYS = ("escape", "q")
 DEFAULT_SEARCH_CASE_SENSITIVE = False
 DEFAULT_SEARCH_HIGHLIGHT_STYLE = ("fg_black", "bg_yellow", "bold")
 DEFAULT_SEARCH_KEY = "/"
@@ -581,6 +582,8 @@ class TerminalMenu:
         preview_command: Optional[Union[str, Callable[[str], str]]] = None,
         preview_size: float = DEFAULT_PREVIEW_SIZE,
         preview_title: str = DEFAULT_PREVIEW_TITLE,
+        quit_keys: Iterable[str] = DEFAULT_QUIT_KEYS,
+        raise_error_on_interrupt: bool = False,
         search_case_sensitive: bool = DEFAULT_SEARCH_CASE_SENSITIVE,
         search_highlight_style: Optional[Iterable[str]] = DEFAULT_SEARCH_HIGHLIGHT_STYLE,
         search_key: Optional[str] = DEFAULT_SEARCH_KEY,
@@ -596,8 +599,7 @@ class TerminalMenu:
         status_bar: Optional[Union[str, Iterable[str], Callable[[str], str]]] = None,
         status_bar_below_preview: bool = DEFAULT_STATUS_BAR_BELOW_PREVIEW,
         status_bar_style: Optional[Iterable[str]] = DEFAULT_STATUS_BAR_STYLE,
-        title: Optional[Union[str, Iterable[str]]] = None,
-        explode_on_interrupt: bool = False
+        title: Optional[Union[str, Iterable[str]]] = None
     ):
         def extract_shortcuts_menu_entries_and_preview_arguments(
             entries: Iterable[str],
@@ -619,7 +621,7 @@ class TerminalMenu:
                 else:
                     unit_separated_entry = escaped_separator_pattern.sub("|", separator_pattern.sub("\\1\x1F", entry))
                     match_obj = menu_entry_pattern.match(unit_separated_entry)
-                    # this is none in case the entry was an empty string which
+                    # this is none in case the entry was an emtpy string which
                     # will be interpreted as a separator
                     assert match_obj is not None
                     shortcut_key = match_obj.group(1)
@@ -716,10 +718,11 @@ class TerminalMenu:
         self._preview_command = preview_command
         self._preview_size = preview_size
         self._preview_title = preview_title
+        self._quit_keys = tuple(quit_keys)
+        self._raise_error_on_interrupt = raise_error_on_interrupt
         self._search_case_sensitive = search_case_sensitive
         self._search_highlight_style = tuple(search_highlight_style) if search_highlight_style is not None else ()
         self._search_key = search_key
-        self._explode_on_interrupt = explode_on_interrupt
         self._shortcut_brackets_highlight_style = (
             tuple(shortcut_brackets_highlight_style) if shortcut_brackets_highlight_style is not None else ()
         )
@@ -787,6 +790,7 @@ class TerminalMenu:
         # backspace can be queried from the terminal database but is unreliable, query the terminal directly instead
         self._init_backspace_control_character()
         self._add_missing_control_characters_for_keys(self._accept_keys)
+        self._add_missing_control_characters_for_keys(self._quit_keys)
         self._init_terminal_codes()
 
     @staticmethod
@@ -1477,7 +1481,7 @@ class TerminalMenu:
                 "menu_down": set(("down", "ctrl-j", "j")),
                 "accept": set(self._accept_keys),
                 "multi_select": set(self._multi_select_keys),
-                "quit": set(("escape", "q")),
+                "quit": set(self._quit_keys),
                 "search_start": set((self._search_key,)),
                 "backspace": set(("backspace",)),
             }  # type: Dict[str, Set[Optional[str]]]
@@ -1541,7 +1545,7 @@ class TerminalMenu:
                         # `search_start` key
                         self._search.search_text += next_key
         except KeyboardInterrupt as e:
-            if self._explode_on_interrupt:
+            if self._raise_error_on_interrupt:
                 raise e
             menu_was_interrupted = True
         finally:
@@ -1846,12 +1850,6 @@ def get_argumentparser() -> argparse.ArgumentParser:
     )
     parser.add_argument("-t", "--title", action="store", dest="title", help="menu title")
     parser.add_argument(
-        "--explode-on-interrupt",
-        action="store_true",
-        dest="explode_on_interrupt",
-        help="Instead of quitting the menu, this will raise the KeyboardInterrupt Exception",
-    )
-    parser.add_argument(
         "-V", "--version", action="store_true", dest="print_version", help="print the version number and exit"
     )
     parser.add_argument("entries", action="store", nargs="*", help="the menu entries to show")
@@ -1981,7 +1979,6 @@ def main() -> None:
             status_bar_below_preview=args.status_bar_below_preview,
             status_bar_style=args.status_bar_style,
             title=args.title,
-            explode_on_interrupt=args.explode_on_interrupt,
         )
     except (InvalidParameterCombinationError, InvalidStyleError, UnknownMenuEntryError) as e:
         print(str(e), file=sys.stderr)

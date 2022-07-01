@@ -56,8 +56,8 @@ class Menu(TerminalMenu):
 		preview_size=0.75,
 		preview_title='Info',
 		header :Union[List[str],str] = None,
-		explode_on_interrupt :bool = False,
-		explode_warning :str = '',
+		raise_error_on_interrupt :bool = False,
+		raise_error_warning_msg :str = '',
 		clear_screen: bool = True,
 		show_search_hint: bool = True,
 		cycle_cursor: bool = True,
@@ -104,10 +104,10 @@ class Menu(TerminalMenu):
 		param header: one or more header lines for the menu
 		type param: string or list
 
-		param explode_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
+		param raise_error_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
 		type param: bool
 
-		param explode_warning: If explode_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		param raise_error_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
 		type param: str
 
 		:param kwargs : any SimpleTerminal parameter
@@ -150,8 +150,8 @@ class Menu(TerminalMenu):
 		self._skip = skip
 		self._default_option = default_option
 		self._multi = multi
-		self._explode_on_interrupt = explode_on_interrupt
-		self._explode_warning = explode_warning
+		self._raise_error_on_interrupt = raise_error_on_interrupt
+		self._raise_error_warning_msg = raise_error_warning_msg
 
 		menu_title = f'\n{title}\n\n'
 
@@ -164,7 +164,7 @@ class Menu(TerminalMenu):
 		if skip:
 			action_info += str(_("Use ESC to skip"))
 
-		if self._explode_on_interrupt:
+		if self._raise_error_on_interrupt:
 			if len(action_info) > 0:
 				action_info += '\n'
 			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
@@ -198,7 +198,7 @@ class Menu(TerminalMenu):
 			preview_command=preview_command,
 			preview_size=preview_size,
 			preview_title=preview_title,
-			explode_on_interrupt=self._explode_on_interrupt,
+			raise_error_on_interrupt=self._raise_error_on_interrupt,
 			multi_select_select_on_accept=False,
 			clear_screen=clear_screen,
 			show_search_hint=show_search_hint,
@@ -236,8 +236,8 @@ class Menu(TerminalMenu):
 		ret = self._show()
 
 		if ret.type_ == MenuSelectionType.Ctrl_c:
-			if self._explode_on_interrupt and len(self._explode_warning) > 0:
-				response = Menu(self._explode_warning, Menu.yes_no(), skip=False).run()
+			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
+				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
 

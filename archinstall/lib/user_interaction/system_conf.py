@@ -32,8 +32,8 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 		sort=True,
 		multi=True,
 		preset_values=preset,
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match choice.type_:
@@ -67,8 +67,8 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 		list(options.keys()),
 		preset_values=list(preset_disks.keys()),
 		multi=True,
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match selected_harddrive.type_:
