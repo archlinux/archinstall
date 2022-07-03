@@ -254,7 +254,7 @@ def verify_internet_connection():
 		req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 		urllib.request.urlopen(req, timeout=5)
 	except Exception as e:
-		err = str(_('To run archinstall your system must have internet access.'))
+		err = str(_('Your system must have internet access to be able to run archinstall'))
 		log(err, fg="red", level=logging.WARNING)
 		sys.exit(1)
 
