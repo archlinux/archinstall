@@ -26,7 +26,7 @@ jobs:
       image: archlinux:latest
       options: --privileged
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: pwd
       - run: find .
       - run: cat /etc/os-release
@@ -43,7 +43,7 @@ jobs:
       - run: echo -e "git\npython\npython-pip\npython-build\npython-flit\npython-setuptools\npython-wheel" >> /tmp/archlive/packages.x86_64
       - run: find /tmp/archlive
       - run: cd /tmp/archlive;  mkarchiso -v -w work/ -o out/ ./
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Arch Live ISO
           path: /tmp/archlive/out/*.iso
