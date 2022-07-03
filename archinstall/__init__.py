@@ -1,4 +1,5 @@
 """Arch Linux installer - guided, templates etc."""
+import sys
 from argparse import ArgumentParser
 
 from .lib.disk import *
@@ -245,6 +246,20 @@ def post_process_arguments(arguments):
 	load_config()
 
 
+def verify_internet_connection():
+	from urllib.request import urlopen
+	try:
+		import urllib.request
+		url = 'https://1.1.1.1'
+		req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+		urllib.request.urlopen(req, timeout=5)
+	except Exception as e:
+		err = str(_('To run archinstall your system must have internet access.'))
+		log(err, fg="red", level=logging.WARNING)
+		sys.exit(1)
+
+
+verify_internet_connection()
 define_arguments()
 arguments = get_arguments()
 post_process_arguments(arguments)
