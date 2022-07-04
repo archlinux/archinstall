@@ -1,5 +1,4 @@
 """Arch Linux installer - guided, templates etc."""
-import sys
 from argparse import ArgumentParser
 
 from .lib.disk import *
