@@ -43,6 +43,7 @@ def list_free_space(device :archinstall.BlockDevice, unit :str = 'compact'):
 	return full_size,sector_size,free_array
 
 def unit_best_fit(raw_value,default_unit='s'):
+	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
 	base_value = convert_units(raw_value,'s',default_unit)
 	conversion_rates = {
 		'KiB' : 2,
