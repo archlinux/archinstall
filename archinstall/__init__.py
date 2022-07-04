@@ -246,20 +246,6 @@ def post_process_arguments(arguments):
 	load_config()
 
 
-def verify_internet_connection():
-	from urllib.request import urlopen
-	try:
-		import urllib.request
-		url = 'https://1.1.1.1'
-		req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-		urllib.request.urlopen(req, timeout=5)
-	except Exception:
-		err = str(_('Your system must have internet access to be able to run archinstall'))
-		log(err, fg="red", level=logging.WARNING)
-		sys.exit(1)
-
-
-verify_internet_connection()
 define_arguments()
 arguments = get_arguments()
 post_process_arguments(arguments)
