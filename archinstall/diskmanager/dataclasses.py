@@ -20,7 +20,7 @@ class StorageSlot:
 
 	@property
 	def start(self):
-		return convert_units(self.startInput,'s','s')
+		return int(convert_units(self.startInput,'s','s'))
 	@property
 	def size(self):
 		return convert_units(self.sizeInput,'s','s')
@@ -39,14 +39,14 @@ class StorageSlot:
 				return self.device < other.device
 		# TODO throw exception when not comparable
 
-	def asdict(self):
+	def as_dict(self):
 		non_generated = {'start':self.start,'end':self.end,'size': self.size,'sizeN':self.sizeN}
 		return asdict(self) | non_generated
 
-	def asdict_filter(self,filter):
+	def as_dict_filter(self,filter):
 		# TODO there are alternate ways of code. which is the most efficient ?
 		result = {}
-		for key,value in self.asdict().items():
+		for key,value in self.as_dict().items():
 			if key in filter:
 				result[key] = value
 		return result
@@ -55,9 +55,11 @@ class StorageSlot:
 class DiskSlot(StorageSlot):
 	type: str = None
 	wipe: bool = False
+
+	@property
+	def path(self):
+		return self.device
 	# TODO probably not here but code is more or less the same
-
-
 	def create_gaps(self,lista):
 		short_list = sorted([elem for elem in lista if elem.device == self.device and isinstance(elem,PartitionSlot)])
 		gap_list = []
@@ -73,7 +75,9 @@ class DiskSlot(StorageSlot):
 
 @dataclass
 class GapSlot(StorageSlot):
-	pass
+	@property
+	def path(self):
+		return None
 	def parent(self,lista):
 		return parent_from_list(self,lista)
 

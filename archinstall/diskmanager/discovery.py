@@ -110,7 +110,8 @@ def hw_discover(disks=None):
 			case archinstall.BlockDevice:
 				if my_disks and path not in my_disks:
 					continue
-				global_map.append(DiskSlot(path,0,storage_unit.size,storage_unit.partition_type))
+				# TODO BlockDevice gives
+				global_map.append(DiskSlot(path,0,f"{storage_unit.size} GiB",storage_unit.partition_type))
 			case  archinstall.Partition:
 				if my_disks and storage_unit.parent not in my_disks:
 					continue
