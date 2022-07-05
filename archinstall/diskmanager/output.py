@@ -1,13 +1,15 @@
-import logging
-import os
-import sys
-from pathlib import Path
-from typing import Dict, Union, List, Any
-from pudb import set_trace
+from typing import Dict, List, Any
+
 class FormattedOutput:
 
 	@classmethod
-	def values(cls, o: Any) -> Dict[str, Any]:
+	def values(cls, o: Any,class_formatter: str = None) -> Dict[str, Any]:
+		# class_formatter must be a method of the class. JUst to avoid a  lot of complex code
+		if hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
+			func = getattr(o, class_formatter)
+			return func()
+		if hasattr(o,'as_dict_str'):
+			return o.as_dict_str()
 		if hasattr(o,'as_dict'):
 			return o.as_dict()
 		elif hasattr(o, 'as_json'):
@@ -43,13 +45,10 @@ class FormattedOutput:
 		return output
 
 	@classmethod
-	def as_table_filter(cls, obj: List[Any], field_formatter :Any = None, filter: List[str]) -> str:
+	def as_table_filter(cls, obj: List[Any], filter: List[str], class_formatter :str = None) -> str:
 		column_width: Dict[str, int] = {}
 		for o in obj:
-			for k, v in cls.values(o).items():
-				# TODO field_formatter is called twice. ought to be called only once
-				if field_formatter:
-					v = field_formatter(o,k,v)
+			for k, v in cls.values(o,class_formatter).items():
 				column_width.setdefault(k, 0)
 				column_width[k] = max([column_width[k], len(str(v)), len(k)])
 
@@ -59,21 +58,22 @@ class FormattedOutput:
 			width = column_width.get(key,len(key))
 			key = key.replace('!', '')
 			key_list.append(key.ljust(width))
-		output += ' | '.join(key_list) +'\n'
+		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
 
 		for o in obj:
 			obj_data = []
+			original_data = cls.values(o,class_formatter)
 			for key in filter:
 				width = column_width.get(key, len(key))
 				# hasattr gives false positives, so i went for the primitive
-				try:
-					value = getattr(o,key)
-				except AttributeError:
-					value = ''
+				value = original_data.get(key,'')
 				if '!' in key:
 					value = '*' * width
-				obj_data.append(str(value).ljust(width))
-			output += ' | '.join(obj_data) +'\n'
+				if value.isnumeric():
+					obj_data.append(str(value).rjust(width))
+				else:
+					obj_data.append(str(value).ljust(width))
+			output += ' | '.join(obj_data) + '\n'
 
 		return output

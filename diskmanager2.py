@@ -1,12 +1,9 @@
 import archinstall
-from archinstall.diskmanager.dataclasses import *
-from archinstall.diskmanager.discovery import *
-from archinstall.diskmanager.helper import *
-from archinstall.diskmanager.output import *
-from typing import List, Any, Dict
+from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
+from archinstall.diskmanager.discovery import hw_discover
+from archinstall.diskmanager.output import FormattedOutput
+from typing import List, Any, Dict, Optional
 from pprint import pprint
-from dataclasses import asdict
-
 
 def create_gap_list(mapa):
 	""" takes a list of slots and creates an equivalent list with (updated) gaps """
@@ -16,9 +13,28 @@ def create_gap_list(mapa):
 		new_mapa += disk.create_gaps(mapa)
 	return new_mapa
 
+# TODO this ougth come with the dataclass
+def field_formatter(objeto,key,value,width=None):
+	changed_value = value
+	if not changed_value:
+		changed_value = ''
+	if type(value) == bool:
+		if value:
+			changed_value = 'X'
+		else:
+			changed_value = ''
+	if width:
+		if '!' in key:
+			changed_value = '*' * width
+		if str(changed_value).isnumeric():
+			changed_value = str(changed_value).rjust(width)
+		else:
+			changed_value = str(changed_value).ljust(width)
+	return changed_value
+
 def format_to_list_manager(data, field_list=None):
-	filter = ['path','device','start','sizeN','type','wipe','encripted','boot','actual_mountpoint','filesystem','actual_subvolumes']
-	table = FormattedOutput.as_table_filter(data,None,filter)
+	filter = ['path','start','sizeN','type','wipe','encrypted','boot','actual_mountpoint','filesystem','actual_subvolumes']
+	table = FormattedOutput.as_table_filter(data,filter,'as_dict_str')
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
 	# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
@@ -41,39 +57,42 @@ class HwMap(archinstall.ListManager):
 		objeto = self._get_selected_object(selection)
 		# TODO as dataclass method
 		if isinstance(objeto,DiskSlot):
-				return f'disk {objeto.device}'
+			return f'disk {objeto.device}'
 		elif isinstance(objeto,GapSlot):
-				return f'gap {objeto.device}@{objeto.start}'
+			return f'gap {objeto.device}@{objeto.start}'
 		elif isinstance(objeto,PartitionSlot):
-				if objeto.path:
-					return f'partition {objeto.path}'
-				else:
-					return f'partition {objeto.device}@{objeto.start}'
+			if objeto.path:
+				return f'partition {objeto.path}'
+			else:
+				return f'partition {objeto.device}@{objeto.start}'
 		return selection
+
 	def reformat(self, data: List[Any]) -> Dict[str, Any]:
 		# raw_result = self._header() | {f'{item}':item for item in sorted(data)}
 		# return raw_result
-		return format_to_list_manager(data)
+		my_data = create_gap_list(data)
+		return format_to_list_manager(my_data)
 
 	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
 		objeto = self._get_selected_object(entry)
-		pprint(FormattedOutput.value(objeto))
+		pprint(objeto.as_dict())
 		input()
 		return data
+
 	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
 		return options
+
 
 hw_map_data = hw_discover()
 HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
 # create_global_block_map()
 
-#mapa = []
-#mapa.append(PartitionSlot('/dev/loop0',4096,512000,'/boot','ext4')) # TODO path
-#mapa.append(PartitionSlot('/dev/loop0',1000000,6000000,'ext4','/')) # TODO path
-#mapa.append(DiskSlot('/dev/loop0',0,'8GiB')) # TODO size in not integer notation
-
-#mapa = sorted(mapa)
-#print(PartitionSlot('paco',1,1).parent(mapa))
-#for entry in create_gap_list(mapa):
-	#print('\t',entry.sizeN,entry.sizeInput,entry.size,entry.start,entry.end,type(entry))
-
+# mapa = []
+# mapa.append(PartitionSlot('/dev/loop0',4096,512000,'/boot','ext4')) # TODO path
+# mapa.append(PartitionSlot('/dev/loop0',1000000,6000000,'ext4','/')) # TODO path
+# mapa.append(DiskSlot('/dev/loop0',0,'8GiB')) # TODO size in not integer notation
+#
+# mapa = sorted(mapa)
+# print(PartitionSlot('paco',1,1).parent(mapa))
+# for entry in create_gap_list(mapa):
+# 	print('\t',entry.sizeN,entry.sizeInput,entry.size,entry.start,entry.end,type(entry))

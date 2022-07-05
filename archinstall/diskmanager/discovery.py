@@ -1,20 +1,13 @@
 import archinstall
 import pathlib
-import os
 from pprint import pprint
 # from pudb import set_trace
-import logging
-from copy import deepcopy, copy
-import re
-
-from typing import Any, TYPE_CHECKING, Dict, Optional, List
+from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
 	_: Any
 
-from archinstall.lib.user_interaction.disk_conf import get_default_partition_layout
-from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
-from .dataclasses import *
+from .dataclasses import DiskSlot, PartitionSlot
 def device_size_sectors(path):
 	nombre = path.split('/')[-1]
 	filename = f"/sys/class/block/{nombre}/size"
@@ -74,18 +67,18 @@ def createPartitionSlot(path,partition):
 		partition_entry = PartitionSlot(partition.parent,
 			device_info['PART_ENTRY_OFFSET'],
 			device_info['PART_ENTRY_SIZE'],
-			type = device_info.get('PART_ENTRY_NAME',device_info.get('PART_ENTRY_TYPE','')),
-			boot = partition.boot,
-			encrypted = encrypted,
-			wipe = False,
-			mountpoint = None,
-			filesystem = partition.filesystem,
+			type=device_info.get('PART_ENTRY_NAME',device_info.get('PART_ENTRY_TYPE','')),
+			boot=partition.boot,
+			encrypted=encrypted,
+			wipe=False,
+			mountpoint=None,
+			filesystem=partition.filesystem,
 			btrfs=[],
-			uuid= partition.uuid,
-			partnr= device_info['PART_ENTRY_NUMBER'],
-			path= device_info['PATH'],
-			actual_mountpoint = partition.mountpoint,  # <-- this is false
-			actual_subvolumes= subvol_info
+			uuid=partition.uuid,
+			partnr=device_info['PART_ENTRY_NUMBER'],
+			path=device_info['PATH'],
+			actual_mountpoint=partition.mountpoint,  # <-- this is false
+			actual_subvolumes=subvol_info
 		)
 		return partition_entry
 	except KeyError as e:
@@ -97,9 +90,9 @@ def hw_discover(disks=None):
 	global_map = []
 
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
-	hard_drives = []
-	disk_layout = {}
-	encrypted_partitions = set()
+	# hard_drives = []
+	# disk_layout = {}
+	# encrypted_partitions = set()
 	my_disks = {item.path for item in disks} if disks else {}
 	# warning if executed without root privilege everything is a block device
 	all_storage = archinstall.all_blockdevices(partitions=True)
@@ -125,7 +118,7 @@ def hw_discover(disks=None):
 
 def create_global_block_map(disks=None):
 	""" OBSOLETE
-	    For reference of missing parts only
+		For reference of missing parts only
 	"""
 	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
 	result = archinstall.all_blockdevices(partitions=True)
@@ -227,4 +220,4 @@ def create_global_block_map(disks=None):
 			print()
 			# TODO move relevant information to the corresponding partition
 			input('yep')
-	GLOBAL_BLOCK_MAP.update(disk_layout)
+	return disk_layout
