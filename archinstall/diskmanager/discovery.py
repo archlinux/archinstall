@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 	_: Any
 
 from .dataclasses import DiskSlot, PartitionSlot
+from .helper import split_number_unit, convert_units
 def device_size_sectors(path):
 	nombre = path.split('/')[-1]
 	filename = f"/sys/class/block/{nombre}/size"
@@ -115,6 +116,40 @@ def hw_discover(disks=None):
 			case _:
 				print(' error ',path, storage_unit)
 	return global_map
+
+def layout_to_map(layout):
+	part_map = []
+	for disk in layout:
+		partitions = layout[disk].get('partitions',[])
+		device = archinstall.BlockDevice(disk)
+		part_map.append(DiskSlot(disk, 0, f"{device.size} GiB",device.partition_type,wipe=layout[disk].get('wipe',False)))
+		for part in partitions:
+			partition_slot = PartitionSlot(disk,part['start'],part['size'],    # TODO not exactly
+					type='primary',
+					boot=part.get('boot',False),
+					encrypted=part.get('encrypted',False),
+					wipe=part.get('wipe',False),
+					mountpoint=part.get('mountpoint',None),
+					filesystem=part.get('filesystem',{}).get('format',None),
+					filesystem_mount_options=part.get('filesystem',{}).get('mount_options',None), # TODO rename
+					filesystem_format_options=part.get('filesystem',{}).get('format_options',None),
+					btrfs=part.get('btrfs',{}).get('subvolumes',[])
+			)
+			# TODO with all the forth we might provoke overlaps and overflows, we should check it does not happen
+			#     for this we have to do the following adjustments AFTER the full list is done, not after a single element
+			# as everybody knows size is really the end sector. One of this days we must change it.
+			# but we really use size as such so we have to do the conversion
+			unit = None
+			if part['size'].strip().endswith('%'):
+				pass # no problemo with this
+			else:
+				_,unit = split_number_unit(part['size'])
+				real_size = partition_slot.size - partition_slot.start + 1
+				if unit:
+					real_size = convert_units(real_size,unit,'s')
+				partition_slot.sizeInput = str(real_size)  # we use the same units that the user
+			part_map.append(partition_slot)
+	return sorted(part_map)
 
 def create_global_block_map(disks=None):
 	""" OBSOLETE

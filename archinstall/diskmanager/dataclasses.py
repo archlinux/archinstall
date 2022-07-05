@@ -1,5 +1,5 @@
 import archinstall
-from .helper import unit_best_fit, convert_units
+from .helper import unit_best_fit, convert_units, split_number_unit
 from dataclasses import dataclass, asdict, KW_ONLY
 from typing import List , Any, Dict
 # from pprint import pprint
@@ -123,7 +123,7 @@ class PartitionSlot(StorageSlot):
 	_: KW_ONLY
 	mountpoint: str = None
 	filesystem: str = None
-	filesystem_options : str = None
+	filesystem_mount_options : str = None
 	filesystem_format_options : str = None
 	boot: bool = False
 	encrypted: bool = False
@@ -136,6 +136,17 @@ class PartitionSlot(StorageSlot):
 	uuid: str = None
 	partnr: int = None
 	type: str = 'primary'
+
+	@property
+	def size(self):
+		# it's a bit expensive as it needs to instantiate a BlockDevice everytime it is invoked.
+		if self.sizeInput.strip().endswith('%'):
+			my_device = archinstall.BlockDevice(self.device)
+			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') -32 - self.start
+			percentage,_ = split_number_unit(self.sizeInput)
+			return int(round(size_to_the_end * percentage / 100.,0))
+		else:
+			return convert_units(self.sizeInput,'s','s')
 
 	def parent_in_list(self,lista):
 		return parent_from_list(self,lista)

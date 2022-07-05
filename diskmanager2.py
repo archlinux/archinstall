@@ -1,6 +1,6 @@
 import archinstall
 from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
-from archinstall.diskmanager.discovery import hw_discover
+from archinstall.diskmanager.discovery import layout_to_map, hw_discover
 from archinstall.diskmanager.output import FormattedOutput
 from typing import List, Any, Dict, Optional
 from pprint import pprint
@@ -33,7 +33,7 @@ def field_formatter(objeto,key,value,width=None):
 	return changed_value
 
 def format_to_list_manager(data, field_list=None):
-	filter = ['path','start','sizeN','type','wipe','encrypted','boot','actual_mountpoint','filesystem','actual_subvolumes']
+	filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint','btrfs'] # actual_mountpoint','actual_subvolumes']
 	table = FormattedOutput.as_table_filter(data,filter,'as_dict_str')
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
@@ -70,20 +70,21 @@ class HwMap(archinstall.ListManager):
 	def reformat(self, data: List[Any]) -> Dict[str, Any]:
 		# raw_result = self._header() | {f'{item}':item for item in sorted(data)}
 		# return raw_result
-		my_data = create_gap_list(data)
-		return format_to_list_manager(my_data)
+		return format_to_list_manager(data)
 
 	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
 		objeto = self._get_selected_object(entry)
 		pprint(objeto.as_dict())
-		input()
-		return data
+		# this is common for all action.
+		my_data = create_gap_list(data)
+		return my_data
 
 	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
 		return options
 
-
+# TODO gaps are not working on the HwMap (shown but not on the data. OTOH first and last gaps are not to be created
 hw_map_data = hw_discover()
+# hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
 HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
 # create_global_block_map()
 

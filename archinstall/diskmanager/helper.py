@@ -8,6 +8,11 @@ import archinstall
 import re
 
 # from typing import Any, TYPE_CHECKING, Dict, Optional, List
+def split_number_unit(value):
+	result = re.split(r'(\d+\.\d+|\d+)',value.replace(',','').strip())
+	unit = result[2].lower().strip() if result[2].strip() else 's'
+	target_value = float(result[1])
+	return target_value,unit
 
 def unit_best_fit(raw_value,default_unit='s'):
 	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
