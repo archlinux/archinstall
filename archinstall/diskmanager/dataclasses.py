@@ -12,6 +12,41 @@ def parent_from_list(objeto,lista):
 		return None
 	return parent[0]
 
+def actual_mount(entry):
+	blank = ''
+	if entry.actual_subvolumes:
+		subvolumes = entry.actual_subvolumes
+		mountlist = []
+		for subvol in subvolumes:
+			mountlist.append(subvol.mountpoint)
+		if mountlist:
+			amount = f"//HOST({', '.join(mountlist):15.15})..."
+		else:
+			amount = blank
+	elif entry.actual_mountpoint:
+		amount = f"//HOST{entry.actual_mountpoint}"
+	else:
+		amount = blank
+	return amount
+def proposed_mount(entry):
+	blank = ''
+	if entry.btrfs:
+		subvolumes = entry.btrfs
+		mountlist = []
+		for subvol in subvolumes:
+			mountlist.append(subvol.mountpoint)
+		if mountlist and not entry.mountpoint:
+			amount = f"{', '.join(mountlist):15.15}..."
+		elif mountlist and entry.mountpoint: # should not exist, but some samples use it
+			amount = f"{entry.mountpoint} & {', '.join(mountlist):15.15}..."
+		else:
+			amount = blank
+	elif entry.mountpoint:
+		amount = entry.mountpoint
+	else:
+		amount = blank
+	return amount
+
 def field_as_string(objeto :Any) -> Dict:
 	result = {}
 	for k,value in objeto.as_dict().items():
@@ -34,6 +69,10 @@ def field_as_string(objeto :Any) -> Dict:
 					changed_value = prefix + '(new)'
 			else:
 				pass
+		elif k == 'actual_mountpoint':
+			changed_value = actual_mount(objeto)
+		elif k == 'mountpoint':
+			changed_value = proposed_mount(objeto)
 		result[k] = str(changed_value)
 	return result
 
@@ -109,18 +148,24 @@ class DiskSlot(StorageSlot):
 		return self.device
 
 	# TODO probably not here but code is more or less the same
-	def create_gaps(self,lista):
-		short_list = sorted([elem for elem in lista if elem.device == self.device and isinstance(elem,PartitionSlot)])
-		gap_list = []
+	def gap_list(self, part_list):
+		result_list = []
 		start = 32
-		for elem in short_list:
+		for elem in part_list:
 			if elem.start > start:
 				# create gap
-				gap_list.append(GapSlot(self.device,start,elem.start - start))
+				result_list.append(GapSlot(self.device, start, elem.start - start))
 			start = elem.end + 1
 		if start < self.end:
-			gap_list.append(GapSlot(self.device,start,self.end - start + 1))
-		return sorted(short_list + gap_list)
+			result_list.append(GapSlot(self.device, start, self.end - start + 1))
+		return result_list
+
+	def create_gaps(self,lista):
+		short_list = sorted([elem for elem in lista if elem.device == self.device and isinstance(elem,PartitionSlot)])
+		return sorted(short_list + self.gap_list(short_list))
+
+	def children(self,lista):
+		return sorted([elem for elem in lista if elem.device == self.device and not isinstance(elem,DiskSlot)])
 
 @dataclass
 class GapSlot(StorageSlot):
@@ -194,6 +239,7 @@ class PartitionSlot(StorageSlot):
 			if unit:
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
 			return str(real_size)  # we use the same units that the user
+
 
 	def to_layout(self):
 		part_attr = ('boot', 'btrfs', 'encrypted', 'filesystem', 'mountpoint', 'size', 'start', 'wipe')

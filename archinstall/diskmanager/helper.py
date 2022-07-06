@@ -8,6 +8,8 @@ import archinstall
 import re
 
 # from typing import Any, TYPE_CHECKING, Dict, Optional, List
+
+
 def split_number_unit(value):
 	result = re.split(r'(\d+\.\d+|\d+)',value.replace(',','').strip())
 	unit = result[2].lower().strip() if result[2].strip() else 's'
@@ -84,3 +86,5 @@ def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3)
 		return int(round(from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision),0))
 	else:
 		return from_bytes(to_bytes(target_value,from_unit),to_unit.strip().lower(),precision)
+
+

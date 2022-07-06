@@ -1,52 +1,13 @@
 import archinstall
 from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
 from archinstall.diskmanager.discovery import layout_to_map, hw_discover
-from archinstall.diskmanager.output import FormattedOutput
 from archinstall.diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional
 from pprint import pprint
 
-def create_gap_list(mapa):
-	""" takes a list of slots and creates an equivalent list with (updated) gaps """
-	new_mapa = []
-	for disk in sorted([entry for entry in mapa if isinstance(entry,DiskSlot)]):
-		new_mapa.append(disk)
-		new_mapa += disk.create_gaps(mapa)
-	return new_mapa
 
 # TODO this ougth come with the dataclass
-def field_formatter(objeto,key,value,width=None):
-	changed_value = value
-	if not changed_value:
-		changed_value = ''
-	if type(value) == bool:
-		if value:
-			changed_value = 'X'
-		else:
-			changed_value = ''
-	if width:
-		if '!' in key:
-			changed_value = '*' * width
-		if str(changed_value).isnumeric():
-			changed_value = str(changed_value).rjust(width)
-		else:
-			changed_value = str(changed_value).ljust(width)
-	return changed_value
-
-def format_to_list_manager(data, field_list=None):
-	filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint','btrfs'] # actual_mountpoint','actual_subvolumes']
-	table = FormattedOutput.as_table_filter(data,filter,'as_dict_str')
-	rows = table.split('\n')
-	# these are the header rows of the table and do not map to any User obviously
-	# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-	# the selectable rows so the header has to be aligned
-	display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-	for row, payload in zip(rows[2:], data):
-		row = row.replace('|', '\\|')
-		display_data[row] = payload
-
-	return display_data
+from archinstall.diskmanager.partition_list import format_to_list_manager, create_gap_list, DevList
 
 
 class HwMap(archinstall.ListManager):
@@ -96,11 +57,10 @@ class HwMap(archinstall.ListManager):
 
 # TODO rename btrfs attribute to subvolumes
 # TODO verify what archinstall.__init__ does to the start attribute. seems it is normalized before handling
-# hw_map_data = hw_discover()
-pprint(archinstall.arguments.get('disk_layouts'))
-exit()
-hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
-harddrives,disk_layout = generate_layout(hw_map_data)
+hw_map_data = hw_discover()
+# hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
+DevList('List of storage entities',hw_map_data).run()
+#harddrives,disk_layout = generate_layout(hw_map_data)
 #HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
 # create_global_block_map()
 
