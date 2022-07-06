@@ -784,4 +784,4 @@ msgid "Delete subvolume"
 msgstr "Slet underbind"
 
 msgid "Configured {} interfaces"
-msgstr "Konfigurer {} grænseflader"
+msgstr "Konfigureret {} grænseflader"
