@@ -160,12 +160,15 @@ class DiskSlot(StorageSlot):
 			result_list.append(GapSlot(self.device, start, self.end - start + 1))
 		return result_list
 
-	def create_gaps(self,lista):
-		short_list = sorted([elem for elem in lista if elem.device == self.device and isinstance(elem,PartitionSlot)])
-		return sorted(short_list + self.gap_list(short_list))
+	def children(self, lista):
+		return sorted([elem for elem in lista if elem.device == self.device and not isinstance(elem, DiskSlot)])
 
-	def children(self,lista):
-		return sorted([elem for elem in lista if elem.device == self.device and not isinstance(elem,DiskSlot)])
+	def partition_list(self, lista):
+		return sorted([elem for elem in lista if elem.device == self.device and isinstance(elem, PartitionSlot)])
+
+	def create_gaps(self,lista):
+		short_list = self.partition_list(lista)
+		return sorted(short_list + self.gap_list(short_list))
 
 @dataclass
 class GapSlot(StorageSlot):

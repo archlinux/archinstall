@@ -6,14 +6,18 @@ from archinstall.diskmanager.helper import convert_units
 
 from typing import Any, TYPE_CHECKING, Dict, Optional, List
 
-from archinstall.examples.diskmanager import list_free_space, align_entry, merge_list, location_to_gap, \
-	from_global_to_partial_pct, eval_percent, unit_best_fit
+# from archinstall.examples.diskmanager import list_free_space, align_entry, merge_list, location_to_gap, \
+#	from_global_to_partial_pct, eval_percent, unit_best_fit
 
 if TYPE_CHECKING:
 	_: Any
 
-
 class PartitionMenu(archinstall.GeneralMenu):
+	def __init__(self,object,block_device,caller=None):
+		self.ds = None
+		super().__init__(data_store=self.ds)
+
+class PartitionMenu_old(archinstall.GeneralMenu):
 	def __init__(self,parameters,block_device,caller=None):
 		self.caller = caller
 		if isinstance(block_device,archinstall.BlockDevice):
