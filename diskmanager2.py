@@ -2,6 +2,7 @@ import archinstall
 from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
 from archinstall.diskmanager.discovery import layout_to_map, hw_discover
 from archinstall.diskmanager.output import FormattedOutput
+from archinstall.diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional
 from pprint import pprint
 
@@ -49,6 +50,17 @@ def format_to_list_manager(data, field_list=None):
 
 
 class HwMap(archinstall.ListManager):
+
+	def __init__(
+		self,
+		prompt: str,
+		entries: List[Any],
+		base_actions: List[str],
+		sub_menu_actions: List[str]
+	):
+		entries = create_gap_list(entries)  # list will be substituted with one with gaps
+		super().__init__(prompt,entries,base_actions,sub_menu_actions)
+
 	def _get_selected_object(self,selection):
 		pos = self._data.index(selection)
 		return self._data[pos]
@@ -82,10 +94,14 @@ class HwMap(archinstall.ListManager):
 	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
 		return options
 
-# TODO gaps are not working on the HwMap (shown but not on the data. OTOH first and last gaps are not to be created
-hw_map_data = hw_discover()
-# hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
-HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
+# TODO rename btrfs attribute to subvolumes
+# TODO verify what archinstall.__init__ does to the start attribute. seems it is normalized before handling
+# hw_map_data = hw_discover()
+pprint(archinstall.arguments.get('disk_layouts'))
+exit()
+hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
+harddrives,disk_layout = generate_layout(hw_map_data)
+#HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
 # create_global_block_map()
 
 # mapa = []

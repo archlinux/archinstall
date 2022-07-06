@@ -8,26 +8,29 @@ if TYPE_CHECKING:
 	_: Any
 
 from .dataclasses import DiskSlot, PartitionSlot
-from .helper import split_number_unit, convert_units
+
+
 def device_size_sectors(path):
 	nombre = path.split('/')[-1]
 	filename = f"/sys/class/block/{nombre}/size"
-	with open(filename,'r') as file:
+	with open(filename, 'r') as file:
 		size = file.read()
-	return int(size) - 33 # The last 34 sectors are used by the system in GPT drives. If I substract 34 i miss 1 sector
+	return int(size) - 33  # The last 34 sectors are used by the system in GPT drives. If I substract 34 i miss 1 sector
+
 
 def device_sector_size(path):
 	nombre = path.split('/')[-1]
 	filename = f"/sys/class/block/{nombre}/queue/logical_block_size"
-	with open(filename,'r') as file:
+	with open(filename, 'r') as file:
 		size = file.read()
 	return int(size)
+
 
 def get_device_info(device):
 	try:
 		information = archinstall.blkid(f'blkid -p -o export {device}')
 	# TODO: No idea why F841 is raised here:
-	except archinstall.SysCallError as error: # noqa: F841
+	except archinstall.SysCallError as error:  # noqa: F841
 		if error.exit_code in (512, 2):
 			# Assume that it's a loop device, and try to get info on it
 			try:
@@ -139,15 +142,16 @@ def layout_to_map(layout):
 			#     for this we have to do the following adjustments AFTER the full list is done, not after a single element
 			# as everybody knows size is really the end sector. One of this days we must change it.
 			# but we really use size as such so we have to do the conversion
-			unit = None
-			if part['size'].strip().endswith('%'):
-				pass # no problemo with this
-			else:
-				_,unit = split_number_unit(part['size'])
-				real_size = partition_slot.size - partition_slot.start + 1
-				if unit:
-					real_size = convert_units(real_size,unit,'s')
-				partition_slot.sizeInput = str(real_size)  # we use the same units that the user
+			partition_slot.sizeInput = partition_slot.from_end_to_size()
+			# unit = None
+			# if part['size'].strip().endswith('%'):
+			# 	pass # no problemo with this
+			# else:
+			# 	_,unit = split_number_unit(part['size'])
+			# 	real_size = partition_slot.size - partition_slot.start + 1
+			# 	if unit:
+			# 		real_size = convert_units(real_size,unit,'s')
+			# 	partition_slot.sizeInput = str(real_size)  # we use the same units that the user
 			part_map.append(partition_slot)
 	return sorted(part_map)
 

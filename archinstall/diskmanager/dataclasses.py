@@ -86,6 +86,19 @@ class StorageSlot:
 				result[key] = value
 		return result
 
+	def __getitem__(self, key):
+		if hasattr(self, key):
+			if callable(getattr(self, key)):
+				func = getattr(self, key)
+				return func()
+			else:
+				return getattr(self, key)
+		else:
+			return None
+
+	def __setitem__(self, key, value):
+		""" not used but demanded by python"""
+		pass
 @dataclass
 class DiskSlot(StorageSlot):
 	type: str = None
@@ -157,6 +170,51 @@ class PartitionSlot(StorageSlot):
 			return siblings.index(self)
 		except ValueError: # element not in list
 			return -1
+
+	# as everybody knows size is really the end sector at archinstall layout. One of this days we must change it.
+	# but we really use size as such so we have to do the conversion
+	def from_end_to_size(self):
+		unit = None
+		if self.sizeInput.strip().endswith('%'):
+			return self.sizeInput
+		else:
+			_, unit = split_number_unit(self.sizeInput)
+			real_size = self.size - self.start + 1
+			if unit:
+				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
+			return str(real_size)  # we use the same units that the user
+
+	def from_size_to_end(self):
+		unit = None
+		if self.sizeInput.strip().endswith('%'):
+			return self.sizeInput # no problemo with this
+		else:
+			_, unit = split_number_unit(self.sizeInput)
+			real_size = self.end
+			if unit:
+				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
+			return str(real_size)  # we use the same units that the user
+
+	def to_layout(self):
+		part_attr = ('boot', 'btrfs', 'encrypted', 'filesystem', 'mountpoint', 'size', 'start', 'wipe')
+		part_dict = {}
+		for attr in part_attr:
+			if attr == 'size':  # internally size is used. Archinstall sees size as end
+				part_dict[attr] = self.from_size_to_end()
+			elif attr == 'filesystem':
+				if self.filesystem:
+					part_dict[attr] = {'format':self.filesystem}
+					if self.filesystem_mount_options:
+						part_dict[attr]['mount_options'] = self.filesystem_mount_options
+					if self.filesystem_format_options:
+						part_dict[attr]['format_options'] = self.filesystem_format_options
+				else:
+					part_dict[attr] = None
+			elif attr == 'btrfs': # I believe now uses internaly the dataclass format
+				part_dict[attr] = {'subvolumes':self[attr]}
+			else:
+				part_dict[attr]= self[attr]
+		return part_dict
 
 	# @classmethod
 	# def from_dict(cls, entries: List[Dict[str, Any]]) -> List['VirtualPartitionSlot']:

@@ -4,7 +4,7 @@ class FormattedOutput:
 
 	@classmethod
 	def values(cls, o: Any,class_formatter: str = None) -> Dict[str, Any]:
-		# class_formatter must be a method of the class. JUst to avoid a  lot of complex code
+		# key must be a method of the class. JUst to avoid a  lot of complex code
 		if hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 			func = getattr(o, class_formatter)
 			return func()
