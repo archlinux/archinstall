@@ -110,6 +110,9 @@ class StorageSlot:
 				return self.device < other.device
 		# TODO throw exception when not comparable
 
+	def __eq(self,other):
+		return self.device == other.device and self.start == other.start and self.end == other.end
+
 	def as_dict(self):
 		non_generated = {'start':self.start,'end':self.end,'size': self.size,'sizeN':self.sizeN,'path':self.path}
 		return asdict(self) | non_generated

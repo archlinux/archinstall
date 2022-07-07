@@ -147,7 +147,7 @@ class DevList(archinstall.ListManager):
 		return self._original_data
 
 	def _action_add_partition(self,object,data):
-		disk = parent_from_list(object)
+		disk = parent_from_list(object,data)
 		if len(disk.partition_list(data)) == 0:
 			is_empty_disk = True
 		else:
@@ -158,7 +158,7 @@ class DevList(archinstall.ListManager):
 		else:
 			part_data = PartitionSlot(object.device,-1,-1,wipe=True)  # Something has to be done with this
 
-		with PartitionMenu(part_data,disk,self) as add_menu:
+		with PartitionMenu(part_data,self) as add_menu:
 			exit_menu = False
 			for option in add_menu.list_options():
 				# TODO this is not what i need

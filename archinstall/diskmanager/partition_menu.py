@@ -4,13 +4,14 @@ from dataclasses import asdict, dataclass
 
 import archinstall
 from archinstall.diskmanager.dataclasses import PartitionSlot, DiskSlot
+from archinstall.diskmanager.discovery import hw_discover
 
 from archinstall.diskmanager.helper import convert_units, unit_best_fit, split_number_unit
 
 from typing import Any, TYPE_CHECKING, Union   # , Dict, Optional, List
 
 # from archinstall.examples.diskmanager import list_free_space, align_entry, merge_list, location_to_gap, from_global_to_partial_pct, eval_percent, unit_best_fit
-
+from archinstall.diskmanager.output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -211,7 +212,11 @@ class PartitionMenu(archinstall.GeneralMenu):
 	def _select_filesystem(self,prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
-		if fstype.value != prev and self.ds.get('uuid'): # changed FS means reformat if the disk exists
+		# escape control
+		if fstype.type_ == archinstall.MenuSelectionType.Esc:
+			return prev
+		# changed FS means reformat if the disk exists
+		if fstype.value != prev and self.ds.get('uuid'):
 			self.ds['wipe'] = True
 		if fstype.value == 'btrfs':
 			self.option('subvolumes').set_enabled(True)
@@ -219,154 +224,175 @@ class PartitionMenu(archinstall.GeneralMenu):
 			self.option('subvolumes').set_enabled(False)
 		return fstype.value
 
+	# this block is for assesing a space allocation. probably it ougth to be taken off the class
+	def _get_gaps_in_disk(self,list_to_check):
+		if list_to_check is None:
+			tmp_list = hw_discover([self.disk.device])
+			return self._get_gaps_in_disk(tmp_list)
+		elif len(list_to_check) == 0:
+			return []
+		else:
+			tmp_list = [part for part in self.disk.partition_list(list_to_check) if part != self.data]
+			return self.disk.gap_list(tmp_list)
+
+	def _show_gaps(self,gap_list,prev):
+		screen_data = FormattedOutput.as_table_filter(gap_list,['start','end','size','sizeN'])
+		print('Current free space is')
+		print(screen_data)
+		print('Current allocation is',prev)
+
 	def _select_physical(self,prev):
-		# TODO check if IDs have to change when you modify a partition, and if it is allowed
-		from os import system
-		if self.data.get('uuid'): # an existing partition can not be physically changed
+		# from os import system
+		# an existing partition can not be physically changed
+		if self.ds.get('uuid'):
 			return prev
 		if not prev:
 			prev = {}
-		# we get the free list and if there exists prev we add this to the list
-		if self.caller:
-			total_size,sector_size,free = self.caller.gap_map(self.block_device)
-		else: # Might not be needed, but permits to execute standalone
-			total_size,sector_size,free = list_free_space(self.block_device,'s')
-			total_size = int(total_size[:-1])
-
-		ALIGNMENT = convert_units(archinstall.arguments.get('align',0),'s','s') # 2**13
-		MIN_PARTITION = ALIGNMENT if ALIGNMENT > 1 else 2**13 # 4 MiB
-		LAST_SECTOR = total_size - 33 # last assignable sector (we leave 34 sectors por internal info
-
-		def align_gaps(free_slots,ALIGNMENT,MIN_PARTITIONS,LAST_SECTOR):
-			#
-			# the gap list has to be renormalized thru the use of ALIGNMENT,
-			# so we only asign aligned partitions to the structure we define
-			#
-			norm_free_slot = []
-			for slot in free_slots:
-				norm_slot = align_entry(slot,ALIGNMENT,LAST_SECTOR)
-				if norm_slot[2] > 0:
-					norm_free_slot.append(norm_slot)
-				else:
-					continue
-				# mark unavailable slots
-				if len(norm_free_slot[-1]) == 3:
-					norm_free_slot[-1].append('')
-				if norm_free_slot[-1][2] < MIN_PARTITION:
-					norm_free_slot[-1][3] += ' too short'
-			return norm_free_slot
-
-		def show_free_slots(free,prev,ALIGNMENT):
-			# print("<{:>20,}{:>20,}{:>20,} {}".format(*norm_free_slot[-1]))
-			print()
-			print(f"List of free space at {self.block_device.path} in sectors")
-			print()
-			print("{:20} | {:20} | {:20}".format('start','end','size'))
-			print("{}|{}|{}".format('-' * 21,'-' * 21,'-' * 21))
-			for linea in free:
-				if len(linea) == 3:
-					print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}")
-				else:
-					print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}    {linea[3]}")
-			print()
-			# TODO check minimal size
-			# TODO text with possible unit definition
-			# TODO preselect optimal ¿? hole
-			if prev:
-				print(_("Current physical location selection"))
-				print(f"{int(prev.get('start')):>20,} | {int(prev.get('size') + prev.get('start') -1):>20,} | {unit_best_fit(prev.get('size')):>12}")
-				if ALIGNMENT > 1:
-					print(_("Current physical location selection; aligned"))
-					norm_slot = align_entry([int(prev.get('start')),int(prev.get('size')) + int(prev.get('start')) - 1,int(prev.get('size'))],ALIGNMENT,LAST_SECTOR)
-					print(f"{norm_slot[0]:>20,} | {norm_slot[1]:>20,} | {unit_best_fit(norm_slot[2]):>12}")
-			print()
-
-		# we will include the selected chunck as free space, so we can expand it if necessary
-		if prev:
-			merge_list(free,location_to_gap(prev,'Current Location'))
-		# normalize free space according to alignment
-		free = align_gaps(free,ALIGNMENT,MIN_PARTITION,LAST_SECTOR)
-
-		if prev:
-			current_gap = [line[3] if len(line) == 4 else None for line in free].index('Current Location')
-		else:
-			current_gap = 0
-		# TODO define a minimal start position
-		# TODO standarize units for return code
-		system('clear')
-		show_free_slots(free,prev,ALIGNMENT)
-
-		starts = str(int(prev.get('start'))) if prev.get('start') else ''
-		if prev.get('sizeG'):
-			# TODO percentages back
-			if prev['sizeG'].strip()[-1] == '%':
-				size = from_global_to_partial_pct(prev['sizeG'],prev['start'],free[current_gap][1] - prev['start'] + 1,self.block_device.path)
-			else:
-				size = f"{prev.get('sizeG')}"
-		else:
-			size = f"{prev.get('size')}" if prev.get('size') else ''
-		while True:
-			if prev:
-				prompt = _("Define a start sector for the partition. Enter a value or \n"
-						"c to get the first sector of the current slot \n"
-						"q to quit \n"
-						"==> ")
-			else:
-				prompt = _("Define a start sector for the partition. Enter a value or \n"
-						"f to get the first sector of the first free slot which can hold a partition\n"
-						"l to get the first sector of the last free slot \n"
-						"q to quit \n"
-						"==> ")
-			starts = archinstall.TextInput(prompt,starts).run()
-			inplace = False
-			if starts.lower() == 'q':
-				if prev:
-					return prev
-				else:
-					return None
-			elif starts.lower() == 'f':
-				# TODO check really which is the first allocatable sector in a disk
-				starts = free[0][0]
-			elif starts.lower() == 'l':
-				starts = free[-1][0]
-			elif starts.lower() == 'c':
-				starts = free[current_gap][0]
-			else:
-				starts = int(convert_units(starts,'s','s')) # default value are sectors
-			maxsize = 0
-			endgap = 0
-			for gap in free:
-				# asume it is always sectors
-				if int(gap[0]) <= int(starts) <= int(gap[1]):
-					endgap = int(gap[1])
-					maxsize = int(gap[1]) - starts + 1 # i think i got it right
-					maxsize_g = convert_units(f"{maxsize}s",'GiB')
-					inplace = True
-					break
-			if not inplace:
-				print(_("Selected sector {} outside an empty gap").format(starts))
-			else:
-				break
-		while True:
-			size = archinstall.TextInput(_("Define a size for the partition \n(max {} sectors / {}GiB), a percentaje of the free space (ends with %),\n or q to quit \n ==> ").format(maxsize,maxsize_g),size).run()
-			if size.lower() == 'q':
-				if prev:
-					return prev
-				else:
-					return None
-			if size.endswith('%'):
-				size_s,size = eval_percent(size,starts,endgap,self.block_device.path)
-			else:
-				size_s = convert_units(size,'s','s')
-			# TODO when they match something fails ¿? decimals ?
-			if size_s > maxsize:
-				print(f"Size is too big for selected  gap. {size_s} > {maxsize} Reduce it to fit")
-			else: # TODO
-				break
-		if size.lower().strip()[-1] in ('b','%'):
-			return {'start':starts,'size':size_s,'sizeG':size}
-		else:
-			return {'start':starts,'size':size_s}
+		gap_list = self._get_gaps_in_disk(self._list)
+		self._show_gaps(gap_list,prev)
+		input()
+		return prev
+		# # we get the free list and if there exists prev we add this to the list
+		# if self.caller:
+		# 	total_size,sector_size,free = self.caller.gap_map(self.block_device)
+		# else: # Might not be needed, but permits to execute standalone
+		# 	total_size,sector_size,free = list_free_space(self.block_device,'s')
+		# 	total_size = int(total_size[:-1])
+		#
+		# ALIGNMENT = convert_units(archinstall.arguments.get('align',0),'s','s') # 2**13
+		# MIN_PARTITION = ALIGNMENT if ALIGNMENT > 1 else 2**13 # 4 MiB
+		# LAST_SECTOR = total_size - 33 # last assignable sector (we leave 34 sectors por internal info
+		#
+		# def align_gaps(free_slots,ALIGNMENT,MIN_PARTITIONS,LAST_SECTOR):
+		# 	#
+		# 	# the gap list has to be renormalized thru the use of ALIGNMENT,
+		# 	# so we only asign aligned partitions to the structure we define
+		# 	#
+		# 	norm_free_slot = []
+		# 	for slot in free_slots:
+		# 		norm_slot = align_entry(slot,ALIGNMENT,LAST_SECTOR)
+		# 		if norm_slot[2] > 0:
+		# 			norm_free_slot.append(norm_slot)
+		# 		else:
+		# 			continue
+		# 		# mark unavailable slots
+		# 		if len(norm_free_slot[-1]) == 3:
+		# 			norm_free_slot[-1].append('')
+		# 		if norm_free_slot[-1][2] < MIN_PARTITION:
+		# 			norm_free_slot[-1][3] += ' too short'
+		# 	return norm_free_slot
+		#
+		# def show_free_slots(free,prev,ALIGNMENT):
+		# 	# print("<{:>20,}{:>20,}{:>20,} {}".format(*norm_free_slot[-1]))
+		# 	print()
+		# 	print(f"List of free space at {self.block_device.path} in sectors")
+		# 	print()
+		# 	print("{:20} | {:20} | {:20}".format('start','end','size'))
+		# 	print("{}|{}|{}".format('-' * 21,'-' * 21,'-' * 21))
+		# 	for linea in free:
+		# 		if len(linea) == 3:
+		# 			print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}")
+		# 		else:
+		# 			print(f"{linea[0]:>20,} | {linea[1]:>20,} | {unit_best_fit(linea[2]):>12}    {linea[3]}")
+		# 	print()
+		# 	# TODO check minimal size
+		# 	# TODO text with possible unit definition
+		# 	# TODO preselect optimal ¿? hole
+		# 	if prev:
+		# 		print(_("Current physical location selection"))
+		# 		print(f"{int(prev.get('start')):>20,} | {int(prev.get('size') + prev.get('start') -1):>20,} | {unit_best_fit(prev.get('size')):>12}")
+		# 		if ALIGNMENT > 1:
+		# 			print(_("Current physical location selection; aligned"))
+		# 			norm_slot = align_entry([int(prev.get('start')),int(prev.get('size')) + int(prev.get('start')) - 1,int(prev.get('size'))],ALIGNMENT,LAST_SECTOR)
+		# 			print(f"{norm_slot[0]:>20,} | {norm_slot[1]:>20,} | {unit_best_fit(norm_slot[2]):>12}")
+		# 	print()
+		#
+		# # we will include the selected chunck as free space, so we can expand it if necessary
+		# if prev:
+		# 	merge_list(free,location_to_gap(prev,'Current Location'))
+		# # normalize free space according to alignment
+		# free = align_gaps(free,ALIGNMENT,MIN_PARTITION,LAST_SECTOR)
+		#
+		# if prev:
+		# 	current_gap = [line[3] if len(line) == 4 else None for line in free].index('Current Location')
+		# else:
+		# 	current_gap = 0
+		# # TODO define a minimal start position
+		# # TODO standarize units for return code
+		# system('clear')
+		# show_free_slots(free,prev,ALIGNMENT)
+		#
+		# starts = str(int(prev.get('start'))) if prev.get('start') else ''
+		# if prev.get('sizeG'):
+		# 	# TODO percentages back
+		# 	if prev['sizeG'].strip()[-1] == '%':
+		# 		size = from_global_to_partial_pct(prev['sizeG'],prev['start'],free[current_gap][1] - prev['start'] + 1,self.block_device.path)
+		# 	else:
+		# 		size = f"{prev.get('sizeG')}"
+		# else:
+		# 	size = f"{prev.get('size')}" if prev.get('size') else ''
+		# while True:
+		# 	if prev:
+		# 		prompt = _("Define a start sector for the partition. Enter a value or \n"
+		# 				"c to get the first sector of the current slot \n"
+		# 				"q to quit \n"
+		# 				"==> ")
+		# 	else:
+		# 		prompt = _("Define a start sector for the partition. Enter a value or \n"
+		# 				"f to get the first sector of the first free slot which can hold a partition\n"
+		# 				"l to get the first sector of the last free slot \n"
+		# 				"q to quit \n"
+		# 				"==> ")
+		# 	starts = archinstall.TextInput(prompt,starts).run()
+		# 	inplace = False
+		# 	if starts.lower() == 'q':
+		# 		if prev:
+		# 			return prev
+		# 		else:
+		# 			return None
+		# 	elif starts.lower() == 'f':
+		# 		# TODO check really which is the first allocatable sector in a disk
+		# 		starts = free[0][0]
+		# 	elif starts.lower() == 'l':
+		# 		starts = free[-1][0]
+		# 	elif starts.lower() == 'c':
+		# 		starts = free[current_gap][0]
+		# 	else:
+		# 		starts = int(convert_units(starts,'s','s')) # default value are sectors
+		# 	maxsize = 0
+		# 	endgap = 0
+		# 	for gap in free:
+		# 		# asume it is always sectors
+		# 		if int(gap[0]) <= int(starts) <= int(gap[1]):
+		# 			endgap = int(gap[1])
+		# 			maxsize = int(gap[1]) - starts + 1 # i think i got it right
+		# 			maxsize_g = convert_units(f"{maxsize}s",'GiB')
+		# 			inplace = True
+		# 			break
+		# 	if not inplace:
+		# 		print(_("Selected sector {} outside an empty gap").format(starts))
+		# 	else:
+		# 		break
+		# while True:
+		# 	size = archinstall.TextInput(_("Define a size for the partition \n(max {} sectors / {}GiB), a percentaje of the free space (ends with %),\n or q to quit \n ==> ").format(maxsize,maxsize_g),size).run()
+		# 	if size.lower() == 'q':
+		# 		if prev:
+		# 			return prev
+		# 		else:
+		# 			return None
+		# 	if size.endswith('%'):
+		# 		size_s,size = eval_percent(size,starts,endgap,self.block_device.path)
+		# 	else:
+		# 		size_s = convert_units(size,'s','s')
+		# 	# TODO when they match something fails ¿? decimals ?
+		# 	if size_s > maxsize:
+		# 		print(f"Size is too big for selected  gap. {size_s} > {maxsize} Reduce it to fit")
+		# 	else: # TODO
+		# 		break
+		# if size.lower().strip()[-1] in ('b','%'):
+		# 	return {'start':starts,'size':size_s,'sizeG':size}
+		# else:
+		# 	return {'start':starts,'size':size_s}
 
 	def _manage_subvolumes(self,prev):
 		if self.option('filesystem').get_selection() != 'btrfs':

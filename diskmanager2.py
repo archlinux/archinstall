@@ -61,13 +61,10 @@ class HwMap(archinstall.ListManager):
 from pudb import set_trace
 set_trace()
 hw_map_data = hw_discover()
-for entry in hw_map_data:
-	if isinstance(entry,PartitionSlot):
-		PartitionMenu(entry,None).run()
 # hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
-# DevList('List of storage entities',hw_map_data).run()
+DevList('List of storage entities',hw_map_data).run()
 #harddrives,disk_layout = generate_layout(hw_map_data)
-#HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
+# HwMap('List of storage at this machine',hw_map_data,[],['Show']).run()
 # create_global_block_map()
 
 # mapa = []
