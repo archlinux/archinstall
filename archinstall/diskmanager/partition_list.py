@@ -1,8 +1,7 @@
 import archinstall
 from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount
-from archinstall.diskmanager.discovery import layout_to_map, hw_discover
 from archinstall.diskmanager.output import FormattedOutput
-from archinstall.diskmanager.generator import generate_layout
+# from archinstall.diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional, TYPE_CHECKING
 
 from archinstall.diskmanager.partition_menu import PartitionMenu
@@ -133,7 +132,7 @@ class DevList(archinstall.ListManager):
 		# Exclude partition from installation set', # 6
 		elif action == self.ObjectActions[6]:
 			# BUG for the time being disallowed. Current implementation is faulty
-			return self._action_not_implemeted(key,value,disk,data)
+			return self._action_not_implemented(object,data)
 		# Delete partition'                       # 7
 		elif action == self.ObjectActions[7]:
 			return self._action_delete_partition(object,data)
@@ -186,7 +185,6 @@ class DevList(archinstall.ListManager):
 		# no need to delete partitions in this disk
 		self._ripple_delete(object,data,head=False)
 		return data
-
 
 	def _action_clear_partition(self,object,data):
 		PartitionMenu(object,self).run()  # TODO don't like the return control

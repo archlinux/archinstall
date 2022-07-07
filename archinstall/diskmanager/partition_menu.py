@@ -1,45 +1,99 @@
 # WORK IN PROGRESS
 from copy import deepcopy
+from dataclasses import asdict, dataclass
+
 import archinstall
+from archinstall.diskmanager.dataclasses import PartitionSlot, DiskSlot
 
-from archinstall.diskmanager.helper import convert_units
+from archinstall.diskmanager.helper import convert_units, unit_best_fit, split_number_unit
 
-from typing import Any, TYPE_CHECKING, Dict, Optional, List
+from typing import Any, TYPE_CHECKING, Union   # , Dict, Optional, List
 
-# from archinstall.examples.diskmanager import list_free_space, align_entry, merge_list, location_to_gap, \
-#	from_global_to_partial_pct, eval_percent, unit_best_fit
+# from archinstall.examples.diskmanager import list_free_space, align_entry, merge_list, location_to_gap, from_global_to_partial_pct, eval_percent, unit_best_fit
+
 
 if TYPE_CHECKING:
 	_: Any
 
+# TODO generalize
+@dataclass
+class FlexSize:
+	# TODO check nones
+	input_value: Union[str,int]
+
+	@property
+	def sectors(self):
+		return int(convert_units(self.input_value,'s','s'))
+
+	@property
+	def normalized(self):
+		return unit_best_fit(self.sectors,'s')
+
+	def pretty_print(self):
+		return f"{self.sectors:,} ({self.normalized})"
+
+	def adjust_other(self,other):
+		unit = None
+		if other.input_value.strip().endswith('%'):
+			pass
+		else:
+			_, unit = split_number_unit(self.input_value)
+			if unit:
+				other.input_value = f"{convert_units(other.sectors, unit, 's')} {unit.upper()}"
+
+# TODO check real format of (mount|format)_options
+# A prompt i need
 class PartitionMenu(archinstall.GeneralMenu):
-	def __init__(self,object,block_device,caller=None):
-		self.ds = None
+	def __init__(self,object,caller=None,disk=None):
+		# Note if object.sizeInput has -1 it is a new partition. is a small trick to keep object passed as reference
+		self.data = object
+		self.caller = caller
+		# if there is a listmanager disk comes from the list not the parameter.
+		# if no parameter
+		self._list = self.caller._data if isinstance(caller,archinstall.ListManager) else []
+		if self._list:
+			self.disk = object.parent_in_list(self._list)
+		elif disk:
+			self.disk = disk
+		else:
+			my_disk = archinstall.BlockDevice(object.device)
+			self.disk = DiskSlot(my_disk.device,0,my_disk.size,my_disk.partition_type)
+		self.ds = {}
+		self.ds = self._conversion_from_object()
 		super().__init__(data_store=self.ds)
 
-class PartitionMenu_old(archinstall.GeneralMenu):
-	def __init__(self,parameters,block_device,caller=None):
-		self.caller = caller
-		if isinstance(block_device,archinstall.BlockDevice):
-			self.block_device = block_device
+	def _conversion_from_object(self):
+		my_dict = deepcopy(asdict(self.data) if isinstance(self.data,PartitionSlot) else {}) # TODO verify independence
+		print('before')
+		print(my_dict)
+		if my_dict['startInput'] != -1:
+			my_start = FlexSize(my_dict['startInput'])
 		else:
-			self.block_device = archinstall.BlockDevice(block_device) # TODO suspect lots of checks
-		self.data = parameters
-		self.ds = deepcopy(self.data)
-		# we convert formats
-		if 'start' in self.ds or 'size' in self.ds:
-			self.ds['location'] = {'start':self.ds.get('start'), 'size':self.ds.get('size'), 'sizeG':self.ds.get('sizeG')}
-			del self.ds['start']
-			del self.ds['size']
-		if 'filesystem' in self.ds:
-			self.ds['fs'] = self.ds['filesystem'].get('format')
-			self.ds['fs_fmt_options'] = ','.join(self.ds['filesystem'].get('format_options',[]))
-			self.ds['fs_mnt_options'] = ','.join(self.ds['filesystem'].get('mount_options',[]))
-			del self.ds['filesystem']
+			my_start = None
+		if my_dict['sizeInput'] != -1:
+			my_size = FlexSize(my_dict['sizeInput'])
+		else:
+			my_size = None
+		my_dict['location'] = {'start':my_start, 'size':my_size}
+		del my_dict['startInput']
+		del my_dict['sizeInput']
+		if 'btrfs' in my_dict:
+			my_dict['subvolumes'] = deepcopy(my_dict['btrfs'])
+			del my_dict['btrfs']
 		# temporary
-		if 'type' not in self.ds:
-			self.ds['type'] = 'primary'
-		super().__init__(data_store=self.ds)
+		if 'type' not in my_dict:
+			my_dict['type'] = 'primary'
+		return my_dict
+
+	def _conversion_to_object(self):
+		for item in self.ds:
+			if item == 'location':
+				self.data['startInput'] = self.ds['location'].get('start',FlexSize(None)).input_value
+				self.data['sizeInput'] = self.ds['location'].get('size', FlexSize(None)).input_value
+			elif item == 'subvolumes':
+				self.data['btrfs'] = self.ds['subvolumes']
+			else:
+				self.data[item] = self.ds[item]
 
 	def _setup_selection_menu_options(self):
 		self._menu_options['location'] = archinstall.Selector(str(_("Physical layout")),
@@ -52,20 +106,20 @@ class PartitionMenu_old(archinstall.GeneralMenu):
 		self._menu_options['mountpoint'] = archinstall.Selector(str(_("Mount Point")),
 							lambda prev: self._generic_string_editor(str(_('Edit Mount Point :')),prev),
 
-							dependencies=['fs'],enabled=True)
-		self._menu_options['fs'] = archinstall.Selector(str(_("File System Type")),
+							dependencies=['filesystem'],enabled=True)
+		self._menu_options['filesystem'] = archinstall.Selector(str(_("File System Type")),
 							self._select_filesystem,
 							enabled=True)
-		self._menu_options['fs_fmt_options'] = archinstall.Selector(str(_("File System Format Options")),
+		self._menu_options['filesystem_format_options'] = archinstall.Selector(str(_("File System Format Options")),
 							lambda prev: self._generic_string_editor(str(_('Edit format options :')),prev),
-							dependencies=['fs'],enabled=True)
-		self._menu_options['fs_mnt_options'] = archinstall.Selector(str(_("File System Mount Options")),
+							dependencies=['filesystem'],enabled=True)
+		self._menu_options['filesystem_mount_options'] = archinstall.Selector(str(_("File System Mount Options")),
 							lambda prev: self._generic_string_editor(str(_('Edit mount options :')),prev),
-							dependencies=['fs'],enabled=True)
+							dependencies=['filesystem'],enabled=True)
 		self._menu_options['subvolumes'] = archinstall.Selector(str(_("Btrfs Subvolumes")),
 							self._manage_subvolumes,
-							dependencies=['fs'],
-							enabled=True if self.ds.get('fs') == 'btrfs' else False) # TODO only if it is btrfs
+							dependencies=['filesystem'],
+							enabled=True if self.ds.get('filesystem') == 'btrfs' else False) # TODO only if it is btrfs
 		self._menu_options['boot'] = archinstall.Selector(str(_("Is bootable")),
 							self._select_boot,
 							enabled=True)
@@ -76,7 +130,7 @@ class PartitionMenu_old(archinstall.GeneralMenu):
 		if self.ds.get('uuid'):
 			self._menu_options['actual_mountpoint'] = archinstall.Selector(str(_("Actual mount")),
 								enabled=True)
-			if self.ds.get('fs') == 'btrfs':
+			if self.ds.get('filesystem') == 'btrfs':
 				self._menu_options['actual_subvolumes'] = archinstall.Selector(str(_("Actual Btrfs Subvolumes")),
 									enabled=True)
 			self._menu_options['uuid'] = archinstall.Selector(str(_("uuid")),
@@ -107,21 +161,7 @@ class PartitionMenu_old(archinstall.GeneralMenu):
 		# if no location is given we abort
 		if self.ds.get('location') is None:
 			return
-		for item in self.ds:
-			# reconvert to basic format
-			if item == 'location':
-				self.data['start'] = self.ds[item].get('start')
-				self.data['size'] = self.ds[item].get('size')
-				self.data['sizeG'] = self.ds[item].get('sizeG')
-			elif item == 'fs' and self.ds.get(item):
-				self.data['filesystem'] = {}
-				self.data['filesystem']['format'] = self.ds[item]
-			elif item == 'fs_fmt_options' and self.ds.get(item):
-				self.data['filesystem']['format_options'] = self.ds[item].split(',')
-			elif item == 'fs_mnt_options' and self.ds.get(item):
-				self.data['filesystem']['mount_options'] = self.ds[item].split(',')
-			elif item not in self.bottom_list:
-				self.data[item] = self.ds[item]
+		self._conversion_to_object()
 
 	def _generic_string_editor(self,prompt,prev):
 		return archinstall.TextInput(prompt,prev).run()
@@ -138,26 +178,40 @@ class PartitionMenu_old(archinstall.GeneralMenu):
 			return False
 
 	def _show_location(self,location):
-		if location.get('sizeG'):
-			return f"{location['sizeG']} : {int(location['size'])} sectors starting at {int(location['start'])}"
+		if location.get('start'):
+			my_start = location['start'].pretty_print()
 		else:
-			return f"{int(location['size'])} sectors  starting at {int(location['start'])} ({convert_units(location['size'],'GiB','s')} GiB)"
+			my_start = '_'
+		if location.get('size'):
+			my_size = location['size'].pretty_print()
+		else:
+			my_size = '_'
+		return(f' start : {my_start}, size : {my_size}')
 
 	def _select_boot(self,prev):
 		value = self._generic_boolean_editor(str(_('Set bootable partition :')),prev),
-		# TODO needs a refresh
-		# TODO only a boot per disk ¿?
+		# only a boot per disk is allowed
+		if value[0] and self._list:
+			bootable = [entry for entry in self.disk.partition_list() if entry.boot]
+			if len(bootable) > 0:
+				archinstall.log(_('There exists another bootable partition on disk. Unset it before defining this one'))
+				if self.disk.type.upper() == 'GPT':
+					archinstall.log(_('On GPT drives ensure that the boot partition is an EFI partition'))
+				input()
+			return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
-		if value[0]:
+		# problem is when we set it backwards
+		if value[0] and self.disk.type.upper() == 'GPT':
 			self.ds['mountpoint'] = '/boot'
-			self.ds['fs'] = 'FAT32'
+			self.ds['filesystem'] = 'FAT32'
 			self.ds['encrypted'] = False
+			self.ds['type'] = 'EFI'
 		return value[0]
 
 	def _select_filesystem(self,prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
-		if fstype.value != self.data.get('filesystem',{}).get('format') and self.data.get('uuid'): # changed FS means reformat if the disk exists
+		if fstype.value != prev and self.ds.get('uuid'): # changed FS means reformat if the disk exists
 			self.ds['wipe'] = True
 		if fstype.value == 'btrfs':
 			self.option('subvolumes').set_enabled(True)
@@ -315,10 +369,8 @@ class PartitionMenu_old(archinstall.GeneralMenu):
 			return {'start':starts,'size':size_s}
 
 	def _manage_subvolumes(self,prev):
-		if self.option('fs').get_selection() != 'btrfs':
+		if self.option('filesystem').get_selection() != 'btrfs':
 			return []
-		# TODO partition reference if possible
-		# band-aid
 		if prev is None:
 			prev = []
 		return archinstall.SubvolumeList(_("Manage btrfs subvolumes for current partition"),prev).run()

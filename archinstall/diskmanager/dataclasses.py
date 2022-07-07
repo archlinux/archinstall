@@ -1,7 +1,7 @@
 import archinstall
 from .helper import unit_best_fit, convert_units, split_number_unit
 from dataclasses import dataclass, asdict, KW_ONLY
-from typing import List , Any, Dict
+from typing import List , Any, Dict, Union
 # from pprint import pprint
 
 def parent_from_list(objeto,lista):
@@ -79,8 +79,8 @@ def field_as_string(objeto :Any) -> Dict:
 @dataclass(eq=True)
 class StorageSlot:
 	device: str
-	startInput: str
-	sizeInput: str
+	startInput: Union[str,int]
+	sizeInput: Union[str,int]
 
 	@property
 	def start(self):
@@ -137,7 +137,14 @@ class StorageSlot:
 
 	def __setitem__(self, key, value):
 		""" not used but demanded by python"""
-		pass
+		if hasattr(self, key):
+			if callable(getattr(self, key)):
+				# ought to be an error, but i prefer a silent ignore
+				archinstall.log(f'atrribute {key} is not updatable for {self}')
+				pass
+			else:
+				self.__setattr__(key,value)
+
 @dataclass
 class DiskSlot(StorageSlot):
 	type: str = None
@@ -203,7 +210,7 @@ class PartitionSlot(StorageSlot):
 		# it's a bit expensive as it needs to instantiate a BlockDevice everytime it is invoked.
 		if self.sizeInput.strip().endswith('%'):
 			my_device = archinstall.BlockDevice(self.device)
-			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') -32 - self.start
+			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') - 32 - self.start
 			percentage,_ = split_number_unit(self.sizeInput)
 			return int(round(size_to_the_end * percentage / 100.,0))
 		else:
@@ -243,7 +250,6 @@ class PartitionSlot(StorageSlot):
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
 			return str(real_size)  # we use the same units that the user
 
-
 	def to_layout(self):
 		part_attr = ('boot', 'btrfs', 'encrypted', 'filesystem', 'mountpoint', 'size', 'start', 'wipe')
 		part_dict = {}
@@ -262,7 +268,7 @@ class PartitionSlot(StorageSlot):
 			elif attr == 'btrfs': # I believe now uses internaly the dataclass format
 				part_dict[attr] = {'subvolumes':self[attr]}
 			else:
-				part_dict[attr]= self[attr]
+				part_dict[attr] = self[attr]
 		return part_dict
 
 	# @classmethod
