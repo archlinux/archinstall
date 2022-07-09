@@ -84,11 +84,29 @@ class StorageSlot:
 
 	@property
 	def start(self):
-		return int(convert_units(self.startInput,'s','s'))
+		# it's a bit expensive as it needs to instantiate a BlockDevice everytime it is invoked if a % is set
+		if isinstance(self.startInput,(int,float)):
+			return self.startInput
+		if self.startInput.strip().endswith('%'):
+			my_device = archinstall.BlockDevice(self.device)
+			sectors = convert_units(f"{my_device.size}GiB",'s') # the 100% is unreachable as there is an off by one. by design
+			percentage,_ = split_number_unit(self.startInput)
+			return int(round(sectors * percentage / 100.,0))
+		else:
+			return convert_units(self.startInput,'s','s')
 
 	@property
 	def size(self):
-		return convert_units(self.sizeInput,'s','s')
+		# it's a bit expensive as it needs to instantiate a BlockDevice everytime it is invoked if a % is set
+		if isinstance(self.sizeInput,(int,float)):
+			return self.sizeInput
+		if self.sizeInput.strip().endswith('%'):
+			my_device = archinstall.BlockDevice(self.device)
+			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') - 32 - self.start
+			percentage,_ = split_number_unit(self.sizeInput)
+			return int(round(size_to_the_end * percentage / 100.,0))
+		else:
+			return convert_units(self.sizeInput,'s','s')
 
 	@property
 	def sizeN(self):
@@ -97,6 +115,14 @@ class StorageSlot:
 	@property
 	def end(self):
 		return self.start + self.size - 1
+
+	@property
+	def startN(self):
+		return unit_best_fit(self.start,'s')
+
+	@property
+	def endN(self):
+		return unit_best_fit(self.end,'s')
 
 	@property
 	def path(self):
@@ -127,6 +153,11 @@ class StorageSlot:
 			if key in filter:
 				result[key] = value
 		return result
+
+	def pretty_print(self,request):
+		b = self[request]
+		n = self[f'{request}N']
+		return f"{b} s. ({n}"
 
 	def __getitem__(self, key):
 		if hasattr(self, key):
@@ -207,17 +238,6 @@ class PartitionSlot(StorageSlot):
 	uuid: str = None
 	partnr: int = None
 	type: str = 'primary'
-
-	@property
-	def size(self):
-		# it's a bit expensive as it needs to instantiate a BlockDevice everytime it is invoked.
-		if self.sizeInput.strip().endswith('%'):
-			my_device = archinstall.BlockDevice(self.device)
-			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') - 32 - self.start
-			percentage,_ = split_number_unit(self.sizeInput)
-			return int(round(size_to_the_end * percentage / 100.,0))
-		else:
-			return convert_units(self.sizeInput,'s','s')
 
 	def parent_in_list(self,lista):
 		return parent_from_list(self,lista)

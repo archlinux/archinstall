@@ -11,10 +11,16 @@ import re
 
 
 def split_number_unit(value):
+	if isinstance(value,(int,float)):
+		return value,'s'
 	result = re.split(r'(\d+\.\d+|\d+)',value.replace(',','').strip())
 	unit = result[2].lower().strip() if result[2].strip() else 's'
 	target_value = float(result[1])
 	return target_value,unit
+
+def units_from_model(target,model):
+	_,unit = split_number_unit(model)
+	return convert_units(target,unit,'s')
 
 def unit_best_fit(raw_value,default_unit='s'):
 	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
