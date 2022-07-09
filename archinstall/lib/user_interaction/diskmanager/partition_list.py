@@ -1,11 +1,10 @@
-from pudb import set_trace
-import archinstall
-from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount
-from archinstall.diskmanager.output import FormattedOutput
-# from archinstall.diskmanager.generator import generate_layout
+from archinstall.lib.menu.list_manager import ListManager
+from archinstall.lib.output import log
+from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount
+from .output import FormattedOutput
+from .partition_menu import PartitionMenu
+# from diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional, TYPE_CHECKING
-
-from archinstall.diskmanager.partition_menu import PartitionMenu
 
 if TYPE_CHECKING:
 	_: Any
@@ -34,7 +33,7 @@ def create_gap_list(mapa):
 		new_mapa += disk.create_gaps(mapa)
 	return new_mapa
 
-class DevList(archinstall.ListManager):
+class DevList(ListManager):
 
 	def __init__(
 		self,
@@ -140,7 +139,7 @@ class DevList(archinstall.ListManager):
 		return data
 
 	def _action_not_implemented(self,object,data):
-		archinstall.log('Action still not implemented')
+		log('Action still not implemented')
 		return data
 
 	def _action_reset(self,object,data):
@@ -198,7 +197,7 @@ class DevList(archinstall.ListManager):
 
 	def _action_delete_partition(self,object,data):
 		if actual_mount(object):
-			archinstall.log('Can not delete partition {object.path}, because it is in use')  # TODO it doesn't show actually
+			log('Can not delete partition {object.path}, because it is in use')  # TODO it doesn't show actually
 			return data
 		elif object.uuid:
 			self.partitions_to_delete.append(object)

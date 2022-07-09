@@ -1,5 +1,5 @@
-import archinstall
-from archinstall.diskmanager.dataclasses import DiskSlot, PartitionSlot
+from archinstall.lib.disk import BlockDevice
+from .dataclasses import DiskSlot, PartitionSlot
 
 
 def generate_layout(storage_map):
@@ -29,7 +29,7 @@ def generate_layout(storage_map):
 		if not in_set:
 			continue  # disk information will not be used
 
-		harddrives.append(archinstall.BlockDevice(disk.device))
+		harddrives.append(BlockDevice(disk.device))
 		disk_dict = {disk.device: {"partitions": []}}
 		part_list = disk_dict[disk.device]['partitions']
 		for part in disk_partitions:

@@ -1,18 +1,23 @@
 # WORK IN PROGRESS
-from pudb import set_trace
 from copy import deepcopy, copy
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from os import system
 
-import archinstall
-from archinstall.diskmanager.dataclasses import PartitionSlot, DiskSlot, StorageSlot
-from archinstall.diskmanager.discovery import hw_discover
+from archinstall.lib.disk import BlockDevice, fs_types
+from archinstall.lib.output import log
 
-from archinstall.diskmanager.helper import convert_units, unit_best_fit, split_number_unit, units_from_model
+from archinstall.lib.menu.menu import Menu
+from archinstall.lib.menu.text_input import TextInput
+from archinstall.lib.menu.selection_menu import GeneralMenu, Selector
+from archinstall.lib.menu.list_manager import ListManager
+from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
-from typing import Any, TYPE_CHECKING, Union   # , Dict, Optional, List
+from .dataclasses import PartitionSlot, DiskSlot, StorageSlot
+from .discovery import hw_discover
+from .helper import unit_best_fit, units_from_model
+from .output import FormattedOutput
 
-from archinstall.diskmanager.output import FormattedOutput
+from typing import Any, TYPE_CHECKING  # , Dict, Optional, List
 
 if TYPE_CHECKING:
 	_: Any
@@ -48,20 +53,20 @@ if TYPE_CHECKING:
 # TODO check real format of (mount|format)_options
 # TODO convert location as a StorageSlot instead of FlexSize
 # A prompt i need
-class PartitionMenu(archinstall.GeneralMenu):
+class PartitionMenu(GeneralMenu):
 	def __init__(self, object, caller=None, disk=None):
 		# Note if object.sizeInput has -1 it is a new partition. is a small trick to keep object passed as reference
 		self.data = object
 		self.caller = caller
 		# if there is a listmanager disk comes from the list not the parameter.
 		# if no parameter
-		self._list = self.caller._data if isinstance(caller, archinstall.ListManager) else []
+		self._list = self.caller._data if isinstance(caller, ListManager) else []
 		if self._list:
 			self.disk = object.parent_in_list(self._list)
 		elif disk:
 			self.disk = disk
 		else:
-			my_disk = archinstall.BlockDevice(object.device)
+			my_disk = BlockDevice(object.device)
 			self.disk = DiskSlot(my_disk.device, 0, my_disk.size, my_disk.partition_type)
 		self.ds = {}
 		self.ds = self._conversion_from_object()
@@ -101,50 +106,50 @@ class PartitionMenu(archinstall.GeneralMenu):
 				self.data[item] = self.ds[item]
 
 	def _setup_selection_menu_options(self):
-		self._menu_options['location'] = archinstall.Selector(str(_("Physical layout")),
+		self._menu_options['location'] = Selector(str(_("Physical layout")),
 									self._select_physical,
 									display_func=self._show_location,
 									enabled=True)
-		self._menu_options['type'] = archinstall.Selector(str(_("Partition type")),
+		self._menu_options['type'] = Selector(str(_("Partition type")),
 							enabled=False)
 		# TODO ensure unicity
-		self._menu_options['mountpoint'] = archinstall.Selector(str(_("Mount Point")),
+		self._menu_options['mountpoint'] = Selector(str(_("Mount Point")),
 							lambda prev: self._generic_string_editor(str(_('Edit Mount Point :')), prev),
 
 							dependencies=['filesystem'], enabled=True)
-		self._menu_options['filesystem'] = archinstall.Selector(str(_("File System Type")),
+		self._menu_options['filesystem'] = Selector(str(_("File System Type")),
 							self._select_filesystem,
 							enabled=True)
-		self._menu_options['filesystem_format_options'] = archinstall.Selector(str(_("File System Format Options")),
+		self._menu_options['filesystem_format_options'] = Selector(str(_("File System Format Options")),
 							lambda prev: self._generic_string_editor(str(_('Edit format options :')), prev),
 							dependencies=['filesystem'], enabled=True)
-		self._menu_options['filesystem_mount_options'] = archinstall.Selector(str(_("File System Mount Options")),
+		self._menu_options['filesystem_mount_options'] = Selector(str(_("File System Mount Options")),
 							lambda prev: self._generic_string_editor(str(_('Edit mount options :')), prev),
 							dependencies=['filesystem'], enabled=True)
-		self._menu_options['subvolumes'] = archinstall.Selector(str(_("Btrfs Subvolumes")),
+		self._menu_options['subvolumes'] = Selector(str(_("Btrfs Subvolumes")),
 							self._manage_subvolumes,
 							dependencies=['filesystem'],
 							enabled=True if self.ds.get('filesystem') == 'btrfs' else False)  # TODO only if it is btrfs
-		self._menu_options['boot'] = archinstall.Selector(str(_("Is bootable")),
+		self._menu_options['boot'] = Selector(str(_("Is bootable")),
 							self._select_boot,
 							enabled=True)
-		self._menu_options['encrypted'] = archinstall.Selector(str(_("Encrypted")),
+		self._menu_options['encrypted'] = Selector(str(_("Encrypted")),
 							lambda prev: self._generic_boolean_editor(str(_('Set ENCRYPTED partition :')), prev),
 							enabled=True)
 		# readonly options
 		if self.ds.get('uuid'):
-			self._menu_options['actual_mountpoint'] = archinstall.Selector(str(_("Actual mount")),
+			self._menu_options['actual_mountpoint'] = Selector(str(_("Actual mount")),
 								enabled=True)
 			if self.ds.get('filesystem') == 'btrfs':
-				self._menu_options['actual_subvolumes'] = archinstall.Selector(str(_("Actual Btrfs Subvolumes")),
+				self._menu_options['actual_subvolumes'] = Selector(str(_("Actual Btrfs Subvolumes")),
 									enabled=True)
-			self._menu_options['uuid'] = archinstall.Selector(str(_("uuid")),
+			self._menu_options['uuid'] = Selector(str(_("uuid")),
 								enabled=True)
 
-		self._menu_options['save'] = archinstall.Selector(str(_('Save')),
+		self._menu_options['save'] = Selector(str(_('Save')),
 													exec_func=lambda n, v: True,
 													enabled=True)
-		self._menu_options['cancel'] = archinstall.Selector(str(_('Cancel')),
+		self._menu_options['cancel'] = Selector(str(_('Cancel')),
 													func=lambda pre: True,
 													exec_func=lambda n, v: self.fast_exit(n),
 													enabled=True)
@@ -169,21 +174,21 @@ class PartitionMenu(archinstall.GeneralMenu):
 		self._conversion_to_object()
 
 	def _generic_string_editor(self, prompt, prev):
-		return archinstall.TextInput(prompt, prev).run()
+		return TextInput(prompt, prev).run()
 
 	def _generic_boolean_editor(self, prompt, prev):
 		if prev:
 			base_value = 'yes'
 		else:
 			base_value = 'no'
-		response = archinstall.Menu(prompt, ['yes', 'no'], preset_values=base_value).run()
+		response = Menu(prompt, ['yes', 'no'], preset_values=base_value).run()
 		if response.value == 'yes':
 			return True
 		else:
 			return False
 
 	def _show_location(self, location):
-		#return f" start : {location.pretty_print('start')}, size : {location.pretty_print('size')}"
+		# return f" start : {location.pretty_print('start')}, size : {location.pretty_print('size')}"
 		return f"start {location.startInput}, size {location.sizeInput}"
 
 	def _select_boot(self, prev):
@@ -192,9 +197,9 @@ class PartitionMenu(archinstall.GeneralMenu):
 		if value and self._list:
 			bootable = [entry for entry in self.disk.partition_list(self._list) if entry.boot]
 			if len(bootable) > 0:
-				archinstall.log(_('There exists another bootable partition on disk. Unset it before defining this one'))
+				log(_('There exists another bootable partition on disk. Unset it before defining this one'))
 				if self.disk.type.upper() == 'GPT':
-					archinstall.log(_('On GPT drives ensure that the boot partition is an EFI partition'))
+					log(_('On GPT drives ensure that the boot partition is an EFI partition'))
 				input()
 				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
@@ -208,9 +213,9 @@ class PartitionMenu(archinstall.GeneralMenu):
 
 	def _select_filesystem(self, prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
-		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
+		fstype = Menu(fstype_title, fs_types(), skip=False, preset_values=prev).run()
 		#  TODO broken escape control
-		# if fstype.type_ == archinstall.MenuSelectionType.Esc:
+		# if fstype.type_ == MenuSelectionType.Esc:
 		# 	return prev
 		if not fstype.value:
 			return None
@@ -253,7 +258,6 @@ class PartitionMenu(archinstall.GeneralMenu):
 		print('Current free space is')
 		print(screen_data)
 
-
 	def _ask_for_start(self, gap_list, need):
 		pos = self._get_current_gap_pos(gap_list, need)
 		original = copy(need)
@@ -264,7 +268,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 					"q to quit \n"
 					"==> ")
 			starts = need.startInput
-			starts = archinstall.TextInput(prompt, starts).run()
+			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
 				return 'quit'
 			elif starts == 'c':
@@ -276,7 +280,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 					"q to quit \n"
 					"==> ")
 			starts = need.startInput
-			starts = archinstall.TextInput(prompt, starts).run()
+			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
 				return need, 'quit'
 			elif starts == 'f':
@@ -284,7 +288,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 				pos = 0
 			elif starts == 'l':
 				starts = gap_list[-1].startInput
-				pos = len(gap_list) -1
+				pos = len(gap_list) - 1
 
 		need.startInput = starts
 		pos = self._get_current_gap_pos(gap_list, need)
@@ -309,7 +313,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 		or q to quit \n ==> ".format(f"{maxsize} s. ({maxsizeN})"))
 
 			sizes = need.sizeInput
-			sizes = archinstall.TextInput(prompt, sizes).run()
+			sizes = TextInput(prompt, sizes).run()
 			sizes = sizes.strip()
 			if sizes.lower() == 'q':
 				return 'quit'
@@ -355,4 +359,4 @@ class PartitionMenu(archinstall.GeneralMenu):
 			return []
 		if prev is None:
 			prev = []
-		return archinstall.SubvolumeList(_("Manage btrfs subvolumes for current partition"), prev).run()
+		return SubvolumeList(_("Manage btrfs subvolumes for current partition"), prev).run()

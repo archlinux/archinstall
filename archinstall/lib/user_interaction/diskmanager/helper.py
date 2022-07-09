@@ -1,4 +1,5 @@
-import archinstall
+from archinstall.lib.output import log
+from archinstall.lib.exceptions import UserError
 # import pathlib
 # import os
 # from pprint import pprint
@@ -74,17 +75,17 @@ def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3)
 	to_unit = to_unit.lower().strip()
 
 	if (from_unit == '%') or (to_unit == '%'):
-		archinstall.log(f"convert units does not support % notation")
+		log(f"convert units does not support % notation")
 		return value
 
 	if from_unit in ('s','b','kib','mib','gib','tib','kb','mb','gb','tb'):
 		pass
 	else:
-		raise archinstall.UserError(f"Invalid use of {from_unit} as from unit in convert_units")
+		raise UserError(f"Invalid use of {from_unit} as from unit in convert_units")
 	if to_unit in ('s','b','kib','mib','gib','tib','kb','mb','gb','tb'):
 		pass
 	else:
-		raise archinstall.UserError(f"Invalid use of {to_unit} as to unit in convert_units")
+		raise UserError(f"Invalid use of {to_unit} as to unit in convert_units")
 
 	if to_unit == from_unit:
 		return target_value

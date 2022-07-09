@@ -1,4 +1,6 @@
-import archinstall
+from archinstall.lib.disk import BlockDevice, Subvolume, blkid, all_blockdevices, enrich_blockdevice_information, Partition, DMCryptDev, get_blockdevice_uevent, get_loop_info
+from archinstall.lib.output import log
+from archinstall.lib.exceptions import SysCallError
 import pathlib
 from pprint import pprint
 # from pudb import set_trace
@@ -28,26 +30,26 @@ def device_sector_size(path):
 
 def get_device_info(device):
 	try:
-		information = archinstall.blkid(f'blkid -p -o export {device}')
+		information = blkid(f'blkid -p -o export {device}')
 	# TODO: No idea why F841 is raised here:
-	except archinstall.SysCallError as error:  # noqa: F841
+	except SysCallError as error:  # noqa: F841
 		if error.exit_code in (512, 2):
 			# Assume that it's a loop device, and try to get info on it
 			try:
-				information = archinstall.get_loop_info(device)
+				information = get_loop_info(device)
 				if not information:
-					raise archinstall.SysCallError("Could not get loop information", exit_code=1)
+					raise SysCallError("Could not get loop information", exit_code=1)
 
-			except archinstall.SysCallError:
-				information = archinstall.get_blockdevice_uevent(pathlib.Path(device).name)
+			except SysCallError:
+				information = get_blockdevice_uevent(pathlib.Path(device).name)
 		else:
 			raise error
 
-	information = archinstall.enrich_blockdevice_information(information)
+	information = enrich_blockdevice_information(information)
 	return information
 
 def list_subvols(object):
-	subvol_info = [archinstall.Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
+	subvol_info = [Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
 	return subvol_info
 
 def createPartitionSlot(path,partition):
@@ -93,27 +95,27 @@ def createPartitionSlot(path,partition):
 def hw_discover(disks=None):
 	global_map = []
 
-	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
+	log(_("Waiting for the system to get actual block device info"),fg="yellow")
 	# hard_drives = []
 	# disk_layout = {}
 	# encrypted_partitions = set()
 	my_disks = {item.path for item in disks} if disks else {}
 	# warning if executed without root privilege everything is a block device
-	all_storage = archinstall.all_blockdevices(partitions=True)
+	all_storage = all_blockdevices(partitions=True)
 
 	for path in sorted(all_storage):
 		storage_unit = all_storage[path]
-		match type(storage_unit):
-			case archinstall.BlockDevice:
+		match storage_unit:
+			case BlockDevice():
 				if my_disks and path not in my_disks:
 					continue
 				# TODO BlockDevice gives
 				global_map.append(DiskSlot(path,0,f"{storage_unit.size} GiB",storage_unit.partition_type))
-			case  archinstall.Partition:
+			case  Partition():
 				if my_disks and storage_unit.parent not in my_disks:
 					continue
 				global_map.append(createPartitionSlot(path,storage_unit))
-			case archinstall.DMCryptDev:
+			case DMCryptDev():
 				# to do
 				print(' enc  ',path)
 			case _:
@@ -124,7 +126,7 @@ def layout_to_map(layout):
 	part_map = []
 	for disk in layout:
 		partitions = layout[disk].get('partitions',[])
-		device = archinstall.BlockDevice(disk)
+		device = BlockDevice(disk)
 		part_map.append(DiskSlot(disk, 0, f"{device.size} GiB",device.partition_type,wipe=layout[disk].get('wipe',False)))
 		for part in partitions:
 			partition_slot = PartitionSlot(disk,part['start'],part['size'],    # TODO not exactly
@@ -159,8 +161,8 @@ def create_global_block_map(disks=None):
 	""" OBSOLETE
 		For reference of missing parts only
 	"""
-	archinstall.log(_("Waiting for the system to get actual block device info"),fg="yellow")
-	result = archinstall.all_blockdevices(partitions=True)
+	log(_("Waiting for the system to get actual block device info"),fg="yellow")
+	result = all_blockdevices(partitions=True)
 	hard_drives = []
 	disk_layout = {}
 	encrypted_partitions = set()
@@ -171,7 +173,7 @@ def create_global_block_map(disks=None):
 		for entry in get_device_info(res):
 			device_info = device_info | get_device_info(res)[entry]
 		print(res,type(result[res]))
-		if isinstance(result[res],archinstall.BlockDevice): # disk
+		if isinstance(result[res],BlockDevice): # disk
 			if my_disks and res not in my_disks:
 				continue
 			hard_drives.append(result[res])
@@ -192,7 +194,7 @@ def create_global_block_map(disks=None):
 				pprint(device_info)
 				exit(1)
 
-		if isinstance(result[res],archinstall.Partition):
+		if isinstance(result[res],Partition):
 			if my_disks and result[res].parent not in my_disks:
 				continue
 			try:
@@ -211,7 +213,7 @@ def create_global_block_map(disks=None):
 					"type" : device_info.get('PART_ENTRY_NAME',device_info.get('PART_ENTRY_TYPE','')),
 					"start" : device_info['PART_ENTRY_OFFSET'],
 					"size" : device_info['PART_ENTRY_SIZE'],
-					# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / archinstall.GIGA,1),
+					# "sizeG": round(int(device_info['PART_ENTRY_SIZE']) * 512 / GIGA,1),
 					"boot" : result[res].boot,
 					"encrypted" : encrypted,
 					"wipe" : False,
@@ -236,7 +238,7 @@ def create_global_block_map(disks=None):
 			# TODO aditional fields
 			# TODO swap volumes
 			# gaps
-		if isinstance(result[res],archinstall.DMCryptDev):
+		if isinstance(result[res],DMCryptDev):
 			# TODO we need to ensure the device is opened and later closed to get the info
 			# Problems with integration. Returned prior to normal partitions
 			print('==>')

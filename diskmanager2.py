@@ -1,14 +1,12 @@
 import archinstall
-from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
-from archinstall.diskmanager.discovery import layout_to_map, hw_discover
-from archinstall.diskmanager.generator import generate_layout
+from archinstall.lib.user_interaction.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot
+from archinstall.lib.user_interaction.diskmanager import hw_discover
 from typing import List, Any, Dict, Optional
 from pprint import pprint
 
 
 # TODO this ougth come with the dataclass
-from archinstall.diskmanager.partition_list import format_to_list_manager, create_gap_list, DevList
-from archinstall.diskmanager.partition_menu import PartitionMenu
+from archinstall.lib.user_interaction.diskmanager.partition_list import format_to_list_manager, create_gap_list, DevList
 
 
 class HwMap(archinstall.ListManager):

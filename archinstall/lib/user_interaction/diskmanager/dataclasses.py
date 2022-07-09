@@ -1,10 +1,11 @@
-import archinstall
+from archinstall.lib.disk import BlockDevice, Subvolume
+from archinstall.lib.output import log
 from .helper import unit_best_fit, convert_units, split_number_unit
 from dataclasses import dataclass, asdict, KW_ONLY
 from typing import List , Any, Dict, Union
 # from pprint import pprint
 
-def parent_from_list(objeto,lista):
+def parent_from_list(objeto: Any, lista: List[Any]) -> Any:
 	parent = [item for item in lista if item.device == objeto.device and isinstance(item,DiskSlot)]
 	if len(parent) > 1:
 		raise ValueError(f'Device {objeto.device} is more than one times on the list')
@@ -88,7 +89,7 @@ class StorageSlot:
 		if isinstance(self.startInput,(int,float)):
 			return self.startInput
 		if self.startInput.strip().endswith('%'):
-			my_device = archinstall.BlockDevice(self.device)
+			my_device = BlockDevice(self.device)
 			sectors = convert_units(f"{my_device.size}GiB",'s') # the 100% is unreachable as there is an off by one. by design
 			percentage,_ = split_number_unit(self.startInput)
 			return int(round(sectors * percentage / 100.,0))
@@ -101,7 +102,7 @@ class StorageSlot:
 		if isinstance(self.sizeInput,(int,float)):
 			return self.sizeInput
 		if self.sizeInput.strip().endswith('%'):
-			my_device = archinstall.BlockDevice(self.device)
+			my_device = BlockDevice(self.device)
 			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') - 32 - self.start
 			percentage,_ = split_number_unit(self.sizeInput)
 			return int(round(size_to_the_end * percentage / 100.,0))
@@ -174,7 +175,7 @@ class StorageSlot:
 		if hasattr(self, key):
 			if callable(getattr(self, key)):
 				# ought to be an error, but i prefer a silent ignore
-				archinstall.log(f'atrribute {key} is not updatable for {self}')
+				log(f'atrribute {key} is not updatable for {self}')
 				pass
 			else:
 				self.__setattr__(key,value)
@@ -230,11 +231,11 @@ class PartitionSlot(StorageSlot):
 	boot: bool = False
 	encrypted: bool = False
 	wipe: bool = False
-	btrfs: List[archinstall.Subvolume] = None
+	btrfs: List[Subvolume] = None
 	# info for existing partitions
 	path: str = None
 	actual_mountpoint: str = None
-	actual_subvolumes: List[archinstall.Subvolume] = None
+	actual_subvolumes: List[Subvolume] = None
 	uuid: str = None
 	partnr: int = None
 	type: str = 'primary'
