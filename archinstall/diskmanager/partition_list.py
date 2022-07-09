@@ -1,3 +1,4 @@
+from pudb import set_trace
 import archinstall
 from archinstall.diskmanager.dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount
 from archinstall.diskmanager.output import FormattedOutput
@@ -59,7 +60,7 @@ class DevList(archinstall.ListManager):
 		result_list = super().run()
 		# TODO there is no self.action by now
 		if self.last_choice.value != self._confirm_action:
-			self.partitions_to_delete = {}
+			self.partitions_to_delete = []
 		return result_list, self.partitions_to_delete
 
 	def _get_selected_object(self,selection):
@@ -152,28 +153,31 @@ class DevList(archinstall.ListManager):
 			is_empty_disk = True
 		else:
 			is_empty_disk = False
-
 		if isinstance(object,GapSlot):
 			part_data = PartitionSlot(object.device,object.startInput,object.sizeInput,wipe=True)
 		else:
-			part_data = PartitionSlot(object.device,-1,-1,wipe=True)  # Something has to be done with this
+			part_data = PartitionSlot(object.device, -1, -1, wipe=True)  # Something has to be done with this
 
-		with PartitionMenu(part_data,self) as add_menu:
-			exit_menu = False
-			for option in add_menu.list_options():
-				# TODO this is not what i need
-				if option in ('location','mountpoint','fs','subvolumes','boot','encrypted'):
-					add_menu.synch(option)
-					add_menu.exec_option(option)
-					# broke execution there
-					if option == 'location' and add_menu.option('location').get_selection() is None:
-						exit_menu = True
-						break
-			if not exit_menu:
-				add_menu.run()
-			else:
-				add_menu.exec_option(add_menu.cancel_action)
-
+		add_menu = PartitionMenu(part_data,self)
+		# for some reason this code blocks temporarliy set out of process
+		# with PartitionMenu(part_data,self) as add_menu:
+		# 	exit_menu = False
+		# 	for option in add_menu.list_options():
+		# 		# TODO this is not what i need
+		# 		if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
+		# 			add_menu.synch(option)
+		# 			add_menu.exec_option(option)
+		# 			# TODO broken execution there
+		# 			if option == 'location' and add_menu.option('location').get_selection() is None:
+		# 				exit_menu = True
+		# 				break
+		# 	if not exit_menu:
+		# 		add_menu.run()
+		# 	else:
+		# 		add_menu.exec_option(add_menu.cancel_action)
+		add_menu.run()
+		if add_menu.option(add_menu.cancel_action).get_selection():
+			return data
 		if part_data:
 			data.append(part_data)
 			if is_empty_disk:

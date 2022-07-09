@@ -1,4 +1,5 @@
 # WORK IN PROGRESS
+from pudb import set_trace
 from copy import deepcopy, copy
 from dataclasses import asdict, dataclass
 from os import system
@@ -19,29 +20,29 @@ if TYPE_CHECKING:
 # TODO generalize
 
 
-@dataclass
-class FlexSize:
-	# TODO check nones
-	input_value: Union[str, int]
-
-	@property
-	def sectors(self):
-		return int(convert_units(self.input_value, 's', 's'))
-
-	@property
-	def normalized(self):
-		return unit_best_fit(self.sectors, 's')
-
-	def pretty_print(self):
-		return f"{self.sectors:,} ({self.normalized})"
-
-	def adjust_other(self, other):
-		if other.input_value.strip().endswith('%'):
-			pass
-		else:
-			_, unit = split_number_unit(self.input_value)
-			if unit:
-				other.input_value = f"{convert_units(other.sectors, unit, 's')} {unit.upper()}"
+# @dataclass
+# class FlexSize:
+# 	# TODO check nones
+# 	input_value: Union[str, int]
+#
+# 	@property
+# 	def sectors(self):
+# 		return int(convert_units(self.input_value, 's', 's'))
+#
+# 	@property
+# 	def normalized(self):
+# 		return unit_best_fit(self.sectors, 's')
+#
+# 	def pretty_print(self):
+# 		return f"{self.sectors:,} ({self.normalized})"
+#
+# 	def adjust_other(self, other):
+# 		if other.input_value.strip().endswith('%'):
+# 			pass
+# 		else:
+# 			_, unit = split_number_unit(self.input_value)
+# 			if unit:
+# 				other.input_value = f"{convert_units(other.sectors, unit, 's')} {unit.upper()}"
 
 
 # TODO check real format of (mount|format)_options
@@ -182,34 +183,37 @@ class PartitionMenu(archinstall.GeneralMenu):
 			return False
 
 	def _show_location(self, location):
-		return f" start : {location.pretty_print('start')}, size : {location.pretty_print('size')}"
+		#return f" start : {location.pretty_print('start')}, size : {location.pretty_print('size')}"
+		return f"start {location.startInput}, size {location.sizeInput}"
 
 	def _select_boot(self, prev):
-		value = self._generic_boolean_editor(str(_('Set bootable partition :')), prev),
+		value = self._generic_boolean_editor(str(_('Set bootable partition :')), prev)
 		# only a boot per disk is allowed
-		if value[0] and self._list:
-			bootable = [entry for entry in self.disk.partition_list(self, self._list) if entry.boot]
+		if value and self._list:
+			bootable = [entry for entry in self.disk.partition_list(self._list) if entry.boot]
 			if len(bootable) > 0:
 				archinstall.log(_('There exists another bootable partition on disk. Unset it before defining this one'))
 				if self.disk.type.upper() == 'GPT':
 					archinstall.log(_('On GPT drives ensure that the boot partition is an EFI partition'))
 				input()
-			return prev
+				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
 		# problem is when we set it backwards
-		if value[0] and self.disk.type.upper() == 'GPT':
+		if value and self.disk.type.upper() == 'GPT':
 			self.ds['mountpoint'] = '/boot'
 			self.ds['filesystem'] = 'FAT32'
 			self.ds['encrypted'] = False
 			self.ds['type'] = 'EFI'   # TODO this has to be done at the end of processing
-		return value[0]
+		return value
 
 	def _select_filesystem(self, prev):
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = archinstall.Menu(fstype_title, archinstall.fs_types(), skip=False, preset_values=prev).run()
-		# escape control
-		if fstype.type_ == archinstall.MenuSelectionType.Esc:
-			return prev
+		#  TODO broken escape control
+		# if fstype.type_ == archinstall.MenuSelectionType.Esc:
+		# 	return prev
+		if not fstype.value:
+			return None
 		# changed FS means reformat if the disk exists
 		if fstype.value != prev and self.ds.get('uuid'):
 			self.ds['wipe'] = True
@@ -248,11 +252,12 @@ class PartitionMenu(archinstall.GeneralMenu):
 		screen_data = FormattedOutput.as_table_filter(gap_list, ['start', 'end', 'size', 'sizeN'])
 		print('Current free space is')
 		print(screen_data)
-		print("Current allocation need is start:{need['start'].pretty_print()} size {need['size'].pretty_print()}")
+
 
 	def _ask_for_start(self, gap_list, need):
 		pos = self._get_current_gap_pos(gap_list, need)
 		original = copy(need)
+		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
 		if pos:
 			prompt = _("Define a start sector for the partition. Enter a value or \n"
 					"c to get the first sector of the current slot \n"
@@ -274,33 +279,36 @@ class PartitionMenu(archinstall.GeneralMenu):
 			starts = archinstall.TextInput(prompt, starts).run()
 			if starts == 'q':
 				return need, 'quit'
-			elif starts == 'c':
-				starts = gap_list[pos].startInput
 			elif starts == 'f':
 				starts = gap_list[0].startInput  # TODO 32 o 4K
+				pos = 0
 			elif starts == 'l':
 				starts = gap_list[-1].startInput
+				pos = len(gap_list) -1
 
 		need.startInput = starts
+		pos = self._get_current_gap_pos(gap_list, need)
+		if pos is None:
+			print(f"Requested start position {need.pretty_print('start')}not in an avaliable slot. Try again")
+			need.startInput = original.startInput
+			return 'repeat'
 		if gap_list[pos].start <= need.start < gap_list[pos].end:
 			self._adjust_size(original, need)
 			return None
-		else:
-			print(f'Requested start position not in avaliable slot. Try again')
-			need.startInput = original.startInput
-			return 'repeat'
 
-	def _ask_for_size(self, gap_list, my_need):
-		original = copy(my_need)
-		pos = self._get_current_gap_pos(gap_list, my_need)
-		if pos:
-			maxsize = gap_list[pos].size - my_need.start
+	def _ask_for_size(self, gap_list, need):
+		# TODO optional ... ask for size confirmation
+		original = copy(need)
+		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
+		pos = self._get_current_gap_pos(gap_list, need)
+		if pos is not None:
+			maxsize = gap_list[pos].size - need.start
 			maxsizeN = unit_best_fit(maxsize, 's')
 			prompt = _("Define a size for the partition max {}\n \
 		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n \
 		or q to quit \n ==> ".format(f"{maxsize} s. ({maxsizeN})"))
 
-			sizes = my_need.sizeInput
+			sizes = need.sizeInput
 			sizes = archinstall.TextInput(prompt, sizes).run()
 			sizes = sizes.strip()
 			if sizes.lower() == 'q':
@@ -308,10 +316,10 @@ class PartitionMenu(archinstall.GeneralMenu):
 			if sizes.endswith('%'):
 				# from gap percentage to disk percentage
 				pass  # TODO
-			my_need.sizeInput = sizes
-			if my_need.size > maxsize:
-				print(_('Size {} exceeds the maximum size {}'.format(my_need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})")))
-				my_need = original
+			need.sizeInput = sizes
+			if need.size > maxsize:
+				print(_('Size {} exceeds the maximum size {}'.format(need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})")))
+				need = original
 				return 'repeat'
 			return None
 		else:
@@ -334,6 +342,7 @@ class PartitionMenu(archinstall.GeneralMenu):
 				action = self._ask_for_start(gap_list, my_need)
 				if action == 'quit':
 					return prev
+			action = 'begin'
 			while action:
 				my_need_full = copy(my_need)
 				action = self._ask_for_size(gap_list, my_need_full)

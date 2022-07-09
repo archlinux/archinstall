@@ -58,8 +58,6 @@ class HwMap(archinstall.ListManager):
 
 # TODO rename btrfs attribute to subvolumes
 # TODO verify what archinstall.__init__ does to the start attribute. seems it is normalized before handling
-from pudb import set_trace
-set_trace()
 hw_map_data = hw_discover()
 # hw_map_data = layout_to_map(archinstall.arguments.get('disk_layouts',{}))
 DevList('List of storage entities',hw_map_data).run()
