@@ -6,6 +6,8 @@ import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
+print(__name__)
+input('yep')
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
@@ -288,20 +290,21 @@ if not archinstall.arguments['offline']:
 			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 			exit(1)
 
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
+if __name__ == 'guided':
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
-config_output.save()
+	config_output = ConfigurationOutput(archinstall.arguments)
+	if not archinstall.arguments.get('silent'):
+		config_output.show()
+	config_output.save()
 
-if archinstall.arguments.get('dry_run'):
-	exit(0)
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
 
-if not archinstall.arguments.get('silent'):
-	input(str(_('Press Enter to continue.')))
+	if not archinstall.arguments.get('silent'):
+		input(str(_('Press Enter to continue.')))
 
-archinstall.configuration_sanity_check()
-perform_filesystem_operations()
-perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+	archinstall.configuration_sanity_check()
+	perform_filesystem_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
