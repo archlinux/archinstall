@@ -30,7 +30,8 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-
+	from archinstall.lib.user_interaction.diskmanager.glue import diskmanager
+	diskmanager(archinstall.arguments,archinstall.storage)
 	# ref: https://github.com/archlinux/archinstall/pull/831
 	# we'll set NTP to true by default since this is also
 	# the default value specified in the menu options; in

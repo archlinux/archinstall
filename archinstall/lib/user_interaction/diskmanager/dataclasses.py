@@ -1,10 +1,11 @@
 from archinstall.lib.disk import BlockDevice, Subvolume
 from archinstall.lib.output import log
 from .helper import unit_best_fit, convert_units, split_number_unit
-from dataclasses import dataclass, asdict, KW_ONLY
+from dataclasses import dataclass, asdict, KW_ONLY, field
 from typing import List , Any, Dict, Union
 # from pprint import pprint
-
+# TODO
+# 	percent handling is painfully slow
 def parent_from_list(objeto: Any, lista: List[Any]) -> Any:
 	parent = [item for item in lista if item.device == objeto.device and isinstance(item,DiskSlot)]
 	if len(parent) > 1:
@@ -82,6 +83,8 @@ class StorageSlot:
 	device: str
 	startInput: Union[str,int]
 	sizeInput: Union[str,int]
+	# this is an internal field to somehow speed up % processing
+	__related_device_size: int = field(init=False,repr=False,compare=False)
 
 	@property
 	def start(self):
@@ -89,10 +92,8 @@ class StorageSlot:
 		if isinstance(self.startInput,(int,float)):
 			return self.startInput
 		if self.startInput.strip().endswith('%'):
-			my_device = BlockDevice(self.device)
-			sectors = convert_units(f"{my_device.size}GiB",'s') # the 100% is unreachable as there is an off by one. by design
 			percentage,_ = split_number_unit(self.startInput)
-			return int(round(sectors * percentage / 100.,0))
+			return int(round(self._device_size() * percentage / 100.,0))
 		else:
 			return convert_units(self.startInput,'s','s')
 
@@ -102,8 +103,7 @@ class StorageSlot:
 		if isinstance(self.sizeInput,(int,float)):
 			return self.sizeInput
 		if self.sizeInput.strip().endswith('%'):
-			my_device = BlockDevice(self.device)
-			size_to_the_end = convert_units(f"{my_device.size}GiB",'s') - 32 - self.start
+			size_to_the_end = self._device_size() - 32 - self.start
 			percentage,_ = split_number_unit(self.sizeInput)
 			return int(round(size_to_the_end * percentage / 100.,0))
 		else:
@@ -180,6 +180,13 @@ class StorageSlot:
 			else:
 				self.__setattr__(key,value)
 
+	def _device_size(self):
+		# we cache the BlockDevice the first time is called. Not expected to change during lifetime of the class ;-)
+		if not self.__related_device_size:
+			self.__related_device_size = int(convert_units(f"{BlockDevice(self.device).size}GiB",'s'))
+		return self.__related_device_size
+
+
 @dataclass
 class DiskSlot(StorageSlot):
 	type: str = None
@@ -254,10 +261,10 @@ class PartitionSlot(StorageSlot):
 	# but we really use size as such so we have to do the conversion
 	def from_end_to_size(self):
 		unit = None
-		if self.sizeInput.strip().endswith('%'):
-			return self.sizeInput
+		if size_as_str.strip().endswith('%'):
+			return size_as_str
 		else:
-			_, unit = split_number_unit(self.sizeInput)
+			_, unit = split_number_unit(self.size_as_str)
 			real_size = self.size - self.start + 1
 			if unit:
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
@@ -265,10 +272,11 @@ class PartitionSlot(StorageSlot):
 
 	def from_size_to_end(self):
 		unit = None
-		if self.sizeInput.strip().endswith('%'):
-			return self.sizeInput # no problemo with this
+		size_as_str = str(self.sizeInput)
+		if size_as_str.strip().endswith('%'):
+			return size_as_str # no problemo with this
 		else:
-			_, unit = split_number_unit(self.sizeInput)
+			_, unit = split_number_unit(size_as_str)
 			real_size = self.end
 			if unit:
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
