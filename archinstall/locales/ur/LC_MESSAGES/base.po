@@ -851,6 +851,16 @@ msgstr ""
 msgid "Parallel Downloads"
 msgstr ""
 
+#, fuzzy
+msgid "ESC to skip"
+msgstr "چھوڑنے کے لیے ESC استعمال کریں\n"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
+
 #~ msgid "Select disk layout"
 #~ msgstr "ڈسک لے آؤٹ کو منتخب کریں"
 

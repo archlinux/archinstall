@@ -811,3 +811,13 @@ msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {ma
 
 msgid "Parallel Downloads"
 msgstr "Paralelní stahování"
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Pomocí ESC přeskočíte"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
