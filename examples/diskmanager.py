@@ -2,7 +2,7 @@
 import logging
 import os
 import time
-	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
+""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
 
 import archinstall
 from archinstall import ConfigurationOutput, Menu
