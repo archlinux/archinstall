@@ -1,7 +1,5 @@
 # import archinstall
-from pudb import set_trace
-from ..system_conf import  select_harddrives
-from archinstall.lib.disk import BlockDevice
+from ..system_conf import select_harddrives
 from archinstall.lib.menu import Menu
 from archinstall.lib.user_interaction.diskmanager.discovery import layout_to_map, hw_discover
 from archinstall.lib.user_interaction.diskmanager.generator import generate_layout

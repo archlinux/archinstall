@@ -261,6 +261,7 @@ class PartitionSlot(StorageSlot):
 	# but we really use size as such so we have to do the conversion
 	def from_end_to_size(self):
 		unit = None
+		size_as_str = str(self.sizeInput)
 		if size_as_str.strip().endswith('%'):
 			return size_as_str
 		else:

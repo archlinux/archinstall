@@ -156,4 +156,3 @@ def layout_to_map(layout):
 			# 	partition_slot.sizeInput = str(real_size)  # we use the same units that the user
 			part_map.append(partition_slot)
 	return sorted(part_map)
-
