@@ -16,6 +16,8 @@ def ask_user_questions():
 	# case it will be changed by the user we'll also update
 	# the system immediately
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	if archinstall.arguments.get('preset_mount',False):
+		global_menu._disk_check = False
 
 	global_menu.enable('archinstall-language')
 
@@ -29,16 +31,14 @@ def ask_user_questions():
 
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
-	global_menu.enable('harddrives')
-
-	global_menu.enable('disk_layouts')
-
-	# Get disk encryption password (or skip if blank)
-	global_menu.enable('!encryption-password')
-
-	if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
-		# Enables the use of HSM
-		global_menu.enable('HSM')
+	if global_menu._disk_check:
+		global_menu.enable('harddrives')
+		global_menu.enable('disk_layouts')
+		# Get disk encryption password (or skip if blank)
+		global_menu.enable('!encryption-password')
+		if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
+			# Enables the use of HSM
+			global_menu.enable('HSM')
 
 	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
