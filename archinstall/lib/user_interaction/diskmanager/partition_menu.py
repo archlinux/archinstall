@@ -62,7 +62,7 @@ class PartitionMenu(GeneralMenu):
 		# if no parameter
 		self._list = self.caller._data if isinstance(caller, ListManager) else []
 		if self._list:
-			self.disk = object.parent_in_list(self._list)
+			self.disk = object.parent(self._list)
 		elif disk:
 			self.disk = disk
 		else:

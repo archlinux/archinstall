@@ -389,11 +389,11 @@ def integrate_layout_in_global_map(harddrives,layout):
 				if layout[disk].get('wipe',False):
 					result_dict[disk]['wipe'] = True
 					result_dict[disk]['partitions'] = normalized_partitions
-					# result_dict[disk]['partitions'] = create_gaps(normalized_partitions, disk, GLOBAL_BLOCK_MAP[disk]['size'])
+					# result_dict[disk]['partitions'] = device_map(normalized_partitions, disk, GLOBAL_BLOCK_MAP[disk]['size'])
 				else:
 					# TODO reconcilie list.
 					# NO overlap. Fist delete then add/compare from the physical list
-					# result_dict[disk]['partitions'] = create_gaps(normalized_partitions, disk, GLOBAL_BLOCK_MAP[disk]['size'])
+					# result_dict[disk]['partitions'] = device_map(normalized_partitions, disk, GLOBAL_BLOCK_MAP[disk]['size'])
 					result_dict[disk]['partitions'] = normalized_partitions
 	return result_dict
 

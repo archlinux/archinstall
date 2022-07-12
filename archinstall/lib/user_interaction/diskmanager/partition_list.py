@@ -30,7 +30,7 @@ def create_gap_list(mapa):
 	new_mapa = []
 	for disk in sorted([entry for entry in mapa if isinstance(entry,DiskSlot)]):
 		new_mapa.append(disk)
-		new_mapa += disk.create_gaps(mapa)
+		new_mapa += disk.device_map(mapa)
 	return new_mapa
 
 class DevList(ListManager):
@@ -147,7 +147,7 @@ class DevList(ListManager):
 		return self._original_data
 
 	def _action_add_partition(self,object,data):
-		disk = parent_from_list(object,data)
+		disk = parent_from_list(object, data)
 		if len(disk.partition_list(data)) == 0:
 			is_empty_disk = True
 		else:
