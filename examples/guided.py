@@ -6,8 +6,6 @@ import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
-print(__name__)
-input('yep')
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
