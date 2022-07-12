@@ -74,8 +74,8 @@ class StorageSlot:
 		return unit_best_fit(self.end,'s')
 
 	@property
-	""" a synonym to device. Used for formatted output"""
 	def path(self) ->str:
+		""" a synonym to device. Used for formatted output"""
 		return self.device
 
 	def __lt__(self,other) ->bool:

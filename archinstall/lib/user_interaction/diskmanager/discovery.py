@@ -4,31 +4,18 @@ from archinstall.lib.exceptions import SysCallError
 import pathlib
 from pprint import pprint
 # from pudb import set_trace
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Dict, List
 
 if TYPE_CHECKING:
 	_: Any
 
-from .dataclasses import DiskSlot, PartitionSlot
+from .dataclasses import DiskSlot, PartitionSlot, StorageSlot
 
-
-def device_size_sectors(path):
-	nombre = path.split('/')[-1]
-	filename = f"/sys/class/block/{nombre}/size"
-	with open(filename, 'r') as file:
-		size = file.read()
-	return int(size) - 33  # The last 34 sectors are used by the system in GPT drives. If I substract 34 i miss 1 sector
-
-
-def device_sector_size(path):
-	nombre = path.split('/')[-1]
-	filename = f"/sys/class/block/{nombre}/queue/logical_block_size"
-	with open(filename, 'r') as file:
-		size = file.read()
-	return int(size)
-
-
-def get_device_info(device):
+def get_device_info(device: str) -> Dict:
+	""" we get hardware information for a device (in our case a partition)
+	This code is extracted from archinstall.all_blockdevices, as sadly the Partition object does not hold an info structure as the BlockDevice
+	TODO integrate into general flow (it means Partition object holds info, so this code is not needed)
+	"""
 	try:
 		information = blkid(f'blkid -p -o export {device}')
 	# TODO: No idea why F841 is raised here:
@@ -48,18 +35,19 @@ def get_device_info(device):
 	information = enrich_blockdevice_information(information)
 	return information
 
-def list_subvols(object):
+def list_subvols(object: Any) ->List[Subvolume]:
+	""" creates a list of subvolume objects """
 	subvol_info = [Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
 	return subvol_info
 
-def createPartitionSlot(path,partition):
+def createPartitionSlot(path: str,partition: Partition) ->PartitionSlot:
+	""" from all_blockdevices info create a PartitionSlot"""
 	# TODO encrypted volumes, get internal info
 	# TODO btrfs subvolumes if not mounted
 	# TODO aditional fields
 	# TODO swap volumes and other special types
 	try:
 		device_info = get_device_info(path)[path]
-
 		if device_info['TYPE'] == 'crypto_LUKS':
 			encrypted = True
 			# encrypted_partitions.add(res)
@@ -83,7 +71,7 @@ def createPartitionSlot(path,partition):
 			uuid=partition.uuid,
 			partnr=device_info['PART_ENTRY_NUMBER'],
 			path=device_info['PATH'],
-			actual_mountpoint=partition.mountpoint,  # <-- this is false
+			actual_mountpoint=partition.mountpoint,  # <-- this is false TODO
 			actual_subvolumes=subvol_info
 		)
 		return partition_entry
@@ -92,7 +80,8 @@ def createPartitionSlot(path,partition):
 		pprint(device_info)
 		exit()
 
-def hw_discover(disks=None):
+def hw_discover(disks=None) ->List[StorageSlot]:
+	""" we create a hardware map of storage slots of the current machine"""
 	global_map = []
 
 	log(_("Waiting for the system to get actual block device info"),fg="yellow")
@@ -116,13 +105,14 @@ def hw_discover(disks=None):
 					continue
 				global_map.append(createPartitionSlot(path,storage_unit))
 			case DMCryptDev():
-				# to do
+				# TODO
 				print(' enc  ',path)
 			case _:
 				print(' error ',path, storage_unit)
 	return global_map
 
-def layout_to_map(layout):
+def layout_to_map(layout) ->List[StorageSlot]:
+	""" from the content of archinstall.arguments.disk_layouts we generate a map of storage slots"""
 	part_map = []
 	for disk in layout:
 		partitions = layout[disk].get('partitions',[])
@@ -143,16 +133,6 @@ def layout_to_map(layout):
 			# TODO with all the forth we might provoke overlaps and overflows, we should check it does not happen
 			#     for this we have to do the following adjustments AFTER the full list is done, not after a single element
 			# as everybody knows size is really the end sector. One of this days we must change it.
-			# but we really use size as such so we have to do the conversion
 			partition_slot.sizeInput = partition_slot.from_end_to_size()
-			# unit = None
-			# if part['size'].strip().endswith('%'):
-			# 	pass # no problemo with this
-			# else:
-			# 	_,unit = split_number_unit(part['size'])
-			# 	real_size = partition_slot.size - partition_slot.start + 1
-			# 	if unit:
-			# 		real_size = convert_units(real_size,unit,'s')
-			# 	partition_slot.sizeInput = str(real_size)  # we use the same units that the user
 			part_map.append(partition_slot)
 	return sorted(part_map)
