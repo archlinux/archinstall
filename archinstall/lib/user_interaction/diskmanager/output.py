@@ -1,15 +1,19 @@
 from typing import Dict, List, Any
-
+"""
+this class is a copy of the original one for the project at archinstall/lib/output.py
+The idea is to reintegrate the changes at the upstream if they are considered worth of generalizatin
+"""
 class FormattedOutput:
 
 	@classmethod
 	def values(cls, o: Any,class_formatter: str = None) -> Dict[str, Any]:
+		""" the original values returned a dataclass as dict thru the call to some specific methods
+		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method
+		"""
 		# key must be a method of the class. JUst to avoid a  lot of complex code
 		if class_formatter and hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 			func = getattr(o, class_formatter)
 			return func()
-		if hasattr(o,'as_dict_str'):
-			return o.as_dict_str()
 		if hasattr(o,'as_dict'):
 			return o.as_dict()
 		elif hasattr(o, 'as_json'):
@@ -46,6 +50,14 @@ class FormattedOutput:
 
 	@classmethod
 	def as_table_filter(cls, obj: List[Any], filter: List[str], class_formatter :str = None) -> str:
+		""" variant of as_table (subtly different code) which has two additional parameters
+		filter which is a list of fields which will be shon
+		class_formatter a special method to format the outgoing data
+
+		A general comment, the format selected for the output (a string where every data record is separated by newline)
+		is for compatibility with a print statement
+		As_table_filter can be a drop in replacement for as_table
+		"""
 		column_width: Dict[str, int] = {}
 		for o in obj:
 			for k, v in cls.values(o,class_formatter).items():

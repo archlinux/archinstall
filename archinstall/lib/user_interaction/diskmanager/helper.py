@@ -8,7 +8,7 @@ from archinstall.lib.exceptions import UserError
 # from copy import deepcopy, copy
 import re
 
-from typing import Any, TYPE_CHECKING, Dict, Optional, List, Union
+from typing import Union
 
 
 def split_number_unit(value: Union[int,float,str]) -> (Union[float],str):
@@ -44,10 +44,10 @@ def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's') -> s
 
 def convert_units(
 	value: Union[int,float,str],
-	to_unit: str='b',
-	d_from_unit: str='b',
-	sector_size: int=512,
-	precision: int=3
+	to_unit: str = 'b',
+	d_from_unit: str = 'b',
+	sector_size: int = 512,
+	precision: int = 3
 	) -> Union[int,float,str]:
 	""" General routine to convert units
 	parameters

@@ -11,7 +11,7 @@ from .generator import generate_layout
 from .partition_list import DevList
 
 
-def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]) ->None:
+def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]) -> None:
 	""" Main entry point to the disk manager routines
 
 	parameters expected

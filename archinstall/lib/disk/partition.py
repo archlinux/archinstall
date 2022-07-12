@@ -80,7 +80,7 @@ class Partition:
 
 	def as_json(self) -> Dict[str, Any]:
 		"""
-		this is used for the table representation of the partition (see FormattedOutput)
+		this is used for the table representation of the partition (see DM_FormattedOutput)
 		"""
 		partition_info = {
 			'type': 'primary',

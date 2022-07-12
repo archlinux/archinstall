@@ -1,12 +1,14 @@
 from archinstall.lib.disk import BlockDevice, Subvolume
 from archinstall.lib.output import log
 from .helper import unit_best_fit, convert_units, split_number_unit
-from dataclasses import dataclass, asdict, KW_ONLY, field
+from dataclasses import dataclass, asdict, KW_ONLY
 from typing import List , Any, Dict, Union
 
 """
 we define a hierarchy of dataclasses to cope with the storage tree
 """
+
+
 @dataclass
 class StorageSlot:
 	""" The class hierarchy root. Contains all the stuff common to all types of slots
@@ -31,7 +33,7 @@ class StorageSlot:
 		self.__related_device_size = None
 
 	@property
-	def start(self) ->int:
+	def start(self) -> int:
 		""" the value in sectors """
 		if isinstance(self.startInput,(int,float)):
 			return self.startInput
@@ -42,7 +44,7 @@ class StorageSlot:
 			return convert_units(self.startInput,'s','s')
 
 	@property
-	def size(self) ->int:
+	def size(self) -> int:
 		""" the value in sectors """
 		if isinstance(self.sizeInput,(int,float)):
 			return self.sizeInput
@@ -54,31 +56,31 @@ class StorageSlot:
 			return convert_units(self.sizeInput,'s','s')
 
 	@property
-	def sizeN(self) ->str:
+	def sizeN(self) -> str:
 		""" the normalized value in +iB (normalized means integer part from 1 to 1023"""
 		return unit_best_fit(self.size,'s')
 
 	@property
-	def startN(self) ->str:
+	def startN(self) -> str:
 		""" the normalized value in +iB (normalized means integer part from 1 to 1023"""
 		return unit_best_fit(self.start,'s')
 
 	@property
-	def end(self) ->int:
+	def end(self) -> int:
 		""" the last sector included in the slot"""
 		return self.start + self.size - 1
 
 	@property
-	def endN(self) ->str:
+	def endN(self) -> str:
 		""" the normalized value in +iB (normalized means integer part from 1 to 1023"""
 		return unit_best_fit(self.end,'s')
 
 	@property
-	def path(self) ->str:
+	def path(self) -> str:
 		""" a synonym to device. Used for formatted output"""
 		return self.device
 
-	def __lt__(self,other) ->bool:
+	def __lt__(self,other) -> bool:
 		""" magic method to sort slots. It is sorted only by device and start value"""
 		if isinstance(other,StorageSlot):
 			if self.device == other.device:
@@ -87,20 +89,21 @@ class StorageSlot:
 				return self.device < other.device
 		# TODO throw exception when not comparable
 
-	def __eq(self,other) ->bool:
+	def __eq(self,other) -> bool:
 		""" magic method to compare slots. Only device,start and end are compared """
 		return self.device == other.device and self.start == other.start and self.end == other.end
 
-	def as_dict(self) ->Dict:
+	def as_dict(self) -> Dict:
 		""" returns the contents as a dict. By default only the static properties are shown, I add the property methods"""
 		non_generated = {'start':self.start,'end':self.end,'size': self.size,'sizeN':self.sizeN,'path':self.path}
 		return asdict(self) | non_generated
 
-	def as_dict_str(self) ->Dict:
-		""" as the former but with a previous formatting of some fiels"""
+	def as_dict_str(self) -> Dict:
+		""" as the former but with a previous formatting of some fiels
+		Used as class_formatter for FormattedOutput.as_table_filter"""
 		return field_as_string(self)
 
-	def as_dict_filter(self,filter: List[str]) ->Dict:
+	def as_dict_filter(self,filter: List[str]) -> Dict:
 		""" as as_dict but with only a subset of fields"""
 		# TODO there are alternate ways of code. which is the most efficient ?
 		result = {}
@@ -109,7 +112,7 @@ class StorageSlot:
 				result[key] = value
 		return result
 
-	def pretty_print(self,request: str) ->str:
+	def pretty_print(self,request: str) -> str:
 		""" a standard way to print start/size/end, first in sectors then normalized"""
 		b = self[request]
 		n = self[f'{request}N']
@@ -139,7 +142,7 @@ class StorageSlot:
 			else:
 				self.__setattr__(key,value)
 
-	def _device_size(self) ->int:
+	def _device_size(self) -> int:
 		""" we cache the BlockDevice.size the first time is called. Not expected to change during lifetime of the class ;-)"""
 		if not self.__related_device_size:
 			self.__related_device_size = int(convert_units(f"{BlockDevice(self.device).size}GiB",'s'))
@@ -160,7 +163,7 @@ class DiskSlot(StorageSlot):
 		return self.device
 
 	# TODO probably not here but code is more or less the same
-	def gap_list(self, part_list: list[StorageSlot]) ->List[StorageSlot]:
+	def gap_list(self, part_list: list[StorageSlot]) -> List[StorageSlot]:
 		""" from a list of PartitionSlots, returns a list of gaps (areas not defined as partitions)"""
 		result_list = []
 		start = 32
@@ -173,15 +176,15 @@ class DiskSlot(StorageSlot):
 			result_list.append(GapSlot(self.device, start, self.end - start + 1))
 		return result_list
 
-	def children(self, storage_list: list[StorageSlot]) ->list[StorageSlot]:
+	def children(self, storage_list: list[StorageSlot]) -> list[StorageSlot]:
 		""" all the children of a disk in a storageSlot list"""
 		return sorted([elem for elem in storage_list if elem.device == self.device and not isinstance(elem, DiskSlot)])
 
-	def partition_list(self, storage_list: list[StorageSlot]) ->list[StorageSlot]:
+	def partition_list(self, storage_list: list[StorageSlot]) -> list[StorageSlot]:
 		""" all the partitions of a disk in a storageSlot list"""
 		return sorted([elem for elem in storage_list if elem.device == self.device and isinstance(elem, PartitionSlot)])
 
-	def device_map(self, storage_list: list[StorageSlot]) ->list[StorageSlot]:
+	def device_map(self, storage_list: list[StorageSlot]) -> list[StorageSlot]:
 		""" from a storageslot list returns a map of the device (gaps and partitions) """
 		short_list = self.partition_list(storage_list)
 		return sorted(short_list + self.gap_list(short_list))
@@ -194,7 +197,7 @@ class GapSlot(StorageSlot):
 		# TODO check consistency
 		return None
 
-	def parent(self,storage_list: list[StorageSlot]) ->StorageSlot:
+	def parent(self,storage_list: list[StorageSlot]) -> StorageSlot:
 		""" return the diskslot it belongs from a list"""
 		return parent_from_list(self, storage_list)
 
@@ -221,13 +224,13 @@ class PartitionSlot(StorageSlot):
 	partnr: int = None
 	type: str = 'primary'
 
-	def parent(self, storage_list: list[StorageSlot]) ->StorageSlot:
+	def parent(self, storage_list: list[StorageSlot]) -> StorageSlot:
 		""" returns the diskslot element  where it exists"""
 		return parent_from_list(self, storage_list)
 
-	def order_nr(self,storage_list: list[StorageSlot]) ->int:
+	def order_nr(self,storage_list: list[StorageSlot]) -> int:
 		""" returns the order number as child of a disk in a list. Self must be a member of the list """
-		#IIRC not used
+		# IIRC not used
 		siblings = sorted([item for item in storage_list if item.device == self.device and isinstance(item,PartitionSlot)])
 		try:
 			return siblings.index(self)
@@ -236,7 +239,7 @@ class PartitionSlot(StorageSlot):
 
 	# as everybody knows size is really the end sector at archinstall layout. One of this days we must change it.
 	# but we really use size as such so we have to do the conversion
-	def from_end_to_size(self) ->str:
+	def from_end_to_size(self) -> str:
 		""" from the internal data we return the size. This assumes what we have as size is the end position, in fact """
 		unit = None
 		size_as_str = str(self.sizeInput)
@@ -249,7 +252,7 @@ class PartitionSlot(StorageSlot):
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
 			return str(real_size)  # we use the same units that the user
 
-	def from_size_to_end(self):
+	def from_size_to_end(self) -> str:
 		""" from the internal data we return the end position (in the same units as we have internally for the size)"""
 		unit = None
 		size_as_str = str(self.sizeInput)
@@ -262,7 +265,7 @@ class PartitionSlot(StorageSlot):
 				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
 			return str(real_size)  # we use the same units that the user
 
-	def to_layout(self) ->Dict:
+	def to_layout(self) -> Dict:
 		""" from the PartitionSlot we generate the structura for a partition entry at the disk_layouts structure"""
 		part_attr = ('boot', 'btrfs', 'encrypted', 'filesystem', 'mountpoint', 'size', 'start', 'wipe')
 		part_dict = {}
@@ -298,7 +301,7 @@ def parent_from_list(child: StorageSlot, target_list: List[StorageSlot]) -> Stor
 	return parent[0]
 
 
-def actual_mount(entry: StorageSlot) ->str:
+def actual_mount(entry: StorageSlot) -> str:
 	""" for a partition slot return an abreviatted string with the actual mountpoints pointing at that partition
 		the return string is //HOST/(mountpoint ... list of subvolume mount points
 	"""

@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 from .dataclasses import DiskSlot, PartitionSlot, StorageSlot
 
+
 def get_device_info(device: str) -> Dict:
 	""" we get hardware information for a device (in our case a partition)
 	This code is extracted from archinstall.all_blockdevices, as sadly the Partition object does not hold an info structure as the BlockDevice
@@ -35,12 +36,14 @@ def get_device_info(device: str) -> Dict:
 	information = enrich_blockdevice_information(information)
 	return information
 
-def list_subvols(object: Any) ->List[Subvolume]:
+
+def list_subvols(object: Any) -> List[Subvolume]:
 	""" creates a list of subvolume objects """
 	subvol_info = [Subvolume(subvol.name,str(subvol.full_path)) for subvol in object.subvolumes]
 	return subvol_info
 
-def createPartitionSlot(path: str,partition: Partition) ->PartitionSlot:
+
+def create_PartitionSlot(path: str, partition: Partition) -> PartitionSlot:
 	""" from all_blockdevices info create a PartitionSlot"""
 	# TODO encrypted volumes, get internal info
 	# TODO btrfs subvolumes if not mounted
@@ -80,7 +83,8 @@ def createPartitionSlot(path: str,partition: Partition) ->PartitionSlot:
 		pprint(device_info)
 		exit()
 
-def hw_discover(disks=None) ->List[StorageSlot]:
+
+def hw_discover(disks=None) -> List[StorageSlot]:
 	""" we create a hardware map of storage slots of the current machine"""
 	global_map = []
 
@@ -103,7 +107,7 @@ def hw_discover(disks=None) ->List[StorageSlot]:
 			case  Partition():
 				if my_disks and storage_unit.parent not in my_disks:
 					continue
-				global_map.append(createPartitionSlot(path,storage_unit))
+				global_map.append(create_PartitionSlot(path, storage_unit))
 			case DMCryptDev():
 				# TODO
 				print(' enc  ',path)
@@ -111,7 +115,8 @@ def hw_discover(disks=None) ->List[StorageSlot]:
 				print(' error ',path, storage_unit)
 	return global_map
 
-def layout_to_map(layout) ->List[StorageSlot]:
+
+def layout_to_map(layout) -> List[StorageSlot]:
 	""" from the content of archinstall.arguments.disk_layouts we generate a map of storage slots"""
 	part_map = []
 	for disk in layout:
@@ -126,7 +131,7 @@ def layout_to_map(layout) ->List[StorageSlot]:
 					wipe=part.get('wipe',False),
 					mountpoint=part.get('mountpoint',None),
 					filesystem=part.get('filesystem',{}).get('format',None),
-					filesystem_mount_options=part.get('filesystem',{}).get('mount_options',None), # TODO rename
+					filesystem_mount_options=part.get('filesystem',{}).get('mount_options',None),
 					filesystem_format_options=part.get('filesystem',{}).get('format_options',None),
 					btrfs=part.get('btrfs',{}).get('subvolumes',[])
 			)
