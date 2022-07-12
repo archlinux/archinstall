@@ -1,9 +1,10 @@
 from archinstall.lib.disk import BlockDevice
-from .dataclasses import DiskSlot, PartitionSlot
+from .dataclasses import DiskSlot, PartitionSlot, StorageSlot
+from typing import List, Dict
 
 
-def generate_layout(storage_map):
-	# """ This routine converts the abstract internal layout into a standard disk layout """
+def generate_layout(storage_map: List[StorageSlot]) -> (List[BlockDevice],Dict):
+	""" This routine converts the abstract internal layout into a standard disk layout """
 	def emount(partition):
 		""" partition has mountpoint. Btrfs subvolumes are to be checked  """
 		if partition.mountpoint:
@@ -11,7 +12,7 @@ def generate_layout(storage_map):
 		for subvolume in partition.btrfs:  # expect normalized contents
 			if subvolume.mountpoint:
 				return True
-	# TODO if i reuse a btrfs volume. How I do it
+
 	harddrives = []
 	disk_layouts = {}
 	disk_entries = [entry for entry in storage_map if isinstance(entry, DiskSlot)]

@@ -8,10 +8,11 @@ from archinstall.lib.exceptions import UserError
 # from copy import deepcopy, copy
 import re
 
-# from typing import Any, TYPE_CHECKING, Dict, Optional, List
+from typing import Any, TYPE_CHECKING, Dict, Optional, List, Union
 
 
-def split_number_unit(value):
+def split_number_unit(value: Union[int,float,str]) -> (Union[float],str):
+	""" from a number (whatever format) we return a tuple with its numeric value and the unit name (if present else 's')"""
 	if isinstance(value,(int,float)):
 		return value,'s'
 	result = re.split(r'(\d+\.\d+|\d+)',value.replace(',','').strip())
@@ -19,11 +20,14 @@ def split_number_unit(value):
 	target_value = float(result[1])
 	return target_value,unit
 
-def units_from_model(target,model):
+
+def units_from_model(target: Union[int,float,str],model: Union[int,float,str]) -> Union[int,float,str]:
+	""" we convert the value of target to the same numeric format as model has"""
 	_,unit = split_number_unit(model)
 	return convert_units(target,unit,'s')
 
-def unit_best_fit(raw_value,default_unit='s'):
+
+def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's') -> str:
 	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
 	base_value = convert_units(raw_value,'s',default_unit)
 	conversion_rates = {
@@ -38,7 +42,21 @@ def unit_best_fit(raw_value,default_unit='s'):
 	return f"{base_value} s"
 
 
-def convert_units(value,to_unit='b',d_from_unit='b',sector_size=512,precision=3):
+def convert_units(
+	value: Union[int,float,str],
+	to_unit: str='b',
+	d_from_unit: str='b',
+	sector_size: int=512,
+	precision: int=3
+	) -> Union[int,float,str]:
+	""" General routine to convert units
+	parameters
+	value is the one to be converted
+	to_unit is the target unit (as default it will convert to sectors)
+	from_unit. It the value lacks units (it's a pure number) determine which is the  unit it represents
+	sector_size If sector size isnt't 512 you can specify which size to use
+	precision  the number of decimal numbers it will return. If target are sectors or bytes it will always return an integer
+	"""
 	conversion_rates = {
 		'kb' : 10**3,
 		'mb' : 10**6,
