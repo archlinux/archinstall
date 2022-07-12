@@ -1,6 +1,6 @@
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.output import log
-from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount
+from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount, StorageSlot
 from .output import FormattedOutput
 from .partition_menu import PartitionMenu
 # from diskmanager.generator import generate_layout
@@ -9,9 +9,14 @@ from typing import List, Any, Dict, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
 	_: Any
 
-def format_to_list_manager(data, field_list=None):
+def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None) -> List[str]:
+	""" does the specific formatting of the storage list to be shown at ListManager derivatives
+	"""
 	# TODO  short and long form
-	filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
+	if field_list is None:
+		filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
+	else:
+		filter = field_list
 	table = FormattedOutput.as_table_filter(data,filter,'as_dict_str')
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
@@ -25,7 +30,7 @@ def format_to_list_manager(data, field_list=None):
 
 	return display_data
 
-def create_gap_list(mapa):
+def create_gap_list(mapa: List[StorageSlot]) -> List[StorageSlot]:
 	""" takes a list of slots and creates an equivalent list with (updated) gaps """
 	new_mapa = []
 	for disk in sorted([entry for entry in mapa if isinstance(entry,DiskSlot)]):
@@ -40,7 +45,7 @@ class DevList(ListManager):
 		prompt: str,
 		entries: List[Any]
 	):
-		self.ObjectActions = [
+		self._object_actions = [
 			'Add disk to installation set',          # 0
 			'Add partition',                         # 1
 			'Clear disk (delete disk contents)',     # 2
@@ -51,47 +56,48 @@ class DevList(ListManager):
 			'Delete partition'                       # 7
 		]
 		entries = create_gap_list(entries)  # list will be substituted with one with gaps
-		self.ObjectDefaultAction = 'Reset'
+		self._default_action = 'Reset'
 		self.partitions_to_delete = []
-		super().__init__(prompt,entries,[self.ObjectDefaultAction],self.ObjectActions)
+		super().__init__(prompt, entries, [self._default_action], self._object_actions)
 
-	def run(self):
+	def run(self) -> (List[StorageSlot], List[PartitionSlot]):
+		""" overloaded to allow partitions_to_delete to be returned"""
 		result_list = super().run()
-		# TODO there is no self.action by now
 		if self.last_choice.value != self._confirm_action:
 			self.partitions_to_delete = []
 		return result_list, self.partitions_to_delete
 
-	def _get_selected_object(self,selection):
+	def _get_selected_object(self,selection) -> StorageSlot:
+		""" generic method to recover the object we want to work with in _handle_action """
 		pos = self._data.index(selection)
 		return self._data[pos]
 
 	def selected_action_display(self, selection: Any) -> str:
-		objeto = self._get_selected_object(selection)
+		""" implemented to get different headers depending on the class of the element"""
+		target = self._get_selected_object(selection)
 		# TODO as dataclass method
-		if isinstance(objeto,DiskSlot):
-			return f'disk {objeto.device}'
-		elif isinstance(objeto,GapSlot):
-			return f'gap {objeto.device}@{objeto.start}'
-		elif isinstance(objeto,PartitionSlot):
-			if objeto.path:
-				return f'partition {objeto.path}'
+		if isinstance(target,DiskSlot):
+			return f'disk {target.device}'
+		elif isinstance(target,GapSlot):
+			return f'gap {target.device}@{target.start}'
+		elif isinstance(target,PartitionSlot):
+			if target.path:
+				return f'partition {target.path}'
 			else:
-				return f'partition {objeto.device}@{objeto.start}'
+				return f'partition {target.device}@{target.start}'
 		return selection
 
-	def reformat(self, data: List[Any]) -> Dict[str, Any]:
-		# raw_result = self._header() | {f'{item}':item for item in sorted(data)}
-		# return raw_result
+	def reformat(self, data: List[StorageSlot]) -> Dict[str, Any]:
+		""" implemented. The exact formatting is left to an outside routine """
 		return format_to_list_manager(data)
 
-	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
-		# this is common for all action.
-		my_data = create_gap_list(self._exec_action(action,entry,data))
+	def handle_action(self, action: Any, entry: Optional[Any], data: List[StorageSlot]) -> List[StorageSlot]:
+		""" implemented. the meat is at _exec_action. We always recalculate gaps and return sorted"""
+		my_data = create_gap_list(self._exec_action(action, entry, data))
 		return my_data
 
 	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
-		# filter which actions to show for an specific selection
+		""" implemented. filter which actions to show for an specific class selection """
 		target = self._get_selected_object(selection)
 		disk_actions = (0,1,2,5)
 		part_actions = (3,4,7)  # BUG hide partition disallowed for the time being (3,4,6,7)
@@ -105,68 +111,72 @@ class DevList(ListManager):
 			case _:
 				return options
 
-	def _exec_action(self,action,object,data):
+	def _exec_action(self, action :str, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" main driver to the implemented actions
+		Could be more efficient if data wouldn't be copied back and forth, but such is the standard at ListManager now"""
 		# reset
-		if action == self.ObjectDefaultAction:
-			return self._action_reset(object,data)
+		if action == self._default_action:
+			return self._action_reset(target, data)
 		# Add disk to installation set',          # 0
-		elif action == self.ObjectActions[0]:
-			# select harddrive still not on set
+		elif action == self._object_actions[0]:
+			# TODO select harddrive still not on set
 			# load its info and partitions into the list
-			return self._action_not_implemented(object,data)
+			return self._action_not_implemented(target, data)
 		# Add partition',                         # 1
-		elif action == self.ObjectActions[1]:
-			return self._action_add_partition(object,data)
+		elif action == self._object_actions[1]:
+			return self._action_add_partition(target, data)
 		# Clear disk (delete disk contents)',     # 2
-		elif action == self.ObjectActions[2]:
-			return self._action_clear_disk(object,data)
+		elif action == self._object_actions[2]:
+			return self._action_clear_disk(target, data)
 		# Clear Partition & edit attributes',     # 3
-		elif action == self.ObjectActions[3]:
-			return self._action_clear_partition(object,data)
-		# Edit partition attributes',             # 4
-		elif action == self.ObjectActions[4]:
-			return self._action_edit_partition(object,data)
+		elif action == self._object_actions[3]:
+			return self._action_clear_partition(target, data)
+		# Edit partition attributes',             #4
+		elif action == self._object_actions[4]:
+			return self._action_edit_partition(target, data)
 		# Exclude disk from installation set',    # 5
-		elif action == self.ObjectActions[5]:
-			return self._action_exclude_disk(object,data)
+		elif action == self._object_actions[5]:
+			return self._action_exclude_disk(target, data)
 		# Exclude partition from installation set', # 6
-		elif action == self.ObjectActions[6]:
-			# BUG for the time being disallowed. Current implementation is faulty
-			return self._action_not_implemented(object,data)
+		elif action == self._object_actions[6]:
+			# TODO BUG for the time being disallowed.
+			# current implementation doesn't make it possible. Probably of no consequence if  eliminated
+			return self._action_not_implemented(target, data)
 		# Delete partition'                       # 7
-		elif action == self.ObjectActions[7]:
-			return self._action_delete_partition(object,data)
+		elif action == self._object_actions[7]:
+			return self._action_delete_partition(target, data)
 		return data
 
-	def _action_not_implemented(self,object,data):
+	def _action_not_implemented(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		log('Action still not implemented')
 		return data
 
-	def _action_reset(self,object,data):
-		self.partitions_to_delete = {}
+	def _action_reset(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" return the original values without any change from editing"""
+		self.partitions_to_delete = []
 		return self._original_data
 
-	def _action_add_partition(self,object,data):
-		disk = parent_from_list(object, data)
+	def _action_add_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" adding a partition """
+		disk = parent_from_list(target, data)
 		if len(disk.partition_list(data)) == 0:
 			is_empty_disk = True
 		else:
 			is_empty_disk = False
-		if isinstance(object,GapSlot):
-			part_data = PartitionSlot(object.device,object.startInput,object.sizeInput,wipe=True)
+		if isinstance(target,GapSlot):
+			part_data = PartitionSlot(target.device,target.startInput,target.sizeInput,wipe=True)
 		else:
-			part_data = PartitionSlot(object.device, -1, -1, wipe=True)  # Something has to be done with this
-
+			part_data = PartitionSlot(target.device, -1, -1, wipe=True)  # Something has to be done with this
+		# TODO menu has to check coherence of the data
 		add_menu = PartitionMenu(part_data,self)
-		# for some reason this code blocks temporarliy set out of process
+		# TODO BUG for some reason this code blocks. temporarliy set out of process
 		# with PartitionMenu(part_data,self) as add_menu:
 		# 	exit_menu = False
 		# 	for option in add_menu.list_options():
-		# 		# TODO this is not what i need
 		# 		if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
 		# 			add_menu.synch(option)
 		# 			add_menu.exec_option(option)
-		# 			# TODO broken execution there
+		# 			# broken execution here
 		# 			if option == 'location' and add_menu.option('location').get_selection() is None:
 		# 				exit_menu = True
 		# 				break
@@ -183,40 +193,47 @@ class DevList(ListManager):
 				disk.wipe = True
 		return data
 
-	def _action_clear_disk(self,object,data):
-		object.wipe = True
+	def _action_clear_disk(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" we set the disk to wipe and delete all children at data"""
+		target.wipe = True
 		# no need to delete partitions in this disk
-		self._ripple_delete(object,data,head=False)
+		self._ripple_delete(target,data, head=False)
 		return data
 
-	def _action_clear_partition(self,object,data):
-		PartitionMenu(object,self).run()  # TODO don't like the return control
-		if object:
-			object.wipe = True
+	def _action_clear_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" we set the wipe flag, and change the contents"""
+		PartitionMenu(target,self).run()  # TODO don't like the return control
+		if target:
+			target.wipe = True
 		return data
 
-	def _action_delete_partition(self,object,data):
-		if actual_mount(object):
-			log('Can not delete partition {object.path}, because it is in use')  # TODO it doesn't show actually
+	def _action_delete_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" mark partitions to be physically deleted and delete the from the list"""
+		if actual_mount(target):
+			log('Can not delete partition {target.path}, because it is in use')  # TODO it doesn't show actually
 			return data
-		elif object.uuid:
-			self.partitions_to_delete.append(object)
-		key = data.index(object)
+		elif target.uuid:
+			self.partitions_to_delete.append(target)
+		key = data.index(target)
 		del data[key]
 		return data
 
-	def _action_edit_partition(self,object,data):
-		PartitionMenu(object,self).run()
+	def _action_edit_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		PartitionMenu(target,self).run()
 		return data
 
-	def _action_exclude_disk(self,object,data):
-		self._ripple_delete(object,data, head=True)
+	def _action_exclude_disk(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" we get rid of the disk from the list, but left the phiscial implementation untouched"""
+		self._ripple_delete(target,data, head=True)
 		return data
 
-	def _ripple_delete(self, object, data, head):
-		if not isinstance(object,DiskSlot):
+	def _ripple_delete(self, target: StorageSlot, data: List[StorageSlot], head: bool) -> List[StorageSlot]:
+		""" we get rid of dependant elements of the list.
+		if head argument is True we delete also the disk entry
+		we need to clean up the partitions_to_delete list, to avoid repetition of actions, with unexpected behavior"""
+		if not isinstance(target,DiskSlot):
 			return data
-		children = object.children(data)
+		children = target.children(data)
 		for child in children:
 			idx = data.index(child)
 			if isinstance(child,PartitionSlot) and child.uuid:
@@ -227,7 +244,7 @@ class DevList(ListManager):
 					pass
 			del data[idx]
 		if head:
-			idx = data.index(object)
+			idx = data.index(target)
 			del data[idx]
 		return data
 		# placeholder
