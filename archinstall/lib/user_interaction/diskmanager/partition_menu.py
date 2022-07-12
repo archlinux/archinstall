@@ -17,73 +17,39 @@ from .discovery import hw_discover
 from .helper import unit_best_fit, units_from_model
 from .output import FormattedOutput
 
-from typing import Any, TYPE_CHECKING  # , Dict, Optional, List
+from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Optional, List
 
 if TYPE_CHECKING:
 	_: Any
 
-# TODO generalize
-
-
-# @dataclass
-# class FlexSize:
-# 	# TODO check nones
-# 	input_value: Union[str, int]
-#
-# 	@property
-# 	def sectors(self):
-# 		return int(convert_units(self.input_value, 's', 's'))
-#
-# 	@property
-# 	def normalized(self):
-# 		return unit_best_fit(self.sectors, 's')
-#
-# 	def pretty_print(self):
-# 		return f"{self.sectors:,} ({self.normalized})"
-#
-# 	def adjust_other(self, other):
-# 		if other.input_value.strip().endswith('%'):
-# 			pass
-# 		else:
-# 			_, unit = split_number_unit(self.input_value)
-# 			if unit:
-# 				other.input_value = f"{convert_units(other.sectors, unit, 's')} {unit.upper()}"
-
-
 # TODO check real format of (mount|format)_options
-# TODO convert location as a StorageSlot instead of FlexSize
-# A prompt i need
 class PartitionMenu(GeneralMenu):
-	def __init__(self, object, caller=None, disk=None):
-		# Note if object.sizeInput has -1 it is a new partition. is a small trick to keep object passed as reference
-		self.data = object
+	def __init__(self, target: StorageSlot, caller: Callable = None, disk: Union[DiskSlot,str] = None):
+		""" arguments
+		target  the slot we will be editing
+		caller  the routine which calls the menu. Used to extract some information if avaliable
+		disk    the disk the partition is/will be. Usually not need as it can be recovered from caller		else:
+
+		"""
+		# Note if target.sizeInput has -1 it is a new partition. is a small trick to keep ,target passed as reference
+		self.data = target
 		self.caller = caller
 		# if there is a listmanager disk comes from the list not the parameter.
 		# if no parameter
 		self._list = self.caller._data if isinstance(caller, ListManager) else []
 		if self._list:
-			self.disk = object.parent(self._list)
+			self.disk = target.parent(self._list)
 		elif disk:
 			self.disk = disk
-		else:
-			my_disk = BlockDevice(object.device)
+			my_disk = BlockDevice(target.device)
 			self.disk = DiskSlot(my_disk.device, 0, my_disk.size, my_disk.partition_type)
 		self.ds = {}
 		self.ds = self._conversion_from_object()
 		super().__init__(data_store=self.ds)
 
-	def _conversion_from_object(self):
+	def _conversion_from_object(self) -> Dict[str,Any]:
+		""" from the PartitionSlot dataclass to a dict editable by a GeneralMenu derivative (a dict) """
 		my_dict = deepcopy(asdict(self.data) if isinstance(self.data, PartitionSlot) else {})  # TODO verify independence
-		# print('before')
-		# print(my_dict)
-		# if my_dict['startInput'] != -1:
-		# 	my_start = FlexSize(my_dict['startInput'])
-		# else:
-		# 	my_start = None
-		# if my_dict['sizeInput'] != -1:
-		# 	my_size = FlexSize(my_dict['sizeInput'])
-		# else:
-		# 	my_size = None
 		my_dict['location'] = StorageSlot(self.data.device, self.data.start, self.data.size)
 		del my_dict['startInput']
 		del my_dict['sizeInput']
@@ -96,6 +62,9 @@ class PartitionMenu(GeneralMenu):
 		return my_dict
 
 	def _conversion_to_object(self):
+		""" from the GeneralMenu._data_store dictionary to a PartitionSlot
+		TO access the elements dynamicly it uses __setitem__
+		"""
 		for item in self.ds:
 			if item == 'location':
 				self.data['startInput'] = self.ds['location'].startInput
@@ -150,21 +119,24 @@ class PartitionMenu(GeneralMenu):
 													exec_func=lambda n, v: True,
 													enabled=True)
 		self._menu_options['cancel'] = Selector(str(_('Cancel')),
-													func=lambda pre: True,
-													exec_func=lambda n, v: self.fast_exit(n),
-													enabled=True)
+												func=lambda pre: True,
+												exec_func=lambda n, v: self.fast_exit(n),
+												enabled=True)
 		self.cancel_action = 'cancel'
 		self.save_action = 'save'
 		self.bottom_list = [self.save_action, self.cancel_action]
 
-	def fast_exit(self, accion):
-		if self.option(accion).get_selection():
+	def fast_exit(self, action) -> bool:
+		""" an exec_func attached to the cancel action to avoid mandatory field checking"""
+		if self.option(action).get_selection():
 			for item in self.list_options():
 				if self.option(item).is_mandatory():
 					self.option(item).set_mandatory(False)
 		return True
 
 	def exit_callback(self):
+		""" end processing """
+		# TODO we should check the data integrity of the partition. If here is the place
 		# we exit without moving data
 		if self.option(self.cancel_action).get_selection():
 			return
@@ -173,10 +145,10 @@ class PartitionMenu(GeneralMenu):
 			return
 		self._conversion_to_object()
 
-	def _generic_string_editor(self, prompt, prev):
+	def _generic_string_editor(self, prompt: str, prev: Any) -> str:
 		return TextInput(prompt, prev).run()
 
-	def _generic_boolean_editor(self, prompt, prev):
+	def _generic_boolean_editor(self, prompt:str, prev: bool) -> bool:
 		if prev:
 			base_value = 'yes'
 		else:
@@ -187,11 +159,13 @@ class PartitionMenu(GeneralMenu):
 		else:
 			return False
 
-	def _show_location(self, location):
-		# return f" start : {location.pretty_print('start')}, size : {location.pretty_print('size')}"
-		return f"start {location.startInput}, size {location.sizeInput}"
+	def _show_location(self, location: StorageSlot) -> str:
+		""" a pretty way to show the location at the menu"""
+		return f"start {location.startInput}, size {location.sizeInput} ({location.sizeN})"
 
-	def _select_boot(self, prev):
+	def _select_boot(self, prev: bool) -> bool:
+		""" set the bool property """
+		# TODO this checks and changes ought  to be done at the end of processing
 		value = self._generic_boolean_editor(str(_('Set bootable partition :')), prev)
 		# only a boot per disk is allowed
 		if value and self._list:
@@ -203,15 +177,16 @@ class PartitionMenu(GeneralMenu):
 				input()
 				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
-		# problem is when we set it backwards
+		# TODO bug. Does not work as expected
 		if value and self.disk.type.upper() == 'GPT':
 			self.ds['mountpoint'] = '/boot'
 			self.ds['filesystem'] = 'FAT32'
 			self.ds['encrypted'] = False
-			self.ds['type'] = 'EFI'   # TODO this has to be done at the end of processing
+			self.ds['type'] = 'EFI'
 		return value
 
-	def _select_filesystem(self, prev):
+	def _select_filesystem(self, prev: str) -> str:
+		""" set the filesystem property"""
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = Menu(fstype_title, fs_types(), skip=False, preset_values=prev).run()
 		#  TODO broken escape control
@@ -229,7 +204,8 @@ class PartitionMenu(GeneralMenu):
 		return fstype.value
 
 	# this block is for assesing space allocation. probably it ougth to be taken off the class
-	def _get_gaps_in_disk(self, list_to_check):
+	def _get_gaps_in_disk(self, list_to_check: List[StorageSlot]) -> List[StorageSlot]:
+		""" get which gaps are in the disk """
 		if list_to_check is None:
 			tmp_list = hw_discover([self.disk.device])
 			return self._get_gaps_in_disk(tmp_list)
@@ -239,7 +215,8 @@ class PartitionMenu(GeneralMenu):
 			tmp_list = [part for part in self.disk.partition_list(list_to_check) if part != self.data]
 			return self.disk.gap_list(tmp_list)
 
-	def _get_current_gap_pos(self, gap_list, need):
+	def _get_current_gap_pos(self, gap_list: List[StorageSlot], need: StorageSlot) -> int:
+		""" we get the index of the gap where the proposed allocation (need) is """
 		if not need.start or need.start < 0:
 			return None
 		for i, gap in enumerate(gap_list):
@@ -247,18 +224,23 @@ class PartitionMenu(GeneralMenu):
 				return i
 		return None
 
-	def _adjust_size(self, original, need):
+	def _adjust_size(self, original: StorageSlot, need: StorageSlot):
+		""" we reasses the size of need after the start position is changed. Original holds the value before the change"""
 		if str(need.sizeInput).strip().endswith('%'):
 			need.sizeInput = original.sizeInput
 		newsize = need.size - (need.start - original.start)
 		need.sizeInput = units_from_model(newsize, original.sizeInput)
 
-	def _show_gaps(self, gap_list):
+	def _show_gaps(self, gap_list: List[StorageSlot]):
+		""" for header purposes """
 		screen_data = FormattedOutput.as_table_filter(gap_list, ['start', 'end', 'size', 'sizeN'])
 		print('Current free space is')
 		print(screen_data)
 
-	def _ask_for_start(self, gap_list, need):
+	def _ask_for_start(self, gap_list: List[StorageSlot], need: StorageSlot) -> str:
+		""" all the code needed for the user setting a start position
+		returns a string with the operation status quit/repeat/None
+		the size is returned at need object"""
 		pos = self._get_current_gap_pos(gap_list, need)
 		original = copy(need)
 		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
@@ -300,7 +282,10 @@ class PartitionMenu(GeneralMenu):
 			self._adjust_size(original, need)
 			return None
 
-	def _ask_for_size(self, gap_list, need):
+	def _ask_for_size(self, gap_list: List[StorageSlot], need: StorageSlot) -> str:
+		""" all the code needed for the user setting a size for the partition
+		returns a string with the operation status quit/repeat/None
+		the size is returned at need object"""
 		# TODO optional ... ask for size confirmation
 		original = copy(need)
 		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
@@ -329,7 +314,8 @@ class PartitionMenu(GeneralMenu):
 		else:
 			return 'quit'
 
-	def _select_physical(self, prev):
+	def _select_physical(self, prev: StorageSlot) -> StorageSlot:
+		""" frontend for all the code needed to allocate the partition"""
 		# from os import system
 		# an existing partition can not be physically changed
 		if self.data.uuid:
@@ -354,7 +340,7 @@ class PartitionMenu(GeneralMenu):
 					return prev
 			return my_need_full
 
-	def _manage_subvolumes(self, prev):
+	def _manage_subvolumes(self, prev: Any) -> SubvolumeList:
 		if self.option('filesystem').get_selection() != 'btrfs':
 			return []
 		if prev is None:
