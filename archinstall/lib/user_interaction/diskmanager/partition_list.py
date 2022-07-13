@@ -17,7 +17,7 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 		filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
 	else:
 		filter = field_list
-	table = FormattedOutput.as_table_filter(data,filter,'as_dict_str')
+	table = FormattedOutput.as_table(data, filter, 'as_dict_fmt')
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
 	# we're adding 2 spaces as prefix because the menu selector '> ' will be put before

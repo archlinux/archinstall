@@ -99,15 +99,24 @@ class StorageSlot:
 		return asdict(self) | non_generated
 
 	def as_dict_str(self) -> Dict:
+		""" as the former but all results are guaranteed strings"""
+		result = self.as_dict()
+		for k,v in result.items():
+			result[k] = str(v)
+		return result
+
+	def as_dict_fmt(self) -> Dict:
 		""" as the former but with a previous formatting of some fiels
-		Used as class_formatter for FormattedOutput.as_table_filter"""
+		Used as class_formatter for FormattedOutput.as_table"""
 		return field_as_string(self)
 
-	def as_dict_filter(self,filter: List[str]) -> Dict:
+	def as_dict_filter(self, filter: List[str]= None) -> Dict:
 		""" as as_dict but with only a subset of fields"""
 		# TODO there are alternate ways of code. which is the most efficient ?
 		result = {}
-		for key,value in self.as_dict_str().items():
+		if not filter:
+			return self.as_dict()
+		for key,value in self.as_dict().items():
 			if key in filter:
 				result[key] = value
 		return result
@@ -116,7 +125,8 @@ class StorageSlot:
 		""" a standard way to print start/size/end, first in sectors then normalized"""
 		b = self[request]
 		n = self[f'{request}N']
-		return f"{b} s. ({n})"
+		i = self.get(f'{request}Input','')  # end doesn't have input field
+		return f"{i} : {b} s. ({n})"
 
 	"""
 	At some points in the code is easier to handle the attributes as elements of a dict (when using a variable attribute name)

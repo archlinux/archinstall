@@ -22,11 +22,11 @@ from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Op
 if TYPE_CHECKING:
 	_: Any
 
-# TODO check real format of (mount|format)_options
 # TODO accept empty target if disk is set, to avoid the -1 stuff
 class PartitionMenu(GeneralMenu):
 	def __init__(self, target: StorageSlot, caller: Callable = None, disk: Union[DiskSlot,str] = None):
-		""" arguments
+		"""
+		Arguments
 		target  the slot we will be editing
 		caller  the routine which calls the menu. Used to extract some information if avaliable
 		disk    the disk the partition is/will be. Usually not need as it can be recovered from caller		else:
@@ -51,13 +51,21 @@ class PartitionMenu(GeneralMenu):
 
 	def _conversion_from_object(self) -> Dict[str,Any]:
 		""" from the PartitionSlot dataclass to a dict editable by a GeneralMenu derivative (a dict) """
+		# WARNING asdict converts embeded dataclasses also as dicts
 		my_dict = asdict(self.data) if isinstance(self.data, PartitionSlot) else {}
 		my_dict['location'] = StorageSlot(self.data.device, self.data.start, self.data.size)
 		del my_dict['startInput']
 		del my_dict['sizeInput']
 		if 'btrfs' in my_dict:
-			my_dict['subvolumes'] = deepcopy(my_dict['btrfs'])
+			my_dict['subvolumes'] = deepcopy(self.data.btrfs)
 			del my_dict['btrfs']
+		if 'actual_subvolumes' in my_dict:
+			my_dict['actual_subvolumes'] = deepcopy(self.data.actual_subvolumes)
+		# temporary as long as we don't have a selection list for them
+		if 'filesystem_format_options' in my_dict:
+			my_dict['filesystem_format_options'] = ','.join(self.data.filesystem_format_options)
+		if 'filesystem_mount_options' in my_dict:
+			my_dict['filesystem_mount_options'] = ','.join(self.data.filesystem_mount_options)
 		# temporary
 		if 'type' not in my_dict:
 			my_dict['type'] = 'primary'
@@ -69,10 +77,14 @@ class PartitionMenu(GeneralMenu):
 		"""
 		for item in self.ds:
 			if item == 'location':
-				self.data['startInput'] = self.ds['location'].startInput
-				self.data['sizeInput'] = self.ds['location'].sizeInput
+				self.data.startInput = self.ds['location'].startInput
+				self.data.sizeInput = self.ds['location'].sizeInput
 			elif item == 'subvolumes':
-				self.data['btrfs'] = self.ds['subvolumes']
+				self.data.btrfs = self.ds['subvolumes']
+			elif item == 'filesystem_format_options':
+				self.data.filesystem_format_options = self.ds['filesystem_format_options'].split(',')
+			elif item == 'filesystem_mount_options':
+				self.data.filesystem_mount_options = self.ds['filesystem_mount_options'].split(',')
 			else:
 				self.data[item] = self.ds[item]
 
@@ -104,6 +116,9 @@ class PartitionMenu(GeneralMenu):
 							enabled=True)
 		self._menu_options['encrypted'] = Selector(str(_("Encrypted")),
 							lambda prev: self._select_encryption(str(_('Set ENCRYPTED partition :')), prev),
+							enabled=True)
+		self._menu_options['wipe'] = Selector(str(_("Delete content")),
+							lambda prev:self._generic_boolean_editor(str(_('Do you want to wipe the contents of the partition')),prev),
 							enabled=True)
 		# readonly options
 		if self.ds.get('uuid'):
@@ -159,7 +174,11 @@ class PartitionMenu(GeneralMenu):
 			if self.ds['filesystem'].upper() != 'FAT32':
 				forgettable = False
 				status = False
-
+		if self.ds['filesystem'] == 'btrfs':
+			if self.ds['mountpoint'] and [ entry.mountpoint for entry in self.ds['subvolumes'] if entry.mountpoint]:
+				msg_lines.append(str(_("Btrfs partitions with subvolumes MUST NOT be mounted boot at root level and in subvolumes")))
+				forgettable = False
+				status = False
 		if not status:
 			errors = '\n - '.join(msg_lines)
 			if forgettable:
@@ -232,8 +251,9 @@ class PartitionMenu(GeneralMenu):
 		if not fstype.value:
 			return None
 		# changed FS means reformat if the disk exists
-		if fstype.value != prev and self.ds.get('uuid'):
-			self.ds['wipe'] = True
+		if fstype.value != self._original_data.get('filesystem','') and self.ds.get('uuid'):
+			self.option('wipe').set_current_selection(True)
+
 		if fstype.value == 'btrfs':
 			self.option('subvolumes').set_enabled(True)
 		else:
@@ -270,7 +290,7 @@ class PartitionMenu(GeneralMenu):
 
 	def _show_gaps(self, gap_list: List[StorageSlot]):
 		""" for header purposes """
-		screen_data = FormattedOutput.as_table_filter(gap_list, ['start', 'end', 'size', 'sizeN'],'as_dict_str')
+		screen_data = FormattedOutput.as_table(gap_list, ['start', 'end', 'size', 'sizeN'], 'as_dict')
 		print('Current free space is')
 		print(screen_data)
 
@@ -377,6 +397,9 @@ class PartitionMenu(GeneralMenu):
 				action = self._ask_for_size(gap_list, my_need_full)
 				if action == 'quit':
 					return prev
+			# changed size implies wipe (won't even try to resize partitions
+			if my_need_full != self._original_data['location']:
+				self.option('wipe').set_current_selection(True)
 			return my_need_full
 
 	def _manage_subvolumes(self, prev: Any) -> SubvolumeList:
