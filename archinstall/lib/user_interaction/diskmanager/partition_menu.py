@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 	_: Any
 
 # TODO check real format of (mount|format)_options
+# TODO accept empty target if disk is set, to avoid the -1 stuff
 class PartitionMenu(GeneralMenu):
 	def __init__(self, target: StorageSlot, caller: Callable = None, disk: Union[DiskSlot,str] = None):
 		""" arguments
@@ -45,11 +46,12 @@ class PartitionMenu(GeneralMenu):
 			self.disk = DiskSlot(my_disk.device, 0, my_disk.size, my_disk.partition_type)
 		self.ds = {}
 		self.ds = self._conversion_from_object()
+		self._original_data = deepcopy(self.ds)
 		super().__init__(data_store=self.ds)
 
 	def _conversion_from_object(self) -> Dict[str,Any]:
 		""" from the PartitionSlot dataclass to a dict editable by a GeneralMenu derivative (a dict) """
-		my_dict = deepcopy(asdict(self.data) if isinstance(self.data, PartitionSlot) else {})  # TODO verify independence
+		my_dict = asdict(self.data) if isinstance(self.data, PartitionSlot) else {}
 		my_dict['location'] = StorageSlot(self.data.device, self.data.start, self.data.size)
 		del my_dict['startInput']
 		del my_dict['sizeInput']
@@ -81,10 +83,8 @@ class PartitionMenu(GeneralMenu):
 									enabled=True)
 		self._menu_options['type'] = Selector(str(_("Partition type")),
 							enabled=False)
-		# TODO ensure unicity
 		self._menu_options['mountpoint'] = Selector(str(_("Mount Point")),
 							lambda prev: self._generic_string_editor(str(_('Edit Mount Point :')), prev),
-
 							dependencies=['filesystem'], enabled=True)
 		self._menu_options['filesystem'] = Selector(str(_("File System Type")),
 							self._select_filesystem,
@@ -98,12 +98,12 @@ class PartitionMenu(GeneralMenu):
 		self._menu_options['subvolumes'] = Selector(str(_("Btrfs Subvolumes")),
 							self._manage_subvolumes,
 							dependencies=['filesystem'],
-							enabled=True if self.ds.get('filesystem') == 'btrfs' else False)  # TODO only if it is btrfs
+							enabled=True if self.ds.get('filesystem') == 'btrfs' else False)
 		self._menu_options['boot'] = Selector(str(_("Is bootable")),
 							self._select_boot,
 							enabled=True)
 		self._menu_options['encrypted'] = Selector(str(_("Encrypted")),
-							lambda prev: self._generic_boolean_editor(str(_('Set ENCRYPTED partition :')), prev),
+							lambda prev: self._select_encryption(str(_('Set ENCRYPTED partition :')), prev),
 							enabled=True)
 		# readonly options
 		if self.ds.get('uuid'):
@@ -116,7 +116,7 @@ class PartitionMenu(GeneralMenu):
 								enabled=True)
 
 		self._menu_options['save'] = Selector(str(_('Save')),
-													exec_func=lambda n, v: True,
+													exec_func=lambda n, v: self._check_coherence(),
 													enabled=True)
 		self._menu_options['cancel'] = Selector(str(_('Cancel')),
 												func=lambda pre: True,
@@ -134,9 +134,43 @@ class PartitionMenu(GeneralMenu):
 					self.option(item).set_mandatory(False)
 		return True
 
+	def _check_coherence(self) -> bool:
+		""" we check if the resultimg partition slot has coherent values and can be exited"""
+		status = True
+		forgettable = True
+		msg_lines = [str(_("We have found following problems at your setup"))]
+		# we always check for space no matter what happens
+		min_size = 1
+		if self.ds['location'].size <= min_size:  # TODO whatever minimum size you want
+			msg_lines.append(str(_("Location must have a minimal size of {}".format(min_size))))
+			forgettable = False
+			status =  False
+		elif self._original_data == self.ds:
+			return True
+
+		if not self.ds['filesystem'] and self.ds['type'].lower() == 'primary':  # TODO check for MBR
+			msg_lines.append(str(_("Partition SHOULD have a filesystem ")))
+			status = False
+		if not (self.ds['mountpoint'] or self.ds['subvolumes']) and self.ds['filesystem']:
+			msg_lines.append(str(_("Partition SHOULD have a mountpoint or mounted subvolumes")))
+			status = False
+		if self.ds['boot'] and self.disk.type.upper() == 'GPT':
+			msg_lines.append(str(_("Boot partitions on GPT drives must be FAT32")))
+			if self.ds['filesystem'].upper() != 'FAT32':
+				forgettable = False
+				status = False
+
+		if not status:
+			errors = '\n - '.join(msg_lines)
+			if forgettable:
+				status = self._generic_boolean_editor(str(_('Errors found: \n{} Do you want to proceed anyway?').format(errors)),False)
+			else:
+				print(errors)
+				input()
+		return status
+
 	def exit_callback(self):
 		""" end processing """
-		# TODO we should check the data integrity of the partition. If here is the place
 		# we exit without moving data
 		if self.option(self.cancel_action).get_selection():
 			return
@@ -144,6 +178,7 @@ class PartitionMenu(GeneralMenu):
 		if self.ds.get('location') is None:
 			return
 		self._conversion_to_object()
+
 
 	def _generic_string_editor(self, prompt: str, prev: Any) -> str:
 		return TextInput(prompt, prev).run()
@@ -177,21 +212,23 @@ class PartitionMenu(GeneralMenu):
 				input()
 				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
-		# TODO bug. Does not work as expected
 		if value and self.disk.type.upper() == 'GPT':
-			self.ds['mountpoint'] = '/boot'
-			self.ds['filesystem'] = 'FAT32'
-			self.ds['encrypted'] = False
-			self.ds['type'] = 'EFI'
+			self.option('mountpoint').set_current_selection('/boot')
+			self.option('filesystem').set_current_selection('FAT32')
+			self.option('encrypted').set_current_selection(False)
+			self.option('type').set_current_selection('EFI')
 		return value
+
+	def _select_encryption(self, prev: bool) -> str:
+		""" select encrption status. Gpt drives CAN NOT have an encrypted boot """
+		if self.disk.type.upper() == 'GPT' and self.ds['boot']:
+			return False
+		return self._generic_boolean_editor(str(_('Set encryption status :')), prev)
 
 	def _select_filesystem(self, prev: str) -> str:
 		""" set the filesystem property"""
 		fstype_title = _('Enter a desired filesystem type for the partition: ')
 		fstype = Menu(fstype_title, fs_types(), skip=False, preset_values=prev).run()
-		#  TODO broken escape control
-		# if fstype.type_ == MenuSelectionType.Esc:
-		# 	return prev
 		if not fstype.value:
 			return None
 		# changed FS means reformat if the disk exists
@@ -233,7 +270,7 @@ class PartitionMenu(GeneralMenu):
 
 	def _show_gaps(self, gap_list: List[StorageSlot]):
 		""" for header purposes """
-		screen_data = FormattedOutput.as_table_filter(gap_list, ['start', 'end', 'size', 'sizeN'])
+		screen_data = FormattedOutput.as_table_filter(gap_list, ['start', 'end', 'size', 'sizeN'],'as_dict_str')
 		print('Current free space is')
 		print(screen_data)
 
@@ -252,6 +289,7 @@ class PartitionMenu(GeneralMenu):
 			starts = need.startInput
 			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
+				need = original
 				return 'quit'
 			elif starts == 'c':
 				starts = gap_list[pos].startInput
@@ -264,7 +302,7 @@ class PartitionMenu(GeneralMenu):
 			starts = need.startInput
 			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
-				return need, 'quit'
+				return 'quit'
 			elif starts == 'f':
 				starts = gap_list[0].startInput  # TODO 32 o 4K
 				pos = 0
@@ -301,10 +339,11 @@ class PartitionMenu(GeneralMenu):
 			sizes = TextInput(prompt, sizes).run()
 			sizes = sizes.strip()
 			if sizes.lower() == 'q':
+				need = original
 				return 'quit'
 			if sizes.endswith('%'):
-				# from gap percentage to disk percentage
-				pass  # TODO
+				# TODO from gap percentage to disk percentage
+				pass
 			need.sizeInput = sizes
 			if need.size > maxsize:
 				print(_('Size {} exceeds the maximum size {}'.format(need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})")))

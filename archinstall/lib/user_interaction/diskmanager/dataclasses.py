@@ -107,7 +107,7 @@ class StorageSlot:
 		""" as as_dict but with only a subset of fields"""
 		# TODO there are alternate ways of code. which is the most efficient ?
 		result = {}
-		for key,value in self.as_dict().items():
+		for key,value in self.as_dict_str().items():
 			if key in filter:
 				result[key] = value
 		return result
