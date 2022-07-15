@@ -279,7 +279,7 @@ class Partition:
 			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
 
 		try:
-			return self.block_device.uuid
+			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
 		except SysCallError as error:
 			if self.block_device.partition_type == 'iso9660':
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
