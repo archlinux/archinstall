@@ -7,8 +7,7 @@ if __name__ == '__main__':
 	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
 	# will work only with the copy at examples
 	# this solution was taken from https://stackoverflow.com/questions/714063/importing-modules-from-parent-folder/33532002#33532002
-	import os.path, sys
-	from inspect import getsourcefile
+	import sys
 	current_path = os.path.abspath(getsourcefile(lambda: 0))
 	current_dir = os.path.dirname(current_path)
 	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]

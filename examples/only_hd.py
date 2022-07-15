@@ -3,6 +3,18 @@ import logging
 import os
 import pathlib
 
+from inspect import getsourcefile
+
+if __name__ == '__main__':
+	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
+	# will work only with the copy at examples
+	# this solution was taken from https://stackoverflow.com/questions/714063/importing-modules-from-parent-folder/33532002#33532002
+	import sys
+	current_path = os.path.abspath(getsourcefile(lambda: 0))
+	current_dir = os.path.dirname(current_path)
+	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+	sys.path.append(parent_dir)
+
 import archinstall
 from archinstall import ConfigurationOutput
 
@@ -134,18 +146,24 @@ if not archinstall.check_mirror_reachable():
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
 
-config_output = ConfigurationOutput(archinstall.arguments)
-if not archinstall.arguments.get('silent'):
-	config_output.show()
-config_output.save()
+nomen = getsourcefile(lambda: 0)
+script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
 
-if archinstall.arguments.get('dry_run'):
-	exit(0)
-if not archinstall.arguments.get('silent'):
-	input('Press Enter to continue.')
+if __name__ in ('__main__',script_name):
 
-perform_disk_operations()
-perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
+
+	config_output = ConfigurationOutput(archinstall.arguments)
+	if not archinstall.arguments.get('silent'):
+		config_output.show()
+	config_output.save()
+
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
+	if not archinstall.arguments.get('silent'):
+		input('Press Enter to continue.')
+
+	perform_disk_operations()
+	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
