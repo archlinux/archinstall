@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union, List, Any
+from typing import Dict, Union, List, Any, Callable
 
 from .storage import storage
 from dataclasses import asdict, is_dataclass
