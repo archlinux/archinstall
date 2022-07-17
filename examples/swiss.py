@@ -3,8 +3,8 @@
 Script swiss (army knife)
 Designed to make different workflows for the installation process. Which is controlled by  the argument --mode
 mode full  guides the full process of installation
-mode only_hd only proceeds to the creation of the disk infraestructure (partition, mount points, encryption)
-mode only_os processes only the installation of Archlinux and software at --mountpoint (or /mnt/archinstall)
+mode disk only proceeds to the creation of the disk infraestructure (partition, mount points, encryption)
+mode software processes only the installation of Archlinux and software at --mountpoint (or /mnt/archinstall)
 mode minimal (still not implemented)
 mode lineal. Instead of a menu, shows a sequence of selection screens (eq. to the old mode for guided.py)
 
@@ -59,7 +59,7 @@ def select_activate_NTP():
 
 
 def select_mode():
-	return archinstall.generic_select(['full','only_hd','only_os','minimal','lineal'],
+	return archinstall.generic_select(['full','disk','software','minimal','lineal'],
 								'Select one execution mode',
 								default=archinstall.arguments.get('mode','full'))
 
@@ -237,10 +237,10 @@ class MyMenu(archinstall.GlobalMenu):
 			if archinstall.arguments.get('advanced',False):
 				options_list.extend(['sys-language','sys-encoding'])
 			mandatory_list = ['harddrives','bootloader','hostname']
-		elif self._execution_mode == 'only_hd':
+		elif self._execution_mode == 'disk':
 			options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
 			mandatory_list = ['harddrives']
-		elif self._execution_mode == 'only_os':
+		elif self._execution_mode == 'software':
 			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
 					'!root-password', '!users', 'profile', 'audio', 'kernels',
 					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp']
@@ -280,9 +280,9 @@ class MyMenu(archinstall.GlobalMenu):
 			return any([u.sudo for u in users])
 
 		_, missing = self.mandatory_overview()
-		if mode in ('full','only_os') and (not check('!root-password') and not has_superuser()):
+		if mode in ('full','software') and (not check('!root-password') and not has_superuser()):
 			missing += 1
-		if mode in ('full', 'only_hd') and check('harddrives'):
+		if mode in ('full', 'disk') and check('harddrives'):
 			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
 				missing += 1
 		return missing
@@ -480,14 +480,14 @@ def perform_installation(mountpoint, mode):
 	formatted and setup prior to entering this function.
 	"""
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
-		if mode in ('full','only_hd'):
+		if mode in ('full','disk'):
 			disk_setup(installation)
-			if mode == 'only_hd':
+			if mode == 'disk':
 				target = pathlib.Path(f"{mountpoint}/etc/fstab")
 				if not target.parent.exists():
 					target.parent.mkdir(parents=True)
 
-		if mode in ('full','only_os'):
+		if mode in ('full','software'):
 			os_setup(installation)
 			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
 			if not archinstall.arguments.get('silent'):
@@ -527,6 +527,6 @@ if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
 
-	if mode in ('full','only_hd'):
+	if mode in ('full','disk'):
 		perform_filesystem_operations()
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), mode)

@@ -108,7 +108,7 @@ def set_ntp_environment(installation):
 		# TODO: This block might be redundant, but this service is not activated unless
 		# `timedatectl set-ntp true` is executed.
 		logged = False
-		while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
+		while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running',):
 			if not logged:
 				installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
 				logged = True
@@ -158,7 +158,7 @@ def setup_accesibility_tools(installation):
 	if archinstall.accessibility_tools_in_use():
 		installation.enable_espeakup()
 
-def setup_root_pwd:
+def setup_root_pwd(installation):
 	if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 		installation.user_set_pw('root', root_pw)
 
@@ -214,7 +214,7 @@ def setup_services(installation):
 
 def setup_keyboard(installation, force=False):
 	if not force and archinstall.arguments.get('profile', None):
-		pass
+		return
 	# This step must be after profile installs to allow profiles to install language pre-requisites.
 	# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 	installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout', 'us'))
@@ -228,7 +228,7 @@ def perform_filesystem_operations():
 		We mention the drive one last time, and count from 5 to 0.
 		then
 		Setup the blockdevice, filesystem (and optionally encryption).
-		Once that's done, we'll hand over to perform_partition management()  and the rest of the installatin
+		Once that's done, we'll hand over to perform_installation()
 	"""
 
 	if archinstall.arguments.get('harddrives', None):
@@ -243,7 +243,7 @@ def perform_filesystem_operations():
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
-def perform_partition_management(mountpoint,installation):
+def perform_partition_management(installation):
 	# Mount all the drives to the desired mountpoint
 	# This *can* be done outside of the installation, but the installer can deal with it.
 	if archinstall.arguments.get('disk_layouts'):
@@ -290,7 +290,7 @@ def perform_installation(mountpoint,mode='full'):
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		# Mount all the drives to the desired mountpoint
 		if mode.lower() in ('full','disk'):
-			perform_partition_management(mountpoint,installation)
+			perform_partition_management(installation)
 		# setup host environment
 		if mode.lower() != 'disk':
 			set_ntp_environment(installation)
@@ -303,7 +303,7 @@ def perform_installation(mountpoint,mode='full'):
 					return
 				if mode.lower() != 'recover':
 					perform_basic_setup(installation)
-					install_users(installation)
+					setup_users(installation)
 			if mode.lower() != 'recover':
 				perform_additional_software_setup(installation)
 			# This step must be after profile installs to allow profiles to install language pre-requisits.
