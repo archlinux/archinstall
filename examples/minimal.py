@@ -1,75 +1,76 @@
+import os
+import logging
+from inspect import getsourcefile
+
+if __name__ == '__main__':
+	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
+	# will work only with the copy at examples
+	# this solution was taken from https://stackoverflow.com/questions/714063/importing-modules-from-parent-folder/33532002#33532002
+	import sys
+	current_path = os.path.abspath(getsourcefile(lambda: 0))
+	current_dir = os.path.dirname(current_path)
+	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+	sys.path.append(parent_dir)
+
 import archinstall
-
-# Select a harddrive and a disk password
-from archinstall import User
-
-archinstall.log("Minimal only supports:")
-archinstall.log(" * Being installed to a single disk")
+from archinstall.lib.models import NetworkConfiguration
+import archinstall.examples.guided as guided
 
 if archinstall.arguments.get('help', None):
 	archinstall.log(" - Optional disk encryption via --!encryption-password=<password>")
-	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
 	archinstall.log(" - Optional systemd network via --network")
+	archinstall.log(" - Optional keyboard layout via --keyboard-layout=<code>")
 
-archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_blockdevices())
-
-
-def install_on(mountpoint):
-	# We kick off the installer by telling it where the
-	with archinstall.Installer(mountpoint) as installation:
-		# Strap in the base system, add a boot loader and configure
-		# some other minor details as specified by this profile and user.
-		if installation.minimal_installation():
-			installation.set_hostname('minimal-arch')
-			installation.add_bootloader()
-
-			# Optionally enable networking:
-			if archinstall.arguments.get('network', None):
-				installation.copy_iso_network_config(enable_services=True)
-
-			installation.add_additional_packages(['nano', 'wget', 'git'])
-			installation.install_profile('minimal')
-
-			user = User('devel', 'devel', False)
-			installation.create_users(user)
-
-	# Once this is done, we output some useful information to the user
-	# And the installation is complete.
-	archinstall.log("There are two new accounts in your installation after reboot:")
-	archinstall.log(" * root (password: airoot)")
-	archinstall.log(" * devel (password: devel)")
-
-
-if archinstall.arguments['harddrive']:
-	archinstall.arguments['harddrive'].keep_partitions = False
-
-	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
-	archinstall.do_countdown()
-
-	# First, we configure the basic filesystem layout
-	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
-		# We use the entire disk instead of setting up partitions on your own
-		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
-
-		boot = fs.find_partition('/boot')
-		root = fs.find_partition('/')
-
-		boot.format('fat32')
-
-		# We encrypt the root partition if we got a password to do so with,
-		# Otherwise we just skip straight to formatting and installation
-		if archinstall.arguments.get('!encryption-password', None):
-			root.encrypted = True
-			root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
-
-			with archinstall.luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
-				unlocked_root.format(root.filesystem)
-				unlocked_root.mount('/mnt')
+nomen = getsourcefile(lambda: 0)
+script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
+#
+# script specific code
+#
+def ask_user_questions():
+	arguments = archinstall.arguments
+	storage   = archinstall.storage
+	# if we have a disk layouts files we use it (thus we create a minimal test environment fuor a given setup)
+	if not arguments['disk_layouts']:
+		arguments['harddrives'] = archinstall.select_harddrives(None)
+		if len(arguments['harddrives']) == 1:
+			arguments['disk_layouts'] = archinstall.suggest_single_disk_layout(arguments['harddrives'][0])
 		else:
-			root.format(root.filesystem)
-			root.mount('/mnt')
+			arguments['disk_layouts'] = archinstall.suggest_multi_disk_layout(arguments['harddrives'])
+	arguments['hostname'] = 'arch-minimal'
+	arguments['!root-password'] = 'airoot'
+	arguments['additional-packages'] = ['nano','wget','vim']
+	arguments['!users'] = [archinstall.User('devel', 'devel', False)]
+	arguments['profile'] = archinstall.Profile(None, 'minimal')
+	if archinstall.has_uefi():
+		arguments['bootloader'] = 'systemd-bootctl'
+	else:
+		arguments['bootloader'] = 'grub-install'
+	# TODO network setup
+	if arguments.get('network'):
+		arguments['nic'] = [NetworkConfiguration(dhcp = True,
+			dns = None,
+			gateway = None,
+			iface = None,
+			ip = None,
+			type = "iso")]
 
-		boot.mount('/mnt/boot')
+if __name__ in ('__main__',script_name):
+	if not archinstall.arguments.get('silent'):
+		ask_user_questions()
 
-install_on('/mnt')
+	config_output = archinstall.ConfigurationOutput(archinstall.arguments)
+	if not archinstall.arguments.get('silent'):
+		config_output.show()
+	config_output.save()
+
+	if archinstall.arguments.get('dry_run'):
+		exit(0)
+
+	if not archinstall.arguments.get('silent'):
+		input(str(_('Press Enter to continue.')))
+
+	archinstall.configuration_sanity_check()
+	guided.perform_filesystem_operations()
+	guided.perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+	# For support reasons, we'll log the disk layout post installation (crash or no crash)
+	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
