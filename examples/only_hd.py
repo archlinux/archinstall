@@ -5,7 +5,7 @@ import pathlib
 
 from inspect import getsourcefile
 
-from archinstall.examples.guided import perform_filesystem_operations, perform_installation
+
 
 if __name__ == '__main__':
 	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
 import archinstall
 from archinstall import ConfigurationOutput
-
+from archinstall.examples.guided import perform_filesystem_operations, perform_installation
 
 
 class OnlyHDMenu(archinstall.GlobalMenu):

@@ -17,6 +17,7 @@ from archinstall.lib.models import NetworkConfiguration
 import archinstall.examples.guided as guided
 
 if archinstall.arguments.get('help', None):
+	archinstall.log(" - Alternate disk layout    via -- disk_layouts = <json_file>")
 	archinstall.log(" - Optional disk encryption via --!encryption-password=<password>")
 	archinstall.log(" - Optional systemd network via --network")
 	archinstall.log(" - Optional keyboard layout via --keyboard-layout=<code>")
@@ -74,3 +75,8 @@ if __name__ in ('__main__',script_name):
 	guided.perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+	# Once this is done, we output some useful information to the user
+	# And the installation is complete.
+	archinstall.log("There are two new accounts in your installation after reboot:")
+	archinstall.log(" * root (password: airoot)")
+	archinstall.log(" * devel (password: devel)")
