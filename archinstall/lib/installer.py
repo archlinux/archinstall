@@ -631,7 +631,7 @@ class Installer:
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
 
-			if not storage['arguments']['HSM']:
+			if not storage['arguments'].get('HSM',None):
 				# For now, if we don't use HSM we revert to the old
 				# way of setting up encryption hooks for mkinitcpio.
 				# This is purely for stability reasons, we're going away from this.
@@ -737,7 +737,7 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		if storage['arguments']['HSM']:
+		if storage['arguments'].get('HSM',None):
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.

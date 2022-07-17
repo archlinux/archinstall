@@ -17,24 +17,6 @@ import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
-if os.getuid() != 0:
-	print(_("Archinstall requires root privileges to run. See --help for more."))
-	exit(1)
-
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
-
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -137,148 +119,183 @@ def perform_filesystem_operations():
 				with archinstall.Filesystem(drive, mode) as fs:
 					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
+def perform_partition_management(mountpoint,installation):
+	# Mount all the drives to the desired mountpoint
+	# This *can* be done outside of the installation, but the installer can deal with it.
+	if archinstall.arguments.get('disk_layouts'):
+		installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
 
-def perform_installation(mountpoint):
+	# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
+	for partition in installation.partitions:
+		if partition.mountpoint == installation.target + '/boot':
+			if partition.size < 0.19:  # ~200 MiB in GiB
+				raise archinstall.DiskError(
+					f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
+
+def set_ntp_environment(installation):
+	# If we've activated NTP, make sure it's active in the ISO too and
+	# make sure at least one time-sync finishes before we continue with the installation
+	if archinstall.arguments.get('ntp', False):
+		# Activate NTP in the ISO
+		archinstall.SysCommand('timedatectl set-ntp true')
+
+		# TODO: This block might be redundant, but this service is not activated unless
+		# `timedatectl set-ntp true` is executed.
+		logged = False
+		while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
+			if not logged:
+				installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
+				logged = True
+			time.sleep(1)
+
+		logged = False
+		while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
+			if not logged:
+				installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
+				logged = True
+			time.sleep(1)
+
+def set_pacstrap_mirrors():
+	# Set mirrors used by pacstrap (outside of installation)
+	if archinstall.arguments.get('mirror-region', None):
+		archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+
+def basic_system_setup(installation):
+	installation.set_hostname(archinstall.arguments['hostname'])
+	if archinstall.arguments.get('mirror-region',{}).get("mirrors", None) is not None:
+		installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+	if archinstall.arguments.get('swap'):
+		installation.setup_swap('zram')
+	if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
+		installation.add_additional_packages("grub")
+	installation.add_bootloader(archinstall.arguments["bootloader"])
+	# If user selected to copy the current ISO network configuration
+	# Perform a copy of the config
+	network_config = archinstall.arguments.get('nic', None)
+
+	if network_config:
+		handler = NetworkConfigurationHandler(network_config)
+		handler.config_installer(installation)
+
+	if timezone := archinstall.arguments.get('timezone', None):
+		installation.set_timezone(timezone)
+
+	if archinstall.arguments.get('ntp', False):
+		installation.activate_time_syncronization()
+
+	if archinstall.accessibility_tools_in_use():
+		installation.enable_espeakup()
+
+	if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
+		installation.user_set_pw('root', root_pw)
+
+	if archinstall.arguments.get('audio', None) is not None:
+		installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",
+						 level=logging.INFO)
+		if archinstall.arguments.get('audio', None) == 'pipewire':
+			archinstall.Application(installation, 'pipewire').install()
+		elif archinstall.arguments.get('audio', None) == 'pulseaudio':
+			print('Installing pulseaudio ...')
+			installation.add_additional_packages("pulseaudio")
+	else:
+		installation.log("No audio server will be installed.", level=logging.INFO)
+
+def users_definition(installation):
+	if users := archinstall.arguments.get('!users', None):
+		installation.create_users(users)
+
+def software_setup(installation):
+
+	if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+		installation.add_additional_packages(archinstall.arguments.get('packages', None))
+
+	if archinstall.arguments.get('profile', None):
+		installation.install_profile(archinstall.arguments.get('profile', None))
+
+	# This step must be after profile installs to allow profiles to install language pre-requisits.
+	# After which, this step will set the language both for console and x11 if x11 was installed for instance.
+	installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout','us'))
+
+	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
+		with archinstall.arguments['profile'].load_instructions(
+			namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
+			if not imported._post_install():
+				archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
+				exit(1)
+
+	# If the user provided a list of services to be enabled, pass the list to the enable_service function.
+	# Note that while it's called enable_service, it can actually take a list of services and iterate it.
+	if archinstall.arguments.get('services', None):
+		installation.enable_service(*archinstall.arguments['services'])
+
+def perform_installation(mountpoint,mode='full'):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
+	Planned modes:
+	Full install (default)
+	Recover      (pacstrap and minimal setup. No user definition
+	disk         only disk layout(
+	software     software
 	"""
-
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		# Mount all the drives to the desired mountpoint
-		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.arguments.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
-
-		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
-		for partition in installation.partitions:
-			if partition.mountpoint == installation.target + '/boot':
-				if partition.size < 0.19: # ~200 MiB in GiB
-					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
-
-		# if len(mirrors):
-		# Certain services might be running that affects the system during installation.
-		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while archinstall.service_state('reflector') not in ('dead', 'failed'):
-			time.sleep(1)
-
-		# If we've activated NTP, make sure it's active in the ISO too and
-		# make sure at least one time-sync finishes before we continue with the installation
-		if archinstall.arguments.get('ntp', False):
-			# Activate NTP in the ISO
-			archinstall.SysCommand('timedatectl set-ntp true')
-
-			# TODO: This block might be redundant, but this service is not activated unless
-			# `timedatectl set-ntp true` is executed.
-			logged = False
-			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
-				if not logged:
-					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-					logged = True
-				time.sleep(1)
-
-			logged = False
-			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-				if not logged:
-					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-					logged = True
-				time.sleep(1)
-
-		# Set mirrors used by pacstrap (outside of installation)
-		if archinstall.arguments.get('mirror-region', None):
-			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-
-		# Retrieve list of additional repositories and set boolean values appropriately
-		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
-		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
-
-		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
-			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
-			installation.set_hostname(archinstall.arguments['hostname'])
-			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments['swap']:
-				installation.setup_swap('zram')
-			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
-				installation.add_additional_packages("grub")
-			installation.add_bootloader(archinstall.arguments["bootloader"])
-
-			# If user selected to copy the current ISO network configuration
-			# Perform a copy of the config
-			network_config = archinstall.arguments.get('nic', None)
-
-			if network_config:
-				handler = NetworkConfigurationHandler(network_config)
-				handler.config_installer(installation)
-
-			if archinstall.arguments.get('audio', None) is not None:
-				installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}", level=logging.INFO)
-				if archinstall.arguments.get('audio', None) == 'pipewire':
-					archinstall.Application(installation, 'pipewire').install()
-				elif archinstall.arguments.get('audio', None) == 'pulseaudio':
-					print('Installing pulseaudio ...')
-					installation.add_additional_packages("pulseaudio")
-			else:
-				installation.log("No audio server will be installed.", level=logging.INFO)
-
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', None))
-
-			if archinstall.arguments.get('profile', None):
-				installation.install_profile(archinstall.arguments.get('profile', None))
-
-			if users := archinstall.arguments.get('!users', None):
-				installation.create_users(users)
-
-			if timezone := archinstall.arguments.get('timezone', None):
-				installation.set_timezone(timezone)
-
-			if archinstall.arguments.get('ntp', False):
-				installation.activate_time_syncronization()
-
-			if archinstall.accessibility_tools_in_use():
-				installation.enable_espeakup()
-
-			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
-				installation.user_set_pw('root', root_pw)
-
+		if mode.lower() in ('full','disk'):
+			perform_partition_management(mountpoint,installation)
+		# setup host environment
+		if mode.lower() != 'disk':
+			set_ntp_environment(installation)
+			set_pacstrap_mirrors()
+			# Retrieve list of additional repositories and set boolean values appropriately
+			enable_testing = 'testing' in archinstall.arguments.get('additional-repositories',[])
+			enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories',[])
+			if mode.lower() != 'software':
+				if not installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
+					return
+				if mode.lower() != 'recover':
+					basic_system_setup(installation)
+					users_definition(installation)
+			if mode.lower() != 'recover':
+				software_setup(installation)
 			# This step must be after profile installs to allow profiles to install language pre-requisits.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+			installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout','us'))
+			# If the user provided custom commands to be run post-installation, execute them now.
+			if archinstall.arguments.get('custom-commands', None):
+				archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
-			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
-				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
-					if not imported._post_install():
-						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
-						exit(1)
+			installation.genfstab()
 
-		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
-		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
-		if archinstall.arguments.get('services', None):
-			installation.enable_service(*archinstall.arguments['services'])
+			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+			if not archinstall.arguments.get('silent'):
+				prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+				if choice == Menu.yes():
+					try:
+						installation.drop_to_shell()
+					except:
+						pass
 
-		# If the user provided custom commands to be run post-installation, execute them now.
-		if archinstall.arguments.get('custom-commands', None):
-			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
+#
+# initalization steps Executed once per session
+#
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
+if os.getuid() != 0:
+	print(_("Archinstall requires root privileges to run. See --help for more."))
+	exit(1)
 
-		installation.genfstab()
+# Log various information about hardware before starting the installation. This might assist in troubleshooting
+archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
+archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
+archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
+archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
+archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
-		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
-		if not archinstall.arguments.get('silent'):
-			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice == Menu.yes():
-				try:
-					installation.drop_to_shell()
-				except:
-					pass
-
-	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-mirror-check', False)):
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
@@ -293,6 +310,7 @@ if not archinstall.arguments['offline']:
 	if archinstall.arguments.get('skip-keyring-update', False) is False and \
 		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
 
+
 		# Then we update the keyring in the ISO environment
 		if not archinstall.update_keyring():
 			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
@@ -301,7 +319,9 @@ if not archinstall.arguments['offline']:
 
 nomen = getsourcefile(lambda: 0)
 script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
-
+#
+# script specific code
+#
 if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
@@ -320,3 +340,5 @@ if __name__ in ('__main__',script_name):
 	archinstall.configuration_sanity_check()
 	perform_filesystem_operations()
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+	# For support reasons, we'll log the disk layout post installation (crash or no crash)
+	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
