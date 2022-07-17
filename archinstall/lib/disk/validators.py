@@ -1,7 +1,7 @@
 from typing import List
 
 def valid_parted_position(pos :str) -> bool:
-	if not pos:
+	if not len(pos):
 		return False
 
 	if pos.isdigit():
