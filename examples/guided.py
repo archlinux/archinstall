@@ -95,43 +95,9 @@ def ask_user_questions():
 
 	global_menu.run()
 
-
-def perform_filesystem_operations():
-	"""
-		Issue a final warning before we continue with something un-revertable.
-		We mention the drive one last time, and count from 5 to 0.
-	"""
-
-	if archinstall.arguments.get('harddrives', None):
-		print(_(f" ! Formatting {archinstall.arguments['harddrives']} in "), end='')
-		archinstall.do_countdown()
-
-		"""
-			Setup the blockdevice, filesystem (and optionally encryption).
-			Once that's done, we'll hand over to perform_installation()
-		"""
-		mode = archinstall.GPT
-		if archinstall.has_uefi() is False:
-			mode = archinstall.MBR
-
-		for drive in archinstall.arguments.get('harddrives', []):
-			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
-				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
-
-def perform_partition_management(mountpoint,installation):
-	# Mount all the drives to the desired mountpoint
-	# This *can* be done outside of the installation, but the installer can deal with it.
-	if archinstall.arguments.get('disk_layouts'):
-		installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
-
-	# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
-	for partition in installation.partitions:
-		if partition.mountpoint == installation.target + '/boot':
-			if partition.size < 0.19:  # ~200 MiB in GiB
-				raise archinstall.DiskError(
-					f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
-
+#
+# this block of routines (those called set_* are to set up parts of the HOST environment for a correct installation
+#
 def set_ntp_environment(installation):
 	# If we've activated NTP, make sure it's active in the ISO too and
 	# make sure at least one time-sync finishes before we continue with the installation
@@ -160,15 +126,43 @@ def set_pacstrap_mirrors():
 	if archinstall.arguments.get('mirror-region', None):
 		archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
-def basic_system_setup(installation):
+#
+# Those sets of routines (setup_*) are for setting up in the TARGET environmment individual arguments (or a set of closely linked ones
+# They all use the Installation instance as the first (and mostly unique) argument
+#
+def setup_hostname(installation):
 	installation.set_hostname(archinstall.arguments['hostname'])
+
+def setup_mirrors(installation):
 	if archinstall.arguments.get('mirror-region',{}).get("mirrors", None) is not None:
 		installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+
+def setup_swap(installation):
 	if archinstall.arguments.get('swap'):
 		installation.setup_swap('zram')
+
+def setup_bootloader(installation):
 	if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
 		installation.add_additional_packages("grub")
 	installation.add_bootloader(archinstall.arguments["bootloader"])
+
+def setup_timezone(installation):
+	if timezone := archinstall.arguments.get('timezone', None):
+		installation.set_timezone(timezone)
+
+def setup_ntp(installation):
+	if archinstall.arguments.get('ntp', False):
+		installation.activate_time_syncronization()
+
+def setup_accesibility_tools(installation):
+	if archinstall.accessibility_tools_in_use():
+		installation.enable_espeakup()
+
+def setup_root_pwd:
+	if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
+		installation.user_set_pw('root', root_pw)
+
+def setup_network(installation):
 	# If user selected to copy the current ISO network configuration
 	# Perform a copy of the config
 	network_config = archinstall.arguments.get('nic', None)
@@ -177,18 +171,7 @@ def basic_system_setup(installation):
 		handler = NetworkConfigurationHandler(network_config)
 		handler.config_installer(installation)
 
-	if timezone := archinstall.arguments.get('timezone', None):
-		installation.set_timezone(timezone)
-
-	if archinstall.arguments.get('ntp', False):
-		installation.activate_time_syncronization()
-
-	if archinstall.accessibility_tools_in_use():
-		installation.enable_espeakup()
-
-	if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
-		installation.user_set_pw('root', root_pw)
-
+def setup_audio(installation):
 	if archinstall.arguments.get('audio', None) is not None:
 		installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",
 						 level=logging.INFO)
@@ -200,22 +183,20 @@ def basic_system_setup(installation):
 	else:
 		installation.log("No audio server will be installed.", level=logging.INFO)
 
-def users_definition(installation):
+def setup_users(installation):
 	if users := archinstall.arguments.get('!users', None):
 		installation.create_users(users)
 
-def software_setup(installation):
 
+def setup_packages(installation):
 	if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 		installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
+
+def setup_profiles(installation):
 	if archinstall.arguments.get('profile', None):
 		installation.install_profile(archinstall.arguments.get('profile', None))
-
-	# This step must be after profile installs to allow profiles to install language pre-requisits.
-	# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-	installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout','us'))
-
+	setup_keyboard(installation, force=True)
 	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
 		with archinstall.arguments['profile'].load_instructions(
 			namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
@@ -223,13 +204,80 @@ def software_setup(installation):
 				archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 				exit(1)
 
+
+def setup_services(installation):
 	# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 	# Note that while it's called enable_service, it can actually take a list of services and iterate it.
 	if archinstall.arguments.get('services', None):
 		installation.enable_service(*archinstall.arguments['services'])
 
+
+def setup_keyboard(installation, force=False):
+	if not force and archinstall.arguments.get('profile', None):
+		pass
+	# This step must be after profile installs to allow profiles to install language pre-requisites.
+	# After which, this step will set the language both for console and x11 if x11 was installed for instance.
+	installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout', 'us'))
+
+#
+#  Those set of routines (perform _*) do some complex tasks during installation or group the previous setup* functions
+#   to be called as blocks
+def perform_filesystem_operations():
+	"""
+		Issue a final warning before we continue with something un-revertable.
+		We mention the drive one last time, and count from 5 to 0.
+		then
+		Setup the blockdevice, filesystem (and optionally encryption).
+		Once that's done, we'll hand over to perform_partition management()  and the rest of the installatin
+	"""
+
+	if archinstall.arguments.get('harddrives', None):
+		print(_(f" ! Formatting {archinstall.arguments['harddrives']} in "), end='')
+		archinstall.do_countdown()
+		# setup the block device
+		mode = archinstall.GPT
+		if archinstall.has_uefi() is False:
+			mode = archinstall.MBR
+		for drive in archinstall.arguments.get('harddrives', []):
+			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
+				with archinstall.Filesystem(drive, mode) as fs:
+					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
+
+def perform_partition_management(mountpoint,installation):
+	# Mount all the drives to the desired mountpoint
+	# This *can* be done outside of the installation, but the installer can deal with it.
+	if archinstall.arguments.get('disk_layouts'):
+		installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
+
+	# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
+	for partition in installation.partitions:
+		if partition.mountpoint == installation.target + '/boot':
+			if partition.size < 0.19:  # ~200 MiB in GiB
+				raise archinstall.DiskError(
+					f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
+
+def perform_basic_setup(installation):
+	setup_hostname(installation)
+	setup_swap(installation)
+	setup_bootloader(installation)
+	setup_timezone(installation)
+	setup_ntp(installation)
+	setup_accesibility_tools(installation)
+	setup_root_pwd(installation)
+	setup_network(installation)
+	setup_audio(installation)
+	setup_keyboard(installation)
+
+
+def perform_additional_software_setup(installation):
+	setup_packages(installation)
+	setup_profiles(installation)
+	setup_services(installation)
+
+
 def perform_installation(mountpoint,mode='full'):
 	"""
+	This is the main installation routine
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
@@ -254,10 +302,10 @@ def perform_installation(mountpoint,mode='full'):
 				if not installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 					return
 				if mode.lower() != 'recover':
-					basic_system_setup(installation)
-					users_definition(installation)
+					perform_basic_setup(installation)
+					install_users(installation)
 			if mode.lower() != 'recover':
-				software_setup(installation)
+				perform_additional_software_setup(installation)
 			# This step must be after profile installs to allow profiles to install language pre-requisits.
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(archinstall.arguments.get('keyboard-layout','us'))
@@ -268,7 +316,7 @@ def perform_installation(mountpoint,mode='full'):
 			installation.genfstab()
 
 			installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
-			if not archinstall.arguments.get('silent'):
+			if not archinstall.arguments.get('silent') and mode == 'full':
 				prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 				if choice == Menu.yes():
