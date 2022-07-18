@@ -29,7 +29,7 @@ script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
 #
 def ask_user_questions():
 	arguments = archinstall.arguments
-	storage   = archinstall.storage
+	# storage = archinstall.storage
 	# if we have a disk layouts files we use it (thus we create a minimal test environment fuor a given setup)
 	if not arguments['disk_layouts']:
 		arguments['harddrives'] = archinstall.select_harddrives(None)
@@ -48,12 +48,13 @@ def ask_user_questions():
 		arguments['bootloader'] = 'grub-install'
 	# TODO network setup
 	if arguments.get('network'):
-		arguments['nic'] = [NetworkConfiguration(dhcp = True,
-			dns = None,
-			gateway = None,
-			iface = None,
-			ip = None,
-			type = "iso")]
+		arguments['nic'] = [NetworkConfiguration(dhcp=True,
+			dns=None,
+			gateway=None,
+			iface=None,
+			ip=None,
+			type="iso")]
+
 
 if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):

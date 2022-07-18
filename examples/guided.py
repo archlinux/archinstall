@@ -174,7 +174,7 @@ def setup_network(installation):
 def setup_audio(installation):
 	if archinstall.arguments.get('audio', None) is not None:
 		installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",
-						 level=logging.INFO)
+						level=logging.INFO)
 		if archinstall.arguments.get('audio', None) == 'pipewire':
 			archinstall.Application(installation, 'pipewire').install()
 		elif archinstall.arguments.get('audio', None) == 'pulseaudio':
@@ -328,6 +328,8 @@ def perform_installation(mountpoint,mode='full'):
 #
 # initalization steps Executed once per session
 #
+
+
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
@@ -357,19 +359,19 @@ if not archinstall.arguments['offline']:
 	# and the installed package version is lower than the upstream version
 	if archinstall.arguments.get('skip-keyring-update', False) is False and \
 		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
-
-
 		# Then we update the keyring in the ISO environment
 		if not archinstall.update_keyring():
 			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 			exit(1)
 
+#
+# script specific code:
+#  this is the main loop code
+#  If you want to create the script copy this, add an import archinstall.example.guided or similar statements and start adapting it
+#
 nomen = getsourcefile(lambda: 0)
 script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
-#
-# script specific code
-#
 if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()

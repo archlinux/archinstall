@@ -15,9 +15,9 @@ This script respects the --dry_run argument
 """
 import logging
 import os
-import time
-import pathlib
 from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+	_: Any
 
 from inspect import getsourcefile
 
@@ -31,21 +31,9 @@ if __name__ == '__main__':
 	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
 	sys.path.append(parent_dir)
 
-
 import archinstall
-from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
+from archinstall import ConfigurationOutput, Menu
 from archinstall.examples.guided import perform_filesystem_operations, perform_installation
-
-
-if TYPE_CHECKING:
-	_: Any
-
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
-if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
-	exit(1)
 
 """
 particular routines to SetupMenu
@@ -298,7 +286,6 @@ class MyMenu(archinstall.GlobalMenu):
 	def _update_install_text(self, mode='full'):
 		text = self._install_text(mode)
 		self.option('install').update_description(text)
-
 
 
 def ask_user_questions(mode):

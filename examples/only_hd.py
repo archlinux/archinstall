@@ -1,11 +1,7 @@
-
 import logging
 import os
-import pathlib
 
 from inspect import getsourcefile
-
-
 
 if __name__ == '__main__':
 	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
@@ -81,6 +77,7 @@ def ask_user_questions():
 # script specific code
 #
 
+
 nomen = getsourcefile(lambda: 0)
 script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
 #
@@ -104,4 +101,3 @@ if __name__ in ('__main__',script_name):
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'),'disk')
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
