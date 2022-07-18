@@ -46,7 +46,6 @@ def ask_user_questions():
 	global_menu.enable('harddrives')
 
 	global_menu.enable('disk_layouts')
-
 	# Get disk encryption password (or skip if blank)
 	global_menu.enable('!encryption-password')
 

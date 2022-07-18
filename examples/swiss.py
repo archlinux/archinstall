@@ -220,30 +220,32 @@ class MyMenu(archinstall.GlobalMenu):
 		options_list = []
 		mandatory_list = []
 		if self._execution_mode in ('full','lineal'):
-			options_list = ['keyboard-layout', 'mirror-region', 'harddrives', 'disk_layouts',
-					'!encryption-password','swap', 'bootloader', 'hostname', '!root-password',
-					'!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
-					'timezone', 'ntp']
-			if archinstall.arguments.get('advanced',False):
-				options_list.extend(['sys-language','sys-encoding'])
-			mandatory_list = ['harddrives','bootloader','hostname']
+			options_list = ['keyboard-layout', 'mirror-region', 'sys-language',
+							'sys-encoding','harddrives', 'disk_layouts','!encryption-password', 'bootloader', 'swap',
+							'hostname', '!root-password', '!users','profile', 'audio', 'kernels',
+							'packages', 'nic', 'timezone', 'ntp', 'additional-repositories']
+			if archinstall.arguments.get('advanced',False) or archinstall.arguments.get('HSM',False):
+				options_list.append('HSM')
+			mandatory_list = ['bootloader','hostname']
 		elif self._execution_mode == 'disk':
 			options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
-			mandatory_list = ['harddrives']
+			if archinstall.arguments.get('advanced',False) or archinstall.arguments.get('HSM',False):
+				options_list.append('HSM')
+			mandatory_list = []
 		elif self._execution_mode == 'software':
-			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
-					'!root-password', '!users', 'profile', 'audio', 'kernels',
-					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp']
+			self._disk_check = False
+			options_list = ['keyboard-layout', 'mirror-region', 'sys-language',
+							'sys-encoding',
+							'hostname', '!root-password', '!users','profile', 'audio', 'kernels',
+							'packages', 'nic', 'timezone', 'ntp', 'additional-repositories']
 			mandatory_list = ['hostname']
-			if archinstall.arguments.get('advanced',False):
-				options_list.extend(['sys-language','sys-encoding'])
-		elif self._execution_mode == 'minimal':
+		elif self._execution_mode == 'recover':
 			pass
 		else:
 			archinstall.log(f"self._execution_mode {self._execution_mode} not supported")
 			exit(1)
 		if self._execution_mode != 'lineal':
-			options_list.extend(['save_config','install','abort'])
+			options_list.extend(['__separator__','save_config','install','abort'])
 			if not archinstall.arguments.get('advanced'):
 				options_list.append('archinstall-language')
 
@@ -259,9 +261,9 @@ class MyMenu(archinstall.GlobalMenu):
 		self._update_install_text()
 
 	def post_callback(self,option=None,value=None):
-		self._update_install_text(self._execution_mode)
+		self._update_install_text()
 
-	def _missing_configs(self,mode='full'):
+	def _missing_configs(self):
 		def check(s):
 			return self.option(s).has_selection()
 
@@ -269,22 +271,28 @@ class MyMenu(archinstall.GlobalMenu):
 			users = self._menu_options['!users'].current_selection
 			return any([u.sudo for u in users])
 
-		_, missing = self.mandatory_overview()
-		if mode in ('full','software') and (not check('!root-password') and not has_superuser()):
-			missing += 1
-		if mode in ('full', 'disk') and check('harddrives'):
-			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
+		mandatory_nr, missing_ones, missing = self.mandatory_overview()
+		if self._disk_check :
+			if not check('harddrives'):
+				missing += [str(_('Drive(s)'))]
+			if check('harddrives'):
+				if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
+					missing += [str(_('Disk layout'))]
+
+		if self._execution_mode in ('full','software'):
+			if not check('!root-password') and not has_superuser():
+				missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
+
 		return missing
 
-	def _install_text(self,mode='full'):
-		missing = self._missing_configs(mode)
+	def _install_text(self):
+		missing = len(self._missing_configs())
 		if missing > 0:
-			return f'Instalation ({missing} config(s) missing)'
-		return 'Install'
+			return _('Install ({} config(s) missing)').format(missing)
+		return _('Install')
 
-	def _update_install_text(self, mode='full'):
-		text = self._install_text(mode)
+	def _update_install_text(self):
+		text = self._install_text()
 		self.option('install').update_description(text)
 
 
@@ -324,10 +332,10 @@ def ask_user_questions(mode):
 		else:
 			global_menu.set_option('install',
 							archinstall.Selector(
-								global_menu._install_text(mode),
-								exec_func=lambda n,v: True if global_menu._missing_configs(mode) == 0 else False,
-								enabled=True))
-
+								global_menu._install_text(),
+								exec_func=lambda n,v: True if global_menu._missing_configs() == 0 else False,
+								preview_func=global_menu._prev_install_missing_config,
+								no_store=True, enabled=True))
 			global_menu.run()
 
 
@@ -335,7 +343,6 @@ nomen = getsourcefile(lambda: 0)
 script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
 
 if __name__ in ('__main__',script_name):
-
 	mode = archinstall.arguments.get('mode', 'full').lower()
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions(mode)
