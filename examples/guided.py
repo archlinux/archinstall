@@ -275,7 +275,7 @@ def perform_additional_software_setup(installation):
 	setup_services(installation)
 
 
-def perform_installation(mountpoint,mode='full'):
+def perform_installation_base(mountpoint,mode='full'):
 	"""
 	This is the main installation routine
 	Performs the installation steps on a block device.
@@ -324,6 +324,65 @@ def perform_installation(mountpoint,mode='full'):
 						installation.drop_to_shell()
 					except:
 						pass
+def perform_installation(mountpoint,mode='full'):
+	"""
+	This is the main installation routine
+	Performs the installation steps on a block device.
+	Only requirement is that the block devices are
+	formatted and setup prior to entering this function.
+	Planned modes:
+	Full install (default)
+	Recover      (pacstrap and minimal setup. No user definition
+	disk         only disk layout(
+	software     software
+	"""
+	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
+		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
+		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
+		match mode.lower():
+			case 'full':
+				perform_partition_management(installation)
+				set_ntp_environment(installation)
+				set_pacstrap_mirrors()
+				if not installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
+					return
+				perform_basic_setup(installation)
+				setup_users(installation)
+				perform_additional_software_setup(installation)
+			case 'disk':
+				perform_partition_management(installation)
+			case 'software':
+				set_pacstrap_mirrors()
+				if not installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
+					return
+				perform_basic_setup(installation)
+				setup_users(installation)
+				perform_additional_software_setup(installation)
+			case 'recover':
+				archinstall.log(f"mode {mode} not implemeted")
+				exit(1)
+				if not installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
+					return
+				perform_basic_setup(installation)
+			case _:
+				archinstall.log(f"mode {mode} not existant")
+				exit(1)
+
+		if archinstall.arguments.get('custom-commands', None):
+			archinstall.run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
+
+		installation.genfstab()
+
+		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+
+		if not archinstall.arguments.get('silent') and mode == 'full':
+			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
+			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+			if choice == Menu.yes():
+				try:
+					installation.drop_to_shell()
+				except:
+					pass
 
 #
 # initalization steps Executed once per session
