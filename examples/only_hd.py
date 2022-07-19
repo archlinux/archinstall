@@ -97,7 +97,7 @@ if __name__ in ('__main__',script_name):
 		input(str(_('Press Enter to continue.')))
 
 	archinstall.configuration_sanity_check()
-	perform_filesystem_operations()
+	
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'),'disk')
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)

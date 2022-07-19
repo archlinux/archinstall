@@ -357,6 +357,4 @@ if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
 
-	if mode in ('full','disk'):
-		perform_filesystem_operations()
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), archinstall.arguments.get('mode', 'full').lower())

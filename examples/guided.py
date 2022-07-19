@@ -286,6 +286,9 @@ def perform_installation_base(mountpoint,mode='full'):
 	disk         only disk layout(
 	software     software
 	"""
+	# prepare the disks, if necessary
+	perform_filesystem_operations()
+
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		# Mount all the drives to the desired mountpoint
 		if mode.lower() in ('full','disk'):
@@ -335,6 +338,10 @@ def perform_installation(mountpoint,mode='full'):
 	disk         only disk layout(
 	software     software
 	"""
+	# prepare the disks, if necessary
+	if mode in ('full','disk'):
+		perform_filesystem_operations()
+
 	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
 		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
@@ -446,7 +453,6 @@ if __name__ in ('__main__',script_name):
 		input(str(_('Press Enter to continue.')))
 
 	archinstall.configuration_sanity_check()
-	perform_filesystem_operations()
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
