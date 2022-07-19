@@ -60,10 +60,7 @@ if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
-	config_output = archinstall.ConfigurationOutput(archinstall.arguments)
-	if not archinstall.arguments.get('silent'):
-		config_output.show()
-	config_output.save()
+	guided.perform_show_save_arguments()
 
 	if archinstall.arguments.get('dry_run'):
 		exit(0)

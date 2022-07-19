@@ -276,6 +276,7 @@ def perform_additional_software_setup(installation):
 
 def perform_installation_base(mountpoint,mode='full'):
 	"""
+	WARNING  is the first variant, kept for reasons, ... the actual perform_installation is coded below
 	This is the main installation routine
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -326,6 +327,7 @@ def perform_installation_base(mountpoint,mode='full'):
 						installation.drop_to_shell()
 					except:
 						pass
+
 def perform_installation(mountpoint,mode='full'):
 	"""
 	This is the main installation routine
@@ -390,6 +392,12 @@ def perform_installation(mountpoint,mode='full'):
 				except:
 					pass
 
+def perform_show_save_arguments():
+	config_output = ConfigurationOutput(archinstall.arguments)
+	if not archinstall.arguments.get('silent'):
+		config_output.show()
+	config_output.save()
+
 #
 # initalization steps Executed once per session
 #
@@ -441,10 +449,7 @@ if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
-	config_output = ConfigurationOutput(archinstall.arguments)
-	if not archinstall.arguments.get('silent'):
-		config_output.show()
-	config_output.save()
+	perform_show_save_arguments()
 
 	if archinstall.arguments.get('dry_run'):
 		exit(0)

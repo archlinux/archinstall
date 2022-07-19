@@ -16,6 +16,7 @@ This script respects the --dry_run argument
 import logging
 import os
 from typing import TYPE_CHECKING, Any
+
 if TYPE_CHECKING:
 	_: Any
 
@@ -33,7 +34,7 @@ if __name__ == '__main__':
 
 import archinstall
 from archinstall import ConfigurationOutput, Menu
-from archinstall.examples.guided import perform_filesystem_operations, perform_installation
+from archinstall.examples.guided import perform_installation, perform_show_save_arguments
 
 """
 particular routines to SetupMenu
@@ -333,7 +334,7 @@ def ask_user_questions(mode):
 			global_menu.set_option('install',
 							archinstall.Selector(
 								global_menu._install_text(),
-								exec_func=lambda n,v: True if global_menu._missing_configs() == 0 else False,
+								exec_func=lambda n,v: True if len(global_menu._missing_configs()) == 0 else False,
 								preview_func=global_menu._prev_install_missing_config,
 								no_store=True, enabled=True))
 			global_menu.run()
@@ -343,18 +344,17 @@ nomen = getsourcefile(lambda: 0)
 script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
 
 if __name__ in ('__main__',script_name):
+
 	mode = archinstall.arguments.get('mode', 'full').lower()
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions(mode)
 
-	config_output = ConfigurationOutput(archinstall.arguments)
-	if not archinstall.arguments.get('silent'):
-		config_output.show()
-	config_output.save()
+	perform_show_save_arguments()
 
 	if archinstall.arguments.get('dry_run'):
 		exit(0)
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
+
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), archinstall.arguments.get('mode', 'full').lower())

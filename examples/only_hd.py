@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
 import archinstall
 from archinstall import ConfigurationOutput
-from archinstall.examples.guided import perform_filesystem_operations, perform_installation
+from archinstall.examples.guided import perform_installation, perform_show_save_arguments
 
 
 class OnlyHDMenu(archinstall.GlobalMenu):
@@ -85,10 +85,7 @@ if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
-	config_output = ConfigurationOutput(archinstall.arguments)
-	if not archinstall.arguments.get('silent'):
-		config_output.show()
-	config_output.save()
+	perform_show_save_arguments()
 
 	if archinstall.arguments.get('dry_run'):
 		exit(0)
@@ -97,7 +94,7 @@ if __name__ in ('__main__',script_name):
 		input(str(_('Press Enter to continue.')))
 
 	archinstall.configuration_sanity_check()
-	
+
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'),'disk')
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
