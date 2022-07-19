@@ -1,6 +1,17 @@
 import logging
 import os
 import time
+from inspect import getsourcefile
+
+if __name__ == '__main__':
+	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
+	# will work only with the copy at examples
+	# this solution was taken from https://stackoverflow.com/questions/714063/importing-modules-from-parent-folder/33532002#33532002
+	import sys
+	current_path = os.path.abspath(getsourcefile(lambda: 0))
+	current_dir = os.path.dirname(current_path)
+	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+	sys.path.append(parent_dir)
 
 import archinstall
 from archinstall import ConfigurationOutput, Menu
@@ -288,7 +299,10 @@ if not archinstall.arguments['offline']:
 			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 			exit(1)
 
-if __name__ == 'guided':
+nomen = getsourcefile(lambda: 0)
+script_name = nomen[nomen.rfind(os.path.sep) + 1:nomen.rfind('.')]
+
+if __name__ in ('__main__',script_name):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
