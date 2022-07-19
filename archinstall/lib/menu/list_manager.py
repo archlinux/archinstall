@@ -44,7 +44,11 @@ class ListManager:
 		self._base_actions = base_actions
 		self._sub_menu_actions = sub_menu_actions
 
-		self.last_choice = None
+		self._last_choice = None
+
+	@property
+	def last_choice(self):
+		return self._last_choice
 
 	def run(self):
 		while True:
@@ -76,7 +80,7 @@ class ListManager:
 				selected_entry = data_formatted[choice.value]
 				self._run_actions_on_entry(selected_entry)
 
-		self.last_choice = choice
+		self._last_choice = choice
 		if choice.value == self._cancel_action:
 			return self._original_data  # return the original list
 		else:
