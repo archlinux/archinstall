@@ -62,9 +62,9 @@ class PartitionMenu(GeneralMenu):
 		if 'actual_subvolumes' in my_dict:
 			my_dict['actual_subvolumes'] = deepcopy(self.data.actual_subvolumes)
 		# temporary as long as we don't have a selection list for them
-		if 'filesystem_format_options' in my_dict:
+		if my_dict.get('filesystem_format_options',[]):
 			my_dict['filesystem_format_options'] = ','.join(self.data.filesystem_format_options)
-		if 'filesystem_mount_options' in my_dict:
+		if my_dict.get('filesystem_mount_options',[]):
 			my_dict['filesystem_mount_options'] = ','.join(self.data.filesystem_mount_options)
 		# temporary
 		if 'type' not in my_dict:
@@ -81,9 +81,9 @@ class PartitionMenu(GeneralMenu):
 				self.data.sizeInput = self.ds['location'].sizeInput
 			elif item == 'subvolumes':
 				self.data.btrfs = self.ds['subvolumes']
-			elif item == 'filesystem_format_options':
+			elif item == 'filesystem_format_options' and self.ds['filesystem_format_options']:
 				self.data.filesystem_format_options = self.ds['filesystem_format_options'].split(',')
-			elif item == 'filesystem_mount_options':
+			elif item == 'filesystem_mount_options' and self.ds['filesystem_mount_options']:
 				self.data.filesystem_mount_options = self.ds['filesystem_mount_options'].split(',')
 			else:
 				self.data[item] = self.ds[item]
@@ -139,6 +139,7 @@ class PartitionMenu(GeneralMenu):
 												enabled=True)
 		self.cancel_action = 'cancel'
 		self.save_action = 'save'
+
 		self.bottom_list = [self.save_action, self.cancel_action]
 
 	def fast_exit(self, action) -> bool:
@@ -164,6 +165,7 @@ class PartitionMenu(GeneralMenu):
 			return True
 
 		if not self.ds['filesystem'] and self.ds['type'].lower() == 'primary':  # TODO check for MBR
+
 			msg_lines.append(str(_("Partition SHOULD have a filesystem ")))
 			status = False
 		if not (self.ds['mountpoint'] or self.ds['subvolumes']) and self.ds['filesystem']:
@@ -176,6 +178,7 @@ class PartitionMenu(GeneralMenu):
 				status = False
 		if self.ds['filesystem'] == 'btrfs':
 			if self.ds['mountpoint'] and [ entry.mountpoint for entry in self.ds['subvolumes'] if entry.mountpoint]:
+
 				msg_lines.append(str(_("Btrfs partitions with subvolumes MUST NOT be mounted boot at root level and in subvolumes")))
 				forgettable = False
 				status = False
@@ -188,7 +191,8 @@ class PartitionMenu(GeneralMenu):
 				input()
 		return status
 
-	def exit_callback(self):
+	def \
+		exit_callback(self):
 		""" end processing """
 		# we exit without moving data
 		if self.option(self.cancel_action).get_selection():
@@ -213,7 +217,8 @@ class PartitionMenu(GeneralMenu):
 		else:
 			return False
 
-	def _show_location(self, location: StorageSlot) -> str:
+	def \
+		_show_location(self, location: StorageSlot) -> str:
 		""" a pretty way to show the location at the menu"""
 		return f"start {location.startInput}, size {location.sizeInput} ({location.sizeN})"
 
@@ -252,6 +257,7 @@ class PartitionMenu(GeneralMenu):
 			return None
 		# changed FS means reformat if the disk exists
 		if fstype.value != self._original_data.get('filesystem','') and self.ds.get('uuid'):
+
 			self.option('wipe').set_current_selection(True)
 
 		if fstype.value == 'btrfs':
@@ -277,6 +283,7 @@ class PartitionMenu(GeneralMenu):
 		if not need.start or need.start < 0:
 			return None
 		for i, gap in enumerate(gap_list):
+
 			if gap.start <= need.start < gap.end:
 				return i
 		return None
@@ -289,7 +296,8 @@ class PartitionMenu(GeneralMenu):
 		need.sizeInput = units_from_model(newsize, original.sizeInput)
 
 	def _show_gaps(self, gap_list: List[StorageSlot]):
-		""" for header purposes """
+		""" for header
+		purposes """
 		screen_data = FormattedOutput.as_table(gap_list, ['start', 'end', 'size', 'sizeN'], 'as_dict')
 		print('Current free space is')
 		print(screen_data)

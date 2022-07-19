@@ -202,15 +202,22 @@ class DevList(ListManager):
 
 	def _action_clear_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" we set the wipe flag, and change the contents"""
-		PartitionMenu(target,self).run()  # TODO don't like the return control
-		if target:
+		# we don't dare if the partition is in use
+		if actual_mount(target):
+			log(_("Can not clear and redefine partition {}, because it is in use").format(target.path))
+			input()  # only way to let the message be seen
+			return data
+		my_menu = PartitionMenu(target,self)
+		my_menu.run()
+		if my_menu.last_choice != my_menu.cancel_action:
 			target.wipe = True
 		return data
 
 	def _action_delete_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" mark partitions to be physically deleted and delete the from the list"""
 		if actual_mount(target):
-			log('Can not delete partition {target.path}, because it is in use')  # TODO it doesn't show actually
+			log(_("Can not delete partition {}, because it is in use").format(target.path))
+			input()  # only way to let the message be seen
 			return data
 		elif target.uuid:
 			self.partitions_to_delete.append(target)

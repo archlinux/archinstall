@@ -11,7 +11,7 @@ from .generator import generate_layout
 from .partition_list import DevList
 
 
-def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]) -> None:
+def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]):
 	""" Main entry point to the disk manager routines
 
 	parameters expected
@@ -68,7 +68,7 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 			harddrives = []
 			# go to old interface
 			if result.value == options[4]:
-				return 'direct',None
+				return 'direct',None  # old interface
 			# use whatever exists at /mnt/archinstall
 			if result.value == options[0]:
 				# TODO should we check if the directory exists as a mountpoint ?
@@ -76,7 +76,7 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 				if 'disk_layout' in arguments:
 					del arguments['disk_layout']
 				arguments['preset_mount'] = True
-				return "direct",None  # patch, odious patch
+				return "direct",None  # no disk to handle
 
 			# select one or more disks and apply a standard layout
 			standard_layout = None

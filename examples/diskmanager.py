@@ -1,3 +1,16 @@
+import os
+from inspect import getsourcefile
+
+if __name__ == '__main__':
+	# to be able to execute simply as python examples/guided.py or (from inside examples python guided.py)
+	# will work only with the copy at examples
+	# this solution was taken from https://stackoverflow.com/questions/714063/importing-modules-from-parent-folder/33532002#33532002
+	import sys
+	current_path = os.path.abspath(getsourcefile(lambda: 0))
+	current_dir = os.path.dirname(current_path)
+	parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+	sys.path.append(parent_dir)
+
 import archinstall
 from archinstall import ConfigurationOutput
 from archinstall.lib.user_interaction.diskmanager.glue import diskmanager
@@ -32,6 +45,9 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	if global_menu._disk_check:
+		if archinstall.arguments.get('disk_layouts'):
+			for item in ['harddrives','disk_layouts']:
+				global_menu.option(item).func = None
 		global_menu.enable('harddrives')
 		global_menu.enable('disk_layouts')
 		# Get disk encryption password (or skip if blank)
@@ -82,7 +98,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-if __name__ == 'diskmanager':
+if __name__ in ('__main__', 'diskmanager'):
 	if not archinstall.arguments.get('silent'):
 		ask_user_questions()
 
