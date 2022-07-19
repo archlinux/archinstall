@@ -33,7 +33,7 @@ if __name__ == '__main__':
 	sys.path.append(parent_dir)
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu
+from archinstall import Menu
 from archinstall.examples.guided import perform_installation, perform_show_save_arguments
 
 """
@@ -355,6 +355,5 @@ if __name__ in ('__main__',script_name):
 		exit(0)
 	if not archinstall.arguments.get('silent'):
 		input('Press Enter to continue.')
-
 
 	perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), archinstall.arguments.get('mode', 'full').lower())

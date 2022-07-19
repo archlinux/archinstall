@@ -14,7 +14,6 @@ if __name__ == '__main__':
 	sys.path.append(parent_dir)
 
 import archinstall
-from archinstall import ConfigurationOutput
 from archinstall.examples.guided import perform_installation, perform_show_save_arguments
 
 
