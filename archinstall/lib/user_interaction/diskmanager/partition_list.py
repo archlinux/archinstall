@@ -1,10 +1,14 @@
+
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.output import log
 from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount, StorageSlot
+from .discovery import hw_discover
 from .output import FormattedOutput
 from .partition_menu import PartitionMenu
 # from diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional, TYPE_CHECKING
+
+from ...menu.menu import Menu, MenuSelectionType
 
 if TYPE_CHECKING:
 	_: Any
@@ -12,7 +16,10 @@ if TYPE_CHECKING:
 def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None) -> List[str]:
 	""" does the specific formatting of the storage list to be shown at ListManager derivatives
 	"""
-	# TODO  short and long form
+	# TODO  short and long form. Need to integrate PR 1376
+	# 	identifier | wipe | boot | encrypt | s.(GiB) | fs | mount
+	# 	at | used
+
 	if field_list is None:
 		filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
 	else:
@@ -52,8 +59,7 @@ class DevList(ListManager):
 			'Clear Partition & edit attributes',     # 3
 			'Edit partition attributes',             # 4
 			'Exclude disk from installation set',    # 5
-			'Exclude partition from installation set', # 6
-			'Delete partition'                       # 7
+			'Delete partition'                       # 6
 		]
 		entries = create_gap_list(entries)  # list will be substituted with one with gaps
 		self._default_action = 'Reset'
@@ -73,9 +79,9 @@ class DevList(ListManager):
 		return self._data[pos]
 
 	def selected_action_display(self, selection: Any) -> str:
-		""" implemented to get different headers depending on the class of the element"""
+		""" implemented to get different headers depending on the class of the element.
+		Could be also implemented as a dataclass property"""
 		target = self._get_selected_object(selection)
-		# TODO as dataclass method
 		if isinstance(target,DiskSlot):
 			return f'disk {target.device}'
 		elif isinstance(target,GapSlot):
@@ -100,7 +106,7 @@ class DevList(ListManager):
 		""" implemented. filter which actions to show for an specific class selection """
 		target = self._get_selected_object(selection)
 		disk_actions = (0,1,2,5)
-		part_actions = (3,4,7)  # BUG hide partition disallowed for the time being (3,4,6,7)
+		part_actions = (3,4,6)
 		match target:
 			case DiskSlot():
 				return [options[i] for i in disk_actions]
@@ -119,9 +125,8 @@ class DevList(ListManager):
 			return self._action_reset(target, data)
 		# Add disk to installation set',          # 0
 		elif action == self._object_actions[0]:
-			# TODO select harddrive still not on set
 			# load its info and partitions into the list
-			return self._action_not_implemented(target, data)
+			return self._action_add_hd_set(target, data)
 		# Add partition',                         # 1
 		elif action == self._object_actions[1]:
 			return self._action_add_partition(target, data)
@@ -137,13 +142,8 @@ class DevList(ListManager):
 		# Exclude disk from installation set',    # 5
 		elif action == self._object_actions[5]:
 			return self._action_exclude_disk(target, data)
-		# Exclude partition from installation set', # 6
+		# Delete partition'                       # 6
 		elif action == self._object_actions[6]:
-			# TODO BUG for the time being disallowed.
-			# current implementation doesn't make it possible. Probably of no consequence if  eliminated
-			return self._action_not_implemented(target, data)
-		# Delete partition'                       # 7
-		elif action == self._object_actions[7]:
 			return self._action_delete_partition(target, data)
 		return data
 
@@ -167,7 +167,7 @@ class DevList(ListManager):
 			part_data = PartitionSlot(target.device,target.startInput,target.sizeInput,wipe=True)
 		else:
 			part_data = PartitionSlot(target.device, -1, -1, wipe=True)  # Something has to be done with this
-		# TODO menu has to check coherence of the data
+
 		add_menu = PartitionMenu(part_data,self)
 		# TODO BUG for some reason this code blocks. temporarliy set out of process
 		# with PartitionMenu(part_data,self) as add_menu:
@@ -185,13 +185,27 @@ class DevList(ListManager):
 		# 	else:
 		# 		add_menu.exec_option(add_menu.cancel_action)
 		add_menu.run()
-		if add_menu.option(add_menu.cancel_action).get_selection():
+		if add_menu.last_choice == add_menu.cancel_action:
 			return data
 		if part_data:
 			data.append(part_data)
 			if is_empty_disk:
 				disk.wipe = True
 		return data
+
+	def _action_add_hd_set(self,target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+		""" add a harddrive to the working set (list)"""
+		# recheck the hardware is a bit slow, but avoids needing a global variable
+		# TODO ENHANCEMENT check for cheaper alternatives, if any
+		actual_hds = [item.device for item in data if isinstance(item,DiskSlot)]
+		hw_list = hw_discover()
+		missing_hds = [item.device for item in hw_list if isinstance(item,DiskSlot) and item.device not in actual_hds]
+		if missing_hds:
+			to_append = self._select_additional_harddrives(missing_hds)
+			data += [item for item in hw_list if item.device in to_append]
+			return sorted(data)
+		else:
+			return data
 
 	def _action_clear_disk(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" we set the disk to wipe and delete all children at data"""
@@ -255,3 +269,30 @@ class DevList(ListManager):
 			del data[idx]
 		return data
 		# placeholder
+
+	def _select_additional_harddrives(self, missing: List[str] = []) -> List[str]:
+		"""
+		Asks the user to select one or multiple hard drives
+
+		:return: List of selected hard drives
+		:rtype: list
+		"""
+		options = {f'{option}': option for option in missing}
+
+		title = str(_('Select one or more hard drives to add to the list and configure\n'))
+
+		selected_harddrive = Menu(
+			title,
+			list(options.keys()),
+			preset_values= [],
+			multi=True
+		).run()
+
+		match selected_harddrive.type_:
+			case MenuSelectionType.Ctrl_c:
+				return []
+			case MenuSelectionType.Esc:
+				return []
+			case MenuSelectionType.Selection:
+				return [options[i] for i in selected_harddrive.value]
+

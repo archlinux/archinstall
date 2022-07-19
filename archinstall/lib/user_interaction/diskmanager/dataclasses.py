@@ -362,7 +362,7 @@ def field_as_string(target: StorageSlot) -> Dict:
 			changed_value = ''
 		if type(value) == bool:
 			if value:
-				changed_value = 'X'
+				changed_value = k
 			else:
 				changed_value = ''
 		if k == 'path':
