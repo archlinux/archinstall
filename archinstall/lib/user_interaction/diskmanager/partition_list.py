@@ -1,9 +1,8 @@
 
 from archinstall.lib.menu.list_manager import ListManager
-from archinstall.lib.output import log
+from ...output import log, FormattedOutput
 from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount, StorageSlot
 from .discovery import hw_discover
-from .output import FormattedOutput
 from .partition_menu import PartitionMenu
 # from diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional, TYPE_CHECKING
@@ -24,7 +23,7 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 		filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
 	else:
 		filter = field_list
-	table = FormattedOutput.as_table(data, filter, 'as_dict_fmt')
+	table = FormattedOutput.as_table(data, 'as_dict_fmt', filter)
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
 	# we're adding 2 spaces as prefix because the menu selector '> ' will be put before

@@ -4,7 +4,7 @@ from dataclasses import asdict
 from os import system
 
 from archinstall.lib.disk import BlockDevice, fs_types
-from archinstall.lib.output import log
+from ...output import log, FormattedOutput
 
 from archinstall.lib.menu.menu import Menu
 from archinstall.lib.menu.text_input import TextInput
@@ -15,7 +15,6 @@ from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 from .dataclasses import PartitionSlot, DiskSlot, StorageSlot
 from .discovery import hw_discover
 from .helper import unit_best_fit, units_from_model
-from .output import FormattedOutput
 
 from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Optional, List
 
@@ -298,7 +297,7 @@ class PartitionMenu(GeneralMenu):
 	def _show_gaps(self, gap_list: List[StorageSlot]):
 		""" for header
 		purposes """
-		screen_data = FormattedOutput.as_table(gap_list, ['start', 'end', 'size', 'sizeN'], 'as_dict')
+		screen_data = FormattedOutput.as_table(gap_list, 'as_dict', ['start', 'end', 'size', 'sizeN'])
 		print('Current free space is')
 		print(screen_data)
 
