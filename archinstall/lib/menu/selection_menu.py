@@ -442,15 +442,17 @@ class GeneralMenu:
 	def set_mandatory(self, field :str, status :bool):
 		self.option(field).set_mandatory(status)
 
-	def mandatory_overview(self) -> Tuple[int, int]:
+	def mandatory_overview(self) -> Tuple[int, int, List[str]]:
 		mandatory_fields = 0
 		mandatory_waiting = 0
+		mandatory_field_missing = []
 		for field, option in self._menu_options.items():
 			if option.is_mandatory():
 				mandatory_fields += 1
 				if not option.has_selection():
 					mandatory_waiting += 1
-		return mandatory_fields, mandatory_waiting
+					mandatory_field_missing.append(field)
+		return mandatory_fields, mandatory_waiting, mandatory_field_missing
 
 	def _select_archinstall_language(self, preset_value: str) -> str:
 		from ... import select_archinstall_language

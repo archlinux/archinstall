@@ -61,15 +61,16 @@ def generic_select(
 	soptions = list(map(str, options))
 	default_value = options[options.index(default)] if default else None
 
-	selected_option = Menu(input_text,
-							soptions,
-							skip=allow_empty_input,
-							multi=multi,
-							default_option=default_value,
-							sort=sort).run()
+	selected = Menu(input_text,
+					soptions,
+					skip=allow_empty_input,
+					multi=multi,
+					default_option=default_value,
+					sort=sort).run()
 	# we return the original objects, not the strings.
 	# options is the list with the original objects and soptions the list with the string values
 	# thru the map, we get from the value selected in soptions it index, and thu it the original object
+	selected_option = selected.value
 	if not selected_option:
 		return selected_option
 	elif isinstance(selected_option, list):  # for multi True
