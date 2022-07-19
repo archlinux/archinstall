@@ -93,7 +93,7 @@ class StorageSlot:
 		""" magic method to compare slots. Only device,start and end are compared """
 		return self.device == other.device and self.start == other.start and self.end == other.end
 
-	def as_dict(self, filter: List[str]= None) -> Dict:
+	def as_dict(self, filter: List[str] = None) -> Dict:
 		""" as as_dict but with only a subset of fields"""
 		non_generated = {'start':self.start,'end':self.end,'size': self.size,'sizeN':self.sizeN,'path':self.path}
 		full_result = asdict(self) | non_generated
@@ -105,18 +105,17 @@ class StorageSlot:
 			result[key] = full_result.get('key')
 		return result
 
-	def as_dict_str(self, filter: List[str]= None) -> Dict:
+	def as_dict_str(self, filter: List[str] = None) -> Dict:
 		""" as the former but all results are guaranteed strings"""
 		result = self.as_dict(filter)
 		for k,v in result.items():
 			result[k] = str(v)
 		return result
 
-	def as_dict_fmt(self, filter: List[str]= None) -> Dict:
+	def as_dict_fmt(self, filter: List[str] = None) -> Dict:
 		""" as the former but with a previous formatting of some fiels
 		Used as class_formatter for FormattedOutput.as_table"""
 		return field_as_string(self, filter)
-
 
 	def pretty_print(self,request: str) -> str:
 		""" a standard way to print start/size/end, first in sectors then normalized"""
@@ -353,7 +352,7 @@ def proposed_mount(entry: StorageSlot) -> str:
 		amount = blank
 	return amount
 
-def field_as_string(target: StorageSlot, filter: List[str]=None) -> Dict:
+def field_as_string(target: StorageSlot, filter: List[str] = None) -> Dict:
 	""" returns a dict with the *Slot target attributes formatted as strings, with special formatting for some fields """
 	result = {}
 	for k,value in target.as_dict(filter).items():

@@ -21,6 +21,7 @@ from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Op
 if TYPE_CHECKING:
 	_: Any
 
+
 # TODO accept empty target if disk is set, to avoid the -1 stuff
 class PartitionMenu(GeneralMenu):
 	def __init__(self, target: StorageSlot, caller: Callable = None, disk: Union[DiskSlot,str] = None):
@@ -159,7 +160,7 @@ class PartitionMenu(GeneralMenu):
 		if self.ds['location'].size <= min_size:  # TODO whatever minimum size you want
 			msg_lines.append(str(_("Location must have a minimal size of {}".format(min_size))))
 			forgettable = False
-			status =  False
+			status = False
 		elif self._original_data == self.ds:
 			return True
 
@@ -176,7 +177,7 @@ class PartitionMenu(GeneralMenu):
 				forgettable = False
 				status = False
 		if self.ds['filesystem'] == 'btrfs':
-			if self.ds['mountpoint'] and [ entry.mountpoint for entry in self.ds['subvolumes'] if entry.mountpoint]:
+			if self.ds['mountpoint'] and [entry.mountpoint for entry in self.ds['subvolumes'] if entry.mountpoint]:
 
 				msg_lines.append(str(_("Btrfs partitions with subvolumes MUST NOT be mounted boot at root level and in subvolumes")))
 				forgettable = False
@@ -200,7 +201,6 @@ class PartitionMenu(GeneralMenu):
 		if self.ds.get('location') is None:
 			return
 		self._conversion_to_object()
-
 
 	def _generic_string_editor(self, prompt: str, prev: Any) -> str:
 		return TextInput(prompt, prev).run()

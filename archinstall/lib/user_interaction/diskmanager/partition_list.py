@@ -12,6 +12,7 @@ from ...menu.menu import Menu, MenuSelectionType
 if TYPE_CHECKING:
 	_: Any
 
+
 def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None) -> List[str]:
 	""" does the specific formatting of the storage list to be shown at ListManager derivatives
 	"""
@@ -36,6 +37,7 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 
 	return display_data
 
+
 def create_gap_list(mapa: List[StorageSlot]) -> List[StorageSlot]:
 	""" takes a list of slots and creates an equivalent list with (updated) gaps """
 	new_mapa = []
@@ -43,6 +45,7 @@ def create_gap_list(mapa: List[StorageSlot]) -> List[StorageSlot]:
 		new_mapa.append(disk)
 		new_mapa += disk.device_map(mapa)
 	return new_mapa
+
 
 class DevList(ListManager):
 
@@ -101,7 +104,7 @@ class DevList(ListManager):
 		my_data = create_gap_list(self._exec_action(action, entry, data))
 		return my_data
 
-	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
+	def filter_options(self, selection: Any, options: List[str]) -> List[str]:
 		""" implemented. filter which actions to show for an specific class selection """
 		target = self._get_selected_object(selection)
 		disk_actions = (0,1,2,5)
@@ -116,7 +119,7 @@ class DevList(ListManager):
 			case _:
 				return options
 
-	def _exec_action(self, action :str, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
+	def _exec_action(self, action: str, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" main driver to the implemented actions
 		Could be more efficient if data wouldn't be copied back and forth, but such is the standard at ListManager now"""
 		# reset
@@ -283,7 +286,7 @@ class DevList(ListManager):
 		selected_harddrive = Menu(
 			title,
 			list(options.keys()),
-			preset_values= [],
+			preset_values=[],
 			multi=True
 		).run()
 
@@ -294,4 +297,3 @@ class DevList(ListManager):
 				return []
 			case MenuSelectionType.Selection:
 				return [options[i] for i in selected_harddrive.value]
-
