@@ -329,6 +329,7 @@ class GeneralMenu:
 				if not self._process_selection(value):
 					break
 
+		# we get the last action key
 		actions = {v.description:k for k,v in self._menu_options.items()}
 		self._last_choice = actions[selection.value.strip()]
 
