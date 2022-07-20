@@ -4,8 +4,9 @@ if TYPE_CHECKING:
 
 from ..system_conf import select_harddrives
 from ..partitioning_conf import get_default_partition_layout
+from ...menu import Menu
+from ...output import log
 
-from archinstall.lib.menu import Menu
 from .discovery import layout_to_map, hw_discover
 from .generator import generate_layout
 from .partition_list import DevList
@@ -32,13 +33,29 @@ def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]):
 		exit()
 	arguments['harddrives'],arguments['disk_layouts'] = generate_layout(result)
 	# TODO partitions to delete handling
-	arguments['partitions_to_delete'] = [[partitions_to_delete[part.device], partitions_to_delete[part.uuid], partitions_to_delete[part.partnr]]
-										for part in partitions_to_delete]
+	handle_partitions_to_delete(arguments,partitions_to_delete)
 
+# TODO for list or menu ... vfat handling as it is not supported
+# TODO for menu  changed fs and wipe is not activated. and size allocation is a disaster
+def handle_partitions_to_delete(arguments: Dict, partitions_to_delete: list):
+	if partitions_to_delete:
+		delete_msg = _("\n To use the selected configuration you need to delete via os system tools following partitions: \n")
+		log(delete_msg)
+		for partition in partitions_to_delete:
+			log(_(" Path {}  - Device {} - Start sector {} Size {}").format(partition.path, partition.device, partition.start, partition.sizeN))
+		exit_warning = (_("\n after you have completed all configuration, the program will stop. Then \n 1- Proceed to delete the partitions\n"
+					   " 2 - reexecute the installation procedure with following parameters \n"
+					   " \t\t --config /var/log/archinstall/user_configuration.json \ \n"
+					   " \t\t --disk_layouts /var/log/archinstall/user_disk_layout.json \ \n"
+					   " \t\t --creds /var/log/archinstall/user_credentials.json\n"
+					   "\n this are the default config filenames\n"))
+		log(exit_warning)
+		input()
+		arguments['dry_run'] = True
 
 def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[Any]]:
 	""" Menu with selection of which action the user wants to perform
-	parameters expected
+	parameters expectedB
 	param: arguments:  archinstall.arguments
 	param: storage  :  archinstall.storage (needed for the MountPoint at frontend)
 	returns:

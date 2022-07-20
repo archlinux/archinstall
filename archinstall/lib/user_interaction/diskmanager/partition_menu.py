@@ -191,8 +191,7 @@ class PartitionMenu(GeneralMenu):
 				input()
 		return status
 
-	def \
-		exit_callback(self):
+	def exit_callback(self):
 		""" end processing """
 		# we exit without moving data
 		if self.option(self.cancel_action).get_selection():

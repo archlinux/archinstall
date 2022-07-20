@@ -330,7 +330,7 @@ class GeneralMenu:
 					break
 
 		# we get the last action key
-		actions = {v.description:k for k,v in self._menu_options.items()}
+		actions = {str(v.description):k for k,v in self._menu_options.items()}
 		self._last_choice = actions[selection.value.strip()]
 
 		if not self.is_context_mgr:
