@@ -2,7 +2,7 @@
 from archinstall.lib.menu.list_manager import ListManager
 from ...output import log, FormattedOutput
 from ...storage import storage
-from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount, StorageSlot
+from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, StorageSlot
 from .discovery import hw_discover
 from .partition_menu import PartitionMenu
 # from diskmanager.generator import generate_layout
@@ -14,13 +14,52 @@ if TYPE_CHECKING:
 	_: Any
 
 
+def slot_formatter(target: StorageSlot, filter: List[str] = None) -> Dict:
+	""" returns a dict with the *Slot target attributes formatted as strings, with special formatting for some fields """
+	result = {}
+	base_results = target.as_dict(filter)
+	for k in filter:
+		value = base_results.get(k,None)
+		if k == 'size':
+			value = f"{target.sizeN:12}" if isinstance(target,DiskSlot) else f"{target.sizeN:>12}"
+		elif k == 'crypt':
+			value = target.encrypted if isinstance(target,PartitionSlot) else None
+		elif k == 'path':
+			prefix = '└─'
+			if isinstance(target, GapSlot):
+				value = prefix
+			elif isinstance(target, PartitionSlot):
+				if target.uuid:
+					value = prefix + value.split('/')[-1]
+				else:
+					value = prefix + '(new)'
+			else:
+				pass
+		elif k == 'start':
+			value = int(value)
+		elif k == 'fs' and isinstance(target,PartitionSlot):
+			value = target.filesystem
+		elif k == 'actual_mountpoint' and isinstance(target,PartitionSlot):
+			value = target.actual_mount()
+		elif k == 'in use' and isinstance(target,PartitionSlot):
+			if target.actual_mount():
+				value = True
+			else:
+				value = False
+		elif k == 'mountpoint' and isinstance(target,PartitionSlot):
+			value = target.proposed_mount()
+
+		if not value:
+			value = ''
+		elif type(value) == bool:
+			value = k
+
+		result[k] = str(value)
+	return result
+
 def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None) -> List[str]:
 	""" does the specific formatting of the storage list to be shown at ListManager derivatives
 	"""
-	# TODO  short and long form. Need to integrate PR 1376
-	# 	identifier | wipe | boot | encrypt | s.(GiB) | fs | mount
-	# 	at | used
-
 	if field_list is None:
 		if storage['arguments'].get('long_form'):
 			filter = ['path','start','size','type','wipe','crypt','boot','fs','mountpoint', 'actual_mountpoint','uuid']
@@ -28,7 +67,7 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 			filter = ['path','size','type','wipe','crypt','boot','fs','mountpoint', 'in use']
 	else:
 		filter = field_list
-	table = FormattedOutput.as_table(data, 'as_dict_fmt', filter)
+	table = FormattedOutput.as_table(data, slot_formatter, filter)
 	rows = table.split('\n')
 	# these are the header rows of the table and do not map to any User obviously
 	# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
@@ -223,7 +262,7 @@ class DevList(ListManager):
 	def _action_clear_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" we set the wipe flag, and change the contents"""
 		# we don't dare if the partition is in use
-		if actual_mount(target):
+		if target.actual_mount():
 			log(_("Can not clear and redefine partition {}, because it is in use").format(target.path))
 			input()  # only way to let the message be seen
 			return data
@@ -235,7 +274,7 @@ class DevList(ListManager):
 
 	def _action_delete_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
 		""" mark partitions to be physically deleted and delete the from the list"""
-		if actual_mount(target):
+		if target.actual_mount():
 			log(_("Can not delete partition {}, because it is in use").format(target.path))
 			input()  # only way to let the message be seen
 			return data

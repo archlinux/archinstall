@@ -112,11 +112,6 @@ class StorageSlot:
 			result[k] = str(v)
 		return result
 
-	def as_dict_fmt(self, filter: List[str] = None) -> Dict:
-		""" as the former but with a previous formatting of some fiels
-		Used as class_formatter for FormattedOutput.as_table"""
-		return field_as_string(self,filter)  # TODO for the time being i suppress the filter at this level
-
 	def pretty_print(self,request: str) -> str:
 		""" a standard way to print start/size/end, first in sectors then normalized"""
 		b = self[request]
@@ -296,6 +291,48 @@ class PartitionSlot(StorageSlot):
 				part_dict[attr] = self[attr]
 		return part_dict
 
+	def actual_mount(self) -> str:
+		""" for a partition slot return an abreviatted string with the actual mountpoints pointing at that partition
+			the return string is //HOST/(mountpoint ... list of subvolume mount points
+		"""
+		blank = ''
+		if self.actual_subvolumes:
+			subvolumes = self.actual_subvolumes
+			mountlist = []
+			for subvol in subvolumes:
+				mountlist.append(subvol.mountpoint)
+			if mountlist:
+				amount = f"//HOST({', '.join(mountlist):15.15})..."
+			else:
+				amount = blank
+		elif self.actual_mountpoint:
+			amount = f"//HOST{self.actual_mountpoint}"
+		else:
+			amount = blank
+		return amount
+
+	def proposed_mount(self) -> str:
+		""" for a partition slot return an abreviatted string with the mountpoints proposed for that partition
+			the return string is mountpoint (list of subvolume mount points)
+		"""
+		blank = ''
+		if self.btrfs:
+			subvolumes = self.btrfs
+			mountlist = []
+			for subvol in subvolumes:
+				mountlist.append(subvol.mountpoint)
+			if mountlist and not self.mountpoint:
+				amount = f"{', '.join(mountlist):15.15}..."
+			elif mountlist and self.mountpoint: # should not exist, but some samples use it
+				amount = f"{self.mountpoint} & {', '.join(mountlist):15.15}..."
+			else:
+				amount = blank
+		elif self.mountpoint:
+			amount = self.mountpoint
+		else:
+			amount = blank
+		return amount
+
 #
 # some of this functions could be eventually be made methods of the dataclasses
 # position at the end is because the signature needs the previous definition of the dataclasses
@@ -308,86 +345,3 @@ def parent_from_list(child: StorageSlot, target_list: List[StorageSlot]) -> Stor
 	elif len(parent) == 0:
 		return None
 	return parent[0]
-
-
-def actual_mount(entry: StorageSlot) -> str:
-	""" for a partition slot return an abreviatted string with the actual mountpoints pointing at that partition
-		the return string is //HOST/(mountpoint ... list of subvolume mount points
-	"""
-	blank = ''
-	if entry.actual_subvolumes:
-		subvolumes = entry.actual_subvolumes
-		mountlist = []
-		for subvol in subvolumes:
-			mountlist.append(subvol.mountpoint)
-		if mountlist:
-			amount = f"//HOST({', '.join(mountlist):15.15})..."
-		else:
-			amount = blank
-	elif entry.actual_mountpoint:
-		amount = f"//HOST{entry.actual_mountpoint}"
-	else:
-		amount = blank
-	return amount
-
-def proposed_mount(entry: StorageSlot) -> str:
-	""" for a partition slot return an abreviatted string with the mountpoints proposed for that partition
-		the return string is mountpoint (list of subvolume mount points)
-	"""
-	blank = ''
-	if entry.btrfs:
-		subvolumes = entry.btrfs
-		mountlist = []
-		for subvol in subvolumes:
-			mountlist.append(subvol.mountpoint)
-		if mountlist and not entry.mountpoint:
-			amount = f"{', '.join(mountlist):15.15}..."
-		elif mountlist and entry.mountpoint: # should not exist, but some samples use it
-			amount = f"{entry.mountpoint} & {', '.join(mountlist):15.15}..."
-		else:
-			amount = blank
-	elif entry.mountpoint:
-		amount = entry.mountpoint
-	else:
-		amount = blank
-	return amount
-
-def field_as_string(target: StorageSlot, filter: List[str] = None) -> Dict:
-	""" returns a dict with the *Slot target attributes formatted as strings, with special formatting for some fields """
-	result = {}
-	for k,value in target.as_dict(filter).items():
-		changed_value = value
-		if k == 'size':
-			changed_value = f"{target.sizeN:12}" if isinstance(target,DiskSlot) else f"{target.sizeN:>12}"
-		elif k == 'crypt':
-			changed_value = target.encrypted if isinstance(target,PartitionSlot) else None
-		elif k == 'path':
-			prefix = '└─'
-			if isinstance(target, GapSlot):
-				changed_value = prefix
-			elif isinstance(target, PartitionSlot):
-				if target.uuid:
-					changed_value = prefix + changed_value.split('/')[-1]
-				else:
-					changed_value = prefix + '(new)'
-			else:
-				pass
-		elif k == 'fs' and isinstance(target,PartitionSlot):
-			changed_value = target.filesystem
-		elif k == 'actual_mountpoint' and isinstance(target,PartitionSlot):
-			changed_value = actual_mount(target)
-		elif k == 'in use' and isinstance(target,PartitionSlot):
-			if actual_mount(target):
-				changed_value = True
-			else:
-				changed_value = False
-		elif k == 'mountpoint' and isinstance(target,PartitionSlot):
-			changed_value = proposed_mount(target)
-
-		if not changed_value:
-			changed_value = ''
-		elif type(changed_value) == bool:
-			changed_value = k
-
-		result[k] = str(changed_value)
-	return result
