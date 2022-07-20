@@ -705,7 +705,7 @@ class Installer:
 			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
 			self.enable_multilib_repository()
 		else:
-			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+			self.log("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
