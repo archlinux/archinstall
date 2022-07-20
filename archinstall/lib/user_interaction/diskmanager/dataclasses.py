@@ -102,7 +102,7 @@ class StorageSlot:
 			return full_result
 		result = {}
 		for key in filter:
-			result[key] = full_result.get('key')
+			result[key] = full_result.get(key)
 		return result
 
 	def as_dict_str(self, filter: List[str] = None) -> Dict:
@@ -115,7 +115,7 @@ class StorageSlot:
 	def as_dict_fmt(self, filter: List[str] = None) -> Dict:
 		""" as the former but with a previous formatting of some fiels
 		Used as class_formatter for FormattedOutput.as_table"""
-		return field_as_string(self, filter)
+		return field_as_string(self,filter)  # TODO for the time being i suppress the filter at this level
 
 	def pretty_print(self,request: str) -> str:
 		""" a standard way to print start/size/end, first in sectors then normalized"""
@@ -357,14 +357,11 @@ def field_as_string(target: StorageSlot, filter: List[str] = None) -> Dict:
 	result = {}
 	for k,value in target.as_dict(filter).items():
 		changed_value = value
-		if not changed_value:
-			changed_value = ''
-		if type(value) == bool:
-			if value:
-				changed_value = k
-			else:
-				changed_value = ''
-		if k == 'path':
+		if k == 'size':
+			changed_value = f"{target.sizeN:12}" if isinstance(target,DiskSlot) else f"{target.sizeN:>12}"
+		elif k == 'crypt':
+			changed_value = target.encrypted if isinstance(target,PartitionSlot) else None
+		elif k == 'path':
 			prefix = '└─'
 			if isinstance(target, GapSlot):
 				changed_value = prefix
@@ -375,9 +372,22 @@ def field_as_string(target: StorageSlot, filter: List[str] = None) -> Dict:
 					changed_value = prefix + '(new)'
 			else:
 				pass
-		elif k == 'actual_mountpoint':
+		elif k == 'fs' and isinstance(target,PartitionSlot):
+			changed_value = target.filesystem
+		elif k == 'actual_mountpoint' and isinstance(target,PartitionSlot):
 			changed_value = actual_mount(target)
-		elif k == 'mountpoint':
+		elif k == 'in use' and isinstance(target,PartitionSlot):
+			if actual_mount(target):
+				changed_value = True
+			else:
+				changed_value = False
+		elif k == 'mountpoint' and isinstance(target,PartitionSlot):
 			changed_value = proposed_mount(target)
+
+		if not changed_value:
+			changed_value = ''
+		elif type(changed_value) == bool:
+			changed_value = k
+
 		result[k] = str(changed_value)
 	return result

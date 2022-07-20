@@ -1,6 +1,7 @@
 
 from archinstall.lib.menu.list_manager import ListManager
 from ...output import log, FormattedOutput
+from ...storage import storage
 from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, actual_mount, StorageSlot
 from .discovery import hw_discover
 from .partition_menu import PartitionMenu
@@ -21,7 +22,10 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 	# 	at | used
 
 	if field_list is None:
-		filter = ['path','start','sizeN','type','wipe','encrypted','boot','filesystem','mountpoint', 'actual_mountpoint','uuid']
+		if storage['arguments'].get('long_form'):
+			filter = ['path','start','size','type','wipe','crypt','boot','fs','mountpoint', 'actual_mountpoint','uuid']
+		else:
+			filter = ['path','size','type','wipe','crypt','boot','fs','mountpoint', 'in use']
 	else:
 		filter = field_list
 	table = FormattedOutput.as_table(data, 'as_dict_fmt', filter)
