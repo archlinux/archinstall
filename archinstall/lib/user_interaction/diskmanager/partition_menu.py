@@ -165,29 +165,32 @@ class PartitionMenu(GeneralMenu):
 			return True
 
 		if not self.ds['filesystem'] and self.ds['type'].lower() == 'primary':  # TODO check for MBR
-
 			msg_lines.append(str(_("Partition SHOULD have a filesystem ")))
 			status = False
+
 		if not (self.ds['mountpoint'] or self.ds['subvolumes']) and self.ds['filesystem']:
 			msg_lines.append(str(_("Partition SHOULD have a mountpoint or mounted subvolumes")))
 			status = False
+
 		if self.ds['boot'] and self.disk.type.upper() == 'GPT':
-			msg_lines.append(str(_("Boot partitions on GPT drives must be FAT32")))
-			if self.ds['filesystem'].upper() != 'FAT32':
+			if self.ds['filesystem'].upper() not in ('FAT32','VFAT'):
+				msg_lines.append(str(_("Boot partitions on GPT drives must be FAT32")))
 				forgettable = False
 				status = False
+
 		if self.ds['filesystem'] == 'btrfs':
 			if self.ds['mountpoint'] and [entry.mountpoint for entry in self.ds['subvolumes'] if entry.mountpoint]:
-
 				msg_lines.append(str(_("Btrfs partitions with subvolumes MUST NOT be mounted boot at root level and in subvolumes")))
 				forgettable = False
 				status = False
+
 		if not status:
 			errors = '\n - '.join(msg_lines)
 			if forgettable:
 				status = self._generic_boolean_editor(str(_('Errors found: \n{} Do you want to proceed anyway?').format(errors)),False)
 			else:
-				print(errors)
+				log(errors,fg="red")
+				print(_("press any key to exit"))
 				input()
 		return status
 
@@ -215,8 +218,7 @@ class PartitionMenu(GeneralMenu):
 		else:
 			return False
 
-	def \
-		_show_location(self, location: StorageSlot) -> str:
+	def _show_location(self, location: StorageSlot) -> str:
 		""" a pretty way to show the location at the menu"""
 		return f"start {location.startInput}, size {location.sizeInput} ({location.sizeN})"
 
@@ -231,6 +233,7 @@ class PartitionMenu(GeneralMenu):
 				log(_('There exists another bootable partition on disk. Unset it before defining this one'))
 				if self.disk.type.upper() == 'GPT':
 					log(_('On GPT drives ensure that the boot partition is an EFI partition'))
+				print(_("press any key to continue"))
 				input()
 				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
@@ -253,9 +256,8 @@ class PartitionMenu(GeneralMenu):
 		fstype = Menu(fstype_title, fs_types(), skip=False, preset_values=prev).run()
 		if not fstype.value:
 			return None
-		# changed FS means reformat if the disk exists
-		if fstype.value != self._original_data.get('filesystem','') and self.ds.get('uuid'):
-
+		# changed FS means reformat
+		if fstype.value != self._original_data.get('filesystem',''):
 			self.option('wipe').set_current_selection(True)
 
 		if fstype.value == 'btrfs':
@@ -355,7 +357,7 @@ class PartitionMenu(GeneralMenu):
 		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
 		pos = self._get_current_gap_pos(gap_list, need)
 		if pos is not None:
-			maxsize = gap_list[pos].size - need.start
+			maxsize = gap_list[pos].end - need.start + 1
 			maxsizeN = unit_best_fit(maxsize, 's')
 			prompt = _("Define a size for the partition max {}\n \
 		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n \

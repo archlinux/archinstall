@@ -1,7 +1,9 @@
 
-from archinstall.lib.menu.list_manager import ListManager
+from ...menu.list_manager import ListManager
 from ...output import log, FormattedOutput
 from ...storage import storage
+from ...hardware import has_uefi
+
 from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, StorageSlot
 from .discovery import hw_discover
 from .partition_menu import PartitionMenu
@@ -113,15 +115,53 @@ class DevList(ListManager):
 
 	def run(self) -> (List[StorageSlot], List[PartitionSlot]):
 		""" overloaded to allow partitions_to_delete to be returned"""
-		result_list = super().run()
-		if self.last_choice.value != self._confirm_action:
-			self.partitions_to_delete = []
+		# looped to be able to check for errors
+		while True:
+			result_list = super().run()
+			if self.last_choice.value != self._confirm_action:
+				self.partitions_to_delete = []
+				break
+			elif self.last_choice.value == self._confirm_action:
+				if self._check_coherence():
+					break
+
 		return result_list, self.partitions_to_delete
 
 	def _get_selected_object(self,selection) -> StorageSlot:
 		""" generic method to recover the object we want to work with in _handle_action """
 		pos = self._data.index(selection)
 		return self._data[pos]
+
+	def _check_coherence(self):
+		status = True
+		forgettable = True
+		msg_lines = [str(_("We have found following problems at your setup"))]
+		# we always check for space no matter what happens
+		disk_list = [item for item in self._data if isinstance(item,DiskSlot)]
+		# a disk can have only a boot partition
+		for disk in disk_list:
+			boot_part = [item.boot for item in disk.partition_list(self._data) if item.boot]
+			if len(boot_part) > 1:
+				status = False
+				forgettable = False
+				msg_lines.append(str(_("- Disk {} has defined more than one boot partition").format(disk.device)))
+
+			elif len(boot_part) == 1 and has_uefi():
+				if disk.partition_list(self._data)[0].start < 2048 : # TODO 1 MB (sure ¿?)
+					status = True
+					msg_lines.append(str(_("- Fist partition on boot Disk {} has to start after the 1Mb boundary").format(disk.device)))
+		# at least a / partition has to be created
+		# partitions shouldn't overlap
+
+		if not status:
+			errors = '\n - '.join(msg_lines)
+			if forgettable:
+				status = self._generic_boolean_editor(str(_('Errors found: \n{} Do you want to proceed anyway?').format(errors)),False)
+			else:
+				log(errors,fg="red")
+				print(_("press any key to return to the list"))
+				input()
+		return status
 
 	def selected_action_display(self, selection: Any) -> str:
 		""" implemented to get different headers depending on the class of the element.
@@ -233,6 +273,7 @@ class DevList(ListManager):
 		if add_menu.last_choice == add_menu.cancel_action:
 			return data
 		if part_data:
+			part_data.wipe = True
 			data.append(part_data)
 			if is_empty_disk:
 				disk.wipe = True

@@ -40,8 +40,14 @@ class BlockDevice:
 		if not info:
 			from .helpers import all_blockdevices
 			# If we don't give any information, we need to auto-fill it.
-			# Otherwise any subsequent usage will break.
-			self.info = all_blockdevices(partitions=False)[path].info
+			# Otherwise any subsequent usage will break
+			#
+			try:
+			 	self.info = all_blockdevices(partitions=False)[path].info
+			except KeyError:
+				log(_("Device {} does not exist presently in this system. Aborting process").format(path),level=logging.ERROR, fg="red")
+				log()
+				raise
 		else:
 			self.info = info
 

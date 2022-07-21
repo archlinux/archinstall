@@ -32,23 +32,20 @@ def diskmanager(arguments :Dict[str, Any], storage:Dict[str, Any]):
 	if not result or dl.last_choice.value != dl._confirm_action:
 		exit()
 	arguments['harddrives'],arguments['disk_layouts'] = generate_layout(result)
-	# TODO partitions to delete handling
 	handle_partitions_to_delete(arguments,partitions_to_delete)
 
-# TODO for list or menu ... vfat handling as it is not supported
-# TODO for menu  changed fs and wipe is not activated. and size allocation is a disaster
+
 def handle_partitions_to_delete(arguments: Dict, partitions_to_delete: list):
 	if partitions_to_delete:
 		delete_msg = _("\n To use the selected configuration you need to delete via os system tools following partitions: \n")
 		log(delete_msg)
 		for partition in partitions_to_delete:
-			log(_(" Path {}  - Device {} - Start sector {} Size {}").format(partition.path, partition.device, partition.start, partition.sizeN))
-		exit_warning = (_("\n after you have completed all configuration, the program will stop. Then \n 1- Proceed to delete the partitions\n"
-					   " 2 - reexecute the installation procedure with following parameters \n"
-					   " \t\t --config /var/log/archinstall/user_configuration.json \ \n"
-					   " \t\t --disk_layouts /var/log/archinstall/user_disk_layout.json \ \n"
-					   " \t\t --creds /var/log/archinstall/user_credentials.json\n"
-					   "\n this are the default config filenames\n"))
+			log(_(" Path {}  - Device {} Partnr {}  - Start sector {} Size {}").format(partition.path, partition.device, partition.partnr, partition.start, partition.sizeN))
+		exit_warning = (_("\n after you have completed all configuration, the program will stop. Then \n 1 - Proceed to delete the partitions\n"
+		" 2 - Reexecute the installation procedure with following parameters \n"
+		" \t\t --config /var/log/archinstall/user_configuration.json \\ \n"
+		" \t\t --disk_layouts /var/log/archinstall/user_disk_layout.json \\ \n"
+		" \t\t --creds /var/log/archinstall/user_credentials.json\n"))
 		log(exit_warning)
 		input()
 		arguments['dry_run'] = True
@@ -68,7 +65,6 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 	"""
 	layout = {}
 	if arguments.get('disk_layouts'):
-		# TODO check if disks still exist
 		layout = arguments.get('disk_layouts')
 		return 'ok',layout_to_map(layout)
 	else:
@@ -88,7 +84,7 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 				return 'direct',None  # old interface
 			# use whatever exists at /mnt/archinstall
 			if result.value == options[0]:
-				# TODO should we check if the directory exists as a mountpoint ?
+				# TODO should we check if the directory exists ? And if it is a mountpoint ?
 				arguments['harddrives'] = []
 				if 'disk_layout' in arguments:
 					del arguments['disk_layout']
@@ -98,16 +94,12 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 			# select one or more disks and apply a standard layout
 			standard_layout = None
 			if result.value in (options[1], options[2]):
-				# TODO handle unintended gaps
-				# TODO check with current structure ¿?
-				# TODO in option 2 is there an option to get standard layout viable ¿? Is there need
 				old_harddrives = arguments.get('harddrives', [])
 				harddrives = select_harddrives(old_harddrives)
 				if not harddrives:
 					return 'show',None
 				arguments['harddrives'] = harddrives
 				# in case the harddrives got changed we have to reset the disk layout as well
-				# TODO is that needed now ?
 				if old_harddrives != harddrives:
 					arguments['disk_layouts'] = {}
 				if result.value == options[1]:

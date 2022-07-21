@@ -69,7 +69,7 @@ def create_PartitionSlot(path: str, partition: Partition) -> PartitionSlot:
 			encrypted=encrypted,
 			wipe=False,
 			mountpoint=None,
-			filesystem=partition.filesystem,
+			filesystem=partition.filesystem if partition.filesystem != 'vfat' else device_info['VERSION'].lower(),
 			btrfs=[],
 			uuid=partition.uuid,
 			partnr=device_info['PART_ENTRY_NUMBER'],

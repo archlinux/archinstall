@@ -49,7 +49,7 @@ class StorageSlot:
 		if isinstance(self.sizeInput,(int,float)):
 			return self.sizeInput
 		if self.sizeInput.strip().endswith('%'):
-			size_to_the_end = self._device_size() - 32 - self.start
+			size_to_the_end = self._device_size() - 34 - self.start
 			percentage,_ = split_number_unit(self.sizeInput)
 			return int(round(size_to_the_end * percentage / 100.,0))
 		else:
@@ -170,7 +170,7 @@ class DiskSlot(StorageSlot):
 	def gap_list(self, part_list: list[StorageSlot]) -> List[StorageSlot]:
 		""" from a list of PartitionSlots, returns a list of gaps (areas not defined as partitions)"""
 		result_list = []
-		start = 32
+		start = 34
 		for elem in part_list:
 			if elem.start > start:
 				# create gap
