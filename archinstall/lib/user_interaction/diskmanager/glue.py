@@ -70,7 +70,7 @@ def frontpage(arguments: Dict[str, Any], storage: Dict[str, Any]) -> [str, List[
 	else:
 		prompt = _('*** Disk Management ***')
 		options = [
-			str(_("Use whatever is defined at {} as the instalation target".format(storage['MOUNT_POINT']))),
+			str(_("Use whatever is defined at {} as the instalation target").format(storage['MOUNT_POINT'])),
 			str(_('Select full disk(s), delete its contents and use a suggested layout')),
 			str(_('Select disk(s) and manually manage them')),
 			str(_('View full disk structure')),

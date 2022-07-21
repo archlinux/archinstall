@@ -158,7 +158,7 @@ class PartitionMenu(GeneralMenu):
 		# we always check for space no matter what happens
 		min_size = 1
 		if self.ds['location'].size <= min_size:  # TODO whatever minimum size you want
-			msg_lines.append(str(_("Location must have a minimal size of {}".format(min_size))))
+			msg_lines.append(str(_("Location must have a minimal size of {}").format(min_size)))
 			forgettable = False
 			status = False
 		elif self._original_data == self.ds:
@@ -361,7 +361,7 @@ class PartitionMenu(GeneralMenu):
 			maxsizeN = unit_best_fit(maxsize, 's')
 			prompt = _("Define a size for the partition max {}\n \
 		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n \
-		or q to quit \n ==> ".format(f"{maxsize} s. ({maxsizeN})"))
+		or q to quit \n ==> ").format(f"{maxsize} s. ({maxsizeN})")
 
 			sizes = need.sizeInput
 			sizes = TextInput(prompt, sizes).run()
@@ -374,7 +374,7 @@ class PartitionMenu(GeneralMenu):
 				pass
 			need.sizeInput = sizes
 			if need.size > maxsize:
-				print(_('Size {} exceeds the maximum size {}'.format(need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})")))
+				print(_('Size {} exceeds the maximum size {}').format(need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})"))
 				need = original
 				return 'repeat'
 			return None
