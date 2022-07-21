@@ -261,12 +261,14 @@ class PartitionSlot(StorageSlot):
 		unit = None
 		size_as_str = str(self.sizeInput)
 		if size_as_str.strip().endswith('%'):
-			return size_as_str # no problemo with this
+			return size_as_str.strip().replace(' ','') # no problemo with this
 		else:
 			_, unit = split_number_unit(size_as_str)
 			real_size = self.end
 			if unit:
-				real_size = f"{convert_units(real_size, unit, 's')} {unit.upper()}"
+				real_size = f"{convert_units(real_size, unit, 's')}{unit}"
+			else:
+				real_size = f"int{self.end}s"
 			return str(real_size)  # we use the same units that the user
 
 	def to_layout(self) -> Dict:
@@ -276,6 +278,13 @@ class PartitionSlot(StorageSlot):
 		for attr in part_attr:
 			if attr == 'size':  # internally size is used. Archinstall sees size as end
 				part_dict[attr] = self.from_size_to_end()
+			elif attr == 'start':
+				if isinstance(self.startInput,(int,float)):
+					part_dict[attr] = f"{int(convert_units(self.start,'MiB','s',precision=0) +1)}MiB".strip().replace(' ','')
+				elif self.startInput.strip().endswith('%'):
+					part_dict[attr] = self.startInput.strip().replace(' ','')
+				else:
+					part_dict[attr] = self.startInput.strip().replace(' ','')
 			elif attr == 'filesystem':
 				if self.filesystem:
 					part_dict[attr] = {'format':self.filesystem}
@@ -286,7 +295,8 @@ class PartitionSlot(StorageSlot):
 				else:
 					part_dict[attr] = None
 			elif attr == 'btrfs': # I believe now uses internaly the dataclass format
-				part_dict[attr] = {'subvolumes':self[attr]}
+				if self.btrfs:
+					part_dict[attr] = {'subvolumes':self[attr]}
 			else:
 				part_dict[attr] = self[attr]
 		return part_dict

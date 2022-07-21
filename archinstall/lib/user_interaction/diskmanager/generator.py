@@ -32,6 +32,8 @@ def generate_layout(storage_map: List[StorageSlot]) -> (List[BlockDevice],Dict):
 
 		harddrives.append(BlockDevice(disk.device))
 		disk_dict = {disk.device: {"partitions": []}}
+		if disk.wipe:
+			disk_dict[disk.device]['wipe'] = True
 		part_list = disk_dict[disk.device]['partitions']
 		for part in disk_partitions:
 			part_list.append(part.to_layout())
