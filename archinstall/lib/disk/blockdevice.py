@@ -43,7 +43,7 @@ class BlockDevice:
 			# Otherwise any subsequent usage will break
 			#
 			try:
-			 	self.info = all_blockdevices(partitions=False)[path].info
+				self.info = all_blockdevices(partitions=False)[path].info
 			except KeyError:
 				log(_("Device {} does not exist presently in this system. Aborting process").format(path),level=logging.ERROR, fg="red")
 				log()
