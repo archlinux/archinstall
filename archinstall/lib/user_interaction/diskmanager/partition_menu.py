@@ -97,7 +97,8 @@ class PartitionMenu(GeneralMenu):
 							enabled=False)
 		self._menu_options['mountpoint'] = Selector(str(_("Mount Point")),
 							lambda prev: self._generic_string_editor(str(_('Edit Mount Point :')), prev),
-							dependencies=['filesystem'], enabled=True)
+							# dependencies=['filesystem'], enabled=True)
+							enabled=True)
 		self._menu_options['filesystem'] = Selector(str(_("File System Type")),
 							self._select_filesystem,
 							enabled=True)
