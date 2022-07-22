@@ -238,17 +238,25 @@ class PartitionMenu(GeneralMenu):
 				return prev
 		# TODO It's a bit more complex than that. This is only for GPT drives
 		if value and self.disk.type.upper() == 'GPT':
-			self.option('mountpoint').set_current_selection('/boot')
-			self.option('filesystem').set_current_selection('FAT32')
-			self.option('encrypted').set_current_selection(False)
-			self.option('type').set_current_selection('EFI')
+			self.ds['mountpoint'] = '/boot'
+			self.ds['filesystem'] = 'fat32'
+			self.ds['encrypted'] = False
+			self.ds['type'] = 'EFI'
+			self.synch('mountpoint')
+			for item in ['mountpoint','filesystem','encrypted','type']:
+				self.synch(item)
+			# self.option('mountpoint').set_current_selection('/boot')
+			# self.option('filesystem').set_current_selection('FAT32')
+			# self.option('encrypted').set_current
+		# _selection(False)
+			# self.option('type').set_current_selection('EFI')
 		return value
 
-	def _select_encryption(self, prev: bool) -> str:
+	def _select_encryption(self, prompt, prev: bool) -> str:
 		""" select encrption status. Gpt drives CAN NOT have an encrypted boot """
 		if self.disk.type.upper() == 'GPT' and self.ds['boot']:
 			return False
-		return self._generic_boolean_editor(str(_('Set encryption status :')), prev)
+		return self._generic_boolean_editor(prompt, prev)
 
 	def _select_filesystem(self, prev: str) -> str:
 		""" set the filesystem property"""

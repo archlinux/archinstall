@@ -253,23 +253,26 @@ class DevList(ListManager):
 		else:
 			part_data = PartitionSlot(target.device, -1, -1, wipe=True)  # Something has to be done with this
 
-		add_menu = PartitionMenu(part_data,self)
-		# TODO BUG for some reason this code blocks. temporarliy set out of process
-		# with PartitionMenu(part_data,self) as add_menu:
-		# 	exit_menu = False
-		# 	for option in add_menu.list_options():
-		# 		if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
-		# 			add_menu.synch(option)
-		# 			add_menu.exec_option(option)
-		# 			# broken execution here
-		# 			if option == 'location' and add_menu.option('location').get_selection() is None:
-		# 				exit_menu = True
-		# 				break
-		# 	if not exit_menu:
-		# 		add_menu.run()
-		# 	else:
-		# 		add_menu.exec_option(add_menu.cancel_action)
-		add_menu.run()
+		# TODO document argument
+		if storage['arguments'].get('dm_add_menu',False):
+			add_menu = PartitionMenu(part_data,self)
+			add_menu.run()
+		else:
+			with PartitionMenu(part_data,self) as add_menu:
+				exit_menu = False
+				for option in add_menu.list_options():
+					if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
+						add_menu.synch(option)
+						add_menu.exec_option(option)
+						# broken execution here
+						if option == 'location' and add_menu.option('location').get_selection() is None:
+							exit_menu = True
+							break
+				if not exit_menu:
+					add_menu.run()
+				else:
+					add_menu.exec_option(add_menu.cancel_action)
+
 		if add_menu.last_choice == add_menu.cancel_action:
 			return data
 		if part_data:

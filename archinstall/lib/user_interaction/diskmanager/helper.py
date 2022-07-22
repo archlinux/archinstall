@@ -37,7 +37,7 @@ def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's') -> s
 		'TiB' : 2**31,
 	}
 	for unit in ('TiB','GiB','MiB','KiB'):
-		if base_value > conversion_rates[unit]:
+		if base_value >= conversion_rates[unit]:
 			return f"{convert_units(base_value,unit,'s',precision=1)} {unit}"
 	return f"{base_value} s"
 
