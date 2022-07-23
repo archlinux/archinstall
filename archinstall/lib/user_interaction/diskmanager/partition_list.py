@@ -63,7 +63,7 @@ def format_to_list_manager(data: List[StorageSlot], field_list: List[str] = None
 	""" does the specific formatting of the storage list to be shown at ListManager derivatives
 	"""
 	if field_list is None:
-		if storage['arguments'].get('long_form'):
+		if storage['arguments'].get('dm_long_form'):
 			filter = ['path','start','size','type','wipe','crypt','boot','fs','mountpoint', 'actual_mountpoint','uuid']
 		else:
 			filter = ['path','size','type','wipe','crypt','boot','fs','mountpoint', 'in use']
@@ -254,10 +254,11 @@ class DevList(ListManager):
 			part_data = PartitionSlot(target.device, -1, -1, wipe=True)  # Something has to be done with this
 
 		# TODO document argument
-		if storage['arguments'].get('dm_add_menu',False):
+		if not storage['arguments'].get('dm_no_add_menu',True):
 			add_menu = PartitionMenu(part_data,self)
 			add_menu.run()
 		else:
+			# TODO exit on quit at location
 			with PartitionMenu(part_data,self) as add_menu:
 				exit_menu = False
 				for option in add_menu.list_options():
@@ -265,9 +266,14 @@ class DevList(ListManager):
 						add_menu.synch(option)
 						add_menu.exec_option(option)
 						# broken execution here
-						if option == 'location' and add_menu.option('location').get_selection() is None:
-							exit_menu = True
-							break
+						if option == 'location':
+							selection = add_menu.option('location').get_selection()
+							if selection is None:
+								exit_menu = True
+								break
+							elif selection.startInput == -1 or selection.sizeInput == -1:
+								exit_menu = False
+								break
 				if not exit_menu:
 					add_menu.run()
 				else:

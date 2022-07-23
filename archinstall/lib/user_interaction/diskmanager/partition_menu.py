@@ -14,7 +14,7 @@ from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
 from .dataclasses import PartitionSlot, DiskSlot, StorageSlot
 from .discovery import hw_discover
-from .helper import unit_best_fit, units_from_model
+from .helper import unit_best_fit, units_from_model, convert_units
 
 from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Optional, List
 
@@ -231,7 +231,7 @@ class PartitionMenu(GeneralMenu):
 		if value and self._list:
 			bootable = [entry for entry in self.disk.partition_list(self._list) if entry.boot]
 			if len(bootable) > 0:
-				log(_('There exists another bootable partition on disk. Unset it before defining this one'))
+				log(_('There exists another bootable partition on disk. Unset it before defining this one'),fg="yellow")
 				if self.disk.type.upper() == 'GPT':
 					log(_('On GPT drives ensure that the boot partition is an EFI partition'))
 				print(_("press any key to continue"))
@@ -292,7 +292,6 @@ class PartitionMenu(GeneralMenu):
 		if not need.start or need.start < 0:
 			return None
 		for i, gap in enumerate(gap_list):
-
 			if gap.start <= need.start < gap.end:
 				return i
 		return None
@@ -307,9 +306,13 @@ class PartitionMenu(GeneralMenu):
 	def _show_gaps(self, gap_list: List[StorageSlot]):
 		""" for header
 		purposes """
-		screen_data = FormattedOutput.as_table(gap_list, 'as_dict', ['start', 'end', 'size', 'sizeN'])
+		screen_data = FormattedOutput.as_table(gap_list, 'as_dict', ['start', 'size', 'end', 'startN','sizeN'])
 		print('Current free space is')
 		print(screen_data)
+
+	def _show_gap(self, gap_list: List[StorageSlot],pos):
+		tmp_list = [gap_list[pos]]
+		print(FormattedOutput.as_table(tmp_list, 'as_dict', ['start', 'size', 'end', 'startN', 'sizeN']))
 
 	def _ask_for_start(self, gap_list: List[StorageSlot], need: StorageSlot) -> str:
 		""" all the code needed for the user setting a start position
@@ -317,11 +320,12 @@ class PartitionMenu(GeneralMenu):
 		the size is returned at need object"""
 		pos = self._get_current_gap_pos(gap_list, need)
 		original = copy(need)
-		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
-		if pos:
-			prompt = _("Define a start sector for the partition. Enter a value or \n"
-					"c to get the first sector of the current slot \n"
-					"q to quit \n"
+		if pos is not None:
+			# log(f"Current free slot is start:{need.pretty_print('start')} size {need.pretty_print('size')}",fg="yellow")
+			prompt = _("Define a start sector for the partition inside this slot. \n"
+					"		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n"
+					"		or c to get the first sector of the current slot\n"
+					"		or q to quit \n"
 					"==> ")
 			starts = need.startInput
 			starts = TextInput(prompt, starts).run()
@@ -331,10 +335,11 @@ class PartitionMenu(GeneralMenu):
 			elif starts == 'c':
 				starts = gap_list[pos].startInput
 		else:
-			prompt = _("Define a start sector for the partition. Enter a value or \n"
-					"f to get the first sector of the first free slot which can hold a partition\n"
-					"l to get the first sector of the last free slot \n"
-					"q to quit \n"
+			prompt = _("Define a start sector for the partition. \n"
+					"		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n"
+					"		or f to get the first sector of the first free slot which can hold a partition\n"
+					"		or l to get the first sector of the last free slot  \n"
+					"		or q to quit \n"
 					"==> ")
 			starts = need.startInput
 			starts = TextInput(prompt, starts).run()
@@ -350,7 +355,7 @@ class PartitionMenu(GeneralMenu):
 		need.startInput = starts
 		pos = self._get_current_gap_pos(gap_list, need)
 		if pos is None:
-			print(f"Requested start position {need.pretty_print('start')}not in an avaliable slot. Try again")
+			log(_("Requested start position {} ( sector {}) not in an avaliable slot. Try again").format(starts,need.start),fg="yellow")
 			need.startInput = original.startInput
 			return 'repeat'
 		if gap_list[pos].start <= need.start < gap_list[pos].end:
@@ -363,11 +368,11 @@ class PartitionMenu(GeneralMenu):
 		the size is returned at need object"""
 		# TODO optional ... ask for size confirmation
 		original = copy(need)
-		print(f"Current allocation need is start:{need.pretty_print('start')} size {need.pretty_print('size')}")
 		pos = self._get_current_gap_pos(gap_list, need)
 		if pos is not None:
 			maxsize = gap_list[pos].end - need.start + 1
-			maxsizeN = unit_best_fit(maxsize, 's')
+			maxsizeN = unit_best_fit(maxsize, 's',precision=3)
+			maxsize_mib = convert_units(maxsize,'MiB','s')
 			prompt = _("Define a size for the partition max {}\n \
 		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n \
 		or q to quit \n ==> ").format(f"{maxsize} s. ({maxsizeN})")
@@ -383,7 +388,7 @@ class PartitionMenu(GeneralMenu):
 				pass
 			need.sizeInput = sizes
 			if need.size > maxsize:
-				print(_('Size {} exceeds the maximum size {}').format(need.pretty_print('size'), f"{maxsize} s. ({maxsizeN})"))
+				print(_('Size {} exceeds the maximum size {}').format(sizes, f"{maxsize} s. ({maxsizeN}) or {maxsize_mib:,} Mib"))
 				need = original
 				return 'repeat'
 			return None
@@ -401,7 +406,11 @@ class PartitionMenu(GeneralMenu):
 		my_need = copy(prev)
 		while True:
 			system('clear')
-			self._show_gaps(gap_list)
+			pos = self._get_current_gap_pos(gap_list, my_need)
+			if pos is None:
+				self._show_gaps(gap_list)
+			else:
+				self._show_gap(gap_list, pos)
 			action = 'begin'
 			while action:
 				my_need = copy(prev)  # I think i don't need a deepcopy

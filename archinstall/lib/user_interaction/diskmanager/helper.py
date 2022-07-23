@@ -27,7 +27,7 @@ def units_from_model(target: Union[int,float,str],model: Union[int,float,str]) -
 	return convert_units(target,unit,'s')
 
 
-def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's') -> str:
+def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's', precision: int = 1) -> str:
 	""" given an arbitrary value (numeric or numeric + unit) returns the equivalent value in units with the higher integer part """
 	base_value = convert_units(raw_value,'s',default_unit)
 	conversion_rates = {
@@ -38,7 +38,7 @@ def unit_best_fit(raw_value: Union[int,float,str], default_unit: str = 's') -> s
 	}
 	for unit in ('TiB','GiB','MiB','KiB'):
 		if base_value >= conversion_rates[unit]:
-			return f"{convert_units(base_value,unit,'s',precision=1)} {unit}"
+			return f"{convert_units(base_value,unit,'s',precision=precision)} {unit}"
 	return f"{base_value} s"
 
 

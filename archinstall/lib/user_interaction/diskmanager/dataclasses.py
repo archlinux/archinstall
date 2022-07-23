@@ -7,7 +7,7 @@ from typing import List , Any, Dict, Union
 """
 we define a hierarchy of dataclasses to cope with the storage tree
 """
-
+RESERVED_SECTORS = 34
 
 @dataclass
 class StorageSlot:
@@ -49,7 +49,7 @@ class StorageSlot:
 		if isinstance(self.sizeInput,(int,float)):
 			return self.sizeInput
 		if self.sizeInput.strip().endswith('%'):
-			size_to_the_end = self._device_size() - 34 - self.start
+			size_to_the_end = self._device_size() - RESERVED_SECTORS - self.start
 			percentage,_ = split_number_unit(self.sizeInput)
 			return int(round(size_to_the_end * percentage / 100.,0))
 		else:
@@ -95,7 +95,7 @@ class StorageSlot:
 
 	def as_dict(self, filter: List[str] = None) -> Dict:
 		""" as as_dict but with only a subset of fields"""
-		non_generated = {'start':self.start,'end':self.end,'size': self.size,'sizeN':self.sizeN,'path':self.path}
+		non_generated = {'start':self.start,'end':self.end,'size': self.size,'startN':self.startN,'sizeN':self.sizeN,'path':self.path}
 		full_result = asdict(self) | non_generated
 
 		if not filter:
@@ -170,14 +170,14 @@ class DiskSlot(StorageSlot):
 	def gap_list(self, part_list: list[StorageSlot]) -> List[StorageSlot]:
 		""" from a list of PartitionSlots, returns a list of gaps (areas not defined as partitions)"""
 		result_list = []
-		start = 34
+		start = RESERVED_SECTORS
 		for elem in part_list:
 			if elem.start > start:
 				# create gap
 				result_list.append(GapSlot(self.device, start, elem.start - start))
 			start = elem.end + 1
 		if start < self.end:
-			result_list.append(GapSlot(self.device, start, self.end - start + 1))
+			result_list.append(GapSlot(self.device, start, self.end - RESERVED_SECTORS - start + 1))
 		return result_list
 
 	def children(self, storage_list: list[StorageSlot]) -> list[StorageSlot]:
