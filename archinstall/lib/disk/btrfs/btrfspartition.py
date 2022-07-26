@@ -17,21 +17,10 @@ if TYPE_CHECKING:
 	from ...installer import Installer
 	from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
+
 class BTRFSPartition(Partition):
 	def __init__(self, *args, **kwargs):
 		Partition.__init__(self, *args, **kwargs)
-
-	def __repr__(self, *args :str, **kwargs :str) -> str:
-		mount_repr = ''
-		if self.mountpoint:
-			mount_repr = f", mounted={self.mountpoint}"
-		elif self.target_mountpoint:
-			mount_repr = f", rel_mountpoint={self.target_mountpoint}"
-
-		if self._encrypted:
-			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, parent={self.real_device}, fs={self.filesystem}{mount_repr})'
-		else:
-			return f'BTRFSPartition(path={self.path}, size={self.size}, PARTUUID={self._safe_uuid}, fs={self.filesystem}{mount_repr})'
 
 	@property
 	def subvolumes(self):
@@ -40,11 +29,11 @@ class BTRFSPartition(Partition):
 				yield subvolume_info_from_path(filesystem['target'])
 
 			def iterate_children(struct):
-				for child in struct.get('children', []):
+				for c in struct.get('children', []):
 					if '[' in child.get('source', ''):
-						yield subvolume_info_from_path(child['target'])
+						yield subvolume_info_from_path(c['target'])
 
-					for sub_child in iterate_children(child):
+					for sub_child in iterate_children(c):
 						yield sub_child
 
 			for child in iterate_children(filesystem):
