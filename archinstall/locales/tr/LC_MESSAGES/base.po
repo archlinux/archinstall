@@ -800,3 +800,6 @@ msgstr ""
 #, fuzzy
 msgid "Delete subvolume"
 msgstr "Kullanıcı Sil"
+
+msgid "Configured {} interfaces"
+msgstr ""
