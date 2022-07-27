@@ -7,6 +7,8 @@ from ...hardware import has_uefi
 from .dataclasses import DiskSlot, GapSlot, PartitionSlot, parent_from_list, StorageSlot
 from .discovery import hw_discover
 from .partition_menu import PartitionMenu
+from .helper import LoopExit
+
 # from diskmanager.generator import generate_layout
 from typing import List, Any, Dict, Optional, TYPE_CHECKING
 
@@ -254,31 +256,34 @@ class DevList(ListManager):
 			part_data = PartitionSlot(target.device, -1, -1, wipe=True)  # Something has to be done with this
 
 		# TODO document argument
-		if not storage['arguments'].get('dm_no_add_menu',True):
-			add_menu = PartitionMenu(part_data,self)
-			add_menu.run()
-		else:
-			# TODO exit on quit at location
-			with PartitionMenu(part_data,self) as add_menu:
-				exit_menu = False
-				for option in add_menu.list_options():
-					if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
-						add_menu.synch(option)
-						add_menu.exec_option(option)
-						# broken execution here
-						if option == 'location':
-							selection = add_menu.option('location').get_selection()
-							if selection is None:
-								exit_menu = True
-								break
-							elif selection.startInput == -1 or selection.sizeInput == -1:
-								exit_menu = False
-								break
-				if not exit_menu:
-					add_menu.run()
-				else:
-					add_menu.exec_option(add_menu.cancel_action)
-
+		try:
+			if not storage['arguments'].get('dm_no_add_menu', False):
+				add_menu = PartitionMenu(part_data,self)
+				add_menu.run()
+			else:
+				# TODO exit on quit at location
+				with PartitionMenu(part_data,self) as add_menu:
+					exit_menu = False
+					for option in add_menu.list_options():
+						if option in ('location','mountpoint','filesystem','subvolumes','boot','encrypted'):
+							add_menu.synch(option)
+							add_menu.exec_option(option)
+							# broken execution here
+							if option == 'location':
+								selection = add_menu.option('location').get_selection()
+								if selection is None:
+									exit_menu = True
+									break
+								elif selection.startInput == -1 or selection.sizeInput == -1:
+									exit_menu = False
+									break
+					if not exit_menu:
+						add_menu.run()
+					else:
+						add_menu.exec_option(add_menu.cancel_action)
+		except LoopExit:
+			log(_("Menu exited via exception in location assignment"))
+			return data
 		if add_menu.last_choice == add_menu.cancel_action:
 			return data
 		if part_data:
@@ -316,8 +321,12 @@ class DevList(ListManager):
 			log(_("Can not clear and redefine partition {}, because it is in use").format(target.path))
 			input()  # only way to let the message be seen
 			return data
-		my_menu = PartitionMenu(target,self)
-		my_menu.run()
+		try:
+			my_menu = PartitionMenu(target,self)
+			my_menu.run()
+		except LoopExit\
+			:
+			return data
 		if my_menu.last_choice != my_menu.cancel_action:
 			target.wipe = True
 		return data
@@ -335,7 +344,10 @@ class DevList(ListManager):
 		return data
 
 	def _action_edit_partition(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:
-		PartitionMenu(target,self).run()
+		try:
+			PartitionMenu(target,self).run()
+		except LoopExit:
+			pass
 		return data
 
 	def _action_exclude_disk(self, target: StorageSlot, data: List[StorageSlot]) -> List[StorageSlot]:

@@ -10,7 +10,8 @@ import re
 
 from typing import Union
 
-
+class LoopExit(BaseException):
+	pass
 def split_number_unit(value: Union[int,float,str]) -> (Union[float],str):
 	""" from a number (whatever format) we return a tuple with its numeric value and the unit name (if present else 's')"""
 	if isinstance(value,(int,float)):

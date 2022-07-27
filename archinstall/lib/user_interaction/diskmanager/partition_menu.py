@@ -14,7 +14,7 @@ from archinstall.lib.user_interaction.subvolume_config import SubvolumeList
 
 from .dataclasses import PartitionSlot, DiskSlot, StorageSlot
 from .discovery import hw_discover
-from .helper import unit_best_fit, units_from_model, convert_units
+from .helper import unit_best_fit, units_from_model, convert_units, LoopExit
 
 from typing import Any, TYPE_CHECKING, Callable, Union, Dict, List  # , Dict, Optional, List
 
@@ -327,11 +327,12 @@ class PartitionMenu(GeneralMenu):
 					"		or c to get the first sector of the current slot\n"
 					"		or q to quit \n"
 					"==> ")
-			starts = need.startInput
+			starts = str(need.startInput)
 			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
-				need = original
-				return 'quit'
+				raise LoopExit
+				# need = original
+				# return 'quit'
 			elif starts == 'c':
 				starts = gap_list[pos].startInput
 		else:
@@ -341,9 +342,10 @@ class PartitionMenu(GeneralMenu):
 					"		or l to get the first sector of the last free slot  \n"
 					"		or q to quit \n"
 					"==> ")
-			starts = need.startInput
+			starts = str(need.startInput)
 			starts = TextInput(prompt, starts).run()
 			if starts == 'q':
+				raise LoopExit
 				return 'quit'
 			elif starts == 'f':
 				starts = gap_list[0].startInput  # TODO 32 o 4K
@@ -371,18 +373,19 @@ class PartitionMenu(GeneralMenu):
 		pos = self._get_current_gap_pos(gap_list, need)
 		if pos is not None:
 			maxsize = gap_list[pos].end - need.start + 1
-			maxsizeN = unit_best_fit(maxsize, 's',precision=3)
+			maxsizeN = unit_best_fit(maxsize, 's', precision=3)
 			maxsize_mib = convert_units(maxsize,'MiB','s')
 			prompt = _("Define a size for the partition max {}\n \
 		as a quantity (with units at the end) or a percentaje of the free space (ends with %),\n \
 		or q to quit \n ==> ").format(f"{maxsize} s. ({maxsizeN})")
 
-			sizes = need.sizeInput
+			sizes = str(need.sizeInput)
 			sizes = TextInput(prompt, sizes).run()
 			sizes = sizes.strip()
 			if sizes.lower() == 'q':
-				need = original
-				return 'quit'
+				raise LoopExit
+				# need = original
+				# return 'quit'
 			if sizes.endswith('%'):
 				# TODO from gap percentage to disk percentage
 				pass
