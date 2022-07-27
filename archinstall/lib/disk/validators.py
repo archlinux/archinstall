@@ -7,8 +7,11 @@ def valid_parted_position(pos :str) -> bool:
 	if pos.isdigit():
 		return True
 
-	if any(pos.lower().endswith(size) and pos[:-len(size)].replace(".", "", 1).isdigit()
-			for size in ['%', 'b', 'kb', 'mb', 'gb', 'tb', 'kib', 'mib', 'gib', 'tib']):
+	if pos.endswith('b') and pos[:-1].isdigit():
+		return True
+
+	if any(pos.endswith(size) and pos[:-len(size)].replace(".", "", 1).isdigit()
+			for size in ['%', 'kb', 'mb', 'gb', 'tb', 'kib', 'mib', 'gib', 'tib']):
 		return True
 
 	return False
