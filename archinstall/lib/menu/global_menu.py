@@ -143,6 +143,15 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
+
+		self._menu_options['parallel downloads'] = \
+			Selector(
+				_('Parallel Downloads')
+			)
+
+
+
+
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Kernels'),
