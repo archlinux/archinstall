@@ -200,7 +200,20 @@ def add_number_of_parrallel_downloads(input_number = None):
 	print(_("Enter the number of parallel downloads to be enabled."))
 	input_number = TextInput(_("> ")).run().strip()
 	print(_(input_number))
-	input()
+	file_address = "/etc/pacman.conf"
+	f = open(file_address,"r")
+	fileread = f.read().split("\n")
+	f.close()
+	new_val = "ParallelDownloads = "+input_number
+	open(file_address,"w").close()
+	fwrite = open(file_address,"a")
+	for x in fileread:
+		if "ParallelDownloads" in x:
+			fwrite.write(new_val)
+		else:
+			fwrite.write(x)
+		fwrite.write("\n")
+	return input_number
 
 
 def select_additional_repositories(preset: List[str]) -> List[str]:
