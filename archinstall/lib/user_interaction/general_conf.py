@@ -218,6 +218,7 @@ def add_number_of_parrallel_downloads(input_number = None):
 		else:
 			fwrite.write(x)
 		fwrite.write("\n")
+	fwrite.close()
 	return input_number
 
 

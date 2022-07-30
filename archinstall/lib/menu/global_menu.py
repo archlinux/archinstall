@@ -150,7 +150,7 @@ class GlobalMenu(GeneralMenu):
 				_('Parallel Downloads'),
 				add_number_of_parrallel_downloads,
 				display_func = lambda x: x if x else '0',
-				default= 0
+				default= None
 			)
 
 		self._menu_options['kernels'] = \
