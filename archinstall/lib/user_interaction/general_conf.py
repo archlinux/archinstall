@@ -200,6 +200,7 @@ def add_number_of_parrallel_downloads(input_number = None):
 	print(_("Enter the number of parallel downloads to be enabled."))
 	input_number = TextInput(_("> ")).run().strip()
 	print(_(input_number))
+	input()
 
 
 def select_additional_repositories(preset: List[str]) -> List[str]:
