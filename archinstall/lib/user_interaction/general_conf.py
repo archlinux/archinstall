@@ -200,7 +200,7 @@ def add_number_of_parrallel_downloads(input_number = None):
 	print(_("Enter the number of parallel downloads to be enabled."))
 	while True:
 		try:
-			input_number = int(TextInput(_("> ")).run().strip())
+			input_number = str(int(TextInput(_("> ")).run().strip()))
 			break
 		except:
 			print(_("Invalid input! Try again with a valid input"))
