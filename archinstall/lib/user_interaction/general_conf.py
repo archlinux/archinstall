@@ -198,7 +198,11 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 def add_number_of_parrallel_downloads(input_number = None):
 	print(_("Enter the number of parallel downloads to be enabled."))
-	input_number = TextInput(_("> ")).run().strip()
+	while True:
+		input_number = TextInput(_("> ")).run().strip()
+		if type(input_number) == int:
+			break
+		print(_("Invalid input! Try again with a valid input"))
 	print(_(input_number))
 	file_address = "/etc/pacman.conf"
 	f = open(file_address,"r")
