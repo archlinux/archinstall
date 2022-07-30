@@ -196,7 +196,7 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	return packages
 
-def add_number_of_parrallel_downloads():
+def add_number_of_parrallel_downloads(input_number = None):
 	print(_("Enter the number of parallel downloads to be enabled."))
 	input_number = TextInput(_("> ")).run().strip()
 	print(_(input_number))
