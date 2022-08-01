@@ -32,6 +32,7 @@ from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_profile
 from ..user_interaction import select_additional_repositories
+from ..user_interaction import add_number_of_parrallel_downloads
 from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
 from ..output import FormattedOutput
@@ -145,6 +146,15 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
+
+		self._menu_options['parallel downloads'] = \
+			Selector(
+				_('Parallel Downloads'),
+				add_number_of_parrallel_downloads,
+				display_func=lambda x: x if x else '0',
+				default=None
+			)
+
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Kernels'),
