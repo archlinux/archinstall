@@ -158,24 +158,36 @@ class SetupMenu(archinstall.GeneralMenu):
 		super().__init__(data_store=storage_area)
 
 	def _setup_selection_menu_options(self):
-		self.set_option('archinstall-language',
+		self.set_option(
+			'archinstall-language',
 			archinstall.Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				default='English',
-				enabled=True))
-		self.set_option('ntp',
-		archinstall.Selector(
-			'Activate NTP',
-			lambda x: select_activate_NTP(),
-			default='Y',
-			enabled=True))
-		self.set_option('mode',
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language('en'),
+				enabled=True
+			)
+		)
+
+		self.set_option(
+			'ntp',
+			archinstall.Selector(
+				'Activate NTP',
+				lambda x: select_activate_NTP(),
+				default='Y',
+				enabled=True
+			)
+		)
+
+		self.set_option(
+			'mode',
 			archinstall.Selector(
 				'Excution mode',
 				lambda x : select_mode(),
 				default='full',
-				enabled=True))
+				enabled=True)
+		)
+
 		for item in ['LC_ALL','LC_CTYPE','LC_NUMERIC','LC_TIME','LC_MESSAGES','LC_COLLATE']:
 			self.set_option(item,
 				archinstall.Selector(

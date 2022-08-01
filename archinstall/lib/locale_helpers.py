@@ -20,7 +20,7 @@ def list_locales() -> List[str]:
 		entries.reverse()
 
 		for entry in entries:
-			text = entry[1:].strip()
+			text = entry.replace('#', '').strip()
 			if text == '':
 				break
 			locales.append(text)

@@ -631,7 +631,7 @@ class Installer:
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
 
-			if not storage['arguments']['HSM']:
+			if not storage['arguments'].get('HSM'):
 				# For now, if we don't use HSM we revert to the old
 				# way of setting up encryption hooks for mkinitcpio.
 				# This is purely for stability reasons, we're going away from this.
@@ -673,7 +673,7 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if storage['arguments']['HSM']:
+				if storage['arguments'].get('HSM'):
 					# Required bby mkinitcpio to add support for fido2-device options
 					self.pacstrap('libfido2')
 
@@ -737,7 +737,7 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		if storage['arguments']['HSM']:
+		if storage['arguments'].get('HSM'):
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.
@@ -865,7 +865,7 @@ class Installer:
 
 					kernel_options = f"options"
 
-					if storage['arguments']['HSM']:
+					if storage['arguments'].get('HSM'):
 						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
 						# Note: tpm2-device and fido2-device don't play along very well:

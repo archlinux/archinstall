@@ -50,7 +50,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				default='English')
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),
