@@ -85,8 +85,9 @@ def ask_user_questions():
 
 	global_menu.enable('packages')
 
-	# Enable parallel downloads
-	global_menu.enable('parallel downloads')
+	if archinstall.arguments.get('advanced', False):
+		# Enable parallel downloads
+		global_menu.enable('parallel downloads')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	global_menu.enable('nic')

@@ -196,29 +196,27 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	return packages
 
-def add_number_of_parrallel_downloads(input_number = None):
+def add_number_of_parrallel_downloads(input_number = None) -> Optional[int]:
 	print(_("Enter the number of parallel downloads to be enabled.\n [Default value is 0]"))
-	while True:
+
+	while input_number is None:
 		try:
-			input_number = str(int(TextInput(_("> ")).run().strip() or 0))
+			input_number = int(TextInput("> ").run().strip() or 0)
 			break
 		except:
 			print(_("Invalid input! Try again with a valid input"))
-	print(_(input_number))
-	file_address = "/etc/pacman.conf"
-	f = open(file_address,"r")
-	fileread = f.read().split("\n")
-	f.close()
-	new_val = "ParallelDownloads = "+input_number
-	open(file_address,"w").close()
-	fwrite = open(file_address,"a")
-	for x in fileread:
-		if "ParallelDownloads" in x:
-			fwrite.write(new_val)
-		else:
-			fwrite.write(x)
-		fwrite.write("\n")
-	fwrite.close()
+
+	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	with pacman_conf_path.open() as f:
+		pacman_conf = f.read().split("\n")
+
+	with pacman_conf_path.open("w"):
+		for line in pacman_conf:
+			if "ParallelDownloads" in line:
+				fwrite.write(f"ParallelDownloads = {input_number}\n")
+			else:
+				fwrite.write(f"{line}\n")
+
 	return input_number
 
 
