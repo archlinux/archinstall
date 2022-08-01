@@ -197,7 +197,7 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	return packages
 
-def add_number_of_parrallel_downloads(input_number = None) -> Optional[int]:
+def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	print(_("Enter the number of parallel downloads to be enabled.\n [Default value is 0]"))
 
 	while input_number is None:
@@ -211,7 +211,7 @@ def add_number_of_parrallel_downloads(input_number = None) -> Optional[int]:
 	with pacman_conf_path.open() as f:
 		pacman_conf = f.read().split("\n")
 
-	with pacman_conf_path.open("w"):
+	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
 				fwrite.write(f"ParallelDownloads = {input_number}\n")

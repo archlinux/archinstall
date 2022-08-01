@@ -149,8 +149,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Parallel Downloads'),
 				add_number_of_parrallel_downloads,
-				display_func = lambda x: x if x else '0',
-				default= None
+				display_func=lambda x: x if x else '0',
+				default=None
 			)
 
 		self._menu_options['kernels'] = \
