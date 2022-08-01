@@ -8,7 +8,7 @@ Any patch work to existing versions will have to create a new branch against the
 # Describe your PR
 
 If the changes has been discussed in an Issue, please tag it so that we can backtrace from the issue later on.<br>
-If the PR is larger than ~20 lines, please describe it here unless described in an issue.
+If the PR is larger than twenty lines, please describe it here unless described in an issue.
 
 # Testing
 
