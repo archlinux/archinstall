@@ -40,7 +40,7 @@ from .lib.menu.selection_menu import (
 	Selector,
 	GeneralMenu
 )
-from .lib.translation import Translation, DeferredTranslation
+from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
 from .lib.udev import udevadm_info

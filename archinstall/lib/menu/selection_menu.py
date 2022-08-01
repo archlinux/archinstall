@@ -8,8 +8,10 @@ from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CH
 from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
-from ..translation import Translation
+from ..translationhandler import TranslationHandler, Language
 from ..hsm.fido import get_fido2_devices
+
+from ..user_interaction.general_conf import select_archinstall_language
 
 if TYPE_CHECKING:
 	_: Any
@@ -181,7 +183,7 @@ class GeneralMenu:
 
 		"""
 		self._enabled_order :List[str] = []
-		self._translation = Translation.load_nationalization()
+		self._translation_handler = TranslationHandler()
 		self.is_context_mgr = False
 		self._data_store = data_store if data_store is not None else {}
 		self.auto_cursor = auto_cursor
@@ -212,6 +214,10 @@ class GeneralMenu:
 				self._data_store[key] = sel._current_selection
 
 		self.exit_callback()
+
+	@property
+	def translation_handler(self) -> TranslationHandler:
+		return self._translation_handler
 
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
@@ -461,14 +467,10 @@ class GeneralMenu:
 					mandatory_waiting += 1
 		return mandatory_fields, mandatory_waiting
 
-	def _select_archinstall_language(self, preset_value: str) -> str:
-		from ... import select_archinstall_language
-		language = select_archinstall_language(preset_value)
-		if language is not None:
-			self._translation.activate(language)
-			return language
-
-		return preset_value
+	def _select_archinstall_language(self, preset_value: Language) -> Language:
+		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)
+		self._translation_handler.activate(language)
+		return language
 
 	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
 		title = _('Select which partitions to mark for formatting:')

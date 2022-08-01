@@ -12,7 +12,7 @@ from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 
-from ..translation import Translation
+from ..translationhandler import Language
 from ..packages.packages import validate_package_list
 
 from ..storage import storage
@@ -118,13 +118,22 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
-def select_archinstall_language(preset_values: str):
-	languages = Translation.get_available_lang()
-	choice = Menu(_('Archinstall language'), languages, default_option=preset_values).run()
+def select_archinstall_language(languages: List[Language], preset_value: Language) -> Language:
+	# these are the displayed language names which can either be
+	# the english name of a language or, if present, the
+	# name of the language in its own language
+	options = {lang.display_name: lang for lang in languages}
+
+	choice = Menu(
+		_('Archinstall language'),
+		list(options.keys()),
+		default_option=preset_value.display_name
+	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset_values
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Esc: return preset_value
+		case MenuSelectionType.Selection:
+			return options[choice.value]
 
 
 def select_profile(preset) -> Optional[Profile]:
