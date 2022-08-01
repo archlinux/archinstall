@@ -109,7 +109,7 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		list(mirrors.keys()),
 		preset_values=preselected,
 		multi=True,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match selected_mirror.type_:
@@ -159,8 +159,8 @@ def select_profile(preset) -> Optional[Profile]:
 	selection = Menu(
 		title=title,
 		p_options=list(options.keys()),
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match selection.type_:
@@ -222,7 +222,7 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		sort=False,
 		multi=True,
 		preset_values=preset,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match choice.type_:
