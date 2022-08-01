@@ -188,6 +188,11 @@ class GeneralMenu:
 		self._menu_options: Dict[str, Selector] = {}
 		self._setup_selection_menu_options()
 		self.preview_size = preview_size
+		self._last_choice = None
+
+	@property
+	def last_choice(self):
+		return self._last_choice
 
 	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
 		self.is_context_mgr = True
@@ -324,6 +329,10 @@ class GeneralMenu:
 				# we allow for an callback for special processing on realeasing control
 				if not self._process_selection(value):
 					break
+
+		# we get the last action key
+		actions = {str(v.description):k for k,v in self._menu_options.items()}
+		self._last_choice = actions[selection.value.strip()]
 
 		if not self.is_context_mgr:
 			self.__exit__()

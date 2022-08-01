@@ -44,6 +44,12 @@ class ListManager:
 		self._base_actions = base_actions
 		self._sub_menu_actions = sub_menu_actions
 
+		self._last_choice = None
+
+	@property
+	def last_choice(self):
+		return self._last_choice
+
 	def run(self):
 		while True:
 			# this will return a dictionary with the key as the menu entry to be displayed
@@ -73,6 +79,7 @@ class ListManager:
 				selected_entry = data_formatted[choice.value]
 				self._run_actions_on_entry(selected_entry)
 
+		self._last_choice = choice
 		if choice.value == self._cancel_action:
 			return self._original_data  # return the original list
 		else:
@@ -97,7 +104,7 @@ class ListManager:
 		return options, header
 
 	def _run_actions_on_entry(self, entry: Any):
-		options = self._sub_menu_actions + [self._cancel_action]
+		options = self.filter_options(entry,self._sub_menu_actions) + [self._cancel_action]
 		display_value = self.selected_action_display(entry)
 
 		prompt = _("Select an action for '{}'").format(display_value)
@@ -129,3 +136,7 @@ class ListManager:
 		# this function is called when a base action or
 		# a specific action for an entry is triggered
 		raise NotImplementedError('Please implement me in the child class')
+
+	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
+		# filter which actions to show for an specific selection
+		return options
