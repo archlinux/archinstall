@@ -60,7 +60,7 @@ def import_via_path(path :str, namespace :Optional[str] = None) -> ModuleType:
 		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
 
 		try:
-			del(sys.modules[namespace])
+			del(sys.modules[namespace]) # noqa: E275
 		except:
 			pass
 

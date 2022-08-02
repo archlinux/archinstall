@@ -45,8 +45,8 @@ def select_disk_layout(preset: Optional[Dict[str, Any]], block_devices: list, ad
 	choice = Menu(
 		_('Select what you wish to do with the selected block devices'),
 		modes,
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match choice.type_:

@@ -191,11 +191,12 @@ def perform_installation(mountpoint):
 		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
-			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments['swap']:
+			if archinstall.arguments.get('mirror-region') is not None:
+				if archinstall.arguments.get("mirrors", None) is not None:
+					installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+			if archinstall.arguments.get('swap'):
 				installation.setup_swap('zram')
-			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
+			if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
@@ -278,7 +279,7 @@ if not (archinstall.check_mirror_reachable() or archinstall.arguments.get('skip-
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not archinstall.arguments['offline']:
+if not archinstall.arguments.get('offline'):
 	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
 
 	# If we want to check for keyring updates

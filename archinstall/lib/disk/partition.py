@@ -243,6 +243,68 @@ class Partition:
 
 	@property
 	def uuid(self) -> Optional[str]:
+		"""
+		Returns the UUID as returned by lsblk for the **partition**.
+		This is more reliable than relying on /dev/disk/by-uuid as
+		it doesn't seam to be able to detect md raid partitions.
+		For bind mounts all the subvolumes share the same uuid
+		"""
+		for i in range(storage['DISK_RETRY_ATTEMPTS']):
+			if not self.partprobe():
+				raise DiskError(f"Could not perform partprobe on {self.device_path}")
+
+			time.sleep(storage.get('DISK_TIMEOUTS', 1) * i)
+
+			partuuid = self._safe_uuid
+			if partuuid:
+				return partuuid
+
+		raise DiskError(f"Could not get PARTUUID for {self.path} using 'blkid -s PARTUUID -o value {self.path}'")
+
+	@property
+	def _safe_uuid(self) -> Optional[str]:
+		"""
+		A near copy of self.uuid but without any delays.
+		This function should only be used where uuid is not crucial.
+		For instance when you want to get a __repr__ of the class.
+		"""
+		if not self.partprobe():
+			if self.block_device.partition_type == 'iso9660':
+				return None
+
+			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
+
+		try:
+			return SysCommand(f'blkid -s UUID -o value {self.device_path}').decode('UTF-8').strip()
+		except SysCallError as error:
+			if self.block_device.partition_type == 'iso9660':
+				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
+				return None
+
+			log(f"Could not get PARTUUID of partition using 'blkid -s UUID -o value {self.device_path}': {error}")
+
+	@property
+	def _safe_part_uuid(self) -> Optional[str]:
+		"""
+		A near copy of self.uuid but without any delays.
+		This function should only be used where uuid is not crucial.
+		For instance when you want to get a __repr__ of the class.
+		"""
+		if not self.partprobe():
+			if self.block_device.partition_type == 'iso9660':
+				return None
+
+			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
+
+		try:
+			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
+		except SysCallError as error:
+			if self.block_device.partition_type == 'iso9660':
+				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
+				return None
+
+			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
+
 		return self._partition_info.uuid
 
 	@property
