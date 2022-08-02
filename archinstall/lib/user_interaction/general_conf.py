@@ -212,7 +212,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 	print(_("Enter the number of parallel downloads to be enabled.\n(Enter a value between 1 to 10, 10 being the maximum and 1 disables Parallel Downloading)\n"))
 	sleep(5)
 	print(_("Test"))
-	while input_number is None:
+	while not input_number:
 		try:
 			input_number = int(TextInput("[Default value: 1] > ").run().strip() or 1)
 			if input_number > 0:
