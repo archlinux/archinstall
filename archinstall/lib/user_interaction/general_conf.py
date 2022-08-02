@@ -211,6 +211,7 @@ from time import sleep
 def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	print(_("Enter the number of parallel downloads to be enabled.\n(Enter a value between 1 to 10, 10 being the maximum and 1 disables Parallel Downloading)\n"))
 	sleep(5)
+	print(_("Test"))
 	while input_number is None:
 		try:
 			input_number = int(TextInput("[Default value: 1] > ").run().strip() or 1)
@@ -222,10 +223,12 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 			input_number = None
 			print(_("Invalid input! Try again with a valid input [1-10]"))
 	sleep(5)
+	print(_("Test"))
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
 		pacman_conf = f.read().split("\n")
 	sleep(5)
+	print(_("Test"))
 	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
