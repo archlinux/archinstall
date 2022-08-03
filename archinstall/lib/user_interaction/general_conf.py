@@ -218,8 +218,7 @@ Enter the number of parallel downloads to be enabled.
 Note:
 	- Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} at a time) 
 	- Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )
-	- Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )
-"""))
+	- Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"""))
 
 	while True:
 		try:
