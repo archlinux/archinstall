@@ -209,14 +209,12 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	max_downloads = 5
-	print(_(f"""
+	print(_(f"""This option enables the number of parallel downloads that can occur during installation
 
-This option enables the number of parallel downloads that can occur during installation
-
-Enter the number of parallel downloads to be enabled.
-(Enter a value between 1 to {max_downloads})
-Note:
-	- Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} at a time) 
+ Enter the number of parallel downloads to be enabled.
+ (Enter a value between 1 to {max_downloads})
+ Note:
+	- Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time ) 
 	- Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )
 	- Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"""))
 
