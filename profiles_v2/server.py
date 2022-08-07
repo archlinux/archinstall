@@ -1,52 +1,60 @@
 # Used to select various server application profiles on top of a minimal installation.
 
 import logging
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, List
 
 import archinstall
-from archinstall import Menu
-from archinstall.lib.menu.menu import MenuSelectionType
+from profiles_v2.profiles import ProfileType, Profile
+# from .servers import DockerProfile
 
 if TYPE_CHECKING:
 	_: Any
 
-is_top_level_profile = True
 
-__description__ = str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb'))
+class ServerProfile(Profile):
+	def __init__(self):
+		super().__init__(
+			str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb')),
+			ProfileType.Generic
+		)
 
-available_servers = [
-	"cockpit",
-	"docker",
-	"httpd",
-	"lighttpd",
-	"mariadb",
-	"nginx",
-	"postgresql",
-	"sshd",
-	"tomcat",
-]
+	def packages(self) -> List[str]:
+		return []
+
+	def sub_profiles(self, multi: bool = True) -> List[Profile]:
+		return [
+			# CockpitProfile,
+			# DockerProfile,
+			# HttpdProfile,
+			# ListhtpdProfile,
+			# MariadbProfile,
+			# NginxProfile,
+			# PostgresqlProfile,
+			# SshdProfile,
+			# TomcatProfile
+		]
 
 
-def _prep_function(*args, **kwargs):
-	"""
-	Magic function called by the importing installer
-	before continuing any further.
-	"""
-	choice = Menu(str(_(
-		'Choose which servers to install, if none then a minimal installation will be done')),
-		available_servers,
-		preset_values=kwargs['servers'],
-		multi=True
-	).run()
-
-	if choice.type_ != MenuSelectionType.Selection:
-		return False
-
-	if choice.value:
-		archinstall.storage['_selected_servers'] = choice.value
-		return True
-
-	return False
+# def _prep_function(*args, **kwargs):
+# 	"""
+# 	Magic function called by the importing installer
+# 	before continuing any further.
+# 	"""
+# 	choice = Menu(str(_(
+# 		'Choose which servers to install, if none then a minimal installation will be done')),
+# 		available_servers,
+# 		preset_values=kwargs['servers'],
+# 		multi=True
+# 	).run()
+#
+# 	if choice.type_ != MenuSelectionType.Selection:
+# 		return False
+#
+# 	if choice.value:
+# 		archinstall.storage['_selected_servers'] = choice.value
+# 		return True
+#
+# 	return False
 
 
 if __name__ == 'server':

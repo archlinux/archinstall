@@ -4,18 +4,20 @@ from typing import List
 import archinstall
 import logging
 
-from .profiles import Profile
+from .profiles import Profile, ProfileType
 from archinstall.lib.hardware import __packages__ as __hwd__packages__
-
-
-is_top_level_profile = True
 
 
 class XorgProfile(Profile):
 	def __init__(self):
 		super().__init__(
-			str(_('Installs a minimal system as well as xorg and graphics drivers.'))
+			'Xorg',
+			str(_('Installs a minimal system as well as xorg and graphics drivers.')),
+			ProfileType.Generic
 		)
+
+	def is_top_level_profile(self) -> bool:
+		return True
 
 	def packages(self) -> List[str]:
 		return [

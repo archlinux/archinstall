@@ -11,6 +11,7 @@ from ..menu import Menu
 from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
+from ..profiles_v2 import ProfileHandler
 
 from ..translation import Translation
 from ..packages.packages import validate_package_list
@@ -125,6 +126,25 @@ def select_archinstall_language(preset_values: str):
 	match choice.type_:
 		case MenuSelectionType.Esc: return preset_values
 		case MenuSelectionType.Selection: return choice.value
+
+
+def select_profile_v2() -> Any:
+	handler = ProfileHandler()
+	top_level = handler.get_top_level_profiles()
+
+	options = [p.identifier for p in top_level]
+
+	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	choice = Menu(
+		title=title,
+		p_options=options,
+		explode_on_interrupt=True,
+		explode_warning=warning
+	).run()
+
+	print(choice)
 
 
 def select_profile(preset) -> Optional[Profile]:

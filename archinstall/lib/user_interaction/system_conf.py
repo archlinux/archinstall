@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import List, Any, TYPE_CHECKING
+from typing import List, Any, Dict, TYPE_CHECKING
 
 from ..disk import all_blockdevices
-from ..hardware import has_uefi
+from ..exceptions import RequirementError
+from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -116,6 +118,47 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 					bootloader = value
 
 	return bootloader
+
+
+def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
+	"""
+	Some what convoluted function, whose job is simple.
+	Select a graphics driver from a pre-defined set of popular options.
+
+	(The template xorg is for beginner users, not advanced, and should
+	there for appeal to the general public first and edge cases later)
+	"""
+
+	drivers = sorted(list(options))
+
+	if drivers:
+		arguments = storage.get('arguments', {})
+		title = ''
+
+		if has_amd_graphics():
+			title += str(_(
+				'For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.'
+			)) + '\n'
+		if has_intel_graphics():
+			title += str(_(
+				'For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'
+			))
+		if has_nvidia_graphics():
+			title += str(_(
+				'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
+			))
+
+		title += str(_('\n\nSelect a graphics driver or leave blank to install all open-source drivers'))
+		choice = Menu(title, drivers).run()
+
+		if choice.type_ != MenuSelectionType.Selection:
+			return arguments.get('gfx_driver')
+
+		arguments['gfx_driver'] = choice.value
+		return options.get(choice.value)
+
+	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
+
 
 
 def ask_for_swap(preset: bool = True) -> bool:

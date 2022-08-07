@@ -1,17 +1,18 @@
-# Used to do a minimal install
 from typing import List
 
-import archinstall
-from .profiles import Profile
-
-is_top_level_profile = True
+from profiles_v2.profiles import Profile, ProfileType
 
 
 class MinimalProfile(Profile):
 	def __init__(self):
 		super().__init__(
-			str(_('A very basic installation that allows you to customize Arch Linux as you see fit.'))
+			'Minimal',
+			str(_('A very basic installation that allows you to customize Arch Linux as you see fit.')),
+			ProfileType.Generic
 		)
+
+	def is_top_level_profile(self) -> bool:
+		return True
 
 	def packages(self) -> List[str]:
 		return []
