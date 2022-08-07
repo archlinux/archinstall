@@ -57,10 +57,10 @@ class UserList(ListManager):
 			prompt = str(_('Password for user "{}": ').format(entry.username))
 			new_password = get_password(prompt=prompt)
 			if new_password:
-				user = next(filter(lambda x: x == entry, data), 1)
+				user = next(filter(lambda x: x == entry, data))
 				user.password = new_password
 		elif action == self._actions[2]:  # promote/demote
-			user = next(filter(lambda x: x == entry, data), 1)
+			user = next(filter(lambda x: x == entry, data))
 			user.sudo = False if user.sudo else True
 		elif action == self._actions[3]:  # delete
 			data = [d for d in data if d != entry]

@@ -37,7 +37,7 @@ else:
 
 		def unregister(self, fileno :int, *args :List[Any], **kwargs :Dict[str, Any]) -> None:
 			try:
-				del(self.monitoring[fileno])
+				del(self.monitoring[fileno]) # noqa: E275
 			except:
 				pass
 

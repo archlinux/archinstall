@@ -210,7 +210,14 @@ class Filesystem:
 		# TODO: Implement this with declarative profiles instead.
 		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
-	def add_partition(self, partition_type :str, start :str, end :str, partition_format :Optional[str] = None, skip_mklabel :bool = False) -> Partition:
+	def add_partition(
+		self,
+		partition_type :str,
+		start :str,
+		end :str,
+		partition_format :Optional[str] = None,
+		skip_mklabel :bool = False
+	) -> Partition:
 		log(f'Adding partition to {self.blockdevice}, {start}->{end}', level=logging.INFO)
 
 		if len(self.blockdevice.partitions) == 0 and skip_mklabel is False:
@@ -232,6 +239,7 @@ class Filesystem:
 			except DiskError:
 				pass
 
+		# TODO this check should probably run in the setup process rather than during the installation
 		if self.mode == MBR:
 			if len(self.blockdevice.partitions) > 3:
 				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
@@ -246,14 +254,9 @@ class Filesystem:
 		if self.parted(parted_string):
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
 				self.partprobe()
+				self.blockdevice.flush_cache()
 
-				new_partition_uuids = []
-				for partition in self.blockdevice.partitions.values():
-					try:
-						new_partition_uuids.append(partition.part_uuid)
-					except DiskError:
-						pass
-
+				new_partition_uuids = [partition.part_uuid for partition in self.blockdevice.partitions.values()]
 				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
 
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
@@ -263,17 +266,20 @@ class Filesystem:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
 						log(f'Partition set: {new_partuuid_set}', level=logging.ERROR, fg="red")
-						log(f'New UUID: {[new_partuuid]}', level=logging.ERROR, fg="red")
+						log(f'New PARTUUID: {[new_partuuid]}', level=logging.ERROR, fg="red")
 						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 
+		total_partitions = set([partition.part_uuid for partition in self.blockdevice.partitions.values()])
+		total_partitions.update(previous_partuuids)
+
 		# TODO: This should never be able to happen
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
 		log(f"Previous partitions: {previous_partuuids}", level=logging.ERROR, fg="red")
-		log(f"New partitions: {(previous_partuuids ^ {partition.part_uuid for partition in self.blockdevice.partitions.values()})}", level=logging.ERROR, fg="red")
+		log(f"New partitions: {total_partitions}", level=logging.ERROR, fg="red")
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:
