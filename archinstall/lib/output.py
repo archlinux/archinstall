@@ -2,45 +2,86 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union, List, Any
+from typing import Dict, Union, List, Any, Callable
 
 from .storage import storage
+from dataclasses import asdict, is_dataclass
 
 
 class FormattedOutput:
 
 	@classmethod
-	def values(cls, o: Any) -> Dict[str, Any]:
-		if hasattr(o, 'as_json'):
+	def values(cls, o: Any, class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> Dict[str, Any]:
+		""" the original values returned a dataclass as dict thru the call to some specific methods
+		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
+		Can transmit a filter list to the class_formatter,
+		"""
+		if class_formatter:
+			# if invoked per reference it has to be a standard function or a classmethod.
+			# A method of an instance does not make sense
+			if callable(class_formatter):
+				return class_formatter(o, filter_list)
+			# if is invoked by name we restrict it to a method of the class. No need to mess more
+			elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
+				func = getattr(o, class_formatter)
+				return func(filter_list)
+
+			raise ValueError('Unsupported formatting call')
+		elif hasattr(o, 'as_json'):
 			return o.as_json()
 		elif hasattr(o, 'json'):
 			return o.json()
+		elif is_dataclass(o):
+			return asdict(o)
 		else:
 			return o.__dict__
 
 	@classmethod
-	def as_table(cls, obj: List[Any]) -> str:
+	def as_table(cls, obj: List[Any], class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> str:
+		""" variant of as_table (subtly different code) which has two additional parameters
+		filter which is a list of fields which will be shon
+		class_formatter a special method to format the outgoing data
+
+		A general comment, the format selected for the output (a string where every data record is separated by newline)
+		is for compatibility with a print statement
+		As_table_filter can be a drop in replacement for as_table
+		"""
+		raw_data = [cls.values(o, class_formatter, filter_list) for o in obj]
+
+		# determine the maximum column size
 		column_width: Dict[str, int] = {}
-		for o in obj:
-			for k, v in cls.values(o).items():
-				column_width.setdefault(k, 0)
-				column_width[k] = max([column_width[k], len(str(v)), len(k)])
+		for o in raw_data:
+			for k, v in o.items():
+				if not filter_list or k in filter_list:
+					column_width.setdefault(k, 0)
+					column_width[k] = max([column_width[k], len(str(v)), len(k)])
 
+		if not filter_list:
+			filter_list = list(column_width.keys())
+
+		# create the header lines
 		output = ''
-		for key, width in column_width.items():
+		key_list = []
+		for key in filter_list:
+			width = column_width[key]
 			key = key.replace('!', '')
-			output += key.ljust(width) + ' | '
-
-		output = output[:-3] + '\n'
+			key_list.append(key.ljust(width))
+		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
 
-		for o in obj:
-			for k, v in cls.values(o).items():
-				if '!' in k:
-					v = '*' * len(str(v))
-				output += str(v).ljust(column_width[k]) + ' | '
-			output = output[:-3]
-			output += '\n'
+		# create the data lines
+		for record in raw_data:
+			obj_data = []
+			for key in filter_list:
+				width = column_width.get(key, len(key))
+				value = record.get(key, '')
+				if '!' in key:
+					value = '*' * width
+				if isinstance(value,(int, float)) or (isinstance(value, str) and value.isnumeric()):
+					obj_data.append(str(value).rjust(width))
+				else:
+					obj_data.append(str(value).ljust(width))
+			output += ' | '.join(obj_data) + '\n'
 
 		return output
 

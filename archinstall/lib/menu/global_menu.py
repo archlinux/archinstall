@@ -33,6 +33,9 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
 from ..user_interaction.general_conf import select_profile_v2
+from ..user_interaction import select_additional_repositories
+from ..user_interaction import add_number_of_parrallel_downloads
+from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
 
 if TYPE_CHECKING:
@@ -41,6 +44,7 @@ if TYPE_CHECKING:
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
+		self._disk_check = True
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def _setup_selection_menu_options(self):
@@ -49,7 +53,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				default='English')
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),
@@ -142,6 +147,15 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
+
+		self._menu_options['parallel downloads'] = \
+			Selector(
+				_('Parallel Downloads'),
+				add_number_of_parrallel_downloads,
+				display_func=lambda x: x if x else '0',
+				default=None
+			)
+
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Kernels'),
@@ -302,11 +316,12 @@ class GlobalMenu(GeneralMenu):
 			missing += ['Hostname']
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
-		if not check('harddrives'):
-			missing += [str(_('Drive(s)'))]
-		if check('harddrives'):
-			if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
-				missing += [str(_('Disk layout'))]
+		if self._disk_check:
+			if not check('harddrives'):
+				missing += [str(_('Drive(s)'))]
+			if check('harddrives'):
+				if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
+					missing += [str(_('Disk layout'))]
 
 		return missing
 
@@ -332,7 +347,7 @@ class GlobalMenu(GeneralMenu):
 	def _select_harddrives(self, old_harddrives : list) -> List:
 		harddrives = select_harddrives(old_harddrives)
 
-		if harddrives:
+		if harddrives is not None:
 			if len(harddrives) == 0:
 				prompt = _(
 					"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
@@ -343,7 +358,10 @@ class GlobalMenu(GeneralMenu):
 				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
 
 				if choice.value == Menu.no():
+					self._disk_check = True
 					return self._select_harddrives(old_harddrives)
+				else:
+					self._disk_check = False
 
 			# in case the harddrives got changed we have to reset the disk layout as well
 			if old_harddrives != harddrives:

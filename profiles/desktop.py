@@ -57,7 +57,7 @@ def _prep_function(*args, **kwargs) -> bool:
 	if choice.type_ != MenuSelectionType.Selection:
 		return False
 
-	if choice.value:
+	if choice.value and isinstance(choice.value, str):
 		# Temporarily store the selected desktop profile
 		# in a session-safe location, since this module will get reloaded
 		# the next time it gets executed.
@@ -65,7 +65,9 @@ def _prep_function(*args, **kwargs) -> bool:
 			archinstall.storage['_desktop_profile'] = choice.value
 		if not archinstall.arguments.get('desktop-environment', None):
 			archinstall.arguments['desktop-environment'] = choice.value
+
 		profile = archinstall.Profile(None, choice.value)
+
 		# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
 		with profile.load_instructions(namespace=f"{choice.value}.py") as imported:
 			if hasattr(imported, '_prep_function'):

@@ -11,4 +11,4 @@ archinstall.storage['installation_session'].add_additional_packages(__packages__
 @archinstall.plugin
 def on_user_created(installation :archinstall.Installer, user :str):
 	archinstall.log(f"Enabling pipewire-pulse for {user}", level=logging.INFO)
-	installation.chroot('systemctl enable --user pipewire-pulse.service', run_as=user)
+	installation.arch_chroot('systemctl enable --user pipewire-pulse.service', run_as=user)

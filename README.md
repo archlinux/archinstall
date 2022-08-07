@@ -37,6 +37,29 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
     # archinstall --config <path to user config file or URL> --disk-layout <path to disk layout config file or URL> --creds <path to user credentials config file or URL>
 
+# Available Languages
+
+Archinstall is available in different languages which have been contributed and are maintained by the community.  
+Current translations are listed below and vary in the amount of translations per language
+```
+English                                                                                                                                       
+Deutsch
+Española                                                                                                                                                 
+Française                                                                                                                                                
+Italiano                                                                                                                                                 
+Nederlands
+Polskie                                                                                                                                            
+Portugues do Brasil                                                                                                                                      
+Português                                                                                                                                                
+Svenska                                                                                                                                                  
+Türk                                                                                                                                                     
+čeština                                                                                                                                                  
+русский
+اردو
+```
+
+Any contributions to the translations are more than welcome, and to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
+
 # Help?
 
 Submit an issue here on GitHub, or submit a post in the discord help channel.<br>
@@ -56,6 +79,7 @@ Archinstall has one fundamental function which is to be a flexible library to ma
 This library is in turn used by the provided guided installer but is also for anyone who wants to script their own installations.
 
 Therefore, Archinstall will try its best to not introduce any breaking changes except for major releases which may break backwards compatibility after notifying about such changes.
+
 
 # Scripting your own installation
 

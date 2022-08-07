@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
 from ..menu.menu import MenuSelectionType
@@ -13,7 +14,7 @@ from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 from ..profiles_v2 import ProfileHandler
 
-from ..translation import Translation
+from ..translationhandler import Language
 from ..packages.packages import validate_package_list
 
 from ..storage import storage
@@ -110,7 +111,7 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		list(mirrors.keys()),
 		preset_values=preselected,
 		multi=True,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match selected_mirror.type_:
@@ -119,13 +120,22 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
-def select_archinstall_language(preset_values: str):
-	languages = Translation.get_available_lang()
-	choice = Menu(_('Archinstall language'), languages, default_option=preset_values).run()
+def select_archinstall_language(languages: List[Language], preset_value: Language) -> Language:
+	# these are the displayed language names which can either be
+	# the english name of a language or, if present, the
+	# name of the language in its own language
+	options = {lang.display_name: lang for lang in languages}
+
+	choice = Menu(
+		_('Archinstall language'),
+		list(options.keys()),
+		default_option=preset_value.display_name
+	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset_values
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Esc: return preset_value
+		case MenuSelectionType.Selection:
+			return options[choice.value]
 
 
 def select_profile_v2() -> Any:
@@ -170,8 +180,8 @@ def select_profile(preset) -> Optional[Profile]:
 	selection = Menu(
 		title=title,
 		p_options=list(options.keys()),
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match selection.type_:
@@ -216,6 +226,29 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	return packages
 
+def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+	print(_("Enter the number of parallel downloads to be enabled.\n [Default value is 0]"))
+
+	while input_number is None:
+		try:
+			input_number = int(TextInput("> ").run().strip() or 0)
+			break
+		except:
+			print(_("Invalid input! Try again with a valid input"))
+
+	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	with pacman_conf_path.open() as f:
+		pacman_conf = f.read().split("\n")
+
+	with pacman_conf_path.open("w") as fwrite:
+		for line in pacman_conf:
+			if "ParallelDownloads" in line:
+				fwrite.write(f"ParallelDownloads = {input_number}\n")
+			else:
+				fwrite.write(f"{line}\n")
+
+	return input_number
+
 
 def select_additional_repositories(preset: List[str]) -> List[str]:
 	"""
@@ -233,7 +266,7 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		sort=False,
 		multi=True,
 		preset_values=preset,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match choice.type_:

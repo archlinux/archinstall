@@ -37,7 +37,7 @@ else:
 
 		def unregister(self, fileno :int, *args :List[Any], **kwargs :Dict[str, Any]) -> None:
 			try:
-				del(self.monitoring[fileno])
+				del(self.monitoring[fileno]) # noqa: E275
 			except:
 				pass
 
@@ -532,9 +532,8 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
 
-		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
+		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
-		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :

@@ -1,5 +1,10 @@
 # Used to do a minimal install
+from typing import Any, TYPE_CHECKING
+
 import archinstall
+
+if TYPE_CHECKING:
+	_: Any
 
 is_top_level_profile = True
 
