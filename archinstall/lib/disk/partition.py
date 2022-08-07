@@ -275,13 +275,16 @@ class Partition:
 			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
 
 		try:
-			return SysCommand(f'blkid -s UUID -o value {self.device_path}').decode('UTF-8').strip()
+			value = SysCommand(f'blkid -s UUID -o value {self.device_path}').decode('UTF-8')
+			return value.strip() if value else None
 		except SysCallError as error:
 			if self.block_device.partition_type == 'iso9660':
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
 				return None
 
 			log(f"Could not get PARTUUID of partition using 'blkid -s UUID -o value {self.device_path}': {error}")
+
+		return None
 
 	@property
 	def _safe_part_uuid(self) -> Optional[str]:
@@ -297,7 +300,8 @@ class Partition:
 			log(f"Could not reliably refresh PARTUUID of partition {self.device_path} due to partprobe error.", level=logging.DEBUG)
 
 		try:
-			return SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8').strip()
+			value = SysCommand(f'blkid -s PARTUUID -o value {self.device_path}').decode('UTF-8')
+			return value.strip() if value else None
 		except SysCallError as error:
 			if self.block_device.partition_type == 'iso9660':
 				# Parent device is a Optical Disk (.iso dd'ed onto a device for instance)
@@ -306,6 +310,9 @@ class Partition:
 			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
 
 		return self._partition_info.uuid
+
+	def set_encrypted(self, encrypted: bool):
+		self._encrypted = encrypted
 
 	@property
 	def encrypted(self) -> Union[bool, None]:
