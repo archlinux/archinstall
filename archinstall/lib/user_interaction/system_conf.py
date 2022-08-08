@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, TYPE_CHECKING
+from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
 from ..disk import all_blockdevices
 from ..exceptions import RequirementError
@@ -120,7 +120,7 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 	return bootloader
 
 
-def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
+def select_driver(options: Dict[str, Any] = None, current_value: str = None) -> Optional[str]:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -129,36 +129,31 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 	there for appeal to the general public first and edge cases later)
 	"""
 
-	drivers = sorted(list(options))
+	if options is None or len(options) == 0:
+		options = AVAILABLE_GFX_DRIVERS
+
+	drivers = sorted(list(options.keys()))
 
 	if drivers:
-		arguments = storage.get('arguments', {})
 		title = ''
-
 		if has_amd_graphics():
-			title += str(_(
-				'For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.'
-			)) + '\n'
+			title += str(_('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')) + '\n'
 		if has_intel_graphics():
-			title += str(_(
-				'For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'
-			))
+			title += str(_('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'))
 		if has_nvidia_graphics():
-			title += str(_(
-				'For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'
-			))
+			title += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
 		title += str(_('\n\nSelect a graphics driver or leave blank to install all open-source drivers'))
-		choice = Menu(title, drivers).run()
+
+		preset = current_value if current_value else None
+		choice = Menu(title, drivers, preset_values=preset).run()
 
 		if choice.type_ != MenuSelectionType.Selection:
-			return arguments.get('gfx_driver')
+			return None
 
-		arguments['gfx_driver'] = choice.value
-		return options.get(choice.value)
+		return choice.value
 
-	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
-
+	return current_value
 
 
 def ask_for_swap(preset: bool = True) -> bool:

@@ -1,18 +1,15 @@
 from typing import List
 
-from profiles_v2.profiles import Profile, ProfileType
+from profiles_v2.profiles_v2 import Profile_v2, ProfileType
 
 
-class MinimalProfile(Profile):
+class MinimalProfileV2(Profile_v2):
 	def __init__(self):
 		super().__init__(
 			'Minimal',
-			str(_('A very basic installation that allows you to customize Arch Linux as you see fit.')),
-			ProfileType.Generic
+			ProfileType.Generic,
+			description=str(_('A very basic installation that allows you to customize Arch Linux as you see fit.'))
 		)
-
-	def is_top_level_profile(self) -> bool:
-		return True
 
 	def packages(self) -> List[str]:
 		return []

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
+from profiles_v2.profiles_v2 import Profile_v2
 from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
@@ -10,9 +11,9 @@ from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
-from ..profiles import is_desktop_profile
-from ..profiles_v2 import ProfileHandler
+from ..profiles import is_desktop_profile, Profile
 from ..storage import storage
+from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import ask_for_audio_selection
@@ -33,9 +34,6 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
 from ..user_interaction.general_conf import select_profile_v2
-from ..user_interaction import select_additional_repositories
-from ..user_interaction import add_number_of_parrallel_downloads
-from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
 
 if TYPE_CHECKING:
@@ -370,56 +368,60 @@ class GlobalMenu(GeneralMenu):
 
 		return harddrives
 
-	def _select_profile(self, preset):
-		select_profile_v2()
-
+	def _select_profile(self, current_profile: Optional[Profile_v2]):
+		profile = select_profile_v2(current_profile)
+		print(profile)
 		a = 1/0
 
-		profile = select_profile(preset)
-		# ret = None
-		#
-		# if profile is None:
-		# 	if any([
-		# 		archinstall.storage.get('profile_minimal', False),
-		# 		archinstall.storage.get('_selected_servers', None),
-		# 		archinstall.storage.get('_desktop_profile', None),
-		# 		archinstall.arguments.get('desktop-environment', None),
-		# 		archinstall.arguments.get('gfx_driver_packages', None)
-		# 	]):
-		# 		return preset
-		# 	else:  # ctrl+c was actioned and all profile settings have been reset
-		# 		return None
-		#
-		# servers = archinstall.storage.get('_selected_servers', [])
-		# desktop = archinstall.storage.get('_desktop_profile', None)
-		# desktop_env = archinstall.arguments.get('desktop-environment', None)
-		# gfx_driver = archinstall.arguments.get('gfx_driver_packages', None)
-		#
-		# # Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-		# if profile and profile.has_prep_function():
-		# 	namespace = f'{profile.namespace}.py'
-		# 	with profile.load_instructions(namespace=namespace) as imported:
-		# 		if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
-		# 			ret: Profile = profile
-		#
-		# 			match ret.name:
-		# 				case 'minimal':
-		# 					reset = ['_selected_servers', '_desktop_profile', 'desktop-environment', 'gfx_driver_packages']
-		# 				case 'server':
-		# 					reset = ['_desktop_profile', 'desktop-environment']
-		# 				case 'desktop':
-		# 					reset = ['_selected_servers']
-		# 				case 'xorg':
-		# 					reset = ['_selected_servers', '_desktop_profile', 'desktop-environment']
-		#
-		# 			for r in reset:
-		# 				archinstall.storage[r] = None
-		# 		else:
-		# 			return self._select_profile(preset)
-		# elif profile:
-		# 	ret = profile
-		#
-		# return ret
+
+
+
+		import archinstall
+		profile = select_profile(current_profile)
+		ret = None
+
+		if profile is None:
+			if any([
+				archinstall.storage.get('profile_minimal', False),
+				archinstall.storage.get('_selected_servers', None),
+				archinstall.storage.get('_desktop_profile', None),
+				archinstall.arguments.get('desktop-environment', None),
+				archinstall.arguments.get('gfx_driver_packages', None)
+			]):
+				return current_profile
+			else:  # ctrl+c was actioned and all profile settings have been reset
+				return None
+
+		servers = archinstall.storage.get('_selected_servers', [])
+		desktop = archinstall.storage.get('_desktop_profile', None)
+		desktop_env = archinstall.arguments.get('desktop-environment', None)
+		gfx_driver = archinstall.arguments.get('gfx_driver_packages', None)
+
+		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
+		if profile and profile.has_prep_function():
+			namespace = f'{profile.namespace}.py'
+			with profile.load_instructions(namespace=namespace) as imported:
+				if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
+					ret: Profile = profile
+
+					match ret.name:
+						case 'minimal':
+							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment', 'gfx_driver_packages']
+						case 'server':
+							reset = ['_desktop_profile', 'desktop-environment']
+						case 'desktop':
+							reset = ['_selected_servers']
+						case 'xorg':
+							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment']
+
+					for r in reset:
+						archinstall.storage[r] = None
+				else:
+					return self._select_profile(current_profile)
+		elif profile:
+			ret = profile
+
+		return ret
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)

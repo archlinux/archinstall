@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import logging
 import pathlib
+from enum import Enum
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
+from profiles_v2.profiles_v2 import Profile_v2
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 
@@ -12,7 +14,7 @@ from ..menu import Menu
 from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
-from ..profiles_v2 import ProfileHandler
+from ..profiles_handler import ProfileHandler
 
 from ..translationhandler import Language
 from ..packages.packages import validate_package_list
@@ -138,23 +140,47 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 			return options[choice.value]
 
 
-def select_profile_v2() -> Any:
+def select_profile_v2(
+	current_profile: Optional[Profile_v2] = None,
+	title: str = None,
+	allow_reset: bool = True,
+	multi: bool = False
+) -> Optional[Profile_v2]:
+
+	XXXX
+	# instantiate only once -> now profiles are being recreated and not saved I think
 	handler = ProfileHandler()
-	top_level = handler.get_top_level_profiles()
+	selectable_profiles = handler.get_top_level_profiles()
 
-	options = [p.identifier for p in top_level]
-
-	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
-	warning = str(_('Are you sure you want to reset this setting?'))
-
-	choice = Menu(
+	choice = handler.select_profile(
+		selectable_profiles,
+		current_profile=current_profile,
 		title=title,
-		p_options=options,
-		explode_on_interrupt=True,
-		explode_warning=warning
-	).run()
+		allow_reset=allow_reset,
+		multi=multi
+	)
 
-	print(choice)
+	match choice.type_:
+		case MenuSelectionType.Selection:
+			if multi:
+				current_profile = [handler.profile_by_identifier(val) for val in choice.value]
+			else:
+				current_profile = handler.profile_by_identifier(choice.value)
+				current_profile.do_on_select()
+
+			# we're keep showing the profile menu unless we're actively exiting it
+			# by pressing ctrl+c or Esc
+			return select_profile_v2(
+				current_profile,
+				selectable_profiles=selectable_profiles,
+				title=title,
+				allow_reset=allow_reset,
+				multi=multi
+			)
+		case MenuSelectionType.Ctrl_c:
+			return None
+		case MenuSelectionType.Esc:
+			return current_profile
 
 
 def select_profile(preset) -> Optional[Profile]:
