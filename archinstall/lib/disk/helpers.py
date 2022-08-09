@@ -403,6 +403,10 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
+		# Since all_blockdevices() returns PosixPath objects, we need to convert
+		# findmnt paths to pathlib.Path() first:
+		mountpoint = pathlib.Path(mountpoint)
+		
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]

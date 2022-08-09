@@ -1000,9 +1000,9 @@ class Installer:
 		root_partition = None
 		for partition in self.partitions:
 			print(partition, [partition.mountpoint], [self.target])
-			if partition.mountpoint == self.target / 'boot':
+			if self.target / 'boot' in partition.mountpoints:
 				boot_partition = partition
-			elif partition.mountpoint == self.target:
+			elif self.target in partition.mountpoints:
 				root_partition = partition
 
 		if boot_partition is None or root_partition is None:
