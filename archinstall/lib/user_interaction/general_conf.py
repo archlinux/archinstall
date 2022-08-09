@@ -206,15 +206,25 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 
 	return packages
 
-def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
-	print(_("Enter the number of parallel downloads to be enabled.\n [Default value is 0]"))
 
-	while input_number is None:
+def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+	max_downloads = 5
+	print(_(f"This option enables the number of parallel downloads that can occur during installation"))
+	print(_(f"Enter the number of parallel downloads to be enabled.\n (Enter a value between 1 to {max_downloads})\nNote:"))
+	print(_(f" - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"))
+	print(_(f" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"))
+	print(_(f" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
+
+	while True:
 		try:
-			input_number = int(TextInput("> ").run().strip() or 0)
+			input_number = int(TextInput("[Default value: 0] > ").run().strip() or 0)
+			if input_number <= 0:
+				input_number = 0
+			elif input_number > max_downloads:
+				input_number = max_downloads
 			break
 		except:
-			print(_("Invalid input! Try again with a valid input"))
+			print(_(f"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"))
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
@@ -223,7 +233,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
-				fwrite.write(f"ParallelDownloads = {input_number}\n")
+				fwrite.write(f"ParallelDownloads = {input_number+1}\n") if not input_number == 0 else fwrite.write("#ParallelDownloads = 0\n")
 			else:
 				fwrite.write(f"{line}\n")
 
