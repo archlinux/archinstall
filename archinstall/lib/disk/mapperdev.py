@@ -67,7 +67,7 @@ class MapperDev:
 	@property
 	def mount_information(self) -> List[Dict[str, Any]]:
 		from .helpers import find_mountpoint
-		return list(find_mountpoint(self.path))
+		return [{**obj, 'target' : pathlib.Path(obj.get('target', '/dev/null'))} for obj in find_mountpoint(self.path)]
 
 	@property
 	def filesystem(self) -> Optional[str]:
