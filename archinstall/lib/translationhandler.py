@@ -37,6 +37,8 @@ class Language:
 			return True
 		return False
 
+	def json(self):
+		return self.lang
 
 class TranslationHandler:
 	_base_pot = 'base.pot'
