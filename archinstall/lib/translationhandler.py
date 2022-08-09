@@ -37,7 +37,7 @@ class Language:
 			return True
 		return False
 
-	def json(self):
+	def json(self) -> str:
 		return self.lang
 
 class TranslationHandler:
