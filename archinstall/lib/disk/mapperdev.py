@@ -66,7 +66,7 @@ class MapperDev:
 
 	@property
 	def mountpoints(self) -> List[Dict[str, Any]]:
-		return [obj['target'] for obj in self.mount_information()]
+		return [obj['target'] for obj in self.mount_information]
 
 	@property
 	def mount_information(self) -> List[Dict[str, Any]]:
