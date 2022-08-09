@@ -66,6 +66,7 @@ def define_arguments():
 	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and
 	dashes inside it '-' are changed to '_'
 	"""
+	parser.add_argument("-v", "--version", action="version", version="%(prog)s " + __version__)
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--disk_layouts","--disk_layout","--disk-layouts","--disk-layout",nargs="?",
