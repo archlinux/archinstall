@@ -49,7 +49,7 @@ if __name__ == 'xorg':
 				archinstall.storage['installation_session'].add_additional_packages("dkms")  # I've had kernel regen fail if it wasn't installed before nvidia-dkms
 				archinstall.storage['installation_session'].add_additional_packages("xorg-server", "xorg-xinit", "nvidia-dkms")
 			else:
-				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", archinstall.storage.get('gfx_driver_packages', []))
+				archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", *archinstall.storage.get('gfx_driver_packages', []))
 		elif 'amdgpu' in archinstall.storage.get("gfx_driver_packages", []):
 			# The order of these two are important if amdgpu is installed #808
 			if 'amdgpu' in archinstall.storage['installation_session'].MODULES:
@@ -60,9 +60,9 @@ if __name__ == 'xorg':
 				archinstall.storage['installation_session'].MODULES.remove('radeon')
 			archinstall.storage['installation_session'].MODULES.append('radeon')
 
-			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", archinstall.storage.get('gfx_driver_packages', []))
+			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", *archinstall.storage.get('gfx_driver_packages', []))
 		else:
-			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", archinstall.storage.get('gfx_driver_packages', []))
+			archinstall.storage['installation_session'].add_additional_packages(f"xorg-server", "xorg-xinit", *archinstall.storage.get('gfx_driver_packages', []))
 	except Exception as err:
 		archinstall.log(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}", level=logging.WARNING, fg="yellow")
 		archinstall.storage['installation_session'].add_additional_packages("xorg-server", "xorg-xinit")  # Prep didn't run, so there's no driver to install
