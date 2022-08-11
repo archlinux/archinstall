@@ -73,6 +73,7 @@ def find_nth(haystack :List[str], needle :str, n :int) -> int:
 
 def load_plugin(path :str) -> ModuleType:
 	parsed_url = urllib.parse.urlparse(path)
+	log(f"Loading plugin {parsed_url}.", fg="gray", level=logging.INFO)
 
 	# The Profile was not a direct match on a remote URL
 	if not parsed_url.scheme:
