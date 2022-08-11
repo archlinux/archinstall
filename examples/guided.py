@@ -185,8 +185,12 @@ def perform_installation(mountpoint):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
 		# Retrieve list of additional repositories and set boolean values appropriately
-		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
-		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		if archinstall.arguments.get('additional-repositories', None) is not None:
+			enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
+			enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		else:
+			enable_testing = False
+			enable_multilib = False
 
 		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
