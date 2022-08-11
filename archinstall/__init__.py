@@ -1,5 +1,6 @@
 """Arch Linux installer - guided, templates etc."""
-from argparse import ArgumentParser
+import typing
+from argparse import ArgumentParser, Namespace
 
 from .lib.disk import *
 from .lib.exceptions import *
@@ -132,6 +133,24 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 					print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
+def cleanup_empty_args(args :typing.Union[Namespace, dict]) -> dict:
+	"""
+	Takes arguments (dictionary or argparse Namespace) and removes any
+	None values. This ensures clean mergers during dict.update(args)
+	"""
+	if type(args) == Namespace:
+		args = vars(args)
+
+	clean_args = {}
+	for key, val in args.items():
+		if type(val) == dict:
+			val = cleanup_empty_args(val)
+
+		if val is not None:
+			clean_args[key] = val
+
+	return clean_args
+
 def get_arguments() -> Dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
@@ -159,14 +178,15 @@ def get_arguments() -> Dict[str, Any]:
 			exit(1)
 
 	# load the parameters. first the known, then the unknowns
-	config.update(vars(args))
+	args = cleanup_empty_args(args)
+	config.update(args)
 	config.update(parse_unspecified_argument_list(unknowns))
 	# amend the parameters (check internal consistency)
 	# Installation can't be silent if config is not passed
-	if args.config is not None :
-		config["silent"] = args.silent
-	else:
+	if args.get('config') is None:
 		config["silent"] = False
+	else:
+		config["silent"] = args.get('silent')
 
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
