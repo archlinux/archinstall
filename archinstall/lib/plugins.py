@@ -97,6 +97,7 @@ def load_plugin(path :str) -> ModuleType:
 		if hasattr(sys.modules[namespace], 'Plugin'):
 			try:
 				plugins[namespace] = sys.modules[namespace].Plugin()
+				log(f"Plugin {plugins[namespace]} has been loaded.", fg="gray", level=logging.INFO)
 			except Exception as err:
 				log(err, level=logging.ERROR)
 				log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)
