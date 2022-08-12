@@ -443,6 +443,9 @@ class Installer:
 		if not len(locale):
 			return True
 
+		if '.' in locale:
+			locale = locale.split('.', 1)[0]
+
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
 			fh.write(f'{locale}.{encoding} {encoding}\n')
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
