@@ -443,13 +443,27 @@ class Installer:
 		if not len(locale):
 			return True
 
+		modifier = ''
+
+		# This is a temporary patch to fix #1200
 		if '.' in locale:
-			locale = locale.split('.', 1)[0]
+			locale, potential_encoding = locale.split('.', 1)[0]
+
+			# Override encoding if encoding is set to the default parameter
+			# and the "found" encoding differs.
+			if encoding == 'UTF-8' and encoding != potential_encoding:
+				encoding = potential_encoding
+
+		# Make sure we extract the modifier, that way we can put it in if needed.
+		if '@' in locale:
+			locale, modifier = locale.split('@', 1)
+			modifier = f"@{modifier}"
+		# - End patch
 
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding} {encoding}\n')
+			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}\n')
+			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
 
 		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
