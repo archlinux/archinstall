@@ -444,7 +444,7 @@ class SysCommand:
 
 	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
 		if self.session:
-			return self.session._trace_log.decode('UTF-8')
+			return self.session._trace_log.decode('UTF-8', errors='backslashreplace')
 		return ''
 
 	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
