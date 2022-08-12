@@ -1131,7 +1131,8 @@ class Installer:
 		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"").exit_code == 0
 
 	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path.repalce('\'', '\\\'')}'").exit_code == 0
+		cleaned_path = path.repalce('\'', '\\\'')
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'").exit_code == 0
 
 	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
 		return InstallationFile(self, filename, owner)
