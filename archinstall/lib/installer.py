@@ -447,7 +447,7 @@ class Installer:
 
 		# This is a temporary patch to fix #1200
 		if '.' in locale:
-			locale, potential_encoding = locale.split('.', 1)[0]
+			locale, potential_encoding = locale.split('.', 1)
 
 			# Override encoding if encoding is set to the default parameter
 			# and the "found" encoding differs.
