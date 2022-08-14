@@ -866,7 +866,7 @@ class Installer:
 					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 
 				for subvolume in root_partition.subvolumes:
-					if subvolume.root is True:
+					if subvolume.root is True and subvolume.name != '<FS_TREE>':
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
 				# Zswap should be disabled when using zram.
