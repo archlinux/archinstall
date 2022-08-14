@@ -867,7 +867,7 @@ class Installer:
 
 				for subvolume in root_partition.subvolumes:
 					print(subvolume, subvolume.root)
-					if subvolume.root is True nad subvolume.name != '<FS_TREE>':
+					if subvolume.root is True and subvolume.name != '<FS_TREE>':
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
 				print(options_entry)
