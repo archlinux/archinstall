@@ -1,31 +1,26 @@
 # A desktop environment selector.
 from typing import Any, TYPE_CHECKING, List, Optional
 
-from archinstall.lib.menu.menu import MenuSelectionType, MenuSelection
+from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.profiles_handler import ProfileHandler
-from profiles_v2.profiles_v2 import Profile_v2, ProfileType
+from profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class DesktopProfileV2(Profile_v2):
-	def __init__(self, current_selection: Optional[Profile_v2] = None):
+class DesktopProfileV2(ProfileV2):
+	def __init__(self, current_selection: Optional[ProfileV2] = None):
 		super().__init__(
 			'Desktop',
 			ProfileType.Generic,
-			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway'))
+			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway')),
+			current_selection=current_selection
 		)
 
-		self._desktop_profile = current_selection
-
-	def preview_text(self) -> Optional[str]:
-		if self._desktop_profile:
-			return self._desktop_profile.identifier
-		return None
-
 	def packages(self) -> List[str]:
-		return [
+		env_packages = self._current_selection.packages() if self._current_selection else []
+		return env_packages + [
 			'nano',
 			'vim',
 			'openssh',
@@ -38,17 +33,19 @@ class DesktopProfileV2(Profile_v2):
 			'xdg-utils'
 		]
 
-	def do_on_select(self):
+	def do_on_select(self) -> SelectResult:
 		handler = ProfileHandler()
 		choice = handler.select_profile(
 			handler.get_desktop_profiles(),
-			self.current_selection,
+			self._current_selection,
 			title=str(_('Select your desired desktop environment'))
 		)
 
-		if choice.type_ == MenuSelectionType.Selection:
-			self._desktop_profile = choice.value
+		match choice.type_:
+			case MenuSelectionType.Selection:
+				choice.value.do_on_select()
 
+		return self.new_sub_selection(choice)
 
 
 # def _prep_function(*args, **kwargs) -> bool:

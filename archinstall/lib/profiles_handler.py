@@ -5,47 +5,58 @@ from pathlib import Path
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional
 
-from profiles_v2.profiles_v2 import Profile_v2
+from profiles_v2.profiles_v2 import ProfileV2
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
+from .utils.singleton import Singleton
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class ProfileHandler:
+class ProfileHandler(Singleton):
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE_V2']
 
 	@cached_property
-	def profiles(self) -> List[Profile_v2]:
+	def profiles(self) -> List[ProfileV2]:
 		return self._find_available_profiles()
 
-	def profile_by_identifier(self, identifier: str) -> Profile_v2:
+	def profile_by_identifier(self, identifier: str) -> ProfileV2:
 		return next(filter(lambda x: x.identifier == identifier, self.profiles), None)
 
-	def get_top_level_profiles(self) -> List[Profile_v2]:
+	def get_top_level_profiles(self) -> List[ProfileV2]:
 		return list(filter(lambda x: x.is_generic_profile(), self.profiles))
 
-	def get_server_profiles(self) -> List[Profile_v2]:
+	def get_server_profiles(self) -> List[ProfileV2]:
 		return list(filter(lambda x: x.is_server_profile(), self.profiles))
 
-	def get_desktop_profiles(self) -> List[Profile_v2]:
+	def get_desktop_profiles(self) -> List[ProfileV2]:
 		return list(filter(lambda x: x.is_desktop_profile(), self.profiles))
 
-	def _load_profile_class(self, module: ModuleType) -> List[Profile_v2]:
+	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
 		profiles = []
 
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
 				cls_ = v()
-				if isinstance(cls_, Profile_v2):
+				if isinstance(cls_, ProfileV2):
 					profiles.append(cls_)
 
 		return profiles
 
-	def _find_available_profiles(self) -> List[Profile_v2]:
+	def _verify_unique(self, profiles: List[ProfileV2]):
+		names = {}
+		for p in profiles:
+			names.setdefault(p.name, 0)
+			names[p.name] += 1
+
+		for name, count in names.items():
+			if count > 1:
+				raise ValueError(f'Profile definitions with duplicate name found: {name}')
+
+	def _find_available_profiles(self) -> List[ProfileV2]:
 		profiles = []
 		for file in self._profiles_path.glob('**/*.py'):
 			# !!!!!! REMOVE THIS
@@ -61,23 +72,33 @@ class ProfileHandler:
 
 			profiles += self._load_profile_class(imported)
 
+		self._verify_unique(profiles)
 		return profiles
+
+	def reset_top_level_profiles(self, exclude: List[ProfileV2] = []):
+		excluded_profiles = [p.identifier for p in exclude]
+		for profile in self.get_top_level_profiles():
+			if profile.identifier not in excluded_profiles:
+				profile.reset()
 
 	def select_profile(
 		self,
-		selectable_profiles: List[Profile_v2],
-		current_profile: Optional[Profile_v2] = None,
+		selectable_profiles: List[ProfileV2],
+		current_profile: Optional[ProfileV2] = None,
 		title: str = None,
 		allow_reset: bool = True,
 		multi: bool = False
 	) -> MenuSelection:
 
-		if not title:
-			title = str(_('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments'))
-
 		options = {p.identifier: p for p in selectable_profiles}
 		warning = str(_('Are you sure you want to reset this setting?'))
-		preset_value = current_profile.identifier if current_profile else None
+
+		preset_value = None
+		if current_profile is not None:
+			if isinstance(current_profile, list):
+				preset_value = [p.identifier for p in current_profile]
+			else:
+				preset_value = current_profile.identifier
 
 		choice = Menu(
 			title=title,
@@ -87,11 +108,19 @@ class ProfileHandler:
 			raise_error_warning_msg=warning,
 			multi=multi,
 			sort=True,
-			preview_command=self._preview_text
+			preview_command=self.preview_text,
+			preview_size=0.5
 		).run()
+
+		if choice.type_ == MenuSelectionType.Selection:
+			value = choice.value
+			if multi:
+				choice.value = [options[val] for val in value]
+			else:
+				choice.value = options[value]
 
 		return choice
 
-	def _preview_text(self, selection: str) -> Optional[str]:
+	def preview_text(self, selection: str) -> Optional[str]:
 		profile = self.profile_by_identifier(selection)
 		return profile.preview_text()

@@ -64,7 +64,7 @@ class FormattedOutput:
 		key_list = []
 		for key in filter_list:
 			width = column_width[key]
-			key = key.replace('!', '')
+			key = key.replace('!', '').replace('_', ' ')
 			key_list.append(key.ljust(width))
 		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
@@ -82,6 +82,20 @@ class FormattedOutput:
 				else:
 					obj_data.append(str(value).ljust(width))
 			output += ' | '.join(obj_data) + '\n'
+
+		return output
+
+	@classmethod
+	def as_columns(cls, entries: List[str], cols: int) -> str:
+		chunks = []
+		output = ''
+
+		for i in range(0, len(entries), cols):
+			chunks.append(entries[i:i+cols])
+
+		for row in chunks:
+			out_fmt = '{: <30} ' * len(row)
+			output += out_fmt.format(*row) + '\n'
 
 		return output
 

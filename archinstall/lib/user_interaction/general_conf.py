@@ -5,13 +5,13 @@ import pathlib
 from enum import Enum
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-from profiles_v2.profiles_v2 import Profile_v2
+from profiles_v2.profiles_v2 import ProfileV2
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
-from ..output import log
+from ..output import log, FormattedOutput
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 from ..profiles_handler import ProfileHandler
@@ -141,38 +141,53 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 
 
 def select_profile_v2(
-	current_profile: Optional[Profile_v2] = None,
+	current_profile: Optional[ProfileV2] = None,
 	title: str = None,
 	allow_reset: bool = True,
 	multi: bool = False
-) -> Optional[Profile_v2]:
-
-	XXXX
-	# instantiate only once -> now profiles are being recreated and not saved I think
+) -> Optional[ProfileV2]:
 	handler = ProfileHandler()
 	selectable_profiles = handler.get_top_level_profiles()
+
+	display_title = title
+	if not display_title:
+		display_title = str(_('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments'))
+
+	if current_profile is not None:
+		if profile_info := current_profile.info():
+			output = FormattedOutput.as_table([profile_info])
+			display_title += '\n\n' + str(_('Current profile selection'))
+			display_title += '\n\n' + output
 
 	choice = handler.select_profile(
 		selectable_profiles,
 		current_profile=current_profile,
-		title=title,
+		title=display_title,
 		allow_reset=allow_reset,
 		multi=multi
 	)
 
 	match choice.type_:
 		case MenuSelectionType.Selection:
-			if multi:
-				current_profile = [handler.profile_by_identifier(val) for val in choice.value]
-			else:
-				current_profile = handler.profile_by_identifier(choice.value)
-				current_profile.do_on_select()
+			profile_selection: ProfileV2 = choice.value
+			select_result = profile_selection.do_on_select()
+
+			# we're going to reset the currently selected profile(s) to avoid
+			# any stale data laying around
+			match select_result:
+				case select_result.NewSelection:
+					handler.reset_top_level_profiles(exclude=[profile_selection])
+					current_profile = profile_selection
+				case select_result.ResetCurrent:
+					handler.reset_top_level_profiles()
+					current_profile = None
+				case select_result.SameSelection:
+					pass
 
 			# we're keep showing the profile menu unless we're actively exiting it
 			# by pressing ctrl+c or Esc
 			return select_profile_v2(
-				current_profile,
-				selectable_profiles=selectable_profiles,
+				current_profile=current_profile,
 				title=title,
 				allow_reset=allow_reset,
 				multi=multi

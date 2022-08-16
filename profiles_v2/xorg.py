@@ -2,14 +2,14 @@ from typing import List, Any, TYPE_CHECKING
 
 from archinstall import select_driver
 
-from profiles_v2.profiles_v2 import Profile_v2, ProfileType
+from profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
 from archinstall.lib.hardware import __packages__ as __hwd__packages__
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class XorgProfileV2(Profile_v2):
+class XorgProfileV2(ProfileV2):
 	def __init__(
 		self,
 		name: str = 'Xorg',
@@ -31,8 +31,9 @@ class XorgProfileV2(Profile_v2):
 			*__hwd__packages__
 		]
 
-	def do_on_select(self):
-		self._gfx_driver = select_driver(current_value=self._gfx_driver)
+	def do_on_select(self) -> SelectResult:
+		self.gfx_driver = select_driver(current_value=self.gfx_driver)
+		return SelectResult.NewSelection
 
 
 # Ensures that this code only gets executed if executed

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from profiles_v2.profiles_v2 import ProfileType
 from profiles_v2.xorg import XorgProfileV2
@@ -24,7 +24,8 @@ class KdeProfileV2(XorgProfileV2):
 	def do_on_select(self):
 		super().do_on_select()
 
-
+	def preview_text(self) -> Optional[str]:
+		return self.packages_text()
 
 # """
 # def _post_install(*args, **kwargs):
