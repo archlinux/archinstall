@@ -9,19 +9,19 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Se ha creado un archivo de registro aquí: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Por favor envíe este problema (y archivo) a https://github.com/archlinux/archinstall/issues"
+msgstr "    Por favor envía este problema (y archivo) a https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "¿Realmente desea abortar?"
+msgstr "¿Realmente deseas abortar?"
 
 msgid "And one more time for verification: "
-msgstr "Una vez más para verificar: "
+msgstr "Una vez más, para verificar: "
 
 msgid "Would you like to use swap on zram?"
 msgstr "¿Te gustaría usar swap en zram?"
@@ -33,28 +33,28 @@ msgid "Username for required superuser with sudo privileges: "
 msgstr "Nombre de usuario para el superusuario con privilegios sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Algún usuario adicional a instalar (déjelo en blanco para no agregar ninguno): "
+msgstr "Quieres instalar algún otro usuario? (déjalo en blanco para no agregar ninguno): "
 
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Debería este usuario ser un superusuario (sudoer)?"
 
 msgid "Select a timezone"
-msgstr "Zona horaria"
+msgstr "Selecciona una zona horaria"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Te gustaría usar GRUB como gestor de arranque en lugar de systemd-boot?"
+msgstr "Te gustaría usar GRUB como gestor de arranque en vez de systemd-boot?"
 
 msgid "Choose a bootloader"
-msgstr "Elija un gestor de arranque"
+msgstr "Elige un gestor de arranque"
 
 msgid "Choose an audio server"
-msgstr "Elija un servidor de audio"
+msgstr "Elige un servidor de audio"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
 msgstr "Solo paquetes como base, base-devel, linux, linux-firmware, efibootmgr y paquetes opcionales de perfil se instalan."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Si desea un navegador web, como firefox o chromium, puede especificarlo en el siguiente diálogo."
+msgstr "Si desea un navegador web, como firefox o chromium, especifícalo en el siguiente diálogo."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Escriba paquetes adicionales para instalar (separados por espacios, deja en blanco para omitir): "
@@ -66,22 +66,22 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "Usar NetworkManager (necesario para configurar internet gráficamente en GNOME y KDE)"
 
 msgid "Select one network interface to configure"
-msgstr "Seleccione una interfaz de red para configurar"
+msgstr "Selecciona una interfaz de red para configurar"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Seleccione qué modo configurar para \"{}\" o salte para usar el modo predeterminado \"{}\""
+msgstr "Selecciona qué modo configurar para \"{}\" o salte para usar el modo predeterminado \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Escriba la IP y subred para {} (ejemplo: 192.168.0.5/24): "
+msgstr "Escribe la IP y subred para {} (ejemplo: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Escriba la IP de su puerta de enlace (enrutador) o déjelo en blanco para no usar ninguna: "
+msgstr "Escribe la IP de tu puerta de enlace (enrutador) o déjelo en blanco para no usar ninguna: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
 msgstr "Ingrese sus servidores DNS (separados por espacios, en blanco para ninguno): "
 
 msgid "Select which filesystem your main partition should use"
-msgstr "Seleccione qué sistema de archivos debe usar su partición principal"
+msgstr "Selecciona qué sistema de archivos debe usar tu partición principal"
 
 msgid "Current partition layout"
 msgstr "Distribución actual de las particiones"
@@ -90,7 +90,7 @@ msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Seleccione qué hacer con\n"
+"Selecciona qué hacer con\n"
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
@@ -112,7 +112,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione por índice qué particiones eliminar"
+"Selecciona por índice qué particiones eliminar"
 
 msgid ""
 "{}\n"
@@ -121,13 +121,13 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione por índice la ubicación de la partición a montar"
+"Selecciona por índice la ubicación de la partición a montar"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Los puntos de montaje de partición son relativos a la instalación, el arranque sería /boot como ejemplo."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Seleccione dónde montar la partición (déjelo en blanco para eliminar el punto de montaje): "
+msgstr "Selecciona dónde montar la partición (déjelo en blanco para eliminar el punto de montaje): "
 
 msgid ""
 "{}\n"
@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione qué partición enmascarar para formatear"
+"Selecciona qué partición enmascarar para formatear"
 
 msgid ""
 "{}\n"
@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione qué partición marcar como encriptada"
+"Selecciona qué partición marcar como encriptada"
 
 msgid ""
 "{}\n"
@@ -154,7 +154,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione qué partición marcar como de arranque"
+"Selecciona qué partición marcar como de arranque"
 
 msgid ""
 "{}\n"
@@ -163,7 +163,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione en qué partición establecer un sistema de archivos"
+"Selecciona en qué partición establecer un sistema de archivos"
 
 msgid "Enter a desired filesystem type for the partition: "
 msgstr "Ingrese un tipo de sistema de archivos deseado para la partición: "
@@ -175,31 +175,31 @@ msgid "Wipe all selected drives and use a best-effort default partition layout"
 msgstr "Borrar todas las unidades seleccionadas y use un diseño de partición predeterminado de mejor esfuerzo"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Seleccione qué hacer con cada unidad individual (seguido del uso de la partición)"
+msgstr "Selecciona qué hacer con cada unidad individual (seguido del uso de la partición)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Seleccione lo que desea hacer con los dispositivos de bloque seleccionados"
+msgstr "Selecciona lo que desea hacer con los dispositivos de bloque seleccionados"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
 msgstr "Esta es una lista de perfiles pre-programados, pueden facilitar la instalación de aplicaciones como entornos de escritorio"
 
 msgid "Select keyboard layout"
-msgstr "Seleccione la distribución del teclado"
+msgstr "Selecciona la distribución del teclado"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Seleccione una de las regiones para descargar paquetes desde"
+msgstr "Selecciona una de las regiones para descargar paquetes desde"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Seleccione uno o más discos duros para usar y configurar"
+msgstr "Selecciona uno o más discos duros para usar y configurar"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Para obtener la mejor compatibilidad con su hardware AMD, es posible que desee utilizar las opciones de código abierto o AMD/ATI."
+msgstr "Para obtener la mejor compatibilidad con tu hardware AMD, es posible que desees utilizar las opciones de código abierto o AMD/ATI."
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Para obtener la mejor compatibilidad con su hardware Intel, es posible que desee utilizar las opciones de código abierto o de Intel.\n"
+msgstr "Para obtener la mejor compatibilidad con tu hardware Intel, es posible que desees utilizar las opciones de código abierto o de Intel.\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Para obtener la mejor compatibilidad con su hardware de Nvidia, es posible que desee utilizar el controlador patentado de Nvidia.\n"
+msgstr "Para obtener la mejor compatibilidad con tu hardware de Nvidia, es posible que desees utilizar el controlador patentado de Nvidia.\n"
 
 msgid ""
 "\n"
@@ -208,25 +208,25 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Seleccione un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
+"Selecciona un controlador de gráficos o déjelo en blanco para instalar todos los controladores de código abierto"
 
 msgid "All open-source (default)"
 msgstr "Todos de código abierto (predeterminado)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Elija qué kernel usar o déjelo en blanco para usar el kernel \"{}\" predeterminado"
+msgstr "Elige qué kernel usar o déjelo en blanco para usar el kernel \"{}\" predeterminado"
 
 msgid "Choose which locale language to use"
-msgstr "Elija qué idioma local usar"
+msgstr "Elige qué idioma local usar"
 
 msgid "Choose which locale encoding to use"
-msgstr "Elija qué codificación local usar"
+msgstr "Elige qué codificación local usar"
 
 msgid "Select one of the values shown below: "
-msgstr "Seleccione uno de los valores que se muestran a continuación: "
+msgstr "Selecciona uno de los valores que se muestran a continuación: "
 
 msgid "Select one or more of the options below: "
-msgstr "Seleccione una o más de las siguientes opciones: "
+msgstr "Selecciona una o más de las siguientes opciones: "
 
 msgid "Adding partition...."
 msgstr "Añadiendo partición..."
@@ -396,14 +396,14 @@ msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Introduzca un nombre de usuario para crear un usuario adicional (dejar en blanco para saltar): "
 
 msgid "Use ESC to skip\n"
-msgstr "Use ESC para saltar\n"
+msgstr "Usa ESC para saltar\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Elija un objeto de la lista y seleccione una de las acciones disponibles para que se ejecute"
+"Elige un objeto de la lista y selecciona una de las acciones disponibles para que se ejecute"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -424,7 +424,7 @@ msgid "Delete"
 msgstr "Eliminar"
 
 msgid "Select an action for '{}'"
-msgstr "Seleccione una acción para '{}'"
+msgstr "Selecciona una acción para '{}'"
 
 msgid "Copy to new key:"
 msgstr "Copiar a nueva clave:"
@@ -437,16 +437,16 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"Esta es su configuración elegida:"
+"Esta es tu configuración elegida:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman ya se está ejecutando, esperando un máximo de 10 minutos para que finalice."
+msgstr "Pacman ya se estás ejecutando, esperando un máximo de 10 minutos para que finalice."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "El bloqueo de pacman preexistente nunca salió. Limpie cualquier sesión de pacman existente antes de usar archinstall."
+msgstr "El bloqueo de pacman preexistente nunca salió. Por favor, limpia cualquier sesión de pacman existente antes de usar archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Elija qué repositorios adicionales opcionales habilitar"
+msgstr "Elige qué repositorios adicionales opcionales habilitar"
 
 msgid "Add a user"
 msgstr "Añadir un usuario"
@@ -471,10 +471,10 @@ msgid "User Name : "
 msgstr "Nombre de usuario : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "¿Debe {} ser un superusuario (sudoer)?"
+msgstr "¿Debería {} ser un superusuario (sudoer)?"
 
 msgid "Define users with sudo privilege: "
-msgstr "Defina usuarios con privilegio sudo: "
+msgstr "Define usuarios con privilegios sudo: "
 
 msgid "No network configuration"
 msgstr "Sin configuración de red"
@@ -489,7 +489,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione en qué partición configurar los subvolúmenes"
+"Selecciona en qué partición configurar los subvolúmenes"
 
 msgid "Manage btrfs subvolumes for current partition"
 msgstr "Administrar subvolúmenes btrfs para la partición actual"
@@ -510,16 +510,16 @@ msgid "Save all"
 msgstr "Guardar todo"
 
 msgid "Choose which configuration to save"
-msgstr "Elija qué configuración guardar"
+msgstr "Elige qué configuración guardar"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Introduzca un directorio para guardar la(s) configuración(es): "
+msgstr "Introduce un directorio para guardar la(s) configuración(es): "
 
 msgid "Not a valid directory: {}"
 msgstr "No es un directorio válido: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "La contraseña que está utilizando parece ser débil,"
+msgstr "La contraseña que estás utilizando parece ser débil,"
 
 msgid "are you sure you want to use it?"
 msgstr "¿Estás seguro de que quieres usarlo?"
@@ -534,7 +534,7 @@ msgid "Missing configurations:\n"
 msgstr "Configuraciones que faltan:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Se debe especificar una contraseña raíz o al menos 1 superusuario"
+msgstr "Debes especificar una contraseña raíz o al menos 1 superusuario"
 
 msgid "Manage superuser accounts: "
 msgstr "Administrar cuentas de superusuario: "
@@ -574,10 +574,10 @@ msgid "Subvolume name :"
 msgstr "Nombre del subvolumen :"
 
 msgid "Select a mount point :"
-msgstr "Seleccione un punto de montaje :"
+msgstr "Selecciona un punto de montaje :"
 
 msgid "Select the desired subvolume options "
-msgstr "Seleccione las opciones de subvolumen deseadas "
+msgstr "Selecciona las opciones de subvolumen deseadas "
 
 msgid "Define users with sudo privilege, by username: "
 msgstr "Defina usuarios con privilegio sudo, por nombre de usuario: "
@@ -592,10 +592,10 @@ msgid "Would you like to use BTRFS compression?"
 msgstr "¿Te gustaría usar la compresión BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
-msgstr "¿Le gustaría crear una partición separada para /home?"
+msgstr "¿Te gustaría crear una partición separada para /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Las unidades seleccionadas no tienen la capacidad mínima requerida para una sugerencia automática\n"
+msgstr "Las unidades que seleccionaste no tienen la capacidad mínima requerida para una sugerencia automática\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
 msgstr "Capacidad mínima para la partición /home: {}GB\n"
@@ -634,7 +634,7 @@ msgid "Delete interface"
 msgstr "Eliminar intefaz"
 
 msgid "Select interface to add"
-msgstr "Seleccione la interfaz para agregar"
+msgstr "Selecciona la interfaz para agregar"
 
 msgid "Manual configuration"
 msgstr "Configuración manual"
@@ -643,23 +643,22 @@ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Marcar/Desmarcar una partición como comprimida (solo btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "La contraseña que está utilizando parece ser débil, ¿está seguro de que desea usarla?"
+msgstr "La contraseña que estás utilizando parece ser débil, ¿estás seguro de que deseas usarla?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr "Proporciona una selección de entornos de escritorio y administradores de ventanas en mosaico, p.e. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Seleccione su entorno de escritorio deseado"
+msgstr "Selecciona tu entorno de escritorio deseado"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "Una instalación muy básica que te permite personalizar Arch Linux como mejor te parezca."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
+msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, por ejemplo httpd, nginx, o mariadb"
 
-#, fuzzy
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
+msgstr "Elige qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Instala un sistema mínimo, así como controladores xorg y gráficos."
@@ -668,19 +667,19 @@ msgid "Press Enter to continue."
 msgstr "Presione Entrar para continuar."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "¿Le gustaría hacer chroot en la instalación recién creada y realizar la configuración posterior a la instalación?"
+msgstr "¿Te gustaría hacer chroot en la instalación recién creada y realizar la configuración posterior a la instalación?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "¿Está seguro de que desea restablecer esta configuración?"
+msgstr "¿Estás seguro de que desea restablecer esta configuración?"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Seleccione uno o más discos duros para usar y configurar\n"
+msgstr "Selecciona uno o más discos duros para usar y configurar\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "¡Cualquier modificación a la configuración existente restablecerá el diseño del disco!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Si restablece la selección del disco duro, esto también restablecerá el diseño actual del disco. ¿Está seguro?"
+msgstr "Si restableces la selección del disco duro, esto también restablecerá el diseño actual del disco. ¿Está seguro?"
 
 msgid "Save and exit"
 msgstr "Guardar y salir"
@@ -690,7 +689,7 @@ msgid ""
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"contiene particiones en cola, esto las eliminará, ¿está seguro?"
+"contiene particiones en cola, esto las eliminará, ¿estás seguro?"
 
 msgid "No audio server"
 msgstr "Sin servidor de audio"
@@ -730,10 +729,10 @@ msgid "You can skip selecting a drive and partitioning and use whatever drive-se
 msgstr "Puede omitir la selección de una unidad y la partición y usar cualquier configuración de unidad que esté montada en /mnt (experimental)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Seleccione uno de los discos u omita y use /mnt como predeterminado"
+msgstr "Selecciona uno de los discos u omita y use /mnt como predeterminado"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "Seleccione qué particiones marcar para formatear:"
+msgstr "Selecciona qué particiones marcar para formatear:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "Utilice HSM para desbloquear la unidad cifrada"
@@ -754,37 +753,35 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "Se debe especificar una contraseña de root o al menos 1 usuario con privilegios sudo"
 
 msgid "Enter username (leave blank to skip): "
-msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
+msgstr "Ingresa el nombre de usuario (déjalo en blanco para omitir): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "El nombre de usuario que ingresó no es válido. Intente nuevamente"
+msgstr "El nombre de usuario que ingresaste no es válido. Intente nuevamente"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
+msgstr "¿Debería \"{}\" ser un superusuario (sudo)?"
 
 msgid "Select which partitions to encrypt:"
-msgstr "Seleccione qué particiones cifrar:"
+msgstr "Selecciona qué particiones cifrar:"
 
 msgid "very weak"
-msgstr ""
+msgstr "muy débil"
 
 msgid "weak"
-msgstr ""
+msgstr "débil"
 
 msgid "moderate"
-msgstr ""
+msgstr "moderada"
 
 msgid "strong"
-msgstr ""
+msgstr "fuerte"
 
-#, fuzzy
 msgid "Add subvolume"
-msgstr " Subvolumen :{:16}"
+msgstr "Añadir subvolumen :{:16}"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Editar subvolumen"
 
-#, fuzzy
 msgid "Delete subvolume"
 msgstr "Eliminar usuario"
 
