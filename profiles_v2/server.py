@@ -1,7 +1,8 @@
-# Used to select various server application profiles on top of a minimal installation.
-
+import logging
 from typing import Any, TYPE_CHECKING, List
 
+from archinstall import log
+from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.profiles_handler import ProfileHandler
 from profiles_v2.profiles_v2 import ProfileType, ProfileV2, SelectResult
 
@@ -18,13 +19,6 @@ class ServerProfileV2(ProfileV2):
 			current_selection=current_value
 		)
 
-	def packages(self) -> List[str]:
-		packages = []
-		if self._current_selection:
-			for server in self._current_selection:
-				packages += server.packages()
-		return packages
-
 	def do_on_select(self) -> SelectResult:
 		handler = ProfileHandler()
 		available_servers = handler.get_server_profiles()
@@ -36,41 +30,25 @@ class ServerProfileV2(ProfileV2):
 			multi=True
 		)
 
-		return self.new_sub_selection(choice)
+		match choice.type_:
+			case MenuSelectionType.Selection:
+				self.set_current_selection(choice.value)
+				return SelectResult.NewSelection
+			case MenuSelectionType.Esc:
+				return SelectResult.SameSelection
+			case MenuSelectionType.Ctrl_c:
+				return SelectResult.ResetCurrent
 
+	def post_install(self):
+		for profile in self._current_selection:
+			profile.post_install()
 
+	def install(self, install_session: 'Installer'):
+		log('Now installing the selected servers.', level=logging.INFO)
+		log(self.info().details, level=logging.DEBUG)
 
-# def _prep_function(*args, **kwargs):
-# 	"""
-# 	Magic function called by the importing installer
-# 	before continuing any further.
-# 	"""
-# 	choice = Menu(str(_(
-# 		'Choose which servers to install, if none then a minimal installation will be done')),
-# 		available_servers,
-# 		preset_values=kwargs['servers'],
-# 		multi=True
-# 	).run()
-#
-# 	if choice.type_ != MenuSelectionType.Selection:
-# 		return False
-#
-# 	if choice.value:
-# 		archinstall.storage['_selected_servers'] = choice.value
-# 		return True
-#
-# 	return False
+		for server in self._current_selection:
+			log(f'Installing {server.name}...', level=logging.INFO)
+			server.install(install_session)
 
-
-# if __name__ == 'server':
-# 	"""
-# 	This "profile" is a meta-profile.
-# 	"""
-# 	archinstall.log('Now installing the selected servers.', level=logging.INFO)
-# 	archinstall.log(archinstall.storage['_selected_servers'], level=logging.DEBUG)
-# 	for server in archinstall.storage['_selected_servers']:
-# 		archinstall.log(f'Installing {server} ...', level=logging.INFO)
-# 		app = archinstall.Application(archinstall.storage['installation_session'], server)
-# 		app.install()
-#
-# 	archinstall.log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)
+		log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)

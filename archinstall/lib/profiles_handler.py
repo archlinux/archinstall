@@ -3,7 +3,7 @@ import logging
 from functools import cached_property
 from pathlib import Path
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional
+from typing import List, TYPE_CHECKING, Any, Optional, Dict
 
 from profiles_v2.profiles_v2 import ProfileV2
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
@@ -19,12 +19,23 @@ class ProfileHandler(Singleton):
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE_V2']
 
+	@classmethod
+	def parse_profile_config(cls, profile: Dict[str, Any]):
+		if path := profile.get('path', None):
+			pass
+		elif basic := profile.get('basic', None):
+			pass
+		elif server := profile.get('server', None):
+			pass
+		elif desktop := profile.get('desktop', None):
+			pass
+
 	@cached_property
 	def profiles(self) -> List[ProfileV2]:
 		return self._find_available_profiles()
 
-	def profile_by_identifier(self, identifier: str) -> ProfileV2:
-		return next(filter(lambda x: x.identifier == identifier, self.profiles), None)
+	def get_profile_by_name(self, name: str) -> ProfileV2:
+		return next(filter(lambda x: x.name == name, self.profiles), None)
 
 	def get_top_level_profiles(self) -> List[ProfileV2]:
 		return list(filter(lambda x: x.is_generic_profile(), self.profiles))
@@ -76,9 +87,9 @@ class ProfileHandler(Singleton):
 		return profiles
 
 	def reset_top_level_profiles(self, exclude: List[ProfileV2] = []):
-		excluded_profiles = [p.identifier for p in exclude]
+		excluded_profiles = [p.name for p in exclude]
 		for profile in self.get_top_level_profiles():
-			if profile.identifier not in excluded_profiles:
+			if profile.name not in excluded_profiles:
 				profile.reset()
 
 	def select_profile(
@@ -90,15 +101,15 @@ class ProfileHandler(Singleton):
 		multi: bool = False
 	) -> MenuSelection:
 
-		options = {p.identifier: p for p in selectable_profiles}
+		options = {p.name: p for p in selectable_profiles}
 		warning = str(_('Are you sure you want to reset this setting?'))
 
 		preset_value = None
 		if current_profile is not None:
 			if isinstance(current_profile, list):
-				preset_value = [p.identifier for p in current_profile]
+				preset_value = [p.name for p in current_profile]
 			else:
-				preset_value = current_profile.identifier
+				preset_value = current_profile.name
 
 		choice = Menu(
 			title=title,
@@ -122,5 +133,5 @@ class ProfileHandler(Singleton):
 		return choice
 
 	def preview_text(self, selection: str) -> Optional[str]:
-		profile = self.profile_by_identifier(selection)
+		profile = self.get_profile_by_name(selection)
 		return profile.preview_text()

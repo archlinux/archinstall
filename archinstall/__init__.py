@@ -28,6 +28,7 @@ from .lib.packages.packages import (
 	validate_package_list,
 )
 from .lib.profiles import *
+from .lib.profiles_handler import ProfileHandler
 from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
@@ -184,12 +185,8 @@ def load_config():
 		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
-	if arguments.get('profile', None) is not None:
-		if type(arguments.get('profile', None)) is dict:
-			arguments['profile'] = Profile(None, arguments.get('profile', None)['path'])
-		else:
-			arguments['profile'] = Profile(None, arguments.get('profile', None))
-	storage['_desktop_profile'] = arguments.get('desktop-environment', None)
+	if profile := arguments.get('profile', None) is not None:
+		arguments['profile'] = ProfileHandler.parse_profile_config(profile)
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
 			arguments['mirror-region'] = arguments.get('mirror-region', None)

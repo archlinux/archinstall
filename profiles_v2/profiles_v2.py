@@ -3,7 +3,6 @@ from enum import Enum, auto
 from typing import List, Union, Optional
 
 from archinstall.lib.output import FormattedOutput
-from archinstall.lib.menu.menu import MenuSelection, MenuSelectionType
 
 
 class ProfileType(Enum):
@@ -15,9 +14,15 @@ class ProfileType(Enum):
 
 @dataclass
 class ProfileInfo:
-	profile_type: str
+	name: str
 	details: Optional[str]
 	gfx_driver: str
+
+	@property
+	def absolute_name(self) -> str:
+		if self.details is not None:
+			return self.details
+		return self.name
 
 
 class SelectResult(Enum):
@@ -41,17 +46,14 @@ class ProfileV2:
 		self.gfx_driver = None
 		self._current_selection: Union[List[ProfileV2], ProfileV2] = current_selection
 
-	@property
-	def identifier(self) -> str:
-		identifier = f'{self.name}'
-		if self.profile_type in [ProfileType.DesktopEnv, ProfileType.WindowMgr]:
-			identifier = f'{identifier} ({self.profile_type.value})'
-		return identifier
+	@classmethod
+	def packages(cls) -> List[str]:
+		return []
 
 	def info(self) -> Optional[ProfileInfo]:
 		if self._current_selection:
 			if isinstance(self._current_selection, list):
-				details = [s.name for s in self._current_selection]
+				details = ', '.join([s.name for s in self._current_selection])
 				gfx_driver = self.gfx_driver
 			else:
 				details = self._current_selection.name
@@ -76,16 +78,6 @@ class ProfileV2:
 	def set_current_selection(self, current_selection: Union[List['ProfileV2'], 'ProfileV2']):
 		self._current_selection = current_selection
 
-	def new_sub_selection(self, choice: MenuSelection) -> SelectResult:
-		match choice.type_:
-			case MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)
-				return SelectResult.NewSelection
-			case MenuSelectionType.Esc:
-				return SelectResult.SameSelection
-			case MenuSelectionType.Ctrl_c:
-				return SelectResult.ResetCurrent
-
 	def is_generic_profile(self) -> bool:
 		return self.profile_type == ProfileType.Generic
 
@@ -95,8 +87,20 @@ class ProfileV2:
 	def is_desktop_profile(self) -> bool:
 		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
 
-	def packages(self) -> List[str]:
-		return []
+	def graphic_driver_enabled(self) -> bool:
+		if self._current_selection is None:
+			return self.with_graphic_driver()
+		else:
+			if isinstance(self._current_selection, list):
+				if any([p.with_graphic_driver() for p in self._current_selection]):
+					return True
+			return self._current_selection.with_graphic_driver()
+
+	def with_graphic_driver(self) -> bool:
+		return False
+
+	def post_install(self):
+		pass
 
 	def do_on_select(self) -> SelectResult:
 		return SelectResult.NewSelection
@@ -115,6 +119,20 @@ class ProfileV2:
 		return None
 
 	def packages_text(self) -> str:
-		text = str(_('Installed packages')) + ':\n\n'
-		text += FormattedOutput.as_columns(self.packages(), 4)
+		text = str(_('Installed packages')) + ':\n'
+
+		nr_packages = len(self.packages())
+		if nr_packages <= 5:
+			col = 1
+		elif nr_packages <= 10:
+			col = 2
+		elif nr_packages <= 15:
+			col = 3
+		else:
+			col = 4
+
+		text += FormattedOutput.as_columns(self.packages(), col)
 		return text
+
+	def install(self, install_session: 'Installer'):
+		pass

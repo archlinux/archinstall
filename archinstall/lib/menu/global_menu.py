@@ -32,7 +32,6 @@ from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
-from ..user_interaction import select_profile
 from ..user_interaction.general_conf import select_profile_v2
 from ..user_interaction.partitioning_conf import current_partition_layout
 
@@ -136,7 +135,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Profile'),
 				lambda preset: self._select_profile(preset),
-				display_func=lambda x: x if x else 'None'
+				display_func=lambda x: x.name if x else 'None',
+				preview_func=self._prev_profile
 			)
 		self._menu_options['audio'] = \
 			Selector(
@@ -299,6 +299,13 @@ class GlobalMenu(GeneralMenu):
 			return FormattedOutput.as_table(users)
 		return None
 
+	def _prev_profile(self) -> Optional[str]:
+		selector = self._menu_options['profile']
+		if selector.has_selection():
+			profile: ProfileV2 = selector.current_selection
+			return FormattedOutput.as_table([profile.info()])
+		return None
+
 	def _missing_configs(self) -> List[str]:
 		def check(s):
 			return self._menu_options.get(s).has_selection()
@@ -370,58 +377,7 @@ class GlobalMenu(GeneralMenu):
 
 	def _select_profile(self, current_profile: Optional[ProfileV2]):
 		profile = select_profile_v2(current_profile)
-		print(profile)
-		a = 1/0
-
-
-
-
-		import archinstall
-		profile = select_profile(current_profile)
-		ret = None
-
-		if profile is None:
-			if any([
-				archinstall.storage.get('profile_minimal', False),
-				archinstall.storage.get('_selected_servers', None),
-				archinstall.storage.get('_desktop_profile', None),
-				archinstall.arguments.get('desktop-environment', None),
-				archinstall.arguments.get('gfx_driver_packages', None)
-			]):
-				return current_profile
-			else:  # ctrl+c was actioned and all profile settings have been reset
-				return None
-
-		servers = archinstall.storage.get('_selected_servers', [])
-		desktop = archinstall.storage.get('_desktop_profile', None)
-		desktop_env = archinstall.arguments.get('desktop-environment', None)
-		gfx_driver = archinstall.arguments.get('gfx_driver_packages', None)
-
-		# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-		if profile and profile.has_prep_function():
-			namespace = f'{profile.namespace}.py'
-			with profile.load_instructions(namespace=namespace) as imported:
-				if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
-					ret: Profile = profile
-
-					match ret.name:
-						case 'minimal':
-							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment', 'gfx_driver_packages']
-						case 'server':
-							reset = ['_desktop_profile', 'desktop-environment']
-						case 'desktop':
-							reset = ['_selected_servers']
-						case 'xorg':
-							reset = ['_selected_servers', '_desktop_profile', 'desktop-environment']
-
-					for r in reset:
-						archinstall.storage[r] = None
-				else:
-					return self._select_profile(current_profile)
-		elif profile:
-			ret = profile
-
-		return ret
+		return profile
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)

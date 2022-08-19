@@ -11,5 +11,6 @@ class PostgresqlProfileV2(ProfileV2):
 			''
 		)
 
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return ['postgresql']

@@ -8,7 +8,8 @@ class CinnamonProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Cinnamon', ProfileType.DesktopEnv, description='')
 
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return super().packages() + [
 			"cinnamon",
 			"system-config-printer",
@@ -20,11 +21,9 @@ class CinnamonProfileV2(XorgProfileV2):
 			"lightdm-gtk-greeter"
 		]
 
-	def do_on_select(self):
-		super().do_on_select()
-
 	def preview_text(self) -> Optional[str]:
-		return self.packages_text()
+		text = str(_('Environment type: {}')).format(self.profile_type.value)
+		return text + '\n' + self.packages_text()
 
 
 #

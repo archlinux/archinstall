@@ -3,11 +3,9 @@ from __future__ import annotations
 from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
 from ..disk import all_blockdevices
-from ..exceptions import RequirementError
 from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
-from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any

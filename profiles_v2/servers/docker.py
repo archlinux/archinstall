@@ -10,7 +10,8 @@ class DockerProfileV2(ProfileV2):
 			ProfileType.Server
 		)
 
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return ['docker']
 
 	def services_to_enable(self):

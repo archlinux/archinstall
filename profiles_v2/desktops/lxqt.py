@@ -11,7 +11,8 @@ class LxqtProfileV2(XorgProfileV2):
 	# NOTE: SDDM is the only officially supported greeter for LXQt, so unlike other DEs, lightdm is not used here.
 	# LXQt works with lightdm, but since this is not supported, we will not default to this.
 	# https://github.com/lxqt/lxqt/issues/795
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return super().packages() + [
 			"lxqt",
 			"breeze-icons",
@@ -23,11 +24,9 @@ class LxqtProfileV2(XorgProfileV2):
 			"sddm",
 		]
 
-	def do_on_select(self):
-		super().do_on_select()
-
 	def preview_text(self) -> Optional[str]:
-		return self.packages_text()
+		text = str(_('Environment type: {}')).format(self.profile_type.value)
+		return text + '\n' + self.packages_text()
 
 
 #

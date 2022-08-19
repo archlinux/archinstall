@@ -1,6 +1,7 @@
 # A desktop environment selector.
 from typing import Any, TYPE_CHECKING, List, Optional
 
+from archinstall import log
 from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.profiles_handler import ProfileHandler
 from profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
@@ -18,9 +19,9 @@ class DesktopProfileV2(ProfileV2):
 			current_selection=current_selection
 		)
 
-	def packages(self) -> List[str]:
-		env_packages = self._current_selection.packages() if self._current_selection else []
-		return env_packages + [
+	@classmethod
+	def packages(cls) -> List[str]:
+		return [
 			'nano',
 			'vim',
 			'openssh',
@@ -38,63 +39,27 @@ class DesktopProfileV2(ProfileV2):
 		choice = handler.select_profile(
 			handler.get_desktop_profiles(),
 			self._current_selection,
-			title=str(_('Select your desired desktop environment'))
+			title=str(_('Select your desired desktop environment')),
+			multi=True
 		)
 
 		match choice.type_:
 			case MenuSelectionType.Selection:
-				choice.value.do_on_select()
+				self.set_current_selection(choice.value)
+				return SelectResult.NewSelection
+			case MenuSelectionType.Esc:
+				return SelectResult.SameSelection
+			case MenuSelectionType.Ctrl_c:
+				return SelectResult.ResetCurrent
 
-		return self.new_sub_selection(choice)
+	def post_install(self):
+		for profile in self._current_selection:
+			profile.post_install()
 
+	def install(self, install_session: 'Installer'):
+		# Install common packages for all desktop environments
+		install_session.add_additional_packages(self.packages())
 
-# def _prep_function(*args, **kwargs) -> bool:
-# 	"""
-# 	Magic function called by the importing installer
-# 	before continuing any further. It also avoids executing any
-# 	other code in this stage. So it's a safe way to ask the user
-# 	for more input before any other installer steps start.
-# 	"""
-# 	choice = Menu(str(_('Select your desired desktop environment')), __supported__).run()
-#
-# 	if choice.type_ != MenuSelectionType.Selection:
-# 		return False
-#
-# 	if choice.value:
-# 		# Temporarily store the selected desktop profile
-# 		# in a session-safe location, since this module will get reloaded
-# 		# the next time it gets executed.
-# 		if not archinstall.storage.get('_desktop_profile', None):
-# 			archinstall.storage['_desktop_profile'] = choice.value
-# 		if not archinstall.arguments.get('desktop-environment', None):
-# 			archinstall.arguments['desktop-environment'] = choice.value
-# 		profile = archinstall.Profile(None, choice.value)
-# 		# Loading the instructions with a custom namespace, ensures that a __name__ comparison is never triggered.
-# 		with profile.load_instructions(namespace=f"{choice.value}.py") as imported:
-# 			if hasattr(imported, '_prep_function'):
-# 				return imported._prep_function()
-# 			else:
-# 				log(f"Deprecated (??): {choice.value} profile has no _prep_function() anymore")
-# 				exit(1)
-#
-# 	return False
-#
-#
-# if __name__ == 'desktop':
-# 	"""
-# 	This "profile" is a meta-profile.
-# 	There are no desktop-specific steps, it simply routes
-# 	the installer to whichever desktop environment/window manager was chosen.
-#
-# 	Maybe in the future, a network manager or similar things *could* be added here.
-# 	We should honor that Arch Linux does not officially endorse a desktop-setup, nor is
-# 	it trying to be a turn-key desktop distribution.
-#
-# 	There are plenty of desktop-turn-key-solutions based on Arch Linux,
-# 	this is therefore just a helper to get started
-# 	"""
-#
-# 	# Install common packages for all desktop environments
-# 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
-#
-# 	archinstall.storage['installation_session'].install_profile(archinstall.storage['_desktop_profile'])
+		for profile in self._current_selection:
+			log(f'Installing profile {profile.name}...')
+			profile.install(install_session)

@@ -8,7 +8,8 @@ class SwayProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__('Sway', ProfileType.WindowMgr, description='')
 
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return [
 			"sway",
 			"swaylock",
@@ -40,7 +41,8 @@ class SwayProfileV2(ProfileV2):
 			self.do_on_select()
 
 	def preview_text(self) -> Optional[str]:
-		return self.packages_text()
+		text = str(_('Environment type: {}')).format(self.profile_type.value)
+		return text + '\n' + self.packages_text()
 
 
 #

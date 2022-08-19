@@ -9,6 +9,8 @@ import subprocess
 import glob
 from types import ModuleType
 from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
+
+from profiles_v2.profiles_v2 import ProfileV2
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
@@ -375,7 +377,7 @@ class Installer:
 				else:
 					pacman_conf.write(line)
 
-	def pacstrap(self, *packages :str, **kwargs :str) -> bool:
+	def pacstrap(self, *packages: Union[str, List[str]], **kwargs :str) -> bool:
 		if type(packages[0]) in (list, tuple):
 			packages = packages[0]
 
@@ -1021,26 +1023,21 @@ class Installer:
 
 		return True
 
-	def add_additional_packages(self, *packages :str) -> bool:
+	def add_additional_packages(self, *packages: Union[str, List[str]]) -> bool:
 		return self.pacstrap(*packages)
 
-	def install_profile(self, profile :str) -> ModuleType:
+	def install_profile(self, profile: ProfileV2):
 		"""
-		Installs a archinstall profile script (.py file).
-		This profile can be either local, remote or part of the library.
+		Installs a archinstall profile
 
-		:param profile: Can be a local path or a remote path (URL)
+		:param profile: ProfileV2
 		:return: Returns the imported script as a module, this way
 			you can access any remaining functions exposed by the profile.
 		:rtype: module
 		"""
-		storage['installation_session'] = self
-
-		if type(profile) == str:
-			profile = Profile(self, profile)
-
-		self.log(f'Installing archinstall profile {profile}', level=logging.INFO)
-		return profile.install()
+		absolute_name = profile.info().absolute_name
+		self.log(f'Installing archinstall profile(s) {absolute_name}', level=logging.INFO)
+		profile.install(self)
 
 	def enable_sudo(self, entity: str, group :bool = False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)

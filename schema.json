@@ -110,29 +110,59 @@
             }
         },
         "profile": {
-            "description": "Profiles are present in profiles/, use the name of a profile to install it",
-            "type": "string",
-            "enum": [
-                "awesome",
-                "bspwm",
-                "budgie",
-                "cinnamon",
-                "cutefish",
-                "deepin",
-                "desktop",
-                "enlightenment",
-                "gnome",
-                "i3",
-                "kde",
-                "lxqt",
-                "mate",
-                "minimal",
-                "server",
-                "sway",
-                "xfce4",
-                "xorg",
-                "qtile"
-            ]
+            "path":  {
+                "description": "URL or local path to a python file specifying a profile",
+                "type": "string"
+            },
+            "basic":  {
+                "description": "Basic profile to install",
+                "type": "string",
+                "enum": [
+                    "minimal",
+                    "xorg"
+                ]
+            },
+            "desktop": {
+                "description": "Profiles are present in profiles/, use the name of a profile to install it (case insensitive)",
+                "type": "string",
+                "enum": [
+                    "awesome",
+                    "bspwm",
+                    "budgie",
+                    "cinnamon",
+                    "cutefish",
+                    "deepin",
+                    "desktop",
+                    "enlightenment",
+                    "gnome",
+                    "i3-wm",
+                    "i3-gasp",
+                    "kde",
+                    "lxqt",
+                    "mate",
+                    "sway",
+                    "xfce4",
+                    "qtile"
+                ]
+            },
+            "server": {
+                "description": "List of servers to install (case insensitive)",
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "enum": [
+                        "cockpit",
+                        "docker",
+                        "httpd",
+                        "lighttpd",
+                        "mariadb",
+                        "nginx",
+                        "postgresql",
+                        "sshd",
+                        "tomcat"
+                    ]
+                }
+            }
         },
         "services": {
             "description": "Services to enable post-installation",

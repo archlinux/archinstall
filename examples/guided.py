@@ -243,11 +243,8 @@ def perform_installation(mountpoint):
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
-			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
-				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
-					if not imported._post_install():
-						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
-						exit(1)
+			if profile := archinstall.arguments.get('profile', None):
+				profile.post_install()
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.

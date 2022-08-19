@@ -10,5 +10,6 @@ class CockpitProfileV2(ProfileV2):
 			ProfileType.Server
 		)
 
-	def packages(self) -> List[str]:
+	@classmethod
+	def packages(cls) -> List[str]:
 		return ['cockpit']
