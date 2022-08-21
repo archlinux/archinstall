@@ -100,10 +100,10 @@ msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {})"
+msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρος;"
+msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
 
 msgid ""
 "{}\n"
@@ -259,7 +259,7 @@ msgid "Disk layout"
 msgstr "Διάταξη δίσκου"
 
 msgid "Encryption password"
-msgstr "Κωδικός κωδικοποίησης"
+msgstr "Κωδικός κρυπτογράφησης"
 
 msgid "Swap"
 msgstr "Swap"
@@ -367,10 +367,10 @@ msgid "Enter a password: "
 msgstr "Εισάγετε κωδικό: "
 
 msgid "Enter a encryption password for {}"
-msgstr "Εισάγετε έναν κωδικό κωδικοποίησης για {}"
+msgstr "Εισάγετε έναν κωδικό κρυπτογράφησης για {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Εισάγετε κωδικό κωδικοποίησης δίσκου (αφήστε άδειο για καμία κωδικοποίηση):"
+msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε άδειο για καμία κρυπτογράφηση): "
 
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Δημιουργήστε έναν απαιτούμενο υπερχρήστη με δικαιώματα sudo: "
@@ -405,7 +405,7 @@ msgid ""
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"Επιλέξτε ένα αντικείμενο από τη λίστα, και επιλέξτε μία από τις διαθέσιμες επιλογές για αυτό να εκτελέσει"
+"Επιλέξτε ένα αντικείμενο από τη λίστα, και επιλέξτε μία από τις διαθέσιμες επιλογές προς εκτέλεση"
 
 msgid "Cancel"
 msgstr "Ακύρωση"
@@ -445,7 +445,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Ο Pacman ήδη εκτελείται, αναμονή μέχρι 10 λεπτά ώστε να τερματίσει."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Η προϋπάρχουσα pacman lock δεν εξήλθε. Παρακαλώ καθαρίστε τυχόν συνεδρίες pacman πριν τη χρήση του archinstall"
+msgstr "Η προϋπάρχουσα pacman lock δεν εξήλθε. Παρακαλώ καθαρίστε τυχόν συνεδρίες pacman πριν τη χρήση του archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Επιλέξτε ποια προαιρετικά περαιτέρω αποθετήρια να ενεργοποιηθούν"
@@ -521,10 +521,10 @@ msgid "Not a valid directory: {}"
 msgstr "Μη έγκυρος φάκελος: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Ο κω δικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος,"
+msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος,"
 
 msgid "are you sure you want to use it?"
-msgstr "είστε σίγουρος ότι θέλετε να τον χρησιμοποιήσετε;"
+msgstr "είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
 
 msgid "Optional repositories"
 msgstr "Προαιρετικά αποθετήρια"
@@ -545,7 +545,7 @@ msgid "Manage ordinary user accounts: "
 msgstr "Διαχείριση λογαριασμών κανονικών χρηστών: "
 
 msgid " Subvolume :{:16}"
-msgstr "Υποόγκος :{:16}"
+msgstr " Υποόγκος :{:16}"
 
 msgid " mounted at {:16}"
 msgstr " Έχει γίνει mount στο {:16}"
@@ -645,7 +645,7 @@ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος, είστε σίγουρος ότι θέλετε να τον χρησιμοποιήσετε;"
+msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος, είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
 msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
@@ -672,7 +672,7 @@ msgid "Would you like to chroot into the newly created installation and perform 
 msgstr "Θα θέλατε να κάνετε chroot εντός της καινούργιας εγκατάστασης για περαιτέρω διαμόρφωση;"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Είστε σίγουρος ότι θέλετε να επαναφέρετε αυτήν τη ρύθμιση;"
+msgstr "Είστε σίγουρη/ος ότι θέλετε να επαναφέρετε αυτήν τη ρύθμιση;"
 
 msgid "Select one or more hard drives to use and configure\n"
 msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση\n"
@@ -681,7 +681,7 @@ msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "Τυχόν τροποποιήσεις στην ήδη υπάρχουσα ρύθμιση θα επαναφέρουν τη διάταξη δίσκου!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρος;"
+msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
 
 msgid "Save and exit"
 msgstr "Αποθήκευση και έξοδος"
@@ -691,7 +691,7 @@ msgid ""
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρος;"
+"περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
 
 msgid "No audio server"
 msgstr "Κανένας διακομιστής ήχου"
@@ -737,7 +737,7 @@ msgid "Select which partitions to mark for formatting:"
 msgstr "Επιλέξτε ποιες διαμερίσεις να σημειωθούν για μορφοποίηση:"
 
 msgid "Use HSM to unlock encrypted drive"
-msgstr "Χρήση HSM για ξεκλείδωμα κωδικοποιημένου δίσκου"
+msgstr "Χρήση HSM για ξεκλείδωμα κρυπτογραφημένου δίσκου"
 
 msgid "Device"
 msgstr "Συσκευή"
@@ -764,7 +764,7 @@ msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
 
 msgid "Select which partitions to encrypt:"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κωδικοποιηθούν"
+msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
 
 msgid "very weak"
 msgstr "πολύ αδύναμος"
