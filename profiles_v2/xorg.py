@@ -47,8 +47,7 @@ class XorgProfileV2(ProfileV2):
 						install_session.add_additional_packages(f"{kernel}-headers")
 
 					# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-					install_session.add_additional_packages("dkms")
-					install_session.add_additional_packages("xorg-server xorg-xinit nvidia-dkms")
+					install_session.add_additional_packages("dkms xorg-server xorg-xinit nvidia-dkms")
 				else:
 					install_session.add_additional_packages(additional_pkg)
 			elif 'amdgpu' in driver_pkgs:
