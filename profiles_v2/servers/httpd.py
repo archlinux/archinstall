@@ -7,7 +7,7 @@ class HttpdProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'httpd',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod

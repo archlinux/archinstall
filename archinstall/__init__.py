@@ -185,8 +185,8 @@ def load_config():
 		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
-	if profile := arguments.get('profile', None) is not None:
-		arguments['profile'] = ProfileHandler.parse_profile_config(profile)
+	if profile := arguments.get('profile', None):
+		arguments['profile'] = ProfileHandler().parse_profile_config(profile)
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
 			arguments['mirror-region'] = arguments.get('mirror-region', None)

@@ -7,7 +7,7 @@ class LighttpdProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Lighttpd',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod

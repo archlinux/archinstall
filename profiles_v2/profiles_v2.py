@@ -1,13 +1,15 @@
+import json
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Any, Dict
 
 from archinstall.lib.output import FormattedOutput
 
 
 class ProfileType(Enum):
 	Generic = 'Generic'
-	Server = 'Server'
+	Custom = 'Custom'
+	ServerType = 'ServerType'
 	WindowMgr = 'Window Manager'
 	DesktopEnv = 'Desktop Environment'
 
@@ -50,6 +52,23 @@ class ProfileV2:
 	def packages(cls) -> List[str]:
 		return []
 
+	def json(self) -> Dict[str, Union[str, List[str]]]:
+		data = {}
+
+		if self.profile_type == ProfileType.Generic:
+			data = {
+				'main': self.name,
+				'gfx_driver': self.gfx_driver
+			}
+
+			if self._current_selection is not None:
+				if isinstance(self._current_selection, list):
+					data['details'] = [profile.name for profile in self._current_selection]
+				else:
+					data['details'] = self._current_selection.name
+
+		return data
+
 	def info(self) -> Optional[ProfileInfo]:
 		if self._current_selection:
 			if isinstance(self._current_selection, list):
@@ -82,7 +101,7 @@ class ProfileV2:
 		return self.profile_type == ProfileType.Generic
 
 	def is_server_profile(self) -> bool:
-		return self.profile_type == ProfileType.Server
+		return self.profile_type == ProfileType.ServerType
 
 	def is_desktop_profile(self) -> bool:
 		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
@@ -94,6 +113,8 @@ class ProfileV2:
 			if isinstance(self._current_selection, list):
 				if any([p.with_graphic_driver() for p in self._current_selection]):
 					return True
+				return False
+
 			return self._current_selection.with_graphic_driver()
 
 	def with_graphic_driver(self) -> bool:

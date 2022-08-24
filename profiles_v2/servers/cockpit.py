@@ -7,7 +7,7 @@ class CockpitProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Cockpit',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod

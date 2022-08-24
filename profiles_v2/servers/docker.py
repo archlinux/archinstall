@@ -7,7 +7,7 @@ class DockerProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Docker',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod

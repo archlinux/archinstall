@@ -7,7 +7,7 @@ class NginxProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Nginx',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod

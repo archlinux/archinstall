@@ -19,16 +19,20 @@ class ProfileHandler(Singleton):
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE_V2']
 
-	@classmethod
-	def parse_profile_config(cls, profile: Dict[str, Any]):
-		if path := profile.get('path', None):
-			pass
-		elif basic := profile.get('basic', None):
-			pass
-		elif server := profile.get('server', None):
-			pass
-		elif desktop := profile.get('desktop', None):
-			pass
+	def parse_profile_config(self, profile_config: Dict[str, Any]) -> ProfileV2:
+		profile = None
+		selection = None
+
+		if main := profile_config.get('main', None):
+			profile = self.get_profile_by_name(main) if main else None
+		if details := profile_config.get('details', None):
+			selection = [self.get_profile_by_name(d) for d in details]
+
+		if profile:
+			profile.set_current_selection(selection)
+			profile.gfx_driver = profile_config.get('gfx_driver', None)
+
+		return profile
 
 	@cached_property
 	def profiles(self) -> List[ProfileV2]:

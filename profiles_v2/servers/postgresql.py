@@ -7,7 +7,7 @@ class PostgresqlProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Postgresql',
-			ProfileType.Server,
+			ProfileType.ServerType,
 			''
 		)
 

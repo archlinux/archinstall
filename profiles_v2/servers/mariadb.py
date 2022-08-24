@@ -7,7 +7,7 @@ class MariadbProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__(
 			'Mariadb',
-			ProfileType.Server
+			ProfileType.ServerType
 		)
 
 	@classmethod
