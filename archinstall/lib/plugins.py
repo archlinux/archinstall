@@ -73,6 +73,7 @@ def find_nth(haystack :List[str], needle :str, n :int) -> int:
 
 def load_plugin(path :str) -> ModuleType:
 	parsed_url = urllib.parse.urlparse(path)
+	log(f"Loading plugin {parsed_url}.", fg="gray", level=logging.INFO)
 
 	# The Profile was not a direct match on a remote URL
 	if not parsed_url.scheme:
@@ -96,6 +97,7 @@ def load_plugin(path :str) -> ModuleType:
 		if hasattr(sys.modules[namespace], 'Plugin'):
 			try:
 				plugins[namespace] = sys.modules[namespace].Plugin()
+				log(f"Plugin {plugins[namespace]} has been loaded.", fg="gray", level=logging.INFO)
 			except Exception as err:
 				log(err, level=logging.ERROR)
 				log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)

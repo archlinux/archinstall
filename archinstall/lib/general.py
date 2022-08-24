@@ -12,6 +12,7 @@ import time
 import re
 import urllib.parse
 import urllib.request
+import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
@@ -443,7 +444,7 @@ class SysCommand:
 
 	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
 		if self.session:
-			return self.session._trace_log.decode('UTF-8')
+			return self.session._trace_log.decode('UTF-8', errors='backslashreplace')
 		return ''
 
 	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
@@ -547,8 +548,12 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	parsed_url = urllib.parse.urlparse(stream)
 
 	if parsed_url.scheme: # The stream is in fact a URL that should be grabbed
-		with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
-			target.update(json.loads(response.read()))
+		try:
+			with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
+				target.update(json.loads(response.read()))
+		except urllib.error.HTTPError as error:
+			log(f"Could not load {configuration_identifier} via {parsed_url} due to: {error}", level=logging.ERROR, fg="red")
+			return False
 	else:
 		if pathlib.Path(stream).exists():
 			try:

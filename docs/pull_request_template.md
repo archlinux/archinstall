@@ -1,4 +1,4 @@
-- This fixes issue(s): <!-- #13, #15 and #16 for instance. Or ignore if you're adding new functionality -->
+- This fix issue: <!-- #13, #15 and #16 for instance. Or ignore if you're adding new functionality -->
 
 ## PR Description:
 

@@ -221,7 +221,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list if sub_list[subvolume]]:
+				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.mountpoint for subvolume in sub_list]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -445,10 +445,27 @@ class Installer:
 		if not len(locale):
 			return True
 
+		modifier = ''
+
+		# This is a temporary patch to fix #1200
+		if '.' in locale:
+			locale, potential_encoding = locale.split('.', 1)
+
+			# Override encoding if encoding is set to the default parameter
+			# and the "found" encoding differs.
+			if encoding == 'UTF-8' and encoding != potential_encoding:
+				encoding = potential_encoding
+
+		# Make sure we extract the modifier, that way we can put it in if needed.
+		if '@' in locale:
+			locale, modifier = locale.split('@', 1)
+			modifier = f"@{modifier}"
+		# - End patch
+
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding} {encoding}\n')
+			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}\n')
+			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
 
 		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
@@ -707,7 +724,7 @@ class Installer:
 			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
 			self.enable_multilib_repository()
 		else:
-			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+			self.log("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
@@ -851,7 +868,7 @@ class Installer:
 					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 
 				for subvolume in root_partition.subvolumes:
-					if subvolume.root is True:
+					if subvolume.root is True and subvolume.name != '<FS_TREE>':
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
 				# Zswap should be disabled when using zram.
@@ -1002,9 +1019,9 @@ class Installer:
 		root_partition = None
 		for partition in self.partitions:
 			print(partition, [partition.mountpoint], [self.target])
-			if partition.mountpoint == self.target / 'boot':
+			if self.target / 'boot' in partition.mountpoints:
 				boot_partition = partition
-			elif partition.mountpoint == self.target:
+			elif self.target in partition.mountpoints:
 				root_partition = partition
 
 		if boot_partition is None or root_partition is None:
@@ -1128,7 +1145,8 @@ class Installer:
 		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"").exit_code == 0
 
 	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path}").exit_code == 0
+		cleaned_path = path.replace('\'', '\\\'')
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'").exit_code == 0
 
 	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
 		return InstallationFile(self, filename, owner)
