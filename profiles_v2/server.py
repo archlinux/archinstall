@@ -39,9 +39,9 @@ class ServerProfileV2(ProfileV2):
 			case MenuSelectionType.Ctrl_c:
 				return SelectResult.ResetCurrent
 
-	def post_install(self):
+	def post_install(self, install_session: 'Installer'):
 		for profile in self._current_selection:
-			profile.post_install()
+			profile.post_install(install_session)
 
 	def install(self, install_session: 'Installer'):
 		log('Now installing the selected servers.', level=logging.INFO)

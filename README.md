@@ -127,7 +127,8 @@ with archinstall.Installer('/mnt') as installation:
 
         # Optionally, install a profile of choice.
         # In this case, we install a minimal profile that is empty
-        installation.install_profile('minimal')
+        profile = MinimalProfileV2()
+        installation.install_profile(profile)
 
         user = User('devel', 'devel', False)
         installation.create_users(user)

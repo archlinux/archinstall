@@ -167,6 +167,7 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
+
 class GeneralMenu:
 	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
 		"""

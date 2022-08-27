@@ -157,7 +157,6 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = raise_error_on_interrupt
 		self._raise_error_warning_msg = raise_error_warning_msg
-		self._preview_command_cb = preview_command
 
 		menu_title = f'\n{title}\n\n'
 
@@ -184,7 +183,7 @@ class Menu(TerminalMenu):
 			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
 
 		if display_back_option and not multi and skip:
-			self._menu_options += self.back()
+			self._menu_options += [self.back()]
 
 		self._preselection(preset_values,cursor_index)
 
@@ -204,7 +203,7 @@ class Menu(TerminalMenu):
 			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
-			preview_command=lambda x: self._show_preview(x),
+			preview_command=lambda x: self._show_preview(preview_command, x),
 			preview_size=preview_size,
 			preview_title=preview_title,
 			raise_error_on_interrupt=self._raise_error_on_interrupt,
@@ -216,12 +215,12 @@ class Menu(TerminalMenu):
 			skip_empty_entries=skip_empty_entries
 		)
 
-	def _show_preview(self, selection: str) -> Optional[str]:
+	def _show_preview(self, preview_callback: Callable, selection: str) -> Optional[str]:
 		if selection == self.back():
 			return None
-		elif self._preview_command_cb is not None:
-			return str(self._preview_command_cb)
-			# return self._preview_command_cb(selection)
+
+		if preview_callback is not None:
+			return preview_callback(selection)
 		return None
 
 	def _show(self) -> MenuSelection:

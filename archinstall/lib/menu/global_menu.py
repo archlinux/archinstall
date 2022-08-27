@@ -140,7 +140,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['audio'] = \
 			Selector(
 				_('Audio'),
-				lambda preset: self._select_audio(),
+				lambda preset: self._select_audio(preset),
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)

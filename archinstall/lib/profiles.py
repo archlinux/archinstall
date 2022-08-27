@@ -33,8 +33,7 @@ def grab_url_data(path :str) -> str:
 
 def list_profiles(
 	filter_irrelevant_macs :bool = True,
-	subpath :str = '',
-	filter_top_level_profiles :bool = False
+	subpath :str = ''
 ) -> Dict[str, Dict[str, Union[str, bool]]]:
 	# TODO: Grab from github page as well, not just local static files
 
@@ -85,11 +84,6 @@ def list_profiles(
 					tailored = True
 
 				cache[profile[:-3]] = {'path': os.path.join(storage["UPSTREAM_URL"] + subpath, profile), 'description': profile_list[profile], 'tailored': tailored}
-
-	if filter_top_level_profiles:
-		for profile in list(cache.keys()):
-			if Profile(None, profile).is_top_level_profile() is False:
-				del cache[profile]
 
 	return cache
 
@@ -178,38 +172,3 @@ class Script:
 		self.spec.loader.exec_module(sys.modules[self.namespace])
 
 		return sys.modules[self.namespace]
-
-
-class Profile(Script):
-	def __init__(self, installer :Optional[Installer], path :str):
-		super().__init__(path, installer)
-
-	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:
-		return {'path': self.path}
-
-	def __repr__(self, *args :str, **kwargs :str) -> str:
-		return f'Profile({os.path.basename(self.profile)})'
-
-	@property
-	def name(self) -> str:
-		return os.path.basename(self.profile)
-
-	def install(self) -> ModuleType:
-		# Before installing, revert any temporary changes to the namespace.
-		# This ensures that the namespace during installation is the original initiation namespace.
-		# (For instance awesome instead of aweosme.py or app-awesome.py)
-		self.namespace = self.original_namespace
-		return self.execute()
-
-	def is_top_level_profile(self) -> bool:
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			if '__name__' in source_data and 'is_top_level_profile' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, 'is_top_level_profile'):
-						return imported.is_top_level_profile
-
-		# Default to True if nothing is specified,
-		# since developers like less code - omitting it should assume they want to present it.
-		return True

@@ -1,11 +1,12 @@
 import importlib
 import logging
+from collections import Counter
 from functools import cached_property
 from pathlib import Path
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict
 
-from profiles_v2.profiles_v2 import ProfileV2
+from profiles_v2.profiles_v2 import ProfileV2, ProfileType
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 class ProfileHandler(Singleton):
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE_V2']
+		self._profiles = self._find_available_profiles()
 
 	def parse_profile_config(self, profile_config: Dict[str, Any]) -> ProfileV2:
 		profile = None
@@ -35,14 +37,18 @@ class ProfileHandler(Singleton):
 
 		return profile
 
-	@cached_property
+	@property
 	def profiles(self) -> List[ProfileV2]:
-		return self._find_available_profiles()
+		return self._profiles
 
 	@cached_property
 	def local_mac_addresses(self) -> List[str]:
 		ifaces = list_interfaces()
 		return list(ifaces.keys())
+
+	def add_custom_profile(self, profile: ProfileV2):
+		self._profiles.append(profile)
+		self._verify_unique(self._profiles)
 
 	def get_profile_by_name(self, name: str) -> ProfileV2:
 		return next(filter(lambda x: x.name == name, self.profiles), None)
@@ -54,7 +60,10 @@ class ProfileHandler(Singleton):
 		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
 
 	def get_desktop_profiles(self) -> List[ProfileV2]:
-		return list(filter(lambda x: x.is_desktop_sub_profile(), self.profiles))
+		return list(filter(lambda x: x.is_desktop_type_profile(), self.profiles))
+
+	def get_custom_profiles(self) -> List[ProfileV2]:
+		return list(filter(lambda x: x.is_custom_type_profile(), self.profiles))
 
 	def get_mac_addr_profiles(self) -> List[ProfileV2]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
@@ -63,7 +72,6 @@ class ProfileHandler(Singleton):
 
 	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
 		profiles = []
-
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
 				cls_ = v()
@@ -73,24 +81,34 @@ class ProfileHandler(Singleton):
 		return profiles
 
 	def _verify_unique(self, profiles: List[ProfileV2]):
-		names = {}
-		for p in profiles:
-			names.setdefault(p.name, 0)
-			names[p.name] += 1
+		counter = Counter([p.name for p in profiles])
+		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
 
-		for name, count in names.items():
-			if count > 1:
-				raise ValueError(f'Profile definitions with duplicate name found: {name}')
+		if len(duplicates) > 0:
+			raise ValueError(f'Profile definitions with duplicate name found: {duplicates[0][0]}')
+
+	def _is_legacy(self, file: Path) -> bool:
+		with open(file, 'r') as fp:
+			for line in fp.readlines():
+				if '__packages__' in line:
+					return True
+		return False
 
 	def _find_available_profiles(self) -> List[ProfileV2]:
 		profiles = []
 		for file in self._profiles_path.glob('**/*.py'):
-			# !!!!!! REMOVE THIS
-			if 'minimal' not in str(file) and 'xorg' not in str(file) and 'server' not in str(file) and 'desktop' not in str(file):
+			if self._is_legacy(file):
+				log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 				continue
 
-			log(f'Importing profile: {file}', level=logging.DEBUG)
+			if file.name == 'profiles_v2.py':
+				# not a very elegant way but this will ignore the
+				# abstract ProfileV2 class
+				continue
+
 			name = file.name.removesuffix(file.suffix)
+
+			log(f'Importing profile: {file}', level=logging.DEBUG)
 
 			spec = importlib.util.spec_from_file_location(name, file)
 			imported = importlib.util.module_from_spec(spec)

@@ -17,6 +17,7 @@ class ProfileType(Enum):
 	ServerType = 'ServerType'
 	WindowMgr = 'Window Manager'
 	DesktopEnv = 'Desktop Environment'
+	CustomType = 'CustomType'
 	# special things
 	Tailored = 'Tailored'
 	Application = 'Application'
@@ -122,9 +123,8 @@ class ProfileV2:
 		self._current_selection = current_selection
 
 	def is_top_level_profile(self) -> bool:
-		if self.profile_type in [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal]:
-			return True
-		return False
+		top_levels = [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal, ProfileType.Custom]
+		return self.profile_type in top_levels
 
 	def is_desktop_profile(self) -> bool:
 		return self.profile_type == ProfileType.Desktop
@@ -132,11 +132,14 @@ class ProfileV2:
 	def is_server_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.ServerType
 
-	def is_desktop_sub_profile(self) -> bool:
+	def is_desktop_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
 
 	def is_tailored(self) -> bool:
 		return self.profile_type == ProfileType.Tailored
+
+	def is_custom_type_profile(self) -> bool:
+		return self.profile_type == ProfileType.CustomType
 
 	def graphic_driver_enabled(self) -> bool:
 		if self._current_selection is None:

@@ -6,7 +6,7 @@ from typing import List, Any, Optional, Dict, TYPE_CHECKING, Union
 
 from .system_conf import select_driver
 
-from profiles_v2.profiles_v2 import ProfileV2
+from profiles_v2.profiles_v2 import ProfileV2, ProfileType
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
@@ -169,6 +169,14 @@ def select_profile_v2(
 		case MenuSelectionType.Selection:
 			profile_selection: ProfileV2 = choice.value
 			select_result = profile_selection.do_on_select()
+
+			if not select_result:
+				return select_profile_v2(
+					current_profile=current_profile,
+					title=title,
+					allow_reset=allow_reset,
+					multi=multi
+				)
 
 			# we're going to reset the currently selected profile(s) to avoid
 			# any stale data laying around
