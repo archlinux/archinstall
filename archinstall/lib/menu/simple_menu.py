@@ -715,7 +715,7 @@ class TerminalMenu:
             convert_preselected_entries_to_indices(preselected_entries) if preselected_entries is not None else None
         )
         self._preview_border = preview_border
-        self._preview_command = preview_command
+        self._preview_command_cb = preview_command
         self._preview_size = preview_size
         self._preview_title = preview_title
         self._quit_keys = tuple(quit_keys)
@@ -1136,11 +1136,11 @@ class TerminalMenu:
             # pylint: disable=unsubscriptable-object
             assert self._codename_to_terminal_code is not None
             assert self._tty_out is not None
-            if self._preview_command is None or preview_max_num_lines < 3:
+            if self._preview_command_cb is None or preview_max_num_lines < 3:
                 return 0
 
             def get_preview_string() -> Optional[str]:
-                assert self._preview_command is not None
+                assert self._preview_command_cb is not None
                 if self._view.active_menu_index is None:
                     return None
                 preview_argument = (
@@ -1150,10 +1150,10 @@ class TerminalMenu:
                 )
                 if preview_argument == "":
                     return None
-                if isinstance(self._preview_command, str):
+                if isinstance(self._preview_command_cb, str):
                     try:
                         preview_process = subprocess.Popen(
-                            [cmd_part.format(preview_argument) for cmd_part in shlex.split(self._preview_command)],
+                            [cmd_part.format(preview_argument) for cmd_part in shlex.split(self._preview_command_cb)],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                         )
@@ -1168,7 +1168,7 @@ class TerminalMenu:
                             e.stderr.decode(encoding=self._user_locale, errors="replace").strip()
                         ) from e
                 else:
-                    preview_string = self._preview_command(preview_argument) if preview_argument is not None else ""
+                    preview_string = self._preview_command_cb(preview_argument) if preview_argument is not None else ""
                 return preview_string
 
             @static_variables(
@@ -1385,7 +1385,7 @@ class TerminalMenu:
         displayed_menu_height = 0  # sum all written lines
         status_bar_lines = get_status_bar_lines()
         self._viewport.status_bar_lines_count = len(status_bar_lines)
-        if self._preview_command is not None:
+        if self._preview_command_cb is not None:
             self._viewport.preview_lines_count = int(self._preview_size * self._num_lines())
             preview_max_num_lines = self._viewport.preview_lines_count
         self._viewport.keep_visible(self._view.active_displayed_index)
@@ -1393,7 +1393,7 @@ class TerminalMenu:
         displayed_menu_height += print_search_line(displayed_menu_height)
         if not self._status_bar_below_preview:
             displayed_menu_height += print_status_bar(displayed_menu_height, status_bar_lines)
-        if self._preview_command is not None:
+        if self._preview_command_cb is not None:
             displayed_menu_height += print_preview(displayed_menu_height, preview_max_num_lines)
         if self._status_bar_below_preview:
             displayed_menu_height += print_status_bar(displayed_menu_height, status_bar_lines)

@@ -182,7 +182,7 @@ class Script:
 
 class Profile(Script):
 	def __init__(self, installer :Optional[Installer], path :str):
-		super(Profile, self).__init__(path, installer)
+		super().__init__(path, installer)
 
 	def __dump__(self, *args :str, **kwargs :str) -> Dict[str, str]:
 		return {'path': self.path}
@@ -201,39 +201,6 @@ class Profile(Script):
 		self.namespace = self.original_namespace
 		return self.execute()
 
-	def has_prep_function(self) -> bool:
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check and if so, check if it's got a _prep_function()
-			# we can call to ask for more user input.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '_prep_function' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '_prep_function'):
-						return True
-		return False
-
-	def has_post_install(self) -> bool:
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check and if so, check if it's got a _prep_function()
-			# we can call to ask for more user input.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '_post_install' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '_post_install'):
-						return True
-
 	def is_top_level_profile(self) -> bool:
 		with open(self.path, 'r') as source:
 			source_data = source.read()
@@ -246,36 +213,3 @@ class Profile(Script):
 		# Default to True if nothing is specified,
 		# since developers like less code - omitting it should assume they want to present it.
 		return True
-
-	def get_profile_description(self) -> str:
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			if '__description__' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '__description__'):
-						return imported.__description__
-
-		# Default to this string if the profile does not have a description.
-		return "This profile does not have the __description__ attribute set."
-
-	@property
-	def packages(self) -> Optional[list]:
-		"""
-		Returns a list of packages baked into the profile definition.
-		If no package definition has been done, .packages() will return None.
-		"""
-		with open(self.path, 'r') as source:
-			source_data = source.read()
-
-			# Some crude safety checks, make sure the imported profile has
-			# a __name__ check before importing.
-			#
-			# If the requirements are met, import with .py in the namespace to not
-			# trigger a traditional:
-			#     if __name__ == 'moduleName'
-			if '__name__' in source_data and '__packages__' in source_data:
-				with self.load_instructions(namespace=f"{self.namespace}.py") as imported:
-					if hasattr(imported, '__packages__'):
-						return imported.__packages__
-		return None

@@ -118,9 +118,6 @@ class ProfileHandler(Singleton):
 	) -> MenuSelection:
 		options = {p.name: p for p in selectable_profiles}
 
-		if with_back_option and not multi:
-			options[Menu.back()] = Menu.back()
-
 		warning = str(_('Are you sure you want to reset this setting?'))
 
 		preset_value = None
@@ -139,7 +136,8 @@ class ProfileHandler(Singleton):
 			multi=multi,
 			sort=True,
 			preview_command=self.preview_text,
-			preview_size=0.5
+			preview_size=0.5,
+			display_back_option=with_back_option
 		).run()
 
 		if choice.type_ == MenuSelectionType.Selection:
@@ -147,16 +145,10 @@ class ProfileHandler(Singleton):
 			if multi:
 				choice.value = [options[val] for val in value]
 			else:
-				if value == Menu.back():
-					choice.type_ = MenuSelectionType.Esc
-					choice.value = None
-				else:
-					choice.value = options[value]
+				choice.value = options[value]
 
 		return choice
 
 	def preview_text(self, selection: str) -> Optional[str]:
-		if selection != Menu.back():
-			profile = self.get_profile_by_name(selection)
-			return profile.preview_text()
-		return None
+		profile = self.get_profile_by_name(selection)
+		return profile.preview_text()

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from os import system
-from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
+from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 
@@ -66,7 +66,8 @@ class Menu(TerminalMenu):
 		show_search_hint: bool = True,
 		cycle_cursor: bool = True,
 		clear_menu_on_exit: bool = True,
-		skip_empty_entries: bool = False
+		skip_empty_entries: bool = False,
+		display_back_option: bool = False
 	):
 		"""
 		Creates a new menu
@@ -156,6 +157,7 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = raise_error_on_interrupt
 		self._raise_error_warning_msg = raise_error_warning_msg
+		self._preview_command_cb = preview_command
 
 		menu_title = f'\n{title}\n\n'
 
@@ -181,6 +183,9 @@ class Menu(TerminalMenu):
 			default = f'{default_option} {self._default_str}'
 			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
 
+		if display_back_option and not multi and skip:
+			self._menu_options += self.back()
+
 		self._preselection(preset_values,cursor_index)
 
 		cursor = "> "
@@ -199,7 +204,7 @@ class Menu(TerminalMenu):
 			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
-			preview_command=preview_command,
+			preview_command=lambda x: self._show_preview(x),
 			preview_size=preview_size,
 			preview_title=preview_title,
 			raise_error_on_interrupt=self._raise_error_on_interrupt,
@@ -210,6 +215,14 @@ class Menu(TerminalMenu):
 			clear_menu_on_exit=clear_menu_on_exit,
 			skip_empty_entries=skip_empty_entries
 		)
+
+	def _show_preview(self, selection: str) -> Optional[str]:
+		if selection == self.back():
+			return None
+		elif self._preview_command_cb is not None:
+			return str(self._preview_command_cb)
+			# return self._preview_command_cb(selection)
+		return None
 
 	def _show(self) -> MenuSelection:
 		try:
@@ -224,32 +237,37 @@ class Menu(TerminalMenu):
 				return elem
 
 		if idx is not None:
-			if isinstance(idx, (list, tuple)):
+			if isinstance(idx, (list, tuple)):  # on multi selection
 				results = []
 				for i in idx:
 					option = check_default(self._menu_options[i])
 					results.append(option)
 				return MenuSelection(type_=MenuSelectionType.Selection, value=results)
-			else:
+			else:  # on single selection
 				result = check_default(self._menu_options[idx])
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
 			return MenuSelection(type_=MenuSelectionType.Esc)
 
 	def run(self) -> MenuSelection:
-		ret = self._show()
+		selection = self._show()
 
-		if ret.type_ == MenuSelectionType.Ctrl_c:
+		if selection.type_ == MenuSelectionType.Ctrl_c:
 			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
 				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
 
-		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
+		if selection.type_ != MenuSelectionType.Selection and not self._skip:
 			system('clear')
 			return self.run()
 
-		return ret
+		if selection.type_ == MenuSelectionType.Selection:
+			if selection.value == self.back():
+				selection.type_ = MenuSelectionType.Esc
+				selection.value = None
+
+		return selection
 
 	def set_cursor_pos(self,pos :int):
 		if pos and 0 < pos < len(self._menu_entries):
