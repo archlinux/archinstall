@@ -13,3 +13,7 @@ class LighttpdProfileV2(ProfileV2):
 	@classmethod
 	def packages(cls) -> List[str]:
 		return ['lighttpd']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['lighttpd']

@@ -207,7 +207,7 @@ class Filesystem:
 			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
 
 	def use_entire_disk(self, root_filesystem_type :str = 'ext4') -> Partition:
-		# TODO: Implement this with declarative profiles instead.
+		# TODO: Implement this with declarative profiles_bck instead.
 		raise ValueError("Installation().use_entire_disk() has to be re-worked.")
 
 	def add_partition(

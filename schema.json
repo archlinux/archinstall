@@ -37,17 +37,6 @@
                 "type": "string"
             }
         },
-        "gfx_driver": {
-            "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
-            "type": "string",
-            "enum": [
-                "VMware / VirtualBox (open-source)",
-                "Nvidia",
-                "Intel (open-source)",
-                "AMD / ATI (open-source)",
-                "All open-source (default)"
-            ]
-        },
         "harddrives": {
             "description": "Path of device to be used",
             "type": "array",
@@ -110,20 +99,18 @@
             }
         },
         "profile": {
-            "path":  {
-                "description": "URL or local path to a python file specifying a profile",
-                "type": "string"
-            },
-            "basic":  {
-                "description": "Basic profile to install",
+            "main":  {
+                "description": "Main top level profile ",
                 "type": "string",
                 "enum": [
+                    "desktop",
                     "minimal",
-                    "xorg"
+                    "server",
+                    "xorg",
                 ]
             },
-            "desktop": {
-                "description": "Profiles are present in profiles/, use the name of a profile to install it (case insensitive)",
+            "details": {
+                "description": "Specific profile to be installed based on the 'main' selection; these profiles are present in profiles_v2/, use the name of a profile to install it (case insensitive)",
                 "type": "string",
                 "enum": [
                     "awesome",
@@ -142,26 +129,30 @@
                     "mate",
                     "sway",
                     "xfce4",
-                    "qtile"
+                    "qtile",
+                    "cockpit",
+                    "docker",
+                    "httpd",
+                    "lighttpd",
+                    "mariadb",
+                    "nginx",
+                    "postgresql",
+                    "sshd",
+                    "tomcat"
                 ]
             },
-            "server": {
-                "description": "List of servers to install (case insensitive)",
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "enum": [
-                        "cockpit",
-                        "docker",
-                        "httpd",
-                        "lighttpd",
-                        "mariadb",
-                        "nginx",
-                        "postgresql",
-                        "sshd",
-                        "tomcat"
-                    ]
-                }
+            "gfx_driver": {
+                "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",
+                "type": "string",
+                "enum": [
+                    "VMware / VirtualBox (open-source)",
+                    "Intel (open-source)",
+                    "AMD / ATI (open-source)",
+                    "All open-source (default)",
+                    "Nvidia (open kernel module for newer GPUs, Turing+)",
+                    "Nvidia (open-source nouveau driver)",
+                    "Nvidia (proprietary)"
+                ]
             }
         },
         "services": {

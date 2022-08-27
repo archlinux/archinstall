@@ -12,4 +12,8 @@ class HttpdProfileV2(ProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
+		return ['apache']
+
+	@classmethod
+	def services(cls) -> List[str]:
 		return ['httpd']

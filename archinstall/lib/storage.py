@@ -1,9 +1,9 @@
 import os
 
 # There's a few scenarios of execution:
-#   1. In the git repository, where ./profiles/ exist
+#   1. In the git repository, where ./profiles_bck/ exist
 #   2. When executing from a remote directory, but targeted a script that starts from the git repository
-#   3. When executing as a python -m archinstall module where profiles exist one step back for library reasons.
+#   3. When executing as a python -m archinstall module where profiles_bck exist one step back for library reasons.
 #   (4. Added the ~/.config directory as an additional option for future reasons)
 #
 # And Keeping this in dict ensures that variables are shared across imports.
@@ -20,7 +20,7 @@ storage: Dict[str, Any] = {
 	],
 	'PROFILE_V2': Path(__file__).parent.parent.parent.joinpath('profiles_v2'),
 	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
-	'PROFILE_DB': None,  # Used in cases when listing profiles is desired, not mandatory for direct profile grabbing.
+	'PROFILE_DB': None,  # Used in cases when listing profiles_bck is desired, not mandatory for direct profile grabbing.
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',
 	'MOUNT_POINT': '/mnt/archinstall',

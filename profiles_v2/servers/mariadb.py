@@ -13,3 +13,10 @@ class MariadbProfileV2(ProfileV2):
 	@classmethod
 	def packages(cls) -> List[str]:
 		return ['mariadb']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['mariadb']
+
+	def post_install(self, install_session: 'Installer'):
+		install_session.arch_chroot('mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql')

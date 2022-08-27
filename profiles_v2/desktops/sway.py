@@ -23,6 +23,10 @@ class SwayProfileV2(ProfileV2):
 			"foot"
 		]
 
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['lightdm']
+
 	def _check_driver(self) -> bool:
 		if self.gfx_driver:
 			packages = AVAILABLE_GFX_DRIVERS[self.gfx_driver]
@@ -44,17 +48,10 @@ class SwayProfileV2(ProfileV2):
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		return text + '\n' + self.packages_text()
 
+	def install(self, install_session: 'Installer'):
+		super().install(install_session)
 
-#
-# # Ensures that this code only gets executed if executed
-# # through importlib.util.spec_from_file_location("sway", "/somewhere/sway.py")
-# # or through conventional import sway
-# if __name__ == "sway":
-# 	if not _check_driver():
-# 		raise archinstall.lib.exceptions.HardwareIncompatibilityError("Sway does not support the proprietary nvidia drivers.")
-#
-# 	# Install the Sway packages
-# 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
-#
-# 	# Install the graphics driver packages
-# 	archinstall.storage['installation_session'].add_additional_packages(f"xorg-server xorg-xinit {' '.join(archinstall.storage.get('gfx_driver_packages', None))}")
+		driver_pkgs = AVAILABLE_GFX_DRIVERS[self.gfx_driver] if self.gfx_driver else []
+		additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
+
+		install_session.add_additional_packages(additional_pkg)

@@ -16,20 +16,13 @@ class CutefishProfileV2(XorgProfileV2):
 			"sddm"
 		]
 
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['sddm']
+
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		return text + '\n' + self.packages_text()
 
-
-
-# # Ensures that this code only gets executed if executed
-# # through importlib.util.spec_from_file_location("cutefish", "/somewhere/cutefish.py")
-# # or through conventional import cutefish
-# if __name__ == "cutefish":
-# 	# Install dependency profiles
-# 	archinstall.storage["installation_session"].install_profile("xorg")
-#
-# 	# Install the Cutefish packages
-# 	archinstall.storage["installation_session"].add_additional_packages(__packages__)
-#
-# 	archinstall.storage["installation_session"].enable_service("sddm")
+	def install(self, install_session: 'Installer'):
+		super().install(install_session)

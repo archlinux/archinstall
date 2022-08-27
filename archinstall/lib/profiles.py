@@ -31,23 +31,6 @@ def grab_url_data(path :str) -> str:
 	return response.read() # bytes?
 
 
-def is_desktop_profile(profile :str) -> bool:
-	if str(profile) == 'Profile(desktop)':
-		return True
-
-	desktop_profile = Profile(None, "desktop")
-	with open(desktop_profile.path, 'r') as source:
-		source_data = source.read()
-
-		if '__name__' in source_data and '__supported__' in source_data:
-			with desktop_profile.load_instructions(namespace=f"{desktop_profile.namespace}.py") as imported:
-				if hasattr(imported, '__supported__'):
-					desktop_profiles = imported.__supported__
-					return str(profile) in [f"Profile({s})" for s in desktop_profiles]
-
-	return False
-
-
 def list_profiles(
 	filter_irrelevant_macs :bool = True,
 	subpath :str = '',
@@ -59,7 +42,7 @@ def list_profiles(
 		local_macs = list_interfaces()
 
 	cache = {}
-	# Grab all local profiles found in PROFILE_PATH
+	# Grab all local profiles_bck found in PROFILE_PATH
 	for PATH_ITEM in storage['PROFILE_PATH']:
 		for root, folders, files in os.walk(os.path.abspath(os.path.expanduser(PATH_ITEM + subpath))):
 			for file in files:
@@ -81,13 +64,13 @@ def list_profiles(
 					cache[file[:-3]] = {'path': os.path.join(root, file), 'description': description, 'tailored': tailored}
 			break
 
-	# Grab profiles from upstream URL
+	# Grab profiles_bck from upstream URL
 	if storage['PROFILE_DB']:
 		profiles_url = os.path.join(storage["UPSTREAM_URL"] + subpath, storage['PROFILE_DB'])
 		try:
 			profile_list = json.loads(grab_url_data(profiles_url))
 		except urllib.error.HTTPError as err:
-			print(_('Error: Listing profiles on URL "{}" resulted in:').format(profiles_url), err)
+			print(_('Error: Listing profiles_bck on URL "{}" resulted in:').format(profiles_url), err)
 			return cache
 		except json.decoder.JSONDecodeError as err:
 			print(_('Error: Could not decode "{}" result as JSON:').format(profiles_url), err)
@@ -164,7 +147,7 @@ class Script:
 
 			if f"{self.profile}" in self.examples:
 				return self.localize_path(self.examples[self.profile]['path'])
-			# TODO: Redundant, the below block shouldn't be needed as profiles are stripped of their .py, but just in case for now:
+			# TODO: Redundant, the below block shouldn't be needed as profiles_bck are stripped of their .py, but just in case for now:
 			elif f"{self.profile}.py" in self.examples:
 				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
 
@@ -210,10 +193,6 @@ class Profile(Script):
 	@property
 	def name(self) -> str:
 		return os.path.basename(self.profile)
-
-	@property
-	def is_desktop_profile(self) -> bool:
-		return is_desktop_profile(repr(self))
 
 	def install(self) -> ModuleType:
 		# Before installing, revert any temporary changes to the namespace.
@@ -300,41 +279,3 @@ class Profile(Script):
 					if hasattr(imported, '__packages__'):
 						return imported.__packages__
 		return None
-
-
-class Application(Profile):
-	def __repr__(self, *args :str, **kwargs :str):
-		return f'Application({os.path.basename(self.profile)})'
-
-	@property
-	def path(self) -> str:
-		parsed_url = urllib.parse.urlparse(self.profile)
-
-		# The Profile was not a direct match on a remote URL
-		if not parsed_url.scheme:
-			# Try to locate all local or known URL's
-			if not self.examples:
-				self.examples = list_profiles(subpath='/applications')
-
-			if f"{self.profile}" in self.examples:
-				return self.localize_path(self.examples[self.profile]['path'])
-			# TODO: Redundant, the below block shouldn't be needed as profiles are stripped of their .py, but just in case for now:
-			elif f"{self.profile}.py" in self.examples:
-				return self.localize_path(self.examples[f"{self.profile}.py"]['path'])
-
-			# Path was not found in any known examples, check if it's an absolute path
-			if os.path.isfile(self.profile):
-				return os.path.basename(self.profile)
-
-			raise ProfileNotFound(f"Application file {self.profile} does not exist in {storage['PROFILE_PATH']}")
-		elif parsed_url.scheme in ('https', 'http'):
-			return self.localize_path(self.profile)
-		else:
-			raise ProfileNotFound(f"Application cannot handle scheme {parsed_url.scheme}")
-
-	def install(self) -> ModuleType:
-		# Before installing, revert any temporary changes to the namespace.
-		# This ensures that the namespace during installation is the original initiation namespace.
-		# (For instance awesome instead of aweosme.py or app-awesome.py)
-		self.namespace = self.original_namespace
-		return self.execute()

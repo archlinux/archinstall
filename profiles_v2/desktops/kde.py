@@ -22,16 +22,10 @@ class KdeProfileV2(XorgProfileV2):
 			"egl-wayland"
 		]
 
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['sddm']
+
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		return text + '\n' + self.packages_text()
-
-	def install(self, install_session: 'Installer'):
-		# Install dependency profiles
-		super().install(install_session)
-
-		# Install the KDE packages
-		install_session.add_additional_packages(self.packages())
-
-		# Enable autostart of KDE for all users
-		install_session.enable_service('sddm')

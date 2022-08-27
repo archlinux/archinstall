@@ -1,17 +1,25 @@
 import json
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import List, Union, Optional, Any, Dict
+from typing import List, Union, Optional, Any, Dict, TYPE_CHECKING
 
 from archinstall.lib.output import FormattedOutput
 
 
 class ProfileType(Enum):
-	Generic = 'Generic'
+	# top level profiles
+	Server = 'Server'
+	Desktop = 'Desktop'
+	Xorg = 'Xorg'
+	Minimal = 'Minimal'
 	Custom = 'Custom'
+	# detailed selection profiles
 	ServerType = 'ServerType'
 	WindowMgr = 'Window Manager'
 	DesktopEnv = 'Desktop Environment'
+	# special things
+	Tailored = 'Tailored'
+	Application = 'Application'
 
 
 @dataclass
@@ -33,6 +41,10 @@ class SelectResult(Enum):
 	ResetCurrent = auto()
 
 
+if TYPE_CHECKING:
+	_: Any
+
+
 class ProfileV2:
 	def __init__(
 		self,
@@ -50,12 +62,24 @@ class ProfileV2:
 
 	@classmethod
 	def packages(cls) -> List[str]:
+		"""
+		Returns a list of packages that should be installed when
+		this profile is among the choosen ones
+		"""
+		return []
+
+	@classmethod
+	def services(cls) -> List[str]:
+		"""
+		Returns a list of services that should be enabled when
+		this profile is among the chosen ones
+		"""
 		return []
 
 	def json(self) -> Dict[str, Union[str, List[str]]]:
 		data = {}
 
-		if self.profile_type == ProfileType.Generic:
+		if self.is_top_level_profile():
 			data = {
 				'main': self.name,
 				'gfx_driver': self.gfx_driver
@@ -97,14 +121,22 @@ class ProfileV2:
 	def set_current_selection(self, current_selection: Union[List['ProfileV2'], 'ProfileV2']):
 		self._current_selection = current_selection
 
-	def is_generic_profile(self) -> bool:
-		return self.profile_type == ProfileType.Generic
-
-	def is_server_profile(self) -> bool:
-		return self.profile_type == ProfileType.ServerType
+	def is_top_level_profile(self) -> bool:
+		if self.profile_type in [ProfileType.Desktop, ProfileType.Server, ProfileType.Xorg, ProfileType.Minimal]:
+			return True
+		return False
 
 	def is_desktop_profile(self) -> bool:
+		return self.profile_type == ProfileType.Desktop
+
+	def is_server_type_profile(self) -> bool:
+		return self.profile_type == ProfileType.ServerType
+
+	def is_desktop_sub_profile(self) -> bool:
 		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
+
+	def is_tailored(self) -> bool:
+		return self.profile_type == ProfileType.Tailored
 
 	def graphic_driver_enabled(self) -> bool:
 		if self._current_selection is None:
@@ -120,18 +152,15 @@ class ProfileV2:
 	def with_graphic_driver(self) -> bool:
 		return False
 
-	def post_install(self):
+	def post_install(self, install_session: 'Installer'):
 		pass
 
 	def do_on_select(self) -> SelectResult:
 		return SelectResult.NewSelection
 
-	def services_to_enable(self) -> List[str]:
-		return []
-
 	def preview_text(self) -> Optional[str]:
 		"""
-		Used for preview text in profiles. If a description is set for a
+		Used for preview text in profiles_bck. If a description is set for a
 		profile it will automatically display that one in the preivew.
 		If no preview or a different text should be displayed just
 		"""

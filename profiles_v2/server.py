@@ -14,7 +14,7 @@ class ServerProfileV2(ProfileV2):
 	def __init__(self, current_value: List[ProfileV2] = None):
 		super().__init__(
 			'Server',
-			ProfileType.Generic,
+			ProfileType.Server,
 			description=str(_('Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb')),
 			current_selection=current_value
 		)
@@ -49,6 +49,8 @@ class ServerProfileV2(ProfileV2):
 
 		for server in self._current_selection:
 			log(f'Installing {server.name}...', level=logging.INFO)
+			install_session.add_additional_packages(server.packages())
+			install_session.enable_service(server.services())
 			server.install(install_session)
 
 		log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)

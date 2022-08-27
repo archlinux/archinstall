@@ -12,4 +12,8 @@ class SshdProfileV2(ProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
+		return ['openssh']
+
+	@classmethod
+	def services(cls) -> List[str]:
 		return ['sshd']

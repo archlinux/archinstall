@@ -10,7 +10,7 @@ class BspwmProfileV2(XorgProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
-		return super().packages() + [
+		return [
 			'bspwm',
 			'sxhkd',
 			'dmenu',
@@ -20,20 +20,10 @@ class BspwmProfileV2(XorgProfileV2):
 			'lightdm-gtk-greeter',
 		]
 
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['lightdm']
+
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
 		return text + '\n' + self.packages_text()
-
-
-
-#
-# # Ensures that this code only gets executed if executed
-# # through importlib.util.spec_from_file_location("bspwm", "/somewhere/bspwm.py")
-# # or through conventional import bspwm
-# if __name__ == 'bspwm':
-# 	# Install dependency profiles
-# 	archinstall.storage['installation_session'].install_profile('xorg')
-# 	# Install bspwm packages
-# 	archinstall.storage['installation_session'].add_additional_packages(__packages__)
-# 	# Set up LightDM for login
-# 	archinstall.storage['installation_session'].enable_service('lightdm')

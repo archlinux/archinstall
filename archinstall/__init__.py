@@ -218,8 +218,6 @@ def load_config():
 		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
 	if arguments.get('sys-encoding', None) is not None:
 		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
-	if arguments.get('gfx_driver', None) is not None:
-		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 	if arguments.get('nic', None) is not None:
@@ -268,7 +266,7 @@ arguments = get_arguments()
 post_process_arguments(arguments)
 
 # @archinstall.plugin decorator hook to programmatically add
-# plugins in runtime. Useful in profiles and other things.
+# plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs):
 	plugins[f.__name__] = f
 
@@ -280,7 +278,7 @@ def run_as_a_module():
 	This function and the file __main__ acts as a entry point.
 	"""
 
-	# Add another path for finding profiles, so that list_profiles() in Script() can find guided.py, unattended.py etc.
+	# Add another path for finding profiles_bck, so that list_profiles() in Script() can find guided.py, unattended.py etc.
 	storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
 	try:
 		script = Script(arguments.get('script', None))

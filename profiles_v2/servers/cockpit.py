@@ -12,4 +12,8 @@ class CockpitProfileV2(ProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
-		return ['cockpit']
+		return ['cockpit', 'udisks2', 'packagekit']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['cockpit.socket']

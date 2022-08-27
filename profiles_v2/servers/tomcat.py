@@ -12,4 +12,8 @@ class TomcatProfileV2(ProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
-		return ['tomcat']
+		return ['tomcat10']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['tomcat10']

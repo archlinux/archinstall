@@ -13,7 +13,7 @@ class XorgProfileV2(ProfileV2):
 	def __init__(
 		self,
 		name: str = 'Xorg',
-		profile_type: ProfileType = ProfileType.Generic,
+		profile_type: ProfileType = ProfileType.Xorg,
 		description: str = str(_('Installs a minimal system as well as xorg and graphics drivers.'))
 	):
 		super().__init__(
@@ -21,16 +21,6 @@ class XorgProfileV2(ProfileV2):
 			profile_type,
 			description=description
 		)
-
-	# @classmethod
-	# def packages(cls) -> List[str]:
-	# 	return [
-	# 		'dkms',
-	# 		'xorg-server',
-	# 		'xorg-xinit',
-	# 		'nvidia-dkms',
-	# 		*__hwd__packages__
-	# 	]
 
 	def with_graphic_driver(self) -> bool:
 		return True

@@ -14,5 +14,6 @@ class DockerProfileV2(ProfileV2):
 	def packages(cls) -> List[str]:
 		return ['docker']
 
-	def services_to_enable(self):
+	@classmethod
+	def services(cls) -> List[str]:
 		return ['docker']

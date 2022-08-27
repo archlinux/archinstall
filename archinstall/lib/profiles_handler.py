@@ -10,6 +10,7 @@ from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
 from .utils.singleton import Singleton
+from .networking import list_interfaces
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,17 +39,27 @@ class ProfileHandler(Singleton):
 	def profiles(self) -> List[ProfileV2]:
 		return self._find_available_profiles()
 
+	@cached_property
+	def local_mac_addresses(self) -> List[str]:
+		ifaces = list_interfaces()
+		return list(ifaces.keys())
+
 	def get_profile_by_name(self, name: str) -> ProfileV2:
 		return next(filter(lambda x: x.name == name, self.profiles), None)
 
 	def get_top_level_profiles(self) -> List[ProfileV2]:
-		return list(filter(lambda x: x.is_generic_profile(), self.profiles))
+		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
 
 	def get_server_profiles(self) -> List[ProfileV2]:
-		return list(filter(lambda x: x.is_server_profile(), self.profiles))
+		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
 
 	def get_desktop_profiles(self) -> List[ProfileV2]:
-		return list(filter(lambda x: x.is_desktop_profile(), self.profiles))
+		return list(filter(lambda x: x.is_desktop_sub_profile(), self.profiles))
+
+	def get_mac_addr_profiles(self) -> List[ProfileV2]:
+		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
+		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, self.profiles))
+		return match_mac_addr_profiles
 
 	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
 		profiles = []
@@ -102,10 +113,14 @@ class ProfileHandler(Singleton):
 		current_profile: Optional[ProfileV2] = None,
 		title: str = None,
 		allow_reset: bool = True,
-		multi: bool = False
+		multi: bool = False,
+		with_back_option: bool = False
 	) -> MenuSelection:
-
 		options = {p.name: p for p in selectable_profiles}
+
+		if with_back_option and not multi:
+			options[Menu.back()] = Menu.back()
+
 		warning = str(_('Are you sure you want to reset this setting?'))
 
 		preset_value = None
@@ -132,10 +147,16 @@ class ProfileHandler(Singleton):
 			if multi:
 				choice.value = [options[val] for val in value]
 			else:
-				choice.value = options[value]
+				if value == Menu.back():
+					choice.type_ = MenuSelectionType.Esc
+					choice.value = None
+				else:
+					choice.value = options[value]
 
 		return choice
 
 	def preview_text(self, selection: str) -> Optional[str]:
-		profile = self.get_profile_by_name(selection)
-		return profile.preview_text()
+		if selection != Menu.back():
+			profile = self.get_profile_by_name(selection)
+			return profile.preview_text()
+		return None

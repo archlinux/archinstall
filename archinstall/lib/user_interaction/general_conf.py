@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
-from typing import List, Any, Optional, Dict, TYPE_CHECKING
+from typing import List, Any, Optional, Dict, TYPE_CHECKING, Union
 
 from .system_conf import select_driver
 
@@ -55,7 +55,7 @@ def ask_for_a_timezone(preset: str = None) -> str:
 		case MenuSelectionType.Selection: return choice.value
 
 
-def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
+def ask_for_audio_selection(desktop: bool = True, preset: Union[str, None] = None) -> Union[str, None]:
 	no_audio = str(_('No audio server'))
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', no_audio]
 	default = 'pipewire' if desktop else no_audio
@@ -144,11 +144,11 @@ def select_profile_v2(
 	multi: bool = False
 ) -> Optional[ProfileV2]:
 	handler = ProfileHandler()
-	selectable_profiles = handler.get_top_level_profiles()
+	top_level_profiles = handler.get_top_level_profiles()
 
 	display_title = title
 	if not display_title:
-		display_title = str(_('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments'))
+		display_title = str(_('This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments'))
 
 	if current_profile is not None:
 		if profile_info := current_profile.info():
@@ -157,11 +157,12 @@ def select_profile_v2(
 			display_title += '\n\n' + output
 
 	choice = handler.select_profile(
-		selectable_profiles,
+		top_level_profiles,
 		current_profile=current_profile,
 		title=display_title,
 		allow_reset=allow_reset,
-		multi=multi
+		multi=multi,
+		with_back_option=True
 	)
 
 	match choice.type_:

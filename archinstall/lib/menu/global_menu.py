@@ -11,7 +11,6 @@ from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
-from ..profiles import is_desktop_profile, Profile
 from ..storage import storage
 from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
@@ -141,7 +140,7 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['audio'] = \
 			Selector(
 				_('Audio'),
-				lambda preset: ask_for_audio_selection(is_desktop_profile(storage['arguments'].get('profile', None)),preset),
+				lambda preset: self._select_audio(),
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
@@ -378,6 +377,12 @@ class GlobalMenu(GeneralMenu):
 	def _select_profile(self, current_profile: Optional[ProfileV2]):
 		profile = select_profile_v2(current_profile)
 		return profile
+
+	def _select_audio(self, current: Union[str, None]) -> Union[str, None]:
+		profile: ProfileV2 = self._menu_options['profile'].current_selection
+		is_desktop = profile.is_desktop_profile() if profile else False
+		selection = ask_for_audio_selection(is_desktop, current)
+		return selection
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)

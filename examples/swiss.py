@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
+from profiles_v2.applications.pipewire import PipewireProfileV2
 
 if TYPE_CHECKING:
 	_: Any
@@ -420,16 +421,6 @@ def os_setup(installation):
 			handler = NetworkConfigurationHandler(network_config)
 			handler.config_installer(installation)
 
-		if archinstall.arguments.get('audio', None) is not None:
-			installation.log(f"This audio server will be used: {archinstall.arguments.get('audio', None)}",level=logging.INFO)
-			if archinstall.arguments.get('audio', None) == 'pipewire':
-				archinstall.Application(installation, 'pipewire').install()
-			elif archinstall.arguments.get('audio', None) == 'pulseaudio':
-				print('Installing pulseaudio ...')
-				installation.add_additional_packages("pulseaudio")
-		else:
-			installation.log("No audio server will be installed.", level=logging.INFO)
-
 		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 			installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
@@ -438,6 +429,15 @@ def os_setup(installation):
 
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
+
+		if audio := archinstall.arguments.get('audio', None):
+			installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
+			if audio == 'pipewire':
+				PipewireProfileV2().install(installation)
+			elif audio == 'pulseaudio':
+				installation.add_additional_packages("pulseaudio")
+		else:
+			installation.log("No audio server will be installed.", level=logging.INFO)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -451,16 +451,12 @@ def os_setup(installation):
 		if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
 			installation.user_set_pw('root', root_pw)
 
-		# This step must be after profile installs to allow profiles to install language pre-requisits.
+		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 		installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
-		if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
-			with archinstall.arguments['profile'].load_instructions(
-				namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
-				if not imported._post_install():
-					archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
-					exit(1)
+		if profile := archinstall.arguments['profile']:
+			profile.post_install()
 
 	# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 	# Note that while it's called enable_service, it can actually take a list of services and iterate it.

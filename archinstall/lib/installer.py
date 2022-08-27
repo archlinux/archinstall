@@ -1,32 +1,29 @@
-import time
+import glob
 import logging
 import os
-import re
-import shutil
-import shlex
 import pathlib
+import re
+import shlex
+import shutil
 import subprocess
-import glob
-from types import ModuleType
+import time
 from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 
 from profiles_v2.profiles_v2 import ProfileV2
 from .disk import get_partitions_in_use, Partition
-from .general import SysCommand, generate_password
-from .hardware import has_uefi, is_vm, cpu_vendor
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import findmnt
-from .mirrors import use_mirrors
-from .plugins import plugins
-from .storage import storage
-# from .user_interaction import *
-from .output import log
-from .profiles import Profile
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+from .general import SysCommand, generate_password
+from .hardware import has_uefi, is_vm, cpu_vendor
 from .hsm import fido2_enroll
-from .models.users import User
+from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .mirrors import use_mirrors
 from .models.subvolume import Subvolume
+from .models.users import User
+from .output import log
+from .plugins import plugins
+from .storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -530,10 +527,10 @@ class Installer:
 				if hasattr(plugin, 'on_service'):
 					plugin.on_service(service)
 
-	def run_command(self, cmd :str, *args :str, **kwargs :str) -> None:
+	def run_command(self, cmd :str, *args :str, **kwargs :str) -> SysCommand:
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} {cmd}')
 
-	def arch_chroot(self, cmd :str, run_as :Optional[str] = None):
+	def arch_chroot(self, cmd :str, run_as :Optional[str] = None) -> SysCommand:
 		if run_as:
 			cmd = f"su - {run_as} -c {shlex.quote(cmd)}"
 

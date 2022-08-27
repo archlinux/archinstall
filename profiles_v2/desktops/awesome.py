@@ -10,10 +10,7 @@ class AwesomeProfileV2(XorgProfileV2):
 
 	@classmethod
 	def packages(cls) -> List[str]:
-		xorg_packages = super().packages()
-		return xorg_packages + [
-			'alacritty',
-		]
+		return ['alacritty']
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
@@ -21,7 +18,6 @@ class AwesomeProfileV2(XorgProfileV2):
 
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)
-		install_session.add_additional_packages(self.packages())
 
 		# TODO: Copy a full configuration to ~/.config/awesome/rc.lua instead.
 		with open(f"{install_session.target}/etc/xdg/awesome/rc.lua", 'r') as fh:

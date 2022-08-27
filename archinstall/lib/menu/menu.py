@@ -31,15 +31,19 @@ class MenuSelection:
 class Menu(TerminalMenu):
 
 	@classmethod
-	def yes(cls):
+	def back(cls) -> str:
+		return str(_('← Back'))
+
+	@classmethod
+	def yes(cls) -> str:
 		return str(_('yes'))
 
 	@classmethod
-	def no(cls):
+	def no(cls) -> str:
 		return str(_('no'))
 
 	@classmethod
-	def yes_no(cls):
+	def yes_no(cls) -> List[str]:
 		return [cls.yes(), cls.no()]
 
 	def __init__(

@@ -14,3 +14,10 @@ class PostgresqlProfileV2(ProfileV2):
 	@classmethod
 	def packages(cls) -> List[str]:
 		return ['postgresql']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['postgresql']
+
+	def post_install(self, install_session: 'Installer'):
+		install_session.arch_chroot("initdb -D /var/lib/postgres/data", run_as='postgres')

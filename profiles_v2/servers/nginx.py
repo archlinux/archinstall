@@ -13,3 +13,7 @@ class NginxProfileV2(ProfileV2):
 	@classmethod
 	def packages(cls) -> List[str]:
 		return ['nginx']
+
+	@classmethod
+	def services(cls) -> List[str]:
+		return ['nginx']

@@ -14,7 +14,7 @@ class DesktopProfileV2(ProfileV2):
 	def __init__(self, current_selection: Optional[ProfileV2] = None):
 		super().__init__(
 			'Desktop',
-			ProfileType.Generic,
+			ProfileType.Desktop,
 			description=str(_('Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway')),
 			current_selection=current_selection
 		)
@@ -62,4 +62,8 @@ class DesktopProfileV2(ProfileV2):
 
 		for profile in self._current_selection:
 			log(f'Installing profile {profile.name}...')
+
+			install_session.add_additional_packages(profile.packages())
+			install_session.enable_service(profile.services())
+
 			profile.install(install_session)
