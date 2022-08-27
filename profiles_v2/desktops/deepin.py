@@ -8,9 +8,9 @@ class DeepinProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Deepin', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			"deepin",
 			"deepin-terminal",
 			"deepin-editor",
@@ -18,8 +18,8 @@ class DeepinProfileV2(XorgProfileV2):
 			"lightdm-deepin-greeter",
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['lightdm']
 
 	def preview_text(self) -> Optional[str]:

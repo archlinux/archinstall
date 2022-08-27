@@ -8,9 +8,9 @@ class I3gapsProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('i3-gaps', ProfileType.WindowMgr, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			'i3lock',
 			'i3status',
 			'i3blocks',
@@ -21,8 +21,8 @@ class I3gapsProfileV2(XorgProfileV2):
 			'i3-gaps'
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['lightdm']
 
 	def preview_text(self) -> Optional[str]:

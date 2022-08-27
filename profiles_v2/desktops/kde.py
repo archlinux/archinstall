@@ -8,10 +8,9 @@ class KdeProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Kde', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		xorg_packages = super().packages()
-		return xorg_packages + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			"plasma-meta",
 			"konsole",
 			"kwrite",
@@ -22,8 +21,8 @@ class KdeProfileV2(XorgProfileV2):
 			"egl-wayland"
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['sddm']
 
 	def preview_text(self) -> Optional[str]:

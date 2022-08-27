@@ -8,16 +8,16 @@ class CutefishProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Cutefish', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			"cutefish",
 			"noto-fonts",
 			"sddm"
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['sddm']
 
 	def preview_text(self) -> Optional[str]:

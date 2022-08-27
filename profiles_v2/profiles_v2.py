@@ -61,16 +61,16 @@ class ProfileV2:
 		self.gfx_driver = None
 		self._current_selection: Union[List[ProfileV2], ProfileV2] = current_selection
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		"""
 		Returns a list of packages that should be installed when
 		this profile is among the choosen ones
 		"""
 		return []
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		"""
 		Returns a list of services that should be enabled when
 		this profile is among the chosen ones

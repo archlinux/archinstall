@@ -10,10 +10,10 @@ class CockpitProfileV2(ProfileV2):
 			ProfileType.ServerType
 		)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['cockpit', 'udisks2', 'packagekit']
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['cockpit.socket']

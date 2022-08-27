@@ -8,8 +8,8 @@ class AwesomeProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Awesome', ProfileType.WindowMgr, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['alacritty']
 
 	def preview_text(self) -> Optional[str]:

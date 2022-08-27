@@ -19,8 +19,8 @@ class DesktopProfileV2(ProfileV2):
 			current_selection=current_selection
 		)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return [
 			'nano',
 			'vim',

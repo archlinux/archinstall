@@ -10,8 +10,8 @@ class PipewireProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__('Pipewire', ProfileType.Application)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return [
 			'pipewire',
 			'pipewire-alsa',

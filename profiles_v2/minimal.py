@@ -10,7 +10,3 @@ class MinimalProfileV2(ProfileV2):
 			ProfileType.Minimal,
 			description=str(_('A very basic installation that allows you to customize Arch Linux as you see fit.'))
 		)
-
-	@classmethod
-	def packages(cls) -> List[str]:
-		return []

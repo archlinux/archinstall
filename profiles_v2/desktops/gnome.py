@@ -8,16 +8,16 @@ class GnomeProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Gnome', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			'gnome',
 			'gnome-tweaks',
 			'gdm'
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['gdm']
 
 	def preview_text(self) -> Optional[str]:

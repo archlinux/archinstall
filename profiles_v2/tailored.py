@@ -8,8 +8,8 @@ class TailoredProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('52-54-00-12-34-56', ProfileType.Tailored, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['nano', 'wget', 'git']
 
 	def install(self, install_session: 'Installer'):

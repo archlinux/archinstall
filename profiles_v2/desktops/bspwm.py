@@ -8,8 +8,8 @@ class BspwmProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Bspwm', ProfileType.WindowMgr, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return [
 			'bspwm',
 			'sxhkd',

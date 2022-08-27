@@ -8,17 +8,17 @@ class MateProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Mate', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			"mate",
 			"mate-extra",
 			"lightdm",
 			"lightdm-gtk-greeter",
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['lightdm']
 
 	def preview_text(self) -> Optional[str]:

@@ -10,12 +10,12 @@ class MariadbProfileV2(ProfileV2):
 			ProfileType.ServerType
 		)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['mariadb']
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['mariadb']
 
 	def post_install(self, install_session: 'Installer'):

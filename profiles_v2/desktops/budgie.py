@@ -8,8 +8,8 @@ class BudgieProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Budgie', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return super().packages() + [
 			"budgie-desktop",
 			"gnome",

@@ -10,10 +10,10 @@ class SshdProfileV2(ProfileV2):
 			ProfileType.ServerType
 		)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['openssh']
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['sshd']

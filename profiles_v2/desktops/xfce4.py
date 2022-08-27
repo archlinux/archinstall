@@ -8,9 +8,9 @@ class Xfce4ProfileV2(XorgProfileV2):
 	def __init__(self):
 		super().__init__('Xfce4', ProfileType.DesktopEnv, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
-		return super().packages() + [
+	@property
+	def packages(self) -> List[str]:
+		return [
 			"xfce4",
 			"xfce4-goodies",
 			"pavucontrol",
@@ -20,8 +20,8 @@ class Xfce4ProfileV2(XorgProfileV2):
 			"xarchiver"
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['lightdm']
 
 	def preview_text(self) -> Optional[str]:

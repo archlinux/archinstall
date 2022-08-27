@@ -8,8 +8,8 @@ class SwayProfileV2(ProfileV2):
 	def __init__(self):
 		super().__init__('Sway', ProfileType.WindowMgr, description='')
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return [
 			"sway",
 			"swaylock",
@@ -23,8 +23,8 @@ class SwayProfileV2(ProfileV2):
 			"foot"
 		]
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['lightdm']
 
 	def _check_driver(self) -> bool:

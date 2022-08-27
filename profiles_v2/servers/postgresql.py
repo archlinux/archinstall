@@ -11,12 +11,12 @@ class PostgresqlProfileV2(ProfileV2):
 			''
 		)
 
-	@classmethod
-	def packages(cls) -> List[str]:
+	@property
+	def packages(self) -> List[str]:
 		return ['postgresql']
 
-	@classmethod
-	def services(cls) -> List[str]:
+	@property
+	def services(self) -> List[str]:
 		return ['postgresql']
 
 	def post_install(self, install_session: 'Installer'):
