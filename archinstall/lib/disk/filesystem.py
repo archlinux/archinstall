@@ -79,6 +79,8 @@ class Filesystem:
 			self.blockdevice.flush_cache()
 			time.sleep(3)
 
+		print(layout)
+
 		prev_partition = None
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
