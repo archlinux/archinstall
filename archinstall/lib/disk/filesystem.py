@@ -155,8 +155,8 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 
-				print(partition['device_instance'])
-				exit(1)
+					print(partition['device_instance'])
+					exit(1)
 
 				elif partition.get('wipe', False):
 					if not partition['device_instance']:
