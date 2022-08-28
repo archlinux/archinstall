@@ -183,7 +183,8 @@ class Menu(TerminalMenu):
 			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
 
 		if display_back_option and not multi and skip:
-			self._menu_options += [self.back()]
+			skip_empty_entries = True
+			self._menu_options += ['', self.back()]
 
 		self._preselection(preset_values,cursor_index)
 
