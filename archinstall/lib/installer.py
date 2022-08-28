@@ -234,9 +234,6 @@ class Installer:
 		from .luks import luks2
 		from .disk.btrfs import setup_subvolumes, mount_subvolume
 
-		print(layouts)
-		exit(1)
-
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
@@ -245,6 +242,9 @@ class Installer:
 
 		# TODO: Implement a proper mount-queue system that does not depend on return values.
 		mount_queue = {}
+
+		print(list_part)
+		exit(1)
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
