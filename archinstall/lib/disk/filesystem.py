@@ -91,6 +91,8 @@ class Filesystem:
 																	end=partition.get('size', '100%'),
 																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
 																	skip_mklabel=layout.get('wipe', False) is not False)
+				if not partition['device_instance']:
+					raise ValueError(f"DEBUG: Never got a device_instance set (which will cause issues further down the line)")
 
 			elif (partition_uuid := partition.get('PARTUUID')):
 				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
@@ -102,6 +104,8 @@ class Filesystem:
 					partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
 
 				log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
+				if not partition['device_instance']:
+					raise ValueError(f"DEBUG: 2 Never got a device_instance set (which will cause issues further down the line)")
 			else:
 				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
 				continue
@@ -167,6 +171,9 @@ class Filesystem:
 							filesystem='btrfs',
 							autodetect_filesystem=False
 						)
+
+			if not partition['device_instance']:
+				raise ValueError(f"DEBUG: 3 Never got a device_instance set (which will cause issues further down the line)")
 
 			if partition.get('boot', False):
 				log(f"Marking partition {partition['device_instance']} as bootable.")
