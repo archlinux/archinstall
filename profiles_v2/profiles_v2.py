@@ -1,8 +1,8 @@
-import json
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import List, Union, Optional, Any, Dict, TYPE_CHECKING
 
+from archinstall.lib.hardware import AVAILABLE_GFX_DRIVERS
 from archinstall.lib.output import FormattedOutput
 
 
@@ -52,14 +52,23 @@ class ProfileV2:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: Union['ProfileV2', List['ProfileV2']] = None
+		current_selection: Union['ProfileV2', List['ProfileV2']] = None,
+		packages: List[str] = [],
+		services: List[str] = []
 	):
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
 
 		self.gfx_driver = None
+
 		self._current_selection: Union[List[ProfileV2], ProfileV2] = current_selection
+		self._packages = packages
+		self._services = services
+
+	@property
+	def current_selection(self) -> Union[List['ProfileV2'], 'ProfileV2']:
+		return self._current_selection
 
 	@property
 	def packages(self) -> List[str]:
@@ -67,7 +76,7 @@ class ProfileV2:
 		Returns a list of packages that should be installed when
 		this profile is among the choosen ones
 		"""
-		return []
+		return self._packages
 
 	@property
 	def services(self) -> List[str]:
@@ -75,24 +84,7 @@ class ProfileV2:
 		Returns a list of services that should be enabled when
 		this profile is among the chosen ones
 		"""
-		return []
-
-	def json(self) -> Dict[str, Union[str, List[str]]]:
-		data = {}
-
-		if self.is_top_level_profile():
-			data = {
-				'main': self.name,
-				'gfx_driver': self.gfx_driver
-			}
-
-			if self._current_selection is not None:
-				if isinstance(self._current_selection, list):
-					data['details'] = [profile.name for profile in self._current_selection]
-				else:
-					data['details'] = self._current_selection.name
-
-		return data
+		return self._services
 
 	def info(self) -> Optional[ProfileInfo]:
 		if self._current_selection:
@@ -103,17 +95,9 @@ class ProfileV2:
 				details = self._current_selection.name
 				gfx_driver = self._current_selection.gfx_driver
 
-			return ProfileInfo(
-				self.name,
-				details,
-				gfx_driver
-			)
+			return ProfileInfo(self.name, details, gfx_driver)
 		else:
-			return ProfileInfo(
-				self.name,
-				None,
-				self.gfx_driver
-			)
+			return ProfileInfo(self.name, None, self.gfx_driver)
 
 	def reset(self):
 		self._current_selection = None
@@ -158,6 +142,9 @@ class ProfileV2:
 	def post_install(self, install_session: 'Installer'):
 		pass
 
+	def json(self) -> Dict:
+		return {}
+
 	def do_on_select(self) -> SelectResult:
 		return SelectResult.NewSelection
 
@@ -174,7 +161,7 @@ class ProfileV2:
 	def packages_text(self) -> str:
 		text = str(_('Installed packages')) + ':\n'
 
-		nr_packages = len(self.packages())
+		nr_packages = len(self.packages)
 		if nr_packages <= 5:
 			col = 1
 		elif nr_packages <= 10:
@@ -184,8 +171,15 @@ class ProfileV2:
 		else:
 			col = 4
 
-		text += FormattedOutput.as_columns(self.packages(), col)
+		text += FormattedOutput.as_columns(self.packages, col)
 		return text
+
+	def gfx_driver_packages(self) -> List[str]:
+		if self.gfx_driver is not None:
+			driver_pkgs = AVAILABLE_GFX_DRIVERS[self.gfx_driver]
+			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
+			return additional_pkg
+		return []
 
 	def install(self, install_session: 'Installer'):
 		pass

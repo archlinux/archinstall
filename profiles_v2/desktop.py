@@ -1,7 +1,6 @@
-# A desktop environment selector.
 from typing import Any, TYPE_CHECKING, List, Optional
 
-from archinstall import log
+from archinstall.lib.output import log
 from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.profiles_handler import ProfileHandler
 from profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
@@ -58,12 +57,12 @@ class DesktopProfileV2(ProfileV2):
 
 	def install(self, install_session: 'Installer'):
 		# Install common packages for all desktop environments
-		install_session.add_additional_packages(self.packages())
+		install_session.add_additional_packages(self.packages)
 
 		for profile in self._current_selection:
 			log(f'Installing profile {profile.name}...')
 
-			install_session.add_additional_packages(profile.packages())
-			install_session.enable_service(profile.services())
+			install_session.add_additional_packages(profile.packages)
+			install_session.enable_service(profile.services)
 
 			profile.install(install_session)

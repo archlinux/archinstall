@@ -32,5 +32,5 @@ class PipewireProfileV2(ProfileV2):
 
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)
-		install_session.add_additional_packages(self.packages())
+		install_session.add_additional_packages(self.packages)
 		self._enable_pipewire_for_all(install_session)

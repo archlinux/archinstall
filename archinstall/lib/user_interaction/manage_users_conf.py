@@ -80,7 +80,8 @@ class UserList(ListManager):
 			if not username:
 				return None
 			if not self._check_for_correct_username(username):
-				prompt = str(_("The username you entered is invalid. Try again")) + '\n' + prompt
+				error_prompt = str(_("The username you entered is invalid. Try again"))
+				print(error_prompt)
 			else:
 				break
 

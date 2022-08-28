@@ -47,10 +47,13 @@ class ListManager:
 		self._last_choice = None
 
 	@property
-	def last_choice(self):
+	def last_choice(self) -> Optional[str]:
 		return self._last_choice
 
-	def run(self):
+	def is_last_choice_cancel(self) -> bool:
+		return self._last_choice.value == self._cancel_action
+
+	def run(self) -> List[Any]:
 		while True:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
@@ -80,6 +83,7 @@ class ListManager:
 				self._run_actions_on_entry(selected_entry)
 
 		self._last_choice = choice
+
 		if choice.value == self._cancel_action:
 			return self._original_data  # return the original list
 		else:

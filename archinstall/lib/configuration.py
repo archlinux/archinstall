@@ -8,6 +8,8 @@ from .general import JSON, UNSAFE_JSON
 from .output import log
 from .exceptions import RequirementError
 from .hsm import get_fido2_devices
+from .profiles_handler import ProfileHandler
+
 
 def configuration_sanity_check():
 	if storage['arguments'].get('HSM'):
@@ -18,6 +20,7 @@ def configuration_sanity_check():
 				+ f" the FIDO2 protocol. You can check this by running"
 				+ f" 'systemd-cryptenroll --fido2-device=list'."
 			)
+
 
 class ConfigurationOutput:
 	def __init__(self, config: Dict):
@@ -62,6 +65,8 @@ class ConfigurationOutput:
 				self._disk_layout = self._config[key]
 			elif key in self._ignore:
 				pass
+			elif key == 'profile':
+				self._user_config[key] = ProfileHandler().to_json(self._config[key])
 			else:
 				self._user_config[key] = self._config[key]
 

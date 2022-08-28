@@ -1,7 +1,7 @@
 import logging
 from typing import Any, TYPE_CHECKING, List
 
-from archinstall import log
+from archinstall.lib.output import log
 from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.profiles_handler import ProfileHandler
 from profiles_v2.profiles_v2 import ProfileType, ProfileV2, SelectResult
@@ -49,8 +49,8 @@ class ServerProfileV2(ProfileV2):
 
 		for server in self._current_selection:
 			log(f'Installing {server.name}...', level=logging.INFO)
-			install_session.add_additional_packages(server.packages())
-			install_session.enable_service(server.services())
+			install_session.add_additional_packages(server.packages)
+			install_session.enable_service(server.services)
 			server.install(install_session)
 
 		log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)

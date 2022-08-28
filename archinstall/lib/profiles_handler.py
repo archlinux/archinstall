@@ -4,9 +4,9 @@ from collections import Counter
 from functools import cached_property
 from pathlib import Path
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional, Dict
+from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from profiles_v2.profiles_v2 import ProfileV2, ProfileType
+from profiles_v2.profiles_v2 import ProfileV2
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
@@ -22,14 +22,59 @@ class ProfileHandler(Singleton):
 		self._profiles_path: Path = storage['PROFILE_V2']
 		self._profiles = self._find_available_profiles()
 
+	def to_json(self, profile: Optional[ProfileV2]) -> Dict[str, Union[str, List[str]]]:
+		data = {}
+
+		# special handling for custom profile
+		# even if this profile was not selected we
+		# still want to export all the defined custom
+		# inactive profiles so don't they get lost
+		custom_profile = self.get_profile_by_name('Custom')
+		custom_json_export = custom_profile.json()
+
+		if profile is not None:
+			data = {'main': profile.name, 'gfx_driver': profile.gfx_driver}
+
+			if profile.name != custom_profile.name:
+				if profile.current_selection is not None:
+					if isinstance(profile.current_selection, list):
+						data['details'] = [profile.name for profile in profile.current_selection]
+					else:
+						data['details'] = profile.current_selection.name
+
+		data['custom'] = custom_json_export['custom']
+
+		return data
+
 	def parse_profile_config(self, profile_config: Dict[str, Any]) -> ProfileV2:
 		profile = None
 		selection = None
+		custom = None
 
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 		if details := profile_config.get('details', None):
 			selection = [self.get_profile_by_name(d) for d in details]
+		if custom := profile_config.get('custom', None):
+			from profiles_v2.custom import CustomTypeProfileV2
+			custom_types = []
+
+			for entry in custom:
+				custom_types.append(
+					CustomTypeProfileV2(
+						entry['name'],
+						entry['enabled'],
+						entry.get('packages', []),
+						entry.get('services', [])
+					)
+				)
+
+			custom_profile = self.get_profile_by_name('Custom')
+
+			self.remove_custom_profiles(custom_types)
+			self.add_custom_profiles(custom_types)
+
+			custom_profile.set_current_selection(custom_types)
 
 		if profile:
 			profile.set_current_selection(selection)
@@ -46,11 +91,23 @@ class ProfileHandler(Singleton):
 		ifaces = list_interfaces()
 		return list(ifaces.keys())
 
-	def add_custom_profile(self, profile: ProfileV2):
-		self._profiles.append(profile)
-		self._verify_unique(self._profiles)
+	def add_custom_profiles(self, profiles: Union[ProfileV2, List[ProfileV2]]):
+		if not isinstance(profiles, list):
+			profiles = [profiles]
 
-	def get_profile_by_name(self, name: str) -> ProfileV2:
+		for profile in profiles:
+			self._profiles.append(profile)
+
+		self.verify_unique_profile_names(self._profiles)
+
+	def remove_custom_profiles(self, profiles: Union[ProfileV2, List[ProfileV2]]):
+		if not isinstance(profiles, list):
+			profiles = [profiles]
+
+		remove_names = [p.name for p in profiles]
+		self._profiles = [p for p in self._profiles if p.name not in remove_names]
+
+	def get_profile_by_name(self, name: str) -> Optional[ProfileV2]:
 		return next(filter(lambda x: x.name == name, self.profiles), None)
 
 	def get_top_level_profiles(self) -> List[ProfileV2]:
@@ -74,13 +131,16 @@ class ProfileHandler(Singleton):
 		profiles = []
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
-				cls_ = v()
-				if isinstance(cls_, ProfileV2):
-					profiles.append(cls_)
+				try:
+					cls_ = v()
+					if isinstance(cls_, ProfileV2):
+						profiles.append(cls_)
+				except Exception:
+					log(f'Cannot import {module}, it does not appear to be a ProfileV2 class', level=logging.DEBUG)
 
 		return profiles
 
-	def _verify_unique(self, profiles: List[ProfileV2]):
+	def verify_unique_profile_names(self, profiles: List[ProfileV2]):
 		counter = Counter([p.name for p in profiles])
 		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
 
@@ -101,11 +161,6 @@ class ProfileHandler(Singleton):
 				log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 				continue
 
-			if file.name == 'profiles_v2.py':
-				# not a very elegant way but this will ignore the
-				# abstract ProfileV2 class
-				continue
-
 			name = file.name.removesuffix(file.suffix)
 
 			log(f'Importing profile: {file}', level=logging.DEBUG)
@@ -116,7 +171,7 @@ class ProfileHandler(Singleton):
 
 			profiles += self._load_profile_class(imported)
 
-		self._verify_unique(profiles)
+		self.verify_unique_profile_names(profiles)
 		return profiles
 
 	def reset_top_level_profiles(self, exclude: List[ProfileV2] = []):

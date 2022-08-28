@@ -1,9 +1,9 @@
 import logging
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING
 
-from archinstall import log, select_driver
+from archinstall import log
 from archinstall.lib.hardware import AVAILABLE_GFX_DRIVERS
-from profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
+from profiles_v2.profiles_v2 import ProfileV2, ProfileType
 
 if TYPE_CHECKING:
 	_: Any

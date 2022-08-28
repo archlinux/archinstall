@@ -51,7 +51,5 @@ class SwayProfileV2(ProfileV2):
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)
 
-		driver_pkgs = AVAILABLE_GFX_DRIVERS[self.gfx_driver] if self.gfx_driver else []
-		additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
-
-		install_session.add_additional_packages(additional_pkg)
+		driver_packages = self.gfx_driver_packages()
+		install_session.add_additional_packages(driver_packages)

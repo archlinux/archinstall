@@ -107,6 +107,7 @@
                     "minimal",
                     "server",
                     "xorg",
+                    "custom"
                 ]
             },
             "details": {
@@ -140,6 +141,18 @@
                     "sshd",
                     "tomcat"
                 ]
+            },
+            "custom": {
+                "description": "Specific profile definitions for custom setup profiles)",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "packages": "string",
+                        "services": "string",
+                        "enabled": "boolean"
+                    }
+                }
             },
             "gfx_driver": {
                 "description": "Graphics Drivers to install if a desktop profile is used, ignored otherwise.",

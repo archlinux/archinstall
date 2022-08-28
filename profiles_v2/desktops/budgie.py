@@ -10,7 +10,7 @@ class BudgieProfileV2(XorgProfileV2):
 
 	@property
 	def packages(self) -> List[str]:
-		return super().packages() + [
+		return [
 			"budgie-desktop",
 			"gnome",
 			"lightdm",
