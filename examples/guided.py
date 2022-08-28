@@ -268,9 +268,11 @@ def perform_installation(mountpoint):
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			print(choice)
-			if choice == Menu.yes():
-				installation.drop_to_shell()
+			if choice.value == Menu.yes():
+				try:
+					installation.drop_to_shell()
+				except:
+					pass
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
