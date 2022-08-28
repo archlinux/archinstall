@@ -1017,7 +1017,6 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			print(partition, [partition.mountpoint], [self.target])
 			if self.target / 'boot' in partition.mountpoints:
 				boot_partition = partition
 			elif self.target in partition.mountpoints:
