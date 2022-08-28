@@ -155,9 +155,6 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 
-					print(partition['device_instance'])
-					exit(1)
-
 				elif partition.get('wipe', False):
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
@@ -183,6 +180,9 @@ class Filesystem:
 				self.set(self.partuuid_to_index(partition['device_instance'].part_uuid), 'boot on')
 
 			prev_partition = partition
+
+		print(layout)
+		exit(1)
 
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:
