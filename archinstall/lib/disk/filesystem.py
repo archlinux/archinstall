@@ -159,9 +159,7 @@ class Filesystem:
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
 
-					print("Testing..")
 					partition['device_instance'].format(partition['filesystem']['format'], options=format_options)
-					print("I should be here next")
 
 					if partition['filesystem']['format'] == 'btrfs':
 						# We upgrade the device instance to a BTRFSPartition if we format it as such.

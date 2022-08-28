@@ -439,6 +439,9 @@ class Partition:
 		if log_formatting:
 			log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
 
+		if filesystem == 'btrfs':
+			raise ValueError(f"DEBUG")
+
 		try:
 			if filesystem == 'btrfs':
 				options = ['-f'] + options
