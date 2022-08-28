@@ -246,11 +246,12 @@ class Installer:
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
-			if not (password := partition.get('!password', None)):
-				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
-			else:
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+			if not (password := partition.get('!password', None)) and storage['arguments'].get('!encryption-password'):
+				password = storage['arguments'].get('!encryption-password')
+			elif not password:
+				raise RequirementError(f"Missing partition encryption password for: {partition}")
+			
+			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
