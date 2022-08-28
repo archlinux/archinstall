@@ -243,11 +243,9 @@ class Installer:
 		# TODO: Implement a proper mount-queue system that does not depend on return values.
 		mount_queue = {}
 
-		print(list_part)
-		exit(1)
-
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
+			print(partition)
 			# open the luks device and all associate stuff
 			if not (password := partition.get('!password', None)) and storage['arguments'].get('!encryption-password'):
 				password = storage['arguments'].get('!encryption-password')
