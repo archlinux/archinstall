@@ -131,6 +131,7 @@ def perform_filesystem_operations():
 					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
 		print(archinstall.arguments['disk_layouts'])
+		exit(1)
 
 
 def perform_installation(mountpoint):
