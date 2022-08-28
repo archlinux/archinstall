@@ -234,6 +234,9 @@ class Installer:
 		from .luks import luks2
 		from .disk.btrfs import setup_subvolumes, mount_subvolume
 
+		print(layouts)
+		exit(1)
+
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
 		list_part = []
 		list_luks_handles = []
@@ -249,7 +252,7 @@ class Installer:
 			if not (password := partition.get('!password', None)) and storage['arguments'].get('!encryption-password'):
 				password = storage['arguments'].get('!encryption-password')
 			elif not password:
-				raise RequirementError(f"Missing partition encryption password for: {partition}")
+				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
 			
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 

@@ -181,9 +181,6 @@ class Filesystem:
 
 			prev_partition = partition
 
-		print(layout)
-		exit(1)
-
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
