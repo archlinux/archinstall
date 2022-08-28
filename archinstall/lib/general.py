@@ -371,10 +371,18 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
+			history_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_history.txt")
 			try:
+				change_perm = False
+				if history_logfile.exists() is False:
+					change_perm = True
+
 				try:
-					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+					with history_logfile.open("a") as cmd_log:
 						cmd_log.write(f"{self.cmd}\n")
+
+					if change_perm:
+						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
 
