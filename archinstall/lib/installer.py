@@ -242,6 +242,7 @@ class Installer:
 
 		# TODO: Implement a proper mount-queue system that does not depend on return values.
 		mount_queue = {}
+		print(list_part)
 
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
