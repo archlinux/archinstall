@@ -155,6 +155,9 @@ class Filesystem:
 
 						unlocked_device.format(partition['filesystem']['format'], options=format_options)
 
+				print(partition['device_instance'])
+				exit(1)
+
 				elif partition.get('wipe', False):
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
