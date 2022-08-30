@@ -273,6 +273,8 @@ class Filesystem:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
 					self.partprobe()
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
+		else:
+			print("Parted did not return True")
 
 		total_partitions = set([partition.part_uuid for partition in self.blockdevice.partitions.values()])
 		total_partitions.update(previous_partuuids)
