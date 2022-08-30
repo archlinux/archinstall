@@ -253,7 +253,6 @@ class Filesystem:
 
 		if self.parted(parted_string):
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
-				self.partprobe()
 				self.blockdevice.flush_cache()
 
 				new_partition_uuids = [partition.part_uuid for partition in self.blockdevice.partitions.values()]
@@ -271,6 +270,7 @@ class Filesystem:
 						raise err
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
+					self.partprobe()
 					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
 
 		total_partitions = set([partition.part_uuid for partition in self.blockdevice.partitions.values()])
