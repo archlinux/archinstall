@@ -468,6 +468,8 @@ class GeneralMenu:
 		return mandatory_fields, mandatory_waiting
 
 	def _select_archinstall_language(self, preset_value: Language) -> Language:
+		print(preset_value)
+		raise ValueError()
 		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)
 		self._translation_handler.activate(language)
 		return language
