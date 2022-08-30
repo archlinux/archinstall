@@ -36,6 +36,7 @@ from ..user_interaction import add_number_of_parrallel_downloads
 from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
 from ..output import FormattedOutput
+from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any
