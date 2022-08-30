@@ -43,12 +43,12 @@ if TYPE_CHECKING:
 
 def display_language(global_menu, x):
 	if type(x) == Language:
-		return x.display_name
+		return x
 	elif type(x) == str:
 		translation_handler = global_menu._translation_handler
 		for language in translation_handler._get_translations():
 			if language.lang == x:
-				return language.display_name
+				return language
 	else:
 		raise ValueError(f"Language entry needs to Language() object or string of full language like 'English'.")
 
@@ -63,7 +63,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(display_language(self, x)),
-				display_func=lambda x: display_language(self, x),
+				display_func=lambda x: display_language(self, x).display_name,
 				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
