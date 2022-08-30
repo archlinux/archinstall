@@ -73,7 +73,7 @@ def display_language(global_menu, x):
 	if type(x) == Language:
 		return x.display_name
 	elif type(x) == str:
-		translation_handler = global_menu.self._translation_handler
+		translation_handler = global_menu._translation_handler
 		for language in translation_handler._get_translations():
 			print(language, language.lang)
 			if language.lang == x:
