@@ -139,7 +139,19 @@ class Partition:
 
 	def _call_lsblk(self) -> Dict[str, Any]:
 		self.partprobe()
-		output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+		# This sleep might be overkill, but lsblk is known to
+		# work against a chaotic cache that can change during call
+		# causing no information to be returned (blkid is better)
+		# time.sleep(1)
+
+		# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
+
+		try:
+			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+		except SysCallError as error:
+			# It appears as if lsblk can return exit codes like 8192 to indicate something.
+			# But it does return output so we'll try to catch it.
+			output = error.worker.decode('UTF-8')
 
 		if output:
 			lsblk_info = json.loads(output)
@@ -165,7 +177,9 @@ class Partition:
 	def _fetch_information(self) -> PartitionInfo:
 		lsblk_info = self._call_lsblk()
 		sfdisk_info = self._call_sfdisk()
-		device = lsblk_info['blockdevices'][0]
+
+		if not (device := lsblk_info.get('blockdevices', [None])[0]):
+			raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
 
 		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
 		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
