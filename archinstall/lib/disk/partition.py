@@ -176,7 +176,7 @@ class Partition:
 		lsblk_info = self._call_lsblk()
 		sfdisk_info = self._call_sfdisk()
 
-		if not device := lsblk_info.get('blockdevices', [None])[0]:
+		if not (device := lsblk_info.get('blockdevices', [None])[0]):
 			raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
 
 		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
