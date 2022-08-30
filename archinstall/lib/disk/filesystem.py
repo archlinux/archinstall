@@ -272,7 +272,7 @@ class Filesystem:
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
 					self.partprobe()
-					time.sleep(storage.get('DISK_TIMEOUTS', 1) * count)
+					time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
 		else:
 			print("Parted did not return True")
 
