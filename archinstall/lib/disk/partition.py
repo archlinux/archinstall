@@ -144,6 +144,8 @@ class Partition:
 		# causing no information to be returned (blkid is better)
 		# time.sleep(1)
 
+		# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
+
 		try:
 			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 		except SysCallError as error:
