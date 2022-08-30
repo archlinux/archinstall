@@ -41,34 +41,6 @@ from ..translationhandler import Language
 if TYPE_CHECKING:
 	_: Any
 
-def _get_translations(self) -> List[Language]:
-	mappings = self._load_language_mappings()
-	defined_languages = self._defined_languages()
-
-	languages = []
-
-	for short_form in defined_languages:
-		mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
-		abbr = mapping_entry['abbr']
-		lang = mapping_entry['lang']
-		translated_lang = mapping_entry.get('translated_lang', None)
-
-		try:
-			translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
-
-			if abbr == 'en':
-				percent = 100
-			else:
-				num_translations = self._get_catalog_size(translation)
-				percent = int((num_translations / self._total_messages) * 100)
-
-			language = Language(abbr, lang, translation, percent, translated_lang)
-			languages.append(language)
-		except FileNotFoundError as error:
-			raise TranslationError(f"Could not locate language file for '{lang}': {error}")
-
-	return languages
-
 def display_language(global_menu, x):
 	if type(x) == Language:
 		return x.display_name
