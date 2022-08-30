@@ -225,11 +225,11 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
-				print("Exit code for blkid -p -o export was:", ex.exit_code)
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
 					if not information:
+						print("Exit code for blkid -p -o export was:", ex.exit_code)
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
