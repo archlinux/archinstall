@@ -142,7 +142,7 @@ class Partition:
 		# This sleep might be overkill, but lsblk is known to
 		# work against a chaotic cache that can change during call
 		# causing no information to be returned (blkid is better)
-		time.sleep(1)
+		# time.sleep(1)
 
 		try:
 			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')

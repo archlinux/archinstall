@@ -1,4 +1,7 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+	from .general import SysCommandWorker
 
 class RequirementError(BaseException):
 	pass
