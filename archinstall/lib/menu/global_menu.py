@@ -40,10 +40,45 @@ from ..output import FormattedOutput
 if TYPE_CHECKING:
 	_: Any
 
-def DEBUG(x):
-	print(x)
-	exit(1)
-	return x.display_name
+def _get_translations(self) -> List[Language]:
+	mappings = self._load_language_mappings()
+	defined_languages = self._defined_languages()
+
+	languages = []
+
+	for short_form in defined_languages:
+		mapping_entry: Dict[str, Any] = next(filter(lambda x: x['abbr'] == short_form, mappings))
+		abbr = mapping_entry['abbr']
+		lang = mapping_entry['lang']
+		translated_lang = mapping_entry.get('translated_lang', None)
+
+		try:
+			translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
+
+			if abbr == 'en':
+				percent = 100
+			else:
+				num_translations = self._get_catalog_size(translation)
+				percent = int((num_translations / self._total_messages) * 100)
+
+			language = Language(abbr, lang, translation, percent, translated_lang)
+			languages.append(language)
+		except FileNotFoundError as error:
+			raise TranslationError(f"Could not locate language file for '{lang}': {error}")
+
+	return languages
+
+def display_language(global_menu, x):
+	if type(x) == Language:
+		return x.display_name
+	elif type(x) == str:
+		translation_handler = global_menu.self._translation_handler
+		for language in translation_handler._get_translations():
+			print(language, language.lang)
+			if language.lang == x:
+				return language.display_name
+	else:
+		raise ValueError(f"Language entry needs to Language() object or string of full language like 'English'.")
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
@@ -56,7 +91,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				display_func=DEBUG,
+				display_func=lambda x: display_language(self, x),
 				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
