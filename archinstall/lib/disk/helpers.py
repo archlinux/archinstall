@@ -225,6 +225,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
+				print("Exit code for blkid -p -o export was:", ex.exit_code)
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					information = get_loop_info(device_path)
@@ -232,9 +233,13 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
+					print("Not a loop device, trying uevent rules.")
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
+				# We could not reliably get any information, perhaps the disk is clean of information?
+				print("Raising ex because:", ex.exit_code)
 				raise ex
+				#return instances
 
 		information = enrich_blockdevice_information(information)
 
