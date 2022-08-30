@@ -42,6 +42,7 @@ if TYPE_CHECKING:
 
 def DEBUG(x):
 	print(x)
+	exit(1)
 	return x.display_name
 
 class GlobalMenu(GeneralMenu):
