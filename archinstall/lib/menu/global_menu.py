@@ -40,10 +40,6 @@ from ..output import FormattedOutput
 if TYPE_CHECKING:
 	_: Any
 
-def DEBUG(x):
-	print(x)
-	return x.display_name
-
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
 		self._disk_check = True
@@ -55,7 +51,7 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				display_func=DEBUG,
+				display_func=lambda x: x.display_name if type(x) is not str else x,
 				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
