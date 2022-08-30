@@ -253,6 +253,7 @@ class Filesystem:
 
 		if self.parted(parted_string):
 			for count in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
+				print(count)
 				self.blockdevice.flush_cache()
 
 				new_partition_uuids = [partition.part_uuid for partition in self.blockdevice.partitions.values()]

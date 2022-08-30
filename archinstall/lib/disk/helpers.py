@@ -239,7 +239,7 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				# We could not reliably get any information, perhaps the disk is clean of information?
 				print("Raising ex because:", ex.exit_code)
 				raise ex
-				#return instances
+				# return instances
 
 		information = enrich_blockdevice_information(information)
 
