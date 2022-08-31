@@ -1,8 +1,10 @@
 import importlib
 import logging
+import sys
 from collections import Counter
 from functools import cached_property
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
@@ -11,7 +13,7 @@ from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
 from .utils.singleton import Singleton
-from .networking import list_interfaces
+from .networking import list_interfaces, fetch_data_from_url
 
 if TYPE_CHECKING:
 	_: Any
@@ -21,6 +23,11 @@ class ProfileHandler(Singleton):
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE_V2']
 		self._profiles = self._find_available_profiles()
+
+		# special variable to keep track of a profile url configuration
+		# it is merely used to be able to export the path again when a user
+		# wants to save the configuration
+		self._url_path = None
 
 	def to_json(self, profile: Optional[ProfileV2]) -> Dict[str, Union[str, List[str]]]:
 		data = {}
@@ -44,17 +51,24 @@ class ProfileHandler(Singleton):
 
 		data['custom'] = custom_json_export['custom']
 
+		if self._url_path is not None:
+			data['path'] = self._url_path
+
 		return data
 
-	def parse_profile_config(self, profile_config: Dict[str, Any]) -> ProfileV2:
+	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[ProfileV2]:
 		profile = None
-		selection = None
-		custom = None
+		selection = []
 
-		if main := profile_config.get('main', None):
-			profile = self.get_profile_by_name(main) if main else None
-		if details := profile_config.get('details', None):
-			selection = [self.get_profile_by_name(d) for d in details]
+		# the order of these is important, we want to
+		# load all the profiles from url and custom
+		# so that we can then apply whatever was specified
+		# in the main/detail sections
+
+		if url_path := profile_config.get('path', None):
+			self._url_path = url_path
+			self._import_profile_from_url(url_path)
+
 		if custom := profile_config.get('custom', None):
 			from profiles_v2.custom import CustomTypeProfileV2
 			custom_types = []
@@ -74,9 +88,23 @@ class ProfileHandler(Singleton):
 			self.remove_custom_profiles(custom_types)
 			self.add_custom_profiles(custom_types)
 
+			# this doesn't mean it's actual going to be set as a selection
+			# but we are simply populating the custom profile with all
+			# possible custom definitions
 			custom_profile.set_current_selection(custom_types)
 
-		if profile:
+		if main := profile_config.get('main', None):
+			profile = self.get_profile_by_name(main) if main else None
+
+		if details := profile_config.get('details', []):
+			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
+
+			if resolved:
+				valid = [p for p in resolved.values() if p is not None]
+				invalid = ', '.join([k for k, v in resolved.items() if v is None])
+				log(f'No profile definition found: {invalid}')
+
+		if profile is not None:
 			profile.set_current_selection(selection)
 			profile.gfx_driver = profile_config.get('gfx_driver', None)
 
@@ -98,7 +126,7 @@ class ProfileHandler(Singleton):
 		for profile in profiles:
 			self._profiles.append(profile)
 
-		self.verify_unique_profile_names(self._profiles)
+		self._verify_unique_profile_names(self._profiles)
 
 	def remove_custom_profiles(self, profiles: Union[ProfileV2, List[ProfileV2]]):
 		if not isinstance(profiles, list):
@@ -127,6 +155,24 @@ class ProfileHandler(Singleton):
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, self.profiles))
 		return match_mac_addr_profiles
 
+	def _import_profile_from_url(self, url: str):
+		try:
+			data = fetch_data_from_url(url)
+		except ValueError:
+			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
+			log(err, level=logging.ERROR, fg="red")
+			sys.exit(1)
+
+		b_data = bytes(data, 'utf-8')
+
+		with NamedTemporaryFile(delete=False, suffix='.py') as fp:
+			fp.write(b_data)
+			filepath = Path(fp.name)
+
+		profiles = self._process_profile_file(filepath)
+		self.remove_custom_profiles(profiles)
+		self.add_custom_profiles(profiles)
+
 	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
 		profiles = []
 		for k, v in module.__dict__.items():
@@ -140,12 +186,14 @@ class ProfileHandler(Singleton):
 
 		return profiles
 
-	def verify_unique_profile_names(self, profiles: List[ProfileV2]):
+	def _verify_unique_profile_names(self, profiles: List[ProfileV2]):
 		counter = Counter([p.name for p in profiles])
 		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
 
 		if len(duplicates) > 0:
-			raise ValueError(f'Profile definitions with duplicate name found: {duplicates[0][0]}')
+			err = str(_('Profiles must have unique name, but profile definitions with duplicate name found: {}')).format(duplicates[0][0])
+			log(err, level=logging.ERROR, fg="red")
+			sys.exit(1)
 
 	def _is_legacy(self, file: Path) -> bool:
 		with open(file, 'r') as fp:
@@ -154,24 +202,32 @@ class ProfileHandler(Singleton):
 					return True
 		return False
 
-	def _find_available_profiles(self) -> List[ProfileV2]:
-		profiles = []
-		for file in self._profiles_path.glob('**/*.py'):
-			if self._is_legacy(file):
-				log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
-				continue
+	def _process_profile_file(self, file: Path) -> List[ProfileV2]:
+		if self._is_legacy(file):
+			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
+			return []
 
-			name = file.name.removesuffix(file.suffix)
+		name = file.name.removesuffix(file.suffix)
 
-			log(f'Importing profile: {file}', level=logging.DEBUG)
+		log(f'Importing profile: {file}', level=logging.DEBUG)
 
+		try:
 			spec = importlib.util.spec_from_file_location(name, file)
 			imported = importlib.util.module_from_spec(spec)
 			spec.loader.exec_module(imported)
 
-			profiles += self._load_profile_class(imported)
+			return self._load_profile_class(imported)
+		except Exception as e:
+			log(f'Unable to import file {file}', level=logging.ERROR)
 
-		self.verify_unique_profile_names(profiles)
+		return []
+
+	def _find_available_profiles(self) -> List[ProfileV2]:
+		profiles = []
+		for filename in self._profiles_path.glob('**/*.py'):
+			profiles += self._process_profile_file(filename)
+
+		self._verify_unique_profile_names(profiles)
 		return profiles
 
 	def reset_top_level_profiles(self, exclude: List[ProfileV2] = []):

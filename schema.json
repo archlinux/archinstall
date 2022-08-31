@@ -99,8 +99,12 @@
             }
         },
         "profile": {
+            "path": {
+                "description": "Url that points to a python file containing profile definitions",
+                "type": "string"
+            },
             "main":  {
-                "description": "Main top level profile ",
+                "description": "Main top level profile selection",
                 "type": "string",
                 "enum": [
                     "desktop",
