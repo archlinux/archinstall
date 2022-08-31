@@ -12,9 +12,7 @@ jobs:
             - run: pip install fastapi pydantic
             - run: python --version
             - run: mypy --version
-            - name: run mypy non-strict
-              run: mypy --config-file mypy.ini
-# some files have to be made compliant with the strict mode first otherwise mypy wil throw an error:
-# "There are no .py[i] files in directory 'archinstall'"
-#            - name: run mypy strict
-#              run: mypy --config mypy-strict.ini
+            # one day this will be enabled
+              # run: mypy --strict --module archinstall || exit 0
+            - name: run mypy
+              run: mypy --follow-imports=silent archinstall/lib/menu/selection_menu.py archinstall/lib/menu/global_menu.py archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py archinstall/lib/models/users.py archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py archinstall/lib/disk/btrfs/btrfs_helpers.py archinstall/lib/translationhandler.py
