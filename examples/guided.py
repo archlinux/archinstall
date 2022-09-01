@@ -265,7 +265,7 @@ def perform_installation(mountpoint):
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice == Menu.yes():
+			if choice.value == Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:

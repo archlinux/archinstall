@@ -33,9 +33,23 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction.general_conf import select_profile_v2
 from ..user_interaction.partitioning_conf import current_partition_layout
+from ..output import FormattedOutput
+from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any
+
+
+def display_language(global_menu, x):
+	if type(x) == Language:
+		return x
+	elif type(x) == str:
+		translation_handler = global_menu._translation_handler
+		for language in translation_handler._get_translations():
+			if language.lang == x:
+				return language
+	else:
+		raise ValueError(f"Language entry needs to Language() object or string of full language like 'English'.")
 
 
 class GlobalMenu(GeneralMenu):
@@ -48,8 +62,8 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Archinstall language'),
-				lambda x: self._select_archinstall_language(x),
-				display_func=lambda x: x.display_name,
+				lambda x: self._select_archinstall_language(display_language(self, x)),
+				display_func=lambda x: display_language(self, x).display_name,
 				default=self.translation_handler.get_language('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(

@@ -1,4 +1,6 @@
+import os
 import json
+import stat
 import logging
 import pathlib
 from typing import Optional, Dict
@@ -111,22 +113,32 @@ class ConfigurationOutput:
 
 	def save_user_config(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
-			with open(dest_path / self._user_config_file, 'w') as config_file:
+			target = dest_path / self._user_config_file
+
+			with open(target, 'w') as config_file:
 				config_file.write(self.user_config_to_json())
+
+			os.chmod(str(dest_path / self._user_config_file), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save_user_creds(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
+
 				with open(target, 'w') as config_file:
 					config_file.write(user_creds)
+
+				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save_disk_layout(self, dest_path :pathlib.Path = None):
 		if self._is_valid_path(dest_path):
 			if disk_layout := self.disk_layout_to_json():
 				target = dest_path / self._disk_layout_file
+
 				with target.open('w') as config_file:
 					config_file.write(disk_layout)
+
+				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save(self, dest_path :pathlib.Path = None):
 		if not dest_path:
