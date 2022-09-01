@@ -2,7 +2,7 @@ import archinstall
 
 # Select a harddrive and a disk password
 from archinstall import User
-from profiles_v2.minimal import MinimalProfileV2
+from archinstall.profiles_v2.minimal import MinimalProfileV2
 
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")

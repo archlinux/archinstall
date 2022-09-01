@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles_v2.profiles_v2 import ProfileV2
 from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
 from ..hardware import has_uefi

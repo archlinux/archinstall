@@ -278,7 +278,7 @@ def run_as_a_module():
 	This function and the file __main__ acts as a entry point.
 	"""
 
-	import examples.guided
+	import archinstall.examples.guided
 
 	#
 	# # Add another path for finding profiles_bck, so that list_profiles() in Script() can find guided.py, unattended.py etc.

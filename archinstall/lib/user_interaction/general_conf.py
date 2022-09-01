@@ -6,7 +6,7 @@ from typing import List, Any, Optional, Dict, TYPE_CHECKING, Union
 
 from .system_conf import select_driver
 
-from profiles_v2.profiles_v2 import ProfileV2, ProfileType
+from archinstall.profiles_v2.profiles_v2 import ProfileV2
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType

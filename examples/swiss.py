@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
-from profiles_v2.applications.pipewire import PipewireProfileV2
+from archinstall.profiles_v2.applications.pipewire import PipewireProfileV2
 
 if TYPE_CHECKING:
 	_: Any

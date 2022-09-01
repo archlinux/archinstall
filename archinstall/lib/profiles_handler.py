@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles_v2.profiles_v2 import ProfileV2
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
@@ -70,7 +70,7 @@ class ProfileHandler(Singleton):
 			self._import_profile_from_url(url_path)
 
 		if custom := profile_config.get('custom', None):
-			from profiles_v2.custom import CustomTypeProfileV2
+			from archinstall.profiles_v2.custom import CustomTypeProfileV2
 			custom_types = []
 
 			for entry in custom:

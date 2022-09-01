@@ -9,7 +9,7 @@ import subprocess
 import time
 from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 
-from profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles_v2.profiles_v2 import ProfileV2
 from .disk import get_partitions_in_use, Partition
 from .disk.helpers import findmnt
 from .disk.partition import get_mount_fs_type

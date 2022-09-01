@@ -5,7 +5,7 @@ import time
 import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from profiles_v2.applications.pipewire import PipewireProfileV2
+from archinstall.profiles_v2.applications.pipewire import PipewireProfileV2
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

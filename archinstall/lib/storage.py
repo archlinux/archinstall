@@ -18,7 +18,7 @@ storage: Dict[str, Any] = {
 		os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'profiles'),
 		# os.path.abspath(f'{os.path.dirname(__file__)}/../examples')
 	],
-	'PROFILE_V2': Path(__file__).parent.parent.parent.joinpath('profiles_v2'),
+	'PROFILE_V2': Path(__file__).parent.parent.joinpath('profiles_v2'),
 	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
 	'PROFILE_DB': None,  # Used in cases when listing profiles_bck is desired, not mandatory for direct profile grabbing.
 	'LOG_PATH': '/var/log/archinstall',
