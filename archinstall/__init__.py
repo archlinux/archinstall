@@ -1,4 +1,5 @@
 """Arch Linux installer - guided, templates etc."""
+import imp
 import typing
 from argparse import ArgumentParser, Namespace
 
@@ -265,6 +266,7 @@ define_arguments()
 arguments = get_arguments()
 post_process_arguments(arguments)
 
+
 # @archinstall.plugin decorator hook to programmatically add
 # plugins in runtime. Useful in profiles_bck and other things.
 def plugin(f, *args, **kwargs):
@@ -273,24 +275,18 @@ def plugin(f, *args, **kwargs):
 
 def run_as_a_module():
 	"""
-	Since we're running this as a 'python -m archinstall' module OR
-	a nuitka3 compiled version of the project.
-	This function and the file __main__ acts as a entry point.
+	This can either be run as the compiled and installed application: python setup.py install
+	OR straight as a module: python -m archinstall
+	In any case we will be attempting to load the provided script to be run from the scripts/ folder
 	"""
+	script = arguments.get('script', None)
 
-	import archinstall.examples.guided
+	if script is None:
+		print('No script to run provided')
 
-	#
-	# # Add another path for finding profiles_bck, so that list_profiles() in Script() can find guided.py, unattended.py etc.
-	# storage['PROFILE_PATH'].append(os.path.abspath(f'{os.path.dirname(__file__)}/examples'))
-	# try:
-	# 	script = Script(arguments.get('script', None))
-	# except ProfileNotFound as err:
-	# 	print(f"Couldn't find file: {err}")
-	# 	sys.exit(1)
-	#
-	# os.chdir(os.path.abspath(os.path.dirname(__file__)))
-	#
-	# # Remove the example directory from the PROFILE_PATH, to avoid guided.py etc shows up in user input questions.
-	# storage['PROFILE_PATH'].pop()
-	# script.execute()
+	try:
+		mod_name = f'archinstall.scripts.{script}'
+		# by loading the module we'll automatically run the script
+		importlib.import_module(mod_name)
+	except ModuleNotFoundError:
+		print(f'Provided script could not be found: {script}')
