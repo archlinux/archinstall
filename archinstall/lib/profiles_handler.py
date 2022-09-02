@@ -49,7 +49,7 @@ class ProfileHandler(Singleton):
 					else:
 						data['details'] = profile.current_selection.name
 
-		data['custom'] = custom_json_export['custom']
+		data['custom'] = custom_json_export.get('custom', {})
 
 		if self._url_path is not None:
 			data['path'] = self._url_path
