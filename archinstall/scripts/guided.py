@@ -248,7 +248,7 @@ def perform_installation(mountpoint):
 			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
 			if profile := archinstall.arguments.get('profile', None):
-				profile.post_install()
+				profile.post_install(installation)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.

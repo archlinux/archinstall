@@ -103,16 +103,17 @@ class ProfileHandler(Singleton):
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
+		valid = None
 		if details := profile_config.get('details', []):
 			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
+			valid = [p for p in resolved.values() if p is not None]
+			invalid = ', '.join([k for k, v in resolved.items() if v is None])
 
-			if resolved:
-				valid = [p for p in resolved.values() if p is not None]
-				invalid = ', '.join([k for k, v in resolved.items() if v is None])
+			if invalid:
 				log(f'No profile definition found: {invalid}')
 
 		if profile is not None:
-			profile.set_current_selection(selection)
+			profile.set_current_selection(valid)
 			profile.gfx_driver = profile_config.get('gfx_driver', None)
 
 		return profile
