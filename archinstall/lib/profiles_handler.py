@@ -209,7 +209,6 @@ class ProfileHandler(Singleton):
 			return []
 
 		name = file.name.removesuffix(file.suffix)
-
 		log(f'Importing profile: {file}', level=logging.DEBUG)
 
 		try:
@@ -226,8 +225,11 @@ class ProfileHandler(Singleton):
 
 	def _find_available_profiles(self) -> List[Profile]:
 		profiles = []
-		for filename in self._profiles_path.glob('**/*.py'):
-			profiles += self._process_profile_file(filename)
+		for file in self._profiles_path.glob('**/*.py'):
+			# ignore the abstract profiles class
+			if 'profiles.py' in file.name:
+				continue
+			profiles += self._process_profile_file(file)
 
 		self._verify_unique_profile_names(profiles)
 		return profiles

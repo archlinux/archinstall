@@ -5,7 +5,7 @@ from archinstall.lib.menu.menu import Menu
 from archinstall.lib.menu.text_input import TextInput
 from archinstall.lib.output import log, FormattedOutput
 from archinstall.lib.profiles_handler import ProfileHandler
-from archinstall.profiles.profiles import Profile, ProfileType, SelectResult, ProfileInfo
+from archinstall.profiles.profiles import Profile, ProfileType, SelectResult, ProfileInfo, TProfile
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class CustomProfileList(ListManager):
-	def __init__(self, prompt: str, profiles: List['Profile']):
+	def __init__(self, prompt: str, profiles: List[TProfile]):
 		self._actions = [
 			str(_('Add profile')),
 			str(_('Edit profile')),
@@ -21,14 +21,14 @@ class CustomProfileList(ListManager):
 		]
 		super().__init__(prompt, profiles, [self._actions[0]], self._actions[1:])
 
-	def reformat(self, data: List['Profile']) -> Dict[str, Optional['Profile']]:
+	def reformat(self, data: List[TProfile]) -> Dict[str, Optional[TProfile]]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
 		# these are the header rows of the table and do not map to any profile obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional['Profile']] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[TProfile]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
 		for row, profile in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
@@ -36,15 +36,15 @@ class CustomProfileList(ListManager):
 
 		return display_data
 
-	def selected_action_display(self, profile: 'Profile') -> str:
+	def selected_action_display(self, profile: TProfile) -> str:
 		return profile.name
 
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional['Profile'],
-		data: List['Profile']
-	) -> List['Profile']:
+		entry: Optional[TProfile],
+		data: List[TProfile]
+	) -> List[TProfile]:
 		if action == self._actions[0]:  # add
 			new_profile = self._add_profile()
 			if new_profile is not None:
@@ -70,7 +70,7 @@ class CustomProfileList(ListManager):
 			return False
 		return True
 
-	def _add_profile(self, editing: Optional['Profile'] = None) -> Optional['Profile']:
+	def _add_profile(self, editing: Optional[TProfile] = None) -> Optional[TProfile]:
 		name_prompt = '\n\n' + str(_('Profile name: '))
 
 		while True:
@@ -130,7 +130,7 @@ class CustomProfile(Profile):
 				'name': profile.name,
 				'packages': profile.packages,
 				'services': profile.services,
-				'enabled': profile.is_enabled()
+				'enabled': profile.custom_enabled
 			})
 
 		return data
@@ -151,7 +151,7 @@ class CustomProfile(Profile):
 		if custom_profile_list.is_last_choice_cancel():
 			return SelectResult.SameSelection
 
-		enabled_profiles = [p for p in self._current_selection if p.is_enabled()]
+		enabled_profiles = [p for p in self._current_selection if p.custom_enabled]
 		# in  case we only created inactive profiles we wanna store them but
 		# we want to reset the original setting
 		if not enabled_profiles:
@@ -168,7 +168,7 @@ class CustomProfile(Profile):
 		install_session.add_additional_packages(driver_packages)
 
 		for profile in self._current_selection:
-			if profile.is_enabled():
+			if profile.custom_enabled:
 				log(f'Installing custom profile {profile.name}...')
 
 				install_session.add_additional_packages(profile.packages)
@@ -177,7 +177,7 @@ class CustomProfile(Profile):
 				profile.install(install_session)
 
 	def info(self) -> Optional[ProfileInfo]:
-		enabled_profiles = [p for p in self._current_selection if p.is_enabled()]
+		enabled_profiles = [p for p in self._current_selection if p.custom_enabled]
 		if enabled_profiles:
 			details = ', '.join([p.name for p in enabled_profiles])
 			gfx_driver = self.gfx_driver
@@ -207,15 +207,13 @@ class CustomTypeProfile(Profile):
 			services=services,
 			support_gfx_driver=True
 		)
-		self._enabled = enabled
 
-	def is_enabled(self) -> bool:
-		return self._enabled
+		super().custom_enabled = enabled
 
 	def json(self) -> Dict[str, Any]:
 		return {
 			'name': self.name,
 			'packages': self.packages,
 			'services': self.services,
-			'enabled': self._enabled
+			'enabled': self.custom_enabled
 		}

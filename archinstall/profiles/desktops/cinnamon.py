@@ -1,6 +1,6 @@
 from typing import Optional, List, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType
+from archinstall.profiles.profiles import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -19,14 +19,12 @@ class CinnamonProfileV2(XorgProfile):
 			"gnome-keyring",
 			"gnome-terminal",
 			"blueberry",
-			"metacity",
-			"lightdm",
-			"lightdm-gtk-greeter"
+			"metacity"
 		]
 
 	@property
-	def services(self) -> List[str]:
-		return ['lightdm']
+	def greeter_type(self) -> Optional[GreeterType]:
+		return GreeterType.Lightdm
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)

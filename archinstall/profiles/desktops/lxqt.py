@@ -1,6 +1,6 @@
 from typing import List, Optional, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType
+from archinstall.profiles.profiles import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -24,12 +24,11 @@ class LxqtProfileV2(XorgProfile):
 			"ttf-freefont",
 			"leafpad",
 			"slock",
-			"sddm",
 		]
 
 	@property
-	def services(self) -> List[str]:
-		return ['sddm']
+	def greeter_type(self) -> Optional[GreeterType]:
+		return GreeterType.Sddm
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)

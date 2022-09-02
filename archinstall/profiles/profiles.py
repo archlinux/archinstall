@@ -32,6 +32,12 @@ class ProfileType(Enum):
 	Application = 'Application'
 
 
+class GreeterType(Enum):
+	Lightdm = 'lightdm'
+	Sddm = 'sddm'
+	Gdm = 'gdm'
+
+
 class SelectResult(Enum):
 	NewSelection = auto()
 	SameSelection = auto()
@@ -73,8 +79,11 @@ class Profile:
 		self._packages = packages
 		self._services = services
 
+		# Only used for Desktop profiles
+		self._greeter_type: Optional[GreeterType] = None
+
 		# Only used for custom profiles
-		self._enabled = True
+		self.custom_enabled = False
 
 	@property
 	def current_selection(self) -> List[TProfile]:
@@ -96,6 +105,13 @@ class Profile:
 		"""
 		return self._services
 
+	@property
+	def greeter_type(self) -> Optional[GreeterType]:
+		"""
+		Setting a default greeter type for a desktop profile
+		"""
+		return None
+
 	def install(self, install_session: 'Installer'):
 		"""
 		Performs installation steps when this profile was selected
@@ -116,18 +132,6 @@ class Profile:
 		"""
 		return {}
 
-	def is_enabled(self) -> bool:
-		"""
-		Only used for custom profiles
-		"""
-		return self._enabled
-
-	def set_enabled(self, enabled: bool):
-		"""
-		Only used for custom profiles
-		"""
-		self._enabled = enabled
-
 	def do_on_select(self) -> SelectResult:
 		"""
 		Hook that will be called when a profile is selected
@@ -136,12 +140,12 @@ class Profile:
 
 	def info(self) -> Optional[ProfileInfo]:
 		details = None
-		if self._current_selection:
-			details = ', '.join([s.name for s in self._current_selection])
+		if self.current_selection:
+			details = ', '.join([s.name for s in self.current_selection])
 		return ProfileInfo(self.name, details, self.gfx_driver)
 
 	def reset(self):
-		self._current_selection = []
+		self.set_current_selection([])
 		self.gfx_driver = None
 
 	def set_current_selection(self, current_selection: List[TProfile]):

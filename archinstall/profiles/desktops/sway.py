@@ -1,7 +1,7 @@
 from typing import List, Optional, TYPE_CHECKING, Any
 
 from archinstall import Menu, select_driver, AVAILABLE_GFX_DRIVERS
-from archinstall.profiles.profiles import Profile, ProfileType
+from archinstall.profiles.profiles import Profile, ProfileType, GreeterType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -28,8 +28,8 @@ class SwayProfile(Profile):
 		]
 
 	@property
-	def services(self) -> List[str]:
-		return ['lightdm']
+	def greeter_type(self) -> Optional[GreeterType]:
+		return GreeterType.Lightdm
 
 	def _check_driver(self) -> bool:
 		if self.gfx_driver:

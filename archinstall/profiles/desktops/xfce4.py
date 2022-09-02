@@ -1,6 +1,6 @@
 from typing import List, Optional, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType
+from archinstall.profiles.profiles import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -17,15 +17,13 @@ class Xfce4ProfileV2(XorgProfile):
 			"xfce4",
 			"xfce4-goodies",
 			"pavucontrol",
-			"lightdm",
-			"lightdm-gtk-greeter",
 			"gvfs",
 			"xarchiver"
 		]
 
 	@property
-	def services(self) -> List[str]:
-		return ['lightdm']
+	def greeter_type(self) -> Optional[GreeterType]:
+		return GreeterType.Lightdm
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
