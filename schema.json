@@ -100,7 +100,7 @@
         },
         "profile": {
             "path": {
-                "description": "Url that points to a python file containing profile definitions",
+                "description": "Local path or Url that points to a python file containing profile definitions",
                 "type": "string"
             },
             "main":  {
