@@ -6,9 +6,9 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union, TypeVar
+from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.profiles.profiles import Profile
+from archinstall.profiles.profiles import Profile, TProfile
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .networking import list_interfaces, fetch_data_from_url
 from .output import log
@@ -17,7 +17,6 @@ from .utils.singleton import Singleton
 
 if TYPE_CHECKING:
 	_: Any
-	TProfile = TypeVar('TProfile', bound=Profile)
 
 
 class ProfileHandler(Singleton):
@@ -242,7 +241,7 @@ class ProfileHandler(Singleton):
 	def select_profile(
 		self,
 		selectable_profiles: List[Profile],
-		current_profile: Optional[Union[Profile, List[Profile]]] = None,
+		current_profile: Optional[Union[TProfile, List[TProfile]]] = None,
 		title: str = '',
 		allow_reset: bool = True,
 		multi: bool = False,

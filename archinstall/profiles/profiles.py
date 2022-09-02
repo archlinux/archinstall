@@ -10,7 +10,9 @@ from archinstall.lib.output import FormattedOutput
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
-	TProfile = TypeVar('TProfile', bound='Profile')
+
+
+TProfile = TypeVar('TProfile', bound='Profile')
 
 
 class ProfileType(Enum):
@@ -55,7 +57,7 @@ class Profile:
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: List['Profile'] = [],
+		current_selection: List[TProfile] = [],
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False
@@ -75,7 +77,7 @@ class Profile:
 		self._enabled = True
 
 	@property
-	def current_selection(self) -> List['Profile']:
+	def current_selection(self) -> List[TProfile]:
 		return self._current_selection
 
 	@property
