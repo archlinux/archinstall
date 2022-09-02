@@ -1,7 +1,7 @@
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, List
 
-from archinstall.lib.output import log
 from archinstall.lib.menu.menu import MenuSelectionType
+from archinstall.lib.output import log
 from archinstall.lib.profiles_handler import ProfileHandler
 from archinstall.profiles.profiles import Profile, ProfileType, SelectResult
 

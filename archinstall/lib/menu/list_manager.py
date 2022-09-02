@@ -2,7 +2,7 @@ import copy
 from os import system
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
-from .menu import Menu, MenuSelectionType
+from .menu import Menu
 
 if TYPE_CHECKING:
 	_: Any

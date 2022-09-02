@@ -1,5 +1,3 @@
-import os
-
 # There's a few scenarios of execution:
 #   1. In the git repository, where ./profiles_bck/ exist
 #   2. When executing from a remote directory, but targeted a script that starts from the git repository

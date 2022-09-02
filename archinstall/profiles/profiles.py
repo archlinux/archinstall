@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import List, Union, Optional, Any, Dict, TYPE_CHECKING
+from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
 
 from archinstall.lib.hardware import AVAILABLE_GFX_DRIVERS
 from archinstall.lib.output import FormattedOutput
@@ -9,6 +10,7 @@ from archinstall.lib.output import FormattedOutput
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
+	TProfile = TypeVar('TProfile', bound='Profile')
 
 
 class ProfileType(Enum):
@@ -73,7 +75,7 @@ class Profile:
 		self._enabled = True
 
 	@property
-	def current_selection(self) -> Optional[Union[List['Profile'], 'Profile']]:
+	def current_selection(self) -> List['Profile']:
 		return self._current_selection
 
 	@property
@@ -140,7 +142,7 @@ class Profile:
 		self._current_selection = []
 		self.gfx_driver = None
 
-	def set_current_selection(self, current_selection: List['Profile']):
+	def set_current_selection(self, current_selection: List[TProfile]):
 		self._current_selection = current_selection
 
 	def is_top_level_profile(self) -> bool:

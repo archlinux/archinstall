@@ -4,7 +4,7 @@ import socket
 import ssl
 import struct
 from typing import Union, Dict, Any, List, Optional
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
@@ -128,5 +128,5 @@ def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:
 		response = urlopen(full_url, context=ssl_context)
 		data = response.read().decode('UTF-8')
 		return data
-	except URLError as err:
+	except URLError:
 		raise ValueError(f'Unable to fetch data from url: {url}')

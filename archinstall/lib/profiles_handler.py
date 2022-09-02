@@ -1,4 +1,4 @@
-import importlib
+import importlib.util
 import logging
 import sys
 from collections import Counter
@@ -6,17 +6,18 @@ from functools import cached_property
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import ModuleType
-from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
+from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union, TypeVar
 
 from archinstall.profiles.profiles import Profile
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
+from .networking import list_interfaces, fetch_data_from_url
 from .output import log
 from .storage import storage
 from .utils.singleton import Singleton
-from .networking import list_interfaces, fetch_data_from_url
 
 if TYPE_CHECKING:
 	_: Any
+	TProfile = TypeVar('TProfile', bound=Profile)
 
 
 class ProfileHandler(Singleton):
@@ -29,27 +30,21 @@ class ProfileHandler(Singleton):
 		# wants to save the configuration
 		self._url_path = None
 
-	def to_json(self, profile: Optional[Profile]) -> Dict[str, Union[str, List[str]]]:
-		data = {}
-
-		# special handling for custom profile
-		# even if this profile was not selected we
-		# still want to export all the defined custom
-		# inactive profiles so don't they get lost
+	def to_json(self, profile: Optional[Profile]) -> Dict[str, Any]:
+		data: Dict[str, Any] = {}
 		custom_profile = self.get_profile_by_name('Custom')
-		custom_json_export = custom_profile.json()
 
 		if profile is not None:
-			data = {'main': profile.name, 'gfx_driver': profile.gfx_driver}
+			data = {'main': profile.name, 'gfx_driver': profile.gfx_driver, 'details': []}
 
-			if profile.name != custom_profile.name:
-				if profile.current_selection is not None:
-					if isinstance(profile.current_selection, list):
-						data['details'] = [profile.name for profile in profile.current_selection]
-					else:
-						data['details'] = profile.current_selection.name
+			if custom_profile is not None and profile.name != custom_profile.name:
+				data['details'] = [profile.name for profile in profile.current_selection]
 
-		data['custom'] = custom_json_export.get('custom', {})
+		# special handling for custom profile even if this profile was not selected we
+		# still want to export all the defined custom inactive profiles so don't they get lost
+		if custom_profile:
+			custom_json_export = custom_profile.json()
+			data['custom'] = custom_json_export.get('custom', {})
 
 		if self._url_path is not None:
 			data['path'] = self._url_path
@@ -58,13 +53,11 @@ class ProfileHandler(Singleton):
 
 	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
 		profile = None
-		selection = []
 
 		# the order of these is important, we want to
 		# load all the profiles from url and custom
 		# so that we can then apply whatever was specified
 		# in the main/detail sections
-
 		if url_path := profile_config.get('path', None):
 			self._url_path = url_path
 			local_path = Path(url_path)
@@ -90,20 +83,19 @@ class ProfileHandler(Singleton):
 					)
 				)
 
-			custom_profile = self.get_profile_by_name('Custom')
-
 			self.remove_custom_profiles(custom_types)
 			self.add_custom_profiles(custom_types)
 
 			# this doesn't mean it's actual going to be set as a selection
 			# but we are simply populating the custom profile with all
 			# possible custom definitions
-			custom_profile.set_current_selection(custom_types)
+			if custom_profile := self.get_profile_by_name('Custom'):
+				custom_profile.set_current_selection(custom_types)
 
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
-		valid = None
+		valid: List[Profile] = []
 		if details := profile_config.get('details', []):
 			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
 			valid = [p for p in resolved.values() if p is not None]
@@ -127,7 +119,7 @@ class ProfileHandler(Singleton):
 		ifaces = list_interfaces()
 		return list(ifaces.keys())
 
-	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
+	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -136,7 +128,7 @@ class ProfileHandler(Singleton):
 
 		self._verify_unique_profile_names(self._profiles)
 
-	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
+	def remove_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -144,7 +136,7 @@ class ProfileHandler(Singleton):
 		self._profiles = [p for p in self._profiles if p.name not in remove_names]
 
 	def get_profile_by_name(self, name: str) -> Optional[Profile]:
-		return next(filter(lambda x: x.name == name, self.profiles), None)
+		return next(filter(lambda x: x.name == name, self.profiles), None)  # type: ignore
 
 	def get_top_level_profiles(self) -> List[Profile]:
 		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
@@ -160,7 +152,7 @@ class ProfileHandler(Singleton):
 
 	def get_mac_addr_profiles(self) -> List[Profile]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
-		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, self.profiles))
+		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, tailored))
 		return match_mac_addr_profiles
 
 	def _import_profile_from_url(self, url: str):
@@ -223,10 +215,11 @@ class ProfileHandler(Singleton):
 
 		try:
 			spec = importlib.util.spec_from_file_location(name, file)
-			imported = importlib.util.module_from_spec(spec)
-			spec.loader.exec_module(imported)
-
-			return self._load_profile_class(imported)
+			if spec is not None:
+				imported = importlib.util.module_from_spec(spec)
+				if spec.loader is not None:
+					spec.loader.exec_module(imported)
+					return self._load_profile_class(imported)
 		except Exception as e:
 			log(f'Unable to parse file {file}: {e}', level=logging.ERROR)
 
@@ -250,7 +243,7 @@ class ProfileHandler(Singleton):
 		self,
 		selectable_profiles: List[Profile],
 		current_profile: Optional[Union[Profile, List[Profile]]] = None,
-		title: str = None,
+		title: str = '',
 		allow_reset: bool = True,
 		multi: bool = False,
 		with_back_option: bool = False
@@ -259,7 +252,7 @@ class ProfileHandler(Singleton):
 
 		warning = str(_('Are you sure you want to reset this setting?'))
 
-		preset_value = None
+		preset_value: Optional[Union[str, List[str]]] = None
 		if current_profile is not None:
 			if isinstance(current_profile, list):
 				preset_value = [p.name for p in current_profile]
@@ -282,12 +275,14 @@ class ProfileHandler(Singleton):
 		if choice.type_ == MenuSelectionType.Selection:
 			value = choice.value
 			if multi:
-				choice.value = [options[val] for val in value]
+				# this is quite dirty and should eb switched to a
+				# dedicated return type instead
+				choice.value = [options[val] for val in value]  # type: ignore
 			else:
-				choice.value = options[value]
+				choice.value = options[value]  # type: ignore
 
 		return choice
 
 	def preview_text(self, selection: str) -> Optional[str]:
 		profile = self.get_profile_by_name(selection)
-		return profile.preview_text()
+		return profile.preview_text() if profile is not None else None

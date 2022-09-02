@@ -91,7 +91,7 @@ class FormattedOutput:
 		output = ''
 
 		for i in range(0, len(entries), cols):
-			chunks.append(entries[i:i+cols])
+			chunks.append(entries[i:i + cols])
 
 		for row in chunks:
 			out_fmt = '{: <30} ' * len(row)

@@ -1,10 +1,10 @@
-from typing import List, Dict, Optional, TYPE_CHECKING, Any, Union
+from typing import List, Dict, Optional, TYPE_CHECKING, Any
 
 from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.menu.menu import Menu
 from archinstall.lib.menu.text_input import TextInput
-from archinstall.lib.profiles_handler import ProfileHandler
 from archinstall.lib.output import log, FormattedOutput
+from archinstall.lib.profiles_handler import ProfileHandler
 from archinstall.profiles.profiles import Profile, ProfileType, SelectResult, ProfileInfo
 
 if TYPE_CHECKING:

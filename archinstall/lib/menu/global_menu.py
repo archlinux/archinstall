@@ -12,6 +12,7 @@ from ..models import NetworkConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
+from ..translationhandler import Language
 from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_for_additional_users
@@ -33,8 +34,6 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction.general_conf import select_profile_v2
 from ..user_interaction.partitioning_conf import current_partition_layout
-from ..output import FormattedOutput
-from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any
