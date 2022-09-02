@@ -190,8 +190,9 @@ class CustomProfileV2(ProfileV2):
 		return None
 
 	def reset(self):
-		for profile in self._current_selection:
-			profile.set_enabled(False)
+		if self._current_selection is not None:
+			for profile in self._current_selection:
+				profile.set_enabled(False)
 
 		self.gfx_driver = None
 

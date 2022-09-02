@@ -249,7 +249,7 @@ class Installer:
 				password = storage['arguments'].get('!encryption-password')
 			elif not password:
 				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
-			
+
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
@@ -518,7 +518,10 @@ class Installer:
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
-	def enable_service(self, *services :str) -> None:
+	def enable_service(self, *services: Union[str, List[str]]) -> None:
+		if type(services[0]) in (list, tuple):
+			services = services[0]
+
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
 			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
