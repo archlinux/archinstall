@@ -3,8 +3,6 @@ import time
 import archinstall
 from archinstall import ProfileHandler
 
-archinstall.storage['UPSTREAM_URL'] = 'https://archlinux.life/profiles'
-archinstall.storage['PROFILE_DB'] = 'index.json'
 
 for profile in ProfileHandler().get_mac_addr_profiles():
 	# Tailored means it's a match for this machine

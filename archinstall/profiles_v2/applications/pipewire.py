@@ -28,7 +28,7 @@ class PipewireProfileV2(ProfileV2):
 			users = [users]
 
 		for user in users:
-			install_session.arch_chroot('systemctl enable --user pipewire-pulse.service', run_as=user.name)
+			install_session.arch_chroot('systemctl enable --user pipewire-pulse.service', run_as=user.username)
 
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)

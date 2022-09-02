@@ -67,7 +67,14 @@ class ProfileHandler(Singleton):
 
 		if url_path := profile_config.get('path', None):
 			self._url_path = url_path
-			self._import_profile_from_url(url_path)
+			local_path = Path(url_path)
+
+			if local_path.is_file():
+				profiles = self._process_profile_file(local_path)
+				self.remove_custom_profiles(profiles)
+				self.add_custom_profiles(profiles)
+			else:
+				self._import_profile_from_url(url_path)
 
 		if custom := profile_config.get('custom', None):
 			from archinstall.profiles_v2.custom import CustomTypeProfileV2
@@ -158,20 +165,18 @@ class ProfileHandler(Singleton):
 	def _import_profile_from_url(self, url: str):
 		try:
 			data = fetch_data_from_url(url)
+			b_data = bytes(data, 'utf-8')
+
+			with NamedTemporaryFile(delete=False, suffix='.py') as fp:
+				fp.write(b_data)
+				filepath = Path(fp.name)
+
+			profiles = self._process_profile_file(filepath)
+			self.remove_custom_profiles(profiles)
+			self.add_custom_profiles(profiles)
 		except ValueError:
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
 			log(err, level=logging.ERROR, fg="red")
-			sys.exit(1)
-
-		b_data = bytes(data, 'utf-8')
-
-		with NamedTemporaryFile(delete=False, suffix='.py') as fp:
-			fp.write(b_data)
-			filepath = Path(fp.name)
-
-		profiles = self._process_profile_file(filepath)
-		self.remove_custom_profiles(profiles)
-		self.add_custom_profiles(profiles)
 
 	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
 		profiles = []
@@ -207,6 +212,10 @@ class ProfileHandler(Singleton):
 			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
 
+		if not file.is_file():
+			log(f'Cannot find profile file {file}')
+			return []
+
 		name = file.name.removesuffix(file.suffix)
 
 		log(f'Importing profile: {file}', level=logging.DEBUG)
@@ -218,7 +227,7 @@ class ProfileHandler(Singleton):
 
 			return self._load_profile_class(imported)
 		except Exception as e:
-			log(f'Unable to import file {file}', level=logging.ERROR)
+			log(f'Unable to parse file {file}: {e}', level=logging.ERROR)
 
 		return []
 

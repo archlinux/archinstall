@@ -1,5 +1,8 @@
-from typing import List
+from typing import List, Union
 
+import archinstall
+
+from archinstall import User
 from archinstall.profiles_v2.profiles_v2 import ProfileV2, ProfileType
 
 
@@ -17,3 +20,11 @@ class DockerProfileV2(ProfileV2):
 	@property
 	def services(self) -> List[str]:
 		return ['docker']
+
+	def post_install(self, install_session: 'Installer'):
+		users: Union[User, List[User]] = archinstall.arguments.get('!users', None)
+		if not isinstance(users, list):
+			users = [users]
+
+		for user in users:
+			install_session.arch_chroot(f'usermod -a -G docker {user.username}')

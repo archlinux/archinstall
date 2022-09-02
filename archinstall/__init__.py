@@ -1,6 +1,5 @@
 """Arch Linux installer - guided, templates etc."""
-import imp
-import typing
+import importlib
 from argparse import ArgumentParser, Namespace
 
 from .lib.disk import *
@@ -29,7 +28,6 @@ from .lib.packages.packages import (
 	installed_package,
 	validate_package_list,
 )
-from .lib.profiles import *
 from .lib.profiles_handler import ProfileHandler
 from .lib.services import *
 from .lib.storage import *
