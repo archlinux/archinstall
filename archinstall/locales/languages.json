@@ -33,7 +33,7 @@
  {"abbr": "de", "lang": "German", "translated_lang":  "Deutsch"},
  {"abbr": "dv", "lang": "Dhivehi"},
  {"abbr": "dz", "lang": "Dzongkha"},
- {"abbr": "el", "lang": "Modern Greek (1453-)"},
+ {"abbr": "el", "lang": "Modern Greek (1453-)", "translated_lang": "Ελληνικά"},
  {"abbr": "en", "lang": "English"},
  {"abbr": "eo", "lang": "Esperanto"},
  {"abbr": "et", "lang": "Estonian"},
