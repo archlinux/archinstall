@@ -1,6 +1,9 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from archinstall.profiles_v2.profiles_v2 import ProfileV2, ProfileType
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 
 
 class PostgresqlProfileV2(ProfileV2):

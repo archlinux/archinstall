@@ -1,9 +1,12 @@
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
 
 import archinstall
 
 from archinstall import User
 from archinstall.profiles_v2.profiles_v2 import ProfileV2, ProfileType
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 
 
 class DockerProfileV2(ProfileV2):

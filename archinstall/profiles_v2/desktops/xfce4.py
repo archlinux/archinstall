@@ -1,7 +1,10 @@
-from typing import List, Optional
+from typing import List, Optional, Any, TYPE_CHECKING
 
 from archinstall.profiles_v2.profiles_v2 import ProfileType
 from archinstall.profiles_v2.xorg import XorgProfileV2
+
+if TYPE_CHECKING:
+	_: Any
 
 
 class Xfce4ProfileV2(XorgProfileV2):

@@ -249,7 +249,7 @@ class ProfileHandler(Singleton):
 	def select_profile(
 		self,
 		selectable_profiles: List[ProfileV2],
-		current_profile: Optional[ProfileV2] = None,
+		current_profile: Optional[Union[ProfileV2, List[ProfileV2]]] = None,
 		title: str = None,
 		allow_reset: bool = True,
 		multi: bool = False,

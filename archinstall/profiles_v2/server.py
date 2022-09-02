@@ -7,11 +7,12 @@ from archinstall.lib.profiles_handler import ProfileHandler
 from archinstall.profiles_v2.profiles_v2 import ProfileType, ProfileV2, SelectResult
 
 if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 	_: Any
 
 
 class ServerProfileV2(ProfileV2):
-	def __init__(self, current_value: List[ProfileV2] = None):
+	def __init__(self, current_value: List[ProfileV2] = []):
 		super().__init__(
 			'Server',
 			ProfileType.Server,
@@ -32,7 +33,7 @@ class ServerProfileV2(ProfileV2):
 
 		match choice.type_:
 			case MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)
+				self.set_current_selection(choice.value)  # type: ignore
 				return SelectResult.NewSelection
 			case MenuSelectionType.Esc:
 				return SelectResult.SameSelection
@@ -44,8 +45,9 @@ class ServerProfileV2(ProfileV2):
 			profile.post_install(install_session)
 
 	def install(self, install_session: 'Installer'):
-		log('Now installing the selected servers.', level=logging.INFO)
-		log(self.info().details, level=logging.DEBUG)
+		server_info = self.info()
+		details = server_info.details if server_info and server_info.details else 'No servers'
+		log(f'Now installing the selected servers: {details}', level=logging.INFO)
 
 		for server in self._current_selection:
 			log(f'Installing {server.name}...', level=logging.INFO)

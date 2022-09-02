@@ -1,9 +1,14 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import List, Union, Optional, Any, Dict, TYPE_CHECKING
 
 from archinstall.lib.hardware import AVAILABLE_GFX_DRIVERS
 from archinstall.lib.output import FormattedOutput
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
+	_: Any
 
 
 class ProfileType(Enum):
@@ -23,11 +28,17 @@ class ProfileType(Enum):
 	Application = 'Application'
 
 
+class SelectResult(Enum):
+	NewSelection = auto()
+	SameSelection = auto()
+	ResetCurrent = auto()
+
+
 @dataclass
 class ProfileInfo:
 	name: str
 	details: Optional[str]
-	gfx_driver: str
+	gfx_driver: Optional[str]
 
 	@property
 	def absolute_name(self) -> str:
@@ -36,38 +47,33 @@ class ProfileInfo:
 		return self.name
 
 
-class SelectResult(Enum):
-	NewSelection = auto()
-	SameSelection = auto()
-	ResetCurrent = auto()
-
-
-if TYPE_CHECKING:
-	_: Any
-
-
 class ProfileV2:
 	def __init__(
 		self,
 		name: str,
 		profile_type: ProfileType,
 		description: str = '',
-		current_selection: Union['ProfileV2', List['ProfileV2']] = None,
+		current_selection: List['ProfileV2'] = [],
 		packages: List[str] = [],
-		services: List[str] = []
+		services: List[str] = [],
+		support_gfx_driver: bool = False
 	):
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
+		self.support_gfx_driver = support_gfx_driver
 
-		self.gfx_driver = None
+		self.gfx_driver: Optional[str] = None
 
-		self._current_selection: Union[List[ProfileV2], ProfileV2] = current_selection
+		self._current_selection = current_selection
 		self._packages = packages
 		self._services = services
 
+		# Only used for custom profiles
+		self._enabled = True
+
 	@property
-	def current_selection(self) -> Union[List['ProfileV2'], 'ProfileV2']:
+	def current_selection(self) -> Optional[Union[List['ProfileV2'], 'ProfileV2']]:
 		return self._current_selection
 
 	@property
@@ -86,24 +92,55 @@ class ProfileV2:
 		"""
 		return self._services
 
-	def info(self) -> Optional[ProfileInfo]:
-		if self._current_selection:
-			if isinstance(self._current_selection, list):
-				details = ', '.join([s.name for s in self._current_selection])
-				gfx_driver = self.gfx_driver
-			else:
-				details = self._current_selection.name
-				gfx_driver = self._current_selection.gfx_driver
+	def install(self, install_session: 'Installer'):
+		"""
+		Performs installation steps when this profile was selected
+		"""
+		pass
 
-			return ProfileInfo(self.name, details, gfx_driver)
-		else:
-			return ProfileInfo(self.name, None, self.gfx_driver)
+	def post_install(self, install_session: 'Installer'):
+		"""
+		Hook that will be called when the installation process is
+		finished and custom installation steps for specific profiles
+		are needed
+		"""
+		pass
+
+	def json(self) -> Dict:
+		"""
+		Returns a json representation of the profile
+		"""
+		return {}
+
+	def is_enabled(self) -> bool:
+		"""
+		Only used for custom profiles
+		"""
+		return self._enabled
+
+	def set_enabled(self, enabled: bool):
+		"""
+		Only used for custom profiles
+		"""
+		self._enabled = enabled
+
+	def do_on_select(self) -> SelectResult:
+		"""
+		Hook that will be called when a profile is selected
+		"""
+		return SelectResult.NewSelection
+
+	def info(self) -> Optional[ProfileInfo]:
+		details = None
+		if self._current_selection:
+			details = ', '.join([s.name for s in self._current_selection])
+		return ProfileInfo(self.name, details, self.gfx_driver)
 
 	def reset(self):
-		self._current_selection = None
+		self._current_selection = []
 		self.gfx_driver = None
 
-	def set_current_selection(self, current_selection: Union[List['ProfileV2'], 'ProfileV2']):
+	def set_current_selection(self, current_selection: List['ProfileV2']):
 		self._current_selection = current_selection
 
 	def is_top_level_profile(self) -> bool:
@@ -125,28 +162,13 @@ class ProfileV2:
 	def is_custom_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.CustomType
 
-	def graphic_driver_enabled(self) -> bool:
-		if self._current_selection is None:
-			return self.with_graphic_driver()
+	def is_graphic_driver_enabled(self) -> bool:
+		if not self._current_selection:
+			return self.support_gfx_driver
 		else:
-			if isinstance(self._current_selection, list):
-				if any([p.with_graphic_driver() for p in self._current_selection]):
-					return True
-				return False
-
-			return self._current_selection.with_graphic_driver()
-
-	def with_graphic_driver(self) -> bool:
-		return False
-
-	def post_install(self, install_session: 'Installer'):
-		pass
-
-	def json(self) -> Dict:
-		return {}
-
-	def do_on_select(self) -> SelectResult:
-		return SelectResult.NewSelection
+			if any([p.support_gfx_driver for p in self._current_selection]):
+				return True
+			return False
 
 	def preview_text(self) -> Optional[str]:
 		"""
@@ -177,9 +199,5 @@ class ProfileV2:
 	def gfx_driver_packages(self) -> List[str]:
 		if self.gfx_driver is not None:
 			driver_pkgs = AVAILABLE_GFX_DRIVERS[self.gfx_driver]
-			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
-			return additional_pkg
+			return ['xorg-server', 'xorg-xinit'] + driver_pkgs
 		return []
-
-	def install(self, install_session: 'Installer'):
-		pass

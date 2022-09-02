@@ -1,7 +1,10 @@
-from typing import Optional, List
+from typing import Optional, List, Any, TYPE_CHECKING
 
 from archinstall.profiles_v2.profiles_v2 import ProfileType
 from archinstall.profiles_v2.xorg import XorgProfileV2
+
+if TYPE_CHECKING:
+	_: Any
 
 
 class I3wmProfileV2(XorgProfileV2):

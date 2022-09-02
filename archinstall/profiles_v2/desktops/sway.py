@@ -1,7 +1,11 @@
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING, Any
 
 from archinstall import Menu, select_driver, AVAILABLE_GFX_DRIVERS
 from archinstall.profiles_v2.profiles_v2 import ProfileV2, ProfileType
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
+	_: Any
 
 
 class SwayProfileV2(ProfileV2):

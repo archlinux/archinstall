@@ -182,7 +182,7 @@ def select_profile_v2(
 			# any stale data laying around
 			match select_result:
 				case select_result.NewSelection:
-					if profile_selection.graphic_driver_enabled():
+					if profile_selection.is_graphic_driver_enabled():
 						profile_selection.gfx_driver = select_driver(current_value=profile_selection.gfx_driver)
 
 					handler.reset_top_level_profiles(exclude=[profile_selection])

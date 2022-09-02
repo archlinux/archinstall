@@ -6,11 +6,12 @@ from archinstall.lib.profiles_handler import ProfileHandler
 from archinstall.profiles_v2.profiles_v2 import ProfileV2, ProfileType, SelectResult
 
 if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
 	_: Any
 
 
 class DesktopProfileV2(ProfileV2):
-	def __init__(self, current_selection: Optional[ProfileV2] = None):
+	def __init__(self, current_selection: List[ProfileV2] = []):
 		super().__init__(
 			'Desktop',
 			ProfileType.Desktop,
@@ -44,7 +45,7 @@ class DesktopProfileV2(ProfileV2):
 
 		match choice.type_:
 			case MenuSelectionType.Selection:
-				self.set_current_selection(choice.value)
+				self.set_current_selection(choice.value)  # type: ignore
 				return SelectResult.NewSelection
 			case MenuSelectionType.Esc:
 				return SelectResult.SameSelection

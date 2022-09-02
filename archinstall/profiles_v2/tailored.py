@@ -1,7 +1,11 @@
-from typing import List
+from typing import List, Any, TYPE_CHECKING
 
 from archinstall.profiles_v2.profiles_v2 import ProfileType
 from archinstall.profiles_v2.xorg import XorgProfileV2
+
+if TYPE_CHECKING:
+	from archinstall.lib.installer import Installer
+	_: Any
 
 
 class TailoredProfileV2(XorgProfileV2):
