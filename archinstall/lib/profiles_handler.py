@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 class ProfileHandler(Singleton):
 	def __init__(self):
-		self._profiles_path: Path = storage['PROFILE_V2']
+		self._profiles_path: Path = storage['PROFILE']
 		self._profiles = self._find_available_profiles()
 
 		# special variable to keep track of a profile url configuration

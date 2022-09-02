@@ -10,8 +10,7 @@ from pathlib import Path
 
 
 storage: Dict[str, Any] = {
-	'PROFILE_V2': Path(__file__).parent.parent.joinpath('profiles'),
-	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
+	'PROFILE': Path(__file__).parent.parent.joinpath('profiles'),
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',
 	'MOUNT_POINT': '/mnt/archinstall',

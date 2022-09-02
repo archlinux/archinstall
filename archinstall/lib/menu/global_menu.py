@@ -32,7 +32,7 @@ from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
-from ..user_interaction.general_conf import select_profile_v2
+from ..user_interaction.general_conf import select_profile
 from ..user_interaction.partitioning_conf import current_partition_layout
 
 if TYPE_CHECKING:
@@ -388,7 +388,7 @@ class GlobalMenu(GeneralMenu):
 		return harddrives
 
 	def _select_profile(self, current_profile: Optional[Profile]):
-		profile = select_profile_v2(current_profile)
+		profile = select_profile(current_profile)
 		return profile
 
 	def _select_audio(self, current: Union[str, None]) -> Union[str, None]:

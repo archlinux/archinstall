@@ -137,7 +137,7 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 			return options[choice.value]
 
 
-def select_profile_v2(
+def select_profile(
 	current_profile: Optional[Profile] = None,
 	title: str = None,
 	allow_reset: bool = True,
@@ -171,7 +171,7 @@ def select_profile_v2(
 			select_result = profile_selection.do_on_select()
 
 			if not select_result:
-				return select_profile_v2(
+				return select_profile(
 					current_profile=current_profile,
 					title=title,
 					allow_reset=allow_reset,
@@ -195,7 +195,7 @@ def select_profile_v2(
 
 			# we're keep showing the profile menu unless we're actively exiting it
 			# by pressing ctrl+c or Esc
-			return select_profile_v2(
+			return select_profile(
 				current_profile=current_profile,
 				title=title,
 				allow_reset=allow_reset,
