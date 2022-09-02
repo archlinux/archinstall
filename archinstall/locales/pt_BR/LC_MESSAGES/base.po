@@ -1,6 +1,10 @@
+# Translators:
+#  @Cain-dev (cain-dev.github.io)
+#  Rafael Fontenelle <rafaelff@gnome.org>
+
 msgid ""
 msgstr ""
-"Last-Translator: @Cain-dev (cain-dev.github.io)\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -67,7 +71,7 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "Selecione qual modo configurar para \"{}\" ou ignore para usar o modo padrão \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Digite o IP e a subrede para {} (exemplo: 192.168.0.5/24): "
+msgstr "Digite o IP e a sub-rede para {} (exemplo: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Digite o seu IP de gateway (router) ou deixe em branco para nenhum: "
@@ -85,7 +89,7 @@ msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"Selecione o que fazer com \n"
+"Selecione o que fazer com\n"
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
@@ -95,7 +99,7 @@ msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Digite o setor de início (porcentagem ou número do bloco, padrão: {}): "
 
 msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex: {}): "
+msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex.: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
@@ -149,7 +153,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Selecione qual partição marcar como bootável"
+"Selecione qual partição marcar como inicializável"
 
 msgid ""
 "{}\n"
@@ -298,7 +302,7 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Você decidiu ignorar a seleção de disco rídigo\n"
+"Você decidiu ignorar a seleção de disco rígido\n"
 "e usar qualquer configuração de disco rígido montada em {} (experimental)\n"
 "ATENÇÃO: O Archinstall não verifica a viabilidade desta configuração\n"
 "Deseja continuar?"
@@ -325,7 +329,7 @@ msgid "Mark/Unmark a partition as encrypted"
 msgstr "Marcar/Desmarcar uma partição como encriptada"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Marcar/Desmarcar uma partição como bootável (automática para /boot)"
+msgstr "Marcar/Desmarcar uma partição como inicializável (automática para /boot)"
 
 msgid "Set desired filesystem for a partition"
 msgstr "Definir o sistema de arquivos desejado para uma partição"
@@ -387,7 +391,7 @@ msgid ""
 "For more information, please check the Arch wiki"
 msgstr ""
 "A hora de hardware e outros passos de pós-configuração podem ser necessários para que o NTP funcione.\n"
-"Para mais informações, por favor visite a Arch wiki"
+"Para mais informações, por favor visite a wiki do Arch"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Digite um nome de usuário para criar um usuário adicional (deixe em branco para pular): "
@@ -437,10 +441,10 @@ msgstr ""
 "Esta é a configuração escolhida escolhida por você:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "O Pacman já está a rodando, aguarde no máximo até 10 minutos para terminar."
+msgstr "O Pacman já está em execução, aguarde no máximo até 10 minutos para terminar."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Pacman lock não terminou. Por favor, limpe as sessões de pacman existentes antes de usar o archinstall."
+msgstr "A trava pré-existente do Pacman não terminou. Por favor, limpe as sessões de pacman existentes antes de usar o archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Escolha quais repositórios adicionais opcionais ativar"
@@ -452,7 +456,7 @@ msgid "Change password"
 msgstr "Mudar senha"
 
 msgid "Promote/Demote user"
-msgstr "Promover/Demover usuário"
+msgstr "Promover/Rebaixar usuário"
 
 msgid "Delete User"
 msgstr "Deletar usuário"
@@ -465,7 +469,7 @@ msgstr ""
 "Definir um novo usuário\n"
 
 msgid "User Name : "
-msgstr "Nome de Usuário : "
+msgstr "Nome de usuário : "
 
 msgid "Should {} be a superuser (sudoer)?"
 msgstr "{} deve ser um superusuário (sudoer)?"
@@ -513,7 +517,7 @@ msgid "Enter a directory for the configuration(s) to be saved: "
 msgstr "Digite um diretório para as configurações serem salvas: "
 
 msgid "Not a valid directory: {}"
-msgstr "Não é um diretorio válido: {}"
+msgstr "Não é um diretório válido: {}"
 
 msgid "The password you are using seems to be weak,"
 msgstr "A senha que está usando parece ser fraca,"
@@ -616,7 +620,7 @@ msgid "Manual configuration setting must be a list"
 msgstr "O ajuste de configuração manual deve ser em lista"
 
 msgid "No iface specified for manual configuration"
-msgstr "iface não especificado para configuração manual"
+msgstr "iface não especificada para configuração manual"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "A configuração manual de NIC sem DHCP automático requer um endereço IP"
@@ -654,7 +658,6 @@ msgstr "Uma instalação bem básica que permite a você customizar o Arch Linux
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Proporciona uma seleção de diversos pacotes de servidor para instalar e habilitar como por exemplo httpd, nginx, mariadb"
 
-#, fuzzy
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Selecione quais servidores instalar, se há nenhum uma instalação mínima será feita"
 
@@ -668,16 +671,16 @@ msgid "Would you like to chroot into the newly created installation and perform 
 msgstr "Deseja fazer chroot para a nova instalação e realizar configurações pós-instalação?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Tem certeza que desejar resetar essa configuração?"
+msgstr "Tem certeza que desejar redefinir essa configuração?"
 
 msgid "Select one or more hard drives to use and configure\n"
 msgstr "Selecione uma ou mais unidades para usar e configurar\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Quaisquer modificações para configurações existentes vão resetar o layout de disco!"
+msgstr "Quaisquer modificações para configurações existentes vão redefinir o layout de disco!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Se você resetar a seleção de unidades isso também resetará o layout da unidade atual. Tem certeza?"
+msgstr "Se você redefinir a seleção de unidades isso também redefinirá o layout da unidade atual. Tem certeza?"
 
 msgid "Save and exit"
 msgstr "Salvar e sair"
@@ -687,7 +690,7 @@ msgid ""
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"contém partições enfileiradas partitions, isso irá removê-las, tem certeza?"
+"contém partições enfileiradas, isso irá removê-las, tem certeza?"
 
 msgid "No audio server"
 msgstr "Sem servidor de áudio"
@@ -702,7 +705,7 @@ msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Use CTRL+C para resetar a seleção atual\n"
+"Use CTRL+C para redefinir a seleção atual\n"
 "\n"
 
 msgid "Copy to: "
@@ -733,61 +736,55 @@ msgid "Select which partitions to mark for formatting:"
 msgstr "Selecione quais partições marcar para formatar:"
 
 msgid "Use HSM to unlock encrypted drive"
-msgstr ""
+msgstr "Usar HSM para desbloquear unidade encriptada"
 
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 msgid "Size"
-msgstr ""
+msgstr "Tamanho"
 
 msgid "Free space"
-msgstr ""
+msgstr "Espaço livre"
 
 msgid "Bus-type"
-msgstr ""
+msgstr "Tipo de barramento"
 
-#, fuzzy
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Deve se especificar uma senha de root ou pelo menos 1 superusuário"
+msgstr "Deve-se especificar uma senha de root ou pelo menos 1 usuário com privilégios de sudo"
 
-#, fuzzy
 msgid "Enter username (leave blank to skip): "
-msgstr "Digite um nome de usuário para criar um usuário adicional (deixe em branco para pular): "
+msgstr "Digite um nome de usuário (deixe em branco para pular): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr ""
+msgstr "O nome de usuário que você digitou é inválido. Tente novamente"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "{} deve ser um superusuário (sudoer)?"
+msgstr "\"{}\" deve ser um superusuário (sudo)?"
 
-#, fuzzy
 msgid "Select which partitions to encrypt:"
-msgstr ""
-"{}\n"
-"\n"
-"Selecione qual partição marcar como encriptada"
+msgstr "Selecione quais partições encriptar:"
 
 msgid "very weak"
-msgstr ""
+msgstr "muito fraca"
 
 msgid "weak"
-msgstr ""
+msgstr "fraca"
 
 msgid "moderate"
-msgstr ""
+msgstr "moderada"
 
 msgid "strong"
-msgstr ""
+msgstr "forte"
 
-#, fuzzy
 msgid "Add subvolume"
-msgstr " Subvolume :{:16}"
+msgstr "Adicionar subvolume"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Editar subvolume"
 
-#, fuzzy
 msgid "Delete subvolume"
-msgstr "Deletar usuário"
+msgstr "Deletar subvolume"
+
+msgid "Configured {} interfaces"
+msgstr "{} interfaces configuradas"
