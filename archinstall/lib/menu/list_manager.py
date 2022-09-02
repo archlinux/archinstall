@@ -2,7 +2,7 @@ import copy
 from os import system
 from typing import Any, TYPE_CHECKING, Dict, Optional, Tuple, List
 
-from .menu import Menu
+from .menu import Menu, MenuSelectionType
 
 if TYPE_CHECKING:
 	_: Any
@@ -44,14 +44,16 @@ class ListManager:
 		self._base_actions = base_actions
 		self._sub_menu_actions = sub_menu_actions
 
-		self._last_choice = None
+		self._last_choice: Optional[str] = None
 
 	@property
 	def last_choice(self) -> Optional[str]:
 		return self._last_choice
 
 	def is_last_choice_cancel(self) -> bool:
-		return self._last_choice.value == self._cancel_action
+		if self._last_choice is not None:
+			return self._last_choice == self._cancel_action
+		return False
 
 	def run(self) -> List[Any]:
 		while True:
@@ -79,10 +81,10 @@ class ListManager:
 			elif choice.value in self._terminate_actions:
 				break
 			else:  # an entry of the existing selection was choosen
-				selected_entry = data_formatted[choice.value]
+				selected_entry = data_formatted[choice.value]  # type: ignore
 				self._run_actions_on_entry(selected_entry)
 
-		self._last_choice = choice
+		self._last_choice = choice.value  # type: ignore
 
 		if choice.value == self._cancel_action:
 			return self._original_data  # return the original list
@@ -130,7 +132,7 @@ class ListManager:
 		# "Select an action for '{}'" string
 		raise NotImplementedError('Please implement me in the child class')
 
-	def reformat(self, data: List[Any]) -> Dict[str, Any]:
+	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
 		# this should return a dictionary of display string to actual data entry
 		# mapping; if the value for a given display string is None it will be used
 		# in the header value (useful when displaying tables)
