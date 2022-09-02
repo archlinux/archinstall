@@ -2,7 +2,7 @@ import archinstall
 
 # Select a harddrive and a disk password
 from archinstall import User
-from archinstall.profiles_v2.minimal import MinimalProfileV2
+from archinstall.profiles.minimal import MinimalProfile
 
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")
@@ -30,7 +30,7 @@ def install_on(mountpoint):
 
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 
-			profile = MinimalProfileV2()
+			profile = MinimalProfile()
 			installation.install_profile(profile)
 
 			user = User('devel', 'devel', False)

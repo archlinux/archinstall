@@ -6,7 +6,7 @@ from typing import List, Any, Optional, Dict, TYPE_CHECKING, Union
 
 from .system_conf import select_driver
 
-from archinstall.profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles.profiles import Profile
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
@@ -138,11 +138,11 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 
 
 def select_profile_v2(
-	current_profile: Optional[ProfileV2] = None,
+	current_profile: Optional[Profile] = None,
 	title: str = None,
 	allow_reset: bool = True,
 	multi: bool = False
-) -> Optional[ProfileV2]:
+) -> Optional[Profile]:
 	handler = ProfileHandler()
 	top_level_profiles = handler.get_top_level_profiles()
 
@@ -167,7 +167,7 @@ def select_profile_v2(
 
 	match choice.type_:
 		case MenuSelectionType.Selection:
-			profile_selection: ProfileV2 = choice.value
+			profile_selection: Profile = choice.value
 			select_result = profile_selection.do_on_select()
 
 			if not select_result:

@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
-from archinstall.profiles_v2.applications.pipewire import PipewireProfileV2
+from archinstall.profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -433,7 +433,7 @@ def os_setup(installation):
 		if audio := archinstall.arguments.get('audio', None):
 			installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
 			if audio == 'pipewire':
-				PipewireProfileV2().install(installation)
+				PipewireProfile().install(installation)
 			elif audio == 'pulseaudio':
 				installation.add_additional_packages("pulseaudio")
 		else:

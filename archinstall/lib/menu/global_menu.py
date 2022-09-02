@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from archinstall.profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles.profiles import Profile
 from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
@@ -315,7 +315,7 @@ class GlobalMenu(GeneralMenu):
 	def _prev_profile(self) -> Optional[str]:
 		selector = self._menu_options['profile']
 		if selector.has_selection():
-			profile: ProfileV2 = selector.current_selection
+			profile: Profile = selector.current_selection
 			return FormattedOutput.as_table([profile.info()])
 		return None
 
@@ -388,12 +388,12 @@ class GlobalMenu(GeneralMenu):
 
 		return harddrives
 
-	def _select_profile(self, current_profile: Optional[ProfileV2]):
+	def _select_profile(self, current_profile: Optional[Profile]):
 		profile = select_profile_v2(current_profile)
 		return profile
 
 	def _select_audio(self, current: Union[str, None]) -> Union[str, None]:
-		profile: ProfileV2 = self._menu_options['profile'].current_selection
+		profile: Profile = self._menu_options['profile'].current_selection
 		is_desktop = profile.is_desktop_profile() if profile else False
 		selection = ask_for_audio_selection(is_desktop, current)
 		return selection

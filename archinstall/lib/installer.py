@@ -9,7 +9,7 @@ import subprocess
 import time
 from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
 
-from archinstall.profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles.profiles import Profile
 from .disk import get_partitions_in_use, Partition
 from .disk.helpers import findmnt
 from .disk.partition import get_mount_fs_type
@@ -1043,7 +1043,7 @@ class Installer:
 	def add_additional_packages(self, *packages: Union[str, List[str]]) -> bool:
 		return self.pacstrap(*packages)
 
-	def install_profile(self, profile: ProfileV2):
+	def install_profile(self, profile: Profile):
 		"""
 		Installs a archinstall profile
 

@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 storage: Dict[str, Any] = {
-	'PROFILE_V2': Path(__file__).parent.parent.joinpath('profiles_v2'),
+	'PROFILE_V2': Path(__file__).parent.parent.joinpath('profiles'),
 	'UPSTREAM_URL': 'https://raw.githubusercontent.com/archlinux/archinstall/master/profiles',
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',

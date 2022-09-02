@@ -5,7 +5,7 @@ import time
 import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from archinstall.profiles_v2.applications.pipewire import PipewireProfileV2
+from archinstall.profiles.applications.pipewire import PipewireProfile
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -225,7 +225,7 @@ def perform_installation(mountpoint):
 			if audio := archinstall.arguments.get('audio', None):
 				installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
 				if audio == 'pipewire':
-					PipewireProfileV2().install(installation)
+					PipewireProfile().install(installation)
 				elif audio == 'pulseaudio':
 					installation.add_additional_packages("pulseaudio")
 			else:

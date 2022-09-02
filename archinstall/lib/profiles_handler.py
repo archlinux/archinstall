@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.profiles_v2.profiles_v2 import ProfileV2
+from archinstall.profiles.profiles import Profile
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .output import log
 from .storage import storage
@@ -29,7 +29,7 @@ class ProfileHandler(Singleton):
 		# wants to save the configuration
 		self._url_path = None
 
-	def to_json(self, profile: Optional[ProfileV2]) -> Dict[str, Union[str, List[str]]]:
+	def to_json(self, profile: Optional[Profile]) -> Dict[str, Union[str, List[str]]]:
 		data = {}
 
 		# special handling for custom profile
@@ -56,7 +56,7 @@ class ProfileHandler(Singleton):
 
 		return data
 
-	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[ProfileV2]:
+	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
 		profile = None
 		selection = []
 
@@ -77,12 +77,12 @@ class ProfileHandler(Singleton):
 				self._import_profile_from_url(url_path)
 
 		if custom := profile_config.get('custom', None):
-			from archinstall.profiles_v2.custom import CustomTypeProfileV2
+			from archinstall.profiles.custom import CustomTypeProfile
 			custom_types = []
 
 			for entry in custom:
 				custom_types.append(
-					CustomTypeProfileV2(
+					CustomTypeProfile(
 						entry['name'],
 						entry['enabled'],
 						entry.get('packages', []),
@@ -119,7 +119,7 @@ class ProfileHandler(Singleton):
 		return profile
 
 	@property
-	def profiles(self) -> List[ProfileV2]:
+	def profiles(self) -> List[Profile]:
 		return self._profiles
 
 	@cached_property
@@ -127,7 +127,7 @@ class ProfileHandler(Singleton):
 		ifaces = list_interfaces()
 		return list(ifaces.keys())
 
-	def add_custom_profiles(self, profiles: Union[ProfileV2, List[ProfileV2]]):
+	def add_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
@@ -136,29 +136,29 @@ class ProfileHandler(Singleton):
 
 		self._verify_unique_profile_names(self._profiles)
 
-	def remove_custom_profiles(self, profiles: Union[ProfileV2, List[ProfileV2]]):
+	def remove_custom_profiles(self, profiles: Union[Profile, List[Profile]]):
 		if not isinstance(profiles, list):
 			profiles = [profiles]
 
 		remove_names = [p.name for p in profiles]
 		self._profiles = [p for p in self._profiles if p.name not in remove_names]
 
-	def get_profile_by_name(self, name: str) -> Optional[ProfileV2]:
+	def get_profile_by_name(self, name: str) -> Optional[Profile]:
 		return next(filter(lambda x: x.name == name, self.profiles), None)
 
-	def get_top_level_profiles(self) -> List[ProfileV2]:
+	def get_top_level_profiles(self) -> List[Profile]:
 		return list(filter(lambda x: x.is_top_level_profile(), self.profiles))
 
-	def get_server_profiles(self) -> List[ProfileV2]:
+	def get_server_profiles(self) -> List[Profile]:
 		return list(filter(lambda x: x.is_server_type_profile(), self.profiles))
 
-	def get_desktop_profiles(self) -> List[ProfileV2]:
+	def get_desktop_profiles(self) -> List[Profile]:
 		return list(filter(lambda x: x.is_desktop_type_profile(), self.profiles))
 
-	def get_custom_profiles(self) -> List[ProfileV2]:
+	def get_custom_profiles(self) -> List[Profile]:
 		return list(filter(lambda x: x.is_custom_type_profile(), self.profiles))
 
-	def get_mac_addr_profiles(self) -> List[ProfileV2]:
+	def get_mac_addr_profiles(self) -> List[Profile]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, self.profiles))
 		return match_mac_addr_profiles
@@ -179,20 +179,20 @@ class ProfileHandler(Singleton):
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
 			log(err, level=logging.ERROR, fg="red")
 
-	def _load_profile_class(self, module: ModuleType) -> List[ProfileV2]:
+	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
 		profiles = []
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
 				try:
 					cls_ = v()
-					if isinstance(cls_, ProfileV2):
+					if isinstance(cls_, Profile):
 						profiles.append(cls_)
 				except Exception:
 					log(f'Cannot import {module}, it does not appear to be a ProfileV2 class', level=logging.DEBUG)
 
 		return profiles
 
-	def _verify_unique_profile_names(self, profiles: List[ProfileV2]):
+	def _verify_unique_profile_names(self, profiles: List[Profile]):
 		counter = Counter([p.name for p in profiles])
 		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
 
@@ -208,7 +208,7 @@ class ProfileHandler(Singleton):
 					return True
 		return False
 
-	def _process_profile_file(self, file: Path) -> List[ProfileV2]:
+	def _process_profile_file(self, file: Path) -> List[Profile]:
 		if self._is_legacy(file):
 			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
@@ -232,7 +232,7 @@ class ProfileHandler(Singleton):
 
 		return []
 
-	def _find_available_profiles(self) -> List[ProfileV2]:
+	def _find_available_profiles(self) -> List[Profile]:
 		profiles = []
 		for filename in self._profiles_path.glob('**/*.py'):
 			profiles += self._process_profile_file(filename)
@@ -240,7 +240,7 @@ class ProfileHandler(Singleton):
 		self._verify_unique_profile_names(profiles)
 		return profiles
 
-	def reset_top_level_profiles(self, exclude: List[ProfileV2] = []):
+	def reset_top_level_profiles(self, exclude: List[Profile] = []):
 		excluded_profiles = [p.name for p in exclude]
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
@@ -248,8 +248,8 @@ class ProfileHandler(Singleton):
 
 	def select_profile(
 		self,
-		selectable_profiles: List[ProfileV2],
-		current_profile: Optional[Union[ProfileV2, List[ProfileV2]]] = None,
+		selectable_profiles: List[Profile],
+		current_profile: Optional[Union[Profile, List[Profile]]] = None,
 		title: str = None,
 		allow_reset: bool = True,
 		multi: bool = False,
