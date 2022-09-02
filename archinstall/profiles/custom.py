@@ -42,9 +42,9 @@ class CustomProfileList(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[TProfile],
-		data: List[TProfile]
-	) -> List[TProfile]:
+		entry: Optional['CustomTypeProfile'],
+		data: List['CustomTypeProfile']
+	) -> List['CustomTypeProfile']:
 		if action == self._actions[0]:  # add
 			new_profile = self._add_profile()
 			if new_profile is not None:
@@ -70,7 +70,7 @@ class CustomProfileList(ListManager):
 			return False
 		return True
 
-	def _add_profile(self, editing: Optional[TProfile] = None) -> Optional[TProfile]:
+	def _add_profile(self, editing: Optional['CustomTypeProfile'] = None) -> Optional['CustomTypeProfile']:
 		name_prompt = '\n\n' + str(_('Profile name: '))
 
 		while True:
@@ -208,7 +208,7 @@ class CustomTypeProfile(Profile):
 			support_gfx_driver=True
 		)
 
-		super().custom_enabled = enabled
+		self.custom_enabled = enabled
 
 	def json(self) -> Dict[str, Any]:
 		return {

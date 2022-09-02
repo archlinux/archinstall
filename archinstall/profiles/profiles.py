@@ -140,8 +140,8 @@ class Profile:
 
 	def info(self) -> Optional[ProfileInfo]:
 		details = None
-		if self.current_selection:
-			details = ', '.join([s.name for s in self.current_selection])
+		if self._current_selection:
+			details = ', '.join([s.name for s in self._current_selection])
 		return ProfileInfo(self.name, details, self.gfx_driver)
 
 	def reset(self):
