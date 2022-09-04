@@ -48,7 +48,8 @@ class SelectResult(Enum):
 class ProfileInfo:
 	name: str
 	details: Optional[str]
-	gfx_driver: Optional[str]
+	gfx_driver: Optional[str] = None
+	greeter: Optional[str] = None
 
 	@property
 	def absolute_name(self) -> str:
@@ -79,8 +80,8 @@ class Profile:
 		self._packages = packages
 		self._services = services
 
-		# Only used for Desktop profiles
-		self._greeter_type: Optional[GreeterType] = None
+		# Only used for desktop profiles
+		self.greeter_type: Optional[GreeterType] = None
 
 		# Only used for custom profiles
 		self.custom_enabled = False
@@ -106,7 +107,7 @@ class Profile:
 		return self._services
 
 	@property
-	def greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> Optional[GreeterType]:
 		"""
 		Setting a default greeter type for a desktop profile
 		"""
@@ -142,11 +143,14 @@ class Profile:
 		details = None
 		if self._current_selection:
 			details = ', '.join([s.name for s in self._current_selection])
-		return ProfileInfo(self.name, details, self.gfx_driver)
+
+		greeter = self.greeter_type.value if self.greeter_type else None
+		return ProfileInfo(self.name, details, self.gfx_driver, greeter)
 
 	def reset(self):
 		self.set_current_selection([])
 		self.gfx_driver = None
+		self.greeter_type = None
 
 	def set_current_selection(self, current_selection: List[TProfile]):
 		self._current_selection = current_selection

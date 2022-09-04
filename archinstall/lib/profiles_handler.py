@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.profiles.profiles import Profile, TProfile
+from archinstall.profiles.profiles import Profile, TProfile, GreeterType
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .networking import list_interfaces, fetch_data_from_url
 from .output import log
@@ -30,11 +30,19 @@ class ProfileHandler(Singleton):
 		self._url_path = None
 
 	def to_json(self, profile: Optional[Profile]) -> Dict[str, Any]:
+		"""
+		Serialize the selected profile setting to JSON
+		"""
 		data: Dict[str, Any] = {}
 		custom_profile = self.get_profile_by_name('Custom')
 
 		if profile is not None:
-			data = {'main': profile.name, 'gfx_driver': profile.gfx_driver, 'details': []}
+			data = {
+				'main': profile.name,
+				'gfx_driver': profile.gfx_driver,
+				'details': [],
+				'greeter_type': profile.greeter_type.value if profile.greeter_type else None
+			}
 
 			if custom_profile is not None and profile.name != custom_profile.name:
 				data['details'] = [profile.name for profile in profile.current_selection]
@@ -51,6 +59,9 @@ class ProfileHandler(Singleton):
 		return data
 
 	def parse_profile_config(self, profile_config: Dict[str, Any]) -> Optional[Profile]:
+		"""
+		Deserialize JSON configuration
+		"""
 		profile = None
 
 		# the order of these is important, we want to
@@ -107,14 +118,24 @@ class ProfileHandler(Singleton):
 			profile.set_current_selection(valid)
 			profile.gfx_driver = profile_config.get('gfx_driver', None)
 
+			greeter_type = profile_config.get('greeter_type', None)
+			if greeter_type:
+				try:
+					profile.greeter_type = GreeterType(greeter_type)
+				except ValueError:
+					log(f'Unknown greeter type: {greeter_type}')
+
 		return profile
 
 	@property
 	def profiles(self) -> List[Profile]:
+		"""
+		List of all available profiles
+		"""
 		return self._profiles
 
 	@cached_property
-	def local_mac_addresses(self) -> List[str]:
+	def _local_mac_addresses(self) -> List[str]:
 		ifaces = list_interfaces()
 		return list(ifaces.keys())
 
@@ -151,10 +172,13 @@ class ProfileHandler(Singleton):
 
 	def get_mac_addr_profiles(self) -> List[Profile]:
 		tailored = list(filter(lambda x: x.is_tailored(), self.profiles))
-		match_mac_addr_profiles = list(filter(lambda x: x.name in self.local_mac_addresses, tailored))
+		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
 
 	def _import_profile_from_url(self, url: str):
+		"""
+		Import profiles from a url path
+		"""
 		try:
 			data = fetch_data_from_url(url)
 			b_data = bytes(data, 'utf-8')
@@ -171,6 +195,9 @@ class ProfileHandler(Singleton):
 			log(err, level=logging.ERROR, fg="red")
 
 	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
+		"""
+		Load all profiles defined in a module
+		"""
 		profiles = []
 		for k, v in module.__dict__.items():
 			if isinstance(v, type) and v.__module__ == module.__name__:
@@ -184,6 +211,10 @@ class ProfileHandler(Singleton):
 		return profiles
 
 	def _verify_unique_profile_names(self, profiles: List[Profile]):
+		"""
+		All profile names have to be unique, this function will verify
+		that the provided list contains only profiles with unique names
+		"""
 		counter = Counter([p.name for p in profiles])
 		duplicates = list(filter(lambda x: x[1] != 1, counter.items()))
 
@@ -193,6 +224,10 @@ class ProfileHandler(Singleton):
 			sys.exit(1)
 
 	def _is_legacy(self, file: Path) -> bool:
+		"""
+		Check if the provided profile file contains a
+		legacy profile definition
+		"""
 		with open(file, 'r') as fp:
 			for line in fp.readlines():
 				if '__packages__' in line:
@@ -200,6 +235,9 @@ class ProfileHandler(Singleton):
 		return False
 
 	def _process_profile_file(self, file: Path) -> List[Profile]:
+		"""
+		Process a file for profile definitions
+		"""
 		if self._is_legacy(file):
 			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
@@ -224,6 +262,9 @@ class ProfileHandler(Singleton):
 		return []
 
 	def _find_available_profiles(self) -> List[Profile]:
+		"""
+		Search the profile path for profile definitions
+		"""
 		profiles = []
 		for file in self._profiles_path.glob('**/*.py'):
 			# ignore the abstract profiles class
@@ -235,6 +276,10 @@ class ProfileHandler(Singleton):
 		return profiles
 
 	def reset_top_level_profiles(self, exclude: List[Profile] = []):
+		"""
+		Reset all top level profile configurations, this is usually necessary
+		when a new top level profile is selected
+		"""
 		excluded_profiles = [p.name for p in exclude]
 		for profile in self.get_top_level_profiles():
 			if profile.name not in excluded_profiles:
@@ -249,6 +294,9 @@ class ProfileHandler(Singleton):
 		multi: bool = False,
 		with_back_option: bool = False
 	) -> MenuSelection:
+		"""
+		Helper function to perform a profile selection
+		"""
 		options = {p.name: p for p in selectable_profiles}
 
 		warning = str(_('Are you sure you want to reset this setting?'))
@@ -285,5 +333,8 @@ class ProfileHandler(Singleton):
 		return choice
 
 	def preview_text(self, selection: str) -> Optional[str]:
+		"""
+		Callback for preview display on profile selection
+		"""
 		profile = self.get_profile_by_name(selection)
 		return profile.preview_text() if profile is not None else None

@@ -19,7 +19,7 @@ class QtileProfileV2(XorgProfile):
 		]
 
 	@property
-	def greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Lightdm
 
 	def preview_text(self) -> Optional[str]:

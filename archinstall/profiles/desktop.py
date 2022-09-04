@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, List
 
 from archinstall.lib.menu.menu import MenuSelectionType, Menu
 from archinstall.lib.output import log
@@ -19,8 +19,6 @@ class DesktopProfile(Profile):
 			current_selection=current_selection
 		)
 
-		self._greeter_type: Optional[GreeterType] = None
-
 	@property
 	def packages(self) -> List[str]:
 		return [
@@ -37,13 +35,11 @@ class DesktopProfile(Profile):
 		]
 
 	def _select_greeter(self):
-		if not self.current_selection:
-			return
-
 		combined_greeters = set()
+
 		for profile in self.current_selection:
-			if profile.greeter_type:
-				combined_greeters.add(profile.greeter_type)
+			if profile.default_greeter_type:
+				combined_greeters.add(profile.default_greeter_type)
 
 		if len(combined_greeters) >= 1:
 			profile_names = ', '.join([profile.name for profile in self.current_selection])
@@ -56,7 +52,7 @@ class DesktopProfile(Profile):
 				default_option = list(combined_greeters)[0].value
 
 			choice = Menu(title, greeter_options, skip=False, default_option=default_option).run()
-			self._greeter_type = choice.value
+			self.greeter_type = GreeterType(choice.value)
 
 	def do_on_select(self) -> SelectResult:
 		handler = ProfileHandler()
@@ -82,13 +78,13 @@ class DesktopProfile(Profile):
 			profile.post_install(install_session)
 
 	def _install_greeter(self, install_session: 'Installer'):
-		if self._greeter_type is None:
+		if self.greeter_type is None:
 			return
 
 		packages = []
 		service = None
 
-		match self._greeter_type:
+		match self.greeter_type:
 			case GreeterType.Lightdm:
 				packages = ['lightdm', 'lightdm-gtk-greeter']
 				service = ['lightdm']

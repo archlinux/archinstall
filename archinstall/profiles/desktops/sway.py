@@ -28,7 +28,7 @@ class SwayProfile(Profile):
 		]
 
 	@property
-	def greeter_type(self) -> Optional[GreeterType]:
+	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Lightdm
 
 	def _check_driver(self) -> bool:
