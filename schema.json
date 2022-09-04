@@ -170,6 +170,11 @@
                     "Nvidia (open-source nouveau driver)",
                     "Nvidia (proprietary)"
                 ]
+            },
+            "greeter_type": {
+                "description": "Greeter type to install if a desktop profile is used, ignored otherwise.",
+                "type": "string",
+                "enum": ["lightdm", "sddm", "gdm"]
             }
         },
         "services": {
