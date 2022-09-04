@@ -37,6 +37,10 @@ doc = ["sphinx"]
 include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]
 exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
 
+[tool.mypy]
+python_version = "3.10"
+exclude = "tests"
+
 [tool.bandit]
 targets = ["ourkvm"]
 exclude = ["/tests"]
