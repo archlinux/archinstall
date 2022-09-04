@@ -57,6 +57,7 @@ Türk
 русский
 اردو
 Ελληνικά
+தமிழ்
 ```
 
 Any contributions to the translations are more than welcome, and to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)
