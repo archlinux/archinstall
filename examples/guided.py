@@ -192,9 +192,9 @@ def perform_installation(mountpoint):
 			enable_testing = False
 			enable_multilib = False
 
-		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib):
-			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
-			installation.set_hostname(archinstall.arguments['hostname'])
+		if installation.minimal_installation(
+				testing=enable_testing, multilib=enable_multilib, hostname=archinstall.arguments['hostname'],
+				locales=[f"{archinstall.arguments['sys-language']} {archinstall.arguments['sys-encoding'].upper()}"]):
 			if archinstall.arguments.get('mirror-region') is not None:
 				if archinstall.arguments.get("mirrors", None) is not None:
 					installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
