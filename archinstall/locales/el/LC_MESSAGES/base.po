@@ -787,6 +787,9 @@ msgstr "Επεξεργασία υποόγκου"
 msgid "Delete subvolume"
 msgstr "Διαγραφή υποόγκου"
 
+msgid "Configured {} interfaces"
+msgstr "Διαμορφωμένες {} διεπαφές"
+
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
 
@@ -815,6 +818,3 @@ msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με �
 
 msgid "Parallel Downloads"
 msgstr "Παράλληλες Λήψεις"
-
-msgid "Configured {} interfaces"
-msgstr "Διαμορφωμένες {} διεπαφές"
