@@ -789,7 +789,7 @@ msgid "Delete subvolume"
 msgstr "Удалить подтом"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Настроено интерфейсов: {}"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
