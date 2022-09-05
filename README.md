@@ -54,7 +54,7 @@ Português
 Svenska                                                                                                                                                  
 Türk                                                                                                                                                     
 čeština                                                                                                                                                  
-русский
+Русский
 اردو
 Ελληνικά
 தமிழ்
