@@ -155,7 +155,7 @@
  {"abbr": "sw", "lang": "Swahili (macrolanguage)"},
  {"abbr": "sv", "lang": "Swedish", "translated_lang":  "Svenska"},
  {"abbr": "ty", "lang": "Tahitian"},
- {"abbr": "ta", "lang": "Tamil"},
+ {"abbr": "ta", "lang": "Tamil", "translated_lang":  "தமிழ்"},
  {"abbr": "tt", "lang": "Tatar"},
  {"abbr": "te", "lang": "Telugu"},
  {"abbr": "tg", "lang": "Tajik"},
