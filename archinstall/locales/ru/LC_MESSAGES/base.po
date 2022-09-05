@@ -789,7 +789,7 @@ msgid "Delete subvolume"
 msgstr "Удалить подтом"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Настроено интерфейсов: {}"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
