@@ -3,54 +3,41 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
-
-from ..menu import Menu
-from ..menu.selection_menu import Selector, GeneralMenu
+from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
+from ..menu import Menu
+from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration
-from ..storage import storage
+from ..models.users import User
+from ..output import FormattedOutput
 from ..profiles import is_desktop_profile, Profile
-from ..disk import encrypted_partitions
-
-from ..user_interaction import get_password, ask_for_a_timezone, save_config
-from ..user_interaction import ask_ntp
-from ..user_interaction import ask_for_swap
-from ..user_interaction import ask_for_bootloader
-from ..user_interaction import ask_hostname
-from ..user_interaction import ask_for_audio_selection
+from ..storage import storage
+from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
-from ..user_interaction import ask_to_configure_network
 from ..user_interaction import ask_for_additional_users
-from ..user_interaction import select_language
-from ..user_interaction import select_mirror_regions
-from ..user_interaction import select_locale_lang
-from ..user_interaction import select_locale_enc
+from ..user_interaction import ask_for_audio_selection
+from ..user_interaction import ask_for_bootloader
+from ..user_interaction import ask_for_swap
+from ..user_interaction import ask_hostname
+from ..user_interaction import ask_ntp
+from ..user_interaction import ask_to_configure_network
+from ..user_interaction import get_password, ask_for_a_timezone, save_config
+from ..user_interaction import select_additional_repositories
 from ..user_interaction import select_disk_layout
-from ..user_interaction import select_kernel
 from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
+from ..user_interaction import select_kernel
+from ..user_interaction import select_language
+from ..user_interaction import select_locale_enc
+from ..user_interaction import select_locale_lang
+from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
-from ..user_interaction import select_additional_repositories
-from ..user_interaction import add_number_of_parrallel_downloads
-from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
-from ..output import FormattedOutput
-from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any
 
-def display_language(global_menu, x):
-	if type(x) == Language:
-		return x
-	elif type(x) == str:
-		translation_handler = global_menu._translation_handler
-		for language in translation_handler._get_translations():
-			if language.lang == x:
-				return language
-	else:
-		raise ValueError(f"Language entry needs to Language() object or string of full language like 'English'.")
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
@@ -62,9 +49,9 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Archinstall language'),
-				lambda x: self._select_archinstall_language(display_language(self, x)),
-				display_func=lambda x: display_language(self, x).display_name,
-				default=self.translation_handler.get_language('en'))
+				lambda x: self._select_archinstall_language(x),
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language_by_abbr('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),
