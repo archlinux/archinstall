@@ -52,7 +52,7 @@ Polskie
 Portugues do Brasil                                                                                                                                      
 Português                                                                                                                                                
 Svenska                                                                                                                                                  
-Türk                                                                                                                                                     
+Türkçe                                                                                                                                                     
 čeština                                                                                                                                                  
 Русский
 اردو
