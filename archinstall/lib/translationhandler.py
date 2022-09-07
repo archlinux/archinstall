@@ -46,8 +46,8 @@ class TranslationHandler:
 	_languages = 'languages.json'
 
 	def __init__(self):
-		# to display cyrillic languages correctly
-		self._set_font('UniCyr_8x16')
+		# to display latin, greek, cyrillic characters
+		self._set_font('LatGrkCyr-8x16')
 
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
@@ -61,7 +61,7 @@ class TranslationHandler:
 		Load all translated languages and return a list of such
 		"""
 		mappings = self._load_language_mappings()
-		defined_languages = self._defined_languages()
+		defined_languages = self._provided_translations()
 
 		languages = []
 
@@ -165,13 +165,20 @@ class TranslationHandler:
 		locales_dir = Path.joinpath(cur_path, 'locales')
 		return locales_dir
 
-	def _defined_languages(self) -> List[str]:
+	def _provided_translations(self) -> List[str]:
 		"""
 		Get a list of all known languages
 		"""
 		locales_dir = self._get_locales_dir()
 		filenames = os.listdir(locales_dir)
-		return list(filter(lambda x: len(x) == 2 or x == 'pt_BR', filenames))
+
+		translation_files = []
+		for filename in filenames:
+			if len(filename) == 2 or filename == 'pt_BR':
+				if filename not in ['ur', 'ta']:
+					translation_files.append(filename)
+
+		return translation_files
 
 
 class DeferredTranslation:
