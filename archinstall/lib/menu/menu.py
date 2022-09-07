@@ -162,14 +162,17 @@ class Menu(TerminalMenu):
 
 		action_info = ''
 		if skip:
-			action_info += str(_("Use ESC to skip"))
+			action_info += str(_('ESC to skip'))
 
 		if self._raise_error_on_interrupt:
-			if len(action_info) > 0:
-				action_info += '\n'
-			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('CTRL+C to reset'))
 
-		menu_title += action_info
+		if multi:
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('TAB to select'))
+
+		menu_title += action_info + '\n'
 
 		if default_option:
 			# if a default value was specified we move that one
