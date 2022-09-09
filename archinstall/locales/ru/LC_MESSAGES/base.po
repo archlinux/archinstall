@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Здесь был создан файл журнала: {} {}"
@@ -792,7 +792,7 @@ msgid "Configured {} interfaces"
 msgstr "Настроено интерфейсов: {}"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Этот параметр определяет количество параллельных загрузок, которые могут происходить во время установки"
 
 #, python-brace-format
 msgid ""
@@ -800,32 +800,37 @@ msgid ""
 " (Enter a value between 1 to {max_downloads})\n"
 "Note:"
 msgstr ""
+"Введите количество параллельных загрузок, которые будут включены.\n"
+" (Введите значение от 1 до {max_downloads})\n"
+"Примечание:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Максимальное значение: {max_downloads} ( Позволяет {max_downloads} параллельных загрузок, позволяет {max_downloads+1} загрузок одновременно )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Минимальное значение: 1 ( Позволяет 1 параллельную загрузку, позволяет 2 загрузки одновременно )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Отключить/по умолчанию: 0 ( Отключает параллельную загрузку, позволяет только 1 загрузку за один раз )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Неверный ввод! Повторите попытку с правильным вводом [1 - {max_downloads}, или 0 - отключить]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Параллельные загрузки"
 
-#, fuzzy
 msgid "ESC to skip"
-msgstr "Используйте ESC, чтобы пропустить"
+msgstr "ESC, чтобы пропустить"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C, чтобы сбросить"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB, чтобы выбрать"
+
+msgid "[Default value: 0] > "
+msgstr "[Значение по умолчанию: 0] > "
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
