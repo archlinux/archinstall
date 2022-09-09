@@ -217,7 +217,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 
 	while True:
 		try:
-			input_number = int(TextInput("[Default value: 0] > ").run().strip() or 0)
+			input_number = int(TextInput(_("[Default value: 0] > ")).run().strip() or 0)
 			if input_number <= 0:
 				input_number = 0
 			elif input_number > max_downloads:
