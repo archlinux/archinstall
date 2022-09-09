@@ -818,3 +818,13 @@ msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με �
 
 msgid "Parallel Downloads"
 msgstr "Παράλληλες Λήψεις"
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Χρησιμοποιήστε ESC για παράλειψη"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""

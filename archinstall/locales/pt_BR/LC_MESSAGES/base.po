@@ -813,3 +813,13 @@ msgstr ""
 
 msgid "Parallel Downloads"
 msgstr ""
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Use ESC para pular"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""

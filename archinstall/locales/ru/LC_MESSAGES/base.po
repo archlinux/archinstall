@@ -817,6 +817,16 @@ msgstr ""
 msgid "Parallel Downloads"
 msgstr ""
 
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Используйте ESC, чтобы пропустить"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"

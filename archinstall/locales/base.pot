@@ -823,3 +823,12 @@ msgstr ""
 
 msgid "Parallel Downloads"
 msgstr ""
+
+msgid "ESC to skip"
+msgstr ""
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""

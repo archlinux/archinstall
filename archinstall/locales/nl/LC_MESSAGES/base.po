@@ -849,6 +849,16 @@ msgstr ""
 msgid "Parallel Downloads"
 msgstr ""
 
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Druk op Esc om over te slaan\n"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
+
 #~ msgid "Select disk layout"
 #~ msgstr "Kies een schijfindeling"
 

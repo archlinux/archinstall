@@ -829,3 +829,13 @@ msgstr ""
 
 msgid "Parallel Downloads"
 msgstr ""
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Geçmek için ESC'yi kullanın"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
