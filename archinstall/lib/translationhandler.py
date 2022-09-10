@@ -65,7 +65,7 @@ class TranslationHandler:
 					name = name.split('.')[0]
 
 				import time
-				time.sleep(0.5)
+				time.sleep(1)
 
 				self._set_font(name)
 				print("தமிழ்")
