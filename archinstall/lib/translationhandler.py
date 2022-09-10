@@ -56,6 +56,11 @@ class TranslationHandler:
 		else:
 			self._set_font('LatGrkCyr-8x16')
 
+		print("தமிழ்")
+		print("தமிழ்")
+		print("தமிழ்")
+		print("தமிழ்")
+		print("தமிழ்")
 
 		for file in glob.glob('/usr/share/kbd/consolefonts/*'):
 			path = Path(file)
@@ -65,10 +70,8 @@ class TranslationHandler:
 					name = name.split('.')[0]
 
 				import time
-				time.sleep(1)
-
+				time.sleep(3)
 				self._set_font(name)
-				print("தமிழ்")
 
 		a = 1/0
 
