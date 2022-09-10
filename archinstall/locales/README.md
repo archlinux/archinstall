@@ -3,14 +3,14 @@
 Archinstall supports multiple languages, which depend on translations coming from the community :)
 
 ## Important Note
-Before starting to translate the messages into a language, please be aware that a font for that language my not be
-available on the ISO. We are using setting the font `/usr/share/kbd/consolefonts/LatGrkCyr-8x16.psfu.gz` in archinstall
-which should cover a fair amount of different languages but not all of them. 
+Before starting a new language translation be aware that a font for that language my not be
+available on the ISO. We are using the pre-installed font `/usr/share/kbd/consolefonts/LatGrkCyr-8x16.psfu.gz` in archinstall
+which should cover a fair amount of different languages but unfortunately not all of them.
 
-We have the option to be able to provide a custom font in case the above is not covering a specific language, which can
-be achienved by installing the font yourself on the ISO and saving it to `/usr/share/kbd/consolefonts/archinstall_font.psfu.gz`.
+We have the option to provide a custom font in case the above is not covering a specific language, which can
+be achieved by installing the font yourself on the ISO and saving it to `/usr/share/kbd/consolefonts/archinstall_font.psfu.gz`.
 If this font is present it will be automatically loaded and all languages which are not supported by the default font will
-be made available (but only some might actually work).
+be enabled (but only some might actually work).
 
 ## Adding new languages
 
