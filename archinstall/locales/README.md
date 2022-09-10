@@ -12,6 +12,12 @@ be achieved by installing the font yourself on the ISO and saving it to `/usr/sh
 If this font is present it will be automatically loaded and all languages which are not supported by the default font will
 be enabled (but only some might actually work).
 
+Please make sure that the provided language works with the default font on the ISO, and if not mark it in the `languages.json`
+that it needs an external dependency
+```
+{"abbr": "ur", "lang": "Urdu", "translated_lang": "اردو", "external_dep":  true},
+```
+
 ## Adding new languages
 
 New languages can be added simply by creating a new folder with the proper language abbreviation (see list `languages.json` if unsure).  
