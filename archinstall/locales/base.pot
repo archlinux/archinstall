@@ -832,3 +832,6 @@ msgstr ""
 
 msgid "TAB to select"
 msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
