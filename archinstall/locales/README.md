@@ -1,8 +1,20 @@
 # Nationalization
 
-Archinstall supports multiple languages, which depend on translations coming from the community :) 
+Archinstall supports multiple languages, which depend on translations coming from the community :)
 
-New languages can be added simply by creating a new folder with the proper language abbrevation (see list `languages.json` if unsure).  
+## Important Note
+Before starting to translate the messages into a language, please be aware that a font for that language my not be
+available on the ISO. We are using setting the font `/usr/share/kbd/consolefonts/LatGrkCyr-8x16.psfu.gz` in archinstall
+which should cover a fair amount of different languages but not all of them. 
+
+We have the option to be able to provide a custom font in case the above is not covering a specific language, which can
+be achienved by installing the font yourself on the ISO and saving it to `/usr/share/kbd/consolefonts/archinstall_font.psfu.gz`.
+If this font is present it will be automatically loaded and all languages which are not supported by the default font will
+be made available (but only some might actually work).
+
+## Adding new languages
+
+New languages can be added simply by creating a new folder with the proper language abbreviation (see list `languages.json` if unsure).  
 Run the following command to create a new template for a language
 ```
 mkdir -p <abbr>/LC_MESSAGES/ && touch <abbr>/LC_MESSAGES/base.po
