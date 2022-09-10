@@ -54,7 +54,7 @@ class Menu(TerminalMenu):
 		cursor_index : Optional[int] = None,
 		preview_command: Optional[Callable] = None,
 		preview_size: float = 0.75,
-		preview_title: str ='Info',
+		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
 		raise_error_on_interrupt :bool = False,
 		raise_error_warning_msg :str = '',
