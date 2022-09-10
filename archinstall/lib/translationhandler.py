@@ -56,26 +56,6 @@ class TranslationHandler:
 		else:
 			self._set_font('LatGrkCyr-8x16')
 
-		print("தமிழ்")
-		print("தமிழ்")
-		print("தமிழ்")
-		print("தமிழ்")
-		print("தமிழ்")
-
-		for file in glob.glob('/usr/share/kbd/consolefonts/*'):
-			path = Path(file)
-			if path.suffix == '.gz' and 'psf' in path.name:
-				name = path.stem
-				if '.' in name:
-					name = name.split('.')[0]
-
-				import time
-				time.sleep(3)
-				self._set_font(name)
-
-		a = 1/0
-
-
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
 

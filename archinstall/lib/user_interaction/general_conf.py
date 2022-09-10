@@ -152,7 +152,7 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 			# present to be able to use this language
 			if not language.external_dep or TranslationHandler.is_custom_font_enabled():
 				return language
-			select_archinstall_language(languages, preset_value)
+			return select_archinstall_language(languages, preset_value)
 
 
 def select_profile(preset) -> Optional[Profile]:
