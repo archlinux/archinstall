@@ -64,6 +64,9 @@ class TranslationHandler:
 				if '.' in name:
 					name = name.split('.')[0]
 
+				import time
+				time.sleep(0.5)
+
 				self._set_font(name)
 				print("தமிழ்")
 
