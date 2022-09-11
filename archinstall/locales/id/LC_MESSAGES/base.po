@@ -247,7 +247,7 @@ msgid "Mirror region"
 msgstr "Wilayah mirror"
 
 msgid "Locale language"
-msgstr "Locale bahasa"
+msgstr "Locale language"
 
 msgid "Locale encoding"
 msgstr "Locale encoding"
@@ -548,10 +548,10 @@ msgid " Subvolume :{:16}"
 msgstr " Subvolume :{:16}"
 
 msgid " mounted at {:16}"
-msgstr "di mount di {:16}"
+msgstr " di mount di {:16}"
 
 msgid " with option {}"
-msgstr "dengan opsi {}"
+msgstr " dengan opsi {}"
 
 msgid ""
 "\n"
@@ -561,7 +561,7 @@ msgstr ""
 "Isi nilai yang diinginkan untuk subvolume baru\n"
 
 msgid "Subvolume name "
-msgstr "Nama subvolume"
+msgstr " Nama subvolume"
 
 msgid "Subvolume mountpoint"
 msgstr "Titik mount subvolume"
@@ -755,7 +755,7 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "Baik kata sandi root atau setidaknya 1 pengguna dengan hak sudo harus ditentukan"
 
 msgid "Enter username (leave blank to skip): "
-msgstr "Masukkan nama pengguna (kosongkan untuk melewati):"
+msgstr " Masukkan nama pengguna (kosongkan untuk melewati):"
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
@@ -804,13 +804,13 @@ msgstr ""
 "Catatan:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr "- Nilai maksimum   : {max_downloads} ( Memungkinkan {max_downloads} unduhan paralel, memungkinkan {max_downloads+1} unduhan sekaligus)"
+msgstr " - Nilai maksimum   : {max_downloads} ( Memungkinkan {max_downloads} unduhan paralel, memungkinkan {max_downloads+1} unduhan sekaligus)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr "- Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 unduhan sekaligus)"
+msgstr " - Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 unduhan sekaligus)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr "- Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
+msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
