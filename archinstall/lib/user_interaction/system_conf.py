@@ -52,10 +52,7 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	hard_drives = all_blockdevices(partitions=False).values()
 	options = {f'{option}': option for option in hard_drives}
 
-	if preset:
-		preset_disks = {f'{option}': option for option in preset}
-	else:
-		preset_disks = {}
+	preset_disks = {f'{option}': option for option in preset}
 
 	title = str(_('Select one or more hard drives to use and configure\n'))
 	title += str(_('Any modifications to the existing setting will reset the disk layout!'))
