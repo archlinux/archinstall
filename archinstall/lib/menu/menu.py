@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from os import system
-from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
+from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 
@@ -52,9 +52,9 @@ class Menu(TerminalMenu):
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
 		cursor_index : Optional[int] = None,
-		preview_command=None,
-		preview_size=0.75,
-		preview_title='Info',
+		preview_command: Optional[Callable] = None,
+		preview_size: float = 0.75,
+		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
 		raise_error_on_interrupt :bool = False,
 		raise_error_warning_msg :str = '',
@@ -152,6 +152,7 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = raise_error_on_interrupt
 		self._raise_error_warning_msg = raise_error_warning_msg
+		self._preview_command = preview_command
 
 		menu_title = f'\n{title}\n\n'
 
@@ -198,7 +199,7 @@ class Menu(TerminalMenu):
 			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
-			preview_command=preview_command,
+			preview_command=lambda x: self._preview_wrapper(preview_command, x),
 			preview_size=preview_size,
 			preview_title=preview_title,
 			raise_error_on_interrupt=self._raise_error_on_interrupt,
@@ -234,6 +235,13 @@ class Menu(TerminalMenu):
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
 			return MenuSelection(type_=MenuSelectionType.Esc)
+
+	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
+		if preview_command:
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' == current_selection:
+				current_selection = self._default_option
+			return preview_command(current_selection)
+		return None
 
 	def run(self) -> MenuSelection:
 		ret = self._show()

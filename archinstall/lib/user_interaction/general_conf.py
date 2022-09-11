@@ -13,7 +13,7 @@ from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 
-from ..translationhandler import Language
+from ..translationhandler import Language, TranslationHandler
 from ..packages.packages import validate_package_list
 
 from ..storage import storage
@@ -125,16 +125,34 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 	# name of the language in its own language
 	options = {lang.display_name: lang for lang in languages}
 
+	def dependency_preview(current_selection: str) -> Optional[str]:
+		current_lang = options[current_selection]
+
+		if current_lang.external_dep and not TranslationHandler.is_custom_font_enabled():
+			font_file = TranslationHandler.custom_font_path()
+			text = str(_('To be able to use this translation, please install a font manually that supports the language.')) + '\n'
+			text += str(_('The font should be stored as {}')).format(font_file)
+			return text
+		return None
+
 	choice = Menu(
 		_('Archinstall language'),
 		list(options.keys()),
-		default_option=preset_value.display_name
+		default_option=preset_value.display_name,
+		preview_command=lambda x: dependency_preview(x),
+		preview_size=0.5
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset_value
+		case MenuSelectionType.Esc:
+			return preset_value
 		case MenuSelectionType.Selection:
-			return options[choice.value]
+			language: Language = options[choice.value]
+			# we have to make sure that the proper AUR dependency is
+			# present to be able to use this language
+			if not language.external_dep or TranslationHandler.is_custom_font_enabled():
+				return language
+			return select_archinstall_language(languages, preset_value)
 
 
 def select_profile(preset) -> Optional[Profile]:
