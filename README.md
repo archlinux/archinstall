@@ -45,7 +45,8 @@ Current translations are listed below and vary in the amount of translations per
 English                                                                                                                                       
 Deutsch
 Española                                                                                                                                                 
-Française                                                                                                                                                
+Française
+Indonesia                                                                                                                                                
 Italiano                                                                                                                                                 
 Nederlands
 Polskie                                                                                                                                            
