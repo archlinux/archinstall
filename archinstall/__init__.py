@@ -1,4 +1,7 @@
 """Arch Linux installer - guided, templates etc."""
+import parted
+import tabulate
+
 import typing
 from argparse import ArgumentParser, Namespace
 
