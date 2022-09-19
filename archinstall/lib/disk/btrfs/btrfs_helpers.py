@@ -25,7 +25,7 @@ class fstab_btrfs_compression_plugin():
 			fstab = fh.read()
 
 		print([fstab])
-		for line in fstab.split():
+		for line in fstab.split('\n'):
 			print([line])
 			if subvoldef := re.findall(',.*?subvol=.*?[ ]', line):
 				print(subvoldef)
