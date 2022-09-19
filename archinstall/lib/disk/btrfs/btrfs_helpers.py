@@ -30,7 +30,6 @@ class fstab_btrfs_compression_plugin():
 
 			print(line)
 
-		for subvolume self.partition_dict)
 		exit(1)
 
 
