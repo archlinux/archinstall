@@ -24,18 +24,22 @@ class fstab_btrfs_compression_plugin():
 		with open(f"{installation.target}/etc/fstab", 'r') as fh:
 			fstab = fh.read()
 
-		print(self.partition_dict)
-
 		# Replace the {installation}/etc/fstab with entries
 		# using the compress=zstd where the mountpoint has compression set.
 		with open(f"{installation.target}/etc/fstab", 'w') as fh:
 			for line in fstab.split('\n'):
-				if subvoldef := re.findall(',.*?subvol=.*?[ ]', line):
-					line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
+				# So first we grab the mount options by using subvol=.*? as a locator.
+				# And we also grab the mountpoint for the entry, for instance /var/log
+				if (subvoldef := re.findall(',.*?subvol=.*?[ ]', line)) and (mountpoint := re.findall('[\t ]/.*?[\t ]', line)):
+					for subvolume in self.partition_dict.get('btrfs', {}).get('subvolumes', []):
+						# We then locate the correct subvolume and check if it's compressed
+						if subvolume.compress and subvolume.mountpoint == mountpoint.strip():
+							# We then sneak in the compress=zstd option and add back the rest of the options
+							line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
+							break
 
 				fh.write(f"{line}\n")
 
-		exit(1)
 		return True
 
 
