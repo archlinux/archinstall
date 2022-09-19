@@ -16,10 +16,14 @@ if TYPE_CHECKING:
 
 
 class fstab_btrfs_compression_plugin():
+	def __init__(self, partition_dict):
+		self.partition_dict = partition_dict
+
 	def on_genfstab(self, installation):
 		with open(f"{installation.target}/etc/fstab", 'r') as fh:
 			print(fh.read())
 
+		print(self.partition_dict)
 		exit(1)
 
 
@@ -71,7 +75,7 @@ def setup_subvolumes(installation: 'Installer', partition_dict: Dict[str, Any]):
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 
 			if 'fstab_btrfs_compression_plugin' not in plugins:
-				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin()
+				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin(partition_dict)
 
 
 def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:
