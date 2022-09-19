@@ -30,7 +30,7 @@ class fstab_btrfs_compression_plugin():
 			for line in fstab.split('\n'):
 				# So first we grab the mount options by using subvol=.*? as a locator.
 				# And we also grab the mountpoint for the entry, for instance /var/log
-				if (subvoldef := re.findall(',.*?subvol=.*?[ ]', line)) and (mountpoint := re.findall('[\t ]/.*?[\t ]', line)):
+				if (subvoldef := re.findall(',.*?subvol=.*?[\t ]', line)) and (mountpoint := re.findall('[\t ]/.*?[\t ]', line)):
 					for subvolume in self.partition_dict.get('btrfs', {}).get('subvolumes', []):
 						# We then locate the correct subvolume and check if it's compressed
 						if subvolume.compress and subvolume.mountpoint == mountpoint[0].strip():
