@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
@@ -21,9 +22,15 @@ class fstab_btrfs_compression_plugin():
 
 	def on_genfstab(self, installation):
 		with open(f"{installation.target}/etc/fstab", 'r') as fh:
-			print(fh.read())
+			fstab = fh.read()
 
-		print(self.partition_dict)
+		for line in fstab.split():
+			if subvoldef := re.findall(',.*?subvol=.*?[ ]', line):
+				line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
+
+			print(line)
+
+		for subvolume self.partition_dict)
 		exit(1)
 
 
