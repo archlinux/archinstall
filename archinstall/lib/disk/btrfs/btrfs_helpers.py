@@ -33,7 +33,7 @@ class fstab_btrfs_compression_plugin():
 				if (subvoldef := re.findall(',.*?subvol=.*?[ ]', line)) and (mountpoint := re.findall('[\t ]/.*?[\t ]', line)):
 					for subvolume in self.partition_dict.get('btrfs', {}).get('subvolumes', []):
 						# We then locate the correct subvolume and check if it's compressed
-						if subvolume.compress and subvolume.mountpoint == mountpoint.strip():
+						if subvolume.compress and subvolume.mountpoint == mountpoint[0].strip():
 							# We then sneak in the compress=zstd option and add back the rest of the options
 							line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
 							break
