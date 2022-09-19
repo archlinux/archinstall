@@ -432,7 +432,8 @@ class Installer:
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_genfstab'):
-				plugin.on_genfstab(self)
+				if plugin.on_genfstab(self) is True:
+					break
 
 		return True
 
