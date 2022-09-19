@@ -24,8 +24,11 @@ class fstab_btrfs_compression_plugin():
 		with open(f"{installation.target}/etc/fstab", 'r') as fh:
 			fstab = fh.read()
 
+		print([fstab])
 		for line in fstab.split():
+			print([line])
 			if subvoldef := re.findall(',.*?subvol=.*?[ ]', line):
+				print(subvoldef)
 				line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
 
 			print(line)
