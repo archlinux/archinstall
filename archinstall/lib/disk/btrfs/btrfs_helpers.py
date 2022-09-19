@@ -6,12 +6,21 @@ from ...models.subvolume import Subvolume
 from ...exceptions import SysCallError, DiskError
 from ...general import SysCommand
 from ...output import log
+from ...plugins import plugins
 from ..helpers import get_mount_info
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 if TYPE_CHECKING:
 	from .btrfspartition import BTRFSPartition
 	from ...installer import Installer
+
+
+class fstab_btrfs_compression_plugin():
+	def on_genfstab(self, installation):
+		with open(f"{installation.target}/etc/fstab", 'r') as fh:
+			print(fh.read())
+
+		exit(1)
 
 
 def mount_subvolume(installation: 'Installer', device: 'BTRFSPartition', subvolume: Subvolume):
@@ -60,6 +69,9 @@ def setup_subvolumes(installation: 'Installer', partition_dict: Dict[str, Any]):
 			if not any(['compress' in filesystem_option for filesystem_option in partition_dict.get('filesystem', {}).get('mount_options', [])]):
 				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
+
+			if 'fstab_btrfs_compression_plugin' not in plugins:
+				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin(installation)
 
 
 def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:

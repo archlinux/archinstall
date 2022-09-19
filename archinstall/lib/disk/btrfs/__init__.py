@@ -54,7 +54,3 @@ def create_subvolume(installation: Installer, subvolume_location :Union[pathlib.
 	log(f"Creating a subvolume on {target}", level=logging.INFO)
 	if (cmd := SysCommand(f"btrfs subvolume create {target}")).exit_code != 0:
 		raise DiskError(f"Could not create a subvolume at {target}: {cmd}")
-
-
-def manage_btrfs_subvolumes(installation :Installer, partition :Dict[str, str]) -> list:
-	raise Deprecated("Use setup_subvolumes() instead.")
