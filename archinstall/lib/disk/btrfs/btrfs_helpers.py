@@ -71,7 +71,7 @@ def setup_subvolumes(installation: 'Installer', partition_dict: Dict[str, Any]):
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
 
 			if 'fstab_btrfs_compression_plugin' not in plugins:
-				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin(installation)
+				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin()
 
 
 def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:
