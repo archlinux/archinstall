@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
@@ -6,12 +7,42 @@ from ...models.subvolume import Subvolume
 from ...exceptions import SysCallError, DiskError
 from ...general import SysCommand
 from ...output import log
+from ...plugins import plugins
 from ..helpers import get_mount_info
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
 if TYPE_CHECKING:
 	from .btrfspartition import BTRFSPartition
 	from ...installer import Installer
+
+
+class fstab_btrfs_compression_plugin():
+	def __init__(self, partition_dict):
+		self.partition_dict = partition_dict
+
+	def on_genfstab(self, installation):
+		with open(f"{installation.target}/etc/fstab", 'r') as fh:
+			fstab = fh.read()
+
+		# Replace the {installation}/etc/fstab with entries
+		# using the compress=zstd where the mountpoint has compression set.
+		with open(f"{installation.target}/etc/fstab", 'w') as fh:
+			for line in fstab.split('\n'):
+				# So first we grab the mount options by using subvol=.*? as a locator.
+				# And we also grab the mountpoint for the entry, for instance /var/log
+				if (subvoldef := re.findall(',.*?subvol=.*?[\t ]', line)) and (mountpoint := re.findall('[\t ]/.*?[\t ]', line)):
+					for subvolume in self.partition_dict.get('btrfs', {}).get('subvolumes', []):
+						# We then locate the correct subvolume and check if it's compressed
+						if subvolume.compress and subvolume.mountpoint == mountpoint[0].strip():
+							# We then sneak in the compress=zstd option if it doesn't already exist:
+							# We skip entries where compression is already defined
+							if ',compress=zstd,' not in line:
+								line = line.replace(subvoldef[0], f",compress=zstd{subvoldef[0]}")
+								break
+
+				fh.write(f"{line}\n")
+
+		return True
 
 
 def mount_subvolume(installation: 'Installer', device: 'BTRFSPartition', subvolume: Subvolume):
@@ -60,6 +91,9 @@ def setup_subvolumes(installation: 'Installer', partition_dict: Dict[str, Any]):
 			if not any(['compress' in filesystem_option for filesystem_option in partition_dict.get('filesystem', {}).get('mount_options', [])]):
 				if (cmd := SysCommand(f"chattr +c {installation.target}/{name}")).exit_code != 0:
 					raise DiskError(f"Could not set compress attribute at {installation.target}/{name}: {cmd}")
+
+			if 'fstab_btrfs_compression_plugin' not in plugins:
+				plugins['fstab_btrfs_compression_plugin'] = fstab_btrfs_compression_plugin(partition_dict)
 
 
 def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:
