@@ -220,7 +220,12 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 	# we'll iterate the /sys/class definitions and find the information
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
-		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
+		device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+
+		if device_path.exists() is False:
+			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
+			continue
+
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
