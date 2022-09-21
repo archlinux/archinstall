@@ -204,11 +204,18 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 		}
 	}
 
+
 def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
-def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, Any]:
+
+def all_blockdevices(
+	mappers: bool = False,
+	partitions: bool = False,
+	error: bool = False,
+	exclude_iso: bool = False
+) -> Dict[str, Any]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
 	"""
@@ -411,7 +418,7 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 		# Since all_blockdevices() returns PosixPath objects, we need to convert
 		# findmnt paths to pathlib.Path() first:
 		mountpoint = pathlib.Path(mountpoint)
-		
+
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
