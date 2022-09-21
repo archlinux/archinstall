@@ -1,0 +1,830 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ta\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.1.1\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr " இந்த சிக்கல் (மற்றும் கோப்பை) https://github.com/archlinux/archinstall/issues க்கு சமர்ப்பிக்கவும்"
+
+msgid "Do you really want to abort?"
+msgstr "நீங்கள் உண்மையிலேயே கைவிட விரும்புகிறீர்களா?"
+
+msgid "And one more time for verification: "
+msgstr "மற்றும் மேலும் ஒரு முறை சரிபார்த்தல்: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "நீங்கள் zram இல் swap ஐப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Desired hostname for the installation: "
+msgstr "நிறுவலுக்கு விரும்பிய ஹோஸ்ட்பெயர்: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "சூடோ சிறப்புரிமைகளுடன் தேவைப்படும் சூப்பர் யூசருக்கான பயனர் பெயர்: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "நிறுவ வேண்டிய கூடுதல் பயனர்கள் (பயனர்கள் யாரும் இல்லாத நிலையில் காலியாக விடவும்): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "இந்தப் பயனர் ஒரு சூப்பர் யூசராக (sudoer) இருக்க வேண்டுமா?"
+
+msgid "Select a timezone"
+msgstr "நேர மண்டலத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "நீங்கள் systemd-boot க்குப் பதிலாக GRUB ஐ துவக்க ஏற்றியாகப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Choose a bootloader"
+msgstr "துவக்க ஏற்றியைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Choose an audio server"
+msgstr "ஆடியோ சர்வரை தேர்வு செய்யவும்"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "தொகுப்பு Base, base-devel, linux, linux-firmware, efibootmgr மற்றும் விருப்ப சுயவிவர தொகுப்புகள் போன்ற தொகுப்புகள் மட்டுமே நிறுவப்பட்டுள்ளன."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "நீங்கள் பயர்பாக்ஸ் அல்லது குரோமியம் போன்ற இணைய உலாவியை விரும்பினால், அதை பின்வரும் வரியில் குறிப்பிடலாம்."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "நிறுவ கூடுதல் தொகுப்புகளை எழுதவும் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "நிறுவலுக்கு ISO பிணைய கட்டமைப்பு நகலெடுக்கவும்"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "பயன்படுத்துங்கள் NetworkManager ஐப்(GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
+
+msgid "Select one network interface to configure"
+msgstr "கட்டமைக்க ஒரு பிணைய இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "எந்த பயன்முறையை \"{}\" உள்ளமைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் அல்லது இயல்புநிலை பயன்முறை \"{}\" ஐப் பயன்படுத்த தவிர்க்கவும்"
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "உள்ளிடுங்கள் IP மற்றும் சப்நெட்டை {}(எடுத்துக்காட்டு: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "உங்கள் நுழைவாயில் (திசைவி) IP முகவரியை உள்ளிடவும் அல்லது எதற்கும் காலியாக விடவும்: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "உங்கள் DNS சேவையகங்களை உள்ளிடவும் (இடம் பிரிக்கப்பட்டது, எதற்கும் காலியாக இல்லை): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "உங்கள் பிரதான பகிர்வு எந்த கோப்பு முறைமையைப் பயன்படுத்த வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Current partition layout"
+msgstr "தற்போதைய பகிர்வு தளவமைப்பு"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"என்ன செய்ய வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "பகிர்வுக்கு தேவையான கோப்பு முறைமை வகையை உள்ளிடவும்"
+
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"எந்த பகிர்வுகளை நீக்க வேண்டும் என்பதை குறியீட்டின் மூலம் தேர்ந்தெடுக்கவும்"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"எந்த பகிர்வை எங்கு ஏற்ற வேண்டும் என்பதை குறியீட்டு மூலம் தேர்ந்தெடுக்கவும்"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * பகிர்வு மவுண்ட்-பாயிண்ட்கள் நிறுவலின் உள்ளே தொடர்புடையவை, துவக்கம் /boot எடுத்துக்காட்டாக இருக்கும்."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "பகிர்வை எங்கு ஏற்ற வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் (மவுண்ட்பாயிண்டை அகற்ற காலியாக விடவும்): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"வடிவமைப்பிற்கு எந்த பகிர்வை மறைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"எந்தப் பிரிவை மறைகுறியாக்கப்பட்டதாகக் குறிக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"துவக்கக்கூடியதாகக் குறிக்கும் பகிர்வைத் தேர்ந்தெடுக்கவும்"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"கோப்பு முறைமையை எந்த பகிர்வில் அமைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "பகிர்வுக்கு தேவையான கோப்பு முறைமை வகையை உள்ளிடவும்: "
+
+msgid "Archinstall language"
+msgstr "Archinstall மொழி"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "தேர்ந்தெடுக்கப்பட்ட அனைத்து இயக்கிகளையும் துடைத்து, சிறந்த முயற்சி இயல்புநிலை பகிர்வு அமைப்பைப் பயன்படுத்தவும்"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "ஒவ்வொரு தனி இயக்ககத்தையும் என்ன செய்ய வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் (பகிர்வு உபயோகத்தைத் தொடர்ந்து)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "தேர்ந்தெடுக்கப்பட்ட தொகுதி சாதனங்களில் நீங்கள் என்ன செய்ய விரும்புகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "இது முன்-திட்டமிடப்பட்ட சுயவிவரங்களின் பட்டியல், அவை டெஸ்க்டாப் சூழல்கள் போன்றவற்றை நிறுவுவதை எளிதாக்கலாம்"
+
+msgid "Select keyboard layout"
+msgstr "விசைப்பலகை அமைப்பைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Select one of the regions to download packages from"
+msgstr "தொகுப்புகளை பதிவிறக்கம் செய்ய வேண்டிய பகுதிகளில் ஒன்றைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "உங்கள் AMD வன்பொருளுடன் சிறந்த இணக்கத்தன்மைக்கு, நீங்கள் அனைத்து திறந்த மூல அல்லது AMD / ATI விருப்பங்களையும் பயன்படுத்த விரும்பலாம்."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "உங்கள் இன்டெல் வன்பொருளுடன் சிறந்த இணக்கத்தன்மைக்கு, நீங்கள் அனைத்து ஓப்பன் சோர்ஸ் அல்லது இன்டெல் விருப்பங்களையும் பயன்படுத்த விரும்பலாம்.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "உங்கள் Nvidia வன்பொருளுடன் சிறந்த இணக்கத்தன்மைக்கு, நீங்கள் Nvidia தனியுரிம இயக்கியைப் பயன்படுத்த விரும்பலாம்.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"கிராபிக்ஸ் இயக்கியைத் தேர்ந்தெடுக்கவும் அல்லது அனைத்து திறந்த மூல இயக்கிகளையும் நிறுவ காலியாக விடவும்"
+
+msgid "All open-source (default)"
+msgstr "அனைத்தும் திறந்த-மூலம் (இயல்புநிலை)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "எந்த கர்னல்களைப் பயன்படுத்த வேண்டும் என்பதைத் தேர்வு செய்யவும் அல்லது இயல்புநிலைக்கு காலியாக விடவும் \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "எந்த லோகேல் மொழியைப் பயன்படுத்த வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Choose which locale encoding to use"
+msgstr "எந்த லோகேல் என்கோடிங்கைப் பயன்படுத்த வேண்டும் என்பதைத் தேர்வுசெய்யவும்"
+
+msgid "Select one of the values shown below: "
+msgstr "கீழே காட்டப்பட்டுள்ள மதிப்புகளில் ஒன்றைத் தேர்ந்தெடுக்கவும்: "
+
+msgid "Select one or more of the options below: "
+msgstr "கீழே உள்ள விருப்பங்களில் ஒன்று அல்லது அதற்கு மேற்பட்டவற்றைத் தேர்ந்தெடுக்கவும்: "
+
+msgid "Adding partition...."
+msgstr "பகிர்வை சேர்க்கிறது...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "தொடர, நீங்கள் செல்லுபடியாகும் fs-type உள்ளிட வேண்டும். செல்லுபடியாகும் fs-type'sக்கு `man parted` என்பதைப் பார்க்கவும்."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "பிழை:  URL \"{}\" இல் சுயவிவரங்களை பட்டியலிடுவதால் விளைவித்தது:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "பிழை: \"{}\" முடிவை JSON ஆக டிகோட் செய்ய முடியவில்லை:"
+
+msgid "Keyboard layout"
+msgstr "விசைப்பலகை அமைப்பு"
+
+msgid "Mirror region"
+msgstr "மிரர் பிராந்தியம்"
+
+msgid "Locale language"
+msgstr "லோகேல் மொழி"
+
+msgid "Locale encoding"
+msgstr "லோகேல் என்கோடிங்"
+
+msgid "Drive(s)"
+msgstr "இயக்கி(கள்)"
+
+msgid "Disk layout"
+msgstr "வட்டு தளவமைப்பு"
+
+msgid "Encryption password"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+msgid "Swap"
+msgstr "இடமாற்று"
+
+msgid "Bootloader"
+msgstr "துவக்க ஏற்றி"
+
+msgid "Root password"
+msgstr "ரூட் கடவுச்சொல்"
+
+msgid "Superuser account"
+msgstr "சூப்பர் யூசர் கணக்கு"
+
+msgid "User account"
+msgstr "பயனர் கணக்கு"
+
+msgid "Profile"
+msgstr "சுயவிவரம்"
+
+msgid "Audio"
+msgstr "ஆடியோ"
+
+msgid "Kernels"
+msgstr "கர்னல்கள்"
+
+msgid "Additional packages"
+msgstr "கூடுதல் தொகுப்புகள்"
+
+msgid "Network configuration"
+msgstr "பிணைய கட்டமைப்பு"
+
+msgid "Automatic time sync (NTP)"
+msgstr "தானியங்கி நேர ஒத்திசைவு (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "நிறுவு ({} config(கள்) இல்லை)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"ஹார்ட் டிரைவ் தேர்வைத் தவிர்க்க முடிவு செய்துள்ளீர்கள்\n"
+"மற்றும் {} (சோதனை) இல் ஏற்றப்பட்ட எந்த இயக்கி அமைப்பையும் பயன்படுத்தும்\n"
+"எச்சரிக்கை: இந்த அமைப்பின் பொருத்தத்தை Archinstall சரிபார்க்காது\n"
+"நீங்கள் தொடர விரும்புகிறீர்களா?"
+
+msgid "Re-using partition instance: {}"
+msgstr "பகிர்வு நிகழ்வை மீண்டும் பயன்படுத்துதல்: {}"
+
+msgid "Create a new partition"
+msgstr "புதிய பகிர்வை உருவாக்கவும்"
+
+msgid "Delete a partition"
+msgstr "ஒரு பகிர்வை நீக்கவும்"
+
+msgid "Clear/Delete all partitions"
+msgstr "அழிக்கவும்/நீக்கவும் அனைத்து பகிர்வுகளை"
+
+msgid "Assign mount-point for a partition"
+msgstr "ஒரு பகிர்வுக்கு ஏற்ற-புள்ளியை ஒதுக்கவும்"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "குறி/குறிநீக்கு வடிவமைக்கப்பட வேண்டிய பகிர்வை (தரவை அழிக்கிறது)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "குறி/குறி நீக்கு ஒரு பகிர்வு மறைகுறியாக்கப்பட்டது"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "குறி/குறிநீக்கு ஒரு பகிர்வை துவக்கக்கூடியதாக(/boot க்கு தானியங்கு)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "ஒரு பகிர்வுக்கு தேவையான கோப்பு முறைமையை அமைக்கவும்"
+
+msgid "Abort"
+msgstr "கைவிடு"
+
+msgid "Hostname"
+msgstr "ஹோஸ்ட் பெயர்"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "உள்ளமைக்கப்படவில்லை, கைமுறையாக அமைக்கும் வரை கிடைக்காது"
+
+msgid "Timezone"
+msgstr "நேரம் மண்டலம்"
+
+msgid "Set/Modify the below options"
+msgstr "கீழே உள்ள விருப்பங்களை அமைக்கவும்/மாற்றவும்"
+
+msgid "Install"
+msgstr "நிறுவு"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"தவிர்க்க ESC ஐப் பயன்படுத்தவும்\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "பகிர்வு தளவமைப்பை பரிந்துரைக்கவும்"
+
+msgid "Enter a password: "
+msgstr "கடவுச்சொல்லை உள்ளிடவும்: "
+
+msgid "Enter a encryption password for {}"
+msgstr "{}க்கான என்க்ரிப்ஷன் கடவுச்சொல்லை உள்ளிடவும்"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "வட்டு குறியாக்க கடவுச்சொல்லை உள்ளிடவும் (குறியாக்கம் இல்லாமல் இருப்பதற்கு காலியாக விடவும்): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "சூடோ சலுகைகளுடன் தேவையான சூப்பர் பயனரை உருவாக்கவும்: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "ரூட் கடவுச்சொல்லை உள்ளிடவும் (ரூட்டை முடக்க காலியாக விடவும்): "
+
+msgid "Password for user \"{}\": "
+msgstr "\"{}\" பயனருக்கான கடவுச்சொல்: "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "கூடுதல் தொகுப்புகள் உள்ளனவா என்று சரிபார்க்கிறது (இதற்கு சில வினாடிகள் ஆகலாம்)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "இயல்புநிலை நேர சேவையகங்களுடன் தானியங்கி நேர ஒத்திசைவை (NTP) பயன்படுத்த விரும்புகிறீர்களா?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP வேலை செய்ய வன்பொருள் நேரம் மற்றும் பிற பிந்தைய கட்டமைப்பு படிகள் தேவைப்படலாம்.\n"
+"மேலும் தகவலுக்கு, ஆர்ச் விக்கியைப் பார்க்கவும்"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "கூடுதல் பயனரை உருவாக்க பயனர்பெயரை உள்ளிடவும் (தவிர்க்க காலியாக விடவும்): "
+
+msgid "Use ESC to skip\n"
+msgstr "தவிர்க்க ESC ஐப் பயன்படுத்தவும்\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"பட்டியலிலிருந்து ஒரு பொருளைத் தேர்வுசெய்து, அதைச் செயல்படுத்த கிடைக்கக்கூடிய செயல்களில் ஒன்றைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Cancel"
+msgstr "ரத்து செய்"
+
+msgid "Confirm and exit"
+msgstr "உறுதி செய்து வெளியேறவும்"
+
+msgid "Add"
+msgstr "சேர்"
+
+msgid "Copy"
+msgstr "நகல்"
+
+msgid "Edit"
+msgstr "தொகு"
+
+msgid "Delete"
+msgstr "அழி"
+
+msgid "Select an action for '{}'"
+msgstr "'{}'க்கான செயலைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Copy to new key:"
+msgstr "புதிய விசைக்கு நகலெடு:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "அறியப்படாத nic வகை: {}. சாத்தியமான மதிப்புகள் {} ஆகும்"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"இது நீங்கள் தேர்ந்தெடுத்த கட்டமைப்பு:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "பேக்மேன் ஏற்கனவே இயங்கி வருகிறது, அது முடிவடைவதற்கு அதிகபட்சம் 10 நிமிடங்கள் காத்திருக்கிறது."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "முன்பே இருக்கும் பேக்மேன் பூட்டு ஒருபோதும் வெளியேறவில்லை. archinstall ஐப் பயன்படுத்துவதற்கு முன், ஏற்கனவே உள்ள பேக்மேன் அமர்வுகளை சுத்தம் செய்யவும்."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "எந்த விருப்ப கூடுதல் களஞ்சியங்களை இயக்க வேண்டும் என்பதை தேர்வு செய்யவும்"
+
+msgid "Add a user"
+msgstr "ஒரு பயனரைச் சேர்க்கவும்"
+
+msgid "Change password"
+msgstr "கடவுச்சொல்லை மாற்று"
+
+msgid "Promote/Demote user"
+msgstr "பயனரை உயர்த்து/பதவி இறக்கு"
+
+msgid "Delete User"
+msgstr "பயனரை நீக்கு"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"புதிய பயனரை வரையறுக்கவும்\n"
+
+msgid "User Name : "
+msgstr "பயனர் பெயர்: "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "{} ஒரு சூப்பர் யூசராக (sudoer) இருக்க வேண்டுமா?"
+
+msgid "Define users with sudo privilege: "
+msgstr "சூடோ சிறப்புரிமை கொண்ட பயனர்களை வரையறுக்கவும்: "
+
+msgid "No network configuration"
+msgstr "பிணைய கட்டமைப்பு இல்லை"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "ஒரு btrfs பகிர்வில் விரும்பிய துணை தொகுதிகளை அமைக்கவும்"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"எந்த பகிர்வில் துணைத்தொகுதிகளை அமைக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "தற்போதைய பகிர்வுக்கு btrfs துணை தொகுதிகளை நிர்வகிக்கவும்"
+
+msgid "No configuration"
+msgstr "கட்டமைப்பு இல்லை"
+
+msgid "Save user configuration"
+msgstr "பயனர் உள்ளமைவைச் சேமிக்கவும்"
+
+msgid "Save user credentials"
+msgstr "பயனர் நற்சான்றிதழ்களைச் சேமிக்கவும்"
+
+msgid "Save disk layout"
+msgstr "வட்டு அமைப்பைச் சேமிக்கவும்"
+
+msgid "Save all"
+msgstr "அனைத்தையும் சேமிக்கவும்"
+
+msgid "Choose which configuration to save"
+msgstr "எந்த அமைப்பைச் சேமிக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "உள்ளமைவு(களை) சேமிக்க ஒரு கோப்பகத்தை உள்ளிடவும்: "
+
+msgid "Not a valid directory: {}"
+msgstr "சரியான கோப்பகம் இல்லை: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "நீங்கள் பயன்படுத்தும் கடவுச்சொல் பலவீனமாக உள்ளது,"
+
+msgid "are you sure you want to use it?"
+msgstr "நீங்கள் நிச்சயமாக அதைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Optional repositories"
+msgstr "விருப்ப களஞ்சியங்கள்"
+
+msgid "Save configuration"
+msgstr "உள்ளமைவைச் சேமிக்கவும்"
+
+msgid "Missing configurations:\n"
+msgstr "விடுபட்ட கட்டமைப்புகள்:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "ரூட்-கடவுச்சொல் அல்லது குறைந்தபட்சம் 1 சூப்பர் யூசர் குறிப்பிடப்பட வேண்டும்"
+
+msgid "Manage superuser accounts: "
+msgstr "சூப்பர் யூசர் கணக்குகளை நிர்வகிக்கவும்: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "சாதாரண பயனர் கணக்குகளை நிர்வகிக்கவும்: "
+
+msgid " Subvolume :{:16}"
+msgstr " துணைத் தொகுதி :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " {:16} இல் ஏற்றப்பட்டது"
+
+msgid " with option {}"
+msgstr " விருப்பம் உடன் {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+"புதிய துணைத்தொகுதிக்கு தேவையான மதிப்புகளை நிரப்பவும்\n"
+
+msgid "Subvolume name "
+msgstr "துணைத்தொகுதி பெயர் "
+
+msgid "Subvolume mountpoint"
+msgstr "துணை தொகுதி மவுண்ட்பாயிண்ட்"
+
+msgid "Subvolume options"
+msgstr "துணை தொகுதி விருப்பங்கள்"
+
+msgid "Save"
+msgstr "சேமிக்கவும்"
+
+msgid "Subvolume name :"
+msgstr "துணைத்தொகுதி பெயர்:"
+
+msgid "Select a mount point :"
+msgstr "மவுண்ட் பாயிண்ட்டைத் தேர்ந்தெடுக்கவும்:"
+
+msgid "Select the desired subvolume options "
+msgstr "தேவையான துணை தொகுதி விருப்பங்களைத் தேர்ந்தெடுக்கவும் "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "சூடோ சிறப்புரிமை கொண்ட பயனர்களை, பயனர் பெயரால் வரையறுக்கவும்: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "இயல்புநிலை கட்டமைப்புடன் BTRFS துணைத்தொகுதிகளைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "BTRFS சுருக்கத்தைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "/home க்கு தனி பகிர்வை உருவாக்க விரும்புகிறீர்களா?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "தேர்ந்தெடுக்கப்பட்ட டிரைவ்களில் தானியங்கி பரிந்துரைக்குத் தேவையான குறைந்தபட்ச திறன் இல்லை\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "/home பகிர்வுக்கான குறைந்த பட்ச கொள்ளளவு: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}GB"
+
+msgid "Continue"
+msgstr "தொடரவும்"
+
+msgid "yes"
+msgstr "ஆமாம்"
+
+msgid "no"
+msgstr "இல்லை"
+
+msgid "set: {}"
+msgstr "அமை: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "கைமுறை உள்ளமைவு அமைப்பு கண்டிப்பாக ஒரு பட்டியலாக இருக்க வேண்டும்"
+
+msgid "No iface specified for manual configuration"
+msgstr "கைமுறை உள்ளமைவுக்கு iface எதுவும் குறிப்பிடப்படவில்லை"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "தானியங்கு DHCP இல்லாத கைமுறையான nic கட்டமைப்பிற்கு IP முகவரி தேவை"
+
+msgid "Add interface"
+msgstr "இடைமுகத்தைச் சேர்க்கவும்"
+
+msgid "Edit interface"
+msgstr "இடைமுகத்தை திருத்தவும்"
+
+msgid "Delete interface"
+msgstr "இடைமுகத்தை நீக்கு"
+
+msgid "Select interface to add"
+msgstr "சேர்க்க இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Manual configuration"
+msgstr "கைமுறை கட்டமைப்பு"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "ஒரு பகிர்வை சுருக்கப்பட்டதாகக் குறிக்கவும்/குறி நீக்கவும் (btrfs மட்டும்)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "நீங்கள் பயன்படுத்தும் கடவுச்சொல் பலவீனமாக இருப்பதாகத் தெரிகிறது, நிச்சயமாக அதைப் பயன்படுத்த விரும்புகிறீர்களா?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "டெஸ்க்டாப் சூழல்கள் மற்றும் டைலிங் சாளர மேலாளர்களின் தேர்வை வழங்குகிறது, எ.கா. gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "நீங்கள் விரும்பும் டெஸ்க்டாப் சூழலைத் தேர்ந்தெடுக்கவும்"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "ஆர்ச் லினக்ஸை நீங்கள் பொருத்தமாகத் தனிப்பயனாக்க அனுமதிக்கும் மிக அடிப்படையான நிறுவல்."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "நிறுவவும் இயக்கவும் பல்வேறு சர்வர் தொகுப்புகளின் தேர்வை வழங்குகிறது, எ.கா. httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "எந்த சேவையகங்களை நிறுவ வேண்டும் என்பதைத் தேர்வுசெய்யவும், எதுவும் இல்லை என்றால், குறைந்தபட்ச நிறுவல் செய்யப்படும்"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "குறைந்தபட்ச அமைப்பு மற்றும் xorg மற்றும் கிராபிக்ஸ் இயக்கிகளை நிறுவுகிறது."
+
+msgid "Press Enter to continue."
+msgstr "தொடர Enter ஐ அழுத்தவும்."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "புதிதாக உருவாக்கப்பட்ட நிறுவலில் chroot செய்து, நிறுவலுக்குப் பிந்தைய உள்ளமைவைச் செய்ய விரும்புகிறீர்களா?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "இஇந்த அமைப்பை நிச்சயமாக மீட்டமைக்க வேண்டுமா?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "ஏற்கனவே உள்ள அமைப்பில் ஏதேனும் மாற்றங்கள் செய்தால் வட்டு தளவமைப்பை மீட்டமைக்கும்!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "நீங்கள் ஹார்ட் டிரைவ் தேர்வை மீட்டமைத்தால், இது தற்போதைய வட்டு அமைப்பையும் மீட்டமைக்கும். நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+msgid "Save and exit"
+msgstr "சேமித்து விட்டு வெளியேறவும்"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+msgid "No audio server"
+msgstr "ஆடியோ சர்வர் இல்லை"
+
+msgid "(default)"
+msgstr "(இயல்புநிலை)"
+
+msgid "Use ESC to skip"
+msgstr "தவிர்க்க ESC ஐப் பயன்படுத்தவும்"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"தற்போதைய தேர்வை மீட்டமைக்க CTRL+C ஐப் பயன்படுத்தவும்\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "இதற்கு நகலெடுக்கவும்: "
+
+msgid "Edit: "
+msgstr "தொகு: "
+
+msgid "Key: "
+msgstr "சாவி: "
+
+msgid "Edit {}: "
+msgstr "தொகு {}: "
+
+msgid "Add: "
+msgstr "சேர்: "
+
+msgid "Value: "
+msgstr "மதிப்பு: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "நீங்கள் ஒரு இயக்கி மற்றும் பகிர்வைத் தேர்ந்தெடுப்பதைத் தவிர்க்கலாம் மற்றும் /mnt (பரிசோதனை) இல் ஏற்றப்பட்ட எந்த இயக்கி அமைப்பையும் பயன்படுத்தலாம்"
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "வட்டுகளில் ஒன்றைத் தேர்ந்தெடுக்கவும் அல்லது தவிர்க்கவும் மற்றும் /mnt ஐ இயல்புநிலையாகப் பயன்படுத்தவும்"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "வடிவமைப்பிற்காக எந்தப் பகிர்வுகளைக் குறிக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "மறைகுறியாக்கப்பட்ட இயக்ககத்தைத் திறக்க HSM ஐப் பயன்படுத்தவும்"
+
+msgid "Device"
+msgstr "சாதனம்"
+
+msgid "Size"
+msgstr "அளவு"
+
+msgid "Free space"
+msgstr "பயன்படுத்தாத இடம்"
+
+msgid "Bus-type"
+msgstr "பேருந்து-வகை"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "ரூட்-கடவுச்சொல் அல்லது குறைந்தபட்சம் 1 பயனர் சூடோ சிறப்புரிமைகளைக் குறிப்பிட வேண்டும்"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "பயனர்பெயரை உள்ளிடவும் (தவிர்க்க காலியாக விடவும்): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "நீங்கள் உள்ளிட்ட பயனர்பெயர் தவறானது. மீண்டும் முயற்சிக்கவும்"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "\"{}\" ஒரு சூப்பர் யூசராக (sudo) இருக்க வேண்டுமா?"
+
+msgid "Select which partitions to encrypt:"
+msgstr "குறியாக்கம் செய்ய வேண்டிய பகிர்வுகளைத் தேர்ந்தெடுக்கவும்:"
+
+msgid "very weak"
+msgstr "மிகவும் பலவீனமானது"
+
+msgid "weak"
+msgstr "பலவீனமான"
+
+msgid "moderate"
+msgstr "மிதமான"
+
+msgid "strong"
+msgstr "வலுவான"
+
+msgid "Add subvolume"
+msgstr "துணைத்தொகுதியைச் சேர்க்கவும்"
+
+msgid "Edit subvolume"
+msgstr "துணைத்தொகுதியைத் திருத்தவும்"
+
+msgid "Delete subvolume"
+msgstr "துணைத்தொகுதியை நீக்கவும்"
+
+msgid "Configured {} interfaces"
+msgstr "கட்டமைக்கப்பட்ட {} இடைமுகங்கள்"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "இந்த விருப்பம் நிறுவலின் போது நிகழக்கூடிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை செயல்படுத்துகிறது"
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+"இயக்கப்பட வேண்டிய இணையான பதிவிறக்கங்களின் எண்ணிக்கையை உள்ளிடவும்.\n"
+"  (1 முதல் {max_downloads} வரையிலான மதிப்பை உள்ளிடவும்)\n"
+"குறிப்பு:"
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - அதிகபட்ச மதிப்பு  : {max_downloads} ( {max_downloads} இணையான பதிவிறக்கங்களை அனுமதிக்கிறது, ஒரே நேரத்தில் {max_downloads+1} பதிவிறக்கங்களை அனுமதிக்கிறது )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - குறைந்தபட்ச மதிப்பு  : 1 (1 இணை பதிவிறக்கத்தை அனுமதிக்கிறது, ஒரு நேரத்தில் 2 பதிவிறக்கங்களை அனுமதிக்கிறது )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - முடக்கு/இயல்புநிலை: 0 (இணை பதிவிறக்கத்தை முடக்குகிறது, ஒரு நேரத்தில் 1 பதிவிறக்கத்தை மட்டுமே அனுமதிக்கிறது )"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "தவறான உள்ளீடு! சரியான உள்ளீட்டில் [1 முதல் {max_downloads} வரை அல்லது முடக்க 0 வரை] மீண்டும் முயற்சிக்கவும்"
+
+msgid "Parallel Downloads"
+msgstr "இணையான பதிவிறக்கங்கள்"
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "தவிர்க்க ESC ஐப் பயன்படுத்தவும்"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""

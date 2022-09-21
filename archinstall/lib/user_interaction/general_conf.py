@@ -13,6 +13,7 @@ from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 from ..mirrors import list_mirrors
 from ..output import log, FormattedOutput
+from ..translationhandler import TranslationHandler
 from ..packages.packages import validate_package_list
 from ..profiles_handler import ProfileHandler
 from ..storage import storage
@@ -125,16 +126,34 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 	# name of the language in its own language
 	options = {lang.display_name: lang for lang in languages}
 
+	def dependency_preview(current_selection: str) -> Optional[str]:
+		current_lang = options[current_selection]
+
+		if current_lang.external_dep and not TranslationHandler.is_custom_font_enabled():
+			font_file = TranslationHandler.custom_font_path()
+			text = str(_('To be able to use this translation, please install a font manually that supports the language.')) + '\n'
+			text += str(_('The font should be stored as {}')).format(font_file)
+			return text
+		return None
+
 	choice = Menu(
 		_('Archinstall language'),
 		list(options.keys()),
-		default_option=preset_value.display_name
+		default_option=preset_value.display_name,
+		preview_command=lambda x: dependency_preview(x),
+		preview_size=0.5
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset_value
+		case MenuSelectionType.Esc:
+			return preset_value
 		case MenuSelectionType.Selection:
-			return options[choice.value]
+			language: Language = options[choice.value]
+			# we have to make sure that the proper AUR dependency is
+			# present to be able to use this language
+			if not language.external_dep or TranslationHandler.is_custom_font_enabled():
+				return language
+			return select_archinstall_language(languages, preset_value)
 
 
 def select_profile(
@@ -246,7 +265,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 
 	while True:
 		try:
-			input_number = int(TextInput("[Default value: 0] > ").run().strip() or 0)
+			input_number = int(TextInput(_("[Default value: 0] > ")).run().strip() or 0)
 			if input_number <= 0:
 				input_number = 0
 			elif input_number > max_downloads:

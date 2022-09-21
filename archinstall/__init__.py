@@ -195,34 +195,45 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 def load_config():
-	from .lib.models import NetworkConfiguration
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
+	from .lib.models import NetworkConfiguration
+
+	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
+		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
+
 	if arguments.get('harddrives', None) is not None:
 		if type(arguments['harddrives']) is str:
 			arguments['harddrives'] = arguments['harddrives'].split(',')
 		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
+
 	if profile := arguments.get('profile', None):
 		arguments['profile'] = ProfileHandler().parse_profile_config(profile)
+
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
 			arguments['mirror-region'] = arguments.get('mirror-region', None)
 		else:
 			selected_region = arguments.get('mirror-region', None)
 			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
+
 	if arguments.get('sys-language', None) is not None:
 		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
+
 	if arguments.get('sys-encoding', None) is not None:
 		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
+
 	if arguments.get('nic', None) is not None:
 		handler = NetworkConfigurationHandler()
 		handler.parse_arguments(arguments.get('nic'))
 		arguments['nic'] = handler.configuration
+
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
 		superusers = arguments.get('!superusers', None)

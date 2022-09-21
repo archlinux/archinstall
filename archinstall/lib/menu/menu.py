@@ -56,9 +56,9 @@ class Menu(TerminalMenu):
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
 		cursor_index : Optional[int] = None,
-		preview_command=None,
-		preview_size=0.75,
-		preview_title='Info',
+		preview_command: Optional[Callable] = None,
+		preview_size: float = 0.75,
+		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
 		raise_error_on_interrupt :bool = False,
 		raise_error_warning_msg :str = '',
@@ -157,6 +157,7 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = raise_error_on_interrupt
 		self._raise_error_warning_msg = raise_error_warning_msg
+		self._preview_command = preview_command
 
 		menu_title = f'\n{title}\n\n'
 
@@ -167,14 +168,17 @@ class Menu(TerminalMenu):
 
 		action_info = ''
 		if skip:
-			action_info += str(_("Use ESC to skip"))
+			action_info += str(_('ESC to skip'))
 
 		if self._raise_error_on_interrupt:
-			if len(action_info) > 0:
-				action_info += '\n'
-			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('CTRL+C to reset'))
 
-		menu_title += action_info
+		if multi:
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('TAB to select'))
+
+		menu_title += action_info + '\n'
 
 		if default_option:
 			# if a default value was specified we move that one
@@ -248,6 +252,13 @@ class Menu(TerminalMenu):
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
 			return MenuSelection(type_=MenuSelectionType.Esc)
+
+	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
+		if preview_command:
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' == current_selection:
+				current_selection = self._default_option
+			return preview_command(current_selection)
+		return None
 
 	def run(self) -> MenuSelection:
 		selection = self._show()

@@ -45,17 +45,20 @@ Current translations are listed below and vary in the amount of translations per
 English                                                                                                                                       
 Deutsch
 Española                                                                                                                                                 
-Française                                                                                                                                                
+Française
+Indonesia                                                                                                                                                
 Italiano                                                                                                                                                 
 Nederlands
 Polskie                                                                                                                                            
 Portugues do Brasil                                                                                                                                      
 Português                                                                                                                                                
 Svenska                                                                                                                                                  
-Türk                                                                                                                                                     
+Türkçe                                                                                                                                                     
 čeština                                                                                                                                                  
-русский
+Русский
 اردو
+Ελληνικά
+தமிழ்
 ```
 
 Any contributions to the translations are more than welcome, and to get started please follow [the guide](https://github.com/archlinux/archinstall/blob/master/archinstall/locales/README.md)

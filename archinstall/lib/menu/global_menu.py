@@ -12,7 +12,6 @@ from ..models import NetworkConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
-from ..translationhandler import Language
 from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_for_additional_users
@@ -32,23 +31,11 @@ from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
-from ..user_interaction.general_conf import select_profile
+from ..user_interaction import select_profile
 from ..user_interaction.partitioning_conf import current_partition_layout
 
 if TYPE_CHECKING:
 	_: Any
-
-
-def display_language(global_menu, x):
-	if type(x) == Language:
-		return x
-	elif type(x) == str:
-		translation_handler = global_menu._translation_handler
-		for language in translation_handler._get_translations():
-			if language.lang == x:
-				return language
-	else:
-		raise ValueError(f"Language entry needs to Language() object or string of full language like 'English'.")
 
 
 class GlobalMenu(GeneralMenu):
@@ -61,9 +48,9 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['archinstall-language'] = \
 			Selector(
 				_('Archinstall language'),
-				lambda x: self._select_archinstall_language(display_language(self, x)),
-				display_func=lambda x: display_language(self, x).display_name,
-				default=self.translation_handler.get_language('en'))
+				lambda x: self._select_archinstall_language(x),
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language_by_abbr('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),

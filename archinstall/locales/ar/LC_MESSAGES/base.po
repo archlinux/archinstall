@@ -1,78 +1,81 @@
+# Header entry was created by Lokalize.
+#
+# zer0-x, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: en\n"
+"PO-Revision-Date: 2022-06-16 03:35+0300\n"
+"Last-Translator: zer0-x\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Lokalize 22.04.2\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr ""
+msgstr "[!] مِلَف سِجِل أُنشِأ هُنا: {} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr ""
+msgstr "    يُرجى تسليم تقرير عن هذا الخلل (مع المِلَف) إلى https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr ""
+msgstr "هل تُريدُ حقًا إجهاضَ العَملِيَّة؟"
 
 msgid "And one more time for verification: "
-msgstr ""
+msgstr "ومرة أخرى للتحقق:"
 
 msgid "Would you like to use swap on zram?"
-msgstr ""
+msgstr "هل تريد استخدام swap أو zram؟"
 
 msgid "Desired hostname for the installation: "
-msgstr ""
+msgstr "اسم المضيف المُراد للتثبيت:"
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr ""
+msgstr "اسم المتستخدم لأجل المستخدم الخارِق المطلوب مع امتيازات sudo:"
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr ""
+msgstr "أي مستخدمين إضافيين للتثبيت (اتركه فارغًا لعدم وجود مستخدمين):"
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr ""
+msgstr "هل يجب أن يكون هذا المستخدم خارق (sudoer)؟"
 
 msgid "Select a timezone"
-msgstr ""
+msgstr "حدِّد منطقة زمنية"
 
 msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr ""
+msgstr "هل ترغب في استخدام GRUB كمُحمّل إقلاع بدلاً من systemd-boot؟"
 
 msgid "Choose a bootloader"
-msgstr ""
+msgstr "اختر مُحمّل الإقلاع"
 
 msgid "Choose an audio server"
-msgstr ""
+msgstr "اختر خادِم صوتيات"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr ""
+msgstr "فقط الحزم مثل base وbase-devel وlinux وlinux-firmware وefibootmgr و حِزم مِلف اختيارية سوف تُثَبَّت."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr ""
+msgstr "إذا كنت ترغب في متصفح الويب ، مثل Firefox أو chromium، فيمكنك تحديده في موضِع الكتابة التالي."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr ""
+msgstr "اكتب حزمًا إضافية لتثبيتها (تُفصَل بالمسافات، اتركها فارغة للتخطي):"
 
 msgid "Copy ISO network configuration to installation"
-msgstr ""
+msgstr "انسخ إعداد شبكة الـISO للتثبيت"
 
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr ""
+msgstr "استخدم مُدير الشبكة (ضروري لإعداد الإنترنت باستخدام واجهة رسومية في جنوم و كيدي)"
 
 msgid "Select one network interface to configure"
-msgstr ""
+msgstr "حدِّد واجهة شبكة واحدة للإعداد"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr ""
+msgstr "حدد الوضع المراد تهيئته لـ\"{}\" أو تخطى لاستخدام الوضع الافتراضي \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr ""
+msgstr "أدخِل الIP مع تجزئة الشبكة لـ{} (على سبيل المثال: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr ""
@@ -392,8 +395,9 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+#, fuzzy
 msgid "Select an action for '{}'"
-msgstr ""
+msgstr "حدِّد منطقة زمنية"
 
 msgid "Copy to new key:"
 msgstr ""

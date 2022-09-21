@@ -165,7 +165,7 @@ class SetupMenu(archinstall.GeneralMenu):
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
 				display_func=lambda x: x.display_name,
-				default=self.translation_handler.get_language('en'),
+				default=self.translation_handler.get_language_by_abbr('en'),
 				enabled=True
 			)
 		)
