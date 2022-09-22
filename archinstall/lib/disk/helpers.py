@@ -233,8 +233,10 @@ def all_blockdevices(
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
 		try:
 			if exclude_iso_dev:
+				# exclude all devices associated with the iso boot locations
+				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
 				lsblk_info = get_lsblk_info(device_path)
-				if '/run/archiso/airootfs' in lsblk_info.mountpoints:
+				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
 					continue
 
 			information = blkid(f'blkid -p -o export {device_path}')
