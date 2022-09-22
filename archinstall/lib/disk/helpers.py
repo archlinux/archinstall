@@ -6,12 +6,11 @@ import pathlib
 import re
 import time
 import glob
+
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from .diskinfo import get_lsblk_info
 from ..models.subvolume import Subvolume
-
-if TYPE_CHECKING:
-	from .partition import Partition
 
 from .blockdevice import BlockDevice
 from .dmcryptdev import DMCryptDev
@@ -20,6 +19,10 @@ from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage
+
+if TYPE_CHECKING:
+	from .partition import Partition
+
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GIGA = 2 ** 30
@@ -214,7 +217,7 @@ def all_blockdevices(
 	mappers: bool = False,
 	partitions: bool = False,
 	error: bool = False,
-	exclude_iso: bool = False
+	exclude_iso_dev: bool = True
 ) -> Dict[str, Any]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
@@ -229,6 +232,11 @@ def all_blockdevices(
 	for block_device in glob.glob("/sys/class/block/*"):
 		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
 		try:
+			if exclude_iso_dev:
+				lsblk_info = get_lsblk_info(device_path)
+				if '/run/archiso/airootfs' in lsblk_info.mountpoints:
+					continue
+
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
