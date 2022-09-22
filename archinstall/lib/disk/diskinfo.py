@@ -23,8 +23,7 @@ class LsblkInfo:
 
 def get_lsblk_info(dev_path: str) -> LsblkInfo:
 	fields = [f.name for f in dataclasses.fields(LsblkInfo)]
-	lsblk_fields = [f.upper().replace('_', '-') for f in fields]
-	lsblk_fields = ','.join(lsblk_fields)
+	lsblk_fields = ','.join([f.upper().replace('_', '-') for f in fields])
 
 	output = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode('UTF-8')
 
