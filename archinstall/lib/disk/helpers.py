@@ -220,7 +220,12 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 	# we'll iterate the /sys/class definitions and find the information
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
-		device_path = f"/dev/{pathlib.Path(block_device).readlink().name}"
+		device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+
+		if device_path.exists() is False:
+			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
+			continue
+
 		try:
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
@@ -229,12 +234,17 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 				try:
 					information = get_loop_info(device_path)
 					if not information:
+						print("Exit code for blkid -p -o export was:", ex.exit_code)
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
+					print("Not a loop device, trying uevent rules.")
 					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
 			else:
+				# We could not reliably get any information, perhaps the disk is clean of information?
+				print("Raising ex because:", ex.exit_code)
 				raise ex
+				# return instances
 
 		information = enrich_blockdevice_information(information)
 
@@ -370,7 +380,7 @@ def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict
 
 	return filters
 
-def get_partitions_in_use(mountpoint :str) -> List[Partition]:
+def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 	from .partition import Partition
 
 	try:
@@ -393,12 +403,20 @@ def get_partitions_in_use(mountpoint :str) -> List[Partition]:
 		if not type(blockdev) in (Partition, MapperDev):
 			continue
 
-		for blockdev_mountpoint in blockdev.mount_information:
-			block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
+		if isinstance(blockdev, Partition):
+			for blockdev_mountpoint in blockdev.mountpoints:
+				block_devices_mountpoints[blockdev_mountpoint] = blockdev
+		else:
+			for blockdev_mountpoint in blockdev.mount_information:
+				block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
+		# Since all_blockdevices() returns PosixPath objects, we need to convert
+		# findmnt paths to pathlib.Path() first:
+		mountpoint = pathlib.Path(mountpoint)
+		
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]

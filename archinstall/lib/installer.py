@@ -219,7 +219,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume] if isinstance(sub_list[subvolume],str) else sub_list[subvolume].get("mountpoint") for subvolume in sub_list if sub_list[subvolume]]:
+				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.mountpoint for subvolume in sub_list]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -246,11 +246,12 @@ class Installer:
 		# we manage the encrypted partititons
 		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
 			# open the luks device and all associate stuff
-			if not (password := partition.get('!password', None)):
-				raise RequirementError(f"Missing partition {partition['device_instance'].path} encryption password in layout: {partition}")
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
-			else:
-				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+			if not (password := partition.get('!password', None)) and storage['arguments'].get('!encryption-password'):
+				password = storage['arguments'].get('!encryption-password')
+			elif not password:
+				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
+			
+			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
 			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
@@ -325,7 +326,7 @@ class Installer:
 
 	def enable_multilib_repository(self):
 		# Set up a regular expression pattern of a commented line containing 'multilib' within []
-		pattern = re.compile("^#\\[.*multilib.*\\]$")
+		pattern = re.compile(r"^#\s*\[multilib\]$")
 
 		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
 		matched = False
@@ -431,7 +432,8 @@ class Installer:
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_genfstab'):
-				plugin.on_genfstab(self)
+				if plugin.on_genfstab(self) is True:
+					break
 
 		return True
 
@@ -443,10 +445,27 @@ class Installer:
 		if not len(locale):
 			return True
 
+		modifier = ''
+
+		# This is a temporary patch to fix #1200
+		if '.' in locale:
+			locale, potential_encoding = locale.split('.', 1)
+
+			# Override encoding if encoding is set to the default parameter
+			# and the "found" encoding differs.
+			if encoding == 'UTF-8' and encoding != potential_encoding:
+				encoding = potential_encoding
+
+		# Make sure we extract the modifier, that way we can put it in if needed.
+		if '@' in locale:
+			locale, modifier = locale.split('@', 1)
+			modifier = f"@{modifier}"
+		# - End patch
+
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding} {encoding}\n')
+			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}\n')
+			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
 
 		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
 
@@ -631,7 +650,7 @@ class Installer:
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
 
-			if not storage['arguments']['HSM']:
+			if not storage['arguments'].get('HSM'):
 				# For now, if we don't use HSM we revert to the old
 				# way of setting up encryption hooks for mkinitcpio.
 				# This is purely for stability reasons, we're going away from this.
@@ -673,7 +692,7 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if storage['arguments']['HSM']:
+				if storage['arguments'].get('HSM'):
 					# Required bby mkinitcpio to add support for fido2-device options
 					self.pacstrap('libfido2')
 
@@ -705,7 +724,7 @@ class Installer:
 			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
 			self.enable_multilib_repository()
 		else:
-			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+			self.log("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
@@ -738,7 +757,7 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		if storage['arguments']['HSM']:
+		if storage['arguments'].get('HSM'):
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.
@@ -850,7 +869,7 @@ class Installer:
 					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
 
 				for subvolume in root_partition.subvolumes:
-					if subvolume.root is True:
+					if subvolume.root is True and subvolume.name != '<FS_TREE>':
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
 				# Zswap should be disabled when using zram.
@@ -866,7 +885,7 @@ class Installer:
 
 					kernel_options = f"options"
 
-					if storage['arguments']['HSM']:
+					if storage['arguments'].get('HSM'):
 						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
 						# Note: tpm2-device and fido2-device don't play along very well:
@@ -1000,10 +1019,9 @@ class Installer:
 		boot_partition = None
 		root_partition = None
 		for partition in self.partitions:
-			print(partition, [partition.mountpoint], [self.target])
-			if partition.mountpoint == self.target / 'boot':
+			if self.target / 'boot' in partition.mountpoints:
 				boot_partition = partition
-			elif partition.mountpoint == self.target:
+			elif self.target in partition.mountpoints:
 				root_partition = partition
 
 		if boot_partition is None or root_partition is None:
@@ -1132,7 +1150,8 @@ class Installer:
 		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"").exit_code == 0
 
 	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {path}").exit_code == 0
+		cleaned_path = path.replace('\'', '\\\'')
+		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'").exit_code == 0
 
 	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
 		return InstallationFile(self, filename, owner)

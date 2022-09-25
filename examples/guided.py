@@ -87,6 +87,10 @@ def ask_user_questions():
 
 	global_menu.enable('packages')
 
+	if archinstall.arguments.get('advanced', False):
+		# Enable parallel downloads
+		global_menu.enable('parallel downloads')
+
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	global_menu.enable('nic')
 
@@ -183,18 +187,25 @@ def perform_installation(mountpoint):
 			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
 		# Retrieve list of additional repositories and set boolean values appropriately
-		enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
-		enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		if archinstall.arguments.get('additional-repositories', None) is not None:
+			enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
+			enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
+		else:
+			enable_testing = False
+			enable_multilib = False
+
+		# Check if custom mirrors are used
 		has_custom_mirrors = archinstall.arguments.get('mirrors', None)
 
 		if installation.minimal_installation(testing=enable_testing, multilib=enable_multilib, copy_over_pacman_conf=has_custom_mirrors):
 			installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
 			installation.set_hostname(archinstall.arguments['hostname'])
-			if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments['swap']:
+			if archinstall.arguments.get('mirror-region') is not None:
+				if archinstall.arguments.get("mirrors", None) is not None:
+					installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+			if archinstall.arguments.get('swap'):
 				installation.setup_swap('zram')
-			if archinstall.arguments["bootloader"] == "grub-install" and archinstall.has_uefi():
+			if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
@@ -262,7 +273,7 @@ def perform_installation(mountpoint):
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice == Menu.yes():
+			if choice.value == Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:

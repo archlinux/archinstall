@@ -232,10 +232,10 @@ msgstr ""
 msgid "Drive(s)"
 msgstr ""
 
-msgid "Select disk layout"
+msgid "Disk layout"
 msgstr ""
 
-msgid "Set encryption password"
+msgid "Encryption password"
 msgstr ""
 
 msgid "Swap"
@@ -244,7 +244,7 @@ msgstr ""
 msgid "Bootloader"
 msgstr ""
 
-msgid "root password"
+msgid "Root password"
 msgstr ""
 
 msgid "Superuser account"
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-msgid "Select an action for < {} >"
+msgid "Select an action for '{}'"
 msgstr ""
 
 msgid "Copy to new key:"
@@ -617,7 +617,7 @@ msgstr ""
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr ""
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr ""
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -688,4 +688,93 @@ msgid "Select one of the disks or skip and use /mnt as default"
 msgstr ""
 
 msgid "Select which partitions to mark for formatting:"
+msgstr ""
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Free space"
+msgstr ""
+
+msgid "Bus-type"
+msgstr ""
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr ""
+
+msgid "Enter username (leave blank to skip): "
+msgstr ""
+
+msgid "The username you entered is invalid. Try again"
+msgstr ""
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr ""
+
+msgid "Select which partitions to encrypt:"
+msgstr ""
+
+msgid "very weak"
+msgstr ""
+
+msgid "weak"
+msgstr ""
+
+msgid "moderate"
+msgstr ""
+
+msgid "strong"
+msgstr ""
+
+msgid "Add subvolume"
+msgstr ""
+
+msgid "Edit subvolume"
+msgstr ""
+
+msgid "Delete subvolume"
+msgstr ""
+
+msgid "Configured {} interfaces"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr ""
+
+msgid "ESC to skip"
+msgstr ""
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
 msgstr ""

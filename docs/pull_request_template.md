@@ -1,15 +1,12 @@
-🚨 PR Guidelines:
+- This fix issue: <!-- #13, #15 and #16 for instance. Or ignore if you're adding new functionality -->
 
-# New features *(v2.2.0)*
+## PR Description:
 
-All future work towards *`v2.2.0`* is done against `master` now.<br>
-Any patch work to existing versions will have to create a new branch against the tagged versions.
+<!-- Please describe what changes this PR introduces, a good example would be: https://github.com/archlinux/archinstall/pull/1377 -->
 
-# Describe your PR
-
-If the changes has been discussed in an Issue, please tag it so that we can backtrace from the issue later on.<br>
-If the PR is larger than ~20 lines, please describe it here unless described in an issue.
-
-# Testing
-
-Any new feature or stability improvement should be tested if possible. Please follow the test instructions at the bottom of the README or use the ISO built on each PR.
+## Tests and Checks
+- [ ] I have tested the code!<br>
+  <!-- 
+      After submitting your PR, an ISO can be downloaded below the PR description. After testing it you can check the box
+      You can do manual tests too, like isolated function tests, just something!
+  -->

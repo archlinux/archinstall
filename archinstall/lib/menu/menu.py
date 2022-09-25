@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional
+from os import system
+from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
 from archinstall.lib.menu.simple_menu import TerminalMenu
 
@@ -51,13 +52,17 @@ class Menu(TerminalMenu):
 		sort :bool = True,
 		preset_values :Union[str, List[str]] = None,
 		cursor_index : Optional[int] = None,
-		preview_command=None,
-		preview_size=0.75,
-		preview_title='Info',
+		preview_command: Optional[Callable] = None,
+		preview_size: float = 0.75,
+		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
-		explode_on_interrupt :bool = False,
-		explode_warning :str = '',
-		**kwargs
+		raise_error_on_interrupt :bool = False,
+		raise_error_warning_msg :str = '',
+		clear_screen: bool = True,
+		show_search_hint: bool = True,
+		cycle_cursor: bool = True,
+		clear_menu_on_exit: bool = True,
+		skip_empty_entries: bool = False
 	):
 		"""
 		Creates a new menu
@@ -99,10 +104,10 @@ class Menu(TerminalMenu):
 		param header: one or more header lines for the menu
 		type param: string or list
 
-		param explode_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
+		param raise_error_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
 		type param: bool
 
-		param explode_warning: If explode_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		param raise_error_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
 		type param: str
 
 		:param kwargs : any SimpleTerminal parameter
@@ -145,27 +150,30 @@ class Menu(TerminalMenu):
 		self._skip = skip
 		self._default_option = default_option
 		self._multi = multi
-		self._explode_on_interrupt = explode_on_interrupt
-		self._explode_warning = explode_warning
+		self._raise_error_on_interrupt = raise_error_on_interrupt
+		self._raise_error_warning_msg = raise_error_warning_msg
+		self._preview_command = preview_command
 
 		menu_title = f'\n{title}\n\n'
 
 		if header:
 			if not isinstance(header,(list,tuple)):
 				header = [header]
-			header = '\n'.join(header)
-			menu_title += f'\n{header}\n'
+			menu_title += '\n'.join(header)
 
 		action_info = ''
 		if skip:
-			action_info += str(_("Use ESC to skip"))
+			action_info += str(_('ESC to skip'))
 
-		if self._explode_on_interrupt:
-			if len(action_info) > 0:
-				action_info += '\n'
-			action_info += str(_('Use CTRL+C to reset current selection\n\n'))
+		if self._raise_error_on_interrupt:
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('CTRL+C to reset'))
 
-		menu_title += action_info
+		if multi:
+			action_info += ', ' if len(action_info) > 0 else ''
+			action_info += str(_('TAB to select'))
+
+		menu_title += action_info + '\n'
 
 		if default_option:
 			# if a default value was specified we move that one
@@ -178,10 +186,6 @@ class Menu(TerminalMenu):
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
 		main_menu_style = ("bg_blue", "fg_gray")
-		# defaults that can be changed up the stack
-		kwargs['clear_screen'] = kwargs.get('clear_screen',True)
-		kwargs['show_search_hint'] = kwargs.get('show_search_hint',True)
-		kwargs['cycle_cursor'] = kwargs.get('cycle_cursor',True)
 
 		super().__init__(
 			menu_entries=self._menu_options,
@@ -195,12 +199,16 @@ class Menu(TerminalMenu):
 			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
-			preview_command=preview_command,
+			preview_command=lambda x: self._preview_wrapper(preview_command, x),
 			preview_size=preview_size,
 			preview_title=preview_title,
-			explode_on_interrupt=self._explode_on_interrupt,
+			raise_error_on_interrupt=self._raise_error_on_interrupt,
 			multi_select_select_on_accept=False,
-			**kwargs,
+			clear_screen=clear_screen,
+			show_search_hint=show_search_hint,
+			cycle_cursor=cycle_cursor,
+			clear_menu_on_exit=clear_menu_on_exit,
+			skip_empty_entries=skip_empty_entries
 		)
 
 	def _show(self) -> MenuSelection:
@@ -228,16 +236,24 @@ class Menu(TerminalMenu):
 		else:
 			return MenuSelection(type_=MenuSelectionType.Esc)
 
+	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
+		if preview_command:
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' == current_selection:
+				current_selection = self._default_option
+			return preview_command(current_selection)
+		return None
+
 	def run(self) -> MenuSelection:
 		ret = self._show()
 
 		if ret.type_ == MenuSelectionType.Ctrl_c:
-			if self._explode_on_interrupt and len(self._explode_warning) > 0:
-				response = Menu(self._explode_warning, Menu.yes_no(), skip=False).run()
+			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
+				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
 
 		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
+			system('clear')
 			return self.run()
 
 		return ret

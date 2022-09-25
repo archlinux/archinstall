@@ -3,38 +3,37 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
-
-from ..menu import Menu
-from ..menu.selection_menu import Selector, GeneralMenu
+from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
+from ..menu import Menu
+from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration
-from ..storage import storage
+from ..models.users import User
+from ..output import FormattedOutput
 from ..profiles import is_desktop_profile, Profile
-from ..disk import encrypted_partitions
-
-from ..user_interaction import get_password, ask_for_a_timezone, save_config
-from ..user_interaction import ask_ntp
-from ..user_interaction import ask_for_swap
-from ..user_interaction import ask_for_bootloader
-from ..user_interaction import ask_hostname
-from ..user_interaction import ask_for_audio_selection
+from ..storage import storage
+from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
-from ..user_interaction import ask_to_configure_network
 from ..user_interaction import ask_for_additional_users
-from ..user_interaction import select_language
-from ..user_interaction import select_mirror_regions
-from ..user_interaction import select_locale_lang
-from ..user_interaction import select_locale_enc
+from ..user_interaction import ask_for_audio_selection
+from ..user_interaction import ask_for_bootloader
+from ..user_interaction import ask_for_swap
+from ..user_interaction import ask_hostname
+from ..user_interaction import ask_ntp
+from ..user_interaction import ask_to_configure_network
+from ..user_interaction import get_password, ask_for_a_timezone, save_config
+from ..user_interaction import select_additional_repositories
 from ..user_interaction import select_disk_layout
-from ..user_interaction import select_kernel
 from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
+from ..user_interaction import select_kernel
+from ..user_interaction import select_language
+from ..user_interaction import select_locale_enc
+from ..user_interaction import select_locale_lang
+from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
-from ..user_interaction import select_additional_repositories
-from ..models.users import User
 from ..user_interaction.partitioning_conf import current_partition_layout
-from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -42,6 +41,7 @@ if TYPE_CHECKING:
 
 class GlobalMenu(GeneralMenu):
 	def __init__(self,data_store):
+		self._disk_check = True
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def _setup_selection_menu_options(self):
@@ -50,7 +50,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Archinstall language'),
 				lambda x: self._select_archinstall_language(x),
-				default='English')
+				display_func=lambda x: x.display_name,
+				default=self.translation_handler.get_language_by_abbr('en'))
 		self._menu_options['keyboard-layout'] = \
 			Selector(
 				_('Keyboard layout'),
@@ -143,6 +144,15 @@ class GlobalMenu(GeneralMenu):
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
+
+		self._menu_options['parallel downloads'] = \
+			Selector(
+				_('Parallel Downloads'),
+				add_number_of_parrallel_downloads,
+				display_func=lambda x: x if x else '0',
+				default=0
+			)
+
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Kernels'),
@@ -163,7 +173,8 @@ class GlobalMenu(GeneralMenu):
 			Selector(
 				_('Network configuration'),
 				ask_to_configure_network,
-				display_func=lambda x: self._prev_network_configuration(x),
+				display_func=lambda x: self._display_network_conf(x),
+				preview_func=self._prev_network_config,
 				default={})
 		self._menu_options['timezone'] = \
 			Selector(
@@ -226,15 +237,22 @@ class GlobalMenu(GeneralMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return _('Install')
 
-	def _prev_network_configuration(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
+	def _display_network_conf(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
 		if not cur_value:
 			return _('Not configured, unavailable unless setup manually')
 		else:
 			if isinstance(cur_value, list):
-				ifaces = [x.iface for x in cur_value]
-				return f'Configured ifaces: {ifaces}'
+				return str(_('Configured {} interfaces')).format(len(cur_value))
 			else:
 				return str(cur_value)
+
+	def _prev_network_config(self) -> Optional[str]:
+		selector = self._menu_options['nic']
+		if selector.has_selection():
+			ifaces = selector.current_selection
+			if isinstance(ifaces, list):
+				return FormattedOutput.as_table(ifaces)
+		return None
 
 	def _prev_harddrives(self) -> Optional[str]:
 		selector = self._menu_options['harddrives']
@@ -295,11 +313,12 @@ class GlobalMenu(GeneralMenu):
 			missing += ['Hostname']
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
-		if not check('harddrives'):
-			missing += [str(_('Drive(s)'))]
-		if check('harddrives'):
-			if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
-				missing += [str(_('Disk layout'))]
+		if self._disk_check:
+			if not check('harddrives'):
+				missing += [str(_('Drive(s)'))]
+			if check('harddrives'):
+				if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
+					missing += [str(_('Disk layout'))]
 
 		return missing
 
@@ -325,7 +344,7 @@ class GlobalMenu(GeneralMenu):
 	def _select_harddrives(self, old_harddrives : list) -> List:
 		harddrives = select_harddrives(old_harddrives)
 
-		if harddrives:
+		if harddrives is not None:
 			if len(harddrives) == 0:
 				prompt = _(
 					"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
@@ -336,7 +355,10 @@ class GlobalMenu(GeneralMenu):
 				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
 
 				if choice.value == Menu.no():
+					self._disk_check = True
 					return self._select_harddrives(old_harddrives)
+				else:
+					self._disk_check = False
 
 			# in case the harddrives got changed we have to reset the disk layout as well
 			if old_harddrives != harddrives:

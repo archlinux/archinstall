@@ -6,12 +6,14 @@ import os
 import secrets
 import shlex
 import subprocess
+import stat
 import string
 import sys
 import time
 import re
 import urllib.parse
 import urllib.request
+import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
@@ -37,7 +39,7 @@ else:
 
 		def unregister(self, fileno :int, *args :List[Any], **kwargs :Dict[str, Any]) -> None:
 			try:
-				del(self.monitoring[fileno])
+				del(self.monitoring[fileno]) # noqa: E275
 			except:
 				pass
 
@@ -270,7 +272,7 @@ class SysCommandWorker:
 			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}", self.exit_code)
+			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}", self.exit_code, worker=self)
 
 	def is_alive(self) -> bool:
 		self.poll()
@@ -312,8 +314,17 @@ class SysCommandWorker:
 				except UnicodeDecodeError:
 					return False
 
-			with open(f"{storage['LOG_PATH']}/cmd_output.txt", "a") as peak_output_log:
+			peak_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_output.txt")
+
+			change_perm = False
+			if peak_logfile.exists() is False:
+				change_perm = True
+
+			with peak_logfile.open("a") as peak_output_log:
 				peak_output_log.write(output)
+
+			if change_perm:
+				os.chmod(str(peak_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 			sys.stdout.write(str(output))
 			sys.stdout.flush()
@@ -360,10 +371,18 @@ class SysCommandWorker:
 
 		# https://stackoverflow.com/questions/4022600/python-pty-fork-how-does-it-work
 		if not self.pid:
+			history_logfile = pathlib.Path(f"{storage['LOG_PATH']}/cmd_history.txt")
 			try:
+				change_perm = False
+				if history_logfile.exists() is False:
+					change_perm = True
+
 				try:
-					with open(f"{storage['LOG_PATH']}/cmd_history.txt", "a") as cmd_log:
+					with history_logfile.open("a") as cmd_log:
 						cmd_log.write(f"{self.cmd}\n")
+
+					if change_perm:
+						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
 
@@ -443,7 +462,7 @@ class SysCommand:
 
 	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
 		if self.session:
-			return self.session._trace_log.decode('UTF-8')
+			return self.session._trace_log.decode('UTF-8', errors='backslashreplace')
 		return ''
 
 	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
@@ -548,8 +567,12 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	parsed_url = urllib.parse.urlparse(stream)
 
 	if parsed_url.scheme: # The stream is in fact a URL that should be grabbed
-		with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
-			target.update(json.loads(response.read()))
+		try:
+			with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
+				target.update(json.loads(response.read()))
+		except urllib.error.HTTPError as error:
+			log(f"Could not load {configuration_identifier} via {parsed_url} due to: {error}", level=logging.ERROR, fg="red")
+			return False
 	else:
 		if pathlib.Path(stream).exists():
 			try:

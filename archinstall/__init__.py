@@ -1,5 +1,6 @@
 """Arch Linux installer - guided, templates etc."""
-from argparse import ArgumentParser
+import typing
+from argparse import ArgumentParser, Namespace
 
 from .lib.disk import *
 from .lib.exceptions import *
@@ -40,7 +41,7 @@ from .lib.menu.selection_menu import (
 	Selector,
 	GeneralMenu
 )
-from .lib.translation import Translation, DeferredTranslation
+from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
 from .lib.udev import udevadm_info
@@ -50,7 +51,7 @@ from .lib.hsm import (
 )
 parser = ArgumentParser()
 
-__version__ = "2.5.0"
+__version__ = "2.5.1rc1"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -66,6 +67,7 @@ def define_arguments():
 	Remember that the property/entry name python assigns to the parameters is the first string defined as argument and
 	dashes inside it '-' are changed to '_'
 	"""
+	parser.add_argument("-v", "--version", action="version", version="%(prog)s " + __version__)
 	parser.add_argument("--config", nargs="?", help="JSON configuration file or URL")
 	parser.add_argument("--creds", nargs="?", help="JSON credentials configuration file")
 	parser.add_argument("--disk_layouts","--disk_layout","--disk-layouts","--disk-layout",nargs="?",
@@ -139,6 +141,24 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 					print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
+def cleanup_empty_args(args :typing.Union[Namespace, dict]) -> dict:
+	"""
+	Takes arguments (dictionary or argparse Namespace) and removes any
+	None values. This ensures clean mergers during dict.update(args)
+	"""
+	if type(args) == Namespace:
+		args = vars(args)
+
+	clean_args = {}
+	for key, val in args.items():
+		if type(val) == dict:
+			val = cleanup_empty_args(val)
+
+		if val is not None:
+			clean_args[key] = val
+
+	return clean_args
+
 def get_arguments() -> Dict[str, Any]:
 	""" The handling of parameters from the command line
 	Is done on following steps:
@@ -166,14 +186,15 @@ def get_arguments() -> Dict[str, Any]:
 			exit(1)
 
 	# load the parameters. first the known, then the unknowns
-	config.update(vars(args))
+	args = cleanup_empty_args(args)
+	config.update(args)
 	config.update(parse_unspecified_argument_list(unknowns))
 	# amend the parameters (check internal consistency)
 	# Installation can't be silent if config is not passed
-	if args.config is not None :
-		config["silent"] = args.silent
-	else:
+	if args.get('config') is None:
 		config["silent"] = False
+	else:
+		config["silent"] = args.get('silent')
 
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
@@ -182,40 +203,53 @@ def get_arguments() -> Dict[str, Any]:
 	return config
 
 def load_config():
-	from .lib.models import NetworkConfiguration
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
+	from .lib.models import NetworkConfiguration
+
+	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
+		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
+
 	if arguments.get('harddrives', None) is not None:
 		if type(arguments['harddrives']) is str:
 			arguments['harddrives'] = arguments['harddrives'].split(',')
 		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
+
 	if arguments.get('profile', None) is not None:
 		if type(arguments.get('profile', None)) is dict:
 			arguments['profile'] = Profile(None, arguments.get('profile', None)['path'])
 		else:
 			arguments['profile'] = Profile(None, arguments.get('profile', None))
+
 	storage['_desktop_profile'] = arguments.get('desktop-environment', None)
+
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
 			arguments['mirror-region'] = arguments.get('mirror-region', None)
 		else:
 			selected_region = arguments.get('mirror-region', None)
 			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
+
 	if arguments.get('sys-language', None) is not None:
 		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
+
 	if arguments.get('sys-encoding', None) is not None:
 		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+
 	if arguments.get('gfx_driver', None) is not None:
 		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
+
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
+
 	if arguments.get('nic', None) is not None:
 		handler = NetworkConfigurationHandler()
 		handler.parse_arguments(arguments.get('nic'))
 		arguments['nic'] = handler.configuration
+
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
 		superusers = arguments.get('!superusers', None)

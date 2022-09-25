@@ -256,10 +256,12 @@ msgstr "Teckenuppsättning du vill använda"
 msgid "Drive(s)"
 msgstr "Hårddiskar"
 
-msgid "Select disk layout"
-msgstr "Välj hårddisk-layout"
+#, fuzzy
+msgid "Disk layout"
+msgstr "Spara disk konfigurering"
 
-msgid "Set encryption password"
+#, fuzzy
+msgid "Encryption password"
 msgstr "Välj ett krypterings-lösenord"
 
 msgid "Swap"
@@ -268,7 +270,8 @@ msgstr "Swap"
 msgid "Bootloader"
 msgstr "Boot-loader"
 
-msgid "root password"
+#, fuzzy
+msgid "Root password"
 msgstr "root-lösenord"
 
 msgid "Superuser account"
@@ -426,8 +429,8 @@ msgstr "Editera"
 msgid "Delete"
 msgstr "Ta bort"
 
-msgid "Select an action for < {} >"
-msgstr "Välj vad du vill göra med < {} >"
+msgid "Select an action for '{}'"
+msgstr "Välj vad du vill göra med '{}'"
 
 msgid "Copy to new key:"
 msgstr "Kopiera till en ny nyckel:"
@@ -660,7 +663,8 @@ msgstr "En väldigt minimal installation som möjliggör konfigurering av Arch L
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Erbjuder ett urval av olika server-packeteringar, t.ex. httpd, nginx och mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+#, fuzzy
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Välj vilka servrar du vill installera, en minimal installation sker om du hoppar över detta"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -736,3 +740,105 @@ msgstr "Välj en disk eller hoppa över och använd /mnt/archinstall utan format
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "Välj vilken partition som skall markeras för formatering:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Free space"
+msgstr ""
+
+msgid "Bus-type"
+msgstr ""
+
+#, fuzzy
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Antingen måste ett root-lösenord sättas eller 1 superanvändarkonto skapas"
+
+#, fuzzy
+msgid "Enter username (leave blank to skip): "
+msgstr "Mata in ett användarnamn för att skapa ytterligare användare (lämna tom för att hoppa över): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Är detta en superanvändare (sudo-rättigheter)?"
+
+#, fuzzy
+msgid "Select which partitions to encrypt:"
+msgstr ""
+"{}\n"
+"\n"
+"Välj vilken partition som skall markeras för kryptering"
+
+msgid "very weak"
+msgstr ""
+
+msgid "weak"
+msgstr ""
+
+msgid "moderate"
+msgstr ""
+
+msgid "strong"
+msgstr ""
+
+#, fuzzy
+msgid "Add subvolume"
+msgstr " Sub-volym :{:16}"
+
+msgid "Edit subvolume"
+msgstr ""
+
+#, fuzzy
+msgid "Delete subvolume"
+msgstr "Ta bort användare"
+
+msgid "Configured {} interfaces"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr ""
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Använd ESC för att hoppa över"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
+
+#~ msgid "Select disk layout"
+#~ msgstr "Välj hårddisk-layout"

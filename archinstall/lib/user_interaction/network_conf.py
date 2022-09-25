@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ipaddress
 import logging
-from typing import Any, Optional, TYPE_CHECKING, List, Union
+from typing import Any, Optional, TYPE_CHECKING, List, Union, Dict
 
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
@@ -10,7 +10,7 @@ from ..models.network_configuration import NetworkConfiguration, NicType
 
 from ..networking import list_interfaces
 from ..menu import Menu
-from ..output import log
+from ..output import log, FormattedOutput
 from ..menu.list_manager import ListManager
 
 if TYPE_CHECKING:
@@ -19,55 +19,55 @@ if TYPE_CHECKING:
 
 class ManualNetworkConfig(ListManager):
 	"""
-	subclass of ListManager for the managing of network configuration accounts
+	subclass of ListManager for the managing of network configurations
 	"""
 
-	def __init__(self, prompt: str, ifaces: Union[None, NetworkConfiguration, List[NetworkConfiguration]]):
-		"""
-		param: prompt
-		type: str
-		param: ifaces already defined previously
-		type: Dict
-		"""
+	def __init__(self, prompt: str, ifaces: List[NetworkConfiguration]):
+		self._actions = [
+			str(_('Add interface')),
+			str(_('Edit interface')),
+			str(_('Delete interface'))
+		]
 
-		if ifaces is not None and isinstance(ifaces, list):
-			display_values = {iface.iface: iface for iface in ifaces}
-		else:
-			display_values = {}
+		super().__init__(prompt, ifaces, [self._actions[0]], self._actions[1:])
 
-		self._action_add = str(_('Add interface'))
-		self._action_edit = str(_('Edit interface'))
-		self._action_delete = str(_('Delete interface'))
+	def reformat(self, data: List[NetworkConfiguration]) -> Dict[str, Optional[NetworkConfiguration]]:
+		table = FormattedOutput.as_table(data)
+		rows = table.split('\n')
 
-		self._iface_actions = [self._action_edit, self._action_delete]
+		# these are the header rows of the table and do not map to any User obviously
+		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
+		# the selectable rows so the header has to be aligned
+		display_data: Dict[str, Optional[NetworkConfiguration]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
-		super().__init__(prompt, display_values, self._iface_actions, self._action_add)
+		for row, iface in zip(rows[2:], data):
+			row = row.replace('|', '\\|')
+			display_data[row] = iface
 
-	def run_manual(self) -> List[NetworkConfiguration]:
-		ifaces = super().run()
-		if ifaces is not None:
-			return list(ifaces.values())
-		return []
+		return display_data
 
-	def exec_action(self, data: Any):
-		if self.action == self._action_add:
-			iface_name = self._select_iface(data.keys())
+	def selected_action_display(self, iface: NetworkConfiguration) -> str:
+		return iface.iface if iface.iface else ''
+
+	def handle_action(self, action: str, entry: Optional[NetworkConfiguration], data: List[NetworkConfiguration]):
+		if action == self._actions[0]:  # add
+			iface_name = self._select_iface(data)
 			if iface_name:
 				iface = NetworkConfiguration(NicType.MANUAL, iface=iface_name)
-				data[iface_name] = self._edit_iface(iface)
-		elif self.target:
-			iface_name = list(self.target.keys())[0]
-			iface = data[iface_name]
-
-			if self.action == self._action_edit:
-				data[iface_name] = self._edit_iface(iface)
-			elif self.action == self._action_delete:
-				del data[iface_name]
+				iface = self._edit_iface(iface)
+				data += [iface]
+		elif entry:
+			if action == self._actions[1]:  # edit interface
+				data = [d for d in data if d.iface != entry.iface]
+				data.append(self._edit_iface(entry))
+			elif action == self._actions[2]:  # delete
+				data = [d for d in data if d != entry]
 
 		return data
 
-	def _select_iface(self, existing_ifaces: List[str]) -> Optional[Any]:
+	def _select_iface(self, data: List[NetworkConfiguration]) -> Optional[Any]:
 		all_ifaces = list_interfaces().values()
+		existing_ifaces = [d.iface for d in data]
 		available = set(all_ifaces) - set(existing_ifaces)
 		choice = Menu(str(_('Select interface to add')), list(available), skip=True).run()
 
@@ -76,7 +76,7 @@ class ManualNetworkConfig(ListManager):
 
 		return choice.value
 
-	def _edit_iface(self, edit_iface :NetworkConfiguration):
+	def _edit_iface(self, edit_iface: NetworkConfiguration):
 		iface_name = edit_iface.iface
 		modes = ['DHCP (auto detect)', 'IP (static)']
 		default_mode = 'DHCP (auto detect)'
@@ -99,11 +99,13 @@ class ManualNetworkConfig(ListManager):
 			gateway = None
 
 			while 1:
-				gateway_input = TextInput(_('Enter your gateway (router) IP address or leave blank for none: '),
-									edit_iface.gateway).run().strip()
+				gateway = TextInput(
+					_('Enter your gateway (router) IP address or leave blank for none: '),
+					edit_iface.gateway
+				).run().strip()
 				try:
-					if len(gateway_input) > 0:
-						ipaddress.ip_address(gateway_input)
+					if len(gateway) > 0:
+						ipaddress.ip_address(gateway)
 					break
 				except ValueError:
 					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
@@ -124,7 +126,9 @@ class ManualNetworkConfig(ListManager):
 			return NetworkConfiguration(NicType.MANUAL, iface=iface_name)
 
 
-def ask_to_configure_network(preset: Union[None, NetworkConfiguration, List[NetworkConfiguration]]) -> Optional[Union[List[NetworkConfiguration], NetworkConfiguration]]:
+def ask_to_configure_network(
+	preset: Union[NetworkConfiguration, List[NetworkConfiguration]]
+) -> Optional[NetworkConfiguration | List[NetworkConfiguration]]:
 	"""
 		Configure the network on the newly installed system
 	"""
@@ -150,8 +154,8 @@ def ask_to_configure_network(preset: Union[None, NetworkConfiguration, List[Netw
 		list(network_options.values()),
 		cursor_index=cursor_idx,
 		sort=False,
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match choice.type_:
@@ -165,7 +169,7 @@ def ask_to_configure_network(preset: Union[None, NetworkConfiguration, List[Netw
 	elif choice.value == network_options['network_manager']:
 		return NetworkConfiguration(NicType.NM)
 	elif choice.value == network_options['manual']:
-		manual = ManualNetworkConfig('Configure interfaces', preset)
-		return manual.run_manual()
+		preset_ifaces = preset if isinstance(preset, list) else []
+		return ManualNetworkConfig('Configure interfaces', preset_ifaces).run()
 
 	return preset

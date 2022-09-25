@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
 from ..menu.menu import MenuSelectionType
@@ -12,7 +13,7 @@ from ..output import log
 from ..profiles import Profile, list_profiles
 from ..mirrors import list_mirrors
 
-from ..translation import Translation
+from ..translationhandler import Language, TranslationHandler
 from ..packages.packages import validate_package_list
 
 from ..storage import storage
@@ -109,7 +110,7 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		list(mirrors.keys()),
 		preset_values=preselected,
 		multi=True,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match selected_mirror.type_:
@@ -118,13 +119,40 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
-def select_archinstall_language(preset_values: str):
-	languages = Translation.get_available_lang()
-	choice = Menu(_('Archinstall language'), languages, default_option=preset_values).run()
+def select_archinstall_language(languages: List[Language], preset_value: Language) -> Language:
+	# these are the displayed language names which can either be
+	# the english name of a language or, if present, the
+	# name of the language in its own language
+	options = {lang.display_name: lang for lang in languages}
+
+	def dependency_preview(current_selection: str) -> Optional[str]:
+		current_lang = options[current_selection]
+
+		if current_lang.external_dep and not TranslationHandler.is_custom_font_enabled():
+			font_file = TranslationHandler.custom_font_path()
+			text = str(_('To be able to use this translation, please install a font manually that supports the language.')) + '\n'
+			text += str(_('The font should be stored as {}')).format(font_file)
+			return text
+		return None
+
+	choice = Menu(
+		_('Archinstall language'),
+		list(options.keys()),
+		default_option=preset_value.display_name,
+		preview_command=lambda x: dependency_preview(x),
+		preview_size=0.5
+	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset_values
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Esc:
+			return preset_value
+		case MenuSelectionType.Selection:
+			language: Language = options[choice.value]
+			# we have to make sure that the proper AUR dependency is
+			# present to be able to use this language
+			if not language.external_dep or TranslationHandler.is_custom_font_enabled():
+				return language
+			return select_archinstall_language(languages, preset_value)
 
 
 def select_profile(preset) -> Optional[Profile]:
@@ -150,8 +178,8 @@ def select_profile(preset) -> Optional[Profile]:
 	selection = Menu(
 		title=title,
 		p_options=list(options.keys()),
-		explode_on_interrupt=True,
-		explode_warning=warning
+		raise_error_on_interrupt=True,
+		raise_error_warning_msg=warning
 	).run()
 
 	match selection.type_:
@@ -197,6 +225,39 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 	return packages
 
 
+def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
+	max_downloads = 5
+	print(_(f"This option enables the number of parallel downloads that can occur during installation"))
+	print(_(f"Enter the number of parallel downloads to be enabled.\n (Enter a value between 1 to {max_downloads})\nNote:"))
+	print(_(f" - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"))
+	print(_(f" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"))
+	print(_(f" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
+
+	while True:
+		try:
+			input_number = int(TextInput(_("[Default value: 0] > ")).run().strip() or 0)
+			if input_number <= 0:
+				input_number = 0
+			elif input_number > max_downloads:
+				input_number = max_downloads
+			break
+		except:
+			print(_(f"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"))
+
+	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
+	with pacman_conf_path.open() as f:
+		pacman_conf = f.read().split("\n")
+
+	with pacman_conf_path.open("w") as fwrite:
+		for line in pacman_conf:
+			if "ParallelDownloads" in line:
+				fwrite.write(f"ParallelDownloads = {input_number+1}\n") if not input_number == 0 else fwrite.write("#ParallelDownloads = 0\n")
+			else:
+				fwrite.write(f"{line}\n")
+
+	return input_number
+
+
 def select_additional_repositories(preset: List[str]) -> List[str]:
 	"""
 	Allows the user to select additional repositories (multilib, and testing) if desired.
@@ -213,7 +274,7 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		sort=False,
 		multi=True,
 		preset_values=preset,
-		explode_on_interrupt=True
+		raise_error_on_interrupt=True
 	).run()
 
 	match choice.type_:

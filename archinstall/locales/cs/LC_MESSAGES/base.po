@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Soubor protokolu byl vytvořen zde: {} {}"
@@ -66,7 +66,7 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"
 
 msgid "Select one network interface to configure"
-msgstr "Zvolte zařízení ke konfiguraci"
+msgstr "Zvolte síťové rozhraní ke konfiguraci"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
 msgstr "Zvolte který režim má být nastaven pro \"{}\" nebo přeskočte pro použití výchozího režimu \"{}\""
@@ -423,8 +423,8 @@ msgstr "Upravit"
 msgid "Delete"
 msgstr "Smazat"
 
-msgid "Select an action for < {} >"
-msgstr "Zvolte akci pro < {} >"
+msgid "Select an action for '{}'"
+msgstr "Zvolte akci pro '{}'"
 
 msgid "Copy to new key:"
 msgstr "Zkopírovat k novému klíči:"
@@ -654,8 +654,8 @@ msgstr "Základní instalace, která vám umožní si nastavit Arch Linux jakkol
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Nabízí výběr různých serverových balíčků k instalaci a aktivaci, např. httpd, nginx, mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
-msgstr "Vyberte servery, které mají být nainstalovány, pokud nezvolíte žádné, bude provedena jen základní instalace"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Vyberte, které servery mají být nainstalovány, pokud nezvolíte žádné, bude provedena jen základní instalace"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Nainstaluje minimalistický systém spolu s xorg a ovladači grafiky."
@@ -743,3 +743,81 @@ msgstr "Volné místo"
 
 msgid "Bus-type"
 msgstr "Typ sběrnice"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Musí být zadáno heslo správce (root) nebo musí být specifikován alespoň jeden uživatel s sudo oprávněními"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno (ponechte prázdné k přeskočení): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Zadané uživatelské jméno není platné. Zkuste to znovu"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Má být \"{}\" superuživatelem (sudoer)?"
+
+msgid "Select which partitions to encrypt:"
+msgstr "Zvolte oddíl, který bude označen jako šifrovaný:"
+
+msgid "very weak"
+msgstr "velmi slabé"
+
+msgid "weak"
+msgstr "slabé"
+
+msgid "moderate"
+msgstr "středně silné"
+
+msgid "strong"
+msgstr "silné"
+
+msgid "Add subvolume"
+msgstr "Přidat podsvazek"
+
+msgid "Edit subvolume"
+msgstr "Upravit podsvazek"
+
+msgid "Delete subvolume"
+msgstr "Smazat podsvazek"
+
+msgid "Configured {} interfaces"
+msgstr "Nakonfigurováno {} rozhraní"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "Tato možnost povolí specifikovaný počet paralelních stahování, která mohou nastat při instalaci"
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+"Zadejte povolený počet paralelních stahování.\n"
+" (Zadejte hodnotu mezi 1 a {max_downloads})\n"
+"Poznámka:"
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maximální hodnota  : {max_downloads} (Povolí {max_downloads} paralelních stahování, povolí {max_downloads+1} stahování naráz )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Minimální hodnota   : 1 (Povolí 1 paralelní stahování, povolí 2 stahování naráz)"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Zakázáno/Výchozí    : 0 (Zakáže paralelní stahování, povolí pouze 1 stahování naráz)"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {max_downloads}, nebo 0 pro vypnutí]"
+
+msgid "Parallel Downloads"
+msgstr "Paralelní stahování"
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Pomocí ESC přeskočíte"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""

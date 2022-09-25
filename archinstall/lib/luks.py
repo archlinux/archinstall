@@ -22,9 +22,9 @@ from .disk.btrfs import BTRFSPartition
 
 class luks2:
 	def __init__(self,
-		partition :Partition,
-		mountpoint :str,
-		password :str,
+		partition: Partition,
+		mountpoint: Optional[str],
+		password: Optional[str],
 		key_file :Optional[str] = None,
 		auto_unmount :bool = False,
 		*args :str,

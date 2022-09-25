@@ -254,10 +254,12 @@ msgstr "Codificação de localização"
 msgid "Drive(s)"
 msgstr "Discos rígidos"
 
-msgid "Select disk layout"
-msgstr "Seleciona o esquema de disco"
+#, fuzzy
+msgid "Disk layout"
+msgstr "Selecionar esquema de disco"
 
-msgid "Set encryption password"
+#, fuzzy
+msgid "Encryption password"
 msgstr "Define a palavra-passe de encriptação"
 
 msgid "Swap"
@@ -266,7 +268,8 @@ msgstr "Swap"
 msgid "Bootloader"
 msgstr "Carregador de arranque"
 
-msgid "root password"
+#, fuzzy
+msgid "Root password"
 msgstr "Palavra-passe de root"
 
 msgid "Superuser account"
@@ -429,8 +432,8 @@ msgid "Delete"
 msgstr "Eliminar"
 
 #, fuzzy
-msgid "Select an action for < {} >"
-msgstr "Selecione uma ação para < {} >"
+msgid "Select an action for '{}'"
+msgstr "Selecione uma ação para '{}'"
 
 msgid "Copy to new key:"
 msgstr "Copiar para nova chave:"
@@ -688,7 +691,7 @@ msgstr ""
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr ""
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr ""
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -776,6 +779,110 @@ msgstr ""
 "{}\n"
 "\n"
 "Seleciona a partição a mascar para formatar"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Free space"
+msgstr ""
+
+msgid "Bus-type"
+msgstr ""
+
+#, fuzzy
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "É necessário especificar uma senha de root ou pelo menos 1 super-utilizador"
+
+#, fuzzy
+msgid "Enter username (leave blank to skip): "
+msgstr "Introduzir um nome de utilizador para criar um utilizador adicional (deixar em branco para saltar): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Deve {} ser um superutilizador (sudoer)?"
+
+#, fuzzy
+msgid "Select which partitions to encrypt:"
+msgstr ""
+"{}\n"
+"\n"
+"Seleciona a partição a marcar como encriptada"
+
+msgid "very weak"
+msgstr ""
+
+msgid "weak"
+msgstr ""
+
+msgid "moderate"
+msgstr ""
+
+msgid "strong"
+msgstr ""
+
+#, fuzzy
+msgid "Add subvolume"
+msgstr " Subvolume :{:16}"
+
+msgid "Edit subvolume"
+msgstr ""
+
+#, fuzzy
+msgid "Delete subvolume"
+msgstr "Eliminar Utilizador"
+
+msgid "Configured {} interfaces"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr ""
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr ""
+"Usa ESC para saltar\n"
+"\n"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
+
+#~ msgid "Select disk layout"
+#~ msgstr "Seleciona o esquema de disco"
 
 #~ msgid "Add :"
 #~ msgstr "Adicionar :"

@@ -423,8 +423,8 @@ msgstr "Editar"
 msgid "Delete"
 msgstr "Eliminar"
 
-msgid "Select an action for < {} >"
-msgstr "Seleccione una acción para < {} >"
+msgid "Select an action for '{}'"
+msgstr "Seleccione una acción para '{}'"
 
 msgid "Copy to new key:"
 msgstr "Copiar a nueva clave:"
@@ -657,7 +657,8 @@ msgstr "Una instalación muy básica que te permite personalizar Arch Linux como
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Proporciona una selección de varios paquetes de servidor para instalar y habilitar, p.e. httpd, nginx, mariadb"
 
-msgid "Choose which servers to install, if none then a minimal installation wil be done"
+#, fuzzy
+msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Elija qué servidores instalar, si no hay ninguno, se realizará una instalación mínima"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
@@ -763,6 +764,68 @@ msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
 
 msgid "Select which partitions to encrypt:"
 msgstr "Seleccione qué particiones cifrar:"
+
+msgid "very weak"
+msgstr ""
+
+msgid "weak"
+msgstr ""
+
+msgid "moderate"
+msgstr ""
+
+msgid "strong"
+msgstr ""
+
+#, fuzzy
+msgid "Add subvolume"
+msgstr " Subvolumen :{:16}"
+
+msgid "Edit subvolume"
+msgstr ""
+
+#, fuzzy
+msgid "Delete subvolume"
+msgstr "Eliminar usuario"
+
+msgid "Configured {} interfaces"
+msgstr ""
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr ""
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr ""
+
+msgid "Parallel Downloads"
+msgstr ""
+
+#, fuzzy
+msgid "ESC to skip"
+msgstr "Use ESC para saltar"
+
+msgid "CTRL+C to reset"
+msgstr ""
+
+msgid "TAB to select"
+msgstr ""
 
 #~ msgid "Select disk layout"
 #~ msgstr "Seleccione el diseño del disco"
