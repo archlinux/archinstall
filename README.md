@@ -42,19 +42,19 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 Archinstall is available in different languages which have been contributed and are maintained by the community.  
 Current translations are listed below and vary in the amount of translations per language
 ```
-English                                                                                                                                       
+English
 Deutsch
-Española                                                                                                                                                 
-Française
-Indonesia                                                                                                                                                
-Italiano                                                                                                                                                 
+Español
+Français
+Indonesia
+Italiano
 Nederlands
-Polskie                                                                                                                                            
-Portugues do Brasil                                                                                                                                      
-Português                                                                                                                                                
-Svenska                                                                                                                                                  
-Türkçe                                                                                                                                                     
-čeština                                                                                                                                                  
+Polskie
+Português do Brasil
+Português
+Svenska
+Türkçe
+čeština
 Русский
 اردو
 Ελληνικά
