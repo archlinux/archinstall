@@ -156,7 +156,7 @@ def get_arguments() -> Dict[str, Any]:
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
 	1) preprocess.
-		We take those arguments which use json files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
+		We take those arguments which use JSON files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
 	2) Load.
 		We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
 		The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
@@ -167,7 +167,7 @@ def get_arguments() -> Dict[str, Any]:
 	"""
 	config = {}
 	args, unknowns = parser.parse_known_args()
-	# preprocess the json files.
+	# preprocess the JSON files.
 	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
 		if not json_stream_to_structure('--config', args.config, config):
