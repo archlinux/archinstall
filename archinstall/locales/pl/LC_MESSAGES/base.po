@@ -32,7 +32,7 @@ msgid "Any additional users to install (leave blank for no users): "
 msgstr "Ewentualni użytkownicy do instalacji (pozostaw puste jeśli nie chcesz tworzyć użytkowników): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Czy użytkownik powinien superużytkownikiem (sudoer)?"
+msgstr "Czy użytkownik powinien być superużytkownikiem (sudoer)?"
 
 msgid "Select a timezone"
 msgstr "Wybierz strefę czasową"
