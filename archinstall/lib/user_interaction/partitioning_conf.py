@@ -119,7 +119,7 @@ def select_partition(
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 
-	if choice.type_ == MenuSelectionType.Esc:
+	if choice.type_ == MenuSelectionType.Skip:
 		return None
 
 	if isinstance(choice.value, list):
@@ -207,7 +207,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			fs_choice = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
 
-			if fs_choice.type_ == MenuSelectionType.Esc:
+			if fs_choice.type_ == MenuSelectionType.Skip:
 				continue
 
 			prompt = str(_('Enter the start sector (percentage or block number, default: {}): ')).format(
@@ -390,7 +390,7 @@ def select_encrypted_partitions(
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 
-	if choice.type_ == MenuSelectionType.Esc:
+	if choice.type_ == MenuSelectionType.Skip:
 		return None
 
 	if isinstance(choice.value, list):

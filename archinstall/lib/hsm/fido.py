@@ -1,12 +1,23 @@
-import typing
-import pathlib
 import getpass
 import logging
+
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List
+
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..disk.partition import Partition
 from ..general import log
 
-def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
+
+@dataclass
+class Fido2Device:
+	path: Path
+	manufacturer: str
+	product: str
+
+
+def get_fido2_devices() -> List[Fido2Device]:
 	"""
 	Uses systemd-cryptenroll to list the FIDO2 devices
 	connected that supports FIDO2.
@@ -18,30 +29,36 @@ def get_fido2_devices() -> typing.Dict[str, typing.Dict[str, str]]:
 
 	So we'll look for `MANUFACTURER` and `PRODUCT`, we take their index
 	and we split each line based on those positions.
-	"""
-	worker = clear_vt100_escape_codes(SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8'))
 
-	MANUFACTURER_POS = 0
-	PRODUCT_POS = 0
-	devices = {}
-	for line in worker.split('\r\n'):
+	Output example:
+
+	PATH         MANUFACTURER PRODUCT
+	/dev/hidraw1 Yubico       YubiKey OTP+FIDO+CCID
+	"""
+	fido_devices = clear_vt100_escape_codes(SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8'))
+
+	manufacturer_pos = 0
+	product_pos = 0
+	devices = []
+
+	for line in fido_devices.split('\r\n'):
 		if '/dev' not in line:
-			MANUFACTURER_POS = line.find('MANUFACTURER')
-			PRODUCT_POS = line.find('PRODUCT')
+			manufacturer_pos = line.find('MANUFACTURER')
+			product_pos = line.find('PRODUCT')
 			continue
 
-		path = line[:MANUFACTURER_POS].rstrip()
-		manufacturer = line[MANUFACTURER_POS:PRODUCT_POS].rstrip()
-		product = line[PRODUCT_POS:]
+		path = line[:manufacturer_pos].rstrip()
+		manufacturer = line[manufacturer_pos:product_pos].rstrip()
+		product = line[product_pos:]
 
-		devices[path] = {
-			'manufacturer' : manufacturer,
-			'product' : product
-		}
+		devices.append(
+			Fido2Device(path, manufacturer, product)
+		)
 
 	return devices
 
-def fido2_enroll(hsm_device_path :pathlib.Path, partition :Partition, password :str) -> bool:
+
+def fido2_enroll(hsm_device_path: Path, partition :Partition, password :str) -> bool:
 	worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device_path} {partition.real_device}", peak_output=True)
 	pw_inputted = False
 	pin_inputted = False

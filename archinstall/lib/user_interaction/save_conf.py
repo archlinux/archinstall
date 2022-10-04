@@ -55,7 +55,7 @@ def save_config(config: Dict):
 		preview_command=preview
 	).run()
 
-	if choice.type_ == MenuSelectionType.Esc:
+	if choice.type_ == MenuSelectionType.Skip:
 		return
 
 	while True:

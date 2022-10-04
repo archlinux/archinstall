@@ -49,13 +49,13 @@ def select_disk_layout(preset: Optional[Dict[str, Any]], block_devices: list, ad
 	choice = Menu(
 		_('Select what you wish to do with the selected block devices'),
 		modes,
-		raise_error_on_interrupt=True,
-		raise_error_warning_msg=warning
+		allow_reset=True,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
-		case MenuSelectionType.Ctrl_c: return None
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
 			if choice.value == wipe_mode:
 				return get_default_partition_layout(block_devices, advanced_options)
@@ -81,7 +81,7 @@ def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:
 
 		choice = Menu(title, drives).run()
 
-		if choice.type_ == MenuSelectionType.Esc:
+		if choice.type_ == MenuSelectionType.Skip:
 			return None
 
 		drive = dict_o_disks[choice.value]
