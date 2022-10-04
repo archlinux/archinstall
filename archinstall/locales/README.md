@@ -54,5 +54,5 @@ To display the language inside Archinstall in your own tongue, please edit the f
 add a `translated_lang` entry to the respective language, e.g. 
 
 ```
- {"abbr": "pl", "lang": "Polish", "translated_lang": "Polskie"}
+ {"abbr": "pl", "lang": "Polish", "translated_lang": "Polski"}
 ```

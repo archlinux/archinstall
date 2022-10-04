@@ -664,7 +664,9 @@ class Installer:
 
 		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
 
-	def minimal_installation(self, testing=False, multilib=False) -> bool:
+	def minimal_installation(
+			self, testing: bool = False, multilib: bool = False,
+			hostname: str = 'archinstall', locales: List[str] = ['en_US.UTF-8 UTF-8']) -> bool:
 		# Add necessary packages if encrypting the drive
 		# (encrypted partitions default to btrfs for now, so we need btrfs-progs)
 		# TODO: Perhaps this should be living in the function which dictates
@@ -752,8 +754,8 @@ class Installer:
 		# os.remove(f'{self.target}/etc/localtime')
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
-		self.set_hostname('archinstall')
-		self.set_locale('en_US')
+		self.set_hostname(hostname)
+		self.set_locale(*locales[0].split())
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
