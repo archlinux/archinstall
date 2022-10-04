@@ -379,7 +379,7 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_harddrives(self, old_harddrives : list) -> List:
+	def _select_harddrives(self, old_harddrives: List[str] = []) -> List:
 		harddrives = select_harddrives(old_harddrives)
 
 		if harddrives is not None:

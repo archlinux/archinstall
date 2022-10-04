@@ -42,19 +42,19 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 Archinstall is available in different languages which have been contributed and are maintained by the community.  
 Current translations are listed below and vary in the amount of translations per language
 ```
-English                                                                                                                                       
+English
 Deutsch
-Española                                                                                                                                                 
+Español
 Française
-Indonesia                                                                                                                                                
-Italiano                                                                                                                                                 
+Indonesia
+Italiano
 Nederlands
-Polskie                                                                                                                                            
-Portugues do Brasil                                                                                                                                      
-Português                                                                                                                                                
-Svenska                                                                                                                                                  
-Türkçe                                                                                                                                                     
-čeština                                                                                                                                                  
+Polskie
+Português do Brasil
+Português
+Svenska
+Türkçe
+čeština
 Русский
 اردو
 Ελληνικά
@@ -122,8 +122,7 @@ with archinstall.luks2(root, 'luksloop', disk_password) as unlocked_root:
     boot.mount('/mnt/boot')
 
 with archinstall.Installer('/mnt') as installation:
-    if installation.minimal_installation():
-        installation.set_hostname('minimal-arch')
+    if installation.minimal_installation(hostname='minimal-arch'):
         installation.add_bootloader()
 
         installation.add_additional_packages(['nano', 'wget', 'git'])

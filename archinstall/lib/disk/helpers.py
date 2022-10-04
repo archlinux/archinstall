@@ -6,12 +6,11 @@ import pathlib
 import re
 import time
 import glob
+
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from .diskinfo import get_lsblk_info
 from ..models.subvolume import Subvolume
-
-if TYPE_CHECKING:
-	from .partition import Partition
 
 from .blockdevice import BlockDevice
 from .dmcryptdev import DMCryptDev
@@ -20,6 +19,10 @@ from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage
+
+if TYPE_CHECKING:
+	from .partition import Partition
+
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
 GIGA = 2 ** 30
@@ -204,11 +207,18 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 		}
 	}
 
+
 def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
-def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, Any]:
+
+def all_blockdevices(
+	mappers: bool = False,
+	partitions: bool = False,
+	error: bool = False,
+	exclude_iso_dev: bool = True
+) -> Dict[str, Any]:
 	"""
 	Returns BlockDevice() and Partition() objects for all available devices.
 	"""
@@ -227,6 +237,13 @@ def all_blockdevices(mappers=False, partitions=False, error=False) -> Dict[str, 
 			continue
 
 		try:
+			if exclude_iso_dev:
+				# exclude all devices associated with the iso boot locations
+				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
+				lsblk_info = get_lsblk_info(device_path)
+				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
+					continue
+
 			information = blkid(f'blkid -p -o export {device_path}')
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
@@ -416,7 +433,7 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 		# Since all_blockdevices() returns PosixPath objects, we need to convert
 		# findmnt paths to pathlib.Path() first:
 		mountpoint = pathlib.Path(mountpoint)
-		
+
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:
 				mounts[mountpoint] = block_devices_mountpoints[mountpoint]

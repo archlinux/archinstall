@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: K.B.Dharun Krishna <kbdharunkrishna@gmail.com>\n"
 "Language-Team: \n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
@@ -819,12 +819,11 @@ msgstr "தவறான உள்ளீடு! சரியான உள்ள�
 msgid "Parallel Downloads"
 msgstr "இணையான பதிவிறக்கங்கள்"
 
-#, fuzzy
 msgid "ESC to skip"
-msgstr "தவிர்க்க ESC ஐப் பயன்படுத்தவும்"
+msgstr "தவிர்க்க ESC"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "மீட்டமைக்க CTRL+C"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "தேர்ந்தெடுக்க TAB"

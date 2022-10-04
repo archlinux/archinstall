@@ -51,7 +51,7 @@ from .lib.hsm import (
 )
 parser = ArgumentParser()
 
-__version__ = "2.5.1rc1"
+__version__ = "2.5.1"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -156,18 +156,18 @@ def get_arguments() -> Dict[str, Any]:
 	Is done on following steps:
 	0) we create a dict to store the arguments and their values
 	1) preprocess.
-		We take those arguments which use Json files, and read them into the argument dict. So each first level entry becomes a argument un it's own right
+		We take those arguments which use JSON files, and read them into the argument dict. So each first level entry becomes a argument on it's own right
 	2) Load.
-		We convert the predefined argument list directly into the dict vía the vars() función. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
+		We convert the predefined argument list directly into the dict via the vars() function. Non specified arguments are loaded with value None or false if they are booleans (action="store_true").
 		The name is chosen according to argparse conventions. See above (the first text is used as argument name, but underscore substitutes dash)
 		We then load all the undefined arguments. In this case the names are taken as written.
-		Important. This way explicit command line arguments take precedence over configuración files.
+		Important. This way explicit command line arguments take precedence over configuration files.
 	3) Amend
 		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
 	config = {}
 	args, unknowns = parser.parse_known_args()
-	# preprocess the json files.
+	# preprocess the JSON files.
 	# TODO Expand the url access to the other JSON file arguments ?
 	if args.config is not None:
 		if not json_stream_to_structure('--config', args.config, config):

@@ -259,7 +259,7 @@ msgid "Disk layout"
 msgstr "Disposition du disque"
 
 msgid "Encryption password"
-msgstr "Mot de passe de cryptage"
+msgstr "Mot de passe de chiffrement"
 
 msgid "Swap"
 msgstr "Swap"
@@ -367,7 +367,7 @@ msgid "Enter a password: "
 msgstr "Entrer un mot de passe : "
 
 msgid "Enter a encryption password for {}"
-msgstr "Entrer un mot de passe de cryptage pour {}"
+msgstr "Entrer un mot de passe de chiffrement pour {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Entrer le mot de passe de chiffrement du disque (laisser vide pour aucun chiffrement) : "

@@ -402,9 +402,9 @@ def os_setup(installation):
 	# Set mirrors used by pacstrap (outside of installation)
 	if archinstall.arguments.get('mirror-region', None):
 		archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
-	if installation.minimal_installation():
-		installation.set_locale(archinstall.arguments['sys-language'], archinstall.arguments['sys-encoding'].upper())
-		installation.set_hostname(archinstall.arguments['hostname'])
+	if installation.minimal_installation(
+			hostname=archinstall.arguments['hostname'],
+			locales=[f"{archinstall.arguments['sys-language']} {archinstall.arguments['sys-encoding'].upper()}"]):
 		if archinstall.arguments['mirror-region'].get("mirrors", None) is not None:
 			installation.set_mirrors(
 				archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
