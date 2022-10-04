@@ -12,7 +12,7 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 		super()._setup_selection_menu_options()
 		options_list = []
 		mandatory_list = []
-		options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
+		options_list = ['harddrives', 'disk_layouts', 'disk_encryption','swap']
 		mandatory_list = ['harddrives']
 		options_list.extend(['save_config','install','abort'])
 

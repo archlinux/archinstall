@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, Optional
 
 from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
@@ -7,6 +8,9 @@ from ..disk import BlockDevice
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
+from .utils import get_password
+from ..models.disk_encryption import DiskEncryption, EncryptionType
+from ..hsm.fido import get_fido2_devices
 
 if TYPE_CHECKING:
 	_: Any

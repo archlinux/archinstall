@@ -2,15 +2,12 @@ from __future__ import annotations
 
 import logging
 import sys
-import pathlib
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translationhandler import TranslationHandler, Language
-from ..hsm.fido import get_fido2_devices
-
 from ..user_interaction.general_conf import select_archinstall_language
 
 if TYPE_CHECKING:
@@ -167,7 +164,8 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
-class GeneralMenu:
+
+class AbstractMenu:
 	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
@@ -196,7 +194,7 @@ class GeneralMenu:
 	def last_choice(self):
 		return self._last_choice
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
+	def __enter__(self, *args :Any, **kwargs :Any) -> AbstractMenu:
 		self.is_context_mgr = True
 		return self
 
@@ -209,9 +207,9 @@ class GeneralMenu:
 			raise args[1]
 
 		for key in self._menu_options:
-			sel = self._menu_options[key]
+			selector = self._menu_options[key]
 			if key and key not in self._data_store:
-				self._data_store[key] = sel._current_selection
+				self._data_store[key] = selector.current_selection
 
 		self.exit_callback()
 
@@ -472,26 +470,16 @@ class GeneralMenu:
 		self._translation_handler.activate(language)
 		return language
 
-	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
-		title = _('Select which partitions to mark for formatting:')
-		title += '\n'
 
-		fido_devices = get_fido2_devices()
+class AbstractSubMenu(AbstractMenu):
+	def __init__(self, data_store: Dict = None):
+		super().__init__(data_store=data_store)
 
-		indexes = []
-		for index, path in enumerate(fido_devices.keys()):
-			title += f"{index}: {path} ({fido_devices[path]['manufacturer']} - {fido_devices[path]['product']})"
-			indexes.append(f"{index}|{fido_devices[path]['product']}")
-
-		title += '\n'
-
-		choice = Menu(title, indexes, multi=False).run()
-
-		match choice.type_:
-			case MenuSelectionType.Esc: return preset
-			case MenuSelectionType.Selection:
-				selection: Any = choice.value
-				index = int(selection.split('|',1)[0])
-				return pathlib.Path(list(fido_devices.keys())[index])
-
-		return None
+		self._menu_options['__separator__'] = Selector('')
+		self._menu_options['back'] = \
+			Selector(
+				_('Back'),
+				no_store=True,
+				enabled=True,
+				exec_func=lambda n, v: True,
+			)

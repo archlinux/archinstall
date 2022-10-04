@@ -37,9 +37,9 @@ from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
 from .lib.menu.global_menu import GlobalMenu
-from .lib.menu.selection_menu import (
+from .lib.menu.abstract_menu import (
 	Selector,
-	GeneralMenu
+	AbstractMenu
 )
 from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony

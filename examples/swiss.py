@@ -153,7 +153,7 @@ def select_installed_locale(mode):
 	_menus
 """
 
-class SetupMenu(archinstall.GeneralMenu):
+class SetupMenu(archinstall.AbstractMenu):
 	def __init__(self,storage_area):
 		super().__init__(data_store=storage_area)
 
@@ -230,14 +230,14 @@ class MyMenu(archinstall.GlobalMenu):
 		mandatory_list = []
 		if self._execution_mode in ('full','lineal'):
 			options_list = ['keyboard-layout', 'mirror-region', 'harddrives', 'disk_layouts',
-					'!encryption-password','swap', 'bootloader', 'hostname', '!root-password',
+					'disk_encryption','swap', 'bootloader', 'hostname', '!root-password',
 					'!users', 'profile', 'audio', 'kernels', 'packages','additional-repositories','nic',
 					'timezone', 'ntp']
 			if archinstall.arguments.get('advanced',False):
 				options_list.extend(['sys-language','sys-encoding'])
 			mandatory_list = ['harddrives','bootloader','hostname']
 		elif self._execution_mode == 'only_hd':
-			options_list = ['harddrives', 'disk_layouts', '!encryption-password','swap']
+			options_list = ['harddrives', 'disk_layouts', 'disk_encryption','swap']
 			mandatory_list = ['harddrives']
 		elif self._execution_mode == 'only_os':
 			options_list = ['keyboard-layout', 'mirror-region','bootloader', 'hostname',
