@@ -142,9 +142,7 @@ class Selector:
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
-		if not self._current_selection:
-			return False
-		return True
+		return bool(self._current_selection)
 
 	def get_selection(self) -> Any:
 		return self._current_selection
@@ -377,10 +375,8 @@ class GeneralMenu:
 		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
 		self.post_callback(config_name,result)
 
-		if exec_ret_val and self._check_mandatory_status():
-			return False
-		return True
-
+		return not exec_ret_val or not self._check_mandatory_status()
+		
 	def _set_kb_language(self):
 		""" general for ArchInstall"""
 		# Before continuing, set the preferred keyboard layout/language in the current terminal.
