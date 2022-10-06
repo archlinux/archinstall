@@ -568,6 +568,8 @@ class Partition:
 			except SysCallError as err:
 				raise err
 
+			# Update the partition info since the mount info has changed after this call.
+			self._partition_info = self._fetch_information()
 			return True
 
 		return False
@@ -582,6 +584,8 @@ class Partition:
 		if exit_code and 0 < exit_code < 8000:
 			raise SysCallError(f"Could not unmount {self._path} properly: {worker}", exit_code=exit_code)
 
+		# Update the partition info since the mount info has changed after this call.
+		self._partition_info = self._fetch_information()
 		return True
 
 	def filesystem_supported(self) -> bool:
