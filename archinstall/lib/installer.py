@@ -920,6 +920,9 @@ class Installer:
 
 		options = [f'rootfstype={root_fs_type}']
 
+		if self._zram_enabled:
+			options.insert(0, 'zswap.enabled=0')
+
 		if real_device := self.detect_encryption(root_partition):
 			root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
 
