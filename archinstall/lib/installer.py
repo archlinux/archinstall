@@ -911,6 +911,8 @@ class Installer:
 
 		_file = "/etc/default/grub"
 
+		# Use a try ... except statement rather than checking if the file exists
+		# before reading it to prevent introducing a race condition
 		try:
 			with open(_file, 'r') as fh:
 				contents = fh.readlines()
