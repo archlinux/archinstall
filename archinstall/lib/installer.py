@@ -909,19 +909,45 @@ class Installer:
 
 		root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
+		_file = "/etc/default/grub"
+
+		try:
+			with open(_file, 'r') as fh:
+				contents = fh.readlines()
+		except FileNotFoundError:
+			log(f"Could not configure GRUB, file not found: '{_file}'.", level=logging.DEBUG)
+			return False
+
+		options = [f'rootfstype={root_fs_type}']
+
 		if real_device := self.detect_encryption(root_partition):
 			root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-			_file = "/etc/default/grub"
-			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm rootfstype={root_fs_type}\"/'"
-			enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 			log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
-			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
-			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+			options.append(f'cryptdevice=UUID={root_uuid}:cryptlvm')
+
+			enable_crypt = 'GRUB_ENABLE_CRYPTODISK=y\n'
+
+			if enable_crypt not in contents:
+				for index, line in enumerate(contents):
+					if line == '#' + enable_crypt:
+						contents[index] = enable_crypt
+						break
+				else:
+					contents.append(enable_crypt)
+
+		grub_cmdline = 'GRUB_CMDLINE_LINUX'
+		cmdline = f'{grub_cmdline}="{" ".join(options)}"\n'
+
+		for index, line in enumerate(contents):
+			if line.split('=')[0] == grub_cmdline:
+				contents[index] = cmdline
+				break
 		else:
-			_file = "/etc/default/grub"
-			add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_fs_type}\"/'"
-			SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
+			contents.append(cmdline)
+
+		with open(_file, 'w') as fh:
+			fh.writelines(contents)
 
 		log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 		if has_uefi():
