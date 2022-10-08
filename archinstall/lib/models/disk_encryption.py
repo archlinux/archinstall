@@ -5,13 +5,13 @@ from typing import Optional, List
 
 
 class EncryptionType(Enum):
-	FullDiskEncryption = auto()
 	Partition = auto()
+	# FullDiskEncryption = auto()
 
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType
-	encryption_password: str
+	encryption_type: EncryptionType = EncryptionType.Partition
+	encryption_password: str = ''
 	partitions: List[str] = field(default_factory=list)
 	hsm_device: Optional[Path] = None

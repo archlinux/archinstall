@@ -764,8 +764,8 @@ msgstr "Введенное вами имя пользователя недейс
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Должен ли \"{}\" быть суперпользователем (sudo)?"
 
-msgid "Select which partitions to encrypt:"
-msgstr "Выберите разделы для шифрования:"
+msgid "Select which partitions to encrypt"
+msgstr "Выберите разделы для шифрования"
 
 msgid "very weak"
 msgstr "очень слабый"

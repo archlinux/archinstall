@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
-from ..disk import encrypted_partitions
 from ..disk.encryption import DiskEncryptionMenu
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
@@ -27,7 +26,6 @@ from ..user_interaction import ask_to_configure_network
 from ..user_interaction import get_password, ask_for_a_timezone, save_config
 from ..user_interaction import select_additional_repositories
 from ..user_interaction import select_disk_layout
-from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_kernel
 from ..user_interaction import select_language
@@ -218,28 +216,6 @@ class GlobalMenu(AbstractMenu):
 	def post_callback(self,name :str = None ,result :Any = None):
 		self._update_install_text(name, result)
 
-	def exit_callback(self):
-		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
-				for blockdevice in storage['arguments']['disk_layouts']:
-					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
-						for partition_index in select_encrypted_partitions(
-								title=_('Select which partitions to encrypt:'),
-								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions'],
-								filter_=(lambda p: p['mountpoint'] != '/boot')
-							):
-
-							partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
-							partition['encrypted'] = True
-							partition['!password'] = storage['arguments']['!encryption-password']
-
-							# We make sure generate-encryption-key-file is set on additional partitions
-							# other than the root partition. Otherwise they won't unlock properly #1279
-							if partition['mountpoint'] != '/':
-								partition['generate-encryption-key-file'] = True
-
 	def _install_text(self):
 		missing = len(self._missing_configs())
 		if missing > 0:
@@ -255,9 +231,18 @@ class GlobalMenu(AbstractMenu):
 			else:
 				return str(cur_value)
 
-	def _disk_encryption(self, preset: DiskEncryption) -> Optional[DiskEncryption]:
+	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
 		data_store = {}
-		disk_encryption: DiskEncryption = DiskEncryptionMenu(data_store).run()
+
+		selector = self._menu_options['disk_layouts']
+
+		if selector.has_selection():
+			layouts: Dict[str, Dict[str, Any]] = selector.current_selection
+		else:
+			# this should not happen as the encryption menu has the disk layout as dependency
+			raise ValueError('No disk layout specified')
+
+		disk_encryption = DiskEncryptionMenu(data_store, preset, layouts).run()
 		return disk_encryption
 
 	def _prev_network_config(self) -> Optional[str]:
@@ -302,7 +287,7 @@ class GlobalMenu(AbstractMenu):
 		if selector.has_selection():
 			encryption: DiskEncryption = selector.current_selection
 
-			output = f'Encryption type: {encryption.encryption_type.value}\n'
+			output = f'Encryption type: {encryption.encryption_type}\n'
 			output += f'Password: {secret(encryption.encryption_password)}\n'
 
 			if encryption.partitions:
@@ -318,7 +303,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _display_disk_encryption(self, current_value: Optional[DiskEncryption]) -> str:
-		if current_value:
+		if current_value and current_value.encryption_type:
 			return current_value.encryption_type.value
 		return ''
 

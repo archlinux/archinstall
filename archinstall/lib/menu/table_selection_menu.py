@@ -9,24 +9,61 @@ class TableMenu(Menu):
 	def __init__(
 		self,
 		title: str,
-		data: Any,
+		data: List[Any] = [],
+		table_data: Optional[Tuple[List[Any], str]] = None,
 		custom_options: List[str] = [],
-		default: Any = None
+		default: Any = None,
+		multi: bool = False
 	):
-		self._data = data
+		"""
+		param title: Text that will be displayed above the menu
+		:type title: str
+
+		param data: List of objects that will be displayed as rows
+		:type data: List
+
+		param table_data: Tuple containing a list of objects and the corresponding
+		Table representation of the data as string; this can be used in case the table
+		has to be crafted in a more sophisticated manner
+		:type table_data: Optional[Tuple[List[Any], str]]
+
+		param custom_options: List of custom options that will be displayed under the table
+		:type custom_options: List
+		"""
+		if not data and not table_data:
+			raise ValueError('Either "data" or "table_data" must be provided')
+
 		self._custom_options = custom_options
 		self._default = default
 
-		self._table = self._create_table()
-		self._options, self._header = self._prepare_selection(self._table)
+		if multi:
+			header_padding = 5
+		else:
+			header_padding = 2
 
-		choice = super().__init__(
+		if len(data):
+			table = FormattedOutput.as_table(data)
+			rows = table.split('\n')
+			table = self._create_table(data, rows, header_padding=header_padding)
+		else:
+			# we assume the table to be
+			# h1  |   h2
+			# -----------
+			# r1  |   r2
+			data = table_data[0]
+			rows = table_data[1].split('\n')
+			table = self._create_table(data, rows, header_padding=header_padding)
+
+		self._options, header = self._prepare_selection(table)
+
+		super().__init__(
 			title,
 			self._options,
-			header=self._header,
+			header=header,
 			skip_empty_entries=True,
 			show_search_hint=False,
-			allow_reset=True
+			allow_reset=True,
+			multi=multi
 		)
 
 	def run(self) -> Optional[Any]:
@@ -38,16 +75,14 @@ class TableMenu(Menu):
 			case MenuSelectionType.Selection:
 				return self._options[choice.value]
 
-	def _create_table(self) -> Dict[str, Any]:
-		table = FormattedOutput.as_table(self._data)
-		rows = table.split('\n')
-
+	def _create_table(self, data: List[Any], rows: List[str], header_padding: int = 2) -> Dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		padding = ' ' * header_padding
+		display_data = {f'{header_padding}{rows[0]}': None, f'  {rows[1]}': None}
 
-		for row, entry in zip(rows[2:], self._data):
+		for row, entry in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
 			display_data[row] = entry
 

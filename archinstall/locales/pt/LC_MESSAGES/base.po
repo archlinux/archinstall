@@ -811,11 +811,8 @@ msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Deve {} ser um superutilizador (sudoer)?"
 
 #, fuzzy
-msgid "Select which partitions to encrypt:"
-msgstr ""
-"{}\n"
-"\n"
-"Seleciona a partição a marcar como encriptada"
+msgid "Select which partitions to encrypt"
+msgstr "Seleciona a partição a marcar como encriptada"
 
 msgid "very weak"
 msgstr ""

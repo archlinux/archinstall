@@ -371,30 +371,3 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = result
 
 	return block_device_struct
-
-
-def select_encrypted_partitions(
-	title :str,
-	partitions :List[Partition],
-	multiple :bool = True,
-	filter_ :Callable = None
-) -> Optional[int, List[int]]:
-	partition_indexes = _get_partitions(partitions, filter_)
-
-	if len(partition_indexes) == 0:
-		return None
-
-	# show current partition layout:
-	if len(partitions):
-		title += current_partition_layout(partitions, with_idx=True) + '\n'
-
-	choice = Menu(title, partition_indexes, multi=multiple).run()
-
-	if choice.type_ == MenuSelectionType.Skip:
-		return None
-
-	if isinstance(choice.value, list):
-		for partition_index in choice.value:
-			yield int(partition_index)
-	else:
-		yield (partition_index)
