@@ -909,12 +909,12 @@ class Installer:
 
 		root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
-		_file = "/etc/default/grub"
+		_file = pathlib.Path(f'{self.target}/etc/default/grub')
 
 		# Use a try ... except statement rather than checking if the file exists
 		# before reading it to prevent introducing a race condition
 		try:
-			with open(_file, 'r') as fh:
+			with _file.open('r') as fh:
 				contents = fh.readlines()
 		except FileNotFoundError:
 			log(f"Could not configure GRUB, file not found: '{_file}'.", level=logging.DEBUG)
@@ -951,7 +951,7 @@ class Installer:
 		else:
 			contents.append(cmdline)
 
-		with open(_file, 'w') as fh:
+		with _file.open('w') as fh:
 			fh.writelines(contents)
 
 		log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
