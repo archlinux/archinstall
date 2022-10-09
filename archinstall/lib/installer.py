@@ -985,6 +985,9 @@ class Installer:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.", level=logging.DEBUG)
 				microcode = None
 
+		if self._zram_enabled:
+			options.insert(0, 'zswap.enabled=0')
+
 		# blkid doesn't trigger on loopback devices really well,
 		# so we'll use the old manual method until we get that sorted out.
 		if real_device := self.detect_encryption(root_partition):
