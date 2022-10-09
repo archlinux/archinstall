@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, Optional
 
 from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
