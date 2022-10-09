@@ -261,6 +261,9 @@ class Filesystem:
 				new_partition_uuids = [partition.part_uuid for partition in self.blockdevice.partitions.values()]
 				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
 
+				log(f'Old partition set: {previous_partuuids}', level=logging.INFO, fg="teal")
+				log(f'New partition set: {new_partition_uuids}', level=logging.INFO, fg="teal")
+
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
 						return self.blockdevice.get_partition(partuuid=new_partuuid)

@@ -33,3 +33,4 @@ venv
 **/cmd_history.txt
 **/*.*~
 /*.sig
+/*.json
