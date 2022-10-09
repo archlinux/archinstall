@@ -5,6 +5,8 @@ import json
 import pathlib
 from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from ..models.disk_encryption import DiskEncryption
+
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
 	_: Any
@@ -113,6 +115,8 @@ class Filesystem:
 				if partition.get('encrypted', False):
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
+
+					disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
 
 					if not partition.get('!password'):
 						if not storage['arguments'].get('!encryption-password'):

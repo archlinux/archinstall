@@ -17,14 +17,13 @@ from .disk.helpers import findmnt
 from .mirrors import use_mirrors
 from .plugins import plugins
 from .storage import storage
-# from .user_interaction import *
 from .output import log
 from .profiles import Profile
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
-from .hsm import fido2_enroll
 from .models.users import User
 from .models.subvolume import Subvolume
+from .hsm import Fido2
 
 if TYPE_CHECKING:
 	_: Any
@@ -250,7 +249,7 @@ class Installer:
 				password = storage['arguments'].get('!encryption-password')
 			elif not password:
 				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
-			
+
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
@@ -263,7 +262,7 @@ class Installer:
 			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
 				if storage['arguments'].get('HSM'):
 					hsm_device_path = storage['arguments']['HSM']
-					fido2_enroll(hsm_device_path, partition['device_instance'], password)
+					Fido2.fido2_enroll(hsm_device_path, partition['device_instance'], password)
 
 		btrfs_subvolumes = [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]
 

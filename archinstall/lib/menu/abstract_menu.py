@@ -284,7 +284,7 @@ class AbstractMenu:
 		selector = option[0][1]
 		return config_name, selector
 
-	def run(self):
+	def run(self, allow_reset: bool = False):
 		""" Calls the Menu framework"""
 		# we synch all the options just in case
 		for item in self.list_options():
@@ -302,6 +302,8 @@ class AbstractMenu:
 			padding = self._get_menu_text_padding(list(enabled_menus.values()))
 			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
+			warning_msg = str(_('All settings will be reset, are you sure?'))
+
 			selection = Menu(
 				_('Set/Modify the below options'),
 				menu_options,
@@ -310,29 +312,35 @@ class AbstractMenu:
 				preview_command=self._preview_display,
 				preview_size=self.preview_size,
 				skip_empty_entries=True,
-				skip=False
+				skip=False,
+				allow_reset=allow_reset,
+				allow_reset_warning_msg=warning_msg
 			).run()
 
-			if selection.type_ == MenuSelectionType.Selection:
-				value = selection.value
+			match selection.type_:
+				case MenuSelectionType.Reset:
+					self._data_store = {}
+					return
+				case MenuSelectionType.Selection:
+					value = selection.value
 
-				if self.auto_cursor:
-					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
+					if self.auto_cursor:
+						cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
 
-					# in case the new position lands on a "placeholder" we'll skip them as well
-					while True:
-						if cursor_pos >= len(menu_options):
-							cursor_pos = 0
-						if len(menu_options[cursor_pos]) > 0:
-							break
-						cursor_pos += 1
+						# in case the new position lands on a "placeholder" we'll skip them as well
+						while True:
+							if cursor_pos >= len(menu_options):
+								cursor_pos = 0
+							if len(menu_options[cursor_pos]) > 0:
+								break
+							cursor_pos += 1
 
-				value = value.strip()
+					value = value.strip()
 
-				# if this calls returns false, we exit the menu
-				# we allow for an callback for special processing on realeasing control
-				if not self._process_selection(value):
-					break
+					# if this calls returns false, we exit the menu
+					# we allow for an callback for special processing on realeasing control
+					if not self._process_selection(value):
+						break
 
 		# we get the last action key
 		actions = {str(v.description):k for k,v in self._menu_options.items()}

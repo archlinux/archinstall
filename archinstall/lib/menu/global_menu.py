@@ -9,7 +9,7 @@ from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
-from ..models.disk_encryption import DiskEncryption
+from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.users import User
 from ..output import FormattedOutput
 from ..profiles import is_desktop_profile, Profile
@@ -287,13 +287,11 @@ class GlobalMenu(AbstractMenu):
 		if selector.has_selection():
 			encryption: DiskEncryption = selector.current_selection
 
-			output = f'Encryption type: {encryption.encryption_type}\n'
-			output += f'Password: {secret(encryption.encryption_password)}\n'
+			output = str(_('Encryption type')) + f': {encryption.encryption_type}\n'
+			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
 
 			if encryption.partitions:
-				output += f'Partitions:\n'
-				for partition in encryption.partitions:
-					output += f'\t{partition}\n'
+				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
 
 			if encryption.hsm_device:
 				output += f'HSM: {encryption.hsm_device}'
@@ -303,8 +301,8 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _display_disk_encryption(self, current_value: Optional[DiskEncryption]) -> str:
-		if current_value and current_value.encryption_type:
-			return current_value.encryption_type.value
+		if current_value:
+			return EncryptionType.type_to_text(current_value.encryption_type)
 		return ''
 
 	def _prev_install_missing_config(self) -> Optional[str]:

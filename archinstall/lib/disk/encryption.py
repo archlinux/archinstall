@@ -9,7 +9,7 @@ from ..user_interaction.partitioning_conf import current_partition_layout
 from ..user_interaction.utils import get_password
 from ..menu import Menu
 from ..general import secret
-from ..hsm.fido import get_fido2_devices, Fido2Device
+from ..hsm.fido import Fido2Device, Fido2
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,7 +38,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			Selector(
 				_('Encryption type'),
 				func=lambda preset: select_encryption_type(preset),
-				display_func=lambda x: _type_to_text(x) if x else None,
+				display_func=lambda x: EncryptionType.type_to_text(x) if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.encryption_type,
 				enabled=True
@@ -47,23 +47,24 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			Selector(
 				_('Partitions'),
 				func=lambda preset: select_partitions_to_encrypt(self._disk_layouts, preset),
-				display_func=lambda x: _type_to_text(x) if x else None,
+				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.partitions,
+				preview_func=self._prev_disk_layouts,
 				enabled=True
 			)
 		self._menu_options['HSM'] = \
 			Selector(
 				description=_('Use HSM to unlock encrypted drive'),
 				func=lambda preset: select_hsm(preset),
-				display_func=lambda x: _display_hsm(x),
+				display_func=lambda x: self._display_hsm(x),
 				dependencies=['encryption_password'],
 				default=self._preset.hsm_device,
 				enabled=True
 			)
 
-	def run(self) -> Optional[DiskEncryption]:
-		super().run()
+	def run(self, allow_reset: bool = True) -> Optional[DiskEncryption]:
+		super().run(allow_reset=allow_reset)
 
 		if self._data_store['encryption_password']:
 			return DiskEncryption(
@@ -75,39 +76,29 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
+	def _display_hsm(self, device: Optional[Fido2Device]) -> Optional[str]:
+		if device:
+			return device.manufacturer
 
-def _display_hsm(device: Optional[Fido2Device]) -> Optional[str]:
-	if device:
-		return device.manufacturer
+		if not Fido2.get_fido2_devices():
+			return str(_('No HSM devices available'))
+		return None
 
-	if not get_fido2_devices():
-		return str(_('No HSM devices available'))
-	return None
-
-
-def _encryption_type_mapper() -> Dict[str, EncryptionType]:
-	return {
-		# str(_('Full disk encryption')): EncryptionType.FullDiskEncryption,
-		str(_('Partition encryption')): EncryptionType.Partition
-	}
-
-
-def _text_to_type(text: str) -> EncryptionType:
-	mapping = _encryption_type_mapper()
-	return mapping[text]
-
-
-def _type_to_text(type_: EncryptionType) -> str:
-	mapping = _encryption_type_mapper()
-	type_to_text = {type_: text for text, type_ in mapping.items()}
-	return type_to_text[type_]
+	def _prev_disk_layouts(self) -> Optional[str]:
+		selector = self._menu_options['partitions']
+		if selector.has_selection():
+			partitions: List[Any] = selector.current_selection
+			output = str(_('Partitions to be encrypted')) + '\n'
+			output += current_partition_layout(partitions, with_title=False)
+			return output.rstrip()
+		return None
 
 
 def select_encryption_type(preset: Optional[DiskEncryption]) -> Optional[EncryptionType]:
 	title = str(_('Select disk encryption option'))
 	options = [
 		# _type_to_text(EncryptionType.FullDiskEncryption),
-		_type_to_text(EncryptionType.Partition)
+		EncryptionType.type_to_text(EncryptionType.Partition)
 	]
 
 	choice = Menu(title, options).run()
@@ -115,7 +106,7 @@ def select_encryption_type(preset: Optional[DiskEncryption]) -> Optional[Encrypt
 	match choice.type_:
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return _text_to_type(choice.value)
+		case MenuSelectionType.Selection: return EncryptionType.text_to_type(choice.value)
 
 
 def select_encrypted_password() -> Optional[str]:
@@ -126,7 +117,7 @@ def select_encrypted_password() -> Optional[str]:
 
 def select_hsm(preset: Optional[Path] = None) -> Optional[Fido2Device]:
 	title = _('Select a FIDO2 device to use for HSM')
-	fido_devices = get_fido2_devices()
+	fido_devices = Fido2.get_fido2_devices()
 
 	if fido_devices:
 		maybe_device = TableMenu(title, data=fido_devices, default=preset).run()
@@ -135,38 +126,37 @@ def select_hsm(preset: Optional[Path] = None) -> Optional[Fido2Device]:
 	return None
 
 
-def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: Dict[str, Any]) -> List[Any]:
+def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]) -> List[Any]:
 	# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 	# Then we need to identify which partitions to encrypt. This will default to / (root).
 	all_partitions = []
 	for blockdevice in disk_layouts.values():
 		if partitions := blockdevice.get('partitions'):
+			partitions = [p for p in partitions if p['mountpoint'] != '/boot']
 			all_partitions += partitions
 
 	if all_partitions:
 		title = str(_('Select which partitions to encrypt'))
 		partition_table = current_partition_layout(all_partitions, with_title=False).strip()
-		maybe_device = TableMenu(
+
+		partitions_to_encrypt = TableMenu(
 			title,
 			table_data=(all_partitions, partition_table),
 			multi=True,
 			default=preset
 		).run()
 
+		return partitions_to_encrypt
 
+	return []
 
-		# indexes = select_encrypted_partitions(
-		# 	title=_('Select which partitions to encrypt:'),
-		# 	partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions'],
-		# 	filter_=(lambda p: p['mountpoint'] != '/boot')
-		# )
-		#
-		# for partition_index in indexes:
-		# 	partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
-		# 	partition['encrypted'] = True
-		# 	partition['!password'] = storage['arguments']['!encryption-password']
-		#
-		# 	# We make sure generate-encryption-key-file is set on additional partitions
-		# 	# other than the root partition. Otherwise they won't unlock properly #1279
-		# 	if partition['mountpoint'] != '/':
-		# 		partition['generate-encryption-key-file'] = True
+	#
+	# for partition_index in indexes:
+	# 	partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
+	# 	partition['encrypted'] = True
+	# 	partition['!password'] = storage['arguments']['!encryption-password']
+	#
+	# 	# We make sure generate-encryption-key-file is set on additional partitions
+	# 	# other than the root partition. Otherwise they won't unlock properly #1279
+	# 	if partition['mountpoint'] != '/':
+	# 		partition['generate-encryption-key-file'] = True

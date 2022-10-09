@@ -45,10 +45,6 @@ from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
 from .lib.udev import udevadm_info
-from .lib.hsm import (
-	get_fido2_devices,
-	fido2_enroll
-)
 parser = ArgumentParser()
 
 __version__ = "2.5.1"

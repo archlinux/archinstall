@@ -11,7 +11,7 @@ class TableMenu(Menu):
 		title: str,
 		data: List[Any] = [],
 		table_data: Optional[Tuple[List[Any], str]] = None,
-		custom_options: List[str] = [],
+		custom_menu_options: List[str] = [],
 		default: Any = None,
 		multi: bool = False
 	):
@@ -28,16 +28,17 @@ class TableMenu(Menu):
 		:type table_data: Optional[Tuple[List[Any], str]]
 
 		param custom_options: List of custom options that will be displayed under the table
-		:type custom_options: List
+		:type custom_menu_options: List
 		"""
 		if not data and not table_data:
 			raise ValueError('Either "data" or "table_data" must be provided')
 
-		self._custom_options = custom_options
+		self._custom_options = custom_menu_options
 		self._default = default
+		self._multi = multi
 
 		if multi:
-			header_padding = 5
+			header_padding = 7
 		else:
 			header_padding = 2
 
@@ -72,15 +73,20 @@ class TableMenu(Menu):
 		match choice.type_:
 			case MenuSelectionType.Skip:
 				return self._default
+			case MenuSelectionType.Reset:
+				return None
 			case MenuSelectionType.Selection:
-				return self._options[choice.value]
+				if self._multi:
+					return [self._options[val] for val in choice.value]
+				else:
+					return self._options[choice.value]
 
 	def _create_table(self, data: List[Any], rows: List[str], header_padding: int = 2) -> Dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
 		padding = ' ' * header_padding
-		display_data = {f'{header_padding}{rows[0]}': None, f'  {rows[1]}': None}
+		display_data = {f'{padding}{rows[0]}': None, f'{padding}{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
