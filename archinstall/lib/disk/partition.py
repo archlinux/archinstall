@@ -5,7 +5,7 @@ import json
 import os
 import hashlib
 import typing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Union, Iterator
 
@@ -18,19 +18,47 @@ from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
 
-
 @dataclass
 class PartitionInfo:
-	pttype: str
-	partuuid: str
-	uuid: str
-	start: Optional[int]
-	end: Optional[int]
+	partition_object: 'Partition'
+	device_path: str # This would be /dev/sda1 for instance
 	bootable: bool
 	size: float
 	sector_size: int
-	filesystem_type: str
-	mountpoints: List[Path]
+	start: Optional[int]
+	end: Optional[int]
+	pttype: Optional[str]
+	filesystem_type: Optional[str]
+	partuuid: Optional[str]
+	uuid: Optional[str]
+	mountpoints: List[Path] = field(default_factory=list)
+
+	def __post_init__(self):
+		if not all([self.partuuid, self.uuid]):
+			for i in range(storage['DISK_RETRY_ATTEMPTS']):
+				lsblk_info = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+				lsblk_info = json.loads(lsblk_info)
+
+				if not (device := lsblk_info.get('blockdevices', [None])[0]):
+					raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
+
+				self.partuuid = device.get('partuuid')
+				self.uuid = device.get('uuid')
+
+				# Lets build a list of requirements that we would like
+				# to retry and build (stuff that can take time between partprobes)
+				requirements = []
+				requirements.append(self.partuuid)
+
+				# Unformatted partitions won't have a UUID
+				if lsblk_info.get('fstype') is not None:
+					requirements.append(self.uuid)
+
+				if all(requirements):
+					break
+
+				self.partition_object.partprobe()
+				time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 	def get_first_mountpoint(self) -> Optional[Path]:
 		if len(self.mountpoints) > 0:
@@ -185,6 +213,8 @@ class Partition:
 		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
 
 		return PartitionInfo(
+			partition_object=self,
+			device_path=self._path,
 			pttype=device['pttype'],
 			partuuid=device['partuuid'],
 			uuid=device['uuid'],
