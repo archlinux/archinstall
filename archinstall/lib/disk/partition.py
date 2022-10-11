@@ -37,7 +37,11 @@ class PartitionInfo:
 		if not all([self.partuuid, self.uuid]):
 			for i in range(storage['DISK_RETRY_ATTEMPTS']):
 				lsblk_info = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
-				lsblk_info = json.loads(lsblk_info)
+				try:
+					lsblk_info = json.loads(lsblk_info)
+				except json.decoder.JSONDecodeError:
+					log(f"Could not decode JSON: {lsblk_info}", fg="red", level=logging.ERROR)
+					raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
 
 				if not (device := lsblk_info.get('blockdevices', [None])[0]):
 					raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
@@ -182,8 +186,11 @@ class Partition:
 			output = error.worker.decode('UTF-8')
 
 		if output:
-			lsblk_info = json.loads(output)
-			return lsblk_info
+			try:
+				lsblk_info = json.loads(output)
+				return lsblk_info
+			except json.decoder.JSONDecodeError:
+				log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
 
 		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
 
