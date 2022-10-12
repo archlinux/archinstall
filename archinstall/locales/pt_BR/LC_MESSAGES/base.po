@@ -789,7 +789,7 @@ msgid "Configured {} interfaces"
 msgstr "{} interfaces configuradas"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Esta opção habilita o número de downloads paralelos que podem ocorrer durante a instalação"
 
 #, python-brace-format
 msgid ""
@@ -797,29 +797,32 @@ msgid ""
 " (Enter a value between 1 to {max_downloads})\n"
 "Note:"
 msgstr ""
+"Insira o número de downloads paralelos para serem habilitados.\n"
+" (Insira um valor entre 1 e {max_downloads})\n"
+"Observação:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Valor máximo   : {max_downloads} ( Permite {max_donwloads} downloads paralelos, permite {max_donwloads+1} downloads por vez )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Valor minimo   : 1 ( Permite 1 download paralelo, permite 2 downloads por vez )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Desativar/Padrão : 0 ( Desativa os downloads paralelos, permite apenas 1 download por vez )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {max_downloads}, ou 0 para desativar]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Downloads Paralelos"
 
 #, fuzzy
 msgid "ESC to skip"
 msgstr "Use ESC para pular"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C para reiniciar"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB para selecionar"
