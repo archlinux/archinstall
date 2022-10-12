@@ -280,10 +280,10 @@ class BlockDevice:
 			for partition_index, partition in self.partitions.items():
 				try:
 					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
-						log(f"Matched UUID={uuid} against {partition.uuid}", level=logging.INFO, fg="teal")
+						log(f"Matched UUID={uuid} against {partition.uuid}", level=logging.DEBUG, fg="gray")
 						return partition
 					elif partuuid and partition.part_uuid and partition.part_uuid.lower() == partuuid.lower():
-						log(f"Matched PARTUUID={partuuid} against {partition.part_uuid}", level=logging.INFO, fg="teal")
+						log(f"Matched PARTUUID={partuuid} against {partition.part_uuid}", level=logging.DEBUG, fg="gray")
 						return partition
 				except DiskError as error:
 					# Most likely a blockdevice that doesn't support or use UUID's
