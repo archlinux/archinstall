@@ -71,7 +71,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 				encryption_password=self._data_store.get('encryption_password', None),
 				encryption_type=self._data_store['encryption_type'],
 				partitions=self._data_store.get('partitions', None),
-				hsm_device=self._data_store.get('hsm_device', None)
+				hsm_device=self._data_store.get('HSM', None)
 			)
 
 		return None
@@ -149,14 +149,3 @@ def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]
 		return partitions_to_encrypt
 
 	return []
-
-	#
-	# for partition_index in indexes:
-	# 	partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
-	# 	partition['encrypted'] = True
-	# 	partition['!password'] = storage['arguments']['!encryption-password']
-	#
-	# 	# We make sure generate-encryption-key-file is set on additional partitions
-	# 	# other than the root partition. Otherwise they won't unlock properly #1279
-	# 	if partition['mountpoint'] != '/':
-	# 		partition['generate-encryption-key-file'] = True

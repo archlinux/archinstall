@@ -68,8 +68,8 @@ class Fido2:
 		return cls._fido2_devices
 
 	@classmethod
-	def fido2_enroll(cls, hsm_device_path: Path, partition :Partition, password :str) -> bool:
-		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device_path} {partition.real_device}", peak_output=True)
+	def fido2_enroll(cls, hsm_device: Fido2Device, partition :Partition, password :str) -> bool:
+		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {partition.real_device}", peak_output=True)
 		pw_inputted = False
 		pin_inputted = False
 		while worker.is_alive():

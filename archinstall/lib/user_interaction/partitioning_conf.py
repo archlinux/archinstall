@@ -150,7 +150,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 	delete_all_partitions = str(_('Clear/Delete all partitions'))
 	assign_mount_point = str(_('Assign mount-point for a partition'))
 	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
-	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
 	mark_compressed = str(_('Mark/Unmark a partition as compressed (btrfs only)'))
 	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
 	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
@@ -167,7 +166,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				delete_all_partitions,
 				assign_mount_point,
 				mark_formatted,
-				mark_encrypted,
 				mark_bootable,
 				mark_compressed,
 				set_filesystem_partition,
@@ -321,15 +319,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 					# Negate the current wipe marking
 					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
-
-			elif task == mark_encrypted:
-				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
-					# Negate the current encryption marking
-					block_device_struct["partitions"][partition]['encrypted'] = \
-						not block_device_struct["partitions"][partition].get('encrypted', False)
 
 			elif task == mark_bootable:
 				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)

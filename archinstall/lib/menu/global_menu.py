@@ -98,18 +98,6 @@ class GlobalMenu(AbstractMenu):
 				preview_func=self._prev_disk_encryption,
 				display_func=lambda x: self._display_disk_encryption(x),
 				dependencies=['disk_layouts'])
-		# self._menu_options['!encryption-password'] = \
-		# 	Selector(
-		# 		_('Encryption password'),
-		# 		lambda x: self._select_encrypted_password(),
-		# 		display_func=lambda x: secret(x) if x else 'None',
-		# 		dependencies=['harddrives'])
-		# self._menu_options['HSM'] = Selector(
-		# 	description=_('Use HSM to unlock encrypted drive'),
-		# 	func=lambda preset: self._select_hsm(preset),
-		# 	dependencies=['!encryption-password'],
-		# 	default=None
-		# )
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -287,14 +275,15 @@ class GlobalMenu(AbstractMenu):
 		if selector.has_selection():
 			encryption: DiskEncryption = selector.current_selection
 
-			output = str(_('Encryption type')) + f': {encryption.encryption_type}\n'
+			enc_type = EncryptionType.type_to_text(encryption.encryption_type)
+			output = str(_('Encryption type')) + f': {enc_type}\n'
 			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
 
 			if encryption.partitions:
 				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
 
 			if encryption.hsm_device:
-				output += f'HSM: {encryption.hsm_device}'
+				output += f'HSM: {encryption.hsm_device.manufacturer}'
 
 			return output
 
