@@ -274,12 +274,16 @@ class BlockDevice:
 		if not uuid and not partuuid:
 			raise ValueError(f"BlockDevice.get_partition() requires either a UUID or a PARTUUID for lookups.")
 
+		log(f"Retrieving partition PARTUUID={partuuid} or UUID={uuid}", level=logging.INFO, fg="teal")
+
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
 				try:
 					if uuid and partition.uuid and partition.uuid.lower() == uuid.lower():
+						log(f"Matched UUID={uuid} against {partition.uuid}", level=logging.INFO, fg="teal")
 						return partition
 					elif partuuid and partition.part_uuid and partition.part_uuid.lower() == partuuid.lower():
+						log(f"Matched PARTUUID={partuuid} against {partition.part_uuid}", level=logging.INFO, fg="teal")
 						return partition
 				except DiskError as error:
 					# Most likely a blockdevice that doesn't support or use UUID's
