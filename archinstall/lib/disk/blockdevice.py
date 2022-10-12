@@ -274,7 +274,7 @@ class BlockDevice:
 		if not uuid and not partuuid:
 			raise ValueError(f"BlockDevice.get_partition() requires either a UUID or a PARTUUID for lookups.")
 
-		log(f"Retrieving partition PARTUUID={partuuid} or UUID={uuid}", level=logging.INFO, fg="teal")
+		log(f"Retrieving partition PARTUUID={partuuid} or UUID={uuid}", level=logging.DEBUG, fg="gray")
 
 		for count in range(storage.get('DISK_RETRY_ATTEMPTS', 5)):
 			for partition_index, partition in self.partitions.items():
