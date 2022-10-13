@@ -907,69 +907,74 @@ class Installer:
 	def add_grub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
 		self.pacstrap('grub')  # no need?
 
-		root_fs_type = get_mount_fs_type(root_partition.filesystem)
-
-		_file = pathlib.Path(f'{self.target}/etc/default/grub')
-
-		# Use a try ... except statement rather than checking if the file exists
-		# before reading it to prevent introducing a race condition
-		try:
-			with _file.open('r') as fh:
-				contents = fh.readlines()
-		except FileNotFoundError:
-			log(f"Could not configure GRUB, file not found: '{_file}'.", level=logging.DEBUG)
-			return False
-
-		options = [f'rootfstype={root_fs_type}']
-
-		if self._zram_enabled:
-			options.insert(0, 'zswap.enabled=0')
-
-		if real_device := self.detect_encryption(root_partition):
-			root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
-
-			log(f"Using UUID {root_uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
-			options.append(f'cryptdevice=UUID={root_uuid}:cryptlvm')
-
-			enable_crypt = 'GRUB_ENABLE_CRYPTODISK=y\n'
-
-			if enable_crypt not in contents:
-				for index, line in enumerate(contents):
-					if line == '#' + enable_crypt:
-						contents[index] = enable_crypt
-						break
-				else:
-					contents.append(enable_crypt)
-
-		grub_cmdline = 'GRUB_CMDLINE_LINUX'
-		cmdline = f'{grub_cmdline}="{" ".join(options)}"\n'
-
-		for index, line in enumerate(contents):
-			if line.split('=')[0] == grub_cmdline:
-				contents[index] = cmdline
-				break
-		else:
-			contents.append(cmdline)
-
-		with _file.open('w') as fh:
-			fh.writelines(contents)
-
+		# Install the boot loader
 		log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 		if has_uefi():
 			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+
+			boot_mountpoint = boot_partition.mountpoints[0]
+			esp = pathlib.Path(str(boot_mountpoint).replace(str(self.target), ''))
+			command = f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={esp} --bootloader-id=GRUB --removable'
+
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+				SysCommand(command, peak_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+					SysCommand(command, peak_output=True)
 				except SysCallError as error:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
+					raise DiskError(f"Could not install GRUB to {boot_mountpoint}: {error}")
 		else:
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peak_output=True)
 			except SysCallError as error:
 				raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
 
+		# Set up kernel paramaters
+		kernel_parameters = []
+
+		if (root_fs_type := get_mount_fs_type(root_partition.filesystem)) is not None:
+			kernel_parameters.append('rootfstype={}'.format(root_fs_type))
+
+		if self._zram_enabled:
+			kernel_parameters.insert(0, 'zswap.enabled=0')
+
+		if real_device := self.detect_encryption(root_partition):
+			log(f"Using UUID {real_device.uuid} of {real_device} as encrypted root identifier.", level=logging.INFO)
+			kernel_parameters.insert(0, 'cryptdevice=UUID={}:cryptlvm'.format(real_device.uuid))
+
+		# Configure
+		grub_default = pathlib.Path(f'{self.target}/etc/default/grub')
+
+		# Use a try ... except statement rather than checking if the file exists
+		# before reading it to prevent introducing a race condition
+		try:
+			with grub_default.open('r') as config:
+				config_lines = config.readlines()
+		except FileNotFoundError:
+			log(f"Could not configure GRUB, file not found: '{grub_default}'.", level=logging.DEBUG)
+			return False
+
+		cmdline = ' '.join(kernel_parameters)
+		grub_cmdline = 'GRUB_CMDLINE_LINUX'
+		grub_cmdline_empty = f'{grub_cmdline}=""\n'
+
+		for index, line in enumerate(config_lines):
+			if line == grub_cmdline_empty:
+				config_lines[index] = f'{grub_cmdline}="{cmdline}"\n'
+				break
+
+		if real_device:
+			commented_crypttodisk = '#GRUB_ENABLE_CRYPTODISK=y\n'
+
+			for index, line in enumerate(config_lines):
+				if line == commented_crypttodisk:
+					config_lines[index] = commented_crypttodisk[1:]
+					break
+
+		with grub_default.open('w') as config:
+			config.writelines(config_lines)
+
+		# Generate the main configuration file
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
 		except SysCallError as error:
