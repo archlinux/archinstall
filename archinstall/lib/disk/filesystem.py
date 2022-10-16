@@ -189,10 +189,13 @@ class Filesystem:
 		return True
 
 	def raw_parted(self, string: str) -> SysCommand:
-		if (cmd_handle := SysCommand(f'/usr/bin/parted -s {string}')).exit_code != 0:
-			log(f"Parted ended with a bad exit code: {cmd_handle}", level=logging.ERROR, fg="red")
-		time.sleep(0.5)
-		return cmd_handle
+		try:
+			cmd_handle = SysCommand(f'/usr/bin/parted -s {string}')
+			time.sleep(0.5)
+			return cmd_handle
+		except SysCallError as error:
+			log(f"Parted ended with a bad exit code: {error.exit_code} ({error})", level=logging.ERROR, fg="red")
+			return error
 
 	def parted(self, string: str) -> bool:
 		"""
@@ -282,6 +285,7 @@ class Filesystem:
 		log(f"Could not find the new PARTUUID after adding the partition.", level=logging.ERROR, fg="red")
 		log(f"Previous partitions: {previous_partuuids}", level=logging.ERROR, fg="red")
 		log(f"New partitions: {total_partitions}", level=logging.ERROR, fg="red")
+
 		raise DiskError(f"Could not add partition using: {parted_string}")
 
 	def set_name(self, partition: int, name: str) -> bool:

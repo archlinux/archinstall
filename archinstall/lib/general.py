@@ -379,7 +379,7 @@ class SysCommandWorker:
 
 				try:
 					with history_logfile.open("a") as cmd_log:
-						cmd_log.write(f"{self.cmd}\n")
+						cmd_log.write(f"{time.time()} {self.cmd}\n")
 
 					if change_perm:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
