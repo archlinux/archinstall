@@ -1,6 +1,6 @@
 from typing import Any, Tuple, List, Dict, Optional
 
-from .menu import MenuSelectionType
+from .menu import MenuSelectionType, MenuSelection
 from ..output import FormattedOutput
 from ..menu import Menu
 
@@ -34,7 +34,6 @@ class TableMenu(Menu):
 			raise ValueError('Either "data" or "table_data" must be provided')
 
 		self._custom_options = custom_menu_options
-		self._default = default
 		self._multi = multi
 
 		if multi:
@@ -43,10 +42,10 @@ class TableMenu(Menu):
 			header_padding = 2
 
 		if len(data):
-			table = FormattedOutput.as_table(data)
-			rows = table.split('\n')
+			table_text = FormattedOutput.as_table(data)
+			rows = table_text.split('\n')
 			table = self._create_table(data, rows, header_padding=header_padding)
-		else:
+		elif table_data is not None:
 			# we assume the table to be
 			# h1  |   h2
 			# -----------
@@ -64,22 +63,21 @@ class TableMenu(Menu):
 			skip_empty_entries=True,
 			show_search_hint=False,
 			allow_reset=True,
-			multi=multi
+			multi=multi,
+			default_option=default
 		)
 
-	def run(self) -> Optional[Any]:
+	def run(self) -> MenuSelection:
 		choice = super().run()
 
 		match choice.type_:
-			case MenuSelectionType.Skip:
-				return self._default
-			case MenuSelectionType.Reset:
-				return None
 			case MenuSelectionType.Selection:
 				if self._multi:
-					return [self._options[val] for val in choice.value]
+					choice.value = [self._options[val] for val in choice.value]  # type: ignore
 				else:
-					return self._options[choice.value]
+					choice.value = self._options[choice.value]  # type: ignore
+
+		return choice
 
 	def _create_table(self, data: List[Any], rows: List[str], header_padding: int = 2) -> Dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously

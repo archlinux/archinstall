@@ -104,7 +104,7 @@ class ListManager:
 		return options, header
 
 	def _run_actions_on_entry(self, entry: Any):
-		options = self.filter_options(entry,self._sub_menu_actions) + [self._cancel_action]
+		options = self.filter_options(entry, self._sub_menu_actions) + [self._cancel_action]
 		display_value = self.selected_action_display(entry)
 
 		prompt = _("Select an action for '{}'").format(display_value)

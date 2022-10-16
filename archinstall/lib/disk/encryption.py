@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
 from ..menu.abstract_menu import Selector, AbstractSubMenu
@@ -16,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DiskEncryptionMenu(AbstractSubMenu):
-	def __init__(self, data_store: Dict, preset: Optional[DiskEncryption], disk_layouts: Dict[str, Any]):
+	def __init__(self, data_store: Dict[str, Any], preset: Optional[DiskEncryption], disk_layouts: Dict[str, Any]):
 		if preset:
 			self._preset = preset
 		else:
@@ -66,7 +65,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 	def run(self, allow_reset: bool = True) -> Optional[DiskEncryption]:
 		super().run(allow_reset=allow_reset)
 
-		if self._data_store['encryption_password']:
+		if self._data_store.get('encryption_password', None):
 			return DiskEncryption(
 				encryption_password=self._data_store.get('encryption_password', None),
 				encryption_type=self._data_store['encryption_type'],
@@ -94,19 +93,20 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		return None
 
 
-def select_encryption_type(preset: Optional[DiskEncryption]) -> Optional[EncryptionType]:
+def select_encryption_type(preset: EncryptionType) -> Optional[EncryptionType]:
 	title = str(_('Select disk encryption option'))
 	options = [
 		# _type_to_text(EncryptionType.FullDiskEncryption),
 		EncryptionType.type_to_text(EncryptionType.Partition)
 	]
 
-	choice = Menu(title, options).run()
+	preset_value = EncryptionType.type_to_text(preset)
+	choice = Menu(title, options, preset_values=preset_value).run()
 
 	match choice.type_:
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return EncryptionType.text_to_type(choice.value)
+		case MenuSelectionType.Selection: return EncryptionType.text_to_type(choice.value)  # type: ignore
 
 
 def select_encrypted_password() -> Optional[str]:
@@ -115,13 +115,19 @@ def select_encrypted_password() -> Optional[str]:
 	return None
 
 
-def select_hsm(preset: Optional[Path] = None) -> Optional[Fido2Device]:
+def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 	title = _('Select a FIDO2 device to use for HSM')
 	fido_devices = Fido2.get_fido2_devices()
 
 	if fido_devices:
-		maybe_device = TableMenu(title, data=fido_devices, default=preset).run()
-		return maybe_device
+		choice = TableMenu(title, data=fido_devices).run()
+		match choice.type_:
+			case MenuSelectionType.Reset:
+				return None
+			case MenuSelectionType.Skip:
+				return preset
+			case MenuSelectionType.Selection:
+				return choice.value  # type: ignore
 
 	return None
 
@@ -139,13 +145,18 @@ def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]
 		title = str(_('Select which partitions to encrypt'))
 		partition_table = current_partition_layout(all_partitions, with_title=False).strip()
 
-		partitions_to_encrypt = TableMenu(
+		choice = TableMenu(
 			title,
 			table_data=(all_partitions, partition_table),
-			multi=True,
-			default=preset
+			multi=True
 		).run()
 
-		return partitions_to_encrypt
+		match choice.type_:
+			case MenuSelectionType.Reset:
+				return []
+			case MenuSelectionType.Skip:
+				return preset
+			case MenuSelectionType.Selection:
+				return choice.value  # type: ignore
 
 	return []

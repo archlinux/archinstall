@@ -220,7 +220,7 @@ class GlobalMenu(AbstractMenu):
 				return str(cur_value)
 
 	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
-		data_store = {}
+		data_store: Dict[str, Any] = {}
 
 		selector = self._menu_options['disk_layouts']
 

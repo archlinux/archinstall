@@ -166,7 +166,7 @@ class Selector:
 
 
 class AbstractMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
+	def __init__(self, data_store: Dict[str, Any] = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -322,7 +322,7 @@ class AbstractMenu:
 					self._data_store = {}
 					return
 				case MenuSelectionType.Selection:
-					value = selection.value
+					value: str = selection.value  # type: ignore
 
 					if self.auto_cursor:
 						cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
@@ -344,7 +344,7 @@ class AbstractMenu:
 
 		# we get the last action key
 		actions = {str(v.description):k for k,v in self._menu_options.items()}
-		self._last_choice = actions[selection.value.strip()]
+		self._last_choice = actions[selection.value.strip()]  # type: ignore
 
 		if not self.is_context_mgr:
 			self.__exit__()
@@ -480,7 +480,7 @@ class AbstractMenu:
 
 
 class AbstractSubMenu(AbstractMenu):
-	def __init__(self, data_store: Dict = None):
+	def __init__(self, data_store: Dict[str, Any] = None):
 		super().__init__(data_store=data_store)
 
 		self._menu_options['__separator__'] = Selector('')

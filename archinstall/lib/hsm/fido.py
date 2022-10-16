@@ -18,7 +18,8 @@ class Fido2Device:
 
 
 class Fido2:
-	_fido2_devices: List[Fido2Device] = None
+	_loaded: bool = False
+	_fido2_devices: List[Fido2Device] = []
 
 	@classmethod
 	def get_fido2_devices(cls, reload: bool = False) -> List[Fido2Device]:
@@ -42,8 +43,13 @@ class Fido2:
 
 		# to prevent continous reloading which will slow
 		# down moving the cursor in the menu
-		if cls._fido2_devices is None or reload:
-			fido_devices = clear_vt100_escape_codes(SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8'))
+		if not cls._loaded or reload:
+			ret = SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+			if not ret:
+				log('Unable to retrieve fido2 devices', level=logging.ERROR)
+				return []
+
+			fido_devices = clear_vt100_escape_codes(ret)
 
 			manufacturer_pos = 0
 			product_pos = 0
@@ -63,15 +69,17 @@ class Fido2:
 					Fido2Device(path, manufacturer, product)
 				)
 
+			cls._loaded = True
 			cls._fido2_devices = devices
 
 		return cls._fido2_devices
 
 	@classmethod
-	def fido2_enroll(cls, hsm_device: Fido2Device, partition :Partition, password :str) -> bool:
+	def fido2_enroll(cls, hsm_device: Fido2Device, partition :Partition, password :str):
 		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {partition.real_device}", peak_output=True)
 		pw_inputted = False
 		pin_inputted = False
+
 		while worker.is_alive():
 			if pw_inputted is False and bytes(f"please enter current passphrase for disk {partition.real_device}", 'UTF-8') in worker._trace_log.lower():
 				worker.write(bytes(password, 'UTF-8'))

@@ -44,7 +44,7 @@ class ConfigurationOutput:
 		self._disk_layout_file = "user_disk_layout.json"
 
 		self._sensitive = ['!users']
-		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
+		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run', 'disk_encryption']
 
 		self._process_config()
 
