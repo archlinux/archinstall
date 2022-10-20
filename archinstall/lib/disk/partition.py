@@ -171,7 +171,7 @@ class Partition:
 
 	def _call_lsblk(self) -> Dict[str, Any]:
 		self.partprobe()
-		for _ in range(storage['DISK_RETRY_ATTEMPTS']):
+		for _ in range(storage.get('DISK_RETRY_ATTEMPTS', 3)):
 			try:
 				output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 			except SysCallError as error:
@@ -179,7 +179,7 @@ class Partition:
 				# But it does return output so we'll try to catch it.
 				log(f"Error running lsblk: {error.worker.decode('UTF-8')}", level=logging.DEBUG)
 				# Catch the error but try again anyway
-				delay = max(0.1, storage.get('DISK_TIMEOUTS', 0.1))
+				delay = max(0.1, storage.get('DISK_TIMEOUTS', 1))
 				log(f"Waiting {delay}s to poll disk again", level=logging.DEBUG)
 				time.sleep(delay)
 				continue
