@@ -259,9 +259,9 @@ class Filesystem:
 				self.blockdevice.flush_cache()
 
 				new_partition_uuids = [partition.part_uuid for partition in self.blockdevice.partitions.values()]
-				new_partuuid_set = (set(previous_partuuids) ^ set(new_partition_uuids))
+				new_partuuid_set = set(new_partition_uuids).difference(set(previous_partuuids))
 
-				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
+				if len(new_partuuid_set) == 1 and (new_partuuid := new_partuuid_set.pop()):
 					try:
 						return self.blockdevice.get_partition(partuuid=new_partuuid)
 					except Exception as err:
