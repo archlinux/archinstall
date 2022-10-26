@@ -826,3 +826,12 @@ msgstr "CTRL+C para reiniciar"
 
 msgid "TAB to select"
 msgstr "TAB para selecionar"
+
+msgid "[Default value: 0] > "
+msgstr "[Valor padrão: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Para poder usar esta tradução, instale manualmente uma fonte que suporte o idioma."
+
+msgid "The font should be stored as {}"
+msgstr "A fonte deve ser armazenada como {}"
