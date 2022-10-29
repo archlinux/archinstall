@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 import logging
 import time
 
@@ -121,7 +120,6 @@ class BlockDevice:
 			self._partitions[part_id] = Partition(root + part_id, block_device=self, part_id=part_id)
 
 		print(lsblk_info.json())
-
 
 	def _get_free_space(self) -> Optional[List[BlockSizeInfo]]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition

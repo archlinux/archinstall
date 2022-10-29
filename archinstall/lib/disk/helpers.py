@@ -18,7 +18,7 @@ from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand, JSON
 from ..output import log
 from ..storage import storage
-from ..utils.diskinfo import get_lsblk_info, LsblkInfo, get_all_lsblk_info
+from ..utils.diskinfo import get_lsblk_info, get_all_lsblk_info
 
 if TYPE_CHECKING:
 	from .partition import Partition
@@ -497,7 +497,7 @@ def convert_device_to_uuid(path :str) -> str:
 
 			if dev_uuid := lsblk_info.uuid:
 				return dev_uuid
-		except Exception as e:
+		except Exception:
 			pass
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")

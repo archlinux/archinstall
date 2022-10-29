@@ -6,7 +6,7 @@ import logging
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
-from typing import Optional, List, Any, Dict, Union, ClassVar
+from typing import Optional, List, Any, Dict, Union
 
 from ..general import SysCommand
 from ..exceptions import DiskError, SysCallError
@@ -15,14 +15,14 @@ from ..output import log
 
 @dataclass
 class LsblkInfo:
-	name: Optional[str] = None
-	pkname: Optional[str] = None
+	name: str = ""
+	pkname: str = ""
 	size: int = 0
 	log_sec: int = 0
-	pttype: Optional[str] = None
+	pttype: str = ""
+	ptuuid: str = ""
 	rota: bool = False
 	tran: Optional[str] = None
-	ptuuid: Optional[str] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 	fstype: Optional[str] = None
@@ -88,15 +88,17 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None) -> List[Lsblk
 	except SysCallError as error:
 		# It appears as if lsblk can return exit codes like 8192 to indicate something.
 		# But it does return output so we'll try to catch it.
-		err = error.worker.decode('UTF-8')
-		log(f'Error calling lsblk: {err}', fg="red", level=logging.ERROR)
+		if error.worker:
+			err = error.worker.decode('UTF-8')
+			log(f'Error calling lsblk: {err}', fg="red", level=logging.ERROR)
 		raise error
 
 	if result.exit_code == 0:
 		try:
-			block_devices = json.loads(result.decode('utf-8'))
-			blockdevices = block_devices['blockdevices']
-			return [LsblkInfo.from_json(device) for device in blockdevices]
+			if decoded := result.decode('utf-8'):
+				block_devices = json.loads(decoded)
+				blockdevices = block_devices['blockdevices']
+				return [LsblkInfo.from_json(device) for device in blockdevices]
 		except json.decoder.JSONDecodeError as err:
 			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
 			raise err
