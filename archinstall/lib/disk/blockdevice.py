@@ -119,8 +119,6 @@ class BlockDevice:
 			part_id = child.name.removeprefix(lsblk_info.name)
 			self._partitions[part_id] = Partition(root + part_id, block_device=self, part_id=part_id)
 
-		print(lsblk_info.json())
-
 	def _get_free_space(self) -> Optional[List[BlockSizeInfo]]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
 		# that is "outside" the disk. in /dev/sr0 this is usually the case with Archiso,
