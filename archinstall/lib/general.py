@@ -137,7 +137,7 @@ class JsonEncoder:
 			return obj.isoformat()
 		elif isinstance(obj, (list, set, tuple)):
 			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
-		elif isinstance(obj, (pathlib.Path)):
+		elif isinstance(obj, pathlib.Path):
 			return str(obj)
 		else:
 			return obj

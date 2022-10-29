@@ -5,6 +5,8 @@ import json
 import pathlib
 from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from ..utils.diskinfo import get_lsblk_info
+
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
 	_: Any
@@ -52,14 +54,13 @@ class Filesystem:
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			# We'll use unreliable lbslk to grab children under the /dev/<device>
-			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
+			lsblk_info = get_lsblk_info(self.blockdevice.device)
 
-			for device in output['blockdevices']:
-				for index, partition in enumerate(device.get('children', [])):
-					# But we'll use blkid to reliably grab the PARTUUID for that child device (partition)
-					partition_uuid = SysCommand(f"blkid -s PARTUUID -o value /dev/{partition.get('name')}").decode().strip()
-					if partition_uuid.lower() == uuid.lower():
-						return index
+			for index, child in enumerate(lsblk_info.children):
+				# But we'll use blkid to reliably grab the PARTUUID for that child device (partition)
+				partition_uuid = SysCommand(f"blkid -s PARTUUID -o value /dev/{child.name}").decode().strip()
+				if partition_uuid.lower() == uuid.lower():
+					return index
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 

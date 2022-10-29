@@ -7,6 +7,8 @@ import shlex
 import time
 from typing import Optional, List,TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
+from .utils.diskinfo import get_lsblk_info
+
 if TYPE_CHECKING:
 	from .installer import Installer
 
@@ -123,19 +125,18 @@ class luks2:
 				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 				# For instance: /dev/sda
 				SysCommand(f'bash -c "partprobe"')
-				devinfo = json.loads(b''.join(SysCommand(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
+				lsblk_info = get_lsblk_info(partition.path)
 
 				# For each child (sub-partition/sub-device)
-				if len(children := devinfo.get('children', [])):
-					for child in children:
-						# Unmount the child location
-						if child_mountpoint := child.get('mountpoint', None):
-							log(f'Unmounting {child_mountpoint}', level=logging.DEBUG)
-							SysCommand(f"umount -R {child_mountpoint}")
+				for child in lsblk_info.children:
+					# Unmount the child location
+					for mountpoint in child.mountpoints:
+						log(f'Unmounting {mountpoint}', level=logging.DEBUG)
+						SysCommand(f"umount -R {mountpoint}")
 
-						# And close it if possible.
-						log(f"Closing crypt device {child['name']}", level=logging.DEBUG)
-						SysCommand(f"cryptsetup close {child['name']}")
+					# And close it if possible.
+					log(f"Closing crypt device {child.name}", level=logging.DEBUG)
+					SysCommand(f"cryptsetup close {child.name}")
 
 				# Then try again to set up the crypt-device
 				cmd_handle = SysCommand(cryptsetup_args)
