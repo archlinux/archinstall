@@ -15,6 +15,7 @@ from .hardware import has_uefi, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import findmnt
 from .mirrors import use_mirrors
+from .models.bootloader import Bootloader
 from .plugins import plugins
 from .storage import storage
 # from .user_interaction import *
@@ -250,7 +251,7 @@ class Installer:
 				password = storage['arguments'].get('!encryption-password')
 			elif not password:
 				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
-			
+
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
@@ -995,7 +996,7 @@ class Installer:
 
 		return True
 
-	def add_bootloader(self, bootloader :str = 'systemd-bootctl') -> bool:
+	def add_bootloader(self, bootloader: Bootloader = 'systemd-bootctl') -> bool:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:

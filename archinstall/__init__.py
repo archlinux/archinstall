@@ -10,6 +10,7 @@ from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
+from .lib.models.bootloader import Bootloader
 from .lib.models.network_configuration import NetworkConfigurationHandler
 from .lib.models.users import User
 from .lib.networking import *
@@ -246,6 +247,9 @@ def load_config():
 		users = arguments.get('!users', None)
 		superusers = arguments.get('!superusers', None)
 		arguments['!users'] = User.parse_arguments(users, superusers)
+
+	if arguments.get('bootloader', None) is not None:
+		arguments['bootloader'] = Bootloader.from_arg(arguments['bootloader'])
 
 
 def post_process_arguments(arguments):

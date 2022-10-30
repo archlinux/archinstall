@@ -9,6 +9,7 @@ from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration
+from ..models.bootloader import Bootloader
 from ..models.users import User
 from ..output import FormattedOutput
 from ..profiles import is_desktop_profile, Profile
@@ -111,8 +112,9 @@ class GlobalMenu(GeneralMenu):
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Bootloader'),
-				lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False),preset),
-				default="systemd-bootctl" if has_uefi() else "grub-install")
+				lambda preset: ask_for_bootloader(preset),
+				display_func=lambda x: x.value,
+				default=Bootloader.get_default())
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),

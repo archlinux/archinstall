@@ -7,6 +7,7 @@ from ..exceptions import RequirementError
 from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
+from ..models.bootloader import Bootloader
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -112,47 +113,28 @@ def select_driver(options: Dict[str, Any] = AVAILABLE_GFX_DRIVERS) -> str:
 	raise RequirementError("Selecting drivers require a least one profile to be given as an option.")
 
 
-def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> str:
-	if preset == 'systemd-bootctl':
-		preset_val = 'systemd-boot' if advanced_options else Menu.no()
-	elif preset == 'grub-install':
-		preset_val = 'grub' if advanced_options else Menu.yes()
+def ask_for_bootloader(preset: Bootloader) -> Bootloader:
+	# when the system only supports grub
+	if not has_uefi():
+		options = [Bootloader.Grub.value]
+		default = Bootloader.Grub.value
 	else:
-		preset_val = preset
+		options = Bootloader.values()
+		default = Bootloader.Systemd.value
 
-	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
+	preset_value = preset.value if preset else None
 
-	if has_uefi():
-		if not advanced_options:
-			selection = Menu(
-				_('Would you like to use GRUB as a bootloader instead of systemd-boot?'),
-				Menu.yes_no(),
-				preset_values=preset_val,
-				default_option=Menu.no()
-			).run()
+	choice = Menu(
+		_('Choose a bootloader'),
+		options,
+		preset_values=preset_value,
+		sort=False,
+		default_option=default
+	).run()
 
-			match selection.type_:
-				case MenuSelectionType.Esc: return preset
-				case MenuSelectionType.Selection: bootloader = 'grub-install' if selection.value == Menu.yes() else bootloader
-		else:
-			# We use the common names for the bootloader as the selection, and map it back to the expected values.
-			choices = ['systemd-boot', 'grub', 'efistub']
-			selection = Menu(_('Choose a bootloader'), choices, preset_values=preset_val).run()
-
-			value = ''
-			match selection.type_:
-				case MenuSelectionType.Esc: value = preset_val
-				case MenuSelectionType.Selection: value = selection.value
-
-			if value != "":
-				if value == 'systemd-boot':
-					bootloader = 'systemd-bootctl'
-				elif value == 'grub':
-					bootloader = 'grub-install'
-				else:
-					bootloader = value
-
-	return bootloader
+	match choice.type_:
+		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Selection: return Bootloader(choice.value)
 
 
 def ask_for_swap(preset: bool = True) -> bool:
