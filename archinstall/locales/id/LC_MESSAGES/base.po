@@ -763,8 +763,8 @@ msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Haruskah \"{}\" menjadi superuser (sudo)?"
 
-msgid "Select which partitions to encrypt:"
-msgstr "Pilih partisi mana yang akan dienkripsi:"
+msgid "Select which partitions to encrypt"
+msgstr "Pilih partisi mana yang akan dienkripsi"
 
 msgid "very weak"
 msgstr "sangat lemah"

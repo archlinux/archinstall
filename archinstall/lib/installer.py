@@ -16,9 +16,10 @@ from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
-from .hsm import fido2_enroll
+from .hsm import Fido2
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import use_mirrors
+from .models.disk_encryption import DiskEncryption
 from .models.subvolume import Subvolume
 from .models.users import User
 from .output import log
@@ -134,6 +135,8 @@ class Installer:
 
 		self._zram_enabled = False
 
+		self._disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
+
 	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
 		"""
 		installer.log() wraps output.log() mainly to set a default log-level for this install session.
@@ -195,7 +198,7 @@ class Installer:
 	def _create_keyfile(self,luks_handle , partition :dict, password :str):
 		""" roiutine to create keyfiles, so it can be moved elsewhere
 		"""
-		if partition.get('generate-encryption-key-file'):
+		if self._disk_encryption.generate_encryption_file(partition):
 			if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 				cryptkey_dir.mkdir(parents=True)
 			# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
@@ -243,26 +246,20 @@ class Installer:
 		mount_queue = {}
 
 		# we manage the encrypted partititons
-		for partition in [entry for entry in list_part if entry.get('encrypted', False)]:
+		for partition in self._disk_encryption.partitions:
 			# open the luks device and all associate stuff
-			if not (password := partition.get('!password', None)) and storage['arguments'].get('!encryption-password'):
-				password = storage['arguments'].get('!encryption-password')
-			elif not password:
-				raise RequirementError(f"Missing partition encryption password in layout: {partition}")
-
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
-			with (luks_handle := luks2(partition['device_instance'], loopdev, password, auto_unmount=False)) as unlocked_device:
-				if partition.get('generate-encryption-key-file', False) and not self._has_root(partition):
-					list_luks_handles.append([luks_handle, partition, password])
+			with (luks_handle := luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
+				if self._disk_encryption.generate_encryption_file(partition) and not self._has_root(partition):
+					list_luks_handles.append([luks_handle, partition, self._disk_encryption.encryption_password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
 				partition['device_instance'] = unlocked_device
 
-			if self._has_root(partition) and partition.get('generate-encryption-key-file', False) is False:
-				if storage['arguments'].get('HSM'):
-					hsm_device_path = storage['arguments']['HSM']
-					fido2_enroll(hsm_device_path, partition['device_instance'], password)
+			if self._has_root(partition) and self._disk_encryption.generate_encryption_file(partition) is False:
+				if self._disk_encryption.hsm_device:
+					Fido2.fido2_enroll(self._disk_encryption.hsm_device, partition['device_instance'], self._disk_encryption.encryption_password)
 
 		btrfs_subvolumes = [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]
 
@@ -652,7 +649,7 @@ class Installer:
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
 
-			if not storage['arguments'].get('HSM'):
+			if not self._disk_encryption.hsm_device:
 				# For now, if we don't use HSM we revert to the old
 				# way of setting up encryption hooks for mkinitcpio.
 				# This is purely for stability reasons, we're going away from this.
@@ -696,7 +693,7 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if storage['arguments'].get('HSM'):
+				if self._disk_encryption.hsm_device:
 					# Required bby mkinitcpio to add support for fido2-device options
 					self.pacstrap('libfido2')
 
@@ -760,7 +757,7 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		if storage['arguments'].get('HSM'):
+		if self._disk_encryption.hsm_device:
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.
@@ -888,7 +885,7 @@ class Installer:
 
 					kernel_options = f"options"
 
-					if storage['arguments'].get('HSM'):
+					if self._disk_encryption.hsm_device:
 						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
 						# Note: tpm2-device and fido2-device don't play along very well:

@@ -55,8 +55,8 @@ def ask_user_questions():
 
 	global_menu.enable('disk_layouts')
 
-	# Get disk encryption password (or skip if blank)
-	global_menu.enable('!encryption-password')
+	# Specify disk encryption options
+	global_menu.enable('disk_encryption')
 
 	if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
 		# Enables the use of HSM

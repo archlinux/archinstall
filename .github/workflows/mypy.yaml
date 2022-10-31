@@ -20,3 +20,9 @@ jobs:
                   archinstall/lib/models/users.py archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py
                   archinstall/lib/disk/btrfs/btrfs_helpers.py archinstall/lib/translationhandler.py archinstall/profiles archinstall/lib/profiles_handler.py
                   archinstall/lib/disk/diskinfo.py
+
+              run: mypy --follow-imports=silent archinstall/lib/menu/abstract_menu.py archinstall/lib/menu/global_menu.py
+                archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py archinstall/lib/models/users.py
+                archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py archinstall/lib/disk/btrfs/btrfs_helpers.py
+                archinstall/lib/translationhandler.py archinstall/lib/disk/diskinfo.py archinstall/lib/menu/table_selection_menu.py archinstall/lib/hsm
+                archinstall/lib/disk/encryption.py archinstall/lib/models/disk_encryption.py

@@ -119,7 +119,7 @@ def select_partition(
 
 	choice = Menu(title, partition_indexes, multi=multiple).run()
 
-	if choice.type_ == MenuSelectionType.Esc:
+	if choice.type_ == MenuSelectionType.Skip:
 		return None
 
 	if isinstance(choice.value, list):
@@ -150,7 +150,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 	delete_all_partitions = str(_('Clear/Delete all partitions'))
 	assign_mount_point = str(_('Assign mount-point for a partition'))
 	mark_formatted = str(_('Mark/Unmark a partition to be formatted (wipes data)'))
-	mark_encrypted = str(_('Mark/Unmark a partition as encrypted'))
 	mark_compressed = str(_('Mark/Unmark a partition as compressed (btrfs only)'))
 	mark_bootable = str(_('Mark/Unmark a partition as bootable (automatic for /boot)'))
 	set_filesystem_partition = str(_('Set desired filesystem for a partition'))
@@ -167,7 +166,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 				delete_all_partitions,
 				assign_mount_point,
 				mark_formatted,
-				mark_encrypted,
 				mark_bootable,
 				mark_compressed,
 				set_filesystem_partition,
@@ -207,7 +205,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 
 			fs_choice = Menu(_('Enter a desired filesystem type for the partition'), fs_types()).run()
 
-			if fs_choice.type_ == MenuSelectionType.Esc:
+			if fs_choice.type_ == MenuSelectionType.Skip:
 				continue
 
 			prompt = str(_('Enter the start sector (percentage or block number, default: {}): ')).format(
@@ -322,15 +320,6 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					# Negate the current wipe marking
 					block_device_struct["partitions"][partition]['wipe'] = not block_device_struct["partitions"][partition].get('wipe', False)
 
-			elif task == mark_encrypted:
-				title = _('{}\n\nSelect which partition to mark as encrypted').format(current_layout)
-				partition = select_partition(title, block_device_struct["partitions"])
-
-				if partition is not None:
-					# Negate the current encryption marking
-					block_device_struct["partitions"][partition]['encrypted'] = \
-						not block_device_struct["partitions"][partition].get('encrypted', False)
-
 			elif task == mark_bootable:
 				title = _('{}\n\nSelect which partition to mark as bootable').format(current_layout)
 				partition = select_partition(title, block_device_struct["partitions"])
@@ -371,30 +360,3 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 					block_device_struct["partitions"][partition]['btrfs']['subvolumes'] = result
 
 	return block_device_struct
-
-
-def select_encrypted_partitions(
-	title :str,
-	partitions :List[Partition],
-	multiple :bool = True,
-	filter_ :Callable = None
-) -> Optional[int, List[int]]:
-	partition_indexes = _get_partitions(partitions, filter_)
-
-	if len(partition_indexes) == 0:
-		return None
-
-	# show current partition layout:
-	if len(partitions):
-		title += current_partition_layout(partitions, with_idx=True) + '\n'
-
-	choice = Menu(title, partition_indexes, multi=multiple).run()
-
-	if choice.type_ == MenuSelectionType.Esc:
-		return None
-
-	if isinstance(choice.value, list):
-		for partition_index in choice.value:
-			yield int(partition_index)
-	else:
-		yield (partition_index)

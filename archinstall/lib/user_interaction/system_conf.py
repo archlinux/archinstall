@@ -30,13 +30,13 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 		sort=True,
 		multi=True,
 		preset_values=preset,
-		raise_error_on_interrupt=True,
-		raise_error_warning_msg=warning
+		allow_reset=True,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
-		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Selection: return choice.value
 
 
@@ -60,13 +60,13 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 		list(options.keys()),
 		preset_values=preset,
 		multi=True,
-		raise_error_on_interrupt=True,
-		raise_error_warning_msg=warning
+		allow_reset=True,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match selected_harddrive.type_:
-		case MenuSelectionType.Ctrl_c: return []
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Reset: return []
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return [options[i] for i in selected_harddrive.value]
 
 
@@ -90,7 +90,7 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 			).run()
 
 			match selection.type_:
-				case MenuSelectionType.Esc: return preset
+				case MenuSelectionType.Skip: return preset
 				case MenuSelectionType.Selection: bootloader = 'grub-install' if selection.value == Menu.yes() else bootloader
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
@@ -99,7 +99,7 @@ def ask_for_bootloader(advanced_options: bool = False, preset: str = None) -> st
 
 			value = ''
 			match selection.type_:
-				case MenuSelectionType.Esc: value = preset_val
+				case MenuSelectionType.Skip: value = preset_val
 				case MenuSelectionType.Selection: value = selection.value
 
 			if value != "":
@@ -159,5 +159,5 @@ def ask_for_swap(preset: bool = True) -> bool:
 	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), preset_values=preset_val).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return False if choice.value == Menu.no() else True

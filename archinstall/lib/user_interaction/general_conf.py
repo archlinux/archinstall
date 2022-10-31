@@ -52,7 +52,7 @@ def ask_for_a_timezone(preset: str = None) -> str:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return choice.value
 
 
@@ -64,7 +64,7 @@ def ask_for_audio_selection(desktop: bool = True, preset: Union[str, None] = Non
 	choice = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=default).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return choice.value
 
 
@@ -111,12 +111,12 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		list(mirrors.keys()),
 		preset_values=preselected,
 		multi=True,
-		raise_error_on_interrupt=True
+		allow_reset=True
 	).run()
 
 	match selected_mirror.type_:
-		case MenuSelectionType.Ctrl_c: return {}
-		case MenuSelectionType.Esc: return preset_values
+		case MenuSelectionType.Reset: return {}
+		case MenuSelectionType.Skip: return preset_values
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
@@ -145,7 +145,7 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc:
+		case MenuSelectionType.Skip:
 			return preset_value
 		case MenuSelectionType.Selection:
 			language: Language = options[choice.value]
@@ -220,9 +220,9 @@ def select_profile(
 				allow_reset=allow_reset,
 				multi=multi
 			)
-		case MenuSelectionType.Ctrl_c:
+		case MenuSelectionType.Reset:
 			return None
-		case MenuSelectionType.Esc:
+		case MenuSelectionType.Skip:
 			return current_profile
 
 
@@ -304,10 +304,10 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		sort=False,
 		multi=True,
 		preset_values=preset,
-		raise_error_on_interrupt=True
+		allow_reset=True
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
-		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Selection: return choice.value
