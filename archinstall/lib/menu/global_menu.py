@@ -5,7 +5,6 @@ from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 import archinstall
 from ..disk import encrypted_partitions
 from ..general import SysCommand, secret
-from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.selection_menu import Selector, GeneralMenu
 from ..models import NetworkConfiguration

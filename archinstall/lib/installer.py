@@ -801,7 +801,7 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
-	def add_systemd_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+	def _add_systemd_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
 		self.pacstrap('efibootmgr')
 
 		if not has_uefi():
@@ -905,7 +905,7 @@ class Installer:
 
 		return True
 
-	def add_grub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+	def _add_grub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
 		self.pacstrap('grub')  # no need?
 
 		root_fs_type = get_mount_fs_type(root_partition.filesystem)
@@ -949,7 +949,7 @@ class Installer:
 
 		return True
 
-	def add_efistub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
+	def _add_efistub_bootloader(self, boot_partition :Partition, root_partition :Partition) -> bool:
 		self.pacstrap('efibootmgr')
 
 		if not has_uefi():
@@ -996,7 +996,7 @@ class Installer:
 
 		return True
 
-	def add_bootloader(self, bootloader: Bootloader = 'systemd-bootctl') -> bool:
+	def add_bootloader(self, bootloader: Bootloader) -> bool:
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:
@@ -1029,16 +1029,15 @@ class Installer:
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
 
-		self.log(f'Adding bootloader {bootloader} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
+		self.log(f'Adding bootloader {bootloader.value} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
 
-		if bootloader == 'systemd-bootctl':
-			self.add_systemd_bootloader(boot_partition, root_partition)
-		elif bootloader == "grub-install":
-			self.add_grub_bootloader(boot_partition, root_partition)
-		elif bootloader == 'efistub':
-			self.add_efistub_bootloader(boot_partition, root_partition)
-		else:
-			raise RequirementError(f"Unknown (or not yet implemented) bootloader requested: {bootloader}")
+		match bootloader:
+			case Bootloader.Systemd:
+				self._add_systemd_bootloader(boot_partition, root_partition)
+			case Bootloader.Grub:
+				self._add_grub_bootloader(boot_partition, root_partition)
+			case Bootloader.Efistub:
+				self._add_efistub_bootloader(boot_partition, root_partition)
 
 		return True
 

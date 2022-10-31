@@ -1,7 +1,7 @@
 import archinstall
 
 # Select a harddrive and a disk password
-from archinstall import User
+from archinstall import User, Bootloader
 
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")
@@ -21,7 +21,7 @@ def install_on(mountpoint):
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
 			installation.set_hostname('minimal-arch')
-			installation.add_bootloader()
+			installation.add_bootloader(Bootloader.Systemd)
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):

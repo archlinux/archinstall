@@ -123,7 +123,7 @@ with archinstall.luks2(root, 'luksloop', disk_password) as unlocked_root:
 
 with archinstall.Installer('/mnt') as installation:
     if installation.minimal_installation(hostname='minimal-arch'):
-        installation.add_bootloader()
+        installation.add_bootloader(Bootloader.Systemd)
 
         installation.add_additional_packages(['nano', 'wget', 'git'])
 

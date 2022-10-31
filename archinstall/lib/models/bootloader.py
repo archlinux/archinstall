@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from enum import Enum
 from typing import List
 
@@ -33,8 +34,11 @@ class Bootloader(Enum):
 
 	@classmethod
 	def from_arg(cls, bootloader: str) -> Bootloader:
+		# to support old configuration files
+		bootloader = bootloader.capitalize()
+
 		if bootloader not in cls.values():
 			values = ', '.join(cls.values())
-			log(f'Invalid bootloader value. Allowed values: {values}', level=logging.WARN)
+			log(f'Invalid bootloader value "{bootloader}". Allowed values: {values}', level=logging.WARN)
 			sys.exit(1)
 		return Bootloader(bootloader)
