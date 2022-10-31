@@ -14,10 +14,6 @@ class Bootloader(Enum):
 	Grub = 'Grub'
 	Efistub = 'Efistub'
 
-# 	bootloader = 'systemd-bootctl'
-# elif value == 'grub':
-# bootloader = 'grub-install'
-
 	def json(self):
 		return self.value
 
