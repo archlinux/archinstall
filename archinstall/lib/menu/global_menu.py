@@ -5,11 +5,11 @@ from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 from archinstall.profiles.profiles import Profile
 from ..disk.encryption import DiskEncryptionMenu
 from ..general import SysCommand, secret
-from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
 from ..models.disk_encryption import DiskEncryption, EncryptionType
+from ..models.bootloader import Bootloader
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
@@ -105,8 +105,9 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['bootloader'] = \
 			Selector(
 				_('Bootloader'),
-				lambda preset: ask_for_bootloader(storage['arguments'].get('advanced', False),preset),
-				default="systemd-bootctl" if has_uefi() else "grub-install")
+				lambda preset: ask_for_bootloader(preset),
+				display_func=lambda x: x.value,
+				default=Bootloader.get_default())
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),

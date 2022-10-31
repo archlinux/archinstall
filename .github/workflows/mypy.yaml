@@ -15,6 +15,7 @@ jobs:
             # one day this will be enabled
               # run: mypy --strict --module archinstall || exit 0
             - name: run mypy
+<<<<<<< HEAD
               run: mypy --follow-imports=silent archinstall/lib/menu/selection_menu.py archinstall/lib/menu/global_menu.py
                 archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py
                   archinstall/lib/models/users.py archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py
@@ -30,3 +31,6 @@ jobs:
               run: mypy --follow-imports=silent archinstall/lib/menu/selection_menu.py archinstall/lib/menu/global_menu.py archinstall/lib/models/network_configuration.py
               archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py archinstall/lib/models/users.py archinstall/lib/disk/blockdevice.py
               archinstall/lib/user_interaction/subvolume_config.py archinstall/lib/disk/btrfs/btrfs_helpers.py archinstall/lib/translationhandler.py archinstall/lib/utils/diskinfo.py
+=======
+              run: mypy --follow-imports=silent archinstall/lib/menu/selection_menu.py archinstall/lib/menu/global_menu.py archinstall/lib/models/network_configuration.py archinstall/lib/menu/list_manager.py archinstall/lib/user_interaction/network_conf.py archinstall/lib/models/users.py archinstall/lib/disk/blockdevice.py archinstall/lib/user_interaction/subvolume_config.py archinstall/lib/disk/btrfs/btrfs_helpers.py archinstall/lib/translationhandler.py archinstall/lib/disk/diskinfo.py archinstall/lib/models/bootloader.py
+>>>>>>> reformulate-bootloader
