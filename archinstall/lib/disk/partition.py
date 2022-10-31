@@ -17,6 +17,8 @@ from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
+from ..utils.diskinfo import get_lsblk_info
+
 
 @dataclass
 class PartitionInfo:
@@ -36,26 +38,17 @@ class PartitionInfo:
 	def __post_init__(self):
 		if not all([self.partuuid, self.uuid]):
 			for i in range(storage['DISK_RETRY_ATTEMPTS']):
-				lsblk_info = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
-				try:
-					lsblk_info = json.loads(lsblk_info)
-				except json.decoder.JSONDecodeError:
-					log(f"Could not decode JSON: {lsblk_info}", fg="red", level=logging.ERROR)
-					raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
+				lsblk_info = get_lsblk_info(self.device_path)
 
-				if not (device := lsblk_info.get('blockdevices', [None])[0]):
-					raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
-
-				self.partuuid = device.get('partuuid')
-				self.uuid = device.get('uuid')
+				self.partuuid = lsblk_info.partuuid
+				self.uuid = lsblk_info.uuid
 
 				# Lets build a list of requirements that we would like
 				# to retry and build (stuff that can take time between partprobes)
-				requirements = []
-				requirements.append(self.partuuid)
+				requirements = [self.partuuid]
 
 				# Unformatted partitions won't have a UUID
-				if lsblk_info.get('fstype') is not None:
+				if lsblk_info.fstype is not None:
 					requirements.append(self.uuid)
 
 				if all(requirements):
@@ -168,31 +161,6 @@ class Partition:
 			}
 		}
 
-	def _call_lsblk(self) -> Dict[str, Any]:
-		self.partprobe()
-		# This sleep might be overkill, but lsblk is known to
-		# work against a chaotic cache that can change during call
-		# causing no information to be returned (blkid is better)
-		# time.sleep(1)
-
-		# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
-
-		try:
-			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
-		except SysCallError as error:
-			# It appears as if lsblk can return exit codes like 8192 to indicate something.
-			# But it does return output so we'll try to catch it.
-			output = error.worker.decode('UTF-8')
-
-		if output:
-			try:
-				lsblk_info = json.loads(output)
-				return lsblk_info
-			except json.decoder.JSONDecodeError:
-				log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
-
-		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
-
 	def _call_sfdisk(self) -> Dict[str, Any]:
 		output = SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8')
 
@@ -209,27 +177,24 @@ class Partition:
 		raise DiskError(f'Failed to read disk "{self.block_device.path}" with sfdisk')
 
 	def _fetch_information(self) -> PartitionInfo:
-		lsblk_info = self._call_lsblk()
+		lsblk_info = get_lsblk_info(self.device_path)
 		sfdisk_info = self._call_sfdisk()
 
-		if not (device := lsblk_info.get('blockdevices', [None])[0]):
-			raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
-
-		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
+		mountpoints = [Path(mountpoint) for mountpoint in lsblk_info.mountpoints]
 		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
 
 		return PartitionInfo(
 			partition_object=self,
 			device_path=self._path,
-			pttype=device['pttype'],
-			partuuid=device['partuuid'],
-			uuid=device['uuid'],
-			sector_size=device['log-sec'],
-			size=convert_size_to_gb(device['size']),
+			pttype=lsblk_info.pttype,
+			partuuid=lsblk_info.partuuid,
+			uuid=lsblk_info.uuid,
+			sector_size=lsblk_info.log_sec,
+			size=convert_size_to_gb(lsblk_info.size),
 			start=sfdisk_info.get('start', None),
 			end=sfdisk_info.get('size', None),
 			bootable=bootable,
-			filesystem_type=device['fstype'],
+			filesystem_type=lsblk_info.fstype,
 			mountpoints=mountpoints
 		)
 
@@ -374,15 +339,13 @@ class Partition:
 
 	@property
 	def real_device(self) -> str:
-		output = SysCommand('lsblk -J').decode('UTF-8')
+		lsblk_info = get_lsblk_info(self.device_path)
+		parent = lsblk_info.pkname
 
-		if output:
-			for blockdevice in json.loads(output)['blockdevices']:
-				if parent := self.find_parent_of(blockdevice, os.path.basename(self.device_path)):
-					return f"/dev/{parent}"
+		if parent == os.path.basename(self.device_path):
 			return self._path
 
-		raise DiskError('Unable to get disk information for command "lsblk -J"')
+		return f'/dev/{parent}'
 
 	@property
 	def device_path(self) -> str:
@@ -568,16 +531,6 @@ class Partition:
 			self._encrypted = False
 
 		return True
-
-	def find_parent_of(self, data :Dict[str, Any], name :str, parent :Optional[str] = None) -> Optional[str]:
-		if data['name'] == name:
-			return parent
-		elif 'children' in data:
-			for child in data['children']:
-				if parent := self.find_parent_of(child, name, parent=data['name']):
-					return parent
-
-		return None
 
 	def mount(self, target :str, fs :Optional[str] = None, options :str = '') -> bool:
 		if not self._partition_info.get_first_mountpoint():

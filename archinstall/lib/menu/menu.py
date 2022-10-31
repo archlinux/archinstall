@@ -269,7 +269,7 @@ class Menu(TerminalMenu):
 				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
-		elif ret.type_ is MenuSelectionType.Skip:
+		elif selection.type_ is MenuSelectionType.Skip:
 			if not self._skip:
 				system('clear')
 				return self.run()

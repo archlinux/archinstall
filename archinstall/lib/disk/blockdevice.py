@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 import logging
 import time
 
@@ -11,7 +10,7 @@ from ..exceptions import DiskError, SysCallError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
-
+from ..utils.diskinfo import get_lsblk_info
 
 if TYPE_CHECKING:
 	from .partition import Partition
@@ -107,28 +106,18 @@ class BlockDevice:
 			}
 		}
 
-	def _call_lsblk(self, path: str) -> Dict[str, Any]:
-		output = SysCommand(f'lsblk --json -b -o+SIZE,PTTYPE,ROTA,TRAN,PTUUID {self._path}').decode('UTF-8')
-		if output:
-			lsblk_info = json.loads(output)
-			return lsblk_info
-
-		raise DiskError(f'Failed to read disk "{self.path}" with lsblk')
-
 	def _load_partitions(self):
 		from .partition import Partition
 
 		self._partitions.clear()
 
-		lsblk_info = self._call_lsblk(self._path)
-		device = lsblk_info['blockdevices'][0]
+		lsblk_info = get_lsblk_info(self._path)
 		self._partitions.clear()
+		root = f'/dev/{lsblk_info.name}'
 
-		if children := device.get('children', None):
-			root = f'/dev/{device["name"]}'
-			for child in children:
-				part_id = child['name'].removeprefix(device['name'])
-				self._partitions[part_id] = Partition(root + part_id, block_device=self, part_id=part_id)
+		for child in lsblk_info.children:
+			part_id = child.name.removeprefix(lsblk_info.name)
+			self._partitions[part_id] = Partition(root + part_id, block_device=self, part_id=part_id)
 
 	def _get_free_space(self) -> Optional[List[BlockSizeInfo]]:
 		# NOTE: parted -s will default to `cancel` on prompt, skipping any partition
@@ -151,16 +140,15 @@ class BlockDevice:
 		return None
 
 	def _fetch_information(self) -> BlockInfo:
-		lsblk_info = self._call_lsblk(self._path)
-		device = lsblk_info['blockdevices'][0]
+		lsblk_info = get_lsblk_info(self._path)
 		free_space = self._get_free_space()
 
 		return BlockInfo(
-			pttype=device['pttype'],
-			ptuuid=device['ptuuid'],
-			size=device['size'],
-			tran=device['tran'],
-			rota=device['rota'],
+			pttype=lsblk_info.pttype,
+			ptuuid=lsblk_info.ptuuid,
+			size=lsblk_info.size,
+			tran=lsblk_info.tran,
+			rota=lsblk_info.rota,
 			free_space=free_space
 		)
 

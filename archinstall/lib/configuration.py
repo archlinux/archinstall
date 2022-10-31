@@ -3,7 +3,7 @@ import json
 import stat
 import logging
 import pathlib
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .hsm.fido import Fido2
 from .models.disk_encryption import DiskEncryption

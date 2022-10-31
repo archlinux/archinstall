@@ -9,16 +9,16 @@ import glob
 
 from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
-from .diskinfo import get_lsblk_info
 from ..models.subvolume import Subvolume
 
 from .blockdevice import BlockDevice
 from .dmcryptdev import DMCryptDev
 from .mapperdev import MapperDev
 from ..exceptions import SysCallError, DiskError
-from ..general import SysCommand
+from ..general import SysCommand, JSON
 from ..output import log
 from ..storage import storage
+from ..utils.diskinfo import get_lsblk_info, get_all_lsblk_info
 
 if TYPE_CHECKING:
 	from .partition import Partition
@@ -240,8 +240,8 @@ def all_blockdevices(
 			if exclude_iso_dev:
 				# exclude all devices associated with the iso boot locations
 				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
-				lsblk_info = get_lsblk_info(device_path)
-				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
+				info = get_lsblk_info(device_path)
+				if any([dev in info.mountpoints for dev in iso_devs]):
 					continue
 
 			information = blkid(f'blkid -p -o export {device_path}')
@@ -409,13 +409,10 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 		return {}
 
 	output = json.loads(output)
-	# print(output)
-
 	mounts = {}
-
 	block_devices_available = all_blockdevices(mappers=True, partitions=True, error=True)
-
 	block_devices_mountpoints = {}
+
 	for blockdev in block_devices_available.values():
 		if not type(blockdev) in (Partition, MapperDev):
 			continue
@@ -454,13 +451,10 @@ def get_filesystem_type(path :str) -> Optional[str]:
 		return None
 
 
-def disk_layouts() -> Optional[Dict[str, Any]]:
+def disk_layouts() -> str:
 	try:
-		if (handle := SysCommand("lsblk -f -o+TYPE,SIZE -J")).exit_code == 0:
-			return {str(key): val for key, val in json.loads(handle.decode('UTF-8')).items()}
-		else:
-			log(f"Could not return disk layouts: {handle}", level=logging.WARNING, fg="yellow")
-			return None
+		lsblk_info = get_all_lsblk_info()
+		return json.dumps(lsblk_info, indent=4, sort_keys=True, cls=JSON)
 	except SysCallError as err:
 		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
 		return None
@@ -492,11 +486,13 @@ def convert_device_to_uuid(path :str) -> str:
 
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
-		output = json.loads(SysCommand(f"lsblk --json -o+UUID {device_name}").decode('UTF-8'))
+		try:
+			lsblk_info = get_lsblk_info(device_name)
 
-		for device in output['blockdevices']:
-			if (dev_uuid := device.get('uuid', None)):
+			if dev_uuid := lsblk_info.uuid:
 				return dev_uuid
+		except Exception:
+			pass
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
 
