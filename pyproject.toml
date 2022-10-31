@@ -10,14 +10,13 @@ authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 keywords = ["linux", "arch", "archinstall", "installer"]
 
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX :: Linux",
 ]
@@ -38,7 +37,7 @@ include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall
 exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 exclude = "tests"
 
 [tool.bandit]
