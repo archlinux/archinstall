@@ -11,15 +11,15 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.10"
-
 keywords = ["linux", "arch", "archinstall", "installer"]
-
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "pyparted==3.12.0",
+    "simple-term-menu==1.5.0",
 ]
 
 [project.urls]

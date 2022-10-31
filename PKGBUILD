@@ -12,7 +12,7 @@ arch=(any)
 url="https://github.com/archlinux/archinstall"
 license=(GPL3)
 depends=(python)
-makedepends=(python-build python-installer python-flit python-setuptools python-sphinx python-wheel)
+makedepends=(python-pip python-build python-installer python-setuptools python-sphinx python-wheel)
 provides=(python-archinstall)
 conflicts=(python-archinstall)
 replaces=(python-archinstall)
@@ -28,7 +28,7 @@ validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxe
 
 prepare() {
   cd $pkgname-$pkgver
-  # use real directories for examples and profiles, as symlinks do not work
+  #use real directories for examples and profiles, as symlinks do not work
   # with flit or setuptools PEP517 backends
   rm -fv $pkgname/{examples,profiles}
   mv -v examples profiles $pkgname/
@@ -42,6 +42,12 @@ build() {
 
 package() {
   cd "$pkgname-$pkgver"
-  python -m installer --destdir="$pkgdir" dist/*.whl
+  # extract the dependencies from the pyparted.toml so pip can install them
+  grep -oP '^ *"[\s\S]+?[=><]+[\s\S]+?"' pyproject.toml > requirements.txt && sed -i 's|"||g' requirements.txt
+  # install the dependencies
+  PIP_CONFIG_FILE=/dev/null pip install --root=${pkgdir} --ignore-installed -r requirements.txt
+  # install archinstall
+  PIP_CONFIG_FILE=/dev/null pip install --root="${pkgdir}" --ignore-installed dist/*.whl
+  # install the docs
   install -vDm 644 docs/_build/man/archinstall.1 -t "$pkgdir/usr/share/man/man1/"
 }
