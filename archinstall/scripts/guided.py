@@ -1,15 +1,21 @@
 import logging
 import os
 import time
+from typing import Any, TYPE_CHECKING
 
 import archinstall
 from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
 
+if TYPE_CHECKING:
+	_: Any
+
+
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
+
 if os.getuid() != 0:
 	print(_("Archinstall requires root privileges to run. See --help for more."))
 	exit(1)

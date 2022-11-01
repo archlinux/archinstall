@@ -68,9 +68,9 @@ class DesktopProfile(Profile):
 				self.set_current_selection(choice.value)  # type: ignore
 				self._select_greeter()
 				return SelectResult.NewSelection
-			case MenuSelectionType.Esc:
+			case MenuSelectionType.Skip:
 				return SelectResult.SameSelection
-			case MenuSelectionType.Ctrl_c:
+			case MenuSelectionType.Reset:
 				return SelectResult.ResetCurrent
 
 	def post_install(self, install_session: 'Installer'):

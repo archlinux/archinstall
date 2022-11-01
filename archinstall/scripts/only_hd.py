@@ -2,6 +2,7 @@
 import logging
 import os
 import pathlib
+from typing import List, Tuple
 
 import archinstall
 from archinstall import ConfigurationOutput
@@ -27,7 +28,7 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 				self.option(entry).set_enabled(False)
 		self._update_install_text()
 
-	def mandatory_lacking(self) -> [int, list]:
+	def mandatory_lacking(self) -> Tuple[List, int]:
 		mandatory_fields = []
 		mandatory_waiting = 0
 		for field in self._menu_options:

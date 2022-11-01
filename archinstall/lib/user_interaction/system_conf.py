@@ -7,13 +7,12 @@ from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_in
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..models.bootloader import Bootloader
-from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def select_kernel(preset: List[str] = None) -> List[str]:
+def select_kernel(preset: List[str] = []) -> List[str]:
 	"""
 	Asks the user to select a kernel for system.
 
@@ -39,7 +38,7 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Selection: return choice.value  # type: ignore
 
 
 def select_harddrives(preset: List[str] = []) -> List[str]:
@@ -69,7 +68,7 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	match selected_harddrive.type_:
 		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return [options[i] for i in selected_harddrive.value]
+		case MenuSelectionType.Selection: return [options[i] for i in selected_harddrive.value]  # type: ignore
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:
@@ -92,8 +91,10 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return Bootloader(choice.value)
+
+	return preset
 
 
 def select_driver(options: Dict[str, Any] = None, current_value: str = None) -> Optional[str]:
@@ -127,7 +128,7 @@ def select_driver(options: Dict[str, Any] = None, current_value: str = None) -> 
 		if choice.type_ != MenuSelectionType.Selection:
 			return None
 
-		return choice.value
+		return choice.value  # type: ignore
 
 	return current_value
 
@@ -144,3 +145,5 @@ def ask_for_swap(preset: bool = True) -> bool:
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return False if choice.value == Menu.no() else True
+
+	return preset
