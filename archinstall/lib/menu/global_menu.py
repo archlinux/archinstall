@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.encryption import DiskEncryptionMenu
 from ..general import SysCommand, secret
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
@@ -221,6 +220,8 @@ class GlobalMenu(AbstractMenu):
 				return str(cur_value)
 
 	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
+		from ..disk.encryption import DiskEncryptionMenu
+
 		data_store: Dict[str, Any] = {}
 
 		selector = self._menu_options['disk_layouts']
@@ -359,8 +360,8 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_harddrives(self, old_harddrives: List[str] = []) -> List:
-		harddrives = select_harddrives(old_harddrives)
+	def _select_harddrives(self, preset: List[str] = []) -> List:
+		harddrives = select_harddrives(preset)
 
 		if harddrives is not None:
 			if len(harddrives) == 0:
@@ -374,12 +375,12 @@ class GlobalMenu(AbstractMenu):
 
 				if choice.value == Menu.no():
 					self._disk_check = True
-					return self._select_harddrives(old_harddrives)
+					return self._select_harddrives(preset)
 				else:
 					self._disk_check = False
 
 			# in case the harddrives got changed we have to reset the disk layout as well
-			if old_harddrives != harddrives:
+			if preset != harddrives:
 				self._menu_options['disk_layouts'].set_current_selection(None)
 				storage['arguments']['disk_layouts'] = {}
 
