@@ -110,7 +110,7 @@ class TranslationHandler:
 		"""
 		Set the provided font as the new terminal font
 		"""
-		from archinstall import SysCommand, log
+		from .general import SysCommand, log
 		try:
 			log(f'Setting font: {font}', level=logging.DEBUG)
 			SysCommand(f'setfont {font}')
