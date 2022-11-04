@@ -3,7 +3,7 @@ from enum import Enum, auto
 from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
-from archinstall.lib.menu.simple_menu import TerminalMenu
+from .simple_menu import TerminalMenu
 
 from ..exceptions import RequirementError
 from ..output import log
