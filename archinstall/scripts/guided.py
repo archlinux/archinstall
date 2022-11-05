@@ -58,6 +58,7 @@ def ask_user_questions():
 	# Ask which harddrives/block-devices we will install to
 	# and convert them into archinstall.BlockDevice() objects.
 	global_menu.enable('harddrives')
+	global_menu.enable('devices')
 
 	global_menu.enable('disk_layouts')
 

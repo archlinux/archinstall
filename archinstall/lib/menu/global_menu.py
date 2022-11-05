@@ -32,9 +32,12 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
 from ..user_interaction.partitioning_conf import current_partition_layout
+from ..disk.disk_handler import BDevice, device_handler
 
 if TYPE_CHECKING:
 	_: Any
+
+continue replace 'harddrive' stuff......
 
 
 class GlobalMenu(AbstractMenu):
@@ -73,10 +76,17 @@ class GlobalMenu(AbstractMenu):
 				default='UTF-8')
 		self._menu_options['harddrives'] = \
 			Selector(
-				_('Drive(s)'),
+				_('Legacy Drive(s)'),
 				lambda preset: self._select_harddrives(preset),
 				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
 				preview_func=self._prev_harddrives,
+		)
+		self._menu_options['devices'] = \
+			Selector(
+				_('Drive(s)'),
+				lambda preset: self._select_devices(preset),
+				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
+				preview_func=self._prev_devices,
 		)
 		self._menu_options['disk_layouts'] = \
 			Selector(
@@ -139,7 +149,6 @@ class GlobalMenu(AbstractMenu):
 				display_func=lambda x: x if x else 'None',
 				default=None
 			)
-
 		self._menu_options['parallel downloads'] = \
 			Selector(
 				_('Parallel Downloads'),
@@ -243,6 +252,13 @@ class GlobalMenu(AbstractMenu):
 				return FormattedOutput.as_table(ifaces)
 		return None
 
+	def _prev_devices(self) -> Optional[str]:
+		selector = self._menu_options['devices']
+		if selector.has_selection():
+			drives = selector.current_selection
+			return FormattedOutput.as_table(drives)
+		return None
+
 	def _prev_harddrives(self) -> Optional[str]:
 		selector = self._menu_options['harddrives']
 		if selector.has_selection():
@@ -334,11 +350,11 @@ class GlobalMenu(AbstractMenu):
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
 		if self._disk_check:
-			if not check('harddrives'):
-				missing += [str(_('Drive(s)'))]
-			if check('harddrives'):
-				if not self._menu_options['harddrives'].is_empty() and not check('disk_layouts'):
-					missing += [str(_('Disk layout'))]
+			if not check('devices'):
+				missing += [self._menu_options['devices'].description]
+			if check('devices'):
+				if not self._menu_options['devices'].is_empty() and not check('disk_layouts'):
+					missing += [self._menu_options['disk_layout'].description]
 
 		return missing
 
@@ -346,11 +362,6 @@ class GlobalMenu(AbstractMenu):
 		prompt = str(_('Enter root password (leave blank to disable root): '))
 		password = get_password(prompt=prompt)
 		return password
-
-	# def _select_encrypted_password(self) -> Optional[str]:
-	# 	if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
-	# 		return passwd
-	# 	return None
 
 	def _select_ntp(self, preset :bool = True) -> bool:
 		ntp = ask_ntp(preset)
@@ -360,7 +371,31 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_harddrives(self, preset: List[str] = []) -> List:
+	def _select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
+		devices = device_handler.select_devices(preset)
+
+		if len(devices) == 0:
+			prompt = _(
+				"You decided to skip harddrive selection and will use whatever drive-setup is mounted at {} (experimental)\n"
+				"WARNING: Archinstall won't check the suitability of this setup\n"
+				"Do you wish to continue?"
+			).format(storage['MOUNT_POINT'])
+
+			choice = Menu(prompt, Menu.yes_no(), skip=False).run()
+
+			if choice.value == Menu.no():
+				self._disk_check = True
+				return self._select_devices(preset)
+			else:
+				self._disk_check = False
+
+		# in case the device selection changed we have to reset the disk layout as well
+		if preset != devices:
+			self._menu_options['disk_layouts'].set_current_selection(None)
+
+		return devices
+
+	def _select_harddrives(self, preset: List[str] = []) -> List[BDevice]:
 		harddrives = select_harddrives(preset)
 
 		if harddrives is not None:

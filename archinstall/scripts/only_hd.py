@@ -13,8 +13,8 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 		super()._setup_selection_menu_options()
 		options_list = []
 		mandatory_list = []
-		options_list = ['harddrives', 'disk_layouts', 'disk_encryption','swap']
-		mandatory_list = ['harddrives']
+		options_list = ['devices', 'disk_layouts', 'disk_encryption','swap']
+		mandatory_list = ['devices']
 		options_list.extend(['save_config','install','abort'])
 
 		for entry in self._menu_options:
@@ -45,8 +45,8 @@ class OnlyHDMenu(archinstall.GlobalMenu):
 			return self.option(s).has_selection()
 
 		missing, missing_cnt = self.mandatory_lacking()
-		if check('harddrives'):
-			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
+		if check('devices'):
+			if not self.option('devices').is_empty() and not check('disk_layouts'):
 				missing_cnt += 1
 				missing += ['disk_layout']
 		return missing

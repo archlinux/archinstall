@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import logging
+import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
@@ -16,6 +17,7 @@ from ..output import log
 @dataclass
 class LsblkInfo:
 	name: str = ""
+	path: Path = ""
 	pkname: str = ""
 	size: int = 0
 	log_sec: int = 0
@@ -51,9 +53,16 @@ class LsblkInfo:
 		for f in cls.fields():
 			blk_field = _clean_field(f, CleanType.Blockdevice)
 			data_field = _clean_field(f, CleanType.Dataclass)
-			setattr(info, data_field, blockdevice[blk_field])
+
+			if type(getattr(info, data_field)) == Path:
+				val = Path(blockdevice[blk_field])
+			else:
+				val = blockdevice[blk_field]
+
+			setattr(info, data_field, val)
 
 		info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
+
 		# sometimes lsblk returns 'mountpoint': [null]
 		info.mountpoints = [mountpoint for mountpoint in info.mountpoints if mountpoint]
 
@@ -76,7 +85,7 @@ def _clean_field(name: str, clean_type: CleanType) -> str:
 			return name.replace('_percentage', '%').replace('_', '-').upper()
 
 
-def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None) -> List[LsblkInfo]:
+def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 3) -> List[LsblkInfo]:
 	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
 	lsblk_fields = ','.join(fields)
 
@@ -91,6 +100,11 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None) -> List[Lsblk
 		if error.worker:
 			err = error.worker.decode('UTF-8')
 			log(f'Error calling lsblk: {err}', fg="red", level=logging.ERROR)
+
+			if retry > 0:
+				log('Retrying fetching info with lsblk...', level=logging.INFO)
+				time.sleep(1)
+				return _fetch_lsblk_info(dev_path, retry-1)
 		raise error
 
 	if result.exit_code == 0:

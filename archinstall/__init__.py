@@ -3,6 +3,7 @@ import importlib
 from argparse import ArgumentParser, Namespace
 
 from .lib.disk import *
+from .lib.disk.disk_handler import device_handler
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
@@ -200,10 +201,13 @@ def load_config():
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
-	if arguments.get('harddrives', None) is not None:
-		if type(arguments['harddrives']) is str:
-			arguments['harddrives'] = arguments['harddrives'].split(',')
-		arguments['harddrives'] = [BlockDevice(BlockDev) for BlockDev in arguments['harddrives']]
+	if arguments.get('devices', None) is not None:
+		if type(arguments['devices']) is str:
+			device_paths = arguments['devices'].split(',')
+		else:
+			device_paths = arguments['devices'].keys()
+
+		arguments['devices'] = device_handler.parse_arguments(device_paths)
 		# Temporarily disabling keep_partitions if config file is loaded
 		# Temporary workaround to make Desktop Environments work
 
@@ -256,8 +260,9 @@ def post_process_arguments(arguments):
 		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
 			exit(1)
 		else:
-			if arguments.get('harddrives') is None:
-				arguments['harddrives'] = [disk for disk in layout_storage]
+			if arguments.get('devices') is None:
+				arguments['devices'] = device_handler.parse_arguments(layout_storage.keys())
+
 			# backward compatibility. Change partition.format for partition.wipe
 			for disk in layout_storage:
 				for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
@@ -272,7 +277,7 @@ def post_process_arguments(arguments):
 
 
 define_arguments()
-arguments = get_arguments()
+arguments: Dict[str, Any] = get_arguments()
 post_process_arguments(arguments)
 
 

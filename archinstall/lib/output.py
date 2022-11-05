@@ -37,7 +37,13 @@ class FormattedOutput:
 			return o.__dict__
 
 	@classmethod
-	def as_table(cls, obj: List[Any], class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> str:
+	def as_table(
+		cls,
+		obj: List[Any],
+		class_formatter: Union[str, Callable] = None,
+		filter_list: List[str] = None,
+		capitalize: bool = False
+	) -> str:
 		""" variant of as_table (subtly different code) which has two additional parameters
 		filter which is a list of fields which will be shon
 		class_formatter a special method to format the outgoing data
@@ -65,7 +71,12 @@ class FormattedOutput:
 		for key in filter_list:
 			width = column_width[key]
 			key = key.replace('!', '').replace('_', ' ')
+
+			if capitalize:
+				key = key.capitalize()
+
 			key_list.append(key.ljust(width))
+
 		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
 

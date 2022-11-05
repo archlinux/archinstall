@@ -1,4 +1,4 @@
-from typing import Any, Tuple, List, Dict, Optional
+from typing import Any, Tuple, List, Dict, Optional, Callable
 
 from .menu import MenuSelectionType, MenuSelection
 from ..output import FormattedOutput
@@ -13,7 +13,11 @@ class TableMenu(Menu):
 		table_data: Optional[Tuple[List[Any], str]] = None,
 		custom_menu_options: List[str] = [],
 		default: Any = None,
-		multi: bool = False
+		multi: bool = False,
+		preview_command: Optional[Callable] = None,
+		preview_title: str = 'Info',
+		allow_reset: bool = True,
+		allow_reset_warning_msg: str = None,
 	):
 		"""
 		param title: Text that will be displayed above the menu
@@ -29,6 +33,9 @@ class TableMenu(Menu):
 
 		param custom_options: List of custom options that will be displayed under the table
 		:type custom_menu_options: List
+
+		:param preview_command: A function that should return a string that will be displayed in a preview window when a menu selection item is in focus
+		:type preview_command: Callable
 		"""
 		if not data and not table_data:
 			raise ValueError('Either "data" or "table_data" must be provided')
@@ -41,11 +48,11 @@ class TableMenu(Menu):
 		else:
 			header_padding = 2
 
-		if len(data):
+		if data:
 			table_text = FormattedOutput.as_table(data)
 			rows = table_text.split('\n')
 			table = self._create_table(data, rows, header_padding=header_padding)
-		elif table_data is not None:
+		else:
 			# we assume the table to be
 			# h1  |   h2
 			# -----------
@@ -56,16 +63,29 @@ class TableMenu(Menu):
 
 		self._options, header = self._prepare_selection(table)
 
+		extra_bottom_space = True if preview_command else False
+
 		super().__init__(
 			title,
 			self._options,
 			header=header,
 			skip_empty_entries=True,
 			show_search_hint=False,
-			allow_reset=True,
 			multi=multi,
-			default_option=default
+			default_option=default,
+			preview_command=lambda x: self._table_show_preview(preview_command, x),
+			preview_title=preview_title,
+			extra_bottom_space=extra_bottom_space,
+			allow_reset=allow_reset,
+			allow_reset_warning_msg=allow_reset_warning_msg
 		)
+
+	def _table_show_preview(self, preview_command: Optional[Callable], selection: Any) -> Optional[str]:
+		if preview_command:
+			row = self._escape_row(selection)
+			obj = self._options[row]
+			return preview_command(obj)
+		return None
 
 	def run(self) -> MenuSelection:
 		choice = super().run()
@@ -79,6 +99,9 @@ class TableMenu(Menu):
 
 		return choice
 
+	def _escape_row(self, row: str) -> str:
+		return row.replace('|', '\\|')
+
 	def _create_table(self, data: List[Any], rows: List[str], header_padding: int = 2) -> Dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
@@ -87,7 +110,7 @@ class TableMenu(Menu):
 		display_data = {f'{padding}{rows[0]}': None, f'{padding}{rows[1]}': None}
 
 		for row, entry in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
+			row = self._escape_row(row)
 			display_data[row] = entry
 
 		return display_data
