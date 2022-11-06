@@ -4,19 +4,16 @@ import logging
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
-
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
-from ..output import log
-from ..profiles import Profile, list_profiles
+from ..menu.menu import MenuSelectionType
+from ..menu.text_input import TextInput
 from ..mirrors import list_mirrors
-
-from ..translationhandler import Language, TranslationHandler
+from ..output import log
 from ..packages.packages import validate_package_list
-
+from ..profiles import Profile, list_profiles
 from ..storage import storage
+from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any

@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING, Optional
 from .exceptions import TranslationError
-from .hardware import virtualization
 
 if TYPE_CHECKING:
 	_: Any
