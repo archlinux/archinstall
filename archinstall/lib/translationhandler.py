@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING, Optional
 from .exceptions import TranslationError
+from .hardware import virtualization
 
 if TYPE_CHECKING:
 	_: Any
@@ -21,15 +22,10 @@ class Language:
 	translation: gettext.NullTranslations
 	translation_percent: int
 	translated_lang: Optional[str]
-	external_dep: Optional[str]
 
 	@property
 	def display_name(self) -> str:
-		if not self.external_dep and self.translated_lang:
-			name = self.translated_lang
-		else:
-			name = self.name_en
-
+		name = self.name_en
 		return f'{name} ({self.translation_percent}%)'
 
 	def is_match(self, lang_or_translated_lang: str) -> bool:
@@ -48,23 +44,8 @@ class TranslationHandler:
 		self._base_pot = 'base.pot'
 		self._languages = 'languages.json'
 
-		# check if a custom font was provided, otherwise we'll
-		# use one that can display latin, greek, cyrillic characters
-		if self.is_custom_font_enabled():
-			self._set_font(self.custom_font_path().name)
-		else:
-			self._set_font('LatGrkCyr-8x16')
-
 		self._total_messages = self._get_total_active_messages()
 		self._translated_languages = self._get_translations()
-
-	@classmethod
-	def custom_font_path(cls) -> Path:
-		return Path('/usr/share/kbd/consolefonts/archinstall_font.psfu.gz')
-
-	@classmethod
-	def is_custom_font_enabled(cls) -> bool:
-		return cls.custom_font_path().exists()
 
 	@property
 	def translated_languages(self) -> List[Language]:
@@ -84,7 +65,6 @@ class TranslationHandler:
 			abbr = mapping_entry['abbr']
 			lang = mapping_entry['lang']
 			translated_lang = mapping_entry.get('translated_lang', None)
-			external_dep = mapping_entry.get('external_dep', False)
 
 			try:
 				# get a translation for a specific language
@@ -99,7 +79,7 @@ class TranslationHandler:
 					# prevent cases where the .pot file is out of date and the percentage is above 100
 					percent = min(100, percent)
 
-				language = Language(abbr, lang, translation, percent, translated_lang, external_dep)
+				language = Language(abbr, lang, translation, percent, translated_lang)
 				languages.append(language)
 			except FileNotFoundError as error:
 				raise TranslationError(f"Could not locate language file for '{lang}': {error}")
