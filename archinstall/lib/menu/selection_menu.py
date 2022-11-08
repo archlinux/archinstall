@@ -314,7 +314,6 @@ class GeneralMenu:
 				skip_empty_entries=True,
 				skip=False
 			).run()
-
 			if selection.type_ == MenuSelectionType.Selection:
 				value = selection.value
 

@@ -55,6 +55,7 @@ class ListManager:
 			# this will return a dictionary with the key as the menu entry to be displayed
 			# and the value is the original value from the self._data container
 			data_formatted = self.reformat(self._data)
+
 			options, header = self._prepare_selection(data_formatted)
 
 			system('clear')
@@ -90,7 +91,6 @@ class ListManager:
 		# to exclude those from the selectable data
 		options: List[str] = [key for key, val in data_formatted.items() if val is not None]
 		header = ''
-
 		if len(options) > 0:
 			table_header = [key for key, val in data_formatted.items() if val is None]
 			header = '\n'.join(table_header)

@@ -22,12 +22,12 @@
                         "@pkgs": "/var/cache/pacman/pkg"
                     }
                 },
-                "encrypted": true,
+                "encrypted": false,
                 "filesystem": {
                     "format": "btrfs"
                 },
                 "wipe": true,
-                "mountpoint": "/",
+                "mountpoint": null,
                 "size": "100%",
                 "start": "518MB",
                 "type": "primary"

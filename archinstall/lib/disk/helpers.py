@@ -514,7 +514,6 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 	Input parms:
 	:parm partition the partition we check
 	:type Either a Partition object or a dict with the contents of a partition definition in the disk_layouts schema
-
 	:parm target (a string representing a mount path we want to check for.
 	:type str
 
@@ -528,7 +527,6 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 		mountpoints += [volume.mountpoint for volume in subvolumes]
 	else:
 		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
-
 	# we check
 	if strict or target == '/':
 		if target in mountpoints:

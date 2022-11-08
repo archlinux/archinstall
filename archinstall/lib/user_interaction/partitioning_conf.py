@@ -8,6 +8,7 @@ from ..menu.menu import MenuSelectionType
 from ..output import log, FormattedOutput
 
 from ..disk.validators import fs_types
+# from ..disk.helpers import has_mountpoint
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -78,7 +79,7 @@ def current_partition_layout(partitions: List[Dict[str, Any]], with_idx: bool = 
 		current_layout += f'{row[:-1]}\n'
 
 	# we'll create a separate table for the btrfs subvolumes
-	btrfs_subvolumes = [partition['btrfs']['subvolumes'] for partition in partitions if partition.get('btrfs', None)]
+	btrfs_subvolumes = [partition['btrfs']['subvolumes'] for partition in partitions if partition.get('btrfs', {}).get('subvolumes')]
 	if len(btrfs_subvolumes) > 0:
 		for subvolumes in btrfs_subvolumes:
 			output = FormattedOutput.as_table(subvolumes)
