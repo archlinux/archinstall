@@ -4,19 +4,13 @@ Archinstall supports multiple languages, which depend on translations coming fro
 
 ## Important Note
 Before starting a new language translation be aware that a font for that language may not be
-available on the ISO. We are using the pre-installed font `/usr/share/kbd/consolefonts/LatGrkCyr-8x16.psfu.gz` in archinstall
-which should cover a fair amount of different languages but unfortunately not all of them.
+available on the ISO.
 
-We have the option to provide a custom font in case the above is not covering a specific language, which can
-be achieved by installing the font yourself on the ISO and saving it to `/usr/share/kbd/consolefonts/archinstall_font.psfu.gz`.
-If this font is present it will be automatically loaded and all languages which are not supported by the default font will
-be enabled (but only some might actually work).
+Fonts that are using a different character set than Latin will not be displayed correctly. If those languages
+want to be selected than a proper font has to be set manually in the console.
 
-Please make sure that the provided language works with the default font on the ISO, and if not mark it in the `languages.json`
-that it needs an external dependency
-```
-{"abbr": "ur", "lang": "Urdu", "translated_lang": "اردو", "external_dep":  true},
-```
+All available console fonts can be found in `/usr/share/kbd/consolefonts` and they
+can be set with `setfont LatGrkCyr-8x16`
 
 ## Adding new languages
 
@@ -49,10 +43,3 @@ msgstr "Wollen sie wirklich abbrechen?"
 
 After the translations have been written, run the script once more `./locales_generator.sh` and it will auto-generate the `base.mo` file with the included translations.
 After that you're all ready to go and enjoy Archinstall in the new language :)
-
-To display the language inside Archinstall in your own tongue, please edit the file `languages.json` and 
-add a `translated_lang` entry to the respective language, e.g. 
-
-```
- {"abbr": "pl", "lang": "Polish", "translated_lang": "Polski"}
-```
