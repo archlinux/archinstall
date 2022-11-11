@@ -23,7 +23,7 @@ def select_locale_lang(preset: str = None) -> str:
 
 	match selected_locale.type_:
 		case MenuSelectionType.Selection: return selected_locale.value
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 
 
 def select_locale_enc(preset: str = None) -> str:
@@ -39,4 +39,4 @@ def select_locale_enc(preset: str = None) -> str:
 
 	match selected_locale.type_:
 		case MenuSelectionType.Selection: return selected_locale.value
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset

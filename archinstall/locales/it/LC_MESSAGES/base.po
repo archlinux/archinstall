@@ -763,8 +763,8 @@ msgstr "Il nome utente inserito non è valido. Riprova"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\" dovrebbe essere un superutente? (sudo)"
 
-msgid "Select which partitions to encrypt:"
-msgstr "Seleziona le partizioni da crittografare:"
+msgid "Select which partitions to encrypt"
+msgstr "Seleziona le partizioni da crittografare"
 
 msgid "very weak"
 msgstr "molto debole"

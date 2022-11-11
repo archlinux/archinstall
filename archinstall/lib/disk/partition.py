@@ -91,7 +91,6 @@ class Partition:
 		self._path = path
 		self._part_id = part_id
 		self._target_mountpoint = mountpoint
-		self._encrypted = None
 		self._encrypted = encrypted
 		self._wipe = False
 		self._type = 'primary'

@@ -763,7 +763,7 @@ msgstr "Το όνομα χρήστη που εισάγατε δεν είναι �
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
 
-msgid "Select which partitions to encrypt:"
+msgid "Select which partitions to encrypt"
 msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
 
 msgid "very weak"

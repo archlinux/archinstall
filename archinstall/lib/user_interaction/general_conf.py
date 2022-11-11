@@ -4,19 +4,16 @@ import logging
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
-
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
-from ..output import log
-from ..profiles import Profile, list_profiles
+from ..menu.menu import MenuSelectionType
+from ..menu.text_input import TextInput
 from ..mirrors import list_mirrors
-
-from ..translationhandler import Language, TranslationHandler
+from ..output import log
 from ..packages.packages import validate_package_list
-
+from ..profiles import Profile, list_profiles
 from ..storage import storage
+from ..translationhandler import Language
 
 if TYPE_CHECKING:
 	_: Any
@@ -51,7 +48,7 @@ def ask_for_a_timezone(preset: str = None) -> str:
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return choice.value
 
 
@@ -63,7 +60,7 @@ def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
 	choice = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=default).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
+		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection: return choice.value
 
 
@@ -110,12 +107,12 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		list(mirrors.keys()),
 		preset_values=preselected,
 		multi=True,
-		raise_error_on_interrupt=True
+		allow_reset=True
 	).run()
 
 	match selected_mirror.type_:
-		case MenuSelectionType.Ctrl_c: return {}
-		case MenuSelectionType.Esc: return preset_values
+		case MenuSelectionType.Reset: return {}
+		case MenuSelectionType.Skip: return preset_values
 		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
 
 
@@ -125,34 +122,22 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 	# name of the language in its own language
 	options = {lang.display_name: lang for lang in languages}
 
-	def dependency_preview(current_selection: str) -> Optional[str]:
-		current_lang = options[current_selection]
-
-		if current_lang.external_dep and not TranslationHandler.is_custom_font_enabled():
-			font_file = TranslationHandler.custom_font_path()
-			text = str(_('To be able to use this translation, please install a font manually that supports the language.')) + '\n'
-			text += str(_('The font should be stored as {}')).format(font_file)
-			return text
-		return None
+	title = 'NOTE: If a language can not displayed properly, a proper font must be set manually in the console.\n'
+	title += 'All available fonts can be found in "/usr/share/kbd/consolefonts"\n'
+	title += 'e.g. setfont LatGrkCyr-8x16 (to display latin/greek/cyrillic characters)\n'
 
 	choice = Menu(
-		_('Archinstall language'),
+		title,
 		list(options.keys()),
 		default_option=preset_value.display_name,
-		preview_command=lambda x: dependency_preview(x),
 		preview_size=0.5
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc:
+		case MenuSelectionType.Skip:
 			return preset_value
 		case MenuSelectionType.Selection:
-			language: Language = options[choice.value]
-			# we have to make sure that the proper AUR dependency is
-			# present to be able to use this language
-			if not language.external_dep or TranslationHandler.is_custom_font_enabled():
-				return language
-			return select_archinstall_language(languages, preset_value)
+			return options[choice.value]
 
 
 def select_profile(preset) -> Optional[Profile]:
@@ -178,21 +163,21 @@ def select_profile(preset) -> Optional[Profile]:
 	selection = Menu(
 		title=title,
 		p_options=list(options.keys()),
-		raise_error_on_interrupt=True,
-		raise_error_warning_msg=warning
+		allow_reset=True,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match selection.type_:
 		case MenuSelectionType.Selection:
 			return options[selection.value] if selection.value is not None else None
-		case MenuSelectionType.Ctrl_c:
+		case MenuSelectionType.Reset:
 			storage['profile_minimal'] = False
 			storage['_selected_servers'] = []
 			storage['_desktop_profile'] = None
 			storage['arguments']['desktop-environment'] = None
 			storage['arguments']['gfx_driver_packages'] = None
 			return None
-		case MenuSelectionType.Esc:
+		case MenuSelectionType.Skip:
 			return None
 
 
@@ -274,10 +259,10 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		sort=False,
 		multi=True,
 		preset_values=preset,
-		raise_error_on_interrupt=True
+		allow_reset=True
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
-		case MenuSelectionType.Ctrl_c: return []
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Selection: return choice.value

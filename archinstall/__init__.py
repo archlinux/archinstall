@@ -37,18 +37,14 @@ from .lib.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
 from .lib.menu.global_menu import GlobalMenu
-from .lib.menu.selection_menu import (
+from .lib.menu.abstract_menu import (
 	Selector,
-	GeneralMenu
+	AbstractMenu
 )
 from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
 from .lib.udev import udevadm_info
-from .lib.hsm import (
-	get_fido2_devices,
-	fido2_enroll
-)
 parser = ArgumentParser()
 
 __version__ = "2.5.2"

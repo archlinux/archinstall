@@ -6,6 +6,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"X-Generator: Poedit 2.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Plik dziennika został stworzony tutaj: {} {}"
@@ -26,13 +30,13 @@ msgid "Desired hostname for the installation: "
 msgstr "Nazwa hosta użyta do instalacji: "
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "Nazwa użytkownika dla wymaganego superużytkownika z uprawnieniami sudo: "
+msgstr "Nazwa użytkownika dla wymaganego superusera z uprawnieniami sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
 msgstr "Ewentualni użytkownicy do instalacji (pozostaw puste jeśli nie chcesz tworzyć użytkowników): "
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "Czy użytkownik powinien być superużytkownikiem (sudoer)?"
+msgstr "Czy użytkownik powinien być superuserem (sudo)?"
 
 msgid "Select a timezone"
 msgstr "Wybierz strefę czasową"
@@ -251,26 +255,23 @@ msgstr "Locale kodowania"
 msgid "Drive(s)"
 msgstr "Dyski twarde"
 
-#, fuzzy
 msgid "Disk layout"
-msgstr "Zapisz układ dysku"
+msgstr "Układ dysku"
 
-#, fuzzy
 msgid "Encryption password"
-msgstr "Ustaw hasło szyfrowania"
+msgstr "Hasło szyfrujące"
 
 msgid "Swap"
-msgstr "Swap"
+msgstr "Pamięć wymiany (swap)"
 
 msgid "Bootloader"
 msgstr "Program rozruchowy"
 
-#, fuzzy
 msgid "Root password"
-msgstr "Hasło root"
+msgstr "Hasło użytkownika root"
 
 msgid "Superuser account"
-msgstr "Konto superużytkownika"
+msgstr "Konto superusera"
 
 msgid "User account"
 msgstr "Konto użytkownika"
@@ -294,7 +295,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "Automatycznej synchronizacji czasu (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Zainstaluj ({} brakuje konfiguracji)"
+msgstr "Zainstaluj ({} brakujących konfiguracji)"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -303,18 +304,18 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 "Zdecydowałeś się pominąć wybór dysku twardego\n"
-"i użyje konfiguracji dysku zamontowanego w {} (eksperymentalne)\n"
-"OSTRZEŻENIE: Archinstall nie sprawdzi przydatności tej konfiguracji\n"
+"i użyć konfiguracji dysku zamontowanego w {} (eksperymentalne)\n"
+"OSTRZEŻENIE: Archinstall nie sprawdzi poprawności tej konfiguracji\n"
 "Czy chcesz kontynuować?"
 
 msgid "Re-using partition instance: {}"
-msgstr "Ponowne wykorzystanie instancji partycji"
+msgstr "Ponowne wykorzystanie instancji partycji: {}"
 
 msgid "Create a new partition"
 msgstr "Utwórz nową partycję"
 
 msgid "Delete a partition"
-msgstr "Usuń partycje"
+msgstr "Usuń partycję"
 
 msgid "Clear/Delete all partitions"
 msgstr "Wyczyść/Usuń wszystkie partycje"
@@ -338,13 +339,13 @@ msgid "Abort"
 msgstr "Anuluj"
 
 msgid "Hostname"
-msgstr "Nazwę hosta"
+msgstr "Nazwa hosta"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr "Nie skonfigurowana, niedostępna, chyba że zostanie skonfigurowana ręcznie"
+msgstr "Niedostępna, chyba że zostanie skonfigurowana ręcznie"
 
 msgid "Timezone"
-msgstr "Strefe czasową"
+msgstr "Strefa czasowa"
 
 msgid "Set/Modify the below options"
 msgstr "Ustaw/zmodyfikuj poniższe opcje"
@@ -372,13 +373,13 @@ msgid "Enter disk encryption password (leave blank for no encryption): "
 msgstr "Wprowadź hasło do szyfrowania dysku (pozostaw puste aby nie ustawiać szyfrowania): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "Utwórz wymaganego superużytkownika z uprawnieniami sudo: "
+msgstr "Utwórz wymaganego superusera z uprawnieniami sudo: "
 
 msgid "Enter root password (leave blank to disable root): "
 msgstr "Wprowadź hasło roota (pozostaw puste, aby wyłączyć roota): "
 
 msgid "Password for user \"{}\": "
-msgstr "Hasło dla użytkownika \"{}\": "
+msgstr "Hasło użytkownika \"{}\": "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Sprawdzenie, czy istnieją dodatkowe pakiety (może to potrwać kilka sekund)"
@@ -438,7 +439,7 @@ msgid ""
 "This is your chosen configuration:"
 msgstr ""
 "\n"
-"To jest wybrana konfiguracja:"
+"Wybrana konfiguracja:"
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman jest już uruchomiony i czeka maksymalnie 10 minut na zakończenie pracy."
@@ -449,7 +450,6 @@ msgstr "Istniejąca wcześniej blokada programu pacman nie została zakończona.
 msgid "Choose which optional additional repositories to enable"
 msgstr "Wybierz, które z opcjonalnych dodatkowych repozytoriów mają być włączone"
 
-#, fuzzy
 msgid "Add a user"
 msgstr "Dodaj użytkownika"
 
@@ -533,10 +533,10 @@ msgid "Missing configurations:\n"
 msgstr "Brak konfiguracji:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Musi być podane albo hasło root, albo co najmniej jednego superużytkownika"
+msgstr "Musi być podane albo hasło root, albo co najmniej jednego superusera"
 
 msgid "Manage superuser accounts: "
-msgstr "Zarządzaj kontami superużytkowników: "
+msgstr "Zarządzaj kontami superusera: "
 
 msgid "Manage ordinary user accounts: "
 msgstr "Zarządzaj kontami zwykłych użytkowników: "
@@ -594,13 +594,13 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "Czy chcesz stworzyć oddzielną partycje dla /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Wybrane dyski nie mają wymaganej objętości dla automatycznej sugestii\n"
+msgstr "Wybrane dyski nie mają wymaganej pojemności dla automatycznej sugestii\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "Maksymalna objętość dla partycji /home: {}GB\n"
+msgstr "Maksymalna pojemność dla partycji /home: {}GB\n"
 
 msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Minimalna objętośc dla partycji Arch Linux: {}GB"
+msgstr "Minimalna pojemność dla partycji Arch Linux: {}GB"
 
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -618,10 +618,10 @@ msgid "Manual configuration setting must be a list"
 msgstr "Konfiguracja ustawiona manualnie musi być listą"
 
 msgid "No iface specified for manual configuration"
-msgstr "Iface nie zostało ustawione w manualnej konfiguracji"
+msgstr "Iface nie zostało ustawione w ręcznej konfiguracji"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr ""
+msgstr "Ręczna konfiguracja nic bez automatycznego DHCP wymaga podania adresu IP"
 
 msgid "Add interface"
 msgstr "Dodaj interfejs"
@@ -629,17 +629,14 @@ msgstr "Dodaj interfejs"
 msgid "Edit interface"
 msgstr "Edytuj interfejs"
 
-#, fuzzy
 msgid "Delete interface"
 msgstr "Usuń interfejs"
 
-#, fuzzy
 msgid "Select interface to add"
-msgstr "Wybierz jeden interfejs sieciowy do skonfigurowania"
+msgstr "Wybierz interfejs sieciowy do skonfigurowania"
 
-#, fuzzy
 msgid "Manual configuration"
-msgstr "Zapisz konfiguracje"
+msgstr "Ręczna konfiguracja"
 
 msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Oznacz/odznacz partycje jako skompresowaną (tylko w btrfs)"
@@ -648,43 +645,41 @@ msgid "The password you are using seems to be weak, are you sure you want to use
 msgstr "Używane przez Ciebie hasło wydaje się być słabe, czy na pewno chcesz go użyć?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Dostarcza wybór środowisk desktopowych oraz tiling window managerów, np. gnome, kde, sway"
+msgstr "Dostarcza wybór środowisk graficznych oraz menedżerów okien, np. gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
-msgstr "Wybierz pożądane środowisko desktopowe"
+msgstr "Wybierz środowisko graficzne"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Bardzo podstawowa instalacja pozwalająca ci dostosowanie Arch Linuxa do twoich upodobań."
+msgstr "Bardzo ograniczona instalacja pozwalająca ci dostosowanie Arch Linuxa do twoich upodobań."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Dostarcza wybór różnych pakietów serwerowych do zainstalowania i uruchomienia, np. httpd, nginx, mariadb"
 
-#, fuzzy
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Wybierz jakie serwery zainstalować, jeżeli żadne, wtedy minimalna instalacja będzie użyta"
+msgstr "Wybierz jakie serwery zainstalować. Jeżeli żadne, wtedy będzie użyta minimalna instalacja"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Instaluje minimalną wersje systemu z xorg i sterownikami graficznymi."
+msgstr "Instaluje system podstawowy z xorg i sterownikami graficznymi."
 
 msgid "Press Enter to continue."
-msgstr "Naciśnij Enter aby kontynuować."
+msgstr "Naciśnij Enter, aby kontynuować."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Czy chciałbyś zchrootować do nowostworzonej instalacji i przeprowadzić po-instalacyjną konfiguracje?"
+msgstr "Czy chciałbyś zchrootować do nowej instalacji i przeprowadzić wstępną konfigurację?"
 
 msgid "Are you sure you want to reset this setting?"
-msgstr "Czy napewno chcesz zresetować to ustawienie?"
+msgstr "Czy na pewno chcesz zresetować to ustawienie?"
 
 msgid "Select one or more hard drives to use and configure\n"
 msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Jakiekolwiek modyfikacje do istniejących ustawień zresetują układ dysków!"
+msgstr "Każda zmiana istniejących ustawień zresetuje układ dysków!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Jeżeli zresetujesz wybór dysków, zresetujesz także obecny układ dysków. Jesteś pewny że chcesz to zrobić?"
+msgstr "Jeżeli zresetujesz wybór dysków, zresetujesz także obecny układ dysków. Jesteś pewny, że chcesz to zrobić?"
 
-#, fuzzy
 msgid "Save and exit"
 msgstr "Zapisz i wyjdź"
 
@@ -700,17 +695,16 @@ msgid "No audio server"
 msgstr "Brak serwera dźwięku"
 
 msgid "(default)"
-msgstr "(domyslne)"
+msgstr "(domyślne)"
 
-#, fuzzy
 msgid "Use ESC to skip"
-msgstr "Kliknij ESC aby pominąć"
+msgstr "Naciśnij ESC, aby pominąć"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
 "\n"
 msgstr ""
-"Użyj CTRL+C aby zresetować obecny wybór\n"
+"Użyj CTRL+C, aby zresetować obecny wybór\n"
 "\n"
 
 msgid "Copy to: "
@@ -729,18 +723,18 @@ msgstr "Edytuj {}: "
 msgid "Add: "
 msgstr "Dodaj: "
 
-#, fuzzy
 msgid "Value: "
 msgstr "Wartość: "
 
+#, fuzzy
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Możesz pominąć wybów dysków i partycji i użyć dowolnego zestawu dysku zamontowanego w /mnt (eksperymentalne)"
+msgstr "Możesz pominąć wybór dysków i partycji i użyć dowolnego zestawu dysku zamontowanego w /mnt (eksperymentalne)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Wybierz jeden z dysków lub pomiń i użyj /mnt jako domyślnego"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr "Wybierz partycja która ma zostać sformatowana:"
+msgstr "Wybierz partycje, które mają zostać sformatowane:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "Użyj HSM do odblokowania zaszyfrowanego dysku"
@@ -757,27 +751,21 @@ msgstr "Wolne miejsce"
 msgid "Bus-type"
 msgstr "Typ magistrali"
 
-#, fuzzy
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Musi być podane albo hasło root, albo co najmniej jednego superużytkownika"
+msgstr "Musisz podać hasło root lub utworzyć co najmniej jednego superusera"
 
-#, fuzzy
 msgid "Enter username (leave blank to skip): "
-msgstr "Wprowadź nazwę użytkownika, aby utworzyć dodatkowego użytkownika (pozostaw puste, aby pominąć): "
+msgstr "Wprowadź nazwę użytkownika (pozostaw puste, aby pominąć): "
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Wprowadzona nazwa użytkownika jest nieprawidłowa. Spróbuj ponownie"
 
-#, fuzzy
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "Czy {} powinien być superuserem (sudoer)?"
+msgstr "Czy \"{}\" powinien być superuserem (sudo)?"
 
 #, fuzzy
-msgid "Select which partitions to encrypt:"
-msgstr ""
-"{}\n"
-"\n"
-"Wybierz partycja która ma zostać zaszyfrowana"
+msgid "Select which partitions to encrypt"
+msgstr "Wybierz partycja która ma zostać zaszyfrowana"
 
 msgid "very weak"
 msgstr "bardzo słabe"
@@ -791,55 +779,56 @@ msgstr "umiarkowane"
 msgid "strong"
 msgstr "mocne"
 
-#, fuzzy
 msgid "Add subvolume"
-msgstr "Subwolumin :{:16}"
+msgstr "Dodaj podwolumen"
 
 msgid "Edit subvolume"
-msgstr "Edytuj wolumen"
+msgstr "Edytuj podwolumen"
 
-#, fuzzy
 msgid "Delete subvolume"
-msgstr "Usuń użytkownika"
+msgstr "Usuń podwolumen"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Skonfigurowano {} interfejsów"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Ta opcja pozwala określić maksymalną liczbę pobieranych plików podczas instalacji"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {max_downloads})\n"
 "Note:"
 msgstr ""
+"Wprowadź maksymalną liczbę plików pobieranych jednocześnie.\n"
+" (Liczba z zakresu od 1 do {max_downloads})\n"
+"Zauważ:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Maksymalna wartość   : {max_downloads} ( Zwiększa liczbę zadań o {max_downloads}, co pozwala na pobieranie {max_downloads+1} plików jednocześnie )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Minimalna wartość   : 1 ( Zwiększa liczbę zadań o 1, co pozwala na pobieranie 2 plików jednocześnie )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Wyłącz/domyślnie : 0 ( Wyłącza pobieranie równoległe, więc tylko 1 plik może być pobierany w tym czasie )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {max_downloads}, lub 0 aby wyłączyć."
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Pobieranie równoległe"
 
-#, fuzzy
 msgid "ESC to skip"
-msgstr "Kliknij ESC aby pominąć"
+msgstr "Naciśnij ESC, aby pominąć"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "Naciśnij Ctrl+C, aby zresetować"
 
+#, fuzzy
 msgid "TAB to select"
-msgstr ""
+msgstr "Naciśnij Tab, aby wybrać"
 
 #~ msgid "Select disk layout"
 #~ msgstr "Wybierz układ dysku"

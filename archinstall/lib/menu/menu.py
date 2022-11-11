@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 class MenuSelectionType(Enum):
 	Selection = auto()
-	Esc = auto()
-	Ctrl_c = auto()
+	Skip = auto()
+	Reset = auto()
 
 
 @dataclass
@@ -53,11 +53,11 @@ class Menu(TerminalMenu):
 		preset_values :Union[str, List[str]] = None,
 		cursor_index : Optional[int] = None,
 		preview_command: Optional[Callable] = None,
-		preview_size: float = 0.75,
+		preview_size: float = 0.0,
 		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
-		raise_error_on_interrupt :bool = False,
-		raise_error_warning_msg :str = '',
+		allow_reset :bool = False,
+		allow_reset_warning_msg :str = '',
 		clear_screen: bool = True,
 		show_search_hint: bool = True,
 		cycle_cursor: bool = True,
@@ -150,16 +150,9 @@ class Menu(TerminalMenu):
 		self._skip = skip
 		self._default_option = default_option
 		self._multi = multi
-		self._raise_error_on_interrupt = raise_error_on_interrupt
-		self._raise_error_warning_msg = raise_error_warning_msg
+		self._raise_error_on_interrupt = allow_reset
+		self._raise_error_warning_msg = allow_reset_warning_msg
 		self._preview_command = preview_command
-
-		menu_title = f'\n{title}\n\n'
-
-		if header:
-			if not isinstance(header,(list,tuple)):
-				header = [header]
-			menu_title += '\n'.join(header)
 
 		action_info = ''
 		if skip:
@@ -173,7 +166,15 @@ class Menu(TerminalMenu):
 			action_info += ', ' if len(action_info) > 0 else ''
 			action_info += str(_('TAB to select'))
 
-		menu_title += action_info + '\n'
+		if action_info:
+			action_info += '\n\n'
+
+		menu_title = f'\n{action_info}{title}\n'
+
+		if header:
+			if not isinstance(header,(list,tuple)):
+				header = [header]
+			menu_title += '\n' + '\n'.join(header)
 
 		if default_option:
 			# if a default value was specified we move that one
@@ -215,7 +216,7 @@ class Menu(TerminalMenu):
 		try:
 			idx = self.show()
 		except KeyboardInterrupt:
-			return MenuSelection(type_=MenuSelectionType.Ctrl_c)
+			return MenuSelection(type_=MenuSelectionType.Reset)
 
 		def check_default(elem):
 			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
@@ -234,7 +235,7 @@ class Menu(TerminalMenu):
 				result = check_default(self._menu_options[idx])
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
-			return MenuSelection(type_=MenuSelectionType.Esc)
+			return MenuSelection(type_=MenuSelectionType.Skip)
 
 	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
 		if preview_command:
@@ -246,15 +247,15 @@ class Menu(TerminalMenu):
 	def run(self) -> MenuSelection:
 		ret = self._show()
 
-		if ret.type_ == MenuSelectionType.Ctrl_c:
+		if ret.type_ == MenuSelectionType.Reset:
 			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
 				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
-
-		if ret.type_ is not MenuSelectionType.Selection and not self._skip:
-			system('clear')
-			return self.run()
+		elif ret.type_ is MenuSelectionType.Skip:
+			if not self._skip:
+				system('clear')
+				return self.run()
 
 		return ret
 
