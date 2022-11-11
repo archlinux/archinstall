@@ -835,3 +835,11 @@ msgstr ""
 
 msgid "[Default value: 0] > "
 msgstr ""
+
+msgid ""
+"To be able to use this translation, please install a font manually that "
+"supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
