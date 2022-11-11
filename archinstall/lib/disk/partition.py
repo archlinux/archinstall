@@ -190,7 +190,7 @@ class Partition:
 				log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
 				# This is unexpected, better to raise an error
 				break
-			if not lsblk_info['blockdevices'][0]['partuuid']:
+			if not lsblk_info.get('blockdevices', [{'partuuid': None}])[0].get('partuuid'):
 				# If partition info doesn't have content, try again
 				delay = max(0.1, storage.get('DISK_TIMEOUTS', 1))
 				log(f"Waiting {delay}s to poll disk again", level=logging.DEBUG)
