@@ -3,7 +3,7 @@ from enum import Enum, auto
 from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
-from archinstall.lib.menu.simple_menu import TerminalMenu
+from .simple_menu import TerminalMenu
 
 from ..exceptions import RequirementError
 from ..output import log
@@ -53,7 +53,7 @@ class Menu(TerminalMenu):
 		preset_values :Union[str, List[str]] = None,
 		cursor_index : Optional[int] = None,
 		preview_command: Optional[Callable] = None,
-		preview_size: float = 0.75,
+		preview_size: float = 0.0,
 		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
 		allow_reset :bool = False,

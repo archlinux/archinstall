@@ -1,0 +1,838 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: An Jaebeom <ajb8533296@gmail.com>\n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.1.1\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] 로그파일을 다음의 경로에 생성했습니다: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    이 문제(및 파일)를 https://github.com/archlinux/archinstall/issues 에 제출하세요"
+
+msgid "Do you really want to abort?"
+msgstr "정말 중단하시겠습니까?"
+
+msgid "And one more time for verification: "
+msgstr "확인을 위해 한번 더: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "zram에서 스왑을 사용하시겠습니까?"
+
+msgid "Desired hostname for the installation: "
+msgstr "설치에 원하는 호스트명: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "sudo 권한이 있는 필수 슈퍼유저의 사용자명: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "설치할 추가 사용자(없는 경우 비워 둠): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "이 사용자가 슈퍼유저여야 합니까 (sudoer)?"
+
+msgid "Select a timezone"
+msgstr "시간대를 선택하세요"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "systemd-boot 대신 GRUB 를 부트로더로 사용하시겠습니까?"
+
+msgid "Choose a bootloader"
+msgstr "부트로더를 선택하세요"
+
+msgid "Choose an audio server"
+msgstr "오디오 서버를 선택하세요"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "base, base-devel, linux, linux-firmware, efibootmgr 및 선택적 프로파일 패키지와 같은 패키지만 설치됩니다."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "만약 파이어폭스나 크로미움같은 웹브라우저를 희망하실 경우 다음 프롬프트에서 지정하실 수 있습니다."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건너뛰려면 공백): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO 네트워크 구성을 설치에 복사"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
+
+msgid "Select one network interface to configure"
+msgstr "구성할 네트워크 인터페이스를 하나 선택하세요"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "\"{}\" 에 대해 구성할 모드를 선택하거나 기본 모드 \"{}\" 을(를) 사용하도록 건너뛰세요"
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "{} 의 IP와 서브넷을 입력하세요 (예시: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "게이트웨이(라우터) IP 주소를 입력하시거나 공백으로 두세요: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "DNS 서버를 입력하세요 (띄어쓰기로 구분, 없는 경우 공백): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "주 파티션이 사용해야 하는 파일 시스템을 선택하세요"
+
+msgid "Current partition layout"
+msgstr "현재 파티션 레이아웃"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"무엇을 할 것인지 선택하세요\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "파티션에 대해 원하는 파일 시스템 유형을 입력하세요"
+
+msgid "Enter the start sector (percentage or block number, default: {}): "
+msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgstr "파티션의 끝 섹터를 입력하세요 (백분율 또는 블록 번호, 예시: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} 에 대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"삭제할 파티션을 인덱스 값으로 선택하세요"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"마운트할 파티션을 인덱스 값으로 선택하세요"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * 파티션 마운트 포인트는 설치 내부를 기준으로 하며 예를 들어 부팅은 /boot 입니다."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "파티션을 마운트할 위치를 선택하세요 (마운트 포인트 제거는 공백): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"포맷을 위해 마스킹할 파티션 선택"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"암호화를 위해 마스킹할 파티션 선택"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"부팅 가능으로 표시할 파티션 선택"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"파일 시스템을 설정할 파티션 선택"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "파티션에 대해 원하는 파일 시스템을 입력하세요: "
+
+msgid "Archinstall language"
+msgstr "Archinstall 언어"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "선택한 모든 드라이브를 지우고 최선의 기본 파티션 레이아웃 사용"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "각 개별 드라이브로 수행할 작업을 선택하세요 (파티션 사용 후)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "선택한 블록 장치로 수행할 작업을 선택하세요"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "이것은 사전 프로그래밍된 프로필 목록이며 데스크톱 환경과 같은 것을 더 쉽게 설치할 수 있습니다"
+
+msgid "Select keyboard layout"
+msgstr "키보드 레이아웃을 선택하세요"
+
+msgid "Select one of the regions to download packages from"
+msgstr "패키지를 다운로드할 지역 중 하나를 선택하세요"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "AMD 하드웨어와의 최상의 호환성을 위해 모든 오픈 소스 또는 AMD/ATI 옵션을 사용할 수 있습니다."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "인텔 하드웨어와의 최상의 호환성을 위해 모든 오픈 소스 또는 인텔 옵션을 사용할 수 있습니다.\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Nvidia 하드웨어와의 최상의 호환성을 위해 Nvidia 독점 드라이버를 사용할 수 있습니다.\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"모든 오픈 소스 드라이버를 설치하려면 그래픽 드라이버를 선택하거나 공백으로 두세요"
+
+msgid "All open-source (default)"
+msgstr "전부 오픈소스 (기본값)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "사용할 커널을 선택하시거나 기본 커널인 \"{}\" 을(를) 사용하실 경우 비워두세요"
+
+msgid "Choose which locale language to use"
+msgstr "사용할 로케일 언어를 선택하세요"
+
+msgid "Choose which locale encoding to use"
+msgstr "사용할 로케일 인코딩을 선택하세요"
+
+msgid "Select one of the values shown below: "
+msgstr "아래 표시된 값 중 하나를 선택하세요: "
+
+msgid "Select one or more of the options below: "
+msgstr "아래 표시된 값 중 하나 이상을 선택하세요: "
+
+msgid "Adding partition...."
+msgstr "파티션 추가 중...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "계속하려면 유효한 fs-type을 입력해야 합니다. 유효한 fs-type에 대해서는 `man parted`를 참조하세요."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "오류: URL \"{}\"의 프로필 나열 결과:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "오류: \"{}\" 결과를 JSON으로 디코딩할 수 없습니다:"
+
+msgid "Keyboard layout"
+msgstr "키보드 레이아웃"
+
+msgid "Mirror region"
+msgstr "미러 위치"
+
+msgid "Locale language"
+msgstr "로케일 언어"
+
+msgid "Locale encoding"
+msgstr "로케일 인코딩"
+
+msgid "Drive(s)"
+msgstr "드라이브"
+
+msgid "Disk layout"
+msgstr "디스크 레이아웃"
+
+msgid "Encryption password"
+msgstr "비밀번호 암호화"
+
+msgid "Swap"
+msgstr "스왑"
+
+msgid "Bootloader"
+msgstr "부트로더"
+
+msgid "Root password"
+msgstr "루트 비밀번호"
+
+msgid "Superuser account"
+msgstr "슈퍼유저 계정"
+
+msgid "User account"
+msgstr "사용자 계정"
+
+msgid "Profile"
+msgstr "프로필"
+
+msgid "Audio"
+msgstr "오디오"
+
+msgid "Kernels"
+msgstr "커널"
+
+msgid "Additional packages"
+msgstr "추가 패키지"
+
+msgid "Network configuration"
+msgstr "네트워크 구성"
+
+msgid "Automatic time sync (NTP)"
+msgstr "시간 자동 동기화 (NTP)"
+
+msgid "Install ({} config(s) missing)"
+msgstr "설치 ({} 개의 설정(들)이 누락됨)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"하드 드라이브 선택을 건너뛰기로 결정했습니다\n"
+"{} 에 마운트된 모든 드라이브 설정을 사용합니다 (실험적).\n"
+"경고: Archinstall은 이 설정의 적합성을 확인하지 않습니다.\n"
+"계속하시겠습니까?"
+
+msgid "Re-using partition instance: {}"
+msgstr "파티션 인스턴스 재사용: {}"
+
+msgid "Create a new partition"
+msgstr "새 파티션 생성"
+
+msgid "Delete a partition"
+msgstr "파티션 제거"
+
+msgid "Clear/Delete all partitions"
+msgstr "모든 파티션 제거"
+
+msgid "Assign mount-point for a partition"
+msgstr "파티션에 대한 마운트 지점 할당"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "포맷할 파티션 표시/표시 해제 (데이터 삭제)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "암호화된 파티션으로 표시/표시 해제"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "부팅 가능한 파티션으로 표시/표시 해제 (/boot의 경우 자동)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "파티션에 대해 원하는 파일 시스템 설정"
+
+msgid "Abort"
+msgstr "중단"
+
+msgid "Hostname"
+msgstr "호스트명"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "구성되지 않음, 수동으로 설정하지 않으면 사용할 수 없음"
+
+msgid "Timezone"
+msgstr "시간대"
+
+msgid "Set/Modify the below options"
+msgstr "아래 옵션 설정/수정"
+
+msgid "Install"
+msgstr "설치"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"ESC 키를 사용해 스킵하세요\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "파티션 레이아웃 제안"
+
+msgid "Enter a password: "
+msgstr "비밀번호를 입력하세요: "
+
+msgid "Enter a encryption password for {}"
+msgstr "{} 에 대한 암호화 비밀번호 입력"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "디스크를 암호화할 암호를 입력하세요 (암호화하지 않으려면 비워 둠): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "sudo 권한이 있는 필수 슈퍼유저를 생성합니다: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "루트 비밀번호를 입력하세요 (루트를 비활성화 할 경우 공백): "
+
+msgid "Password for user \"{}\": "
+msgstr "사용자 \"{}\" 님에 대한 비밀번호: "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "추가 패키지가 있는지 확인합니다 (몇 초 정도 소요될 수 있음)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "기본 시간 서버와 함께 자동 시간 동기화(NTP)를 사용하시겠습니까?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP가 작동하려면 하드웨어 시간 및 기타 사후 구성 단계가 필요할 수 있습니다.\n"
+"더 많은 정보를 확인하시려면, Arch wiki 를 확인하세요"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "추가 사용자를 만들려면 사용자 이름을 입력하세요 (건너뛰려면 공백): "
+
+msgid "Use ESC to skip\n"
+msgstr "ESC 키를 사용해 스킵하세요\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+"목록에서 개체를 선택하고 실행 가능한 작업 중 하나를 선택하세요"
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Confirm and exit"
+msgstr "저장 후 종료"
+
+msgid "Add"
+msgstr "추가"
+
+msgid "Copy"
+msgstr "복사"
+
+msgid "Edit"
+msgstr "수정"
+
+msgid "Delete"
+msgstr "제거"
+
+msgid "Select an action for '{}'"
+msgstr "'{}' 에 대한 작업 선택"
+
+msgid "Copy to new key:"
+msgstr "새 키로 복사:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "알 수 없는 nic 타입: {}, 가능한 값은 {} 입니다"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"선택된 구성:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman 이 이미 실행중입니다, 종료될 때까지 최대 10분 대기해야 합니다."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "기존 pacman 잠금이 종료되지 않았습니다. archinstall을 사용하기 전에 기존 pacman 세션을 모두 정리하세요."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "활성화할 선택적 추가 리포지토리를 선택하세요"
+
+msgid "Add a user"
+msgstr "사용자 추가"
+
+msgid "Change password"
+msgstr "비밀번호 변경"
+
+msgid "Promote/Demote user"
+msgstr "사용자 승격/강등"
+
+msgid "Delete User"
+msgstr "사용자 제거"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"새 사용자 정의\n"
+
+msgid "User Name : "
+msgstr "사용자명 : "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "{} 님은 슈퍼유저(sudoer)여야 하나요?"
+
+msgid "Define users with sudo privilege: "
+msgstr "sudo 권한이 있는 사용자 정의: "
+
+msgid "No network configuration"
+msgstr "네트워크 구성 없음"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "btrfs 파티션에 원하는 하위 볼륨 설정"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"하위 볼륨을 설정할 파티션을 선택하세요"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "현재 파티션에 대한 btrfs 하위 볼륨 관리"
+
+msgid "No configuration"
+msgstr "구성 없음"
+
+msgid "Save user configuration"
+msgstr "사용자 구성 저장"
+
+msgid "Save user credentials"
+msgstr "사용자 자격 증명 저장"
+
+msgid "Save disk layout"
+msgstr "디스크 레이아웃 저장"
+
+msgid "Save all"
+msgstr "모두 저장"
+
+msgid "Choose which configuration to save"
+msgstr "저장할 구성을 선택하세요"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "저장할 구성의 디렉토리를 입력하세요: "
+
+msgid "Not a valid directory: {}"
+msgstr "올바른 디렉터리가 아닙니다: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "사용 중인 비밀번호가 보안에 취약한 것 같습니다,"
+
+msgid "are you sure you want to use it?"
+msgstr "그래도 사용하시겠습니까?"
+
+msgid "Optional repositories"
+msgstr "선택적 저장소"
+
+msgid "Save configuration"
+msgstr "구성 저장"
+
+msgid "Missing configurations:\n"
+msgstr "누락된 구성들:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "root-password 또는 1명 이상의 슈퍼유저를 지정해야 합니다"
+
+msgid "Manage superuser accounts: "
+msgstr "슈퍼유저 계정 관리: "
+
+msgid "Manage ordinary user accounts: "
+msgstr "일반 사용자 계정 관리: "
+
+msgid " Subvolume :{:16}"
+msgstr " 하위 볼륨 :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " {:16} 에 마운트됨"
+
+msgid " with option {}"
+msgstr " 옵션 {} 와 함께"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" 새 하위 볼륨에 대해 원하는 값 채우기 \n"
+
+msgid "Subvolume name "
+msgstr "하위 볼륨 이름 "
+
+msgid "Subvolume mountpoint"
+msgstr "하위 볼륨 마운트 지점"
+
+msgid "Subvolume options"
+msgstr "하위 볼륨 옵션"
+
+msgid "Save"
+msgstr "저장"
+
+msgid "Subvolume name :"
+msgstr "하위 볼륨 이름 :"
+
+msgid "Select a mount point :"
+msgstr "마운트 지점을 선택하세요 :"
+
+msgid "Select the desired subvolume options "
+msgstr "원하는 하위 볼륨 옵션을 선택하세요 "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "sudo 권한을 가질 사용자 이름을 입력하세요: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] 로그파일이 다음 경로에 생성되었습니다: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "기본 구조로 BTRFS 하위 볼륨을 사용하시겠습니까?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "BTRFS 압축을 사용하시겠습니까?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "/home 에 대해 별도의 파티션을 생성하시겠습니까?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "선택한 드라이브에 자동 제안에 필요한 최소 용량이 없습니다\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Arch Linux 파티션의 최대 용량: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Arch Linux 파티션의 최소 용량: {}GB"
+
+msgid "Continue"
+msgstr "계속"
+
+msgid "yes"
+msgstr "예"
+
+msgid "no"
+msgstr "아니오"
+
+msgid "set: {}"
+msgstr "설정: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "수동 구성 설정은 list여야 합니다"
+
+msgid "No iface specified for manual configuration"
+msgstr "수동 구성에 대해 지정된 iface가 없습니다"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "자동 DHCP가 없는 수동 nic 구성에는 IP 주소가 필요합니다"
+
+msgid "Add interface"
+msgstr "인터페이스 추가"
+
+msgid "Edit interface"
+msgstr "인터페이스 수정"
+
+msgid "Delete interface"
+msgstr "인터페이스 제거"
+
+msgid "Select interface to add"
+msgstr "추가할 인터페이스 선택"
+
+msgid "Manual configuration"
+msgstr "수동 구성"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "사용 중인 비밀번호가 보안에 취약한 것 같습니다. 그래도 사용하시겠습니까?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "gnome, kde, sway 같은 다양한 데스크탑 환경 및 타일링 창 관리자를 제공합니다"
+
+msgid "Select your desired desktop environment"
+msgstr "원하는 데스크탑 환경을 선택하세요"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Arch Linux를 원하는 대로 커스터마이징할 수 있는 매우 기본적인 설치입니다."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "설치 및 활성화할 httpd, nginx, mariadb 같은 다양한 서버 패키지를 제공합니다"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "설치할 서버를 선택하고, 설치하지 않으면 최소 설치가 수행됩니다"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "최소 시스템과 xorg 및 그래픽 드라이버를 설치합니다."
+
+msgid "Press Enter to continue."
+msgstr "계속하려면 Enter 키를 누르세요."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "새로 생성된 설치로 chroot 하고 설치 후 구성을 수행하시겠습니까?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "정말 설정을 초기화 하시겠습니까?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "사용 및 구성할 하드 드라이브를 하나 이상 선택하세요\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "기존 설정을 수정하면 디스크 레이아웃이 재설정됩니다!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "하드 드라이브 선택을 재설정하면 현재 디스크 레이아웃도 재설정됩니다. 정말 진행하시겠습니까?"
+
+msgid "Save and exit"
+msgstr "저장하고 종료"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
+
+msgid "No audio server"
+msgstr "오디오 서버가 없습니다"
+
+msgid "(default)"
+msgstr "(기본)"
+
+msgid "Use ESC to skip"
+msgstr "ESC 키를 사용하여 건너뜁니다"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"CTRL+C 를 이용해 현재 선택을 재설정합니다\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "다음 경로로 복사: "
+
+msgid "Edit: "
+msgstr "수정됨: "
+
+msgid "Key: "
+msgstr "키: "
+
+msgid "Edit {}: "
+msgstr "수정된 {}: "
+
+msgid "Add: "
+msgstr "추가됨: "
+
+msgid "Value: "
+msgstr "값: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "드라이브 선택 및 파티셔닝을 건너뛰고 /mnt 에 마운트된 드라이브 설정을 사용할 수 있습니다 (실험용)."
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "디스크 중 하나를 선택하거나 건너뛰고 /mnt 를 기본값으로 사용하세요"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "포맷할 파티션을 선택하세요:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "HSM을 사용하여 암호화된 드라이브 잠금 해제"
+
+msgid "Device"
+msgstr "장치"
+
+msgid "Size"
+msgstr "크기"
+
+msgid "Free space"
+msgstr "여유 공간"
+
+msgid "Bus-type"
+msgstr "버스 타입"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "root-password 또는 sudo 권한이 있는 사용자 1 명 이상을 지정해야 합니다"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "입력한 사용자 이름이 잘못되었습니다. 다시 시도하세요"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "\"{}\"은(는) 슈퍼유저여야 합니까 (sudo)?"
+
+msgid "Select which partitions to encrypt:"
+msgstr "암호화할 파티션을 선택하세요:"
+
+msgid "very weak"
+msgstr "아주 약하게"
+
+msgid "weak"
+msgstr "약하게"
+
+msgid "moderate"
+msgstr "보통"
+
+msgid "strong"
+msgstr "강하게"
+
+msgid "Add subvolume"
+msgstr "하위 볼륨 추가"
+
+msgid "Edit subvolume"
+msgstr "하위 볼륨 수정"
+
+msgid "Delete subvolume"
+msgstr "하위 볼륨 제거"
+
+msgid "Configured {} interfaces"
+msgstr "구성된 {} 인터페이스"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "이 옵션은 설치 중에 발생할 수 있는 병렬 다운로드 수를 활성화합니다"
+
+#, python-brace-format
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {max_downloads})\n"
+"Note:"
+msgstr ""
+"활성화할 병렬 다운로드 수를 입력하세요.\n"
+" (1 부터 {max_downloads} 까지의 숫자중 하나를 입력하세요)\n"
+"메모:"
+
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 최댓값   : {max_downloads} ( {max_downloads} 개의 병렬 다운로드 허용, 한 번에 {max_downloads+1} 개의 다운로드 허용 )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - 최솟값   : 1 ( 1 개의 병렬 다운로드 허용, 한 번에 2 개의 다운로드 허용 )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - 비활성화/기본 : - ( 병렬 다운로드 비활성화, 한 번에 1 개의 다운로드만 허용 )"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {max_downloads} 까지, 비활성화 하려면 0]"
+
+msgid "Parallel Downloads"
+msgstr "병렬 다운로드"
+
+msgid "ESC to skip"
+msgstr "ESC 키로 스킵"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C 로 재설정"
+
+msgid "TAB to select"
+msgstr "TAB 으로 선택"
+
+msgid "[Default value: 0] > "
+msgstr "[기본값: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "이 번역을 사용하려면 해당 언어를 지원하는 글꼴을 수동으로 설치하세요."
+
+msgid "The font should be stored as {}"
+msgstr "글꼴은 {} (으)로 저장해야 합니다"
