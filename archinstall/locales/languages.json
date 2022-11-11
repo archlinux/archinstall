@@ -86,7 +86,7 @@
  {"abbr": "ky", "lang": "Kirghiz"},
  {"abbr": "kv", "lang": "Komi"},
  {"abbr": "kg", "lang": "Kongo"},
- {"abbr": "ko", "lang": "Korean"},
+ {"abbr": "ko", "lang": "Korean", "translated_lang": "한글", "external_dep": true},
  {"abbr": "kj", "lang": "Kuanyama"},
  {"abbr": "ku", "lang": "Kurdish"},
  {"abbr": "lo", "lang": "Lao"},
