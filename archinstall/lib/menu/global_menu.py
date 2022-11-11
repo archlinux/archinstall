@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
-from ..disk import encrypted_partitions
+from ..disk.encryption import DiskEncryptionMenu
 from ..general import SysCommand, secret
 from ..hardware import has_uefi
 from ..menu import Menu
-from ..menu.selection_menu import Selector, GeneralMenu
+from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
+from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.users import User
 from ..output import FormattedOutput
 from ..profiles import is_desktop_profile, Profile
@@ -25,7 +26,6 @@ from ..user_interaction import ask_to_configure_network
 from ..user_interaction import get_password, ask_for_a_timezone, save_config
 from ..user_interaction import select_additional_repositories
 from ..user_interaction import select_disk_layout
-from ..user_interaction import select_encrypted_partitions
 from ..user_interaction import select_harddrives
 from ..user_interaction import select_kernel
 from ..user_interaction import select_language
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class GlobalMenu(GeneralMenu):
+class GlobalMenu(AbstractMenu):
 	def __init__(self,data_store):
 		self._disk_check = True
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
@@ -91,18 +91,13 @@ class GlobalMenu(GeneralMenu):
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),
 				dependencies=['harddrives'])
-		self._menu_options['!encryption-password'] = \
+		self._menu_options['disk_encryption'] = \
 			Selector(
-				_('Encryption password'),
-				lambda x: self._select_encrypted_password(),
-				display_func=lambda x: secret(x) if x else 'None',
-				dependencies=['harddrives'])
-		self._menu_options['HSM'] = Selector(
-			description=_('Use HSM to unlock encrypted drive'),
-			func=lambda preset: self._select_hsm(preset),
-			dependencies=['!encryption-password'],
-			default=None
-		)
+				_('Disk encryption'),
+				lambda preset: self._disk_encryption(preset),
+				preview_func=self._prev_disk_encryption,
+				display_func=lambda x: self._display_disk_encryption(x),
+				dependencies=['disk_layouts'])
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -209,28 +204,6 @@ class GlobalMenu(GeneralMenu):
 	def post_callback(self,name :str = None ,result :Any = None):
 		self._update_install_text(name, result)
 
-	def exit_callback(self):
-		if self._data_store.get('harddrives', None) and self._data_store.get('!encryption-password', None):
-			# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-			# Then we need to identify which partitions to encrypt. This will default to / (root).
-			if len(list(encrypted_partitions(storage['arguments'].get('disk_layouts', [])))) == 0:
-				for blockdevice in storage['arguments']['disk_layouts']:
-					if storage['arguments']['disk_layouts'][blockdevice].get('partitions'):
-						for partition_index in select_encrypted_partitions(
-								title=_('Select which partitions to encrypt:'),
-								partitions=storage['arguments']['disk_layouts'][blockdevice]['partitions'],
-								filter_=(lambda p: p['mountpoint'] != '/boot')
-							):
-
-							partition = storage['arguments']['disk_layouts'][blockdevice]['partitions'][partition_index]
-							partition['encrypted'] = True
-							partition['!password'] = storage['arguments']['!encryption-password']
-
-							# We make sure generate-encryption-key-file is set on additional partitions
-							# other than the root partition. Otherwise they won't unlock properly #1279
-							if partition['mountpoint'] != '/':
-								partition['generate-encryption-key-file'] = True
-
 	def _install_text(self):
 		missing = len(self._missing_configs())
 		if missing > 0:
@@ -245,6 +218,20 @@ class GlobalMenu(GeneralMenu):
 				return str(_('Configured {} interfaces')).format(len(cur_value))
 			else:
 				return str(cur_value)
+
+	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
+		data_store: Dict[str, Any] = {}
+
+		selector = self._menu_options['disk_layouts']
+
+		if selector.has_selection():
+			layouts: Dict[str, Dict[str, Any]] = selector.current_selection
+		else:
+			# this should not happen as the encryption menu has the disk layout as dependency
+			raise ValueError('No disk layout specified')
+
+		disk_encryption = DiskEncryptionMenu(data_store, preset, layouts).run()
+		return disk_encryption
 
 	def _prev_network_config(self) -> Optional[str]:
 		selector = self._menu_options['nic']
@@ -281,6 +268,30 @@ class GlobalMenu(GeneralMenu):
 			total_partitions = [entry['partitions'] for entry in current_value.values()]
 			total_nr = sum([len(p) for p in total_partitions])
 			return f'{total_nr} {_("Partitions")}'
+		return ''
+
+	def _prev_disk_encryption(self) -> Optional[str]:
+		selector = self._menu_options['disk_encryption']
+		if selector.has_selection():
+			encryption: DiskEncryption = selector.current_selection
+
+			enc_type = EncryptionType.type_to_text(encryption.encryption_type)
+			output = str(_('Encryption type')) + f': {enc_type}\n'
+			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
+
+			if encryption.partitions:
+				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
+
+			if encryption.hsm_device:
+				output += f'HSM: {encryption.hsm_device.manufacturer}'
+
+			return output
+
+		return None
+
+	def _display_disk_encryption(self, current_value: Optional[DiskEncryption]) -> str:
+		if current_value:
+			return EncryptionType.type_to_text(current_value.encryption_type)
 		return ''
 
 	def _prev_install_missing_config(self) -> Optional[str]:
@@ -327,11 +338,10 @@ class GlobalMenu(GeneralMenu):
 		password = get_password(prompt=prompt)
 		return password
 
-	def _select_encrypted_password(self) -> Optional[str]:
-		if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
-			return passwd
-		else:
-			return None
+	# def _select_encrypted_password(self) -> Optional[str]:
+	# 	if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
+	# 		return passwd
+	# 	return None
 
 	def _select_ntp(self, preset :bool = True) -> bool:
 		ntp = ask_ntp(preset)

@@ -71,7 +71,7 @@ class ManualNetworkConfig(ListManager):
 		available = set(all_ifaces) - set(existing_ifaces)
 		choice = Menu(str(_('Select interface to add')), list(available), skip=True).run()
 
-		if choice.type_ == MenuSelectionType.Esc:
+		if choice.type_ == MenuSelectionType.Skip:
 			return None
 
 		return choice.value
@@ -154,13 +154,13 @@ def ask_to_configure_network(
 		list(network_options.values()),
 		cursor_index=cursor_idx,
 		sort=False,
-		raise_error_on_interrupt=True,
-		raise_error_warning_msg=warning
+		allow_reset=True,
+		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Esc: return preset
-		case MenuSelectionType.Ctrl_c: return None
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return None
 
 	if choice.value == network_options['none']:
 		return None

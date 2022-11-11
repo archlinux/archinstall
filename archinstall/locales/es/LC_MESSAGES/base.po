@@ -762,8 +762,8 @@ msgstr "El nombre de usuario que ingresó no es válido. Intente nuevamente"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
 
-msgid "Select which partitions to encrypt:"
-msgstr "Seleccione qué particiones cifrar:"
+msgid "Select which partitions to encrypt"
+msgstr "Seleccione qué particiones cifrar"
 
 msgid "very weak"
 msgstr ""

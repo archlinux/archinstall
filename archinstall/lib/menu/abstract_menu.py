@@ -2,15 +2,12 @@ from __future__ import annotations
 
 import logging
 import sys
-import pathlib
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translationhandler import TranslationHandler, Language
-from ..hsm.fido import get_fido2_devices
-
 from ..user_interaction.general_conf import select_archinstall_language
 
 if TYPE_CHECKING:
@@ -167,8 +164,9 @@ class Selector:
 		if status and not self.is_enabled():
 			self.set_enabled(True)
 
-class GeneralMenu:
-	def __init__(self, data_store :dict = None, auto_cursor=False, preview_size :float = 0.2):
+
+class AbstractMenu:
+	def __init__(self, data_store: Dict[str, Any] = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -196,7 +194,7 @@ class GeneralMenu:
 	def last_choice(self):
 		return self._last_choice
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> GeneralMenu:
+	def __enter__(self, *args :Any, **kwargs :Any) -> AbstractMenu:
 		self.is_context_mgr = True
 		return self
 
@@ -209,9 +207,9 @@ class GeneralMenu:
 			raise args[1]
 
 		for key in self._menu_options:
-			sel = self._menu_options[key]
+			selector = self._menu_options[key]
 			if key and key not in self._data_store:
-				self._data_store[key] = sel._current_selection
+				self._data_store[key] = selector.current_selection
 
 		self.exit_callback()
 
@@ -286,7 +284,7 @@ class GeneralMenu:
 		selector = option[0][1]
 		return config_name, selector
 
-	def run(self):
+	def run(self, allow_reset: bool = False):
 		""" Calls the Menu framework"""
 		# we synch all the options just in case
 		for item in self.list_options():
@@ -304,6 +302,8 @@ class GeneralMenu:
 			padding = self._get_menu_text_padding(list(enabled_menus.values()))
 			menu_options = [m.menu_text(padding) for m in enabled_menus.values()]
 
+			warning_msg = str(_('All settings will be reset, are you sure?'))
+
 			selection = Menu(
 				_('Set/Modify the below options'),
 				menu_options,
@@ -312,33 +312,39 @@ class GeneralMenu:
 				preview_command=self._preview_display,
 				preview_size=self.preview_size,
 				skip_empty_entries=True,
-				skip=False
+				skip=False,
+				allow_reset=allow_reset,
+				allow_reset_warning_msg=warning_msg
 			).run()
 
-			if selection.type_ == MenuSelectionType.Selection:
-				value = selection.value
+			match selection.type_:
+				case MenuSelectionType.Reset:
+					self._data_store = {}
+					return
+				case MenuSelectionType.Selection:
+					value: str = selection.value  # type: ignore
 
-				if self.auto_cursor:
-					cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
+					if self.auto_cursor:
+						cursor_pos = menu_options.index(value) + 1  # before the strip otherwise fails
 
-					# in case the new position lands on a "placeholder" we'll skip them as well
-					while True:
-						if cursor_pos >= len(menu_options):
-							cursor_pos = 0
-						if len(menu_options[cursor_pos]) > 0:
-							break
-						cursor_pos += 1
+						# in case the new position lands on a "placeholder" we'll skip them as well
+						while True:
+							if cursor_pos >= len(menu_options):
+								cursor_pos = 0
+							if len(menu_options[cursor_pos]) > 0:
+								break
+							cursor_pos += 1
 
-				value = value.strip()
+					value = value.strip()
 
-				# if this calls returns false, we exit the menu
-				# we allow for an callback for special processing on realeasing control
-				if not self._process_selection(value):
-					break
+					# if this calls returns false, we exit the menu
+					# we allow for an callback for special processing on realeasing control
+					if not self._process_selection(value):
+						break
 
 		# we get the last action key
 		actions = {str(v.description):k for k,v in self._menu_options.items()}
-		self._last_choice = actions[selection.value.strip()]
+		self._last_choice = actions[selection.value.strip()]  # type: ignore
 
 		if not self.is_context_mgr:
 			self.__exit__()
@@ -472,26 +478,16 @@ class GeneralMenu:
 		self._translation_handler.activate(language)
 		return language
 
-	def _select_hsm(self, preset :Optional[pathlib.Path] = None) -> Optional[pathlib.Path]:
-		title = _('Select which partitions to mark for formatting:')
-		title += '\n'
 
-		fido_devices = get_fido2_devices()
+class AbstractSubMenu(AbstractMenu):
+	def __init__(self, data_store: Dict[str, Any] = None):
+		super().__init__(data_store=data_store)
 
-		indexes = []
-		for index, path in enumerate(fido_devices.keys()):
-			title += f"{index}: {path} ({fido_devices[path]['manufacturer']} - {fido_devices[path]['product']})"
-			indexes.append(f"{index}|{fido_devices[path]['product']}")
-
-		title += '\n'
-
-		choice = Menu(title, indexes, multi=False).run()
-
-		match choice.type_:
-			case MenuSelectionType.Esc: return preset
-			case MenuSelectionType.Selection:
-				selection: Any = choice.value
-				index = int(selection.split('|',1)[0])
-				return pathlib.Path(list(fido_devices.keys())[index])
-
-		return None
+		self._menu_options['__separator__'] = Selector('')
+		self._menu_options['back'] = \
+			Selector(
+				_('Back'),
+				no_store=True,
+				enabled=True,
+				exec_func=lambda n, v: True,
+			)

@@ -5,21 +5,25 @@ import logging
 import pathlib
 from typing import Optional, Dict
 
+from .hsm.fido import Fido2
+from .models.disk_encryption import DiskEncryption
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log
 from .exceptions import RequirementError
-from .hsm import get_fido2_devices
+
 
 def configuration_sanity_check():
-	if storage['arguments'].get('HSM'):
-		if not get_fido2_devices():
+	disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
+	if disk_encryption.hsm_device:
+		if not Fido2.get_fido2_devices():
 			raise RequirementError(
 				f"In order to use HSM to pair with the disk encryption,"
 				+ f" one needs to be accessible through /dev/hidraw* and support"
 				+ f" the FIDO2 protocol. You can check this by running"
 				+ f" 'systemd-cryptenroll --fido2-device=list'."
 			)
+
 
 class ConfigurationOutput:
 	def __init__(self, config: Dict):
@@ -39,8 +43,8 @@ class ConfigurationOutput:
 		self._user_creds_file = "user_credentials.json"
 		self._disk_layout_file = "user_disk_layout.json"
 
-		self._sensitive = ['!users', '!encryption-password']
-		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
+		self._sensitive = ['!users']
+		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run', 'disk_encryption']
 
 		self._process_config()
 
