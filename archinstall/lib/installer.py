@@ -12,9 +12,9 @@ from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHE
 from archinstall.profiles.profiles import Profile
 from .disk import get_partitions_in_use, Partition
 from .disk.helpers import findmnt
-# from .user_interaction import *
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
+# from .user_interaction import *
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .hsm import Fido2
@@ -867,9 +867,9 @@ class Installer:
 				root_fs_type = get_mount_fs_type(root_partition.filesystem)
 
 				if root_fs_type is not None:
-					options_entry = f'rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
+					options_entry = f'rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 				else:
-					options_entry = f'rw intel_pstate=no_hwp {" ".join(self.KERNEL_PARAMS)}\n'
+					options_entry = f'rw {" ".join(self.KERNEL_PARAMS)}\n'
 
 				for subvolume in root_partition.subvolumes:
 					if subvolume.root is True and subvolume.name != '<FS_TREE>':
@@ -986,10 +986,10 @@ class Installer:
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 				log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.part_uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.part_uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={real_device.part_uuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 			else:
 				log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
-				kernel_parameters.append(f'root=PARTUUID={root_partition.part_uuid} rw intel_pstate=no_hwp rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
+				kernel_parameters.append(f'root=PARTUUID={root_partition.part_uuid} rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}')
 
 			SysCommand(f'efibootmgr --disk {boot_partition.path[:-1]} --part {boot_partition.path[-1]} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 

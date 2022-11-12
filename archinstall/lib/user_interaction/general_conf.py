@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 import pathlib
-from typing import List, Any, Optional, Dict, TYPE_CHECKING, Union
+from typing import List, Any, Optional, Dict, TYPE_CHECKING
+from typing import Union
 
 from archinstall.profiles.profiles import Profile
 from .system_conf import select_driver

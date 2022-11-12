@@ -5,7 +5,7 @@ import pathlib
 from typing import Optional, Dict, Any, TYPE_CHECKING
 # https://stackoverflow.com/a/39757388/929999
 from ..utils.diskinfo import get_lsblk_info
-from ..disk.encryption import DiskEncryption
+from ..models.disk_encryption import DiskEncryption
 
 if TYPE_CHECKING:
 	from .blockdevice import BlockDevice
