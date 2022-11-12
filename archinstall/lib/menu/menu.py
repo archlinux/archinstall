@@ -67,7 +67,8 @@ class Menu(TerminalMenu):
 		cycle_cursor: bool = True,
 		clear_menu_on_exit: bool = True,
 		skip_empty_entries: bool = False,
-		display_back_option: bool = False
+		display_back_option: bool = False,
+		extra_bottom_space: bool = False
 	):
 		"""
 		Creates a new menu
@@ -77,7 +78,7 @@ class Menu(TerminalMenu):
 
 		:param p_options: Options to be displayed in the menu to chose from;
 		if dict is specified then the keys of such will be used as options
-		:type options: list, dict
+		:type p_options: list, dict
 
 		:param skip: Indicate if the selection is not mandatory and can be skipped
 		:type skip: bool
@@ -106,16 +107,17 @@ class Menu(TerminalMenu):
 		:param preview_title: Title of the preview window
 		:type preview_title: str
 
-		param header: one or more header lines for the menu
-		type param: string or list
+		:param header: one or more header lines for the menu
+		:type header: string or list
 
-		param raise_error_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
-		type param: bool
+		:param allow_reset: This will explicitly handle a ctrl+c instead and return that specific state
+		:type allow_reset: bool
 
-		param raise_error_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
-		type param: str
+		param allow_reset_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		type allow_reset_warning_msg: str
 
-		:param kwargs : any SimpleTerminal parameter
+		:param extra_bottom_space: Add an extra empty line at the end of the menu
+		:type extra_bottom_space: bool
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
@@ -157,7 +159,6 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = allow_reset
 		self._raise_error_warning_msg = allow_reset_warning_msg
-		self._preview_command = preview_command
 
 		action_info = ''
 		if skip:
@@ -191,6 +192,10 @@ class Menu(TerminalMenu):
 			skip_empty_entries = True
 			self._menu_options += ['', self.back()]
 
+		if extra_bottom_space:
+			skip_empty_entries = True
+			self._menu_options += ['']
+
 		self._preselection(preset_values,cursor_index)
 
 		cursor = "> "
@@ -203,10 +208,7 @@ class Menu(TerminalMenu):
 			menu_cursor=cursor,
 			menu_cursor_style=main_menu_cursor_style,
 			menu_highlight_style=main_menu_style,
-			# cycle_cursor=True,
-			# clear_screen=True,
 			multi_select=multi,
-			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
 			preview_command=lambda x: self._show_preview(preview_command, x),
@@ -221,12 +223,15 @@ class Menu(TerminalMenu):
 			skip_empty_entries=skip_empty_entries
 		)
 
-	def _show_preview(self, preview_callback: Callable, selection: str) -> Optional[str]:
+	def _show_preview(self, preview_command: Optional[Callable], selection: str) -> Optional[str]:
 		if selection == self.back():
 			return None
 
-		if preview_callback is not None:
-			return preview_callback(selection)
+		if preview_command:
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' == selection:
+				selection = self._default_option
+			return preview_command(selection)
+
 		return None
 
 	def _show(self) -> MenuSelection:
@@ -253,13 +258,6 @@ class Menu(TerminalMenu):
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
 			return MenuSelection(type_=MenuSelectionType.Skip)
-
-	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
-		if preview_command:
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' == current_selection:
-				current_selection = self._default_option
-			return preview_command(current_selection)
-		return None
 
 	def run(self) -> MenuSelection:
 		selection = self._show()
