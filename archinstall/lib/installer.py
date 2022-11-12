@@ -132,6 +132,7 @@ class Installer:
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
+		self.FSTAB_ENTRIES = []
 
 		self._zram_enabled = False
 
@@ -317,6 +318,22 @@ class Installer:
 
 		partition.mount(f'{self.target}{mountpoint}', options=options)
 
+	def add_swapfile(self, size = '4G', enable_resume = True, file='/swapfile'):
+		if not (SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1').exit_code == 0 and
+		SysCommand(f'chmod 0600 {self.target}{file}').exit_code == 0 and
+		SysCommand(f'mkswap {self.target}{file}').exit_code == 0):
+			raise RequirementError(f'generating swapfile {file} failed')
+
+		self.FSTAB_ENTRIES.append(f'{file} none swap defaults 0 0')
+
+		if enable_resume:
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+
+			self.HOOKS.append('resume')
+			self.KERNEL_PARAMS.append(f'resume=UUID={resume_uuid}')
+			self.KERNEL_PARAMS.append(f'resume_offset={resume_offset}')			
+
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
@@ -430,6 +447,11 @@ class Installer:
 			if hasattr(plugin, 'on_genfstab'):
 				if plugin.on_genfstab(self) is True:
 					break
+		
+		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
+			for entry in self.FSTAB_ENTRIES:
+				fstab_fh.write(f'{entry}\n')
+
 
 		return True
 
