@@ -391,7 +391,7 @@ class SysCommandWorker:
 				except Exception as e:
 					exception_type = type(e).__name__
 					log(f"Unexpected {exception_type} occurred in {self.cmd}: {e}", level=logging.ERROR)
-					raise(e)
+					raise e
 
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):
