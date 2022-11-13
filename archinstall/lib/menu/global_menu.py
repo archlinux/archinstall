@@ -257,6 +257,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_harddrives(self) -> Optional[str]:
+		print(self._menu_options['harddrives'])
 		selector = self._menu_options['harddrives']
 		if selector.has_selection():
 			drives = selector.current_selection
@@ -351,7 +352,7 @@ class GlobalMenu(AbstractMenu):
 				missing += [self._menu_options['devices'].description]
 			if check('devices'):
 				if not self._menu_options['devices'].is_empty() and not check('disk_layouts'):
-					missing += [self._menu_options['disk_layout'].description]
+					missing += [self._menu_options['disk_layouts'].description]
 
 		return missing
 
