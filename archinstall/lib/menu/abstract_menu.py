@@ -260,9 +260,8 @@ class AbstractMenu:
 			if mandatory:
 				self._menu_options[selector_name].set_mandatory(True)
 			self.synch(selector_name,omit_if_set)
-		else:
-			print(f'No selector found: {selector_name}')
-			sys.exit(1)
+
+		raise ValueError(f'No selector found: {selector_name}')
 
 	def _preview_display(self, selection_name: str) -> Optional[str]:
 		config_name, selector = self._find_selection(selection_name)
