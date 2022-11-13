@@ -104,7 +104,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 			if retry > 0:
 				log('Retrying fetching info with lsblk...', level=logging.INFO)
 				time.sleep(1)
-				return _fetch_lsblk_info(dev_path, retry-1)
+				return _fetch_lsblk_info(dev_path, retry - 1)
 		raise error
 
 	if result.exit_code == 0:
