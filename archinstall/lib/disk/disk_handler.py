@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import sys
+import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import List, Dict, Any, Optional, TYPE_CHECKING, Union
 
 import parted
 from parted import Disk, Device, Geometry, Partition
@@ -11,6 +13,7 @@ from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..output import FormattedOutput
 from ..utils.diskinfo import get_lsblk_info
+from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
@@ -40,7 +43,7 @@ class PartitionInfo:
 			fs_type = partition.fileSystem.type
 		else:
 			lsblk_info = get_lsblk_info(partition.path)
-			fs_type = lsblk_info.fstype
+			fs_type = lsblk_info.fstype if lsblk_info.fstype else 'N/A'
 
 		partition_type = parted.partitions[partition.type]
 
@@ -107,12 +110,32 @@ class DeviceHandler(object):
 		self._devices: Dict[Path, BDevice] = []
 		self.load_devices()
 
-	def parse_arguments(self, device_paths: List[str]) -> List[BDevice]:
-		paths = [Path(p) for p in device_paths]
-		unknown_devices = filter(lambda path: path not in self._devices, paths)
+	def parse_device_arguments(
+		self,
+		devices: Optional[Union[str, List[str]]] = None,
+		harddrives: Optional[Union[str, List[str]]] = None
+	) -> List[BDevice]:
+		if devices:
+			args = devices
+		else:
+			args = harddrives
 
-		if len(list(unknown_devices)) > 0:
-			raise ValueError(f'Unknown devices: ${unknown_devices}')
+		if not args:
+			return []
+
+		device_paths = args.split(',') if type(args) is str else args
+
+		paths = [Path(p) for p in device_paths]
+		unknown_devices = list(filter(lambda path: path not in self._devices, paths))
+
+		if len(unknown_devices) > 0:
+			unknown = ', '.join([str(path) for path in unknown_devices])
+			log(
+				f'The configuration file contains unknown devices: {unknown}',
+				level=logging.ERROR,
+				fg='red'
+			)
+			sys.exit(1)
 
 		return [self._devices[p] for p in paths]
 
@@ -158,6 +181,7 @@ class DeviceHandler(object):
 			multi=True,
 			preview_command=self._preview_device_selection,
 			preview_title='Partitions',
+			preview_size=0.2,
 			allow_reset=True,
 			allow_reset_warning_msg=warning
 		).run()

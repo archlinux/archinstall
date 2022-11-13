@@ -121,8 +121,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 
 
 def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
-	infos = _fetch_lsblk_info(dev_path)
-	if infos:
+	if infos := _fetch_lsblk_info(dev_path):
 		return infos[0]
 
 	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')

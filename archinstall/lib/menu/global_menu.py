@@ -37,8 +37,6 @@ from ..disk.disk_handler import BDevice, device_handler
 if TYPE_CHECKING:
 	_: Any
 
-continue replace 'harddrive' stuff......
-
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self,data_store):

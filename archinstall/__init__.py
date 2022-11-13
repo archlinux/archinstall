@@ -201,15 +201,10 @@ def load_config():
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
-	if arguments.get('devices', None) is not None:
-		if type(arguments['devices']) is str:
-			device_paths = arguments['devices'].split(',')
-		else:
-			device_paths = arguments['devices'].keys()
-
-		arguments['devices'] = device_handler.parse_arguments(device_paths)
-		# Temporarily disabling keep_partitions if config file is loaded
-		# Temporary workaround to make Desktop Environments work
+	arguments['devices'] = device_handler.parse_device_arguments(
+		arguments.get('devices', None),
+		arguments.get('harddrives', None)
+	)
 
 	if profile := arguments.get('profile', None):
 		arguments['profile'] = ProfileHandler().parse_profile_config(profile)
@@ -257,21 +252,24 @@ def post_process_arguments(arguments):
 
 	if arguments.get('disk_layouts', None) is not None:
 		layout_storage = {}
-		if not json_stream_to_structure('--disk_layouts',arguments['disk_layouts'],layout_storage):
+		if not json_stream_to_structure('--disk_layouts', arguments['disk_layouts'], layout_storage):
 			exit(1)
-		else:
-			if arguments.get('devices') is None:
-				arguments['devices'] = device_handler.parse_arguments(layout_storage.keys())
 
-			# backward compatibility. Change partition.format for partition.wipe
-			for disk in layout_storage:
-				for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
-					if 'format' in partition:
-						partition['wipe'] = partition['format']
-						del partition['format']
-					elif 'btrfs' in partition:
-						partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
-			arguments['disk_layouts'] = layout_storage
+		devices = arguments.get('devices', [])
+		harddrives = arguments.get('harddrives', [])  # legacy
+
+		if not devices and not harddrives:
+			arguments['devices'] = layout_storage.keys()
+
+		# backward compatibility. Change partition.format for partition.wipe
+		for disk in layout_storage:
+			for i, partition in enumerate(layout_storage[disk].get('partitions',[])):
+				if 'format' in partition:
+					partition['wipe'] = partition['format']
+					del partition['format']
+				elif 'btrfs' in partition:
+					partition['btrfs']['subvolumes'] = Subvolume.parse_arguments(partition['btrfs']['subvolumes'])
+		arguments['disk_layouts'] = layout_storage
 
 	load_config()
 

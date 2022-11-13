@@ -11,8 +11,6 @@ from archinstall import ConfigurationOutput
 class OnlyHDMenu(archinstall.GlobalMenu):
 	def _setup_selection_menu_options(self):
 		super()._setup_selection_menu_options()
-		options_list = []
-		mandatory_list = []
 		options_list = ['devices', 'disk_layouts', 'disk_encryption','swap']
 		mandatory_list = ['devices']
 		options_list.extend(['save_config','install','abort'])

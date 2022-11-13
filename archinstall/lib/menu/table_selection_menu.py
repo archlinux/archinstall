@@ -16,6 +16,7 @@ class TableMenu(Menu):
 		multi: bool = False,
 		preview_command: Optional[Callable] = None,
 		preview_title: str = 'Info',
+		preview_size: float = 0.0,
 		allow_reset: bool = True,
 		allow_reset_warning_msg: str = None,
 	):
@@ -74,6 +75,7 @@ class TableMenu(Menu):
 			multi=multi,
 			default_option=default,
 			preview_command=lambda x: self._table_show_preview(preview_command, x),
+			preview_size=preview_size,
 			preview_title=preview_title,
 			extra_bottom_space=extra_bottom_space,
 			allow_reset=allow_reset,
