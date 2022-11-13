@@ -17,7 +17,7 @@ from ..output import log
 @dataclass
 class LsblkInfo:
 	name: str = ""
-	path: Path = ""
+	path: Path = Path()
 	pkname: str = ""
 	size: int = 0
 	log_sec: int = 0
@@ -120,7 +120,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
 
 
-def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
+def get_lsblk_info(dev_path: Union[Path, str]) -> Optional[LsblkInfo]:
 	if infos := _fetch_lsblk_info(dev_path):
 		info = next(filter(lambda x: x.path == dev_path, infos), None)
 		return info
