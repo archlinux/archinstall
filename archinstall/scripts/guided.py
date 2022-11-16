@@ -64,10 +64,6 @@ def ask_user_questions():
 	# Specify disk encryption options
 	global_menu.enable('disk_encryption')
 
-	if archinstall.arguments.get('advanced', False) or archinstall.arguments.get('HSM', None):
-		# Enables the use of HSM
-		global_menu.enable('HSM')
-
 	# Ask which boot-loader to use (will only ask if we're in UEFI mode, otherwise will default to GRUB)
 	global_menu.enable('bootloader')
 
