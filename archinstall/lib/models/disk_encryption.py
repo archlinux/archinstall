@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 
-from archinstall.lib.hsm.fido import Fido2Device
+from ..hsm.fido import Fido2Device
 
 if TYPE_CHECKING:
 	_: Any
