@@ -319,10 +319,9 @@ class Installer:
 		partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def add_swapfile(self, size = '4G', enable_resume = True, file='/swapfile'):
-		if not (SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1').exit_code == 0 and
-		SysCommand(f'chmod 0600 {self.target}{file}').exit_code == 0 and
-		SysCommand(f'mkswap {self.target}{file}').exit_code == 0):
-			raise RequirementError(f'generating swapfile {file} failed')
+		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
+		SysCommand(f'chmod 0600 {self.target}{file}')
+		SysCommand(f'mkswap {self.target}{file}')
 
 		self.FSTAB_ENTRIES.append(f'{file} none swap defaults 0 0')
 
