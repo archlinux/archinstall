@@ -805,96 +805,125 @@ class Installer:
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
 
+		boot_mountpoint = boot_partition.mountpoints[0]
+		esp = boot_mountpoint.root / boot_mountpoint.relative_to(self.target)
+
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path={esp} install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
-
-		# Ensure that the /boot/loader directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader'):
-			os.makedirs(f'{self.target}/boot/loader')
+			try:
+				SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path={esp} install')
+			except SysCallError:
+				raise RequirementError('installing systemd-boot failed')
 
 		# Modify or create a loader.conf
-		if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
-			with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
-				loader_data = loader.read().split('\n')
-		else:
-			loader_data = [
-				f"default {self.init_time}",
-				"timeout 15"
+		loader_dir = boot_mountpoint / 'loader'
+		loader_conf = loader_dir / 'loader.conf'
+
+		# Use a try ... except statement rather than checking if the file exists
+		# before reading it to prevent introducing a race condition
+		try:
+			with loader_conf.open('r') as loader:
+				loader_lines = loader.readlines()
+		except FileNotFoundError:
+			loader_lines = [
+				'default {}_{}.conf\n'.format(self.init_time, self.kernels[0]),
+				'timeout 15\n'
 			]
+		else:
+			for index, line in enumerate(loader_lines):
+				if line.split()[0] in '#timeout':
+					# Uncomment the default timeout to support dual-boot
+					loader_lines[index] = line[1:]
 
-		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
-			for line in loader_data:
-				if line[:8] == 'default ':
-					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-				elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
-					# We add in the default timeout to support dual-boot
-					loader.write(f"{line[1:]}\n")
-				else:
-					loader.write(f"{line}\n")
+		# Ensure that the esp/loader directory exists before we try to create files in it
+		try:
+			loader_dir.mkdir(parents=True, exist_ok=True)
+		except FileExistsError:
+			self.log(f"Failed to create directory at '{loader_dir}', a non-directory file exists at this path.", level=logging.DEBUG)
+			return False
 
-		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader/entries'):
-			os.makedirs(f'{self.target}/boot/loader/entries')
+		with loader_conf.open('w') as loader:
+			loader.writelines(loader_lines)
+
+		# Set up kernel paramaters
+		kernel_parameters = [
+			'rw',
+		]
+
+		if (root_fs_type := get_mount_fs_type(root_partition.filesystem)) is not None:
+			kernel_parameters.append('rootfstype={}'.format(root_fs_type))
+
+		for subvolume in root_partition.subvolumes:
+			if subvolume.root is True and subvolume.name != '<FS_TREE>':
+				kernel_parameters.insert(0, 'rootflags=subvol={}'.format(subvolume.name))
+
+		# Zswap should be disabled when using zram.
+		#
+		# https://github.com/archlinux/archinstall/issues/881
+		if self._zram_enabled:
+			kernel_parameters.insert(0, 'zswap.enabled=0')
+
+		# blkid doesn't trigger on loopback devices really well,
+		# so we'll use the old manual method until we get that sorted out.
+		if real_device := self.detect_encryption(root_partition):
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
+			kernel_parameters.insert(0, 'root=/dev/mapper/luksdev')
+
+			if self._disk_encryption.hsm_device:
+				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+				kernel_parameters.insert(0, 'rd.luks.name={}=luksdev'.format(real_device.uuid))
+				# Note: tpm2-device and fido2-device don't play along very well:
+				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+				kernel_parameters.insert(1, 'rd.luks.options=fido2-device=auto,password-echo=no')
+			else:
+				kernel_parameters.insert(0, 'cryptdevice=PARTUUID={}:luksdev'.format(real_device.part_uuid))
+		else:
+			log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+			kernel_parameters.insert(0, 'root=PARTUUID={}'.format(root_partition.part_uuid))
+
+		# Set up loader entries
+		cmdline = ' '.join(kernel_parameters + self.KERNEL_PARAMS)
+
+		comments = [
+			'# Created by: archinstall\n',
+			'# Created on: {}\n\n'.format(self.init_time)
+		]
+
+		entry_lines = [
+			'title   Arch Linux ({kernel})\n',
+			'linux   /vmlinuz-{kernel}\n',
+			'initrd  /initramfs-{kernel}.img\n',
+			'options {}\n'.format(cmdline)
+		]
+
+		if not is_vm():
+			vendor = cpu_vendor()
+			if vendor == 'AuthenticAMD':
+				entry_lines.insert(2, 'initrd  /amd-ucode.img\n')
+			elif vendor == 'GenuineIntel':
+				entry_lines.insert(2, 'initrd  /intel-ucode.img\n')
+			else:
+				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall will not add ucode for systemd-boot configuration.", level=logging.DEBUG)
+
+		entries_dir = loader_dir / 'entries'
+		# Ensure that the esp/loader/entries directory exists before we try to create files in it
+		try:
+			entries_dir.mkdir(parents=True, exist_ok=True)
+		except FileExistsError:
+			self.log(f"Failed to create directory at '{entries_dir}', a non-directory file exists at this path.", level=logging.DEBUG)
+			return False
 
 		for kernel in self.kernels:
-			# Setup the loader entry
-			with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
-				entry.write('# Created by: archinstall\n')
-				entry.write(f'# Created on: {self.init_time}\n')
-				entry.write(f'title Arch Linux ({kernel})\n')
-				entry.write(f"linux /vmlinuz-{kernel}\n")
-				if not is_vm():
-					vendor = cpu_vendor()
-					if vendor == "AuthenticAMD":
-						entry.write("initrd /amd-ucode.img\n")
-					elif vendor == "GenuineIntel":
-						entry.write("initrd /intel-ucode.img\n")
-					else:
-						self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.", level=logging.DEBUG)
-				entry.write(f"initrd /initramfs-{kernel}.img\n")
-				# blkid doesn't trigger on loopback devices really well,
-				# so we'll use the old manual method until we get that sorted out.
-				root_fs_type = get_mount_fs_type(root_partition.filesystem)
+			entry_data = comments + [entry_line.format(kernel=kernel) if '{kernel}' in entry_line else entry_line for entry_line in entry_lines]
 
-				if root_fs_type is not None:
-					options_entry = f'rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
-				else:
-					options_entry = f'rw {" ".join(self.KERNEL_PARAMS)}\n'
-
-				for subvolume in root_partition.subvolumes:
-					if subvolume.root is True and subvolume.name != '<FS_TREE>':
-						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
-
-				# Zswap should be disabled when using zram.
-				#
-				# https://github.com/archlinux/archinstall/issues/881
-				if self._zram_enabled:
-					options_entry = "zswap.enabled=0 " + options_entry
-
-				if real_device := self.detect_encryption(root_partition):
-					# TODO: We need to detect if the encrypted device is a whole disk encryption,
-					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
-
-					kernel_options = f"options"
-
-					if self._disk_encryption.hsm_device:
-						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
-						# Note: tpm2-device and fido2-device don't play along very well:
-						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
-					else:
-						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
-
-					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-				else:
-					log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
+			entry_conf = entries_dir / f'{self.init_time}_{kernel}.conf'
+			with entry_conf.open('w') as entry:
+				entry.writelines(entry_data)
 
 		self.helper_flags['bootloader'] = "systemd"
 
