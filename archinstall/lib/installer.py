@@ -12,7 +12,7 @@ from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHE
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
 from .hardware import has_uefi, is_vm, cpu_vendor
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale_helpers import Locale, LocaleUtils, verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import findmnt
 from .mirrors import use_mirrors
 from .plugins import plugins
@@ -440,32 +440,13 @@ class Installer:
 			fh.write(hostname + '\n')
 
 	def set_locale(self, locale :str, encoding :str = 'UTF-8', *args :str, **kwargs :str) -> bool:
-		if not len(locale):
-			return True
+		try:
+			locales = [Locale(locale, encoding)]
+		except ValueError as error:
+			self.log(f'Invalid locale: {error}', level=logging.ERROR, fg='red')
+			return False
 
-		modifier = ''
-
-		# This is a temporary patch to fix #1200
-		if '.' in locale:
-			locale, potential_encoding = locale.split('.', 1)
-
-			# Override encoding if encoding is set to the default parameter
-			# and the "found" encoding differs.
-			if encoding == 'UTF-8' and encoding != potential_encoding:
-				encoding = potential_encoding
-
-		# Make sure we extract the modifier, that way we can put it in if needed.
-		if '@' in locale:
-			locale, modifier = locale.split('@', 1)
-			modifier = f"@{modifier}"
-		# - End patch
-
-		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
-		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
-
-		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
+		return LocaleUtils(locales, self.target).run()
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:

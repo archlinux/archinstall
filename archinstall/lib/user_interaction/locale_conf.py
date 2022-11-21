@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def select_locale_lang(preset: str = None) -> str:
 	locales = list_locales()
-	locale_lang = set([locale.split()[0] for locale in locales])
+	locale_lang = set([locale.split('.')[0] if '.' in locale else locale.split()[0] for locale in locales])
 
 	selected_locale = Menu(
 		_('Choose which locale language to use'),
