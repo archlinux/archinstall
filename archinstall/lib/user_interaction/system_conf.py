@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, TYPE_CHECKING
+from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
 from ..disk import all_blockdevices
 from ..exceptions import RequirementError
@@ -42,7 +42,7 @@ def select_kernel(preset: List[str] = None) -> List[str]:
 		case MenuSelectionType.Selection: return choice.value
 
 
-def select_harddrives(preset: List[str] = []) -> List[str]:
+def select_harddrives(preset: Optional[List[Any]] = None) -> List[Any]:
 	"""
 	Asks the user to select one or multiple hard drives
 
@@ -60,7 +60,7 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	selected_harddrive = Menu(
 		title,
 		list(options.keys()),
-		preset_values=preset,
+		preset_values=[str(option) for option in preset] if preset else None,
 		multi=True,
 		allow_reset=True,
 		allow_reset_warning_msg=warning
