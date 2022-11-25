@@ -3,35 +3,20 @@ from __future__ import annotations
 from typing import Any, Dict, TYPE_CHECKING, Optional, List
 
 from ..disk import BlockDevice
-from ..disk.device_handler import BDevice, device_handler, DeviceInfo, DeviceModification, FilesystemType
+from ..disk.device_handler import BDevice, DeviceInfo, DeviceModification, device_handler
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..output import FormattedOutput
-from ..disk.user_guides import select_individual_blockdevice_usage
+from ..disk.user_guides import select_individual_blockdevice_usage, \
+	suggest_single_disk_layout, suggest_multi_disk_layout
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
-	options = {
-		'btrfs': FilesystemType.Btrfs,
-		'ext4': FilesystemType.Ext4,
-		'xfs': FilesystemType.Xfs,
-		'f2fs': FilesystemType.F2fs
-	}
-
-	if advanced_options:
-		options.update({'ntfs': FilesystemType.Ntfs})
-
-	prompt = _('Select which filesystem your main partition should use')
-	choice = Menu(prompt, options, skip=False, sort=False).run()
-	return options[choice.value]
-
-
-def select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
+def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 	"""
 	Asks the user to select one or multiple devices
 
@@ -40,9 +25,9 @@ def select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
 	"""
 
 	def _preview_device_selection(selection: DeviceInfo) -> Optional[str]:
-		device = device_handler.get_device(selection.path)
-		if device:
-			return FormattedOutput.as_table(device.partition_info)
+		dev = device_handler.get_device(selection.path)
+		if dev:
+			return FormattedOutput.as_table(dev.partition_info)
 		return None
 
 	if preset is None:
@@ -53,11 +38,13 @@ def select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
 
 	devices = device_handler.devices
 	options = [d.device_info for d in devices]
+	preset_value = [p.device_info for p in preset]
 
 	choice = TableMenu(
 		title,
 		data=options,
 		multi=True,
+		preset=preset_value,
 		preview_command=_preview_device_selection,
 		preview_title='Partitions',
 		preview_size=0.2,
@@ -83,7 +70,6 @@ def _get_default_partition_layout(
 	devices: List[BDevice],
 	advanced_option: bool = False
 ) -> List[DeviceModification]:
-	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
 
 	if len(devices) == 1:
 		device_modification = suggest_single_disk_layout(devices[0], advanced_options=advanced_option)
@@ -122,7 +108,7 @@ def select_disk_layout(
 			if choice.value == wipe_mode:
 				return _get_default_partition_layout(devices, advanced_option=advanced_option)
 			else:
-				return select_individual_blockdevice_usage(block_devices)
+				return select_individual_blockdevice_usage(devices)
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:

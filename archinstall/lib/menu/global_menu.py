@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.device_handler import BDevice, DeviceModification, FilesystemType
+from ..disk.device_handler import BDevice, DeviceModification
 from ..general import SysCommand, secret
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
@@ -13,8 +13,8 @@ from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
-from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
+from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_for_bootloader
@@ -259,7 +259,7 @@ class GlobalMenu(AbstractMenu):
 
 				# create btrfs table
 				btrfs_partitions = list(
-					filter(lambda p: p.filesystem.type == FilesystemType.Btrfs, modification.partitions)
+					filter(lambda p: len(p.btrfs) > 0, modification.partitions)
 				)
 				for partition in btrfs_partitions:
 					output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'

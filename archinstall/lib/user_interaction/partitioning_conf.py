@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import copy
 from typing import List, Any, Dict, TYPE_CHECKING, Callable, Optional
 
+from ..disk.device_handler import DeviceModification, BDevice
 from ..disk.validators import fs_types
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log, FormattedOutput
 
 if TYPE_CHECKING:
-	from ..disk import BlockDevice
 	from ..disk.partition import Partition
 	_: Any
 
@@ -127,10 +126,18 @@ def select_partition(
 		return int(choice.value)
 
 
-def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50
-	block_device_struct = {"partitions": [partition.__dump__() for partition in block_device.partitions.values()]}
-	original_layout = copy.deepcopy(block_device_struct)
+def manage_new_and_existing_partitions(
+	device: BDevice,
+	device_modification: Optional[DeviceModification] = None
+) -> DeviceModification:
+	device.partition_info
 
+	# CREATE NEW MENU
+	1/0
+
+
+
+	# all possible options for the manual partitioning
 	new_partition = str(_('Create a new partition'))
 	suggest_partition_layout = str(_('Suggest partition layout'))
 	delete_partition = str(_('Delete a partition'))

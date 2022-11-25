@@ -11,6 +11,7 @@ class TableMenu(Menu):
 		title: str,
 		data: List[Any] = [],
 		table_data: Optional[Tuple[List[Any], str]] = None,
+		preset: List[Any] = [],
 		custom_menu_options: List[str] = [],
 		default: Any = None,
 		multi: bool = False,
@@ -66,9 +67,14 @@ class TableMenu(Menu):
 
 		extra_bottom_space = True if preview_command else False
 
+		preset_table = FormattedOutput.as_table(preset).strip()
+		preset_table_rows = preset_table.split('\n')[2:]  # get all data rows
+		preset_values = [p for p in preset_table_rows if self._escape_row(p) in self._options]
+
 		super().__init__(
 			title,
 			self._options,
+			preset_values=preset_values,
 			header=header,
 			skip_empty_entries=True,
 			show_search_hint=False,

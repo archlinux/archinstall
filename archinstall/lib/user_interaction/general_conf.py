@@ -15,7 +15,6 @@ from ..mirrors import list_mirrors
 from ..output import FormattedOutput
 from ..output import log
 from ..packages.packages import validate_package_list
-from ..profiles_handler import ProfileHandler
 from ..storage import storage
 from ..translationhandler import Language
 
@@ -150,6 +149,7 @@ def select_profile(
 	allow_reset: bool = True,
 	multi: bool = False
 ) -> Optional[Profile]:
+	from ..profiles_handler import ProfileHandler
 	handler = ProfileHandler()
 	top_level_profiles = handler.get_top_level_profiles()
 

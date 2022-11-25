@@ -7,4 +7,5 @@ from .partitioning_conf import select_partition
 from .general_conf import (ask_ntp, ask_for_a_timezone, ask_for_audio_selection, select_language, select_mirror_regions,
                            select_profile, select_archinstall_language, ask_additional_packages_to_install,
                            select_additional_repositories, ask_hostname, add_number_of_parrallel_downloads)
+from .disk_conf import select_individual_blockdevice_usage, select_disk_layout, select_disk
 from .utils import get_password, do_countdown

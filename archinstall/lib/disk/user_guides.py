@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional, Any, List, TYPE_CHECKING, Dict
+from typing import Optional, Any, List, TYPE_CHECKING, Tuple
 
 from .device_handler import BDevice, device_handler, NewDevicePartition, PartitionType, Filesystem, FilesystemType, \
 	PartitionFlag, DeviceModification, Size, Unit
 from ..models.subvolume import Subvolume
-from ..user_interaction.disk_conf import ask_for_main_filesystem_format
-from ..user_interaction.partitioning_conf import manage_new_and_existing_partitions
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,12 +36,29 @@ def _boot_partition() -> NewDevicePartition:
 	)
 
 
-def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
-	result = {}
+def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
+	options = {
+		'btrfs': FilesystemType.Btrfs,
+		'ext4': FilesystemType.Ext4,
+		'xfs': FilesystemType.Xfs,
+		'f2fs': FilesystemType.F2fs
+	}
 
-	for device in block_devices:
-		layout = manage_new_and_existing_partitions(device)
-		result[device.path] = layout
+	if advanced_options:
+		options.update({'ntfs': FilesystemType.Ntfs})
+
+	prompt = _('Select which filesystem your main partition should use')
+	choice = Menu(prompt, options, skip=False, sort=False).run()
+	return options[choice.value]
+
+
+def select_individual_blockdevice_usage(devices: list) -> List[DeviceModification]:
+	result = []
+
+	for device in devices:
+		from ..user_interaction.partitioning_conf import manage_new_and_existing_partitions
+		modification = manage_new_and_existing_partitions(device)
+		result.append(modification)
 
 	return result
 
@@ -161,8 +176,8 @@ def suggest_multi_disk_layout(
 		filesystem_type = ask_for_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
-	possible_devices = list(filter(lambda d: d.size >= min_home_partition_size, devices))
-	home_device = max(possible_devices, key=lambda d: d.size) if possible_devices else None
+	possible_devices = list(filter(lambda d: d.device_info.size >= min_home_partition_size, devices))
+	home_device = max(possible_devices, key=lambda d: d.device_info.size) if possible_devices else None
 
 	# find proper device for /root
 	devices_delta = {}
@@ -171,7 +186,7 @@ def suggest_multi_disk_layout(
 			delta = device.device_info.size - desired_root_partition_size
 			devices_delta[device] = delta
 
-	sorted_delta = sorted(devices_delta.items(), key=lambda x: x[1])
+	sorted_delta: List[Tuple[BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])  # type: ignore
 	root_device: Optional[BDevice] = sorted_delta[0][0]
 
 	if home_device is None or root_device is None:
@@ -179,14 +194,14 @@ def suggest_multi_disk_layout(
 		text += _('Minimum capacity for /home partition: {}GiB\n').format(min_home_partition_size.format_size(Unit.GiB))
 		text += _('Minimum capacity for Arch Linux partition: {}GiB').format(desired_root_partition_size.format_size(Unit.GiB))
 		Menu(str(text), [str(_('Continue'))], skip=False).run()
-		return None
+		return []
 
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS compression?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
 		compression = choice.value == Menu.yes()
 
-	device_paths = ', '.join([device.device_info.path for device in devices])
+	device_paths = ', '.join([str(d.device_info.path) for d in devices])
 	log(f"Suggesting multi-disk-layout for devices: {device_paths}", level=logging.DEBUG)
 	log(f"/root: {root_device.device_info.path}", level=logging.DEBUG)
 	log(f"/home: {home_device.device_info.path}", level=logging.DEBUG)

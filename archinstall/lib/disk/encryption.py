@@ -148,6 +148,7 @@ def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]
 		choice = TableMenu(
 			title,
 			table_data=(all_partitions, partition_table),
+			preset=preset,
 			multi=True
 		).run()
 

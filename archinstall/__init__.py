@@ -47,6 +47,8 @@ from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
 from .lib.udev import udevadm_info
+
+
 parser = ArgumentParser()
 
 __version__ = "2.5.2"
@@ -131,7 +133,8 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 					print(f" We ignore the entry {element} as it isn't related to any argument")
 	return config
 
-def cleanup_empty_args(args :typing.Union[Namespace, dict]) -> dict:
+
+def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)

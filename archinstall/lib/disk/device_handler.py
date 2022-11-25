@@ -50,7 +50,7 @@ class Size:
 		if self.unit == Unit.Percent:
 			return f'{self.value}%'
 
-		target = (size.normalize() / target_unit.value)  # type: ignore
+		target = (self.normalize() / target_unit.value)  # type: ignore
 		return str(int(target)).strip()
 
 	def normalize(self) -> int:
@@ -145,7 +145,7 @@ class DeviceInfo:
 			'Path': str(self.path),
 			'Type': self.type,
 			'Size (MiB)': self.size.format_size(Unit.MiB),
-			'Free space (MiB)': self.size.format_size(Unit.MiB),
+			'Free space (MiB)': self.free_space.format_size(Unit.MiB),
 			'Sector size': self.sector_size,
 			'Read only': self.read_only
 		}
@@ -242,12 +242,12 @@ class NewDevicePartition:
 	def as_json(self) -> Dict[str, Any]:
 		return {
 			'type': self.type.value,
-			'start (MiB)': self.size.format_size(Unit.MiB),
+			'start (MiB)': self.start.format_size(Unit.MiB),
 			'size (MiB)': self.size.format_size(Unit.MiB),
 			'wipe': self.wipe,
 			'filesystem': self.filesystem.type.value,
 			'mount options': ', '.join(self.filesystem.mount_options),
-			'mountpoint': self.mountpoint,
+			'mountpoint': self.mountpoint if self.mountpoint else '',
 			'flags': ', '.join([f.name for f in self.flags])
 		}
 
