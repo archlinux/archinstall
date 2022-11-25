@@ -1,60 +1,126 @@
 from __future__ import annotations
 
-from typing import Any, Dict, TYPE_CHECKING, Optional
+from typing import Any, Dict, TYPE_CHECKING, Optional, List
 
-from .partitioning_conf import manage_new_and_existing_partitions, get_default_partition_layout
 from ..disk import BlockDevice
+from ..disk.device_handler import BDevice, device_handler, DeviceInfo, DeviceModification, FilesystemType
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
+from ..menu.table_selection_menu import TableMenu
+from ..output import FormattedOutput
+from ..disk.user_guides import select_individual_blockdevice_usage
 
 if TYPE_CHECKING:
 	_: Any
 
 
-def ask_for_main_filesystem_format(advanced_options=False) -> str:
-	options = {'btrfs': 'btrfs', 'ext4': 'ext4', 'xfs': 'xfs', 'f2fs': 'f2fs'}
-
-	advanced = {'ntfs': 'ntfs'}
+def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
+	options = {
+		'btrfs': FilesystemType.Btrfs,
+		'ext4': FilesystemType.Ext4,
+		'xfs': FilesystemType.Xfs,
+		'f2fs': FilesystemType.F2fs
+	}
 
 	if advanced_options:
-		options.update(advanced)
+		options.update({'ntfs': FilesystemType.Ntfs})
 
 	prompt = _('Select which filesystem your main partition should use')
-	choice = Menu(prompt, options, skip=False).run()
-	return choice.value
+	choice = Menu(prompt, options, skip=False, sort=False).run()
+	return options[choice.value]
 
 
-def select_individual_blockdevice_usage(block_devices: list) -> Dict[str, Any]:
-	result = {}
+def select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
+	"""
+	Asks the user to select one or multiple devices
 
-	for device in block_devices:
-		layout = manage_new_and_existing_partitions(device)
-		result[device.path] = layout
+	:return: List of selected devices
+	:rtype: list
+	"""
 
-	return result
+	def _preview_device_selection(selection: DeviceInfo) -> Optional[str]:
+		device = device_handler.get_device(selection.path)
+		if device:
+			return FormattedOutput.as_table(device.partition_info)
+		return None
 
+	if preset is None:
+		preset = []
 
-def select_disk_layout(preset: Optional[Dict[str, Any]], block_devices: list, advanced_options=False) -> Optional[Dict[str, Any]]:
-	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
-	custome_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
-	modes = [wipe_mode, custome_mode]
+	title = str(_('Select one or more devices to use and configure'))
+	warning = str(_('If you reset the device selection this will also reset the current disk layout. Are you sure?'))
 
-	warning = str(_('Are you sure you want to reset this setting?'))
+	devices = device_handler.devices
+	options = [d.device_info for d in devices]
 
-	choice = Menu(
-		_('Select what you wish to do with the selected block devices'),
-		modes,
+	choice = TableMenu(
+		title,
+		data=options,
+		multi=True,
+		preview_command=_preview_device_selection,
+		preview_title='Partitions',
+		preview_size=0.2,
 		allow_reset=True,
 		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
+		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Selection:
+			selected_device_info: List[DeviceInfo] = choice.value  # type: ignore
+			selected_devices = []
+
+			for device in devices:
+				if device.device_info in selected_device_info:
+					selected_devices.append(device)
+
+			return selected_devices
+
+
+def _get_default_partition_layout(
+	devices: List[BDevice],
+	advanced_option: bool = False
+) -> List[DeviceModification]:
+	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
+
+	if len(devices) == 1:
+		device_modification = suggest_single_disk_layout(devices[0], advanced_options=advanced_option)
+		return [device_modification]
+	else:
+		return suggest_multi_disk_layout(devices, advanced_options=advanced_option)
+
+
+def select_disk_layout(
+	preset: List[DeviceModification],
+	devices: List[BDevice],
+	advanced_option: bool = False
+) -> List[DeviceModification]:
+	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
+	custom_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
+	modes = [wipe_mode, custom_mode]
+
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	infos = [d.device_info for d in devices]
+	device_table = FormattedOutput.as_table(infos)
+
+	choice = Menu(
+		_('Select what you wish to do with the selected block devices'),
+		modes,
+		header=device_table,
+		allow_reset=True,
+		allow_reset_warning_msg=warning,
+		sort=False
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Selection:
 			if choice.value == wipe_mode:
-				return get_default_partition_layout(block_devices, advanced_options)
+				return _get_default_partition_layout(devices, advanced_option=advanced_option)
 			else:
 				return select_individual_blockdevice_usage(block_devices)
 

@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import copy
-from typing import List, Any, Dict, Union, TYPE_CHECKING, Callable, Optional
+from typing import List, Any, Dict, TYPE_CHECKING, Callable, Optional
 
+from ..disk.validators import fs_types
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log, FormattedOutput
-
-from ..disk.validators import fs_types
 
 if TYPE_CHECKING:
 	from ..disk import BlockDevice
@@ -126,18 +125,6 @@ def select_partition(
 		return [int(p) for p in choice.value]
 	else:
 		return int(choice.value)
-
-
-def get_default_partition_layout(
-	block_devices: Union['BlockDevice', List['BlockDevice']],
-	advanced_options: bool = False
-) -> Optional[Dict[str, Any]]:
-	from ..disk import suggest_single_disk_layout, suggest_multi_disk_layout
-
-	if len(block_devices) == 1:
-		return suggest_single_disk_layout(block_devices[0], advanced_options=advanced_options)
-	else:
-		return suggest_multi_disk_layout(block_devices, advanced_options=advanced_options)
 
 
 def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str, Any]:  # noqa: max-complexity: 50

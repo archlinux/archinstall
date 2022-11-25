@@ -42,10 +42,9 @@ build() {
 
 package() {
   cd "$pkgname-$pkgver"
-  # extract the dependencies from the pyparted.toml so pip can install them
-  grep -oP '^ *"[\s\S]+?[=><]+[\s\S]+?"' pyproject.toml > requirements.txt && sed -i 's|"||g' requirements.txt
-  # install the dependencies
-  PIP_CONFIG_FILE=/dev/null pip install --root=${pkgdir} --ignore-installed -r requirements.txt
+
+  #install the dependencies
+  PIP_CONFIG_FILE=/dev/null flit install --only-deps
   # install archinstall
   PIP_CONFIG_FILE=/dev/null pip install --root="${pkgdir}" --ignore-installed dist/*.whl
   # install the docs

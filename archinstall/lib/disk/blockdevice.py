@@ -248,7 +248,7 @@ class BlockDevice:
 
 	def _largest_free_space(self) -> Optional[BlockSizeInfo]:
 		if self._block_info.free_space:
-			sorted_sizes = sorted(self._block_info.free_space, key=lambda x: x.size, reverse=True)
+			sorted_sizes = sorted(self._block_info.free_space, key=lambda x: x.value, reverse=True)
 			return sorted_sizes[0]
 		return None
 

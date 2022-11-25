@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
+from ..disk.device_handler import BDevice, DeviceModification, FilesystemType
 from ..general import SysCommand, secret
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
-from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.bootloader import Bootloader
+from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
@@ -21,18 +22,16 @@ from ..user_interaction import ask_for_swap
 from ..user_interaction import ask_hostname
 from ..user_interaction import ask_ntp
 from ..user_interaction import ask_to_configure_network
-from ..user_interaction import get_password, ask_for_a_timezone, save_config
+from ..user_interaction import get_password, ask_for_a_timezone
 from ..user_interaction import select_additional_repositories
 from ..user_interaction import select_disk_layout
-from ..user_interaction import select_harddrives
 from ..user_interaction import select_kernel
 from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
-from ..user_interaction.partitioning_conf import current_partition_layout
-from ..disk.disk_handler import BDevice, device_handler
+from ..user_interaction.disk_conf import select_devices
 
 if TYPE_CHECKING:
 	_: Any
@@ -72,13 +71,6 @@ class GlobalMenu(AbstractMenu):
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
 				default='UTF-8')
-		self._menu_options['harddrives'] = \
-			Selector(
-				_('Legacy Drive(s)'),
-				lambda preset: self._select_harddrives(preset),
-				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
-				preview_func=self._prev_harddrives,
-		)
 		self._menu_options['devices'] = \
 			Selector(
 				_('Drive(s)'),
@@ -89,14 +81,10 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Disk layout'),
-				lambda preset: select_disk_layout(
-					preset,
-					storage['arguments'].get('harddrives', []),
-					storage['arguments'].get('advanced', False)
-				),
+				lambda preset: self._select_disk_layout(preset),
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),
-				dependencies=['harddrives'])
+				dependencies=['devices'])
 		self._menu_options['disk_encryption'] = \
 			Selector(
 				_('Disk encryption'),
@@ -154,7 +142,6 @@ class GlobalMenu(AbstractMenu):
 				display_func=lambda x: x if x else '0',
 				default=0
 			)
-
 		self._menu_options['kernels'] = \
 			Selector(
 				_('Kernels'),
@@ -252,38 +239,41 @@ class GlobalMenu(AbstractMenu):
 	def _prev_devices(self) -> Optional[str]:
 		selector = self._menu_options['devices']
 		if selector.has_selection():
-			drives = selector.current_selection
-			return FormattedOutput.as_table(drives)
-		return None
-
-	def _prev_harddrives(self) -> Optional[str]:
-		print(self._menu_options['harddrives'])
-		selector = self._menu_options['harddrives']
-		if selector.has_selection():
-			drives = selector.current_selection
-			return FormattedOutput.as_table(drives)
+			devices: List[BDevice] = selector.current_selection
+			infos = [device.device_info for device in devices]
+			return FormattedOutput.as_table(infos)
 		return None
 
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['disk_layouts']
 		if selector.has_selection():
-			layouts: Dict[str, Dict[str, Any]] = selector.current_selection
+			device_modifications: List[DeviceModification] = selector.current_selection
 
-			output = ''
-			for device, layout in layouts.items():
-				output += f'{_("Device")}: {device}\n\n'
-				output += current_partition_layout(layout['partitions'], with_title=False)
-				output += '\n\n'
+			output_partition = ''
+			output_btrfs = ''
+			for modification in device_modifications:
+				# create partition table
+				partition_table = FormattedOutput.as_table(modification.partitions)
+				output_partition += f'{modification.device.device_info.path}\n'
+				output_partition += partition_table + '\n'
 
+				# create btrfs table
+				btrfs_partitions = list(
+					filter(lambda p: p.filesystem.type == FilesystemType.Btrfs, modification.partitions)
+				)
+				for partition in btrfs_partitions:
+					output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'
+
+			output = output_partition + output_btrfs
 			return output.rstrip()
 
 		return None
 
-	def _display_disk_layout(self, current_value: Optional[Dict[str, Any]]) -> str:
+	def _display_disk_layout(self, current_value: List[DeviceModification]) -> str:
 		if current_value:
-			total_partitions = [entry['partitions'] for entry in current_value.values()]
-			total_nr = sum([len(p) for p in total_partitions])
-			return f'{total_nr} {_("Partitions")}'
+			partitions = [len(modification.partitions) for modification in current_value]
+			total = sum(partitions)
+			return f'{total} {_("Partitions")}'
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
@@ -370,7 +360,7 @@ class GlobalMenu(AbstractMenu):
 		return ntp
 
 	def _select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
-		devices = device_handler.select_devices(preset)
+		devices = select_devices(preset)
 
 		if len(devices) == 0:
 			prompt = _(
@@ -393,31 +383,38 @@ class GlobalMenu(AbstractMenu):
 
 		return devices
 
-	def _select_harddrives(self, preset: List[str] = []) -> List[BDevice]:
-		harddrives = select_harddrives(preset)
+	def _select_disk_layout(self, preset: List[DeviceModification]) -> List[DeviceModification]:
+		return select_disk_layout(
+			preset,
+			self._menu_options['devices'].current_selection,
+			storage['arguments'].get('advanced', False)
+		)
 
-		if harddrives is not None:
-			if len(harddrives) == 0:
-				prompt = _(
-					"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
-					"WARNING: Archinstall won't check the suitability of this setup\n"
-					"Do you wish to continue?"
-				).format(storage['MOUNT_POINT'])
-
-				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
-
-				if choice.value == Menu.no():
-					self._disk_check = True
-					return self._select_harddrives(preset)
-				else:
-					self._disk_check = False
-
-			# in case the harddrives got changed we have to reset the disk layout as well
-			if preset != harddrives:
-				self._menu_options['disk_layouts'].set_current_selection(None)
-				storage['arguments']['disk_layouts'] = {}
-
-		return harddrives
+	# def _select_harddrives(self, preset: List[str] = []) -> List[BDevice]:
+	# 	harddrives = select_harddrives(preset)
+	#
+	# 	if harddrives is not None:
+	# 		if len(harddrives) == 0:
+	# 			prompt = _(
+	# 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
+	# 				"WARNING: Archinstall won't check the suitability of this setup\n"
+	# 				"Do you wish to continue?"
+	# 			).format(storage['MOUNT_POINT'])
+	#
+	# 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
+	#
+	# 			if choice.value == Menu.no():
+	# 				self._disk_check = True
+	# 				return self._select_harddrives(preset)
+	# 			else:
+	# 				self._disk_check = False
+	#
+	# 		# in case the harddrives got changed we have to reset the disk layout as well
+	# 		if preset != harddrives:
+	# 			self._menu_options['disk_layouts'].set_current_selection(None)
+	# 			storage['arguments']['disk_layouts'] = {}
+	#
+	# 	return harddrives
 
 	def _select_profile(self, current_profile: Optional[Profile]):
 		profile = select_profile(current_profile)

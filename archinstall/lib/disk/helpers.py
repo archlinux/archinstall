@@ -1,21 +1,21 @@
 from __future__ import annotations
+
+import glob
 import json
 import logging
 import os  # type: ignore
 import pathlib
 import re
 import time
-import glob
-
-from typing import Union, List, Iterator, Dict, Optional, Any, TYPE_CHECKING
-# https://stackoverflow.com/a/39757388/929999
-from ..models.subvolume import Subvolume
+from typing import Union, List, Dict, Optional, Any, TYPE_CHECKING
 
 from .blockdevice import BlockDevice
 from .dmcryptdev import DMCryptDev
 from .mapperdev import MapperDev
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand, JSON
+# https://stackoverflow.com/a/39757388/929999
+from ..models.subvolume import Subvolume
 from ..output import log
 from ..storage import storage
 from ..utils.diskinfo import get_lsblk_info, get_all_lsblk_info
@@ -30,44 +30,6 @@ GIGA = 2 ** 30
 def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
 
-def sort_block_devices_based_on_performance(block_devices :List[BlockDevice]) -> Dict[BlockDevice, int]:
-	result = {device: 0 for device in block_devices}
-
-	for device, weight in result.items():
-		if device.spinning:
-			weight -= 10
-		else:
-			weight += 5
-
-		if device.bus_type == 'nvme':
-			weight += 20
-		elif device.bus_type == 'sata':
-			weight += 10
-
-		result[device] = weight
-
-	return result
-
-def filter_disks_below_size_in_gb(devices :List[BlockDevice], gigabytes :int) -> Iterator[BlockDevice]:
-	for disk in devices:
-		if disk.size >= gigabytes:
-			yield disk
-
-def select_largest_device(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
-	if not filter_out:
-		filter_out = []
-
-	copy_devices = [*devices]
-	for filter_device in filter_out:
-		if filter_device in copy_devices:
-			copy_devices.pop(copy_devices.index(filter_device))
-
-	copy_devices = list(filter_disks_below_size_in_gb(copy_devices, gigabytes))
-
-	if not len(copy_devices):
-		return None
-
-	return max(copy_devices, key=(lambda device : device.size))
 
 def select_disk_larger_than_or_close_to(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
 	if not filter_out:
@@ -81,7 +43,7 @@ def select_disk_larger_than_or_close_to(devices :List[BlockDevice], gigabytes :i
 	if not len(copy_devices):
 		return None
 
-	return min(copy_devices, key=(lambda device : abs(device.size - gigabytes)))
+	return min(copy_devices, key=(lambda device : abs(device.value - gigabytes)))
 
 def convert_to_gigabytes(string :str) -> float:
 	unit = string.strip()[-1]
@@ -530,3 +492,7 @@ def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, stri
 			if mp and mp.endswith(target):
 				return True
 		return False
+
+
+def sort_block_devices_based_on_performance():
+	return None

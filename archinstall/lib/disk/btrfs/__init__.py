@@ -1,8 +1,9 @@
 from __future__ import annotations
-import pathlib
+
 import glob
 import logging
-from typing import Union, Dict, TYPE_CHECKING
+import pathlib
+from typing import Union, TYPE_CHECKING
 
 # https://stackoverflow.com/a/39757388/929999
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ from .btrfs_helpers import (
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo as BtrfsSubvolume
 from .btrfspartition import BTRFSPartition as BTRFSPartition
 
-from ...exceptions import DiskError, Deprecated
+from ...exceptions import DiskError
 from ...general import SysCommand
 from ...output import log
 
