@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import sys
 from dataclasses import dataclass, field
 from enum import Enum
@@ -8,7 +9,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING, Union
 
 import parted
-from parted import Disk, Device, Geometry, Partition
+from parted import Device, Disk, Geometry, Partition
 
 from ..models.subvolume import Subvolume
 from ..output import log
@@ -38,20 +39,35 @@ class Unit(Enum):
 	ZiB = 1024**7  	# zebibyte
 	YiB = 1024**8  	# yobibyte
 
-	Percent = '%'
+	sectors = 'sectors'  # size in sector
+
+	Percent = '%' 	# size in percentile
 
 
 @dataclass
 class Size:
 	value: int
 	unit: Unit
+	sector_size: Optional[Size] = None  # only required when unit is sector
 
-	def format_size(self, target_unit: Unit) -> str:
+	def __post_init__(self):
+		if self.unit == Unit.sectors and self.sector_size is None:
+			raise ValueError('Sector size is required when unit is sectors')
+
+	def format_size(self, target_unit: Unit, sector_size: Optional[Size] = None) -> str:
 		if self.unit == Unit.Percent:
 			return f'{self.value}%'
-
-		target = (self.normalize() / target_unit.value)  # type: ignore
-		return str(int(target)).strip()
+		elif self.unit == Unit.sectors:
+			norm = self.normalize()
+			return Size(norm, Unit.B).format_size(target_unit)
+		else:
+			if target_unit == Unit.sectors:
+				norm = self.normalize()
+				sectors = math.ceil(norm / sector_size.value)
+				return str(sectors)
+			else:
+				target = (self.normalize() / target_unit.value)  # type: ignore
+				return str(int(target)).strip()
 
 	def normalize(self) -> int:
 		"""
@@ -59,11 +75,19 @@ class Size:
 		"""
 		if self.unit == Unit.Percent:
 			return self.value
+		elif self.unit == Unit.sectors:
+			return self.value * self.sector_size.normalize()
 		return self.value * self.unit.value  # type: ignore
 
-	def __sub__(self, other):
-		if self.unit == Unit.Percent or other.unit == Unit.Percent:
+	def __sub__(self, other: Size) -> Size:
+		sector_units = sum([self.unit == Unit.sectors, other.unit == Unit.sectors])
+
+		# we can't do subtractions of percentages or sectors with non sectors
+		if self.unit == Unit.Percent or other.unit == Unit.Percent or sector_units == 1:
 			raise ValueError('Can not subtract incompatible units')
+
+		if sector_units == 2:
+			return Size(self.value - other.value, Unit.sectors, self.sector_size)
 
 		src_norm = self.normalize()
 		dest_norm = other.normalize()
@@ -91,39 +115,59 @@ class Size:
 @dataclass
 class PartitionInfo:
 	name: str
-	fs_type: str
+	type: str
+	filesystem: Filesystem
 	path: Path
 	size: Size
-	part_type: str
 	disk: Disk
 
 	def as_json(self) -> Dict[str, Any]:
 		return {
-			'Name': self.name,
-			'Filesystem': self.fs_type,
-			'Path': str(self.path),
-			'Size (MiB)': self.size.format_size(Unit.MiB),
-			'Type': self.part_type
+			'name': self.name,
+			'type': self.type,
+			'filesystem': self.filesystem.type.value,
+			'path': str(self.path),
+			'size (MiB)': self.size.format_size(Unit.MiB),
 		}
 
 	@classmethod
 	def from_partiion(cls, partition: Partition) -> PartitionInfo:
-		if partition.fileSystem:
-			fs_type = partition.fileSystem.type
-		else:
-			lsblk_info = get_lsblk_info(partition.path)
-			fs_type = lsblk_info.fstype if lsblk_info.fstype else 'N/A'
-
+		fs_type = FilesystemType.parse_parted(partition)
 		partition_type = parted.partitions[partition.type]
 
 		return PartitionInfo(
 			name=partition.get_name(),
-			fs_type=fs_type,
+			type=partition_type,
+			filesystem=Filesystem(fs_type),
 			path=partition.path,
 			size=Size(partition.getLength(unit='B'), Unit.B),
-			part_type=partition_type,
 			disk=partition.disk
 		)
+
+
+class DeviceGeometry:
+	def __init__(self, geometry: Geometry, sector_size: Size):
+		self._geometry = geometry
+		self._sector_size = sector_size
+
+	@property
+	def start(self) -> int:
+		return self._geometry.start
+
+	@property
+	def end(self) -> int:
+		return self._geometry.end
+
+	def get_length(self, unit: Unit = Unit.sectors) -> int:
+		return self._geometry.getLength(unit.name)
+
+	def as_json(self) -> Dict[str, Any]:
+		return {
+			'sector size (bytes)': self._sector_size.value,
+			'start sector': self._geometry.start,
+			'end sector': self._geometry.end,
+			'length': self._geometry.getLength()
+		}
 
 
 @dataclass
@@ -132,21 +176,20 @@ class DeviceInfo:
 	path: Path
 	type: str
 	size: Size
-	free_space: Size
-	sector_size: int
+	free_space_regions: List[DeviceGeometry]
+	sector_size: Size
 	read_only: bool
 	dirty: bool
-	rota: bool
-	bus_type: Optional[str]
 
 	def as_json(self) -> Dict[str, Any]:
+		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
 		return {
 			'Model': self.model,
 			'Path': str(self.path),
 			'Type': self.type,
 			'Size (MiB)': self.size.format_size(Unit.MiB),
-			'Free space (MiB)': self.free_space.format_size(Unit.MiB),
-			'Sector size': self.sector_size,
+			'Free space (MiB)': int(total_free_space),
+			'Sector size (bytes)': self.sector_size.value,
 			'Read only': self.read_only
 		}
 
@@ -155,24 +198,18 @@ class DeviceInfo:
 		device = disk.device
 		device_type = parted.devices[device.type]
 
-		free_regions: List[Geometry] = disk.getFreeSpaceRegions()
-		total_free_space = sum([region.getLength(unit='B') for region in free_regions])
-
-		lsblk_info = get_lsblk_info(device.path)
-		rota = lsblk_info.rota if lsblk_info.rota else False
-		bus_type = lsblk_info.tran if lsblk_info.tran else None
+		sector_size = Size(device.sectorSize, Unit.B)
+		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
 
 		return DeviceInfo(
 			model=device.model.strip(),
 			path=Path(device.path),
 			type=device_type,
-			sector_size=device.sectorSize,
+			sector_size=sector_size,
 			size=Size(device.getLength(unit='B'), Unit.B),
-			free_space=Size(int(total_free_space), Unit.B),
+			free_space_regions=free_space,
 			read_only=device.readOnly,
-			dirty=device.dirty,
-			rota=rota,
-			bus_type=bus_type
+			dirty=device.dirty
 		)
 
 
@@ -221,6 +258,23 @@ class FilesystemType(Enum):
 	Udf = 'udf'
 	Xfs = 'xfs'
 
+	# this is not a FS known to parted, so be careful
+	# with the usage from this enum
+	Crypto_luks = 'crypto_LUKS'
+
+	@classmethod
+	def parse_parted(cls, partition: Partition) -> Optional[FilesystemType]:
+		try:
+			if partition.fileSystem:
+				return FilesystemType(partition.fileSystem.type)
+			else:
+				lsblk_info = get_lsblk_info(partition.path)
+				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
+		except ValueError:
+			log(f'Could not determine the filesystem: {partition.fileSystem}', level=logging.DEBUG)
+
+		return None
+
 
 @dataclass
 class Filesystem:
@@ -232,24 +286,41 @@ class Filesystem:
 class NewDevicePartition:
 	type: PartitionType
 	start: Size
-	size: Size
+	length: Size
 	wipe: bool
 	filesystem: Filesystem
 	mountpoint: Optional[Path] = None
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs: List[Subvolume] = field(default_factory=list)
+	existing: bool = False
+
+	def set_flag(self, flag: PartitionFlag):
+		if flag not in self.flags:
+			self.flags.append(flag)
+
+	def invert_flag(self, flag: PartitionFlag):
+		if flag in self.flags:
+			self.flags = [f for f in self.flags if f != flag]
+		else:
+			self.set_flag(flag)
 
 	def as_json(self) -> Dict[str, Any]:
-		return {
+		info = {
+			'exist. part.': self.existing,
+			'wipe': self.wipe,
 			'type': self.type.value,
 			'start (MiB)': self.start.format_size(Unit.MiB),
-			'size (MiB)': self.size.format_size(Unit.MiB),
-			'wipe': self.wipe,
-			'filesystem': self.filesystem.type.value,
-			'mount options': ', '.join(self.filesystem.mount_options),
+			'length (MiB)': self.length.format_size(Unit.MiB),
+			'fs type': self.filesystem.type.value,
 			'mountpoint': self.mountpoint if self.mountpoint else '',
+			'mount options': ', '.join(self.filesystem.mount_options),
 			'flags': ', '.join([f.name for f in self.flags])
 		}
+
+		if self.btrfs:
+			info['btrfs'] = f'{len(self.btrfs)} subvolumes'
+
+		return info
 
 
 @dataclass

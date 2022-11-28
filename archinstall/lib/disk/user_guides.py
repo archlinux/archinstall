@@ -28,7 +28,7 @@ def _boot_partition() -> NewDevicePartition:
 	return NewDevicePartition(
 		type=PartitionType.Primary,
 		start=start,
-		size=size,
+		length=size,
 		wipe=True,
 		mountpoint=Path('/boot'),
 		filesystem=Filesystem(type=FilesystemType.Fat32),
@@ -52,15 +52,16 @@ def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
 	return options[choice.value]
 
 
-def select_individual_blockdevice_usage(devices: list) -> List[DeviceModification]:
-	result = []
-
-	for device in devices:
-		from ..user_interaction.partitioning_conf import manage_new_and_existing_partitions
-		modification = manage_new_and_existing_partitions(device)
-		result.append(modification)
-
-	return result
+# def select_individual_blockdevice_usage(devices: list) -> List[DeviceModification]:
+# 	result = []
+#
+# 	for device in devices:
+# 		manual_partitioning(device, device_partitions=partitions)
+#
+# 		modification = manage_new_and_existing_partitions(device)
+# 		result.append(modification)
+#
+# 	return result
 
 
 def suggest_single_disk_layout(
@@ -114,14 +115,14 @@ def suggest_single_disk_layout(
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
-		size = Size(100, Unit.Percent)
+		length = Size(100, Unit.Percent)
 	else:
-		size = min(device.device_info.size, root_partition_size)
+		length = min(device.device_info.size, root_partition_size)
 
 	root_partition = NewDevicePartition(
 		type=PartitionType.Primary,
 		start=start,
-		size=size,
+		length=length,
 		wipe=True,
 		mountpoint=Path('/') if not using_subvolumes else None,
 		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),
@@ -147,8 +148,8 @@ def suggest_single_disk_layout(
 		home_partition = NewDevicePartition(
 			type=PartitionType.Primary,
 			wipe=True,
-			start=root_partition.size,
-			size=Size(100, Unit.Percent),
+			start=root_partition.length,
+			length=Size(100, Unit.Percent),
 			mountpoint=Path('/home'),
 			filesystem=Filesystem(
 				type=filesystem_type, mount_options=['compress=zstd'] if compression else []
@@ -162,7 +163,7 @@ def suggest_single_disk_layout(
 def suggest_multi_disk_layout(
 	devices: List[BDevice],
 	filesystem_type: Optional[FilesystemType] = None,
-	advanced_options :bool = False
+	advanced_options: bool = False
 ) -> List[DeviceModification]:
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
@@ -176,8 +177,8 @@ def suggest_multi_disk_layout(
 		filesystem_type = ask_for_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
-	possible_devices = list(filter(lambda d: d.device_info.size >= min_home_partition_size, devices))
-	home_device = max(possible_devices, key=lambda d: d.device_info.size) if possible_devices else None
+	possible_devices = list(filter(lambda d: d.device_info.length >= min_home_partition_size, devices))
+	home_device = max(possible_devices, key=lambda d: d.device_info.length) if possible_devices else None
 
 	# find proper device for /root
 	devices_delta = {}
@@ -217,7 +218,7 @@ def suggest_multi_disk_layout(
 	root_partition = NewDevicePartition(
 		type=PartitionType.Primary,
 		start=Size(513, Unit.MiB) if has_uefi() else Size(206, Unit.MiB),
-		size=Size(100, Unit.Percent),
+		length=Size(100, Unit.Percent),
 		wipe=True,
 		mountpoint=Path('/'),
 		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),
@@ -228,7 +229,7 @@ def suggest_multi_disk_layout(
 	home_partition = NewDevicePartition(
 		type=PartitionType.Primary,
 		start=Size(1, Unit.MiB),
-		size=Size(100, Unit.Percent),
+		length=Size(100, Unit.Percent),
 		wipe=True,
 		mountpoint=Path('/home'),
 		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),

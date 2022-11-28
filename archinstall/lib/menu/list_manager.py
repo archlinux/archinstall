@@ -34,7 +34,7 @@ class ListManager:
 		self._data = copy.deepcopy(entries)
 
 		explainer = str(_('\n Choose an object from the list, and select one of the available actions for it to execute'))
-		self._prompt = prompt + explainer if prompt else explainer
+		self._prompt = prompt if prompt else explainer
 
 		self._separator = ''
 		self._confirm_action = str(_('Confirm and exit'))
@@ -128,21 +128,29 @@ class ListManager:
 			self._data = self.handle_action(choice.value, entry, self._data)
 
 	def selected_action_display(self, selection: Any) -> str:
-		# this will return the value to be displayed in the
-		# "Select an action for '{}'" string
+		"""
+		this will return the value to be displayed in the
+		"Select an action for '{}'" string
+		"""
 		raise NotImplementedError('Please implement me in the child class')
 
 	def reformat(self, data: List[Any]) -> Dict[str, Optional[Any]]:
-		# this should return a dictionary of display string to actual data entry
-		# mapping; if the value for a given display string is None it will be used
-		# in the header value (useful when displaying tables)
+		"""
+		this should return a dictionary of display string to actual data entry
+		mapping; if the value for a given display string is None it will be used
+		in the header value (useful when displaying tables)
+		"""
 		raise NotImplementedError('Please implement me in the child class')
 
 	def handle_action(self, action: Any, entry: Optional[Any], data: List[Any]) -> List[Any]:
-		# this function is called when a base action or
-		# a specific action for an entry is triggered
+		"""
+		this function is called when a base action or
+		a specific action for an entry is triggered
+		"""
 		raise NotImplementedError('Please implement me in the child class')
 
-	def filter_options(self, selection :Any, options :List[str]) -> List[str]:
-		# filter which actions to show for an specific selection
+	def filter_options(self, selection: Any, options: List[str]) -> List[str]:
+		"""
+		filter which actions to show for an specific selection
+		"""
 		return options

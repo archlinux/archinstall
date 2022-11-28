@@ -62,7 +62,7 @@ class SubvolumeList(ListManager):
 		if not name:
 			return None
 
-		mountpoint = TextInput(f'\n{_("Subvolume mountpoint")}: ', editing.mountpoint if editing else '').run()
+		mountpoint = TextInput(f'{_("Subvolume mountpoint")}: ', editing.mountpoint if editing else '').run()
 
 		if not mountpoint:
 			return None

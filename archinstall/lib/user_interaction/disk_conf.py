@@ -4,13 +4,13 @@ from typing import Any, Dict, TYPE_CHECKING, Optional, List
 
 from ..disk import BlockDevice
 from ..disk.device_handler import BDevice, DeviceInfo, DeviceModification, device_handler
+from ..disk.partitioning_menu import manual_partitioning
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..output import FormattedOutput
-from ..disk.user_guides import select_individual_blockdevice_usage, \
-	suggest_single_disk_layout, suggest_multi_disk_layout
+from ..disk.user_guides import suggest_single_disk_layout, suggest_multi_disk_layout
 
 if TYPE_CHECKING:
 	_: Any
@@ -108,7 +108,12 @@ def select_disk_layout(
 			if choice.value == wipe_mode:
 				return _get_default_partition_layout(devices, advanced_option=advanced_option)
 			else:
-				return select_individual_blockdevice_usage(devices)
+				modifications = []
+				for device in devices:
+					mod = device_handler.modify_device(device, wipe=False)
+					mod.partitions = manual_partitioning(device)
+
+				return modifications
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:
