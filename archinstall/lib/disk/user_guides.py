@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Optional, Any, List, TYPE_CHECKING, Tuple
 
-from .device_handler import BDevice, device_handler, NewDevicePartition, PartitionType, Filesystem, FilesystemType, \
+from .device_handler import BDevice, device_handler, NewDevicePartition, PartitionType, FilesystemType, \
 	PartitionFlag, DeviceModification, Size, Unit
 from ..models.subvolume import Subvolume
 
@@ -31,7 +31,7 @@ def _boot_partition() -> NewDevicePartition:
 		length=size,
 		wipe=True,
 		mountpoint=Path('/boot'),
-		filesystem=Filesystem(type=FilesystemType.Fat32),
+		fs_type=FilesystemType.Fat32,
 		flags=[PartitionFlag.Boot]
 	)
 
@@ -125,7 +125,8 @@ def suggest_single_disk_layout(
 		length=length,
 		wipe=True,
 		mountpoint=Path('/') if not using_subvolumes else None,
-		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),
+		fs_type=filesystem_type,
+		mount_options=['compress=zstd'] if compression else [],
 	)
 	device_modification.add_partition(root_partition)
 
@@ -151,9 +152,8 @@ def suggest_single_disk_layout(
 			start=root_partition.length,
 			length=Size(100, Unit.Percent),
 			mountpoint=Path('/home'),
-			filesystem=Filesystem(
-				type=filesystem_type, mount_options=['compress=zstd'] if compression else []
-			),
+			fs_type=filesystem_type,
+			mount_options=['compress=zstd'] if compression else []
 		)
 		device_modification.add_partition(home_partition)
 
@@ -221,7 +221,8 @@ def suggest_multi_disk_layout(
 		length=Size(100, Unit.Percent),
 		wipe=True,
 		mountpoint=Path('/'),
-		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),
+		mount_options=['compress=zstd'] if compression else [],
+		fs_type=filesystem_type
 	)
 	root_device_modification.add_partition(root_partition)
 
@@ -232,7 +233,8 @@ def suggest_multi_disk_layout(
 		length=Size(100, Unit.Percent),
 		wipe=True,
 		mountpoint=Path('/home'),
-		filesystem=Filesystem(type=filesystem_type, mount_options=['compress=zstd'] if compression else []),
+		mount_options=['compress=zstd'] if compression else [],
+		fs_type=filesystem_type,
 	)
 	home_device_modification.add_partition(home_partition)
 

@@ -4,8 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
-from .device_handler import NewDevicePartition, FilesystemType, BDevice, Size, Unit, PartitionType, Filesystem, \
-	PartitionFlag
+from .device_handler import NewDevicePartition, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
 from .user_guides import suggest_single_disk_layout
 from ..menu import Menu
 from ..menu.list_manager import ListManager
@@ -60,7 +59,7 @@ class PartitioningList(ListManager):
 		return str(_('Partition'))
 
 	def filter_options(self, selection: NewDevicePartition, options: List[str]) -> List[str]:
-		if selection.filesystem.type == FilesystemType.Btrfs:
+		if selection.fs_type == FilesystemType.Btrfs:
 			return options
 
 		only_btrfs = [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
@@ -97,7 +96,7 @@ class PartitioningList(ListManager):
 			case 'set_filesystem':
 				fs_type = self._prompt_partition_fs_type()
 				if fs_type:
-					entry.filesystem.type = fs_type
+					entry.fs_type = fs_type
 			case 'btrfs_mark_compressed':
 				self._set_compressed(entry)
 			case 'btrfs_set_subvolumes':
@@ -110,10 +109,10 @@ class PartitioningList(ListManager):
 	def _set_compressed(self, partition: NewDevicePartition):
 		compression = 'compress=zstd'
 
-		if compression in partition.filesystem.mount_options:
-			partition.filesystem.mount_options = [o for o in partition.filesystem.mount_options if o != compression]
+		if compression in partition.mount_options:
+			partition.mount_options = [o for o in partition.mount_options if o != compression]
 		else:
-			partition.filesystem.mount_options.append(compression)
+			partition.mount_options.append(compression)
 
 	def _set_btrfs_subvolumes(self, partition: NewDevicePartition):
 		partition.btrfs = SubvolumeList(
@@ -129,14 +128,14 @@ class PartitioningList(ListManager):
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
-		if partition.filesystem.type == FilesystemType.Crypto_luks:
+		if partition.fs_type == FilesystemType.Crypto_luks:
 			prompt = str(_('This partition is encrypted therefore for the formatting a filesystem has to be specified'))
 			fs_type = self._prompt_partition_fs_type(prompt)
 
 			if fs_type is None:
 				return
 
-			partition.filesystem.type = fs_type
+			partition.fs_type = fs_type
 
 		partition.wipe = True
 
@@ -250,7 +249,7 @@ class PartitioningList(ListManager):
 			start=start_size,
 			length=length,
 			wipe=True,
-			filesystem=Filesystem(fs_type)
+			fs_type=fs_type
 		)
 
 		# new line for the next prompt
@@ -279,14 +278,15 @@ class PartitioningList(ListManager):
 def manual_partitioning(
 	device: BDevice,
 	prompt: str = '',
-	device_partitions: List[NewDevicePartition] = []
+	preset: List[NewDevicePartition] = []
 ) -> List[NewDevicePartition]:
 	if not prompt:
 		prompt = str(_('Partition management: {}')).format(device.device_info.path)
 
-	partitions = PartitioningList(prompt, device, device_partitions).run()
+	partitions = PartitioningList(prompt, device, preset).run()
 	return partitions
 
 
 # TODO
 # verify overlapping partitions
+# add existing partitions to manual

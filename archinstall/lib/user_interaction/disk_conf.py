@@ -78,11 +78,30 @@ def _get_default_partition_layout(
 		return suggest_multi_disk_layout(devices, advanced_options=advanced_option)
 
 
+def _manual_partitioning(
+	preset: List[DeviceModification],
+	devices: List[BDevice]
+) -> List[DeviceModification]:
+	modifications = []
+	for device in devices:
+		mod = next(filter(lambda x: x.device == device, preset), None)
+		if not mod:
+			mod = device_handler.modify_device(device, wipe=False)
+
+		mod.partitions = manual_partitioning(device, preset=mod.partitions)
+		modifications.append(mod)
+
+	return modifications
+
+
 def select_disk_layout(
 	preset: List[DeviceModification],
 	devices: List[BDevice],
 	advanced_option: bool = False
 ) -> List[DeviceModification]:
+	if not preset:
+		preset = []
+
 	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
 	custom_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
 	modes = [wipe_mode, custom_mode]
@@ -108,12 +127,7 @@ def select_disk_layout(
 			if choice.value == wipe_mode:
 				return _get_default_partition_layout(devices, advanced_option=advanced_option)
 			else:
-				modifications = []
-				for device in devices:
-					mod = device_handler.modify_device(device, wipe=False)
-					mod.partitions = manual_partitioning(device)
-
-				return modifications
+				return _manual_partitioning(preset, devices)
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:

@@ -116,7 +116,7 @@ class Size:
 class PartitionInfo:
 	name: str
 	type: str
-	filesystem: Filesystem
+	fs_type: FilesystemType
 	path: Path
 	size: Size
 	disk: Disk
@@ -125,7 +125,7 @@ class PartitionInfo:
 		return {
 			'name': self.name,
 			'type': self.type,
-			'filesystem': self.filesystem.type.value,
+			'filesystem': self.fs_type.value,
 			'path': str(self.path),
 			'size (MiB)': self.size.format_size(Unit.MiB),
 		}
@@ -138,7 +138,7 @@ class PartitionInfo:
 		return PartitionInfo(
 			name=partition.get_name(),
 			type=partition_type,
-			filesystem=Filesystem(fs_type),
+			fs_type=fs_type,
 			path=partition.path,
 			size=Size(partition.getLength(unit='B'), Unit.B),
 			disk=partition.disk
@@ -277,19 +277,14 @@ class FilesystemType(Enum):
 
 
 @dataclass
-class Filesystem:
-	type: FilesystemType
-	mount_options: List[str] = field(default_factory=list)
-
-
-@dataclass
 class NewDevicePartition:
 	type: PartitionType
 	start: Size
 	length: Size
 	wipe: bool
-	filesystem: Filesystem
+	fs_type: FilesystemType
 	mountpoint: Optional[Path] = None
+	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs: List[Subvolume] = field(default_factory=list)
 	existing: bool = False
@@ -311,9 +306,9 @@ class NewDevicePartition:
 			'type': self.type.value,
 			'start (MiB)': self.start.format_size(Unit.MiB),
 			'length (MiB)': self.length.format_size(Unit.MiB),
-			'fs type': self.filesystem.type.value,
+			'fs type': self.fs_type.value,
 			'mountpoint': self.mountpoint if self.mountpoint else '',
-			'mount options': ', '.join(self.filesystem.mount_options),
+			'mount options': ', '.join(self.mount_options),
 			'flags': ', '.join([f.name for f in self.flags])
 		}
 
