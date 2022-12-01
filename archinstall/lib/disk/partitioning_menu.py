@@ -285,8 +285,3 @@ def manual_partitioning(
 
 	partitions = PartitioningList(prompt, device, preset).run()
 	return partitions
-
-
-# TODO
-# verify overlapping partitions
-# add existing partitions to manual

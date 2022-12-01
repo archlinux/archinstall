@@ -10,6 +10,7 @@ from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
 from ..models.bootloader import Bootloader
 from ..models.disk_encryption import DiskEncryption, EncryptionType
+from ..models.disk_layout import DiskLayoutConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
@@ -32,6 +33,7 @@ from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
 from ..user_interaction.disk_conf import select_devices
+from ..user_interaction.save_conf import save_config
 
 if TYPE_CHECKING:
 	_: Any
@@ -71,20 +73,21 @@ class GlobalMenu(AbstractMenu):
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
 				default='UTF-8')
-		self._menu_options['devices'] = \
-			Selector(
-				_('Drive(s)'),
-				lambda preset: self._select_devices(preset),
-				display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
-				preview_func=self._prev_devices,
-		)
+		# self._menu_options['devices'] = \
+		# 	Selector(
+		# 		_('Drive(s)'),
+		# 		lambda preset: self._select_devices(preset),
+		# 		display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
+		# 		preview_func=self._prev_devices,
+		# )
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Disk layout'),
 				lambda preset: self._select_disk_layout(preset),
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),
-				dependencies=['devices'])
+				# dependencies=['devices']
+			)
 		self._menu_options['disk_encryption'] = \
 			Selector(
 				_('Disk encryption'),
@@ -220,7 +223,7 @@ class GlobalMenu(AbstractMenu):
 		selector = self._menu_options['disk_layouts']
 
 		if selector.has_selection():
-			layouts: Dict[str, Dict[str, Any]] = selector.current_selection
+			layouts: List[DeviceModification] = selector.current_selection
 		else:
 			# this should not happen as the encryption menu has the disk layout as dependency
 			raise ValueError('No disk layout specified')
@@ -247,33 +250,40 @@ class GlobalMenu(AbstractMenu):
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['disk_layouts']
 		if selector.has_selection():
-			device_modifications: List[DeviceModification] = selector.current_selection
+			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
 
-			output_partition = ''
-			output_btrfs = ''
-			for modification in device_modifications:
-				# create partition table
-				partition_table = FormattedOutput.as_table(modification.partitions)
-				output_partition += f'{modification.device.device_info.path}\n'
-				output_partition += partition_table + '\n'
+			device_modifications: List[DeviceModification] = \
+				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.modifictions))
 
-				# create btrfs table
-				btrfs_partitions = list(
-					filter(lambda p: len(p.btrfs) > 0, modification.partitions)
-				)
-				for partition in btrfs_partitions:
-					output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'
+			if device_modifications:
+				disk_layout_output = disk_layout_conf.layout_type.value + '\n'
+				output_partition = ''
+				output_btrfs = ''
 
-			output = output_partition + output_btrfs
-			return output.rstrip()
+				for modification in device_modifications:
+					# create partition table
+					partition_table = FormattedOutput.as_table(modification.partitions)
+					output_partition += f'{modification.device.device_info.path}\n'
+					output_partition += partition_table + '\n'
+
+					# create btrfs table
+					btrfs_partitions = list(
+						filter(lambda p: len(p.btrfs) > 0, modification.partitions)
+					)
+					for partition in btrfs_partitions:
+						output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'
+
+				output = disk_layout_output + output_partition + output_btrfs
+				return output.rstrip()
 
 		return None
 
-	def _display_disk_layout(self, current_value: List[DeviceModification]) -> str:
+	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:
-			partitions = [len(modification.partitions) for modification in current_value]
-			total = sum(partitions)
-			return f'{total} {_("Partitions")}'
+			partitions = [len(mod.partitions) for mod in current_value.modifictions if mod.partitions]
+			if partitions:
+				total = sum(partitions)
+				return f'{total} {_("Partitions")}'
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
@@ -338,11 +348,13 @@ class GlobalMenu(AbstractMenu):
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
 		if self._disk_check:
-			if not check('devices'):
-				missing += [self._menu_options['devices'].description]
-			if check('devices'):
-				if not self._menu_options['devices'].is_empty() and not check('disk_layouts'):
-					missing += [self._menu_options['disk_layouts'].description]
+			# if not check('devices'):
+			# 	missing += [self._menu_options['devices'].description]
+			# if check('devices'):
+			# 	if not self._menu_options['devices'].is_empty() and not check('disk_layouts'):
+			# 		missing += [self._menu_options['disk_layouts'].description]
+			if check('disk_layouts'):
+				missing += [self._menu_options['disk_layouts'].description]
 
 		return missing
 
@@ -359,62 +371,11 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_devices(self, preset: List[BDevice] = []) -> List[BDevice]:
-		devices = select_devices(preset)
-
-		if len(devices) == 0:
-			prompt = _(
-				"You decided to skip harddrive selection and will use whatever drive-setup is mounted at {} (experimental)\n"
-				"WARNING: Archinstall won't check the suitability of this setup\n"
-				"Do you wish to continue?"
-			).format(storage['MOUNT_POINT'])
-
-			choice = Menu(prompt, Menu.yes_no(), skip=False).run()
-
-			if choice.value == Menu.no():
-				self._disk_check = True
-				return self._select_devices(preset)
-			else:
-				self._disk_check = False
-
-		# in case the device selection changed we have to reset the disk layout as well
-		if preset != devices:
-			self._menu_options['disk_layouts'].set_current_selection(None)
-
-		return devices
-
-	def _select_disk_layout(self, preset: List[DeviceModification]) -> List[DeviceModification]:
+	def _select_disk_layout(self, preset: Optional[DiskLayoutConfiguration] = None) -> DiskLayoutConfiguration:
 		return select_disk_layout(
 			preset,
-			self._menu_options['devices'].current_selection,
 			storage['arguments'].get('advanced', False)
 		)
-
-	# def _select_harddrives(self, preset: List[str] = []) -> List[BDevice]:
-	# 	harddrives = select_harddrives(preset)
-	#
-	# 	if harddrives is not None:
-	# 		if len(harddrives) == 0:
-	# 			prompt = _(
-	# 				"You decided to skip harddrive selection\nand will use whatever drive-setup is mounted at {} (experimental)\n"
-	# 				"WARNING: Archinstall won't check the suitability of this setup\n"
-	# 				"Do you wish to continue?"
-	# 			).format(storage['MOUNT_POINT'])
-	#
-	# 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes(), skip=False).run()
-	#
-	# 			if choice.value == Menu.no():
-	# 				self._disk_check = True
-	# 				return self._select_harddrives(preset)
-	# 			else:
-	# 				self._disk_check = False
-	#
-	# 		# in case the harddrives got changed we have to reset the disk layout as well
-	# 		if preset != harddrives:
-	# 			self._menu_options['disk_layouts'].set_current_selection(None)
-	# 			storage['arguments']['disk_layouts'] = {}
-	#
-	# 	return harddrives
 
 	def _select_profile(self, current_profile: Optional[Profile]):
 		profile = select_profile(current_profile)

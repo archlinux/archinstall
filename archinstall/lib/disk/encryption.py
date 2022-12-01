@@ -1,21 +1,28 @@
+from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
+from .device_handler import DeviceModification, NewDevicePartition
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..models.disk_encryption import EncryptionType, DiskEncryption
-from ..user_interaction.partitioning_conf import current_partition_layout
 from ..user_interaction.utils import get_password
 from ..menu import Menu
 from ..general import secret
 from ..hsm.fido import Fido2Device, Fido2
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
 
 
 class DiskEncryptionMenu(AbstractSubMenu):
-	def __init__(self, data_store: Dict[str, Any], preset: Optional[DiskEncryption], disk_layouts: Dict[str, Any]):
+	def __init__(
+		self,
+		data_store: Dict[str, Any],
+		preset: Optional[DiskEncryption],
+		disk_layouts: List[DeviceModification]
+	):
 		if preset:
 			self._preset = preset
 		else:
@@ -86,10 +93,11 @@ class DiskEncryptionMenu(AbstractSubMenu):
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['partitions']
 		if selector.has_selection():
-			partitions: List[Any] = selector.current_selection
+			partitions: List[NewDevicePartition] = selector.current_selection
 			output = str(_('Partitions to be encrypted')) + '\n'
-			output += current_partition_layout(partitions, with_title=False)
+			output += FormattedOutput.as_table(partitions)
 			return output.rstrip()
+
 		return None
 
 
@@ -132,18 +140,17 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 	return None
 
 
-def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]) -> List[Any]:
-	# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
-	# Then we need to identify which partitions to encrypt. This will default to / (root).
+def select_partitions_to_encrypt(
+	device_mods: List[DeviceModification],
+	preset: List[NewDevicePartition]
+) -> List[NewDevicePartition]:
 	all_partitions = []
-	for blockdevice in disk_layouts.values():
-		if partitions := blockdevice.get('partitions'):
-			partitions = [p for p in partitions if p['mountpoint'] != '/boot']
-			all_partitions += partitions
+	for entry in device_mods:
+		all_partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), entry.partitions))
 
 	if all_partitions:
 		title = str(_('Select which partitions to encrypt'))
-		partition_table = current_partition_layout(all_partitions, with_title=False).strip()
+		partition_table = FormattedOutput.as_table(all_partitions)
 
 		choice = TableMenu(
 			title,

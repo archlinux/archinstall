@@ -15,7 +15,6 @@ from .mapperdev import MapperDev
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand, JSON
 # https://stackoverflow.com/a/39757388/929999
-from ..models.subvolume import Subvolume
 from ..output import log
 from ..storage import storage
 from ..utils.diskinfo import get_lsblk_info, get_all_lsblk_info
@@ -29,21 +28,6 @@ GIGA = 2 ** 30
 
 def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
-
-
-def select_disk_larger_than_or_close_to(devices :List[BlockDevice], gigabytes :int, filter_out :Optional[List[BlockDevice]] = None) -> BlockDevice:
-	if not filter_out:
-		filter_out = []
-
-	copy_devices = [*devices]
-	for filter_device in filter_out:
-		if filter_device in copy_devices:
-			copy_devices.pop(copy_devices.index(filter_device))
-
-	if not len(copy_devices):
-		return None
-
-	return min(copy_devices, key=(lambda device : abs(device.value - gigabytes)))
 
 def convert_to_gigabytes(string :str) -> float:
 	unit = string.strip()[-1]
@@ -170,11 +154,6 @@ def get_blockdevice_uevent(dev_name :str) -> Dict[str, Any]:
 	}
 
 
-def all_disks() -> List[BlockDevice]:
-	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
-	return all_blockdevices(partitions=False, mappers=False)
-
-
 def all_blockdevices(
 	mappers: bool = False,
 	partitions: bool = False,
@@ -253,16 +232,6 @@ def get_parent_of_partition(path :pathlib.Path) -> pathlib.Path:
 	partition_name = path.name
 	pci_device = (pathlib.Path("/sys/class/block") / partition_name).resolve()
 	return f"/dev/{pci_device.parent.name}"
-
-def harddrive(size :Optional[float] = None, model :Optional[str] = None, fuzzy :bool = False) -> Optional[BlockDevice]:
-	collection = all_blockdevices(partitions=False)
-	for drive in collection:
-		if size and convert_to_gigabytes(collection[drive]['size']) != size:
-			continue
-		if model and (collection[drive]['model'] is None or collection[drive]['model'].lower() != model.lower()):
-			continue
-
-		return collection[drive]
 
 def split_bind_name(path :Union[pathlib.Path, str]) -> list:
 	# log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
@@ -425,12 +394,6 @@ def disk_layouts() -> str:
 		return None
 
 
-def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_mountpoint :str) -> Partition:
-	for device in block_devices:
-		for partition in block_devices[device]['partitions']:
-			if partition.get('mountpoint', None) == relative_mountpoint:
-				return partition
-
 def partprobe(path :str = '') -> bool:
 	try:
 		if SysCommand(f'bash -c "partprobe {path}"').exit_code == 0:
@@ -457,42 +420,3 @@ def convert_device_to_uuid(path :str) -> str:
 			pass
 
 	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")
-
-
-def has_mountpoint(partition: Union[dict,Partition,MapperDev], target: str, strict: bool = True) -> bool:
-	""" Determine if a certain partition is mounted (or has a mountpoint) as specific target (path)
-	Coded for clarity rather than performance
-
-	Input parms:
-	:parm partition the partition we check
-	:type Either a Partition object or a dict with the contents of a partition definition in the disk_layouts schema
-
-	:parm target (a string representing a mount path we want to check for.
-	:type str
-
-	:parm strict if the check will be strict, target is exactly the mountpoint, or no, where the target is a leaf (f.i. to check if it is in /mnt/archinstall/). Not available for root check ('/') for obvious reasons
-
-	"""
-	# we create the mountpoint list
-	if isinstance(partition,dict):
-		subvolumes: List[Subvolume] = partition.get('btrfs',{}).get('subvolumes', [])
-		mountpoints = [partition.get('mountpoint')]
-		mountpoints += [volume.mountpoint for volume in subvolumes]
-	else:
-		mountpoints = [partition.mountpoint,] + [subvol.target for subvol in partition.subvolumes]
-
-	# we check
-	if strict or target == '/':
-		if target in mountpoints:
-			return True
-		else:
-			return False
-	else:
-		for mp in mountpoints:
-			if mp and mp.endswith(target):
-				return True
-		return False
-
-
-def sort_block_devices_based_on_performance():
-	return None

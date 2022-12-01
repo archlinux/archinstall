@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Union
 
 
 @dataclass
@@ -20,6 +20,9 @@ class Subvolume:
 			'nodatacow' if self.nodatacow else ''
 		]
 		return [o for o in options if len(o)]
+
+	def __dump__(self) -> Dict[str, Any]:
+		return self.json()
 
 	def json(self) -> Dict[str, Any]:
 		return {
@@ -59,7 +62,7 @@ class Subvolume:
 		return subvolumes
 
 	@classmethod
-	def parse_arguments(cls, config_subvolumes: Any) -> List['Subvolume']:
+	def parse_arguments(cls, config_subvolumes: Union[List[Dict[str, Any]], Dict[str, Any]]) -> List['Subvolume']:
 		if isinstance(config_subvolumes, list):
 			return cls._parse(config_subvolumes)
 		elif isinstance(config_subvolumes, dict):

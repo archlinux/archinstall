@@ -52,18 +52,6 @@ def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
 	return options[choice.value]
 
 
-# def select_individual_blockdevice_usage(devices: list) -> List[DeviceModification]:
-# 	result = []
-#
-# 	for device in devices:
-# 		manual_partitioning(device, device_partitions=partitions)
-#
-# 		modification = manage_new_and_existing_partitions(device)
-# 		result.append(modification)
-#
-# 	return result
-
-
 def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: Optional[FilesystemType] = None,

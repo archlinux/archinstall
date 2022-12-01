@@ -55,10 +55,6 @@ def ask_user_questions():
 	global_menu.enable('sys-language')
 	global_menu.enable('sys-encoding')
 
-	# Ask which block devices we will install to
-	# and convert them into archinstall.BlockDevice() objects.
-	global_menu.enable('devices')
-
 	global_menu.enable('disk_layouts')
 
 	# Specify disk encryption options

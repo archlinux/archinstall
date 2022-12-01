@@ -23,17 +23,10 @@ def save_config(config: Dict):
 				return f'{config_output.user_credentials_file}\n{json_config}'
 			else:
 				return str(_('No configuration'))
-		elif options['disk_layout'] == selection:
-			if json_config := config_output.disk_layout_to_json():
-				return f'{config_output.disk_layout_file}\n{json_config}'
-			else:
-				return str(_('No configuration'))
 		elif options['all'] == selection:
 			output = f'{config_output.user_configuration_file}\n'
 			if json_config := config_output.user_credentials_to_json():
 				output += f'{config_output.user_credentials_file}\n'
-			if json_config := config_output.disk_layout_to_json():
-				output += f'{config_output.disk_layout_file}\n'
 			return output[:-1]
 		return None
 
@@ -42,7 +35,6 @@ def save_config(config: Dict):
 	options = {
 		'user_config': str(_('Save user configuration')),
 		'user_creds': str(_('Save user credentials')),
-		'disk_layout': str(_('Save disk layout')),
 		'all': str(_('Save all'))
 	}
 
@@ -69,9 +61,6 @@ def save_config(config: Dict):
 		config_output.save_user_config(dest_path)
 	elif options['user_creds'] == choice.value:
 		config_output.save_user_creds(dest_path)
-	elif options['disk_layout'] == choice.value:
-		config_output.save_disk_layout(dest_path)
 	elif options['all'] == choice.value:
 		config_output.save_user_config(dest_path)
 		config_output.save_user_creds(dest_path)
-		config_output.save_disk_layout(dest_path)

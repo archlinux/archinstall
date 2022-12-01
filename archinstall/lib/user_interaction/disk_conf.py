@@ -9,8 +9,10 @@ from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
+from ..models.disk_layout import DiskLayoutConfiguration, DiskLayoutType
 from ..output import FormattedOutput
 from ..disk.user_guides import suggest_single_disk_layout, suggest_multi_disk_layout
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -46,7 +48,7 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 		multi=True,
 		preset=preset_value,
 		preview_command=_preview_device_selection,
-		preview_title='Partitions',
+		preview_title=str(_('Existing Partitions')),
 		preview_size=0.2,
 		allow_reset=True,
 		allow_reset_warning_msg=warning
@@ -95,39 +97,57 @@ def _manual_partitioning(
 
 
 def select_disk_layout(
-	preset: List[DeviceModification],
-	devices: List[BDevice],
+	preset: DiskLayoutConfiguration,
 	advanced_option: bool = False
-) -> List[DeviceModification]:
-	if not preset:
-		preset = []
+) -> Optional[DiskLayoutConfiguration]:
+	def _preview(selection: str) -> Optional[str]:
+		if selection == pre_mount_mode:
+			return _(
+				"You will use whatever drive-setup is mounted at {} (experimental)\n"
+				"WARNING: Archinstall won't check the suitability of this setup"
+			).format(storage['MOUNT_POINT'])
 
-	wipe_mode = str(_('Wipe all selected drives and use a best-effort default partition layout'))
-	custom_mode = str(_('Select what to do with each individual drive (followed by partition usage)'))
-	modes = [wipe_mode, custom_mode]
+		return None
+
+	default_layout = str(_('Use a best-effort default partition layout'))
+	manual_mode = str(_('Manual Partitioning'))
+	pre_mount_mode = str(_('Pre-mounted configuration'))
+	modes = [default_layout, manual_mode, pre_mount_mode]
 
 	warning = str(_('Are you sure you want to reset this setting?'))
 
-	infos = [d.device_info for d in devices]
-	device_table = FormattedOutput.as_table(infos)
-
 	choice = Menu(
-		_('Select what you wish to do with the selected block devices'),
+		_('Select a partitioning option'),
 		modes,
-		header=device_table,
 		allow_reset=True,
 		allow_reset_warning_msg=warning,
-		sort=False
+		sort=False,
+		preview_command=_preview,
+		preview_size=0.2
 	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return []
+		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
-			if choice.value == wipe_mode:
-				return _get_default_partition_layout(devices, advanced_option=advanced_option)
-			else:
-				return _manual_partitioning(preset, devices)
+			if choice.value == pre_mount_mode:
+				return DiskLayoutConfiguration(layout_type=DiskLayoutType.Pre_mount)
+
+			preset_devices = [mod.device for mod in preset.modifictions] if preset else None
+			devices = select_devices(preset_devices)
+
+			if choice.value == default_layout:
+				modifictions = _get_default_partition_layout(devices, advanced_option=advanced_option)
+				return DiskLayoutConfiguration(
+					layout_type=DiskLayoutType.Default,
+					modifictions=modifictions
+				)
+			elif choice.value == manual_mode:
+				modifictions = _manual_partitioning(preset, devices)
+				return DiskLayoutConfiguration(
+					layout_type=DiskLayoutType.Manual,
+					modifictions=modifictions
+				)
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:

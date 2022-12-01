@@ -5,11 +5,8 @@ import string
 import random
 import shutil
 from dataclasses import dataclass
-from typing import Optional, List# , TYPE_CHECKING
+from typing import Optional, List
 from functools import cached_property
-
-# if TYPE_CHECKING:
-# 	from ..blockdevice import BlockDevice
 
 from ...exceptions import DiskError
 from ...general import SysCommand

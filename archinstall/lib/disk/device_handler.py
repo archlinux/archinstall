@@ -299,14 +299,40 @@ class NewDevicePartition:
 		else:
 			self.set_flag(flag)
 
+	def __dump__(self) -> Dict[str, Any]:
+		"""
+		Called for configuration settings
+		"""
+		return {
+			'existing': self.existing,
+			'wipe': self.wipe,
+			'type': self.type.value,
+			'start': {
+				'value': self.start.value,
+				'unit': self.start.unit.name
+			},
+			'length': {
+				'value': self.length.value,
+				'unit': self.length.unit.name
+			},
+			'fs_type': self.fs_type.value,
+			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
+			'mount_options': self.mount_options,
+			'flags': [f.name for f in self.flags],
+			'btrfs': [subvol.__dump__() for subvol in self.btrfs]
+		}
+
 	def as_json(self) -> Dict[str, Any]:
+		"""
+		Called for displaying data in table format
+		"""
 		info = {
 			'exist. part.': self.existing,
 			'wipe': self.wipe,
 			'type': self.type.value,
 			'start (MiB)': self.start.format_size(Unit.MiB),
 			'length (MiB)': self.length.format_size(Unit.MiB),
-			'fs type': self.fs_type.value,
+			'FS type': self.fs_type.value,
 			'mountpoint': self.mountpoint if self.mountpoint else '',
 			'mount options': ', '.join(self.mount_options),
 			'flags': ', '.join([f.name for f in self.flags])
@@ -326,6 +352,17 @@ class DeviceModification:
 
 	def add_partition(self, partition: NewDevicePartition):
 		self.partitions.append(partition)
+
+	def __dump__(self) -> Dict[str, Any]:
+		"""
+		Called when generating configuration files
+		"""
+		return {
+			'device': str(self.device.device_info.path),
+			'wipe': self.wipe,
+			'partitions': [p.__dump__() for p in self.partitions]
+		}
+
 
 	# def add_partition(self):
 	# 	filesystem = parted.FileSystem(type='ext3', geometry=geometry)
@@ -353,34 +390,60 @@ class DeviceHandler(object):
 	def modify_device(self, device: BDevice, wipe: bool) -> DeviceModification:
 		return DeviceModification(device, wipe)
 
-	def parse_device_arguments(
-		self,
-		devices: Optional[Union[str, List[str]]] = None,
-		harddrives: Optional[Union[str, List[str]]] = None
-	) -> List[BDevice]:
-		if devices:
-			args = devices
-		else:
-			args = harddrives
+	def _parse_legacy(self, disk_layouts: Dict[str, Any]) -> List[DeviceModification]:
+		pass
 
-		if not args:
+	def _parse(self, disk_layouts: List[Dict[str, Any]]) -> List[DeviceModification]:
+		device_modifications: List[DeviceModification] = []
+
+		for entry in disk_layouts:
+			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
+
+			if not device_path:
+				continue
+
+			device = self.get_device(device_path)
+
+			if not device:
+				continue
+
+			device_modification = DeviceModification(
+				wipe=entry.get('wipe', False),
+				device=device
+			)
+
+			device_partitions: List[NewDevicePartition] = []
+			for partition in entry.get('partitions', []):
+				device_partition = NewDevicePartition(
+					existing=partition['existing'],
+					fs_type=FilesystemType(partition['fs_type']),
+					length=Size(partition['length']['value'], Unit[partition['length']['unit']]),
+					start=Size(partition['start']['value'], Unit[partition['start']['unit']]),
+					mount_options=partition['mount_options'],
+					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
+					type=PartitionType(partition['type']),
+					wipe=partition['wipe'],
+					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
+					btrfs=Subvolume.parse_arguments(partition.get('btrfs', []))
+				)
+				device_partitions.append(device_partition)
+
+			device_modification.partitions = device_partitions
+			device_modifications.append(device_modification)
+
+
+		return device_modifications
+
+	def parse_device_arguments(self, disk_layouts: Dict[str, List[Dict[str, Any]]]) -> List[DeviceModification]:
+		if not disk_layouts:
 			return []
 
-		device_paths = args.split(',') if type(args) is str else args
+		DiskLayoutConfiguration
 
-		paths = [Path(p) for p in device_paths]
-		unknown_devices = list(filter(lambda path: path not in self._devices, paths))
-
-		if len(unknown_devices) > 0:
-			unknown = ', '.join([str(path) for path in unknown_devices])
-			log(
-				f'The configuration file contains unknown devices: {unknown}',
-				level=logging.ERROR,
-				fg='red'
-			)
-			sys.exit(1)
-
-		return [self._devices[p] for p in paths]
+		if isinstance(disk_layouts, dict):
+			return self._parse_legacy(disk_layouts)
+		else:
+			return self._parse(disk_layouts)
 
 	def load_devices(self):
 		block_devices = {}
