@@ -3,19 +3,17 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.device_handler import BDevice, DeviceModification
+from ..disk.device_handler import DeviceModification, DiskLayoutConfiguration
 from ..general import SysCommand, secret
-from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
 from ..models.bootloader import Bootloader
 from ..models.disk_encryption import DiskEncryption, EncryptionType
-from ..models.disk_layout import DiskLayoutConfiguration
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage
-from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import add_number_of_parrallel_downloads
+from ..user_interaction import ask_additional_packages_to_install
 from ..user_interaction import ask_for_additional_users
 from ..user_interaction import ask_for_audio_selection
 from ..user_interaction import ask_for_bootloader
@@ -32,7 +30,6 @@ from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
-from ..user_interaction.disk_conf import select_devices
 from ..user_interaction.save_conf import save_config
 
 if TYPE_CHECKING:
@@ -40,7 +37,7 @@ if TYPE_CHECKING:
 
 
 class GlobalMenu(AbstractMenu):
-	def __init__(self,data_store):
+	def __init__(self, data_store):
 		self._disk_check = True
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
@@ -73,13 +70,6 @@ class GlobalMenu(AbstractMenu):
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
 				default='UTF-8')
-		# self._menu_options['devices'] = \
-		# 	Selector(
-		# 		_('Drive(s)'),
-		# 		lambda preset: self._select_devices(preset),
-		# 		display_func=lambda x: f'{len(x)} ' + str(_('Drive(s)')) if x is not None and len(x) > 0 else '',
-		# 		preview_func=self._prev_devices,
-		# )
 		self._menu_options['disk_layouts'] = \
 			Selector(
 				_('Disk layout'),
@@ -239,31 +229,22 @@ class GlobalMenu(AbstractMenu):
 				return FormattedOutput.as_table(ifaces)
 		return None
 
-	def _prev_devices(self) -> Optional[str]:
-		selector = self._menu_options['devices']
-		if selector.has_selection():
-			devices: List[BDevice] = selector.current_selection
-			infos = [device.device_info for device in devices]
-			return FormattedOutput.as_table(infos)
-		return None
-
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['disk_layouts']
 		if selector.has_selection():
 			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
 
 			device_modifications: List[DeviceModification] = \
-				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.modifictions))
+				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.layouts))
 
 			if device_modifications:
-				disk_layout_output = disk_layout_conf.layout_type.value + '\n'
 				output_partition = ''
 				output_btrfs = ''
 
 				for modification in device_modifications:
 					# create partition table
 					partition_table = FormattedOutput.as_table(modification.partitions)
-					output_partition += f'{modification.device.device_info.path}\n'
+					output_partition += f'{modification.device_path}\n'
 					output_partition += partition_table + '\n'
 
 					# create btrfs table
@@ -273,17 +254,14 @@ class GlobalMenu(AbstractMenu):
 					for partition in btrfs_partitions:
 						output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'
 
-				output = disk_layout_output + output_partition + output_btrfs
+				output = output_partition + output_btrfs
 				return output.rstrip()
 
 		return None
 
 	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:
-			partitions = [len(mod.partitions) for mod in current_value.modifictions if mod.partitions]
-			if partitions:
-				total = sum(partitions)
-				return f'{total} {_("Partitions")}'
+			return current_value.layout_type.display_msg()
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
@@ -342,18 +320,13 @@ class GlobalMenu(AbstractMenu):
 
 		missing = []
 		if not check('bootloader'):
-			missing += ['Bootloader']
+			missing += [self._menu_options['bootloader'].description]
 		if not check('hostname'):
-			missing += ['Hostname']
+			missing += [self._menu_options['hostname'].description]
 		if not check('!root-password') and not has_superuser():
 			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
 		if self._disk_check:
-			# if not check('devices'):
-			# 	missing += [self._menu_options['devices'].description]
-			# if check('devices'):
-			# 	if not self._menu_options['devices'].is_empty() and not check('disk_layouts'):
-			# 		missing += [self._menu_options['disk_layouts'].description]
-			if check('disk_layouts'):
+			if not check('disk_layouts'):
 				missing += [self._menu_options['disk_layouts'].description]
 
 		return missing

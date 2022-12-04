@@ -1,4 +1,5 @@
 import archinstall
+from ..lib.utils.util import do_countdown
 
 # Select a harddrive and a disk password
 from archinstall.profiles.minimal import MinimalProfile
@@ -47,7 +48,7 @@ if archinstall.arguments['harddrive']:
 	archinstall.arguments['harddrive'].keep_partitions = False
 
 	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
-	archinstall.do_countdown()
+	do_countdown()
 
 	# First, we configure the basic filesystem layout
 	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:

@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
+from archinstall.lib.disk.filesystem import perform_filesystem_operations
 from archinstall.profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
@@ -355,29 +356,6 @@ def ask_user_questions(mode):
 
 			global_menu.run()
 
-def perform_filesystem_operations():
-	"""
-		Issue a final warning before we continue with something un-revertable.
-		We mention the drive one last time, and count from 5 to 0.
-	"""
-
-	if archinstall.arguments.get('harddrives', None):
-		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
-		archinstall.do_countdown()
-
-		"""
-			Setup the blockdevice, filesystem (and optionally encryption).
-			Once that's done, we'll hand over to perform_installation()
-		"""
-
-		mode = archinstall.GPT
-		if archinstall.has_uefi() is False:
-			mode = archinstall.MBR
-
-		for drive in archinstall.arguments.get('harddrives', []):
-			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
-				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
 def disk_setup(installation):
 	# Mount all the drives to the desired mountpoint

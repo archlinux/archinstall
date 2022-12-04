@@ -1,14 +1,20 @@
 from __future__ import annotations
+
+import sys
 import time
 import logging
 import pathlib
-from typing import Optional, Dict, Any, TYPE_CHECKING
+from enum import Enum
+from typing import Any, Optional, TYPE_CHECKING
+
+from .device_handler import DiskLayoutConfiguration, DiskLayoutType, DeviceModification
 # https://stackoverflow.com/a/39757388/929999
 from ..utils.diskinfo import get_lsblk_info
 from ..models.disk_encryption import DiskEncryption
+from ..hardware import has_uefi
+from ..utils.util import do_countdown
 
 if TYPE_CHECKING:
-	from .blockdevice import BlockDevice
 	_: Any
 
 from .partition import Partition
@@ -18,27 +24,63 @@ from ..general import SysCommand
 from ..output import log
 from ..storage import storage
 
-GPT = 0b00000001
-MBR = 0b00000010
 
-# A sane default is 5MiB, that allows for plenty of buffer for GRUB on MBR
-# but also 4MiB for memory cards for instance. And another 1MiB to avoid issues.
-# (we've been pestered by disk issues since the start, so please let this be here for a few versions)
-DEFAULT_PARTITION_START = '5MiB'
+class PartitioningType(Enum):
+	GPT = 0b00000001
+	MBR = 0b00000010
+
+
+def perform_filesystem_operations(disk_layouts: DiskLayoutConfiguration):
+	"""
+		Issue a final warning before we continue with something un-revertable.
+		We mention the drive one last time, and count from 5 to 0.
+	"""
+
+	if disk_layouts.layout_type == DiskLayoutType.Pre_mount:
+		log('Disk layout configuration is set to pre-mount, not perforforming any operations', level=logging.DEBUG)
+		return
+
+	device_mods = list(filter(lambda x: len(x.partitions) > 0, disk_layouts.layouts))
+
+	if not device_mods:
+		log('No modifications required', level=logging.DEBUG)
+		return
+
+	device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
+
+	print(str(_(' ! Formatting {} in ')).format(device_paths))
+	do_countdown()
+
+	# Setup the blockdevice, filesystem (and optionally encryption).
+	# Once that's done, we'll hand over to perform_installation()
+	partitioning_type = PartitioningType.GPT
+	if has_uefi() is False:
+		partitioning_type = PartitioningType.MBR
+
+	for device in device_mods:
+		with Filesystem(device, partitioning_type) as fs:
+			fs.load_layout()
+
 
 class Filesystem:
+	# A sane default is 5MiB, that allows for plenty of buffer for GRUB on MBR
+	# but also 4MiB for memory cards for instance. And another 1MiB to avoid issues.
+	# (we've been pestered by disk issues since the start, so please let this be here for a few versions)
+	DEFAULT_PARTITION_START = '5MiB'
+
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, blockdevice :BlockDevice, mode :int):
-		self.blockdevice = blockdevice
-		self.mode = mode
+	def __init__(self, device_modification: DeviceModification, partitioning_type: PartitioningType):
+		self._device_modification = device_modification
+		self._partitioning_type = partitioning_type
 
 	def __enter__(self, *args :str, **kwargs :str) -> 'Filesystem':
 		return self
 
 	def __repr__(self) -> str:
-		return f"Filesystem(blockdevice={self.blockdevice}, mode={self.mode})"
+		device_path = self._device_modification.device_path
+		return f"Filesystem(device={str(device_path)}, partitioning_type={self._partitioning_type.name})"
 
 	def __exit__(self, *args :str, **kwargs :str) -> bool:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
@@ -50,7 +92,7 @@ class Filesystem:
 
 	def partuuid_to_index(self, uuid :str) -> Optional[int]:
 		for i in range(storage['DISK_RETRY_ATTEMPTS']):
-			self.partprobe()
+			self._partprobe()
 			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i))
 
 			# We'll use unreliable lbslk to grab children under the /dev/<device>
@@ -64,17 +106,17 @@ class Filesystem:
 
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
-	def load_layout(self, layout :Dict[str, Any]) -> None:
+	def load_layout(self) -> None:
 		from ..luks import luks2
 		from .btrfs import BTRFSPartition
 
 		# If the layout tells us to wipe the drive, we do so
-		if layout.get('wipe', False):
-			if self.mode == GPT:
-				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
-					raise KeyError(f"Could not create a GPT label on {self}")
-			elif self.mode == MBR:
-				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+		if self._device_modification.wipe:
+			if self._partitioning_type == PartitioningType.GPT:
+				if not self._parted_mklabel('gpt'):
+					raise KeyError(f"Could not create a GPT label on {self._device_modification.device_path}")
+			elif self._partitioning_type == PartitioningType.MBR:
+				if not self._parted_mklabel(self.blockdevice.device, "msdos"):
 					raise KeyError(f"Could not create a MS-DOS label on {self}")
 
 			self.blockdevice.flush_cache()
@@ -86,7 +128,7 @@ class Filesystem:
 			# We don't want to re-add an existing partition (those containing a UUID already)
 			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
 				start = partition.get('start') or (
-					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or DEFAULT_PARTITION_START)
+					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or self.DEFAULT_PARTITION_START)
 				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
 																	start=start,
 																	end=partition.get('size', '100%'),
@@ -169,23 +211,23 @@ class Filesystem:
 			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
 				return partition
 
-	def partprobe(self) -> bool:
+	def _partprobe(self) -> bool:
 		try:
-			SysCommand(f'partprobe {self.blockdevice.device}')
+			SysCommand(f'partprobe {self._device_modification.device_path}')
 		except SysCallError as error:
 			log(f"Could not execute partprobe: {error!r}", level=logging.ERROR, fg="red")
-			raise DiskError(f"Could not run partprobe on {self.blockdevice.device}: {error!r}")
+			raise DiskError(f"Could not run partprobe on {self._device_modification.device_path}: {error!r}")
 
 		return True
 
-	def raw_parted(self, string: str) -> SysCommand:
+	def _raw_parted(self, string: str) -> SysCommand:
 		try:
 			cmd_handle = SysCommand(f'/usr/bin/parted -s {string}')
 			time.sleep(0.5)
 			return cmd_handle
 		except SysCallError as error:
 			log(f"Parted ended with a bad exit code: {error.exit_code} ({error})", level=logging.ERROR, fg="red")
-			return error
+			sys.exit(1)
 
 	def parted(self, string: str) -> bool:
 		"""
@@ -194,8 +236,8 @@ class Filesystem:
 		:param string: A raw string passed to /usr/bin/parted -s <string>
 		:type string: str
 		"""
-		if (parted_handle := self.raw_parted(string)).exit_code == 0:
-			return self.partprobe()
+		if (parted_handle := self._raw_parted(string)).exit_code == 0:
+			return self._partprobe()
 		else:
 			raise DiskError(f"Parted failed to add a partition: {parted_handle}")
 
@@ -216,11 +258,11 @@ class Filesystem:
 		if len(self.blockdevice.partitions) == 0 and skip_mklabel is False:
 			# If it's a completely empty drive, and we're about to add partitions to it
 			# we need to make sure there's a filesystem label.
-			if self.mode == GPT:
-				if not self.parted_mklabel(self.blockdevice.device, "gpt"):
+			if self._partitioning_type == GPT:
+				if not self._parted_mklabel(self.blockdevice.device, "gpt"):
 					raise KeyError(f"Could not create a GPT label on {self}")
-			elif self.mode == MBR:
-				if not self.parted_mklabel(self.blockdevice.device, "msdos"):
+			elif self._partitioning_type == MBR:
+				if not self._parted_mklabel(self.blockdevice.device, "msdos"):
 					raise KeyError(f"Could not create a MS-DOS label on {self}")
 
 			self.blockdevice.flush_cache()
@@ -233,7 +275,7 @@ class Filesystem:
 				pass
 
 		# TODO this check should probably run in the setup process rather than during the installation
-		if self.mode == MBR:
+		if self._partitioning_type == MBR:
 			if len(self.blockdevice.partitions) > 3:
 				DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
 
@@ -263,7 +305,7 @@ class Filesystem:
 						raise err
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
-					self.partprobe()
+					self._partprobe()
 					time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
 		else:
 			print("Parted did not return True during partition creation")
@@ -285,16 +327,17 @@ class Filesystem:
 		log(f"Setting {string} on (parted) partition index {partition+1}", level=logging.INFO)
 		return self.parted(f'{self.blockdevice.device} set {partition + 1} {string}') == 0
 
-	def parted_mklabel(self, device: str, disk_label: str) -> bool:
-		log(f"Creating a new partition label on {device}", level=logging.INFO, fg="yellow")
-		# Try to unmount devices before attempting to run mklabel
-		try:
-			SysCommand(f'bash -c "umount {device}?"')
-		except:
-			pass
+	def _parted_mklabel(self, disk_label: str) -> bool:
+		log(f"Creating a new partition label on {self._device_modification.device_path}", level=logging.INFO, fg="yellow")
 
-		self.partprobe()
-		worked = self.raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
-		self.partprobe()
+		try:
+			log(f'Attempting to umount the device: {self._device_modification.device_path}')
+			SysCommand(f'bash -c "umount {self._device_modification.device_path}"')
+		except SysCallError as error:
+			log(f'Unable to umount the device: {error}', level=logging.DEBUG)
+
+		self._partprobe()
+		worked = self._raw_parted(f'{device} mklabel {disk_label}').exit_code == 0
+		self._partprobe()
 
 		return worked

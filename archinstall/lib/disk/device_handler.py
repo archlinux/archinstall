@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import logging
 import math
-import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING, Union
+from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
 import parted
 from parted import Device, Disk, Geometry, Partition
@@ -17,6 +16,30 @@ from ..utils.diskinfo import get_lsblk_info
 
 if TYPE_CHECKING:
 	_: Any
+
+
+class DiskLayoutType(Enum):
+	Default = 'default_layout'
+	Manual = 'manual_partitioning'
+	Pre_mount = 'pre_mounted_config'
+
+	def display_msg(self) -> str:
+		match self:
+			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
+			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
+			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
+
+
+@dataclass
+class DiskLayoutConfiguration:
+	layout_type: DiskLayoutType
+	layouts: List[DeviceModification] = field(default_factory=list)
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'layout_type': self.layout_type.value,
+			'layouts': [mod.__dump__() for mod in self.layouts]
+		}
 
 
 class Unit(Enum):
@@ -350,6 +373,10 @@ class DeviceModification:
 	wipe: bool
 	partitions: List[NewDevicePartition] = field(default_factory=list)
 
+	@property
+	def device_path(self) -> Path:
+		return self.device.device_info.path
+
 	def add_partition(self, partition: NewDevicePartition):
 		self.partitions.append(partition)
 
@@ -390,13 +417,21 @@ class DeviceHandler(object):
 	def modify_device(self, device: BDevice, wipe: bool) -> DeviceModification:
 		return DeviceModification(device, wipe)
 
-	def _parse_legacy(self, disk_layouts: Dict[str, Any]) -> List[DeviceModification]:
-		pass
+	def parse_device_arguments(self, disk_layouts: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
+		if not disk_layouts:
+			return None
 
-	def _parse(self, disk_layouts: List[Dict[str, Any]]) -> List[DeviceModification]:
+		layout_type = disk_layouts.get('layout_type', None)
+		if not layout_type:
+			raise ValueError('Missing disk layout configuration: layout_type')
+
 		device_modifications: List[DeviceModification] = []
+		config = DiskLayoutConfiguration(
+			layout_type=DiskLayoutType(layout_type),
+			layouts=device_modifications
+		)
 
-		for entry in disk_layouts:
+		for entry in disk_layouts.get('layouts', []):
 			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
 
 			if not device_path:
@@ -413,6 +448,7 @@ class DeviceHandler(object):
 			)
 
 			device_partitions: List[NewDevicePartition] = []
+
 			for partition in entry.get('partitions', []):
 				device_partition = NewDevicePartition(
 					existing=partition['existing'],
@@ -431,19 +467,7 @@ class DeviceHandler(object):
 			device_modification.partitions = device_partitions
 			device_modifications.append(device_modification)
 
-
-		return device_modifications
-
-	def parse_device_arguments(self, disk_layouts: Dict[str, List[Dict[str, Any]]]) -> List[DeviceModification]:
-		if not disk_layouts:
-			return []
-
-		DiskLayoutConfiguration
-
-		if isinstance(disk_layouts, dict):
-			return self._parse_legacy(disk_layouts)
-		else:
-			return self._parse(disk_layouts)
+		return config
 
 	def load_devices(self):
 		block_devices = {}

@@ -153,6 +153,9 @@ def suggest_multi_disk_layout(
 	filesystem_type: Optional[FilesystemType] = None,
 	advanced_options: bool = False
 ) -> List[DeviceModification]:
+	if not devices:
+		return []
+
 	# Not really a rock solid foundation of information to stand on, but it's a start:
 	# https://www.reddit.com/r/btrfs/comments/m287gp/partition_strategy_for_two_physical_disks/
 	# https://www.reddit.com/r/btrfs/comments/9us4hr/what_is_your_btrfs_partitionsubvolumes_scheme/

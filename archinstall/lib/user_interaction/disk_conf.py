@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import Any, Dict, TYPE_CHECKING, Optional, List
 
 from ..disk import BlockDevice
-from ..disk.device_handler import BDevice, DeviceInfo, DeviceModification, device_handler
+from ..disk.device_handler import BDevice, DeviceInfo, DeviceModification, device_handler, DiskLayoutConfiguration, \
+	DiskLayoutType
 from ..disk.partitioning_menu import manual_partitioning
 from ..exceptions import DiskError
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
-from ..models.disk_layout import DiskLayoutConfiguration, DiskLayoutType
 from ..output import FormattedOutput
 from ..disk.user_guides import suggest_single_disk_layout, suggest_multi_disk_layout
 from ..storage import storage
@@ -90,14 +90,15 @@ def _manual_partitioning(
 		if not mod:
 			mod = device_handler.modify_device(device, wipe=False)
 
-		mod.partitions = manual_partitioning(device, preset=mod.partitions)
-		modifications.append(mod)
+		if partitions := manual_partitioning(device, preset=mod.partitions):
+			mod.partitions = partitions
+			modifications.append(mod)
 
 	return modifications
 
 
 def select_disk_layout(
-	preset: DiskLayoutConfiguration,
+	preset: Optional[DiskLayoutConfiguration] = None,
 	advanced_option: bool = False
 ) -> Optional[DiskLayoutConfiguration]:
 	def _preview(selection: str) -> Optional[str]:
@@ -106,24 +107,25 @@ def select_disk_layout(
 				"You will use whatever drive-setup is mounted at {} (experimental)\n"
 				"WARNING: Archinstall won't check the suitability of this setup"
 			).format(storage['MOUNT_POINT'])
-
 		return None
 
-	default_layout = str(_('Use a best-effort default partition layout'))
-	manual_mode = str(_('Manual Partitioning'))
-	pre_mount_mode = str(_('Pre-mounted configuration'))
-	modes = [default_layout, manual_mode, pre_mount_mode]
+	default_layout = DiskLayoutType.Default.display_msg()
+	manual_mode = DiskLayoutType.Manual.display_msg()
+	pre_mount_mode = DiskLayoutType.Pre_mount.display_msg()
 
+	options = [default_layout, manual_mode, pre_mount_mode]
+	preset_value = preset.layout_type.display_msg() if preset else None
 	warning = str(_('Are you sure you want to reset this setting?'))
 
 	choice = Menu(
 		_('Select a partitioning option'),
-		modes,
+		options,
 		allow_reset=True,
 		allow_reset_warning_msg=warning,
 		sort=False,
 		preview_command=_preview,
-		preview_size=0.2
+		preview_size=0.2,
+		preset_values=preset_value
 	).run()
 
 	match choice.type_:
@@ -133,21 +135,31 @@ def select_disk_layout(
 			if choice.value == pre_mount_mode:
 				return DiskLayoutConfiguration(layout_type=DiskLayoutType.Pre_mount)
 
-			preset_devices = [mod.device for mod in preset.modifictions] if preset else None
+			preset_devices = [mod.device for mod in preset.layouts] if preset else None
+
 			devices = select_devices(preset_devices)
 
+			if not devices:
+				return None
+
 			if choice.value == default_layout:
-				modifictions = _get_default_partition_layout(devices, advanced_option=advanced_option)
-				return DiskLayoutConfiguration(
-					layout_type=DiskLayoutType.Default,
-					modifictions=modifictions
-				)
+				modifications = _get_default_partition_layout(devices, advanced_option=advanced_option)
+				if modifications:
+					return DiskLayoutConfiguration(
+						layout_type=DiskLayoutType.Default,
+						layouts=modifications
+					)
 			elif choice.value == manual_mode:
-				modifictions = _manual_partitioning(preset, devices)
-				return DiskLayoutConfiguration(
-					layout_type=DiskLayoutType.Manual,
-					modifictions=modifictions
-				)
+				preset_mods = preset.layouts if preset else []
+				modifications = _manual_partitioning(preset_mods, devices)
+
+				if modifications:
+					return DiskLayoutConfiguration(
+						layout_type=DiskLayoutType.Manual,
+						layouts=modifications
+					)
+
+	return None
 
 
 def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:

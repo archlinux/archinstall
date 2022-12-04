@@ -6,6 +6,7 @@ from typing import List, Tuple
 
 import archinstall
 from archinstall import ConfigurationOutput
+from ..lib.disk.filesystem import perform_filesystem_operations
 
 
 class OnlyHDMenu(archinstall.GlobalMenu):
@@ -61,26 +62,6 @@ def ask_user_questions():
 		menu.option('archinstall-language').set_enabled(False)
 		menu.run()
 
-def perform_disk_operations():
-	"""
-		Issue a final warning before we continue with something un-revertable.
-		We mention the drive one last time, and count from 5 to 0.
-	"""
-	if archinstall.arguments.get('harddrives', None):
-		print(f" ! Formatting {archinstall.arguments['harddrives']} in ", end='')
-		archinstall.do_countdown()
-		"""
-			Setup the blockdevice, filesystem (and optionally encryption).
-			Once that's done, we'll hand over to perform_installation()
-		"""
-		mode = archinstall.GPT
-		if archinstall.has_uefi() is False:
-			mode = archinstall.MBR
-
-		for drive in archinstall.arguments.get('harddrives', []):
-			if archinstall.arguments.get('disk_layouts', {}).get(drive.path):
-				with archinstall.Filesystem(drive, mode) as fs:
-					fs.load_layout(archinstall.arguments['disk_layouts'][drive.path])
 
 def perform_installation(mountpoint):
 	"""
@@ -146,5 +127,5 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-perform_disk_operations()
+perform_filesystem_operations()
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
