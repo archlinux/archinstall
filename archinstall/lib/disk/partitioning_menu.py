@@ -59,11 +59,17 @@ class PartitioningList(ListManager):
 		return str(_('Partition'))
 
 	def filter_options(self, selection: NewDevicePartition, options: List[str]) -> List[str]:
-		if selection.fs_type == FilesystemType.Btrfs:
-			return options
+		not_filter = []
 
-		only_btrfs = [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
-		return [o for o in options if o not in only_btrfs]
+		# only display wiping if the partition exists already
+		if not selection.existing:
+			not_filter += [self._actions['mark_wipe']]
+
+		# non btrfs partitions shouldn't get btrfs options
+		if selection.fs_type != FilesystemType.Btrfs:
+			not_filter += [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
+
+		return [o for o in options if o not in not_filter]
 
 	def handle_action(
 		self,
@@ -190,7 +196,7 @@ class PartitioningList(ListManager):
 		free_space_table = FormattedOutput.as_table(self._device.device_info.free_space_regions)
 		prompt = text + free_space_table + '\n'
 
-		total_sectors = device_info.size.format_size(Unit.sectors, device_info.sector_size)
+		total_sectors = device_info.total_size.format_size(Unit.sectors, device_info.sector_size)
 		prompt += str(_('Total sectors: {}')).format(total_sectors) + '\n'
 		print(prompt)
 

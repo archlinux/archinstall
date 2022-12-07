@@ -284,5 +284,5 @@ if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
 
 archinstall.configuration_sanity_check()
-perform_filesystem_operations()
+perform_filesystem_operations(archinstall.arguments['disk_layouts'])
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

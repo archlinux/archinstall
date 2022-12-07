@@ -244,7 +244,8 @@ class GlobalMenu(AbstractMenu):
 				for modification in device_modifications:
 					# create partition table
 					partition_table = FormattedOutput.as_table(modification.partitions)
-					output_partition += f'{modification.device_path}\n'
+
+					output_partition += f'{modification.device_path}: {modification.device.device_info.model}\n'
 					output_partition += partition_table + '\n'
 
 					# create btrfs table

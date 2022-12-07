@@ -144,17 +144,22 @@ def select_partitions_to_encrypt(
 	device_mods: List[DeviceModification],
 	preset: List[NewDevicePartition]
 ) -> List[NewDevicePartition]:
-	all_partitions = []
-	for entry in device_mods:
-		all_partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), entry.partitions))
+	partitions: List[NewDevicePartition] = []
 
-	if all_partitions:
+	# do not allow encrypting the boot partition
+	for entry in device_mods:
+		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), entry.partitions))
+
+	# do not allow encrypting existing partitions that or not marked as wipe
+	partitions = list(filter(lambda x: not x.existing or x.wipe, partitions))
+
+	if partitions:
 		title = str(_('Select which partitions to encrypt'))
-		partition_table = FormattedOutput.as_table(all_partitions)
+		partition_table = FormattedOutput.as_table(partitions)
 
 		choice = TableMenu(
 			title,
-			table_data=(all_partitions, partition_table),
+			table_data=(partitions, partition_table),
 			preset=preset,
 			multi=True
 		).run()

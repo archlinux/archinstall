@@ -5,7 +5,7 @@ from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 from ..menu import Menu
 from ..models.subvolume import Subvolume
-from ... import FormattedOutput
+from ..output import FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any

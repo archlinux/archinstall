@@ -4,10 +4,10 @@ import sys
 import time
 import logging
 import pathlib
-from enum import Enum
 from typing import Any, Optional, TYPE_CHECKING
 
-from .device_handler import DiskLayoutConfiguration, DiskLayoutType, DeviceModification
+from .device_handler import DiskLayoutConfiguration, DiskLayoutType, DeviceModification, PartitionTable, \
+	device_handler
 # https://stackoverflow.com/a/39757388/929999
 from ..utils.diskinfo import get_lsblk_info
 from ..models.disk_encryption import DiskEncryption
@@ -23,11 +23,6 @@ from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
 from ..output import log
 from ..storage import storage
-
-
-class PartitioningType(Enum):
-	GPT = 0b00000001
-	MBR = 0b00000010
 
 
 def perform_filesystem_operations(disk_layouts: DiskLayoutConfiguration):
@@ -53,9 +48,9 @@ def perform_filesystem_operations(disk_layouts: DiskLayoutConfiguration):
 
 	# Setup the blockdevice, filesystem (and optionally encryption).
 	# Once that's done, we'll hand over to perform_installation()
-	partitioning_type = PartitioningType.GPT
+	partitioning_type = PartitionTable.GPT
 	if has_uefi() is False:
-		partitioning_type = PartitioningType.MBR
+		partitioning_type = PartitionTable.MBR
 
 	for device in device_mods:
 		with Filesystem(device, partitioning_type) as fs:
@@ -71,7 +66,7 @@ class Filesystem:
 	# TODO:
 	#   When instance of a HDD is selected, check all usages and gracefully unmount them
 	#   as well as close any crypto handles.
-	def __init__(self, device_modification: DeviceModification, partitioning_type: PartitioningType):
+	def __init__(self, device_modification: DeviceModification, partitioning_type: PartitionTable):
 		self._device_modification = device_modification
 		self._partitioning_type = partitioning_type
 
@@ -110,44 +105,41 @@ class Filesystem:
 		from ..luks import luks2
 		from .btrfs import BTRFSPartition
 
-		# If the layout tells us to wipe the drive, we do so
+		# if the MAIN modification configuration specifies a wipe, we'll wipe the entire disk
 		if self._device_modification.wipe:
-			if self._partitioning_type == PartitioningType.GPT:
-				if not self._parted_mklabel('gpt'):
-					raise KeyError(f"Could not create a GPT label on {self._device_modification.device_path}")
-			elif self._partitioning_type == PartitioningType.MBR:
-				if not self._parted_mklabel(self.blockdevice.device, "msdos"):
-					raise KeyError(f"Could not create a MS-DOS label on {self}")
+			device_handler.wipe_dev(self._device_modification)
+			device_handler.partition(self._device_modification, self._partitioning_type, modify=False)
+		else:
+			device_handler.partition(self._device_modification, self._partitioning_type, modify=True)
 
-			self.blockdevice.flush_cache()
-			time.sleep(3)
 
-		prev_partition = None
+		sys.exit(1)
+
 		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
 			# We don't want to re-add an existing partition (those containing a UUID already)
-			if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-				start = partition.get('start') or (
-					prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or self.DEFAULT_PARTITION_START)
-				partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
-																	start=start,
-																	end=partition.get('size', '100%'),
-																	partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
-																	skip_mklabel=layout.get('wipe', False) is not False)
-
-			elif (partition_uuid := partition.get('PARTUUID')):
-				# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
-				# We should re-name or separate this logi based on partition.get('PARTUUID') and partition.get('UUID')
-				# but for now, lets just attempt to deal with both.
-				try:
-					partition['device_instance'] = self.blockdevice.get_partition(uuid=partition_uuid)
-				except DiskError:
-					partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
-
-				log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
-			else:
-				log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
-				continue
+			# if partition.get('wipe', False) and not partition.get('PARTUUID', None):
+			# 	start = partition.get('start') or (
+			# 		prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or self.DEFAULT_PARTITION_START)
+			# 	partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
+			# 														start=start,
+			# 														end=partition.get('size', '100%'),
+			# 														partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
+			# 														skip_mklabel=layout.get('wipe', False) is not False)
+			#
+			# elif (partition_uuid := partition.get('PARTUUID')):
+			# 	# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
+			# 	# We should re-name or separate this logi based on partition.get('PARTUUID') and partition.get('UUID')
+			# 	# but for now, lets just attempt to deal with both.
+			# 	try:
+			# 		partition['device_instance'] = self.blockdevice.get_partition(uuid=partition_uuid)
+			# 	except DiskError:
+			# 		partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
+			#
+			# 	log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
+			# else:
+			# 	log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
+			# 	continue
 
 			if partition.get('filesystem', {}).get('format', False):
 				# needed for backward compatibility with the introduction of the new "format_options"
@@ -200,11 +192,11 @@ class Filesystem:
 							autodetect_filesystem=False
 						)
 
-			if partition.get('boot', False):
-				log(f"Marking partition {partition['device_instance']} as bootable.")
-				self.set(self.partuuid_to_index(partition['device_instance'].part_uuid), 'boot on')
+			# if partition.get('boot', False):
+			# 	log(f"Marking partition {partition['device_instance']} as bootable.")
+			# 	self.set(self.partuuid_to_index(partition['device_instance'].part_uuid), 'boot on')
 
-			prev_partition = partition
+			# prev_partition = partition
 
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:
@@ -334,7 +326,7 @@ class Filesystem:
 			log(f'Attempting to umount the device: {self._device_modification.device_path}')
 			SysCommand(f'bash -c "umount {self._device_modification.device_path}"')
 		except SysCallError as error:
-			log(f'Unable to umount the device: {error}', level=logging.DEBUG)
+			log(f'Unable to umount the device: {error.message}', level=logging.DEBUG)
 
 		self._partprobe()
 		worked = self._raw_parted(f'{device} mklabel {disk_label}').exit_code == 0

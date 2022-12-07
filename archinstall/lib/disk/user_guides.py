@@ -65,7 +65,7 @@ def suggest_single_disk_layout(
 	using_subvolumes = False
 	using_home_partition = False
 	compression = False
-	device_size_gib = device.device_info.size
+	device_size_gib = device.device_info.total_size
 
 	if filesystem_type == FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS subvolumes with a default structure?'))
@@ -105,7 +105,7 @@ def suggest_single_disk_layout(
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
 		length = Size(100, Unit.Percent)
 	else:
-		length = min(device.device_info.size, root_partition_size)
+		length = min(device.device_info.total_size, root_partition_size)
 
 	root_partition = NewDevicePartition(
 		type=PartitionType.Primary,
@@ -175,7 +175,7 @@ def suggest_multi_disk_layout(
 	devices_delta = {}
 	for device in devices:
 		if device is not home_device:
-			delta = device.device_info.size - desired_root_partition_size
+			delta = device.device_info.total_size - desired_root_partition_size
 			devices_delta[device] = delta
 
 	sorted_delta: List[Tuple[BDevice, Any]] = sorted(devices_delta.items(), key=lambda x: x[1])  # type: ignore
