@@ -398,10 +398,10 @@ class Partition:
 
 	def detect_inner_filesystem(self, password :str) -> Optional[str]:
 		log(f'Trying to detect inner filesystem format on {self} (This might take a while)', level=logging.INFO)
-		from ..luks import luks2
+		from ..luks import Luks2
 
 		try:
-			with luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
+			with Luks2(self, storage.get('ENC_IDENTIFIER', 'ai') + 'loop', password, auto_unmount=True) as unlocked_device:
 				return unlocked_device.filesystem
 		except SysCallError:
 			pass
@@ -432,9 +432,9 @@ class Partition:
 		"""
 		A wrapper function for luks2() instances and the .encrypt() method of that instance.
 		"""
-		from ..luks import luks2
+		from ..luks import Luks2
 
-		handle = luks2(self, None, None)
+		handle = Luks2(self, None, None)
 		return handle.encrypt(self, password=password)
 
 	def format(self, filesystem :Optional[str] = None, path :Optional[str] = None, log_formatting :bool = True, options :List[str] = [], retry :bool = True) -> bool:

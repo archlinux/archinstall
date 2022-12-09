@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device_handler import DeviceModification, NewDevicePartition, DiskLayoutConfiguration
+from .device_handler import DeviceModification, PartitionModification, DiskLayoutConfiguration
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
@@ -93,7 +93,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['partitions']
 		if selector.has_selection():
-			partitions: List[NewDevicePartition] = selector.current_selection
+			partitions: List[PartitionModification] = selector.current_selection
 			output = str(_('Partitions to be encrypted')) + '\n'
 			output += FormattedOutput.as_table(partitions)
 			return output.rstrip()
@@ -104,7 +104,6 @@ class DiskEncryptionMenu(AbstractSubMenu):
 def select_encryption_type(preset: EncryptionType) -> Optional[EncryptionType]:
 	title = str(_('Select disk encryption option'))
 	options = [
-		# _type_to_text(EncryptionType.FullDiskEncryption),
 		EncryptionType.type_to_text(EncryptionType.Partition)
 	]
 
@@ -142,13 +141,13 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 
 def select_partitions_to_encrypt(
 	device_mods: List[DeviceModification],
-	preset: List[NewDevicePartition]
-) -> List[NewDevicePartition]:
-	partitions: List[NewDevicePartition] = []
+	preset: List[PartitionModification]
+) -> List[PartitionModification]:
+	partitions: List[PartitionModification] = []
 
 	# do not allow encrypting the boot partition
 	for entry in device_mods:
-		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), entry.partitions))
+		partitions += list(filter(lambda x: x.mapper_name != Path('/boot'), entry.partitions))
 
 	# do not allow encrypting existing partitions that or not marked as wipe
 	partitions = list(filter(lambda x: not x.existing or x.wipe, partitions))

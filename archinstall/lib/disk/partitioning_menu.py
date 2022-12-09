@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
-from .device_handler import NewDevicePartition, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
+from .device_handler import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
 from .user_guides import suggest_single_disk_layout
 from ..menu import Menu
 from ..menu.list_manager import ListManager
@@ -22,7 +22,7 @@ class PartitioningList(ListManager):
 	subclass of ListManager for the managing of user accounts
 	"""
 
-	def __init__(self, prompt: str, device: BDevice, device_partitions: List[NewDevicePartition]):
+	def __init__(self, prompt: str, device: BDevice, device_partitions: List[PartitionModification]):
 		self._device = device
 		self._actions = {
 			'create_new_partition': str(_('Create a new partition')),
@@ -40,7 +40,7 @@ class PartitioningList(ListManager):
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
 
-	def reformat(self, data: List[NewDevicePartition]) -> Dict[str, NewDevicePartition]:
+	def reformat(self, data: List[PartitionModification]) -> Dict[str, PartitionModification]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
@@ -55,10 +55,10 @@ class PartitioningList(ListManager):
 
 		return display_data
 
-	def selected_action_display(self, partition: NewDevicePartition) -> str:
+	def selected_action_display(self, partition: PartitionModification) -> str:
 		return str(_('Partition'))
 
-	def filter_options(self, selection: NewDevicePartition, options: List[str]) -> List[str]:
+	def filter_options(self, selection: PartitionModification, options: List[str]) -> List[str]:
 		not_filter = []
 
 		# only display wiping if the partition exists already
@@ -74,9 +74,9 @@ class PartitioningList(ListManager):
 	def handle_action(
 		self,
 		action: str,
-		entry: Optional[NewDevicePartition],
-		data: List[NewDevicePartition]
-	) -> List[NewDevicePartition]:
+		entry: Optional[PartitionModification],
+		data: List[PartitionModification]
+	) -> List[PartitionModification]:
 		action_key = [k for k, v in self._actions.items() if v == action][0]
 
 		match action_key:
@@ -112,7 +112,7 @@ class PartitioningList(ListManager):
 
 		return data
 
-	def _set_compressed(self, partition: NewDevicePartition):
+	def _set_compressed(self, partition: PartitionModification):
 		compression = 'compress=zstd'
 
 		if compression in partition.mount_options:
@@ -120,13 +120,13 @@ class PartitioningList(ListManager):
 		else:
 			partition.mount_options.append(compression)
 
-	def _set_btrfs_subvolumes(self, partition: NewDevicePartition):
+	def _set_btrfs_subvolumes(self, partition: PartitionModification):
 		partition.btrfs = SubvolumeList(
 			_("Manage btrfs subvolumes for current partition"),
 			partition.btrfs
 		).run()
 
-	def _prompt_wipe_data(self, partition: NewDevicePartition):
+	def _prompt_wipe_data(self, partition: PartitionModification):
 		if partition.wipe is True:
 			partition.wipe = False
 			return
@@ -145,7 +145,7 @@ class PartitioningList(ListManager):
 
 		partition.wipe = True
 
-	def _prompt_mountpoint(self, partition: NewDevicePartition):
+	def _prompt_mountpoint(self, partition: PartitionModification):
 		prompt = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
 		prompt += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
 		prompt += str(_('Mountpoint (leave blank to remove mountpoint): '))
@@ -241,7 +241,7 @@ class PartitioningList(ListManager):
 
 		return start_size, end_size
 
-	def _create_new_partition(self) -> Optional[NewDevicePartition]:
+	def _create_new_partition(self) -> Optional[PartitionModification]:
 		fs_type = self._prompt_partition_fs_type()
 
 		if not fs_type:
@@ -250,7 +250,7 @@ class PartitioningList(ListManager):
 		start_size, end_size = self._prompt_sectors()
 		length = end_size-start_size
 
-		partition = NewDevicePartition(
+		partition = PartitionModification(
 			type=PartitionType.Primary,
 			start=start_size,
 			length=length,
@@ -271,7 +271,7 @@ class PartitioningList(ListManager):
 		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
 		return choice
 
-	def _suggest_partition_layout(self, data: List[NewDevicePartition]) -> List[NewDevicePartition]:
+	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
 		if any([not entry.existing for entry in data]):
 			choice = self._reset_confirmation()
 			if choice.value == Menu.no():
@@ -284,8 +284,8 @@ class PartitioningList(ListManager):
 def manual_partitioning(
 	device: BDevice,
 	prompt: str = '',
-	preset: List[NewDevicePartition] = []
-) -> List[NewDevicePartition]:
+	preset: List[PartitionModification] = []
+) -> List[PartitionModification]:
 	if not prompt:
 		prompt = str(_('Partition management: {}')).format(device.device_info.path)
 

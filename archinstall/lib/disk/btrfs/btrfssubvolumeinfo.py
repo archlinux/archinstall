@@ -106,7 +106,7 @@ class BtrfsSubvolumeInfo:
 			for blockdevice, instance in all_blockdevices(mappers=True, partitions=True, error=True).items():
 				if type(instance) in (Partition, MapperDev):
 					we_mounted_it = False
-					detection_mountpoint = instance.mountpoint
+					detection_mountpoint = instance.mapper_name
 					if not detection_mountpoint:
 						if type(instance) == Partition and instance.encrypted:
 							# TODO: Perhaps support unlocking encrypted volumes?

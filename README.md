@@ -39,7 +39,7 @@ Assuming you are on a Arch Linux live-ISO and booted into EFI mode.
 
 # Available Languages
 
-Archinstall is available in different languages which have been contributed and are maintained by the community.  
+Archinstall is available in different languages which have been contributed and are maintained by the community.
 Current translations are listed below and vary in the amount of translations per language
 ```
 English
@@ -115,7 +115,7 @@ with archinstall.Filesystem(harddrive, archinstall.GPT) as fs:
     root.encrypted = True
     root.encrypt(password=disk_password)
 
-with archinstall.luks2(root, 'luksloop', disk_password) as unlocked_root:
+with archinstall.Luks2(root, 'luksloop', disk_password) as unlocked_root:
     unlocked_root.format(root.filesystem)
     unlocked_root.mount('/mnt')
 

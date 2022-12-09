@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import math
-import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -16,6 +15,9 @@ from ..output import log
 from ..utils.diskinfo import get_lsblk_info
 from ..general import SysCommand, SysCallError
 from ..exceptions import DiskError, UnknownFilesystemFormat
+from ..luks import Luks2
+from ..storage import storage
+from ..disk.encryption import DiskEncryption
 
 if TYPE_CHECKING:
 	_: Any
@@ -171,6 +173,7 @@ class Size:
 
 @dataclass
 class PartitionInfo:
+	partition: Partition
 	name: str
 	type: PartitionType
 	fs_type: FilesystemType
@@ -188,11 +191,12 @@ class PartitionInfo:
 		}
 
 	@classmethod
-	def from_partiion(cls, partition: Partition) -> PartitionInfo:
+	def create(cls, partition: Partition) -> PartitionInfo:
 		fs_type = FilesystemType.parse_parted(partition)
 		partition_type = PartitionType.get_type_from_code(partition.type)
 
 		return PartitionInfo(
+			partition=partition,
 			name=partition.get_name(),
 			type=partition_type,
 			fs_type=fs_type,
@@ -251,7 +255,7 @@ class DeviceInfo:
 		}
 
 	@classmethod
-	def from_disk(cls, disk: Disk) -> DeviceInfo:
+	def create(cls, disk: Disk) -> DeviceInfo:
 		device = disk.device
 		device_type = parted.devices[device.type]
 
@@ -278,27 +282,6 @@ class BDevice:
 
 	def __hash__(self):
 		return hash(self.disk.device.path)
-
-	def _get_mount_info(self) -> str:
-		try:
-			return SysCommand('mount').decode()
-		except SysCallError as error:
-			log(f"Could not get mount information", level=logging.ERROR)
-			raise error
-
-	def umount(self):
-		mounted_devices = self._get_mount_info()
-
-		for info in self.partition_info:
-			if str(info.path) in mounted_devices:
-				log(f'Partition {info.path} is currently mounted')
-				log(f'Attempting to umount the device: {self.device_info.path}')
-
-				try:
-					SysCommand(f'umount {info.path}')
-				except SysCallError as error:
-					log(f'Unable to umount partition {info.path}: {error.message}', level=logging.DEBUG)
-					sys.exit(1)
 
 
 class PartitionType(Enum):
@@ -328,12 +311,8 @@ class FilesystemType(Enum):
 	F2fs = 'f2fs'
 	Fat16 = 'fat16'
 	Fat32 = 'fat32'
-	Hfs = 'hfs'
-	Hfs_plus = 'hfs+'
-	Linux_swap = 'linux-swap'
 	Ntfs = 'ntfs'
 	Reiserfs = 'reiserfs'
-	Udf = 'udf'
 	Xfs = 'xfs'
 
 	# this is not a FS known to parted, so be careful
@@ -355,7 +334,7 @@ class FilesystemType(Enum):
 
 
 @dataclass
-class NewDevicePartition:
+class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
@@ -366,12 +345,16 @@ class NewDevicePartition:
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs: List[Subvolume] = field(default_factory=list)
 	existing: bool = False
+	path: Optional[Path] = None  # if set it means the partition is/was created
 
 	def __post_init__(self):
 		# crypto luks is not known to parted and can therefore not
 		# be used as a filesystem type in that sense;
 		if self.fs_type == FilesystemType.Crypto_luks:
 			raise ValueError('Crypto luks cannot be set as a filesystem type')
+
+		if self.existing and not self.path:
+			raise ValueError('If partition marked as existing a path must be set')
 
 	def set_flag(self, flag: PartitionFlag):
 		if flag not in self.flags:
@@ -432,13 +415,13 @@ class NewDevicePartition:
 class DeviceModification:
 	device: BDevice
 	wipe: bool
-	partitions: List[NewDevicePartition] = field(default_factory=list)
+	partitions: List[PartitionModification] = field(default_factory=list)
 
 	@property
 	def device_path(self) -> Path:
 		return self.device.device_info.path
 
-	def add_partition(self, partition: NewDevicePartition):
+	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
 	def __dump__(self) -> Dict[str, Any]:
@@ -461,8 +444,29 @@ class DeviceHandler(object):
 	def devices(self) -> List[BDevice]:
 		return list(self._devices.values())
 
+	def load_devices(self):
+		block_devices = {}
+
+		devices: List[Device] = parted.getAllDevices()
+
+		for device in devices:
+			disk = Disk(device)
+			device_info = DeviceInfo.create(disk)
+
+			partition_info = [PartitionInfo.create(p) for p in disk.partitions]
+
+			block_device = BDevice(disk, device_info, partition_info)
+			block_devices[block_device.device_info.path] = block_device
+
+		self._devices = block_devices
+
 	def get_device(self, path: Path) -> Optional[BDevice]:
 		return self._devices.get(path, None)
+
+	def find_partition(self, path: Path) -> Optional[PartitionInfo]:
+		for device in self._devices.values():
+			return next(filter(lambda x: x.path == path, device.partition_info), None)
+		return None
 
 	def modify_device(self, device: BDevice, wipe: bool) -> DeviceModification:
 		return DeviceModification(device, wipe)
@@ -497,10 +501,10 @@ class DeviceHandler(object):
 				device=device
 			)
 
-			device_partitions: List[NewDevicePartition] = []
+			device_partitions: List[PartitionModification] = []
 
 			for partition in entry.get('partitions', []):
-				device_partition = NewDevicePartition(
+				device_partition = PartitionModification(
 					existing=partition['existing'],
 					fs_type=FilesystemType(partition['fs_type']),
 					length=Size(partition['length']['value'], Unit[partition['length']['unit']]),
@@ -519,165 +523,122 @@ class DeviceHandler(object):
 
 		return config
 
-	def load_devices(self):
-		block_devices = {}
-
-		devices: List[Device] = parted.getAllDevices()
-
-		for device in devices:
-			disk = Disk(device)
-			device_info = DeviceInfo.from_disk(disk)
-
-			partition_info = [PartitionInfo.from_partiion(p) for p in disk.partitions]
-
-			block_device = BDevice(disk, device_info, partition_info)
-			block_devices[block_device.device_info.path] = block_device
-
-		self._devices = block_devices
-
-	def _perform_formatting(self, new_device_partition: NewDevicePartition):
-		# # To avoid "unable to open /dev/x: No such file or directory"
-		# start_wait = time.time()
-		# while Path(path).exists() is False and time.time() - start_wait < 10:
-		# 	time.sleep(0.025)
-		#
-		# if log_formatting:
-		# 	log(f'Formatting {path} -> {filesystem}', level=logging.INFO)
-
+	def _perform_formatting(
+		self,
+		fs_type: FilesystemType,
+		path: Path,
+		additional_parted_options: List[str] = []
+	):
 		options = []
 		command = ''
 
-
-		match new_device_partition.fs_type:
+		match fs_type:
 			case FilesystemType.Btrfs:
-				options = ['-f']
-				command = 'mkfs.btrfs'
+				options += ['-f']
+				command += 'mkfs.btrfs'
 			case FilesystemType.Fat16:
-				options = ['-F16']
-				command = 'mkfs.fat'
+				options += ['-F16']
+				command += 'mkfs.fat'
 			case FilesystemType.Fat32:
-				options = ['-F32']
-				command = 'mkfs.fat'
+				options += ['-F32']
+				command += 'mkfs.fat'
 			case FilesystemType.Ext2:
-				options = ['-F']
-				command = 'mkfs.ext2'
+				options += ['-F']
+				command += 'mkfs.ext2'
 			case FilesystemType.Ext3:
-				options = ['-F']
-				command = 'mkfs.ext3'
+				options += ['-F']
+				command += 'mkfs.ext3'
 			case FilesystemType.Ext4:
-				options = ['-F']
-				command = 'mkfs.ext4'
+				options += ['-F', 'asdf']
+				command += 'mkfs.ext4'
 			case FilesystemType.Xfs:
-				options = ['-f']
-				command = 'mkfs.xfs'
+				options += ['-f']
+				command += 'mkfs.xfs'
 			case FilesystemType.F2fs:
-				options = ['-f']
-				command = 'mkfs.f2fs'
+				options += ['-f']
+				command += 'mkfs.f2fs'
 			case FilesystemType.Ntfs:
-				options = ['-f', '-Q']
-				command = 'mkfs.ntfs'
+				options += ['-f', '-Q']
+				command += 'mkfs.ntfs'
 			case FilesystemType.Reiserfs:
-				command = 'mkfs.reiserfs'
+				command += 'mkfs.reiserfs'
 			case _:
-				raise UnknownFilesystemFormat(f'Filetype "{new_device_partition.fs_type.value}" is not supported')
+				raise UnknownFilesystemFormat(f'Filetype "{fs_type.value}" is not supported')
 
+		options += additional_parted_options
+		options_str = ' '.join(options)
 
-		Hfs = 'hfs'
-		Hfs_plus = 'hfs+'
-		Linux_swap = 'linux-swap'
-		Udf = 'udf'
+		log(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
 
-
-
-		# 	mkfs = SysCommand(f"/usr/bin/mkfs.btrfs {' '.join(options)} {path}").decode('UTF-8')
-			# 	if mkfs and 'UUID:' not in mkfs:
-			# 		raise DiskError(f'Could not format {path} with {filesystem} because: {mkfs}')
-			# 	self._partition_info.filesystem_type = filesystem
-			#
-			# elif filesystem == 'vfat':
-			# 	options = ['-F32'] + options
-			# 	log(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.vfat {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = filesystem
-
-			# elif filesystem == 'ext4':
-			# 	options = ['-F'] + options
-			#
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.ext4 {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = filesystem
-
-			# elif filesystem == 'ext2':
-			# 	options = ['-F'] + options
-			#
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.ext2 {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = 'ext2'
-			# elif filesystem == 'xfs':
-			# 	options = ['-f'] + options
-			#
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.xfs {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = filesystem
-
-			# elif filesystem == 'f2fs':
-			# 	options = ['-f'] + options
-			#
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.f2fs {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = filesystem
-
-			# elif filesystem == 'ntfs3':
-			# 	options = ['-f'] + options
-			#
-			# 	if (handle := SysCommand(f"/usr/bin/mkfs.ntfs -Q {' '.join(options)} {path}")).exit_code != 0:
-			# 		raise DiskError(f"Could not format {path} with {filesystem} because: {handle.decode('UTF-8')}")
-			# 	self._partition_info.filesystem_type = filesystem
-
-			elif filesystem == 'crypto_LUKS':
-				# 	from ..luks import luks2
-				# 	encrypted_partition = luks2(self, None, None)
-				# 	encrypted_partition.format(path)
-				self._partition_info.filesystem_type = filesystem
-
-			else:
-				raise UnknownFilesystemFormat(f"Fileformat '{filesystem}' is not yet implemented.")
+		try:
+			if (handle := SysCommand(f"/usr/bin/{command} {options_str} {path}")).exit_code != 0:
+				mkfs_error = handle.decode()
+				raise DiskError(f'Could not format {path} with {fs_type.value}: {mkfs_error}')
 		except SysCallError as error:
-			log(f"Formatting ran in to an error: {error}", level=logging.WARNING, fg="orange")
-			if retry is True:
-				log(f"Retrying in {storage.get('DISK_TIMEOUTS', 1)} seconds.", level=logging.WARNING, fg="orange")
-				time.sleep(storage.get('DISK_TIMEOUTS', 1))
+			msg = f'Could not format {path} with {fs_type.value}: {error.message}'
+			log(msg, fg='red')
+			raise DiskError(msg)
 
-				return self.format(filesystem, path, log_formatting, options, retry=False)
+	def _perform_enc_formatting(
+		self,
+		partition_modification: PartitionModification,
+		enc_conf: DiskEncryption
+	):
+		mapper_name = f"{storage.get('ENC_IDENTIFIER', 'ai')}{partition_modification.path.name}"
 
-		if get_filesystem_type(path) == 'crypto_LUKS' or get_filesystem_type(self.real_device) == 'crypto_LUKS':
-			self._encrypted = True
-		else:
-			self._encrypted = False
+		luks_handler = Luks2(
+			partition_modification,
+			mapper_name=mapper_name,
+			password=enc_conf.encryption_password
+		)
+		key_file = luks_handler.encrypt()
 
-		return True
+		mapper_path = luks_handler.unlock(mapper_name=mapper_name, key_file=key_file)
 
-	def format(self, modification: DeviceModification):
+		self._perform_formatting(partition_modification.fs_type, mapper_path)
+
+		luks_handler.lock()
+
+	def format(
+		self,
+		modification: DeviceModification,
+		enc_conf: Optional[DiskEncryption] = None
+	):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
-		for new_device_partition in modification.partitions:
-			self._perform_formatting(new_device_partition)
+
+		# verify that all partitions have a path set (which implies that they have been created)
+		missing_path = next(filter(lambda x: x.path is None, modification.partitions), None)
+		if missing_path is not None:
+			raise ValueError('When formatting, all partitions must have a path set')
+
+		# verify that all partitions are unmounted
+		for partition in modification.partitions:
+			# umounting for existing encrypted partitions is
+			# handled explicitly by Luks2.encrypt
+			if enc_conf is None or partition not in enc_conf.partitions:
+				self.umount(partition.path, recursive=True)
+
+		for part_mod in modification.partitions:
+			if enc_conf is not None and part_mod in enc_conf.partitions:
+				self._perform_enc_formatting(part_mod, enc_conf)
+			else:
+				self._perform_formatting(part_mod.fs_type, part_mod.path)
 
 	def _perform_partitioning(
 		self,
-		new_device_partition: NewDevicePartition,
+		partition_modification: PartitionModification,
 		block_device: BDevice,
 		disk: Disk
 	):
-		start_sector = new_device_partition.start.convert(
+		start_sector = partition_modification.start.convert(
 			Unit.sectors,
 			block_device.device_info.sector_size,
 			block_device.device_info.total_size
 		)
-		length_sector = new_device_partition.length.convert(
+		length_sector = partition_modification.length.convert(
 			Unit.sectors,
 			block_device.device_info.sector_size,
 			block_device.device_info.total_size
@@ -690,24 +651,27 @@ class DeviceHandler(object):
 		)
 		log(f'\tGeometry: {start_sector.value} start sector, {length_sector.value} length', level=logging.DEBUG)
 
-		filesystem = FileSystem(type=new_device_partition.fs_type.value, geometry=geometry)
-		log(f'\tFilesystem: {new_device_partition.fs_type.value}', level=logging.DEBUG)
+		filesystem = FileSystem(type=partition_modification.fs_type.value, geometry=geometry)
+		log(f'\tFilesystem: {partition_modification.fs_type.value}', level=logging.DEBUG)
 
 		partition = parted.Partition(
 			disk=disk,
-			type=new_device_partition.type.get_partition_code(),
+			type=partition_modification.type.get_partition_code(),
 			fs=filesystem,
 			geometry=geometry
 		)
 
-		for flag in new_device_partition.flags:
+		for flag in partition_modification.flags:
 			partition.setFlag(flag.value)
 
 		disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
 
-		log(f'\tType: {new_device_partition.type.value}', level=logging.DEBUG)
+		log(f'\tType: {partition_modification.type.value}', level=logging.DEBUG)
 
 		disk.commit()
+
+		# the partition has a real path now as it was created
+		partition_modification.path = Path(partition.path)
 
 	def partition(
 		self,
@@ -719,7 +683,7 @@ class DeviceHandler(object):
 		Create a partition table on the block device and create all partitions.
 		"""
 		block_device = modification.device
-		block_device.umount()
+		self.umount(block_device.device_info.path)
 
 		log(f'{modification.device_path}: Creating primary partition')
 
@@ -731,24 +695,61 @@ class DeviceHandler(object):
 		log('============  PARTITIONING  ==============')
 		log(f'{modification.device_path}: Creating partitions')
 
-		for new_device_partition in modification.partitions:
+		for partition_modification in modification.partitions:
 			if not modify:
-				self._perform_partitioning(new_device_partition, block_device, disk)
+				self._perform_partitioning(partition_modification, block_device, disk)
 			else:
-				if not new_device_partition.existing or new_device_partition.wipe:
-					self._perform_partitioning(new_device_partition, block_device, disk)
+				if not partition_modification.existing or partition_modification.wipe:
+					self._perform_partitioning(partition_modification, block_device, disk)
 
-		self.partprobe(modification.device)
+		self.partprobe(modification.device.device_info.path)
 
-	def partprobe(self, device: BDevice):
+	def _get_mount_info(self) -> str:
 		try:
-			result = SysCommand(f'partprobe {device.device_info.path}')
-			if result.exit_code != 0:
-				log(f'Error calling partprobe for {device.device_info.path}: {result.decode()}', level=logging.DEBUG)
-				raise DiskError(f'Could not perform partprobe on {device.device_info.path}: {result.decode()}')
+			return SysCommand('mount').decode()
 		except SysCallError as error:
-			log(f"partprobe experienced an error for {device.device_info.path}: {error}", level=logging.DEBUG)
-			raise DiskError(f'Could not perform partprobe on {device.device_info.path}: {error}')
+			log(f"Could not get mount information", level=logging.ERROR)
+			raise error
+
+	def umount(self, path: Path, recursive: bool = False):
+		mounted_devices = self._get_mount_info()
+
+		if str(path) in mounted_devices:
+			log(f'Partition {path} is currently mounted')
+			log(f'Attempting to umount partition: {path}')
+
+			command = 'umount'
+
+			if recursive:
+				command += ' -R'
+
+			try:
+				result = SysCommand(f'{command} {path}')
+
+				# Without to much research, it seams that low error codes are errors.
+				# And above 8k is indicators such as "/dev/x not mounted.".
+				# So anything in between 0 and 8k are errors (?).
+				if result and 0 < result.exit_code < 8000:
+					error_msg = result.decode()
+					raise DiskError(f'Could not unmount {path}: error code {result.exit_code}. {error_msg}')
+			except SysCallError as error:
+				log(f'Unable to umount partition {path}: {error.message}', level=logging.DEBUG)
+				raise DiskError(error.message)
+
+	def partprobe(self, path: Optional[Path] = None):
+		if path is not None:
+			command = f'partprobe {path}'
+		else:
+			command = 'partprobe'
+
+		try:
+			result = SysCommand(command)
+			if result.exit_code != 0:
+				log(f'Error calling partprobe: {result.decode()}', level=logging.DEBUG)
+				raise DiskError(f'Could not perform partprobe on {path}: {result.decode()}')
+		except SysCallError as error:
+			log(f"partprobe experienced an error for {path}: {error}", level=logging.DEBUG)
+			raise DiskError(f'Could not perform partprobe on {path}: {error}')
 
 	def _wipe(self, dev_path: Path):
 		"""

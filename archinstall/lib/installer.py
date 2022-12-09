@@ -223,7 +223,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.mountpoint for subvolume in sub_list]:
+				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.mapper_name for subvolume in sub_list]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -235,7 +235,7 @@ class Installer:
 			return False
 
 	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
-		from .luks import luks2
+		from .luks import Luks2
 		from .disk.btrfs import setup_subvolumes, mount_subvolume
 
 		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
@@ -254,7 +254,7 @@ class Installer:
 			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
 			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
-			with (luks_handle := luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
+			with (luks_handle := Luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
 				if self._disk_encryption.generate_encryption_file(partition) and not self._has_root(partition):
 					list_luks_handles.append([luks_handle, partition, self._disk_encryption.encryption_password])
 				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
@@ -276,7 +276,7 @@ class Installer:
 		# We then handle any special cases, such as btrfs
 		for partition in btrfs_subvolumes:
 			subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
-			for subvolume in sorted(subvolumes, key=lambda item: item.mountpoint):
+			for subvolume in sorted(subvolumes, key=lambda item: item.mapper_name):
 				# We cache the mount call for later
 				mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
 						installation=self,

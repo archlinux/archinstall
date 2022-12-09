@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Optional, Any, List, TYPE_CHECKING, Tuple
 
-from .device_handler import BDevice, device_handler, NewDevicePartition, PartitionType, FilesystemType, \
+from .device_handler import BDevice, device_handler, PartitionModification, PartitionType, FilesystemType, \
 	PartitionFlag, DeviceModification, Size, Unit
 from ..models.subvolume import Subvolume
 
@@ -16,7 +16,7 @@ from ..output import log
 from ..menu import Menu
 
 
-def _boot_partition() -> NewDevicePartition:
+def _boot_partition() -> PartitionModification:
 	if has_uefi():
 		start = Size(1, Unit.MiB)
 		size = Size(512, Unit.MiB)
@@ -25,7 +25,7 @@ def _boot_partition() -> NewDevicePartition:
 		size = Size(203, Unit.MiB)
 
 	# boot partition
-	return NewDevicePartition(
+	return PartitionModification(
 		type=PartitionType.Primary,
 		start=start,
 		length=size,
@@ -107,7 +107,7 @@ def suggest_single_disk_layout(
 	else:
 		length = min(device.device_info.total_size, root_partition_size)
 
-	root_partition = NewDevicePartition(
+	root_partition = PartitionModification(
 		type=PartitionType.Primary,
 		start=start,
 		length=length,
@@ -134,7 +134,7 @@ def suggest_single_disk_layout(
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
-		home_partition = NewDevicePartition(
+		home_partition = PartitionModification(
 			type=PartitionType.Primary,
 			wipe=True,
 			start=root_partition.length,
@@ -206,7 +206,7 @@ def suggest_multi_disk_layout(
 	root_device_modification.add_partition(boot_partition)
 
 	# add root partition to the root device
-	root_partition = NewDevicePartition(
+	root_partition = PartitionModification(
 		type=PartitionType.Primary,
 		start=Size(513, Unit.MiB) if has_uefi() else Size(206, Unit.MiB),
 		length=Size(100, Unit.Percent),
@@ -218,7 +218,7 @@ def suggest_multi_disk_layout(
 	root_device_modification.add_partition(root_partition)
 
 	# add home partition to home device
-	home_partition = NewDevicePartition(
+	home_partition = PartitionModification(
 		type=PartitionType.Primary,
 		start=Size(1, Unit.MiB),
 		length=Size(100, Unit.Percent),

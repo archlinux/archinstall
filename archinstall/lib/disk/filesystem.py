@@ -102,7 +102,7 @@ class Filesystem:
 		raise DiskError(f"Failed to convert PARTUUID {uuid} to a partition index number on blockdevice {self.blockdevice.device}")
 
 	def load_layout(self) -> None:
-		from ..luks import luks2
+		from ..luks import Luks2
 		from .btrfs import BTRFSPartition
 
 		# if the MAIN modification configuration specifies a wipe, we'll wipe the entire disk
@@ -112,68 +112,43 @@ class Filesystem:
 		else:
 			device_handler.partition(self._device_modification, self._partitioning_type, modify=True)
 
+		device_handler.format(self._device_modification)
 
-		sys.exit(1)
 
-		# We then iterate the partitions in order
 		for partition in layout.get('partitions', []):
-			# We don't want to re-add an existing partition (those containing a UUID already)
-			# if partition.get('wipe', False) and not partition.get('PARTUUID', None):
-			# 	start = partition.get('start') or (
-			# 		prev_partition and f'{prev_partition["device_instance"].end_sectors}s' or self.DEFAULT_PARTITION_START)
-			# 	partition['device_instance'] = self.add_partition(partition.get('type', 'primary'),
-			# 														start=start,
-			# 														end=partition.get('size', '100%'),
-			# 														partition_format=partition.get('filesystem', {}).get('format', 'btrfs'),
-			# 														skip_mklabel=layout.get('wipe', False) is not False)
-			#
-			# elif (partition_uuid := partition.get('PARTUUID')):
-			# 	# We try to deal with both UUID and PARTUUID of a partition when it's being re-used.
-			# 	# We should re-name or separate this logi based on partition.get('PARTUUID') and partition.get('UUID')
-			# 	# but for now, lets just attempt to deal with both.
-			# 	try:
-			# 		partition['device_instance'] = self.blockdevice.get_partition(uuid=partition_uuid)
-			# 	except DiskError:
-			# 		partition['device_instance'] = self.blockdevice.get_partition(partuuid=partition_uuid)
-			#
-			# 	log(_("Re-using partition instance: {}").format(partition['device_instance']), level=logging.DEBUG, fg="gray")
-			# else:
-			# 	log(f"{self}.load_layout() doesn't know how to work without 'wipe' being set or UUID ({partition.get('PARTUUID')}) was given and found.", fg="yellow", level=logging.WARNING)
-			# 	continue
-
 			if partition.get('filesystem', {}).get('format', False):
 				# needed for backward compatibility with the introduction of the new "format_options"
 				format_options = partition.get('options',[]) + partition.get('filesystem',{}).get('format_options',[])
 				disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
 
-				if partition in disk_encryption.partitions:
-					if not partition['device_instance']:
-						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
-
-					if partition.get('mountpoint',None):
-						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
-					else:
-						loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
-
-					partition['device_instance'].encrypt(password=disk_encryption.encryption_password)
-					# Immediately unlock the encrypted device to format the inner volume
-					with luks2(partition['device_instance'], loopdev, disk_encryption.encryption_password, auto_unmount=True) as unlocked_device:
-						if not partition.get('wipe'):
-							if storage['arguments'] == 'silent':
-								raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
-							else:
-								if not partition.get('filesystem'):
-									partition['filesystem'] = {}
-
-								if not partition['filesystem'].get('format', False):
-									while True:
-										partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
-										if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
-											log(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
-											continue
-										break
-
-						unlocked_device.format(partition['filesystem']['format'], options=format_options)
+				# if partition in disk_encryption.partitions:
+				# 	# if not partition['device_instance']:
+				# 	# 	raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
+				#
+				# 	if partition.get('mountpoint',None):
+				# 		loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['mountpoint']).name}loop"
+				# 	else:
+				# 		loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+				#
+				# 	partition['device_instance'].encrypt(password=disk_encryption.encryption_password)
+				# 	# Immediately unlock the encrypted device to format the inner volume
+				# 	with Luks2(partition['device_instance'], loopdev, disk_encryption.encryption_password, auto_unmount=True) as unlocked_device:
+				# 		if not partition.get('wipe'):
+				# 			if storage['arguments'] == 'silent':
+				# 				raise ValueError(f"Missing fs-type to format on newly created encrypted partition {partition['device_instance']}")
+				# 			else:
+				# 				if not partition.get('filesystem'):
+				# 					partition['filesystem'] = {}
+				#
+				# 				if not partition['filesystem'].get('format', False):
+				# 					while True:
+				# 						partition['filesystem']['format'] = input(f"Enter a valid fs-type for newly encrypted partition {partition['filesystem']['format']}: ").strip()
+				# 						if not partition['filesystem']['format'] or valid_fs_type(partition['filesystem']['format']) is False:
+				# 							log(_("You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."))
+				# 							continue
+				# 						break
+				#
+				# 		unlocked_device.format(partition['filesystem']['format'], options=format_options)
 
 				elif partition.get('wipe', False):
 					if not partition['device_instance']:
@@ -192,15 +167,10 @@ class Filesystem:
 							autodetect_filesystem=False
 						)
 
-			# if partition.get('boot', False):
-			# 	log(f"Marking partition {partition['device_instance']} as bootable.")
-			# 	self.set(self.partuuid_to_index(partition['device_instance'].part_uuid), 'boot on')
-
-			# prev_partition = partition
 
 	def find_partition(self, mountpoint :str) -> Partition:
 		for partition in self.blockdevice:
-			if partition.target_mountpoint == mountpoint or partition.mountpoint == mountpoint:
+			if partition.target_mountpoint == mountpoint or partition.mapper_name == mountpoint:
 				return partition
 
 	def _partprobe(self) -> bool:
@@ -287,13 +257,13 @@ class Filesystem:
 
 				if len(new_partuuid_set) and (new_partuuid := new_partuuid_set.pop()):
 					try:
-						return self.blockdevice.get_partition(partuuid=new_partuuid)
+						return self.blockdevice.find_partition(partuuid=new_partuuid)
 					except Exception as err:
 						log(f'Blockdevice: {self.blockdevice}', level=logging.ERROR, fg="red")
 						log(f'Partitions: {self.blockdevice.partitions}', level=logging.ERROR, fg="red")
 						log(f'Partition set: {new_partuuid_set}', level=logging.ERROR, fg="red")
 						log(f'New PARTUUID: {[new_partuuid]}', level=logging.ERROR, fg="red")
-						log(f'get_partition(): {self.blockdevice.get_partition}', level=logging.ERROR, fg="red")
+						log(f'get_partition(): {self.blockdevice.find_partition}', level=logging.ERROR, fg="red")
 						raise err
 				else:
 					log(f"Could not get UUID for partition. Waiting {storage.get('DISK_TIMEOUTS', 1) * count}s before retrying.",level=logging.DEBUG)
