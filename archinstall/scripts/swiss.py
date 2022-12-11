@@ -20,9 +20,11 @@ import pathlib
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput, NetworkConfigurationHandler, Menu
-from archinstall.lib.disk.filesystem import perform_filesystem_operations
-from archinstall.profiles.applications.pipewire import PipewireProfile
+from ..lib.configuration import ConfigurationOutput
+from ..lib.models.network_configuration import NetworkConfigurationHandler
+from ..lib.menu import Menu
+from ..lib.disk.filesystem import perform_filesystem_operations
+from ..profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -365,7 +367,7 @@ def disk_setup(installation):
 
 	# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 	for partition in installation.partitions:
-		if partition.mapper_name == installation.target + '/boot':
+		if partition.path == installation.target + '/boot':
 			if partition.value < 0.19:  # ~200 MiB in GiB
 				raise archinstall.DiskError(
 					f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
@@ -496,5 +498,9 @@ if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
 if mode in ('full','only_hd'):
-	perform_filesystem_operations()
+	perform_filesystem_operations(
+		archinstall.arguments['disk_layouts'],
+		archinstall.arguments['disk_encryption']
+	)
+
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), mode)

@@ -2,7 +2,6 @@
 import importlib
 from argparse import ArgumentParser, Namespace
 
-from .lib.disk import *
 from .lib.disk.device_handler import device_handler
 from .lib.exceptions import *
 from .lib.general import *

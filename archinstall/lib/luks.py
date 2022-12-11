@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from .disk.device_handler import PartitionModification, device_handler
 from .utils.diskinfo import get_lsblk_info
 
 from .general import SysCommand
@@ -18,14 +17,14 @@ from .storage import storage
 
 @dataclass
 class Luks2:
-	partition: PartitionModification
+	luks_dev_path: Path
 	mapper_name: Optional[str] = None
 	password: Optional[str] = None
 	key_file: Optional[Path] = None
 	auto_unmount: bool = False
 
 	def __post_init__(self):
-		if self.partition.path is None:
+		if self.luks_dev_path is None:
 			raise ValueError('Partition must have a path set')
 
 	def __enter__(self) -> Path:
@@ -42,7 +41,7 @@ class Luks2:
 		return True
 
 	def _default_key_file(self) -> Path:
-		return Path(f'/tmp/{self.partition.path.name}.disk_pw')  # TODO: Make disk-pw-file randomly unique?
+		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')  # TODO: Make disk-pw-file randomly unique?
 
 	def encrypt(
 		self,
@@ -51,7 +50,7 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[str] = None
 	) -> Path:
-		log(f'Encrypting {self.partition.path} (This might take a while)', level=logging.INFO)
+		log(f'Encrypting {self.luks_dev_path} (This might take a while)', level=logging.INFO)
 
 		if type(self.password) != bytes:
 			byte_password = bytes(self.password, 'UTF-8')
@@ -78,7 +77,7 @@ class Luks2:
 			'--iter-time', str(iter_time),
 			'--key-file', str(key_file),
 			'--use-urandom',
-			'luksFormat', str(self.partition.path),
+			'luksFormat', str(self.luks_dev_path),
 		])
 
 		try:
@@ -93,13 +92,12 @@ class Luks2:
 					break
 
 			if cmd_handle is not None and cmd_handle.exit_code != 0:
-				raise DiskError(f'Could not encrypt volume "{self.partition.path}": {b"".join(cmd_handle)}')
+				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {b"".join(cmd_handle)}')
 		except SysCallError as err:
 			if err.exit_code == 256:
-				log(
-					f'{self.partition.path} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.',
-					level=logging.DEBUG
-				)
+				log(f'luks2 partition currently in use: {self.luks_dev_path}')
+				log('Attempting to unmount, crypt-close and trying encryption again')
+
 				self.lock()
 				# Then try again to set up the crypt-device
 				SysCommand(cryptsetup_args)
@@ -144,24 +142,26 @@ class Luks2:
 			raise ValueError('mapper_name cannot contain "/"')
 
 		wait_timer = time.time()
-		while Path(self.partition.path).exists() is False and time.time() - wait_timer < 10:
+		while Path(self.luks_dev_path).exists() is False and time.time() - wait_timer < 10:
 			time.sleep(0.025)
 
-		SysCommand(f'/usr/bin/cryptsetup open {self.partition.path} {mapper_name} --key-file {key_file} --type luks2')
-		mapper_dev = Path(f'/dev/mapper{mapper_name}')
+		SysCommand(f'/usr/bin/cryptsetup open {self.luks_dev_path} {mapper_name} --key-file {key_file} --type luks2')
+		mapper_dev = Path(f'/dev/mapper/{mapper_name}')
 
 		if mapper_dev.is_symlink():
 			return mapper_dev
 
-		return None
+		raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self):
-		device_handler.umount(self.partition.path)
+		from .disk.device_handler import device_handler
+
+		device_handler.umount(self.luks_dev_path)
 
 		# Get crypt-information about the device by doing a reverse lookup starting with the partition path
 		# For instance: /dev/sda
 		device_handler.partprobe()
-		lsblk_info = get_lsblk_info(self.partition.path)
+		lsblk_info = get_lsblk_info(self.luks_dev_path)
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:

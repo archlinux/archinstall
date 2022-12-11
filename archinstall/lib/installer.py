@@ -223,7 +223,7 @@ class Installer:
 		"""
 		if partition.get("mountpoint") is None:
 			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.mapper_name for subvolume in sub_list]:
+				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.path for subvolume in sub_list]:
 					if mountpoint == '/':
 						return True
 				return False
@@ -276,7 +276,7 @@ class Installer:
 		# We then handle any special cases, such as btrfs
 		for partition in btrfs_subvolumes:
 			subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
-			for subvolume in sorted(subvolumes, key=lambda item: item.mapper_name):
+			for subvolume in sorted(subvolumes, key=lambda item: item.path):
 				# We cache the mount call for later
 				mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
 						installation=self,

@@ -4,8 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
-from .device_handler import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
-from .user_guides import suggest_single_disk_layout
+from .device import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
 from ..menu import Menu
 from ..menu.list_manager import ListManager
 from ..menu.menu import MenuSelectionType, MenuSelection
@@ -64,6 +63,21 @@ class PartitioningList(ListManager):
 		# only display wiping if the partition exists already
 		if not selection.existing:
 			not_filter += [self._actions['mark_wipe']]
+
+		if selection.existing:
+			# only allow to a new filesystem if the existing partition
+			# was marked as wiping, otherwise we run into issues where
+			# 1. select a new fs -> potentially mark as wipe now
+			# 2. Switch back to old filesystem -> should unmark wipe now, but
+			#     how do we know it was the original one?
+			if not selection.wipe:
+				not_filter += [
+					self._actions['set_filesystem'],
+					self._actions['assign_mountpoint'],
+					self._actions['mark_bootable'],
+					self._actions['btrfs_mark_compressed'],
+					self._actions['btrfs_set_subvolumes']
+				]
 
 		# non btrfs partitions shouldn't get btrfs options
 		if selection.fs_type != FilesystemType.Btrfs:
@@ -135,7 +149,7 @@ class PartitioningList(ListManager):
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
 		if partition.fs_type == FilesystemType.Crypto_luks:
-			prompt = str(_('This partition is encrypted therefore for the formatting a filesystem has to be specified'))
+			prompt = str(_('This partition is currently encrypted, to format a filesystem has to be specified'))
 			fs_type = self._prompt_partition_fs_type(prompt)
 
 			if fs_type is None:
@@ -193,7 +207,7 @@ class PartitioningList(ListManager):
 		device_info = self._device.device_info
 
 		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'
-		free_space_table = FormattedOutput.as_table(self._device.device_info.free_space_regions)
+		free_space_table = FormattedOutput.as_table(device_info.free_space_regions)
 		prompt = text + free_space_table + '\n'
 
 		total_sectors = device_info.total_size.format_size(Unit.sectors, device_info.sector_size)
@@ -235,7 +249,7 @@ class PartitioningList(ListManager):
 		start_size = Size(int(start_sector), Unit.sectors, device_info.sector_size)
 
 		if end_sector.endswith('%'):
-			end_size = Size(int(end_sector[:-1]), Unit.Percent, device_info.sector_size)
+			end_size = Size(int(end_sector[:-1]), Unit.Percent, device_info.sector_size, device_info.total_size)
 		else:
 			end_size = Size(int(end_sector), Unit.sectors, device_info.sector_size)
 
@@ -277,6 +291,8 @@ class PartitioningList(ListManager):
 			if choice.value == Menu.no():
 				return []
 
+		from ..user_interaction.disk_conf import suggest_single_disk_layout
+
 		device_modification = suggest_single_disk_layout(self._device)
 		return device_modification.partitions
 
@@ -287,7 +303,33 @@ def manual_partitioning(
 	preset: List[PartitionModification] = []
 ) -> List[PartitionModification]:
 	if not prompt:
-		prompt = str(_('Partition management: {}')).format(device.device_info.path)
+		prompt = str(_('Partition management: {}')).format(device.device_info.path) + '\n'
+		prompt += str(_('Total length: {}')).format(device.device_info.total_size.format_size(Unit.MiB))
 
-	partitions = PartitioningList(prompt, device, preset).run()
+	manual_preset = []
+
+	if not preset:
+		# we'll display the existing partitions of the device
+		for partition in device.partition_info:
+			manual_preset.append(
+				PartitionModification(
+					existing=True,
+					wipe=False,
+					type=partition.type,
+					start=partition.start,
+					length=partition.length,
+					fs_type=partition.fs_type,
+					path=partition.path,
+					flags=partition.flags
+				)
+			)
+	else:
+		manual_preset = preset
+
+	menu_list = PartitioningList(prompt, device, manual_preset)
+	partitions = menu_list.run()
+
+	if menu_list.is_last_choice_cancel():
+		return preset
+
 	return partitions

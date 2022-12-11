@@ -8,6 +8,7 @@ from archinstall import ConfigurationOutput, Menu
 from archinstall.lib.disk.filesystem import perform_filesystem_operations
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
+from ..lib.disk import disk_layouts
 
 if TYPE_CHECKING:
 	_: Any
@@ -29,7 +30,7 @@ archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM
 archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
 
 
 def ask_user_questions():
@@ -284,5 +285,56 @@ if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
 
 archinstall.configuration_sanity_check()
-perform_filesystem_operations(archinstall.arguments['disk_layouts'])
+
+
+
+
+
+
+
+
+# from ..lib.disk.device_handler import device_handler, DeviceModification, \
+# 	PartitionModification, PartitionType, FilesystemType, Size, Unit
+# from pathlib import Path
+# from parted import Geometry
+# from ..lib.disk.encryption import DiskEncryption, EncryptionType
+#
+# dev_path = Path('/dev/sda')
+# p = Path('/dev/sda3')
+#
+# device = device_handler.get_device(dev_path)
+# partition = device_handler.find_partition(p)
+# g: Geometry = partition.partition.geometry
+# start = Size(g.start, Unit.sectors, device.device_info.sector_size)
+# length = Size(g.length, Unit.sectors, device.device_info.sector_size)
+#
+#
+# part_mod = PartitionModification(
+# 	PartitionType.Primary,
+# 	start,
+# 	length,
+# 	wipe=True,
+# 	fs_type=FilesystemType.Ext4,
+# 	existing=True,
+# 	path=p
+# )
+#
+#
+# mod = DeviceModification(device, wipe=False, partitions=[part_mod])
+# enc_conf = DiskEncryption(EncryptionType.Partition, 'a', [part_mod])
+#
+# device_handler.partition(mod)
+# device_handler.format(mod, enc_conf)
+#
+# 1/0
+
+
+
+
+
+perform_filesystem_operations(
+	archinstall.arguments['disk_layouts'],
+	archinstall.arguments['disk_encryption']
+)
+
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device_handler import DeviceModification, PartitionModification, DiskLayoutConfiguration
+from .device import DiskLayoutConfiguration, PartitionModification, DeviceModification
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
@@ -140,16 +140,16 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 
 
 def select_partitions_to_encrypt(
-	device_mods: List[DeviceModification],
+	modification: List[DeviceModification],
 	preset: List[PartitionModification]
 ) -> List[PartitionModification]:
 	partitions: List[PartitionModification] = []
 
 	# do not allow encrypting the boot partition
-	for entry in device_mods:
-		partitions += list(filter(lambda x: x.mapper_name != Path('/boot'), entry.partitions))
+	for mod in modification:
+		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
-	# do not allow encrypting existing partitions that or not marked as wipe
+	# do not allow encrypting existing partitions that are not marked as wipe
 	partitions = list(filter(lambda x: not x.existing or x.wipe, partitions))
 
 	if partitions:

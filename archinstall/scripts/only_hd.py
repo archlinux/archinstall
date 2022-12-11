@@ -5,7 +5,7 @@ import pathlib
 from typing import List, Tuple
 
 import archinstall
-from archinstall import ConfigurationOutput
+from ..lib.configuration import ConfigurationOutput
 from ..lib.disk.filesystem import perform_filesystem_operations
 
 
@@ -127,5 +127,9 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-perform_filesystem_operations()
+perform_filesystem_operations(
+	archinstall.arguments['disk_layouts'],
+	archinstall.arguments['disk_encryption']
+)
+
 perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))

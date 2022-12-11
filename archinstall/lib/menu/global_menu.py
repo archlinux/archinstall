@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.device_handler import DeviceModification, DiskLayoutConfiguration
+from ..disk.device import DiskLayoutConfiguration, DeviceModification
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration

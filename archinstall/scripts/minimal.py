@@ -1,9 +1,8 @@
 import archinstall
-from ..lib.utils.util import do_countdown
-
+from archinstall import User, Bootloader
 # Select a harddrive and a disk password
 from archinstall.profiles.minimal import MinimalProfile
-from archinstall import User, Bootloader
+from ..lib.utils.util import do_countdown
 
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")
