@@ -22,7 +22,11 @@ if TYPE_CHECKING:
 	_: Any
 
 
-def perform_filesystem_operations(disk_layouts: DiskLayoutConfiguration, enc_conf: Optional[DiskEncryption] = None):
+def perform_filesystem_operations(
+	disk_layouts: DiskLayoutConfiguration,
+	enc_conf: Optional[DiskEncryption] = None,
+	show_countdown: bool = True
+):
 	"""
 		Issue a final warning before we continue with something un-revertable.
 		We mention the drive one last time, and count from 5 to 0.
@@ -41,7 +45,9 @@ def perform_filesystem_operations(disk_layouts: DiskLayoutConfiguration, enc_con
 	device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
 
 	print(str(_(' ! Formatting {} in ')).format(device_paths))
-	do_countdown()
+
+	if show_countdown:
+		do_countdown()
 
 	# Setup the blockdevice, filesystem (and optionally encryption).
 	# Once that's done, we'll hand over to perform_installation()

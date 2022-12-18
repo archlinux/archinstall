@@ -1,13 +1,26 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Any, Dict, Union
 
 
 @dataclass
 class Subvolume:
 	name: str
-	mountpoint: str
+	mountpoint: Path
 	compress: bool = False
 	nodatacow: bool = False
+
+	@property
+	def clean_name(self) -> str:
+		return self.name.lstrip('/')
+
+	@property
+	def relative_mountpoint(self) -> Path:
+		"""
+		Will return the relative path based on the anchor
+		e.g. Path('/mnt/test') -> Path('mnt/test')
+		"""
+		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
 	def display(self) -> str:
 		options_str = ','.join(self.options)
@@ -22,12 +35,12 @@ class Subvolume:
 		return [o for o in options if len(o)]
 
 	def __dump__(self) -> Dict[str, Any]:
-		return self.json()
+		return self.as_json()
 
-	def json(self) -> Dict[str, Any]:
+	def as_json(self) -> Dict[str, Any]:
 		return {
 			'name': self.name,
-			'mountpoint': self.mountpoint,
+			'mountpoint': str(self.mountpoint),
 			'compress': self.compress,
 			'nodatacow': self.nodatacow
 		}

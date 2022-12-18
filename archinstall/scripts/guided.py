@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
@@ -108,7 +109,7 @@ def ask_user_questions():
 	global_menu.run()
 
 
-def perform_installation(mountpoint):
+def perform_installation(mountpoint: Path):
 	"""
 	Performs the installation steps on a block device.
 	Only requirement is that the block devices are
@@ -274,8 +275,10 @@ if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
 config_output = ConfigurationOutput(archinstall.arguments)
+
 if not archinstall.arguments.get('silent'):
 	config_output.show()
+
 config_output.save()
 
 if archinstall.arguments.get('dry_run'):
@@ -334,7 +337,7 @@ archinstall.configuration_sanity_check()
 
 perform_filesystem_operations(
 	archinstall.arguments['disk_layouts'],
-	archinstall.arguments['disk_encryption']
+	archinstall.arguments.get('disk_encryption', None)
 )
 
-perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'))
+perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

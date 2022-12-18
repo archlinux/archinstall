@@ -503,4 +503,4 @@ if mode in ('full','only_hd'):
 		archinstall.arguments['disk_encryption']
 	)
 
-perform_installation(archinstall.storage.get('MOUNT_POINT', '/mnt'), mode)
+perform_installation(archinstall.storage.get('MOUNT_POINT', pathlib.Path('/mnt')), mode)

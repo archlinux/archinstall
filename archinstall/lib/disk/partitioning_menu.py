@@ -4,10 +4,11 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
-from .device import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag
+from .device import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
+	ModificationStatus
 from ..menu import Menu
 from ..menu.list_manager import ListManager
-from ..menu.menu import MenuSelectionType, MenuSelection
+from ..menu.menu import MenuSelection
 from ..menu.text_input import TextInput
 from ..output import FormattedOutput, log
 from ..user_interaction.subvolume_config import SubvolumeList
@@ -28,7 +29,7 @@ class PartitioningList(ListManager):
 			'suggest_partiton_layout': str(_('Suggest partition layout')),
 			'remove_added_partitions': str(_('Remove all newly added partitions')),
 			'assign_mountpoint': str(_('Assign mountpoint')),
-			'mark_wipe': str(_('Mark/Unmark to be formatted (wipes data)')),
+			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
 			'mark_bootable': str(_('Mark/Unmark as bootable')),
 			'set_filesystem': str(_('Change filesystem')),
 			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
@@ -60,28 +61,28 @@ class PartitioningList(ListManager):
 	def filter_options(self, selection: PartitionModification, options: List[str]) -> List[str]:
 		not_filter = []
 
-		# only display wiping if the partition exists already
-		if not selection.existing:
-			not_filter += [self._actions['mark_wipe']]
-
-		if selection.existing:
-			# only allow to a new filesystem if the existing partition
-			# was marked as wiping, otherwise we run into issues where
+		# only display formatting if the partition exists already
+		if not selection.exists():
+			not_filter += [self._actions['mark_formatting']]
+		else:
+			# only allow these options if the existing partition
+			# was marked as formatting, otherwise we run into issues where
 			# 1. select a new fs -> potentially mark as wipe now
 			# 2. Switch back to old filesystem -> should unmark wipe now, but
 			#     how do we know it was the original one?
-			if not selection.wipe:
-				not_filter += [
-					self._actions['set_filesystem'],
-					self._actions['assign_mountpoint'],
-					self._actions['mark_bootable'],
-					self._actions['btrfs_mark_compressed'],
-					self._actions['btrfs_set_subvolumes']
-				]
+			not_filter += [
+				self._actions['set_filesystem'],
+				self._actions['assign_mountpoint'],
+				self._actions['mark_bootable'],
+				self._actions['btrfs_mark_compressed'],
+				self._actions['btrfs_set_subvolumes']
+			]
 
 		# non btrfs partitions shouldn't get btrfs options
 		if selection.fs_type != FilesystemType.Btrfs:
 			not_filter += [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
+		else:
+			not_filter += [self._actions['assign_mountpoint']]
 
 		return [o for o in options if o not in not_filter]
 
@@ -100,31 +101,45 @@ class PartitioningList(ListManager):
 			case 'suggest_partiton_layout':
 				new_partitions = self._suggest_partition_layout(data)
 				if len(new_partitions) > 0:
-					# remove all newly created partitions
-					data = [part for part in data if part.existing]
-					data += new_partitions
+					data = new_partitions
 			case 'remove_added_partitions':
 				choice = self._reset_confirmation()
 				if choice.value == Menu.yes():
-					data = [part for part in data if part.existing]
+					data = [part for part in data if part.is_exists_or_modify()]
 			case 'assign_mountpoint':
-				self._prompt_mountpoint(entry)
-			case 'mark_wipe':
-				self._prompt_wipe_data(entry)
+				entry.mountpoint = self._prompt_mountpoint()
+				if entry.mountpoint == Path('/boot'):
+					entry.set_flag(PartitionFlag.Boot)
+			case 'mark_formatting':
+				self._prompt_formatting(entry)
 			case 'mark_bootable':
 				entry.invert_flag(PartitionFlag.Boot)
 			case 'set_filesystem':
 				fs_type = self._prompt_partition_fs_type()
 				if fs_type:
 					entry.fs_type = fs_type
+					# btrfs subvolumes will define mountpoints
+					if fs_type == FilesystemType.Btrfs:
+						entry.mountpoint = None
 			case 'btrfs_mark_compressed':
 				self._set_compressed(entry)
 			case 'btrfs_set_subvolumes':
 				self._set_btrfs_subvolumes(entry)
 			case 'delete_partition':
-				data = [d for d in data if d != entry]
+				data = self._delete_partition(entry, data)
 
 		return data
+
+	def _delete_partition(
+		self,
+		entry: PartitionModification,
+		data: List[PartitionModification]
+	) -> List[PartitionModification]:
+		if entry.is_exists_or_modify():
+			entry.status = ModificationStatus.Delete
+			return data
+		else:
+			return [d for d in data if d != entry]
 
 	def _set_compressed(self, partition: PartitionModification):
 		compression = 'compress=zstd'
@@ -140,53 +155,47 @@ class PartitioningList(ListManager):
 			partition.btrfs
 		).run()
 
-	def _prompt_wipe_data(self, partition: PartitionModification):
-		if partition.wipe is True:
-			partition.wipe = False
+	def _prompt_formatting(self, partition: PartitionModification):
+		# an existing partition can toggle between Exist or Modify
+		if partition.modify():
+			partition.status = ModificationStatus.Exist
 			return
+		elif partition.exists():
+			partition.status = ModificationStatus.Modify
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
 		# without asking the user which inner-filesystem they want to use. Since the flag 'encrypted' = True is already set,
 		# it's safe to change the filesystem for this partition.
 		if partition.fs_type == FilesystemType.Crypto_luks:
-			prompt = str(_('This partition is currently encrypted, to format a filesystem has to be specified'))
+			prompt = str(_('This partition is currently encrypted, to format it a filesystem has to be specified'))
 			fs_type = self._prompt_partition_fs_type(prompt)
-
-			if fs_type is None:
-				return
-
 			partition.fs_type = fs_type
 
-		partition.wipe = True
+			if fs_type == FilesystemType.Btrfs:
+				partition.mountpoint = None
 
-	def _prompt_mountpoint(self, partition: PartitionModification):
-		prompt = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
-		prompt += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
-		prompt += str(_('Mountpoint (leave blank to remove mountpoint): '))
+	def _prompt_mountpoint(self) -> Path:
+		header = str(_('Partition mount-points are relative to inside the installation, the boot would be /boot as an example.')) + '\n'
+		header += str(_('If mountpoint /boot is set, then the partition will also be marked as bootable.')) + '\n'
+		prompt = str(_('Mountpoint: '))
 
-		value = TextInput(prompt).run().strip()
+		print(header)
 
-		if value:
-			mountpoint = Path(value)
-		else:
-			mountpoint = None
+		while True:
+			value = TextInput(prompt).run().strip()
 
-		partition.mountpoint = mountpoint
+			if value:
+				mountpoint = Path(value)
+				break
 
-		if mountpoint == Path('/boot'):
-			partition.set_flag(PartitionFlag.Boot)
+		return mountpoint
 
-	def _prompt_partition_fs_type(self, prompt: str = '') -> Optional[FilesystemType]:
+	def _prompt_partition_fs_type(self, prompt: str = '') -> FilesystemType:
 		options = {fs.value: fs for fs in FilesystemType if fs != FilesystemType.Crypto_luks}
 
-		prompt += prompt + '\n' + str(_('Enter a desired filesystem type for the partition'))
-		choice = Menu(prompt, options, sort=False).run()
-
-		match choice.type_:
-			case MenuSelectionType.Skip:
-				return None
-			case MenuSelectionType.Selection:
-				return options[choice.value]
+		prompt = prompt + '\n' + str(_('Enter a desired filesystem type for the partition'))
+		choice = Menu(prompt, options, sort=False, skip=False).run()
+		return options[choice.value]
 
 	def _validate_sector(self, start_sector: str, end_sector: Optional[str] = None) -> bool:
 		if not start_sector.isdigit():
@@ -258,25 +267,27 @@ class PartitioningList(ListManager):
 	def _create_new_partition(self) -> Optional[PartitionModification]:
 		fs_type = self._prompt_partition_fs_type()
 
-		if not fs_type:
-			return None
-
 		start_size, end_size = self._prompt_sectors()
 		length = end_size-start_size
-
-		partition = PartitionModification(
-			type=PartitionType.Primary,
-			start=start_size,
-			length=length,
-			wipe=True,
-			fs_type=fs_type
-		)
 
 		# new line for the next prompt
 		print()
 
-		print(str(_('Choose a mountpoint')))
-		self._prompt_mountpoint(partition)
+		mountpoint = None
+		if fs_type != FilesystemType.Btrfs:
+			mountpoint = self._prompt_mountpoint()
+
+		partition = PartitionModification(
+			status=ModificationStatus.Create,
+			type=PartitionType.Primary,
+			start=start_size,
+			length=length,
+			fs_type=fs_type,
+			mountpoint=mountpoint
+		)
+
+		if partition.mountpoint == Path('/boot'):
+			partition.set_flag(PartitionFlag.Boot)
 
 		return partition
 
@@ -286,7 +297,9 @@ class PartitioningList(ListManager):
 		return choice
 
 	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
-		if any([not entry.existing for entry in data]):
+		# if modifications have been done already, inform the user
+		# that this operation will erase those modifications
+		if any([not entry.exists() for entry in data]):
 			choice = self._reset_confirmation()
 			if choice.value == Menu.no():
 				return []
@@ -313,13 +326,12 @@ def manual_partitioning(
 		for partition in device.partition_info:
 			manual_preset.append(
 				PartitionModification(
-					existing=True,
-					wipe=False,
+					status=ModificationStatus.Exist,
 					type=partition.type,
 					start=partition.start,
 					length=partition.length,
 					fs_type=partition.fs_type,
-					path=partition.path,
+					dev_path=partition.path,
 					flags=partition.flags
 				)
 			)

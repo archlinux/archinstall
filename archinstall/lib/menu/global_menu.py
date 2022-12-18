@@ -23,13 +23,13 @@ from ..user_interaction import ask_ntp
 from ..user_interaction import ask_to_configure_network
 from ..user_interaction import get_password, ask_for_a_timezone
 from ..user_interaction import select_additional_repositories
-from ..user_interaction import select_disk_layout
 from ..user_interaction import select_kernel
 from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
+from ..user_interaction.disk_conf import select_disk_layout
 from ..user_interaction.save_conf import save_config
 
 if TYPE_CHECKING:

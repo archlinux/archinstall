@@ -2,22 +2,20 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, TYPE_CHECKING, Optional, List
+from typing import Any, TYPE_CHECKING, Optional, List
 
-from ..disk import BlockDevice
 from ..disk.device import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
-	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag
+	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus
+from ..disk.device_handler import device_handler
 from ..disk.partitioning_menu import manual_partitioning
-from ..exceptions import DiskError
+from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..models.subvolume import Subvolume
 from ..output import FormattedOutput
-from ..storage import storage
-from ..disk.device_handler import device_handler
 from ..output import log
-from ..hardware import has_uefi
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -73,16 +71,25 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 			return selected_devices
 
 
-def _get_default_partition_layout(
+def get_default_partition_layout(
 	devices: List[BDevice],
+	filesystem_type: Optional[FilesystemType] = None,
 	advanced_option: bool = False
 ) -> List[DeviceModification]:
 
 	if len(devices) == 1:
-		device_modification = suggest_single_disk_layout(devices[0], advanced_options=advanced_option)
+		device_modification = suggest_single_disk_layout(
+			devices[0],
+			filesystem_type=filesystem_type,
+			advanced_options=advanced_option
+		)
 		return [device_modification]
 	else:
-		return suggest_multi_disk_layout(devices, advanced_options=advanced_option)
+		return suggest_multi_disk_layout(
+			devices,
+			filesystem_type=filesystem_type,
+			advanced_options=advanced_option
+		)
 
 
 def _manual_partitioning(
@@ -148,7 +155,7 @@ def select_disk_layout(
 				return None
 
 			if choice.value == default_layout:
-				modifications = _get_default_partition_layout(devices, advanced_option=advanced_option)
+				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
 				if modifications:
 					return DiskLayoutConfiguration(
 						layout_type=DiskLayoutType.Default,
@@ -167,33 +174,6 @@ def select_disk_layout(
 	return None
 
 
-def select_disk(dict_o_disks: Dict[str, BlockDevice]) -> Optional[BlockDevice]:
-	"""
-	Asks the user to select a harddrive from the `dict_o_disks` selection.
-	Usually this is combined with :ref:`archinstall.list_drives`.
-
-	:param dict_o_disks: A `dict` where keys are the drive-name, value should be a dict containing drive information.
-	:type dict_o_disks: dict
-
-	:return: The name/path (the dictionary key) of the selected drive
-	:rtype: str
-	"""
-	drives = sorted(list(dict_o_disks.keys()))
-	if len(drives) >= 1:
-		title = str(_('You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)')) + '\n'
-		title += str(_('Select one of the disks or skip and use /mnt as default'))
-
-		choice = Menu(title, drives).run()
-
-		if choice.type_ == MenuSelectionType.Skip:
-			return None
-
-		drive = dict_o_disks[choice.value]
-		return drive
-
-	raise DiskError('select_disk() requires a non-empty dictionary of disks to select from.')
-
-
 def _boot_partition() -> PartitionModification:
 	if has_uefi():
 		start = Size(1, Unit.MiB)
@@ -204,10 +184,10 @@ def _boot_partition() -> PartitionModification:
 
 	# boot partition
 	return PartitionModification(
+		status=ModificationStatus.Create,
 		type=PartitionType.Primary,
 		start=start,
 		length=size,
-		wipe=True,
 		mountpoint=Path('/boot'),
 		fs_type=FilesystemType.Fat32,
 		flags=[PartitionFlag.Boot]
@@ -286,10 +266,10 @@ def suggest_single_disk_layout(
 		length = min(device.device_info.total_size, root_partition_size)
 
 	root_partition = PartitionModification(
+		status=ModificationStatus.Create,
 		type=PartitionType.Primary,
 		start=start,
 		length=length,
-		wipe=True,
 		mountpoint=Path('/') if not using_subvolumes else None,
 		fs_type=filesystem_type,
 		mount_options=['compress=zstd'] if compression else [],
@@ -301,11 +281,11 @@ def suggest_single_disk_layout(
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		subvolumes = [
-			Subvolume('@', '/'),
-			Subvolume('@home', '/home'),
-			Subvolume('@log', '/var/log'),
-			Subvolume('@pkg', '/var/cache/pacman/pkg'),
-			Subvolume('@.snapshots', '/.snapshots')
+			Subvolume('@', Path('/')),
+			Subvolume('@home', Path('/home')),
+			Subvolume('@log', Path('/var/log')),
+			Subvolume('@pkg', Path('/var/cache/pacman/pkg')),
+			Subvolume('@.snapshots', Path('/.snapshots'))
 		]
 		root_partition.btrfs = subvolumes
 	elif using_home_partition:
@@ -313,8 +293,8 @@ def suggest_single_disk_layout(
 		# But we want to be able to re-use data between re-installs..
 		# A second partition for /home would be nice if we have the space for it
 		home_partition = PartitionModification(
+			status=ModificationStatus.Create,
 			type=PartitionType.Primary,
-			wipe=True,
 			start=root_partition.length,
 			length=Size(100, Unit.Percent, total_size=device.device_info.total_size),
 			mountpoint=Path('/home'),
@@ -385,10 +365,10 @@ def suggest_multi_disk_layout(
 
 	# add root partition to the root device
 	root_partition = PartitionModification(
+		status=ModificationStatus.Create,
 		type=PartitionType.Primary,
 		start=Size(513, Unit.MiB) if has_uefi() else Size(206, Unit.MiB),
-		length=Size(100, Unit.Percent, total_size=device.device_info.total_size),
-		wipe=True,
+		length=Size(100, Unit.Percent, total_size=root_device.device_info.total_size),
 		mountpoint=Path('/'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type
@@ -397,10 +377,10 @@ def suggest_multi_disk_layout(
 
 	# add home partition to home device
 	home_partition = PartitionModification(
+		status=ModificationStatus.Create,
 		type=PartitionType.Primary,
 		start=Size(1, Unit.MiB),
-		length=Size(100, Unit.Percent, total_size=device.device_info.total_size),
-		wipe=True,
+		length=Size(100, Unit.Percent, total_size=home_device.device_info.total_size),
 		mountpoint=Path('/home'),
 		mount_options=['compress=zstd'] if compression else [],
 		fs_type=filesystem_type,

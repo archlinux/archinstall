@@ -1,32 +1,33 @@
 import glob
 import logging
 import os
-import pathlib
 import re
 import shlex
 import shutil
 import subprocess
 import time
-from typing import Union, Dict, Any, List, Optional, Iterator, Mapping, TYPE_CHECKING
+from pathlib import Path
+from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union
 
 from archinstall.profiles.profiles import Profile
 from .disk import get_partitions_in_use, Partition
-from .disk.helpers import findmnt
+from .disk.btrfs import mount_subvolume
+from .disk.device import DeviceModification, PartitionModification, FilesystemType
 from .disk.partition import get_mount_fs_type
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
-# from .user_interaction import *
-from .general import SysCommand, generate_password
+from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
 from .hsm import Fido2
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .mirrors import use_mirrors
 from .models.bootloader import Bootloader
 from .models.disk_encryption import DiskEncryption
-from .models.subvolume import Subvolume
 from .models.users import User
 from .output import log
 from .plugins import plugins
 from .storage import storage
+from .luks import Luks2
+from .. import device_handler
 
 if TYPE_CHECKING:
 	_: Any
@@ -97,23 +98,26 @@ class Installer:
 
 	"""
 
-	def __init__(self, target :str, *, base_packages :Optional[List[str]] = None, kernels :Optional[List[str]] = None):
-		if base_packages is None:
+	def __init__(
+		self,
+		target: Path,
+		base_packages: List[str] = [],
+		kernels: Optional[List[str]] = None
+	):
+		if not base_packages:
 			base_packages = __packages__[:3]
+
 		if kernels is None:
 			self.kernels = ['linux']
 		else:
 			self.kernels = kernels
+
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
+		self.helper_flags = {'base': False, 'bootloader': False}
+		self.base_packages = base_packages
 
-		self.helper_flags = {
-			'base': False,
-			'bootloader': False
-		}
-
-		self.base_packages = base_packages.split(' ') if type(base_packages) is str else base_packages
 		for kernel in self.kernels:
 			self.base_packages.append(kernel)
 
@@ -146,7 +150,7 @@ class Installer:
 		"""
 		log(*args, level=level, **kwargs)
 
-	def __enter__(self, *args :str, **kwargs :str) -> 'Installer':
+	def __enter__(self, *args: str, **kwargs: str) -> 'Installer':
 		return self
 
 	def __exit__(self, *args :str, **kwargs :str) -> None:
@@ -197,122 +201,89 @@ class Installer:
 
 		return True
 
-	def _create_keyfile(self,luks_handle , partition :dict, password :str):
-		""" roiutine to create keyfiles, so it can be moved elsewhere
+	def _has_root(self, part_mod: PartitionModification) -> bool:
 		"""
-		if self._disk_encryption.generate_encryption_file(partition):
-			if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
-				cryptkey_dir.mkdir(parents=True)
-			# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
-			# if we name the device to "xyzloop".
-			if partition.get('mountpoint',None):
-				encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['mountpoint']).name}loop.key"
-			else:
-				encryption_key_path = f"/etc/cryptsetup-keys.d/{pathlib.Path(partition['device_instance'].path).name}.key"
-			with open(f"{self.target}{encryption_key_path}", "w") as keyfile:
-				keyfile.write(generate_password(length=512))
-
-			os.chmod(f"{self.target}{encryption_key_path}", 0o400)
-
-			luks_handle.add_key(pathlib.Path(f"{self.target}{encryption_key_path}"), password=password)
-			luks_handle.crypttab(self, encryption_key_path, options=["luks", "key-slot=1"])
-
-	def _has_root(self, partition :dict) -> bool:
+		Determine if a partition is mounted at root '/'
 		"""
-		Determine if an encrypted partition contains root in it
-		"""
-		if partition.get("mountpoint") is None:
-			if (sub_list := partition.get("btrfs",{}).get('subvolumes',{})):
-				for mountpoint in [sub_list[subvolume].get("mountpoint") if isinstance(subvolume, dict) else subvolume.path for subvolume in sub_list]:
-					if mountpoint == '/':
-						return True
-				return False
-			else:
-				return False
-		elif partition.get("mountpoint") == '/':
+		if part_mod.mountpoint == Path('/'):
 			return True
-		else:
-			return False
 
-	def mount_ordered_layout(self, layouts: Dict[str, Any]) -> None:
-		from .luks import Luks2
-		from .disk.btrfs import setup_subvolumes, mount_subvolume
+		for subvol in part_mod.btrfs:
+			if subvol.mountpoint == Path('/'):
+				return True
 
-		# set the partitions as a list not part of a tree (which we don't need anymore (i think)
-		list_part = []
+		return False
+
+	def _mount_enc_partitions(self):
 		list_luks_handles = []
-		for blockdevice in layouts:
-			list_part.extend(layouts[blockdevice]['partitions'])
 
-		# TODO: Implement a proper mount-queue system that does not depend on return values.
-		mount_queue = {}
+		for part_mod in self._disk_encryption.partitions:
+			luks_handler = Luks2(
+				part_mod.dev_path,
+				mapper_name=part_mod.mapper_name,
+				password=self._disk_encryption.encryption_password
+			)
+			luks_handler.unlock()
 
-		# we manage the encrypted partititons
-		for partition in self._disk_encryption.partitions:
-			# open the luks device and all associate stuff
+			has_root = self._has_root(part_mod)
+			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
-			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+			if gen_enc_file and not has_root:
+				list_luks_handles.append(
+					[luks_handler, part_mod, self._disk_encryption.encryption_password]
+				)
 
-			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
-			with (luks_handle := Luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
-				if self._disk_encryption.generate_encryption_file(partition) and not self._has_root(partition):
-					list_luks_handles.append([luks_handle, partition, self._disk_encryption.encryption_password])
-				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
-				partition['device_instance'] = unlocked_device
-
-			if self._has_root(partition) and self._disk_encryption.generate_encryption_file(partition) is False:
+			if has_root and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(self._disk_encryption.hsm_device, partition['device_instance'], self._disk_encryption.encryption_password)
-
-		btrfs_subvolumes = [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]
-
-		for partition in btrfs_subvolumes:
-			device_instance = partition['device_instance']
-			mount_options = partition.get('filesystem', {}).get('mount_options', [])
-			self.mount(device_instance, "/", options=','.join(mount_options))
-			setup_subvolumes(installation=self, partition_dict=partition)
-			device_instance.unmount()
-
-		# We then handle any special cases, such as btrfs
-		for partition in btrfs_subvolumes:
-			subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
-			for subvolume in sorted(subvolumes, key=lambda item: item.path):
-				# We cache the mount call for later
-				mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
-						installation=self,
-						device=device,
-						subvolume=sub_vol
+					Fido2.fido2_enroll(
+						self._disk_encryption.hsm_device,
+						part_mod,
+						self._disk_encryption.encryption_password
 					)
 
-		# We mount ordinary partitions, and we sort them by the mountpoint
-		for partition in sorted([entry for entry in list_part if entry.get('mountpoint', False)], key=lambda part: part['mountpoint']):
-			mountpoint = partition['mountpoint']
-			log(f"Mounting {mountpoint} to {self.target}{mountpoint} using {partition['device_instance']}", level=logging.INFO)
+	def _mount_subvolumes(self, modification: DeviceModification):
+		partitions = filter(lambda x: x not in self._disk_encryption.partitions, modification.partitions)
 
-			if partition.get('filesystem',{}).get('mount_options',[]):
-				mount_options = ','.join(partition['filesystem']['mount_options'])
-				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}", options=mount_options: instance.mount(target, options=options)
-			else:
-				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
+		for part_mod in partitions:
+			if part_mod.fs_type == FilesystemType.Btrfs:
+				for subvol in part_mod.btrfs:
+					mount_subvolume(part_mod.dev_path, self.target, subvol)
 
-		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
+					setup_subvolumes(installation=self, partition_dict=partition)
+					device_instance.unmount()
 
-		# We mount everything by sorting on the mountpoint itself.
-		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
-			frozen_func()
+	def mount_ordered_layout(self, modifications: List[DeviceModification]) -> None:
+		# mount all luks partitions
+		self._mount_enc_partitions()
 
-			time.sleep(1)
+		for mod in modifications:
+			# attempt to mount btrfs and subvolumes
+			self._mount_subvolumes(mod)
 
-			try:
-				findmnt(pathlib.Path(f"{self.target}{mountpoint}"), traverse=False)
-			except DiskError:
-				raise DiskError(f"Target {self.target}{mountpoint} never got mounted properly (unable to get mount information using findmnt).")
+		# # We then handle any special cases, such as btrfs
+		# for partition in btrfs_subvolumes:
+		# 	subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
+		# 	for subvolume in sorted(subvolumes, key=lambda item: item.path):
+		# 		# We cache the mount call for later
+		# 		mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
+		# 				installation=self,
+		# 				device=device,
+		# 				subvolume=sub_vol
+		# 			)
+
+			# mount all ordinary partitions
+			for part_mod in mod.partitions:
+				if part_mod.mountpoint is not None:
+					target = self.target / part_mod.relative_mountpoint
+					device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+
 
 		# once everything is mounted, we generate the key files in the correct place
 		for handle in list_luks_handles:
 			ppath = handle[1]['device_instance'].path
-			log(f"creating key-file for {ppath}",level=logging.INFO)
-			self._create_keyfile(handle[0],handle[1],handle[2])
+			if self._disk_encryption.should_generate_encryption_file(part_mod):
+				log(f"creating key-file for {ppath}",level=logging.INFO)
+				self._create_keyfile(handle[0],handle[1],handle[2])
 
 	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
@@ -479,8 +450,8 @@ class Installer:
 				if result := plugin.on_timezone(zone):
 					zone = result
 
-		if (pathlib.Path("/usr") / "share" / "zoneinfo" / zone).exists():
-			(pathlib.Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
+		if (Path("/usr") / "share" / "zoneinfo" / zone).exists():
+			(Path(self.target) / "etc" / "localtime").unlink(missing_ok=True)
 			SysCommand(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{zone} /etc/localtime')
 			return True
 
@@ -713,11 +684,11 @@ class Installer:
 			vendor = cpu_vendor()
 			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
-				if (ucode := pathlib.Path(f"{self.target}/boot/amd-ucode.img")).exists():
+				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
 					ucode.unlink()
 			elif vendor == "GenuineIntel":
 				self.base_packages.append("intel-ucode")
-				if (ucode := pathlib.Path(f"{self.target}/boot/intel-ucode.img")).exists():
+				if (ucode := Path(f"{self.target}/boot/intel-ucode.img")).exists():
 					ucode.unlink()
 			else:
 				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
@@ -764,7 +735,7 @@ class Installer:
 			# TODO:
 			# A bit of a hack, but we need to get vconsole.conf in there
 			# before running `mkinitcpio` because it expects it in HSM mode.
-			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
+			if (vconsole := Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
 				with vconsole.open('w') as fh:
 					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
@@ -1017,7 +988,7 @@ class Installer:
 					return True
 
 		if type(self.target) == str:
-			self.target = pathlib.Path(self.target)
+			self.target = Path(self.target)
 
 		boot_partition = None
 		root_partition = None
@@ -1064,7 +1035,7 @@ class Installer:
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
 
 		# Creates directory if not exists
-		if not (sudoers_path := pathlib.Path(sudoers_dir)).exists():
+		if not (sudoers_path := Path(sudoers_dir)).exists():
 			sudoers_path.mkdir(parents=True)
 			# Guarantees sudoer confs directory recommended perms
 			os.chmod(sudoers_dir, 0o440)
@@ -1086,7 +1057,7 @@ class Installer:
 			sudoers.write(f'{"%" if group else ""}{entity} ALL=(ALL) ALL\n')
 
 		# Guarantees sudoer conf file recommended perms
-		os.chmod(pathlib.Path(rule_file_name), 0o440)
+		os.chmod(Path(rule_file_name), 0o440)
 
 	def create_users(self, users: Union[User, List[User]]):
 		if not isinstance(users, list):

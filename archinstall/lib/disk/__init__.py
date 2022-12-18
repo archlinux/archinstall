@@ -1,4 +1,3 @@
-from .btrfs import create_subvolume
 from .helpers import *
 from .blockdevice import BlockDevice
 from .filesystem import Filesystem

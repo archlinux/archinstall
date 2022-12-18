@@ -239,8 +239,8 @@ def load_config():
 
 def post_process_arguments(arguments):
 	storage['arguments'] = arguments
-	if arguments.get('mount_point'):
-		storage['MOUNT_POINT'] = arguments['mount_point']
+	if mountpoint := arguments.get('mount_point', None):
+		storage['MOUNT_POINT'] = Path(mountpoint)
 
 	if arguments.get('debug', False):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)

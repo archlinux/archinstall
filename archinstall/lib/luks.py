@@ -5,11 +5,11 @@ import shlex
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from .utils.diskinfo import get_lsblk_info
 
-from .general import SysCommand
+from .general import SysCommand, generate_password, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError
 from .storage import storage
@@ -50,6 +50,9 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[str] = None
 	) -> Path:
+		if self.password is None:
+			raise ValueError('Password was not defined')
+
 		log(f'Encrypting {self.luks_dev_path} (This might take a while)', level=logging.INFO)
 
 		if type(self.password) != bytes:
@@ -174,25 +177,53 @@ class Luks2:
 			log(f"Closing crypt device {child.name}", level=logging.DEBUG)
 			SysCommand(f"cryptsetup close {child.name}")
 
-	# def add_key(self, path :Path, password :str) -> bool:
-	# 	if not path.exists():
-	# 		raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
-	#
-	# 	log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
-	# 	worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}",
-	# 						environment_vars={'LC_ALL':'C'})
-	# 	pw_injected = False
-	# 	while worker.is_alive():
-	# 		if b'Enter any existing passphrase' in worker and pw_injected is False:
-	# 			worker.write(bytes(password, 'UTF-8'))
-	# 			pw_injected = True
-	#
-	# 	if worker.exit_code != 0:
-	# 		raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')
-	#
-	# 	return True
-	#
-	# def crypttab(self, installation :Installer, key_path :str, options :List[str] = ["luks", "key-slot=1"]) -> None:
-	# 	log(f'Adding a crypttab entry for key {key_path} in {installation}', level=logging.INFO)
-	# 	with open(f"{installation.target}/etc/crypttab", "a") as crypttab:
-	# 		crypttab.write(f"{self.mapper_name} UUID={convert_device_to_uuid(self.partition.path)} {key_path} {','.join(options)}\n")
+	def create_keyfile(self, target_path: Path):
+		"""
+		Routine to create keyfiles, so it can be moved elsewhere
+		"""
+		if self.mapper_name is None:
+			raise ValueError('Mapper name must be provided')
+
+		# Once we store the key as ../xyzloop.key systemd-cryptsetup can
+		# automatically load this key if we name the device to "xyzloop"
+		key_file_path = target_path / 'etc/cryptsetup-keys.d/' / self.mapper_name / '.key'
+		crypttab_path = target_path / 'etc/crypttab'
+
+		key_file_path.mkdir(parents=True, exist_ok=True)
+
+		with open(key_file_path, "w") as keyfile:
+			keyfile.write(generate_password(length=512))
+
+		key_file_path.chmod(0o400)
+
+		self._add_key(key_file_path)
+		self._crypttab(crypttab_path, key_file_path, options=["luks", "key-slot=1"])
+
+	def _add_key(self, key_file_path: Path):
+		log(f'Adding additional key-file {key_file_path}', level=logging.INFO)
+
+		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file_path}'
+		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
+		pw_injected = False
+
+		while worker.is_alive():
+			if b'Enter any existing passphrase' in worker and pw_injected is False:
+				worker.write(bytes(self.password, 'UTF-8'))
+				pw_injected = True
+
+		if worker.exit_code != 0:
+			raise DiskError(f'Could not add encryption key {key_file_path} to {self.luks_dev_path}: {worker.decode()}')
+
+	def _crypttab(
+		self,
+		crypttab_path: Path,
+		key_file_path: Path,
+		options: List[str]
+	) -> None:
+		log(f'Adding crypttab entry for key {key_file_path}', level=logging.INFO)
+
+		with open(crypttab_path, 'a') as crypttab:
+			opt = ','.join(options)
+			uuid = convert_device_to_uuid(self.luks_dev_path)
+			row = f"{self.mapper_name} UUID={uuid} {key_file_path} {opt}\n"
+			crypttab.write(row)

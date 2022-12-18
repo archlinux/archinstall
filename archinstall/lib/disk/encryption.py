@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device import DiskLayoutConfiguration, PartitionModification, DeviceModification
+from .device import DeviceModification, DiskLayoutConfiguration, PartitionModification
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
@@ -150,7 +150,7 @@ def select_partitions_to_encrypt(
 		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
 	# do not allow encrypting existing partitions that are not marked as wipe
-	partitions = list(filter(lambda x: not x.existing or x.wipe, partitions))
+	partitions = list(filter(lambda x: not x.exists(), partitions))
 
 	if partitions:
 		title = str(_('Select which partitions to encrypt'))

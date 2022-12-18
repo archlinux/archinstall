@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 
 from ..disk.device_handler import PartitionModification
@@ -39,5 +40,5 @@ class DiskEncryption:
 	partitions: List[PartitionModification] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
 
-	def generate_encryption_file(self, partition) -> bool:
-		return partition in self.partitions and partition['mountpoint'] != '/'
+	def should_generate_encryption_file(self, part_mod: PartitionModification) -> bool:
+		return part_mod in self.partitions and part_mod.mountpoint != Path('/')

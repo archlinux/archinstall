@@ -10,9 +10,10 @@ from typing import List, Dict, Any, Optional, TYPE_CHECKING
 import parted
 from parted import Disk, Geometry, Partition
 
+from ..storage import storage
 from ..models.subvolume import Subvolume
 from ..output import log
-from ..utils.diskinfo import get_lsblk_info
+from ..utils.diskinfo import get_lsblk_info, LsblkInfo
 
 if TYPE_CHECKING:
 	_: Any
@@ -128,18 +129,18 @@ class Size:
 		if self.unit == target_unit:
 			return self
 		elif self.unit == Unit.Percent:
-			amount = int(self.total_size.normalize() * (self.value / 100))
+			amount = int(self.total_size._normalize() * (self.value / 100))
 			return Size(amount, Unit.B)
 		elif self.unit == Unit.sectors:
-			norm = self.normalize()
+			norm = self._normalize()
 			return Size(norm, Unit.B).convert(target_unit, sector_size)
 		else:
 			if target_unit == Unit.sectors:
-				norm = self.normalize()
+				norm = self._normalize()
 				sectors = math.ceil(norm / sector_size.value)
 				return Size(sectors, Unit.sectors, sector_size)
 			else:
-				value = int(self.normalize() / target_unit.value)  # type: ignore
+				value = int(self._normalize() / target_unit.value)  # type: ignore
 				return Size(value, target_unit)
 
 	def format_size(
@@ -153,47 +154,38 @@ class Size:
 			target_size = self.convert(target_unit, sector_size)
 			return f'{target_size.value} {target_unit.name}'
 
-	def normalize(self) -> int:
+	def _normalize(self) -> int:
 		"""
 		will normalize the value of the unit to Byte
 		"""
 		if self.unit == Unit.Percent:
 			return self.convert(Unit.B).value
 		elif self.unit == Unit.sectors:
-			return self.value * self.sector_size.normalize()
+			return self.value * self.sector_size._normalize()
 		return int(self.value * self.unit.value)  # type: ignore
 
 	def __sub__(self, other: Size) -> Size:
-		# # handling anything with sectors
-		# if self.unit == Unit.sectors or other.unit == Unit.sectors:
-		# 	byte_delta = self.normalize() - other.normalize()
-		# 	return Size(byte_delta, Unit.B)
-		#
-		# if self.unit == Unit.Percent or other.unit == Unit.Percent:
-		# 	byte_delta = self.normalize() - other.normalize()
-		# 	return Size(byte_delta, Unit.B)
-
-		src_norm = self.normalize()
-		dest_norm = other.normalize()
+		src_norm = self._normalize()
+		dest_norm = other._normalize()
 		return Size(abs(src_norm - dest_norm), Unit.B)
 
 	def __lt__(self, other):
-		return self.normalize() < other.normalize()
+		return self._normalize() < other._normalize()
 
 	def __le__(self, other):
-		return self.normalize() <= other.normalize()
+		return self._normalize() <= other._normalize()
 
 	def __eq__(self, other):
-		return self.normalize() == other.normalize()
+		return self._normalize() == other._normalize()
 
 	def __ne__(self, other):
-		return self.normalize() != other.normalize()
+		return self._normalize() != other._normalize()
 
 	def __gt__(self, other):
-		return self.normalize() > other.normalize()
+		return self._normalize() > other._normalize()
 
 	def __ge__(self, other):
-		return self.normalize() >= other.normalize()
+		return self._normalize() >= other._normalize()
 
 
 @dataclass
@@ -206,22 +198,25 @@ class PartitionInfo:
 	start: Size
 	length: Size
 	flags: List[PartitionFlag]
+	partuuid: str
 	disk: Disk
 
 	def as_json(self) -> Dict[str, Any]:
 		return {
-			'name': self.name,
-			'type': self.type.value,
-			'filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
-			'path': str(self.path),
-			'start': self.start.format_size(Unit.MiB),
-			'length': self.length.format_size(Unit.MiB),
-			'flags': ', '.join([f.name for f in self.flags])
+			'Name': self.name,
+			'Type': self.type.value,
+			'Filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
+			'Path': str(self.path),
+			'Start': self.start.format_size(Unit.MiB),
+			'Length': self.length.format_size(Unit.MiB),
+			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
 	@classmethod
 	def create(cls, partition: Partition) -> PartitionInfo:
-		fs_type = FilesystemType.parse_parted(partition)
+		lsblk_info = get_lsblk_info(partition.path)
+
+		fs_type = FilesystemType.parse_parted(partition, lsblk_info)
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
 
@@ -230,6 +225,7 @@ class PartitionInfo:
 			Unit.sectors,
 			Size(partition.disk.device.sectorSize, Unit.B)
 		)
+
 		length = Size(partition.getLength(unit='B'), Unit.B)
 
 		return PartitionInfo(
@@ -241,6 +237,7 @@ class PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
+			partuuid=lsblk_info.partuuid,
 			disk=partition.disk
 		)
 
@@ -263,10 +260,10 @@ class DeviceGeometry:
 
 	def as_json(self) -> Dict[str, Any]:
 		return {
-			'sector size (bytes)': self._sector_size.value,
-			'start sector': self._geometry.start,
-			'end sector': self._geometry.end,
-			'length': self._geometry.getLength()
+			'Sector size': self._sector_size.value,
+			'Start sector': self._geometry.start,
+			'End sector': self._geometry.end,
+			'Length': self._geometry.getLength()
 		}
 
 
@@ -358,13 +355,18 @@ class FilesystemType(Enum):
 	# with the usage from this enum
 	Crypto_luks = 'crypto_LUKS'
 
+	def fs_type_mount(self) -> str:
+		match self:
+			case FilesystemType.Ntfs: return 'ntfs3'
+			case FilesystemType.Fat32: return 'vfat'
+			case _: return self.value  # type: ignore
+
 	@classmethod
-	def parse_parted(cls, partition: Partition) -> Optional[FilesystemType]:
+	def parse_parted(cls, partition: Partition, lsblk_info: LsblkInfo) -> Optional[FilesystemType]:
 		try:
 			if partition.fileSystem:
 				return FilesystemType(partition.fileSystem.type)
 			else:
-				lsblk_info = get_lsblk_info(partition.path)
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
 		except ValueError:
 			log(f'Could not determine the filesystem: {partition.fileSystem}', level=logging.DEBUG)
@@ -372,23 +374,53 @@ class FilesystemType(Enum):
 		return None
 
 
+class ModificationStatus(Enum):
+	Exist = 'existing'
+	Modify = 'modify'
+	Delete = 'delete'
+	Create = 'create'
+
+
 @dataclass
 class PartitionModification:
+	status: ModificationStatus
 	type: PartitionType
 	start: Size
 	length: Size
-	wipe: bool
 	fs_type: FilesystemType
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs: List[Subvolume] = field(default_factory=list)
-	existing: bool = False
-	path: Optional[Path] = None  # if set it means the partition is/was created
+	dev_path: Optional[Path] = None
+	partuuid: Optional[str] = None
+
+	@property
+	def relative_mountpoint(self) -> Path:
+		"""
+		Will return the relative path based on the anchor
+		e.g. Path('/mnt/test') -> Path('mnt/test')
+		"""
+		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
 	def __post_init__(self):
-		if self.existing and not self.path:
+		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
+
+	def modify(self) -> bool:
+		return self.status == ModificationStatus.Modify
+
+	def exists(self) -> bool:
+		return self.status == ModificationStatus.Exist
+
+	def is_exists_or_modify(self) -> bool:
+		return self.status in [ModificationStatus.Exist, ModificationStatus.Modify]
+
+	@property
+	def mapper_name(self) -> Optional[str]:
+		if self.dev_path:
+			return f'{storage.get("ENC_IDENTIFIER", "ai")}{self.dev_path.name}'
+		return None
 
 	def set_flag(self, flag: PartitionFlag):
 		if flag not in self.flags:
@@ -405,8 +437,7 @@ class PartitionModification:
 		Called for configuration settings
 		"""
 		return {
-			'existing': self.existing,
-			'wipe': self.wipe,
+			'status': self.status.value,
 			'type': self.type.value,
 			'start': self.start.__dump__(),
 			'length': self.length.__dump__(),
@@ -422,16 +453,15 @@ class PartitionModification:
 		Called for displaying data in table format
 		"""
 		info = {
-			'exist. part.': self.existing,
-			'path': str(self.path) if self.path else '',
-			'wipe': self.wipe,
-			'type': self.type.value,
-			'start': self.start.format_size(Unit.MiB),
-			'length': self.length.format_size(Unit.MiB),
+			'Status': self.status.value,
+			'Device path': str(self.dev_path) if self.dev_path else '',
+			'Type': self.type.value,
+			'Start': self.start.format_size(Unit.MiB),
+			'Length': self.length.format_size(Unit.MiB),
 			'FS type': self.fs_type.value,
-			'mountpoint': self.mountpoint if self.mountpoint else '',
-			'mount options': ', '.join(self.mount_options),
-			'flags': ', '.join([f.name for f in self.flags])
+			'Mountpoint': self.mountpoint if self.mountpoint else '',
+			'Mount options': ', '.join(self.mount_options),
+			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
 		if self.btrfs:

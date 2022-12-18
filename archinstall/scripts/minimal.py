@@ -1,8 +1,18 @@
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, List
+
 import archinstall
-from archinstall import User, Bootloader
-# Select a harddrive and a disk password
+from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption
 from archinstall.profiles.minimal import MinimalProfile
-from ..lib.utils.util import do_countdown
+from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
+	PartitionModification
+from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.models.disk_encryption import EncryptionType
+from ..lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
+
+if TYPE_CHECKING:
+	_: Any
+
 
 archinstall.log("Minimal only supports:")
 archinstall.log(" * Being installed to a single disk")
@@ -12,10 +22,8 @@ if archinstall.arguments.get('help', None):
 	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
 	archinstall.log(" - Optional systemd network via --network")
 
-archinstall.arguments['harddrive'] = archinstall.select_disk(archinstall.all_blockdevices())
 
-
-def install_on(mountpoint):
+def perform_installation(mountpoint: Path):
 	# We kick off the installer by telling it where the
 	with archinstall.Installer(mountpoint) as installation:
 		# Strap in the base system, add a boot loader and configure
@@ -43,36 +51,47 @@ def install_on(mountpoint):
 	archinstall.log(" * devel (password: devel)")
 
 
-if archinstall.arguments['harddrive']:
-	archinstall.arguments['harddrive'].keep_partitions = False
+def prompt_disk_layout():
+	fs_type = None
+	if filesystem := archinstall.arguments.get('filesystem', None):
+		fs_type = FilesystemType(filesystem)
 
-	print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
-	do_countdown()
+	devices = select_devices()
+	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
-	# First, we configure the basic filesystem layout
-	with archinstall.Filesystem(archinstall.arguments['harddrive'], archinstall.GPT) as fs:
-		# We use the entire disk instead of setting up partitions on your own
-		if archinstall.arguments['harddrive'].keep_partitions is False:
-			fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+	archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+		layout_type=DiskLayoutType.Default,
+		layouts=[modifications]
+	)
 
-		boot = fs.find_partition('/boot')
-		root = fs.find_partition('/')
 
-		boot.format('fat32')
+def parse_disk_encryption():
+	if enc_password := archinstall.arguments.get('!encryption-password', None):
+		modification: List[DeviceModification] = archinstall.arguments['disk_layouts']
+		partitions: List[PartitionModification] = []
 
-		# We encrypt the root partition if we got a password to do so with,
-		# Otherwise we just skip straight to formatting and installation
-		if archinstall.arguments.get('!encryption-password', None):
-			root.set_encrypted(True)
-			root.encrypt(password=archinstall.arguments.get('!encryption-password', None))
+		# encrypt all partitions except the /boot
+		for mod in modification:
+			partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
-			with archinstall.Luks2(root, 'luksloop', archinstall.arguments.get('!encryption-password', None)) as unlocked_root:
-				unlocked_root.format(root.filesystem)
-				unlocked_root.mount('/mnt')
-		else:
-			root.format(root.filesystem)
-			root.mount('/mnt')
+		archinstall.arguments['disk_encryption'] = DiskEncryption(
+			encryption_type=EncryptionType.Partition,
+			encryption_password=enc_password,
+			partitions=partitions
+		)
 
-		boot.mount('/mnt/boot')
 
-install_on('/mnt')
+prompt_disk_layout()
+parse_disk_encryption()
+
+config_output = ConfigurationOutput(archinstall.arguments)
+config_output.show()
+
+input(str(_('Press Enter to continue.')))
+
+perform_filesystem_operations(
+	archinstall.arguments['disk_layouts'],
+	archinstall.arguments.get('disk_encryption', None)
+)
+
+perform_installation(Path('/mnt'))

@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+from ..disk.device import PartitionModification
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
-from ..disk.partition import Partition
 from ..general import log
 
 
@@ -75,18 +75,28 @@ class Fido2:
 		return cls._fido2_devices
 
 	@classmethod
-	def fido2_enroll(cls, hsm_device: Fido2Device, partition :Partition, password :str):
-		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {partition.real_device}", peak_output=True)
+	def fido2_enroll(
+		cls,
+		hsm_device: Fido2Device,
+		part_mod: PartitionModification,
+		password: str
+	):
+		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {part_mod.dev_path}", peak_output=True)
 		pw_inputted = False
 		pin_inputted = False
 
 		while worker.is_alive():
-			if pw_inputted is False and bytes(f"please enter current passphrase for disk {partition.real_device}", 'UTF-8') in worker._trace_log.lower():
-				worker.write(bytes(password, 'UTF-8'))
-				pw_inputted = True
+			if pw_inputted is False:
+				if bytes(f"please enter current passphrase for disk {part_mod.dev_path}", 'UTF-8') in worker._trace_log.lower():
+					worker.write(bytes(password, 'UTF-8'))
+					pw_inputted = True
+			elif pin_inputted is False:
+				if bytes(f"please enter security token pin", 'UTF-8') in worker._trace_log.lower():
+					worker.write(bytes(getpass.getpass(" "), 'UTF-8'))
+					pin_inputted = True
 
-			elif pin_inputted is False and bytes(f"please enter security token pin", 'UTF-8') in worker._trace_log.lower():
-				worker.write(bytes(getpass.getpass(" "), 'UTF-8'))
-				pin_inputted = True
-
-				log(f"You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds.", level=logging.INFO, fg="yellow")
+				log(
+					f"You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds.",
+					level=logging.INFO,
+					fg="yellow"
+				)

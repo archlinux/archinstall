@@ -12,11 +12,11 @@ from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError
 from ..models.subvolume import Subvolume
 from ..output import log
-from ..storage import storage
 from ..luks import Luks2
 
 from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
-	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable
+	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
+	ModificationStatus
 
 if TYPE_CHECKING:
 	_: Any
@@ -89,14 +89,13 @@ class DeviceHandler(object):
 
 			for partition in entry.get('partitions', []):
 				device_partition = PartitionModification(
-					existing=partition['existing'],
+					status=ModificationStatus[partition['status']],
 					fs_type=FilesystemType(partition['fs_type']),
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['length']),
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					type=PartitionType(partition['type']),
-					wipe=partition['wipe'],
 					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
 					btrfs=Subvolume.parse_arguments(partition.get('btrfs', []))
 				)
@@ -106,6 +105,10 @@ class DeviceHandler(object):
 			device_modifications.append(device_modification)
 
 		return config
+
+	def get_uuid_for_path(self, path: Path) -> Optional[str]:
+		partition = self.find_partition(path)
+		return partition.partuuid if partition else None
 
 	def _perform_formatting(
 		self,
@@ -165,27 +168,25 @@ class DeviceHandler(object):
 
 	def _perform_enc_formatting(
 		self,
-		partition_modification: PartitionModification,
+		part_mod: PartitionModification,
 		enc_conf: 'DiskEncryption'
 	):
-		mapper_name = f"{storage.get('ENC_IDENTIFIER', 'ai')}{partition_modification.path.name}"
-
 		luks_handler = Luks2(
-			partition_modification.path,
-			mapper_name=mapper_name,
+			part_mod.dev_path,
+			mapper_name=part_mod.mapper_name,
 			password=enc_conf.encryption_password
 		)
 
-		log(f'luks2 encrypting device: {partition_modification.path}', level=logging.INFO)
+		log(f'luks2 encrypting device: {part_mod.dev_path}', level=logging.INFO)
 		key_file = luks_handler.encrypt()
 
-		log(f'luks2 unlocking device: {partition_modification.path}', level=logging.INFO)
-		mapper_path = luks_handler.unlock(mapper_name=mapper_name, key_file=key_file)
+		log(f'luks2 unlocking device: {part_mod.dev_path}', level=logging.INFO)
+		mapper_path = luks_handler.unlock(mapper_name=part_mod.mapper_name, key_file=key_file)
 
 		log(f'luks2 formatting mapper dev: {mapper_path}', level=logging.INFO)
-		self._perform_formatting(partition_modification.fs_type, mapper_path)
+		self._perform_formatting(part_mod.fs_type, mapper_path)
 
-		log(f'luks2 locking device: {partition_modification.path}', level=logging.INFO)
+		log(f'luks2 locking device: {part_mod.dev_path}', level=logging.INFO)
 		luks_handler.lock()
 
 	def format(
@@ -217,7 +218,7 @@ class DeviceHandler(object):
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(part_mod, enc_conf)
 			else:
-				self._perform_formatting(part_mod.fs_type, part_mod.path)
+				self._perform_formatting(part_mod.fs_type, part_mod.dev_path)
 
 	def _perform_partitioning(
 		self,
@@ -228,11 +229,14 @@ class DeviceHandler(object):
 	):
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
-		if requires_delete and part_mod.existing:
-			log(f'Delete existing partition: {part_mod.path}', level=logging.INFO)
-			part_info = self.find_partition(part_mod.path)
+		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
+			log(f'Delete existing partition: {part_mod.dev_path}', level=logging.INFO)
+			part_info = self.find_partition(part_mod.dev_path)
 			disk.deletePartition(part_info.partition)
 			disk.commit()
+
+		if part_mod.status == ModificationStatus.Delete:
+			return
 
 		start_sector = part_mod.start.convert(
 			Unit.sectors,
@@ -269,20 +273,32 @@ class DeviceHandler(object):
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
 			disk.commit()
 			# the partition has a real path now as it was created
-			part_mod.path = Path(partition.path)
+			part_mod.dev_path = Path(partition.path)
+
+
+
+
+
+
+
+
+
+			#TODO
+#			get_lsblk_info...
+
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}')
 
 	def _umount_all_existing(self, modification: DeviceModification):
 		for mod_part in modification.partitions:
-			if mod_part.existing:
-				partition = self.find_partition(mod_part.path)
+			if mod_part.is_exists_or_modify():
+				partition = self.find_partition(mod_part.dev_path)
 
 				# umounting for existing encrypted partitions
 				if partition.fs_type == FilesystemType.Crypto_luks:
-					Luks2(mod_part.path).lock()
+					Luks2(mod_part.dev_path).lock()
 				else:
-					self.umount(mod_part.path, recursive=True)
+					self.umount(mod_part.dev_path, recursive=True)
 
 	def partition(
 		self,
@@ -315,8 +331,11 @@ class DeviceHandler(object):
 
 		log(f'Creating partitions: {modification.device_path}')
 
+		# TODO sort by delete first
+
 		for part_mod in modification.partitions:
-			if part_mod.wipe:
+			# don't touch existing partitions
+			if not part_mod.exists():
 				# if the entire disk got nuked then we don't have to delete
 				# any existing partitions anymore because they're all gone already
 				requires_delete = modification.wipe is False
@@ -330,6 +349,36 @@ class DeviceHandler(object):
 		except SysCallError as error:
 			log(f"Could not get mount information", level=logging.ERROR)
 			raise error
+
+	def mount(
+		self,
+		dev_path: Path,
+		target_mountpoint: Path,
+		mount_fs: Optional[str] = None,
+		create_target_mountpoint: bool = True,
+		options: List[str] = []
+	) -> None:
+		if create_target_mountpoint and not target_mountpoint.exists():
+			target_mountpoint.mkdir(parents=True, exist_ok=True)
+
+		if not target_mountpoint.exists():
+			raise ValueError('Target mountpoint does not exist')
+
+		log(f'Mounting {dev_path} to {target_mountpoint}', level=logging.INFO)
+
+		options = ','.join(options)
+		options = f'-o {options}' if options else ''
+
+		mount_fs = f'-t {mount_fs}' if mount_fs else ''
+
+		command = f'mount {mount_fs} {options} {dev_path} {target_mountpoint}'
+
+		try:
+			result = SysCommand(command)
+			if result.exit_code != 0:
+				raise DiskError(f'Could not mount {dev_path}: {command}\n{result.decode()}')
+		except SysCallError as err:
+			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 	def umount(self, path: Path, recursive: bool = False):
 		mounted_devices = self._get_mount_info()
