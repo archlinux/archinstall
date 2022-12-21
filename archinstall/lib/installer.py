@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union
+from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
 from archinstall.profiles.profiles import Profile
 from .disk import get_partitions_in_use, Partition
@@ -27,7 +27,9 @@ from .output import log
 from .plugins import plugins
 from .storage import storage
 from .luks import Luks2
-from .. import device_handler
+from .disk.device_handler import device_handler
+from .pacman import run_pacman
+from .models.network_configuration import NetworkConfiguration
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,9 +40,6 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
-
-from .pacman import run_pacman
-from .models.network_configuration import NetworkConfiguration
 
 
 class InstallationFile:
@@ -101,6 +100,7 @@ class Installer:
 	def __init__(
 		self,
 		target: Path,
+		disk_encryption: Optional[DiskEncryption] = None,
 		base_packages: List[str] = [],
 		kernels: Optional[List[str]] = None
 	):
@@ -111,6 +111,8 @@ class Installer:
 			self.kernels = ['linux']
 		else:
 			self.kernels = kernels
+
+		self._disk_encryption = disk_encryption
 
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -140,8 +142,6 @@ class Installer:
 		self.KERNEL_PARAMS = []
 
 		self._zram_enabled = False
-
-		self._disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
 
 	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
 		"""
@@ -214,10 +214,10 @@ class Installer:
 
 		return False
 
-	def _mount_enc_partitions(self):
-		list_luks_handles = []
+	def _mount_enc_partitions(self, partitions: List[PartitionModification]) -> Dict[PartitionModification, Luks2]:
+		luks_handlers = {}
 
-		for part_mod in self._disk_encryption.partitions:
+		for part_mod in partitions:
 			luks_handler = Luks2(
 				part_mod.dev_path,
 				mapper_name=part_mod.mapper_name,
@@ -225,25 +225,18 @@ class Installer:
 			)
 			luks_handler.unlock()
 
-			has_root = self._has_root(part_mod)
-			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
+			if not luks_handler.mapper_dev:
+				raise DiskError(f'Failed to unlock luks device: {part_mod.dev_path}')
 
-			if gen_enc_file and not has_root:
-				list_luks_handles.append(
-					[luks_handler, part_mod, self._disk_encryption.encryption_password]
-				)
+			luks_handlers[part_mod] = luks_handler
 
-			if has_root and not gen_enc_file:
-				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
-						self._disk_encryption.hsm_device,
-						part_mod,
-						self._disk_encryption.encryption_password
-					)
+		return luks_handlers
 
-	def _mount_subvolumes(self, modification: DeviceModification):
-		partitions = filter(lambda x: x not in self._disk_encryption.partitions, modification.partitions)
-
+	def _mount_subvolumes(
+		self,
+		partitions: List[PartitionModification],
+		luks_handlers: Dict[PartitionModification, Luks2]
+	):
 		for part_mod in partitions:
 			if part_mod.fs_type == FilesystemType.Btrfs:
 				for subvol in part_mod.btrfs:
@@ -252,13 +245,46 @@ class Installer:
 					setup_subvolumes(installation=self, partition_dict=partition)
 					device_instance.unmount()
 
+		# TODO mount luks partitions
+
+	def _mount_partition(
+		self,
+		partitions: List[PartitionModification],
+		luks_handlers: Dict[PartitionModification, Luks2]
+	):
+		# mount all ordinary partitions
+		for part_mod in partitions:
+			# it would be none if it's btrfs as the subvolumes
+			# will have the mountpoints defined
+			if part_mod.mountpoint is not None:
+				target = self.target / part_mod.relative_mountpoint
+				device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+
+		for part_mod, luks_handler in luks_handlers.items():
+			if part_mod.mountpoint is not None:
+				target = self.target / part_mod.relative_mountpoint
+				device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+
 	def mount_ordered_layout(self, modifications: List[DeviceModification]) -> None:
-		# mount all luks partitions
-		self._mount_enc_partitions()
+		log('Mounting all partitions', level=logging.INFO)
 
 		for mod in modifications:
-			# attempt to mount btrfs and subvolumes
-			self._mount_subvolumes(mod)
+			enc_partitions = list(
+				filter(lambda x: x in self._disk_encryption.partitions, mod.partitions)
+			)
+
+			not_enc_partitions = list(
+				filter(lambda x: x not in self._disk_encryption.partitions, mod.partitions)
+			)
+
+			# attempt to mount all luks partitions
+			luks_handlers = self._mount_enc_partitions(enc_partitions)
+
+			# attempt to mount subvolumes including decrypted luks partitions
+			self._mount_subvolumes(not_enc_partitions, luks_handlers)
+
+			# attempt to mount all other partitions including the decrypted luks partition
+			self._mount_partition(not_enc_partitions, luks_handlers)
 
 		# # We then handle any special cases, such as btrfs
 		# for partition in btrfs_subvolumes:
@@ -271,19 +297,37 @@ class Installer:
 		# 				subvolume=sub_vol
 		# 			)
 
-			# mount all ordinary partitions
-			for part_mod in mod.partitions:
-				if part_mod.mountpoint is not None:
-					target = self.target / part_mod.relative_mountpoint
-					device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
 
-		# once everything is mounted, we generate the key files in the correct place
-		for handle in list_luks_handles:
-			ppath = handle[1]['device_instance'].path
-			if self._disk_encryption.should_generate_encryption_file(part_mod):
-				log(f"creating key-file for {ppath}",level=logging.INFO)
-				self._create_keyfile(handle[0],handle[1],handle[2])
+	def generate_key_files(self):
+		for part_mod in self._disk_encryption.partitions:
+			has_root = self._has_root(part_mod)
+			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
+
+			luks_handler = Luks2(
+				part_mod.dev_path,
+				mapper_name=part_mod.mapper_name,
+				password=self._disk_encryption.encryption_password
+			)
+
+			if gen_enc_file and not has_root:
+				log(f'Creating key-file: {part_mod.dev_path}', level=logging.INFO)
+				luks_handler.create_keyfile(self.target)
+
+			if has_root and not gen_enc_file:
+				if self._disk_encryption.hsm_device:
+					Fido2.fido2_enroll(
+						self._disk_encryption.hsm_device,
+						part_mod,
+						self._disk_encryption.encryption_password
+					)
+
+
+		# for handle in list_luks_handles:
+		# 	ppath = handle[1]['device_instance'].path
+		# 	if self._disk_encryption.should_generate_encryption_file(part_mod):
+		# 		log(f"creating key-file for {ppath}",level=logging.INFO)
+		# 		self._create_keyfile(handle[0],handle[1],handle[2])
 
 	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
 		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):

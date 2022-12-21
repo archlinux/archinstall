@@ -158,10 +158,8 @@ class Selector:
 	def is_mandatory(self) -> bool:
 		return self.mandatory
 
-	def set_mandatory(self, status :bool = True):
-		self.mandatory = status
-		if status and not self.is_enabled():
-			self.set_enabled(True)
+	def set_mandatory(self, value: bool):
+		self.mandatory = value
 
 
 class AbstractMenu:
@@ -216,6 +214,29 @@ class AbstractMenu:
 	def translation_handler(self) -> TranslationHandler:
 		return self._translation_handler
 
+	def _missing_configs(self) -> List[str]:
+		def check(s):
+			return self._menu_options.get(s).has_selection()
+
+		def has_superuser() -> bool:
+			sel = self._menu_options['!users']
+			if sel.current_selection:
+				return any([u.sudo for u in sel.current_selection])
+			return False
+
+		mandatory_fields = dict(filter(lambda x: x[1].is_mandatory(), self._menu_options.items()))
+		missing = []
+
+		for key, selector in mandatory_fields.items():
+			if key in ['!root-password', '!users']:
+				if not check('!root-password') and not has_superuser():
+					missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
+			elif key == 'disk_layouts':
+				if not check('disk_layouts'):
+					missing += [self._menu_options['disk_layouts'].description]
+
+		return missing
+
 	def _setup_selection_menu_options(self):
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per program calling self.set_option()
@@ -250,15 +271,12 @@ class AbstractMenu:
 	def _update_enabled_order(self, selector_name: str):
 		self._enabled_order.append(selector_name)
 
-	def enable(self, selector_name :str, omit_if_set :bool = False , mandatory :bool = False):
+	def enable(self, selector_name: str, mandatory: bool = False):
 		""" activates menu options """
 		if self._menu_options.get(selector_name, None):
 			self._menu_options[selector_name].set_enabled(True)
 			self._update_enabled_order(selector_name)
-
-			if mandatory:
-				self._menu_options[selector_name].set_mandatory(True)
-			self.synch(selector_name,omit_if_set)
+			self._menu_options[selector_name].set_mandatory(mandatory)
 		else:
 			raise ValueError(f'No selector found: {selector_name}')
 
@@ -381,8 +399,9 @@ class AbstractMenu:
 		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
 		self.post_callback(config_name,result)
 
-		if exec_ret_val and self._check_mandatory_status():
+		if exec_ret_val:
 			return False
+
 		return True
 
 	def _set_kb_language(self):
@@ -450,26 +469,6 @@ class AbstractMenu:
 	def set_option(self, name :str, selector :Selector):
 		self._menu_options[name] = selector
 		self.synch(name)
-
-	def _check_mandatory_status(self) -> bool:
-		for field in self._menu_options:
-			option = self._menu_options[field]
-			if option.is_mandatory() and not option.has_selection():
-				return False
-		return True
-
-	def set_mandatory(self, field :str, status :bool):
-		self.option(field).set_mandatory(status)
-
-	def mandatory_overview(self) -> Tuple[int, int]:
-		mandatory_fields = 0
-		mandatory_waiting = 0
-		for field, option in self._menu_options.items():
-			if option.is_mandatory():
-				mandatory_fields += 1
-				if not option.has_selection():
-					mandatory_waiting += 1
-		return mandatory_fields, mandatory_waiting
 
 	def _select_archinstall_language(self, preset_value: Language) -> Language:
 		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)

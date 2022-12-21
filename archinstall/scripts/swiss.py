@@ -20,7 +20,9 @@ import pathlib
 from typing import TYPE_CHECKING, Any
 
 import archinstall
+from .. import ask_ntp
 from ..lib.configuration import ConfigurationOutput
+from ..lib.disk import disk_layouts
 from ..lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib.menu import Menu
 from ..lib.disk.filesystem import perform_filesystem_operations
@@ -32,21 +34,21 @@ if TYPE_CHECKING:
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
+
 if os.getuid() != 0:
 	print("Archinstall requires root privileges to run. See --help for more.")
 	exit(1)
 
-"""
-particular routines to SetupMenu
-TODO exec con return parameter
-"""
-def select_activate_NTP():
-	prompt = "Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: "
-	choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-	if choice == Menu.yes():
-		return True
-	else:
-		return False
+
+# Log various information about hardware before starting the installation. This might assist in troubleshooting
+archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
+archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
+archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
+archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
+archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
+
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
 
 
 def select_mode():
@@ -55,9 +57,6 @@ def select_mode():
 								default=archinstall.arguments.get('mode','full'))
 
 
-"""
-following functions will be at locale_helpers, so they will have to be called prefixed by archinstall
-"""
 def get_locale_mode_text(mode):
 	if mode == 'LC_ALL':
 		mode_text = "general (LC_ALL)"
@@ -130,16 +129,13 @@ def set_cmd_locale(general :str = None,
 			archinstall.log(f"{get_locale_mode_text('LC_MESSAGES')} {messages} is not installed. Defaulting to installation language",fg="yellow",level=logging.WARNING)
 	archinstall.storage['CMD_LOCALE'] = result
 
+
 def list_installed_locales() -> list[str]:
 	lista = []
 	for line in archinstall.SysCommand('locale -a'):
 		lista.append(line.decode('UTF-8').strip())
 	return lista
 
-
-"""
-end of locale helpers
-"""
 
 def select_installed_locale(mode):
 	mode_text = get_locale_mode_text(mode)
@@ -153,9 +149,6 @@ def select_installed_locale(mode):
 								default=archinstall.storage.get('CMD_LOCALE',{}).get(mode,'C'))
 
 
-"""
-	_menus
-"""
 
 class SetupMenu(archinstall.AbstractMenu):
 	def __init__(self,storage_area):
@@ -177,7 +170,7 @@ class SetupMenu(archinstall.AbstractMenu):
 			'ntp',
 			archinstall.Selector(
 				'Activate NTP',
-				lambda x: select_activate_NTP(),
+				lambda x: ask_ntp(),
 				default='Y',
 				enabled=True
 			)
@@ -223,8 +216,9 @@ class SetupMenu(archinstall.AbstractMenu):
 			archinstall.storage['CMD_LOCALE'] = exec_locale
 		archinstall.log(f"Archinstall will execute with {archinstall.storage.get('CMD_LOCALE',None)} locale")
 
+
 class MyMenu(archinstall.GlobalMenu):
-	def __init__(self,data_store=archinstall.arguments,mode='full'):
+	def __init__(self,data_store=archinstall.arguments, mode='full'):
 		self._execution_mode = mode
 		super().__init__(data_store)
 
@@ -275,20 +269,21 @@ class MyMenu(archinstall.GlobalMenu):
 		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
-		def check(s):
-			return self.option(s).has_selection()
-
-		def has_superuser() -> bool:
-			users = self._menu_options['!users'].current_selection
-			return any([u.sudo for u in users])
-
-		_, missing = self.mandatory_overview()
-		if mode in ('full','only_os') and (not check('!root-password') and not has_superuser()):
-			missing += 1
-		if mode in ('full', 'only_hd') and check('harddrives'):
-			if not self.option('harddrives').is_empty() and not check('disk_layouts'):
-				missing += 1
-		return missing
+		return 0
+	# 	def check(s):
+	# 		return self.option(s).has_selection()
+	#
+	# 	def has_superuser() -> bool:
+	# 		users = self._menu_options['!users'].current_selection
+	# 		return any([u.sudo for u in users])
+	#
+	# 	_, missing = self._missing_configs()
+	# 	if mode in ('full','only_os') and (not check('!root-password') and not has_superuser()):
+	# 		missing += 1
+	# 	if mode in ('full', 'only_hd') and check('harddrives'):
+	# 		if not self.option('harddrives').is_empty() and not check('disk_layouts'):
+	# 			missing += 1
+	# 	return missing
 
 	def _install_text(self,mode='full'):
 		missing = self._missing_configs(mode)
@@ -301,30 +296,14 @@ class MyMenu(archinstall.GlobalMenu):
 		self.option('install').update_description(text)
 
 
-"""
-Installation general subroutines
-"""
-
-def get_current_status():
-	# Log various information about hardware before starting the installation. This might assist in troubleshooting
-	archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-	archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-	archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-	archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-	archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-	archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
-def ask_user_questions(mode):
+def ask_user_questions(mode: str):
 	"""
 		First, we'll ask the user for a bunch of user input.
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
-	if archinstall.arguments.get('advanced',None):
-		# 3.9 syntax. former x = {**y,**z} or x.update(y)
-		set_cmd_locale(charset='es_ES.utf8',collate='es_ES.utf8')
+	if archinstall.arguments.get('advanced', None):
+		set_cmd_locale(charset='es_ES.utf8', collate='es_ES.utf8')
 		setup_area = archinstall.storage.get('CMD_LOCALE',{}) | {}
 		with SetupMenu(setup_area) as setup:
 			if mode == 'lineal':
@@ -371,6 +350,7 @@ def disk_setup(installation):
 			if partition.value < 0.19:  # ~200 MiB in GiB
 				raise archinstall.DiskError(
 					f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
+
 
 def os_setup(installation):
 	# if len(mirrors):
@@ -484,20 +464,24 @@ if not archinstall.check_mirror_reachable():
 	exit(1)
 
 mode = archinstall.arguments.get('mode', 'full').lower()
+
 if not archinstall.arguments.get('silent'):
 	ask_user_questions(mode)
 
 config_output = ConfigurationOutput(archinstall.arguments)
+
 if not archinstall.arguments.get('silent'):
 	config_output.show()
+
 config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
+
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-if mode in ('full','only_hd'):
+if mode in ('full', 'only_hd'):
 	perform_filesystem_operations(
 		archinstall.arguments['disk_layouts'],
 		archinstall.arguments['disk_encryption']

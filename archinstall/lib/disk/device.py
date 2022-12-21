@@ -362,12 +362,13 @@ class FilesystemType(Enum):
 			case _: return self.value  # type: ignore
 
 	@classmethod
-	def parse_parted(cls, partition: Partition, lsblk_info: LsblkInfo) -> Optional[FilesystemType]:
+	def parse_parted(cls, partition: Partition, lsblk_info: Optional[LsblkInfo] = None) -> Optional[FilesystemType]:
 		try:
 			if partition.fileSystem:
 				return FilesystemType(partition.fileSystem.type)
-			else:
+			elif lsblk_info is not None:
 				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
+			return None
 		except ValueError:
 			log(f'Could not determine the filesystem: {partition.fileSystem}', level=logging.DEBUG)
 

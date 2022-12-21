@@ -5,11 +5,13 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu
+from archinstall import ConfigurationOutput, Menu, Installer
 from archinstall.lib.disk.filesystem import perform_filesystem_operations
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
 from ..lib.disk import disk_layouts
+from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType
+from ..lib.output import log
 
 if TYPE_CHECKING:
 	_: Any
@@ -56,9 +58,10 @@ def ask_user_questions():
 	global_menu.enable('mirror-region')
 
 	global_menu.enable('sys-language')
+
 	global_menu.enable('sys-encoding')
 
-	global_menu.enable('disk_layouts')
+	global_menu.enable('disk_layouts', mandatory=True)
 
 	# Specify disk encryption options
 	global_menu.enable('disk_encryption')
@@ -72,9 +75,9 @@ def ask_user_questions():
 	global_menu.enable('hostname')
 
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
-	global_menu.enable('!root-password')
+	global_menu.enable('!root-password', mandatory=True)
 
-	global_menu.enable('!users')
+	global_menu.enable('!users', mandatory=True)
 
 	# Ask for archinstall-specific profiles_bck (such as desktop environments etc)
 	global_menu.enable('profile')
@@ -115,12 +118,25 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
+	log('Starting installation', level=logging.INFO)
 
-	with archinstall.Installer(mountpoint, kernels=archinstall.arguments.get('kernels', ['linux'])) as installation:
+	with Installer(
+		mountpoint,
+		disk_encryption=archinstall.arguments.get('disk_encryption', None),
+		kernels=archinstall.arguments.get('kernels', ['linux'])
+	) as installation:
+		disk_config: DiskLayoutConfiguration = archinstall.arguments.get('disk_layouts', [])
+
 		# Mount all the drives to the desired mountpoint
-		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.arguments.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
+		# This *can* be done outside of the installation,
+		# but the installer can deal with it.
+		if disk_config.layout_type != DiskLayoutType.Pre_mount:
+			installation.mount_ordered_layout(disk_config.layouts)
+
+			# generate encryption key files for the mounted luks devices
+			installation.generate_key_files()
+
+		1/0
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:

@@ -38,7 +38,6 @@ if TYPE_CHECKING:
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store):
-		self._disk_check = True
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def _setup_selection_menu_options(self):
@@ -99,7 +98,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['hostname'] = \
 			Selector(
 				_('Hostname'),
-				ask_hostname,
+				lambda preset: ask_hostname(preset),
 				default='archlinux')
 		# root password won't have preset value
 		self._menu_options['!root-password'] = \
@@ -310,27 +309,6 @@ class GlobalMenu(AbstractMenu):
 			profile: Profile = selector.current_selection
 			return FormattedOutput.as_table([profile.info()])
 		return None
-
-	def _missing_configs(self) -> List[str]:
-		def check(s):
-			return self._menu_options.get(s).has_selection()
-
-		def has_superuser() -> bool:
-			users = self._menu_options['!users'].current_selection
-			return any([u.sudo for u in users])
-
-		missing = []
-		if not check('bootloader'):
-			missing += [self._menu_options['bootloader'].description]
-		if not check('hostname'):
-			missing += [self._menu_options['hostname'].description]
-		if not check('!root-password') and not has_superuser():
-			missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
-		if self._disk_check:
-			if not check('disk_layouts'):
-				missing += [self._menu_options['disk_layouts'].description]
-
-		return missing
 
 	def _set_root_password(self) -> Optional[str]:
 		prompt = str(_('Enter root password (leave blank to disable root): '))

@@ -35,9 +35,10 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = None) -> str:
-	hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip(' ')
-	return hostname
-
+	while True:
+		hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip()
+		if hostname:
+			return hostname
 
 def ask_for_a_timezone(preset: str = None) -> str:
 	timezones = list_timezones()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
@@ -17,6 +18,7 @@ from ..luks import Luks2
 from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
 	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
 	ModificationStatus
+from ..utils.diskinfo import get_lsblk_info
 
 if TYPE_CHECKING:
 	_: Any
@@ -89,7 +91,7 @@ class DeviceHandler(object):
 
 			for partition in entry.get('partitions', []):
 				device_partition = PartitionModification(
-					status=ModificationStatus[partition['status']],
+					status=ModificationStatus(partition['status']),
 					fs_type=FilesystemType(partition['fs_type']),
 					start=Size.parse_args(partition['start']),
 					length=Size.parse_args(partition['length']),
@@ -181,10 +183,13 @@ class DeviceHandler(object):
 		key_file = luks_handler.encrypt()
 
 		log(f'luks2 unlocking device: {part_mod.dev_path}', level=logging.INFO)
-		mapper_path = luks_handler.unlock(mapper_name=part_mod.mapper_name, key_file=key_file)
+		luks_handler.unlock(mapper_name=part_mod.mapper_name, key_file=key_file)
 
-		log(f'luks2 formatting mapper dev: {mapper_path}', level=logging.INFO)
-		self._perform_formatting(part_mod.fs_type, mapper_path)
+		if not luks_handler.mapper_dev:
+			raise DiskError('Failed to unlock luks device')
+
+		log(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}', level=logging.INFO)
+		self._perform_formatting(part_mod.fs_type, uks_handler.mapper_dev)
 
 		log(f'luks2 locking device: {part_mod.dev_path}', level=logging.INFO)
 		luks_handler.lock()
@@ -200,7 +205,7 @@ class DeviceHandler(object):
 		"""
 
 		# verify that all partitions have a path set (which implies that they have been created)
-		missing_path = next(filter(lambda x: x.path is None, modification.partitions), None)
+		missing_path = next(filter(lambda x: x.dev_path is None, modification.partitions), None)
 		if missing_path is not None:
 			raise ValueError('When formatting, all partitions must have a path set')
 
@@ -272,33 +277,35 @@ class DeviceHandler(object):
 		try:
 			disk.addPartition(partition=partition, constraint=disk.device.optimalAlignedConstraint)
 			disk.commit()
+
+			# the creation will take a bit of time
+			time.sleep(3)
+
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
 
+			info = get_lsblk_info(part_mod.dev_path)
 
+			if not info.partuuid:
+				raise DiskError(f'Unable to determine new partition uuid: {part_mod.dev_path}')
 
-
-
-
-
-
-
-			#TODO
-#			get_lsblk_info...
-
+			part_mod.partuuid = info.partuuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}')
 
 	def _umount_all_existing(self, modification: DeviceModification):
-		for mod_part in modification.partitions:
-			if mod_part.is_exists_or_modify():
-				partition = self.find_partition(mod_part.dev_path)
+		log(f'Unmounting existing partitions: {modification.device_path}', level=logging.INFO)
 
-				# umounting for existing encrypted partitions
-				if partition.fs_type == FilesystemType.Crypto_luks:
-					Luks2(mod_part.dev_path).lock()
-				else:
-					self.umount(mod_part.dev_path, recursive=True)
+		existing_partitions = self._devices[modification.device_path].partition_info
+
+		for partition in existing_partitions:
+			log(f'Unmounting: {partition.path}', level=logging.INFO)
+
+			# umounting for existing encrypted partitions
+			if partition.fs_type == FilesystemType.Crypto_luks:
+				Luks2(partition.path).lock()
+			else:
+				self.umount(partition.path, recursive=True)
 
 	def partition(
 		self,
@@ -343,13 +350,6 @@ class DeviceHandler(object):
 
 		self.partprobe(modification.device.device_info.path)
 
-	def _get_mount_info(self) -> str:
-		try:
-			return SysCommand('mount').decode()
-		except SysCallError as error:
-			log(f"Could not get mount information", level=logging.ERROR)
-			raise error
-
 	def mount(
 		self,
 		dev_path: Path,
@@ -381,29 +381,31 @@ class DeviceHandler(object):
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 	def umount(self, path: Path, recursive: bool = False):
-		mounted_devices = self._get_mount_info()
+		lsblk_info = get_lsblk_info(path)
 
-		if str(path) in mounted_devices:
-			log(f'Partition {path} is currently mounted')
-			log(f'Attempting to umount partition: {path}')
+		if len(lsblk_info.mountpoints) > 0:
+			log(f'Partition {path} is currently mounted on: {lsblk_info.mountpoints}')
 
-			command = 'umount'
+			for mountpoint in lsblk_info.mountpoints:
+				log(f'Attempting to umount: {mountpoint}')
 
-			if recursive:
-				command += ' -R'
+				command = 'umount'
 
-			try:
-				result = SysCommand(f'{command} {path}')
+				if recursive:
+					command += ' -R'
 
-				# Without to much research, it seams that low error codes are errors.
-				# And above 8k is indicators such as "/dev/x not mounted.".
-				# So anything in between 0 and 8k are errors (?).
-				if result and 0 < result.exit_code < 8000:
-					error_msg = result.decode()
-					raise DiskError(f'Could not unmount {path}: error code {result.exit_code}. {error_msg}')
-			except SysCallError as error:
-				log(f'Unable to umount partition {path}: {error.message}', level=logging.DEBUG)
-				raise DiskError(error.message)
+				try:
+					result = SysCommand(f'{command} {mountpoint}')
+
+					# Without to much research, it seams that low error codes are errors.
+					# And above 8k is indicators such as "/dev/x not mounted.".
+					# So anything in between 0 and 8k are errors (?).
+					if result and 0 < result.exit_code < 8000:
+						error_msg = result.decode()
+						raise DiskError(f'Could not unmount {mountpoint}: error code {result.exit_code}. {error_msg}')
+				except SysCallError as error:
+					log(f'Unable to umount partition {mountpoint}: {error.message}', level=logging.DEBUG)
+					raise DiskError(error.message)
 
 	def partprobe(self, path: Optional[Path] = None):
 		if path is not None:
@@ -435,7 +437,7 @@ class DeviceHandler(object):
 		This is not intended to be secure, but rather to ensure that
 		auto-discovery tools don't recognize anything here.
 		"""
-		log(f'{block_device.device_info.path}: Wiping partitions and metadata')
+		log(f'Wiping partitions and metadata: {block_device.device_info.path}')
 		for partition in block_device.partition_info:
 			self._wipe(partition.path)
 

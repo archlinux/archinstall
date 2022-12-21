@@ -23,12 +23,19 @@ class Luks2:
 	key_file: Optional[Path] = None
 	auto_unmount: bool = False
 
+	# will be set internally after unlocking the device
+	_mapper_dev: Optional[Path] = None
+
+	@property
+	def mapper_dev(self) -> Optional[Path]:
+		return self._mapper_dev
+
 	def __post_init__(self):
 		if self.luks_dev_path is None:
 			raise ValueError('Partition must have a path set')
 
-	def __enter__(self) -> Path:
-		return self.unlock()
+	def __enter__(self):
+		self.unlock()
 
 	def __exit__(self, *args: str, **kwargs: str) -> bool:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
@@ -109,7 +116,23 @@ class Luks2:
 
 		return key_file
 
-	def unlock(self, mapper_name: Optional[str] = None, key_file: Optional[Path] = None) -> Optional[Path]:
+	def _get_luks_uuid(self) -> str:
+		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
+
+		try:
+			result = SysCommand(command)
+			if result.exit_code != 0:
+				raise DiskError(f'Unable to get UUID for Luks device: {result.decode()}')
+
+			return result.decode()
+		except SysCallError as err:
+			log(f'Unable to get UUID for Luks device: {self.luks_dev_path}', level=logging.INFO)
+			raise err
+
+	def is_unlocked(self) -> bool:
+		return self._mapper_dev is not None
+
+	def unlock(self, mapper_name: Optional[str] = None, key_file: Optional[Path] = None) -> Path:
 		"""
 		Mounts a luks2 compatible partition to a given mountpoint.
 		Keyfile must be specified as there's no way to interact with the pw-prompt atm.
@@ -152,9 +175,9 @@ class Luks2:
 		mapper_dev = Path(f'/dev/mapper/{mapper_name}')
 
 		if mapper_dev.is_symlink():
-			return mapper_dev
-
-		raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
+			self._mapper_dev = mapper_dev
+		else:
+			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self):
 		from .disk.device_handler import device_handler
@@ -176,6 +199,8 @@ class Luks2:
 			# And close it if possible.
 			log(f"Closing crypt device {child.name}", level=logging.DEBUG)
 			SysCommand(f"cryptsetup close {child.name}")
+
+		self._mapper_dev = None
 
 	def create_keyfile(self, target_path: Path):
 		"""
@@ -224,6 +249,6 @@ class Luks2:
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)
-			uuid = convert_device_to_uuid(self.luks_dev_path)
+			uuid = self._get_luks_uuid()
 			row = f"{self.mapper_name} UUID={uuid} {key_file_path} {opt}\n"
 			crypttab.write(row)

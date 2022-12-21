@@ -2,65 +2,37 @@
 import logging
 import os
 import pathlib
-from typing import List, Tuple
 
 import archinstall
 from ..lib.configuration import ConfigurationOutput
+from ..lib.disk import disk_layouts
 from ..lib.disk.filesystem import perform_filesystem_operations
 
 
-class OnlyHDMenu(archinstall.GlobalMenu):
-	def _setup_selection_menu_options(self):
-		super()._setup_selection_menu_options()
-		options_list = ['devices', 'disk_layouts', 'disk_encryption','swap']
-		mandatory_list = ['devices']
-		options_list.extend(['save_config','install','abort'])
+if archinstall.arguments.get('help'):
+	print("See `man archinstall` for help.")
+	exit(0)
 
-		for entry in self._menu_options:
-			if entry in options_list:
-				# for not lineal executions, only self.option(entry).set_enabled and set_mandatory are necessary
-				if entry in mandatory_list:
-					self.enable(entry,mandatory=True)
-				else:
-					self.enable(entry)
-			else:
-				self.option(entry).set_enabled(False)
-		self._update_install_text()
 
-	def mandatory_lacking(self) -> Tuple[List, int]:
-		mandatory_fields = []
-		mandatory_waiting = 0
-		for field in self._menu_options:
-			option = self._menu_options[field]
-			if option.is_mandatory():
-				if not option.has_selection():
-					mandatory_waiting += 1
-					mandatory_fields += [field,]
-		return mandatory_fields, mandatory_waiting
+if os.getuid() != 0:
+	print("Archinstall requires root privileges to run. See --help for more.")
+	exit(1)
 
-	def _missing_configs(self):
-		""" overloaded method """
-		def check(s):
-			return self.option(s).has_selection()
-
-		missing, missing_cnt = self.mandatory_lacking()
-		if check('devices'):
-			if not self.option('devices').is_empty() and not check('disk_layouts'):
-				missing_cnt += 1
-				missing += ['disk_layout']
-		return missing
 
 def ask_user_questions():
-	"""
-		First, we'll ask the user for a bunch of user input.
-		Not until we're satisfied with what we want to install
-		will we continue with the actual installation steps.
-	"""
-	with OnlyHDMenu(data_store=archinstall.arguments) as menu:
-		# We select the execution language separated
-		menu.exec_option('archinstall-language')
-		menu.option('archinstall-language').set_enabled(False)
-		menu.run()
+	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+
+	global_menu.enable('archinstall-language')
+
+	global_menu.enable('disk_layouts', mandatory=True)
+	global_menu.enable('disk_encryption')
+	global_menu.enable('swap')
+
+	global_menu.enable('save_config')
+	global_menu.enable('install')
+	global_menu.enable('abort')
+
+	global_menu.run()
 
 
 def perform_installation(mountpoint):
@@ -86,30 +58,21 @@ def perform_installation(mountpoint):
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
-
-def log_execution_environment():
-	# Log various information about hardware before starting the installation. This might assist in troubleshooting
-	archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-	archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-	archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-	archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-	archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-	# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-	archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
 
 
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
-if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
-	exit(1)
+# Log various information about hardware before starting the installation. This might assist in troubleshooting
+archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
+archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
+archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
+archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
+archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
-log_execution_environment()
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
 
-if not archinstall.check_mirror_reachable():
+
+if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
@@ -120,16 +83,18 @@ if not archinstall.arguments.get('silent'):
 config_output = ConfigurationOutput(archinstall.arguments)
 if not archinstall.arguments.get('silent'):
 	config_output.show()
+
 config_output.save()
 
 if archinstall.arguments.get('dry_run'):
 	exit(0)
+
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
 perform_filesystem_operations(
 	archinstall.arguments['disk_layouts'],
-	archinstall.arguments['disk_encryption']
+	archinstall.arguments.get('disk_encryption', None)
 )
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', pathlib.Path('/mnt')))
