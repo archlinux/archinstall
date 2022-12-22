@@ -212,6 +212,38 @@ def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
+def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str, Any]:
+	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+		partprobe(device_name)
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
+		try:
+			if exclude_iso_dev:
+				# exclude all devices associated with the iso boot locations
+				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
+				lsblk_info = get_lsblk_info(device_path)
+				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
+					continue
+
+			information = blkid(f'blkid -p -o export {device_path}')
+			return enrich_blockdevice_information(information)
+		except SysCallError as ex:
+			if ex.exit_code in (512, 2):
+				# Assume that it's a loop device, and try to get info on it
+				try:
+					information = get_loop_info(device_path)
+					if not information:
+						print("Exit code for blkid -p -o export was:", ex.exit_code)
+						raise SysCallError("Could not get loop information", exit_code=1)
+
+				except SysCallError:
+					print("Not a loop device, trying uevent rules.")
+					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
+					return enrich_blockdevice_information(information)
+			else:
+				# We could not reliably get any information, perhaps the disk is clean of information?
+				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] -1:
+					print("Raising ex because:", ex.exit_code)
+					raise ex
 
 def all_blockdevices(
 	mappers: bool = False,
@@ -236,34 +268,7 @@ def all_blockdevices(
 			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
 			continue
 
-		try:
-			if exclude_iso_dev:
-				# exclude all devices associated with the iso boot locations
-				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
-				lsblk_info = get_lsblk_info(device_path)
-				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
-					continue
-
-			information = blkid(f'blkid -p -o export {device_path}')
-		except SysCallError as ex:
-			if ex.exit_code in (512, 2):
-				# Assume that it's a loop device, and try to get info on it
-				try:
-					information = get_loop_info(device_path)
-					if not information:
-						print("Exit code for blkid -p -o export was:", ex.exit_code)
-						raise SysCallError("Could not get loop information", exit_code=1)
-
-				except SysCallError:
-					print("Not a loop device, trying uevent rules.")
-					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
-			else:
-				# We could not reliably get any information, perhaps the disk is clean of information?
-				print("Raising ex because:", ex.exit_code)
-				raise ex
-				# return instances
-
-		information = enrich_blockdevice_information(information)
+		information = get_blockdevice_info(device_path)
 
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
