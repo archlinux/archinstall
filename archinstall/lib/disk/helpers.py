@@ -216,7 +216,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
 		print(f"Attempt {retry_attempt} on {device_path}")
 		partprobe(device_path)
-		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt)) # TODO: Remove, we should be relying on blkid instead of lsblk
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt))
 		
 		try:
 			if exclude_iso_dev:
@@ -226,7 +226,9 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
 					continue
 
+			print('Using blkid')
 			information = blkid(f'blkid -p -o export {device_path}')
+			print('Returning')
 			return enrich_blockdevice_information(information)
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
