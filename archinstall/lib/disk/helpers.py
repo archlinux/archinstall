@@ -241,6 +241,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 					if not information:
 						print("Exit code for blkid -p -o export was:", ex.exit_code)
 						raise SysCallError(f"Could not get loop information for {resolved_device_name}", exit_code=1)
+					return enrich_blockdevice_information(information)
 
 				except SysCallError:
 					print(f"Not a loop device, trying uevent rules for {resolved_device_name}")
@@ -278,6 +279,8 @@ def all_blockdevices(
 			continue
 
 		information = get_blockdevice_info(device_path)
+		if not information:
+			continue
 
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
