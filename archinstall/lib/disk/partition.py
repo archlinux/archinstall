@@ -169,28 +169,30 @@ class Partition:
 		}
 
 	def _call_lsblk(self) -> Dict[str, Any]:
-		self.partprobe()
-		# This sleep might be overkill, but lsblk is known to
-		# work against a chaotic cache that can change during call
-		# causing no information to be returned (blkid is better)
-		# time.sleep(1)
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+			self.partprobe()
+			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt)) # TODO: Remove, we should be relying on blkid instead of lsblk
+			# This sleep might be overkill, but lsblk is known to
+			# work against a chaotic cache that can change during call
+			# causing no information to be returned (blkid is better)
+			# time.sleep(1)
 
-		# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
+			# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
 
-		try:
-			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
-		except SysCallError as error:
-			# It appears as if lsblk can return exit codes like 8192 to indicate something.
-			# But it does return output so we'll try to catch it.
-			output = error.worker.decode('UTF-8')
-
-		if output:
 			try:
-				lsblk_info = json.loads(output)
-				return lsblk_info
-			except json.decoder.JSONDecodeError:
-				log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
+				output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+			except SysCallError as error:
+				# It appears as if lsblk can return exit codes like 8192 to indicate something.
+				# But it does return output so we'll try to catch it.
+				output = error.worker.decode('UTF-8')
 
+			if output:
+				try:
+					lsblk_info = json.loads(output)
+					return lsblk_info
+				except json.decoder.JSONDecodeError:
+					log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
+		
 		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
 
 	def _call_sfdisk(self) -> Dict[str, Any]:
