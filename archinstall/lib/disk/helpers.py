@@ -234,7 +234,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 					information = get_loop_info(device_path)
 					if not information:
 						print("Exit code for blkid -p -o export was:", ex.exit_code)
-						raise SysCallError("Could not get loop information", exit_code=1)
+						raise SysCallError(f"Could not get loop information for {device_path.readlink().name}", exit_code=1)
 
 				except SysCallError:
 					print(f"Not a loop device, trying uevent rules for {device_path.readlink().name}")
