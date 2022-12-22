@@ -498,7 +498,7 @@ def find_partition_by_mountpoint(block_devices :List[BlockDevice], relative_moun
 
 def partprobe(path :str = '') -> bool:
 	try:
-		if SysCommand(f'bash -c "partprobe {path}"').exit_code == 0:
+		if SysCommand(f'bash -c "partprobe {path}"', peak_output=True).exit_code == 0:
 			return True
 	except SysCallError:
 		pass
