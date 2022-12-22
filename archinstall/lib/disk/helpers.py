@@ -216,6 +216,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
 		print(f"Attempt {retry_attempt} on {device_path}")
 		partprobe(device_path)
+		print('Partprobe done at least')
 		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt))
 		
 		try:
