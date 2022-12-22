@@ -214,8 +214,9 @@ def all_disks() -> List[BlockDevice]:
 
 def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str, Any]:
 	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
-		partprobe(device_name)
+		partprobe(device_path)
 		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
+		
 		try:
 			if exclude_iso_dev:
 				# exclude all devices associated with the iso boot locations
