@@ -231,14 +231,19 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 			if ex.exit_code in (512, 2):
 				# Assume that it's a loop device, and try to get info on it
 				try:
+					resolved_device_name = device_path.readlink().name
+				except OSError:
+					resolved_device_name = device_path.name
+					
+				try:
 					information = get_loop_info(device_path)
 					if not information:
 						print("Exit code for blkid -p -o export was:", ex.exit_code)
-						raise SysCallError(f"Could not get loop information for {device_path.readlink().name}", exit_code=1)
+						raise SysCallError(f"Could not get loop information for {resolved_device_name}", exit_code=1)
 
 				except SysCallError:
-					print(f"Not a loop device, trying uevent rules for {device_path.readlink().name}")
-					information = get_blockdevice_uevent(device_path.readlink().name)
+					print(f"Not a loop device, trying uevent rules for {resolved_device_name}")
+					information = get_blockdevice_uevent(resolved_device_name)
 					return enrich_blockdevice_information(information)
 			else:
 				# We could not reliably get any information, perhaps the disk is clean of information?
