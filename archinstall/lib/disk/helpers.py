@@ -237,8 +237,8 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 						raise SysCallError("Could not get loop information", exit_code=1)
 
 				except SysCallError:
-					print("Not a loop device, trying uevent rules.")
-					information = get_blockdevice_uevent(pathlib.Path(device_path).readlink().name)
+					print(f"Not a loop device, trying uevent rules for {device_path.readlink().name}")
+					information = get_blockdevice_uevent(device_path.readlink().name)
 					return enrich_blockdevice_information(information)
 			else:
 				# We could not reliably get any information, perhaps the disk is clean of information?
