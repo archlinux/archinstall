@@ -279,6 +279,7 @@ def all_blockdevices(
 			continue
 
 		information = get_blockdevice_info(device_path)
+		print(f'Done gathering info for {device_path}')
 		if not information:
 			continue
 
