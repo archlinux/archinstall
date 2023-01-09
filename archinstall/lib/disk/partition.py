@@ -420,9 +420,9 @@ class Partition:
 	def partprobe(self) -> bool:
 		try:
 			if self.block_device:
-				return 0 == SysCommand(f'partprobe {self.block_device.device}').exit_code
+				return 0 == SysCommand(f'partx {self.block_device.device}').exit_code
 		except SysCallError as error:
-			log(f"Unreliable results might be given for {self._path} due to partprobe error: {error}", level=logging.DEBUG)
+			log(f"Unreliable results might be given for {self._path} due to partx error: {error}", level=logging.DEBUG)
 
 		return False
 
