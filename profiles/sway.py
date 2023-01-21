@@ -15,6 +15,7 @@ __packages__ = [
 	"slurp",
 	"pavucontrol",
 	"foot",
+	"polkit", ## Sway wont launch and throw errors if polkit is not installed. 
 ]
 
 
