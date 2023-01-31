@@ -137,6 +137,8 @@ class BlockDevice:
 		# Doesn't harm us, but worth noting in case something weird happens.
 		try:
 			output = SysCommand(f"parted -s --machine {self._path} print free").decode('utf-8')
+			if not output:
+				output = SysCommand(f'lsblk -a -e 8 --json -b -o+SIZE,PTTYPE,ROTA,TRAN,PTUUID {self._path}').decode('UTF-8')
 			if output:
 				free_lines = [line for line in output.split('\n') if 'free' in line]
 				sizes = []
