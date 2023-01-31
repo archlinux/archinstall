@@ -36,7 +36,10 @@ class PartitionInfo:
 	def __post_init__(self):
 		if not all([self.partuuid, self.uuid]):
 			for i in range(storage['DISK_RETRY_ATTEMPTS']):
-				lsblk_info = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+				try:
+					lsblk_info = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+				except:
+					lsblk_info = SysCommand(f"lsblk -a -e 8 --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 				try:
 					lsblk_info = json.loads(lsblk_info)
 				except json.decoder.JSONDecodeError:
