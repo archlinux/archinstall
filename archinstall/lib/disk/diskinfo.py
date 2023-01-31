@@ -26,6 +26,8 @@ def get_lsblk_info(dev_path: str) -> LsblkInfo:
 	lsblk_fields = ','.join([f.upper().replace('_', '-') for f in fields])
 
 	output = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}').decode('UTF-8')
+	if not output:
+		output = SysCommand(f'lsblk -a -e 8 --json -b -o+{lsblk_fields} {dev_path}').decode('UTF-8')
 
 	if output:
 		block_devices = json.loads(output)
