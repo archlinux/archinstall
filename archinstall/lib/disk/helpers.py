@@ -493,6 +493,8 @@ def convert_device_to_uuid(path :str) -> str:
 		# TODO: Convert lsblk to blkid
 		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
 		output = json.loads(SysCommand(f"lsblk --json -o+UUID {device_name}").decode('UTF-8'))
+		if not output or not output.get('blockdevices'):
+			output = json.loads(SysCommand(f"lsblk -a -e 8 --json -o+UUID {device_name}").decode('UTF-8'))
 
 		for device in output['blockdevices']:
 			if (dev_uuid := device.get('uuid', None)):
