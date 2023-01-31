@@ -55,6 +55,8 @@ class Filesystem:
 
 			# We'll use unreliable lbslk to grab children under the /dev/<device>
 			output = json.loads(SysCommand(f"lsblk --json {self.blockdevice.device}").decode('UTF-8'))
+			if not output or not output.get('blockdevices'):
+				output = json.loads(SysCommand(f"lsblk -a -e 8 --json {self.blockdevice.device}").decode('UTF-8'))
 
 			for device in output['blockdevices']:
 				for index, partition in enumerate(device.get('children', [])):
