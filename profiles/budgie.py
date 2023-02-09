@@ -6,12 +6,10 @@ is_top_level_profile = False
 
 __packages__ = [
 	"arc-gtk-theme",
-	"budgie-desktop",
-	"budgie-desktop-view",
+	"budgie",
 	"lightdm",
 	"lightdm-gtk-greeter",
 	"mate-terminal",
-	"network-manager-applet",
 	"nemo",
 	"papirus-icon-theme",
 ]
