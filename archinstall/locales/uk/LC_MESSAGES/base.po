@@ -72,7 +72,7 @@ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{
 msgstr "Виберіть, режим для налаштування \"{}\" або пропустіть, щоб використовувати режим за замовчуванням \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Введіть IP-адресу та підмережу для {} (наприклад: 192.168.0.5.24): "
+msgstr "Введіть IP-адресу та підмережу для {} (наприклад: 192.168.0.5/24): "
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Введіть IP-адресу свого шлюзу (маршрутизатора) або залиште поле порожнім, якщо немає: "

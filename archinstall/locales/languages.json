@@ -169,7 +169,7 @@
  {"abbr": "tr", "lang": "Turkish", "translated_lang" :  "Türkçe"},
  {"abbr": "tw", "lang": "Twi"},
  {"abbr": "ug", "lang": "Uighur"},
- {"abbr": "uk", "lang": "Ukrainian"},
+ {"abbr": "uk", "lang": "Ukrainian", "translated_lang":  "Українська"},
  {"abbr": "ur", "lang": "Urdu", "translated_lang": "اردو"},
  {"abbr": "uz", "lang": "Uzbek"},
  {"abbr": "ve", "lang": "Venda"},
