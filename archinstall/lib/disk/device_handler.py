@@ -17,8 +17,7 @@ from ..luks import Luks2
 
 from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
 	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
-	ModificationStatus
-from ..utils.diskinfo import get_lsblk_info
+	ModificationStatus, get_lsblk_info, get_lsblk_by_mountpoint
 
 if TYPE_CHECKING:
 	_: Any
@@ -36,9 +35,7 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
-		devices: List[Device] = parted.getAllDevices()
-
-		for device in devices:
+		for device in parted.getAllDevices():
 			disk = Disk(device)
 			device_info = DeviceInfo.create(disk)
 
@@ -52,9 +49,17 @@ class DeviceHandler(object):
 	def get_device(self, path: Path) -> Optional[BDevice]:
 		return self._devices.get(path, None)
 
+	def get_device_by_partition(self, partition_path: Path) -> Optional[BDevice]:
+		partition = self.find_partition(partition_path)
+		if partition:
+			return partition.disk.device
+		return None
+
 	def find_partition(self, path: Path) -> Optional[PartitionInfo]:
 		for device in self._devices.values():
-			return next(filter(lambda x: str(x.path) == str(path), device.partition_info), None)
+			part = next(filter(lambda x: str(x.path) == str(path), device.partition_info), None)
+			if part is not None:
+				return part
 		return None
 
 	def parse_device_arguments(self, disk_layouts: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
@@ -183,13 +188,13 @@ class DeviceHandler(object):
 		key_file = luks_handler.encrypt()
 
 		log(f'luks2 unlocking device: {part_mod.dev_path}', level=logging.INFO)
-		luks_handler.unlock(mapper_name=part_mod.mapper_name, key_file=key_file)
+		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
 			raise DiskError('Failed to unlock luks device')
 
 		log(f'luks2 formatting mapper dev: {luks_handler.mapper_dev}', level=logging.INFO)
-		self._perform_formatting(part_mod.fs_type, uks_handler.mapper_dev)
+		self._perform_formatting(part_mod.fs_type, luks_handler.mapper_dev)
 
 		log(f'luks2 locking device: {part_mod.dev_path}', level=logging.INFO)
 		luks_handler.lock()
@@ -290,8 +295,9 @@ class DeviceHandler(object):
 				raise DiskError(f'Unable to determine new partition uuid: {part_mod.dev_path}')
 
 			part_mod.partuuid = info.partuuid
+			part_mod.uuid = info.uuid
 		except PartitionException as ex:
-			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}')
+			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
 	def _umount_all_existing(self, modification: DeviceModification):
 		log(f'Unmounting existing partitions: {modification.device_path}', level=logging.INFO)
@@ -301,7 +307,7 @@ class DeviceHandler(object):
 		for partition in existing_partitions:
 			log(f'Unmounting: {partition.path}', level=logging.INFO)
 
-			# umounting for existing encrypted partitions
+			# un-mount for existing encrypted partitions
 			if partition.fs_type == FilesystemType.Crypto_luks:
 				Luks2(partition.path).lock()
 			else:
@@ -342,7 +348,7 @@ class DeviceHandler(object):
 
 		for part_mod in modification.partitions:
 			# don't touch existing partitions
-			if not part_mod.exists():
+			if not part_mod.is_exists():
 				# if the entire disk got nuked then we don't have to delete
 				# any existing partitions anymore because they're all gone already
 				requires_delete = modification.wipe is False
@@ -357,12 +363,17 @@ class DeviceHandler(object):
 		mount_fs: Optional[str] = None,
 		create_target_mountpoint: bool = True,
 		options: List[str] = []
-	) -> None:
+	):
 		if create_target_mountpoint and not target_mountpoint.exists():
 			target_mountpoint.mkdir(parents=True, exist_ok=True)
 
 		if not target_mountpoint.exists():
 			raise ValueError('Target mountpoint does not exist')
+
+		lsblk_info = get_lsblk_info(dev_path)
+		if target_mountpoint in lsblk_info.mountpoints:
+			log(f'Device already mounted at {target_mountpoint}')
+			return
 
 		log(f'Mounting {dev_path} to {target_mountpoint}', level=logging.INFO)
 
@@ -384,7 +395,7 @@ class DeviceHandler(object):
 		lsblk_info = get_lsblk_info(path)
 
 		if len(lsblk_info.mountpoints) > 0:
-			log(f'Partition {path} is currently mounted on: {lsblk_info.mountpoints}')
+			log(f'Partition {path} is currently mounted at: {lsblk_info.mountpoints}')
 
 			for mountpoint in lsblk_info.mountpoints:
 				log(f'Attempting to umount: {mountpoint}')
@@ -395,17 +406,41 @@ class DeviceHandler(object):
 					command += ' -R'
 
 				try:
-					result = SysCommand(f'{command} {mountpoint}')
-
+					SysCommand(f'{command} {mountpoint}')
+				except SysCallError as err:
 					# Without to much research, it seams that low error codes are errors.
 					# And above 8k is indicators such as "/dev/x not mounted.".
 					# So anything in between 0 and 8k are errors (?).
-					if result and 0 < result.exit_code < 8000:
-						error_msg = result.decode()
-						raise DiskError(f'Could not unmount {mountpoint}: error code {result.exit_code}. {error_msg}')
-				except SysCallError as error:
-					log(f'Unable to umount partition {mountpoint}: {error.message}', level=logging.DEBUG)
-					raise DiskError(error.message)
+					if err and 0 < err.exit_code < 8000:
+						log(f'Unable to umount partition {mountpoint}: {err.message}', level=logging.DEBUG)
+						raise DiskError(err.message)
+
+	def discover_modifications_by_mountpoint(self, base_mountpoint: Path) -> List[DeviceModification]:
+		lsblk_infos = get_lsblk_by_mountpoint(base_mountpoint, as_prefix=True)
+		part_mods = {}
+
+		for lsblk in lsblk_infos:
+			# we are looking for the real partition not the mapper
+			if lsblk.type == 'crypt':
+				parent_lsblk = get_lsblk_info(f'/dev/{lsblk.pkname}')
+				part_info = self.find_partition(parent_lsblk.path)
+			else:
+				part_info = self.find_partition(lsblk.path)
+
+			if not part_info:
+				raise DiskError(f'Unable to find partition information: {lsblk.path}')
+
+			part_mods.setdefault(part_info.disk.device.path, []).append(
+				PartitionModification.from_existing_partition(part_info)
+			)
+
+		mods = []
+		for device_path, part_mods in part_mods.items():
+			mods.append(
+				DeviceModification(self._devices.get(device_path), False, part_mods)
+			)
+
+		return mods
 
 	def partprobe(self, path: Optional[Path] = None):
 		if path is not None:

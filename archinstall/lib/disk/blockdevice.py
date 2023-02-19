@@ -6,11 +6,11 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, Iterator, List, TYPE_CHECKING
 
+from .device import get_lsblk_info
 from ..exceptions import DiskError, SysCallError
 from ..output import log
 from ..general import SysCommand
 from ..storage import storage
-from ..utils.diskinfo import get_lsblk_info
 
 if TYPE_CHECKING:
 	from .partition import Partition

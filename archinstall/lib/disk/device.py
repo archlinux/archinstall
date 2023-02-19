@@ -1,19 +1,25 @@
 from __future__ import annotations
 
+import dataclasses
+import json
 import logging
 import math
+import time
+import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, auto
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import Optional, List, Any, Dict, Union
+from typing import TYPE_CHECKING
 
 import parted
 from parted import Disk, Geometry, Partition
 
-from ..storage import storage
+from ..exceptions import DiskError, SysCallError
+from ..general import SysCommand
 from ..models.subvolume import Subvolume
 from ..output import log
-from ..utils.diskinfo import get_lsblk_info, LsblkInfo
+from ..storage import storage
 
 if TYPE_CHECKING:
 	_: Any
@@ -216,7 +222,7 @@ class PartitionInfo:
 	def create(cls, partition: Partition) -> PartitionInfo:
 		lsblk_info = get_lsblk_info(partition.path)
 
-		fs_type = FilesystemType.parse_parted(partition, lsblk_info)
+		fs_type = FilesystemType.determine_fs_type(partition, lsblk_info)
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
 
@@ -355,14 +361,48 @@ class FilesystemType(Enum):
 	# with the usage from this enum
 	Crypto_luks = 'crypto_LUKS'
 
+	def is_crypto(self) -> bool:
+		return self == FilesystemType.Crypto_luks
+
+	@property
 	def fs_type_mount(self) -> str:
 		match self:
 			case FilesystemType.Ntfs: return 'ntfs3'
 			case FilesystemType.Fat32: return 'vfat'
 			case _: return self.value  # type: ignore
 
+	@property
+	def installation_pkg(self) -> Optional[str]:
+		match self:
+			case FilesystemType.Btrfs: return 'btrfs-progs'
+			case FilesystemType.Xfs: return 'xfsprogs'
+			case FilesystemType.F2fs: return 'f2fs-tools'
+			case _: return None
+
+	@property
+	def installation_module(self) -> Optional[str]:
+		match self:
+			case FilesystemType.Btrfs: return 'btrfs'
+			case _: return None
+
+	@property
+	def installation_binary(self) -> Optional[str]:
+		match self:
+			case FilesystemType.Btrfs: return '/usr/bin/btrfs'
+			case _: return None
+
+	@property
+	def installation_hooks(self) -> Optional[str]:
+		match self:
+			case FilesystemType.Btrfs: return 'btrfs'
+			case _: return None
+
 	@classmethod
-	def parse_parted(cls, partition: Partition, lsblk_info: Optional[LsblkInfo] = None) -> Optional[FilesystemType]:
+	def determine_fs_type(
+		cls,
+		partition: Partition,
+		lsblk_info: Optional[LsblkInfo] = None
+	) -> Optional[FilesystemType]:
 		try:
 			if partition.fileSystem:
 				return FilesystemType(partition.fileSystem.type)
@@ -395,6 +435,37 @@ class PartitionModification:
 	btrfs: List[Subvolume] = field(default_factory=list)
 	dev_path: Optional[Path] = None
 	partuuid: Optional[str] = None
+	uuid: Optional[str] = None
+
+	def __post_init__(self):
+		# needed to use the object as a dictionary key due to hash func
+		self._id = uuid.uuid4()
+
+		if self.is_exists_or_modify() and not self.dev_path:
+			raise ValueError('If partition marked as existing a path must be set')
+
+	def __hash__(self):
+		return hash(self._id)
+
+	@classmethod
+	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
+		return PartitionModification(
+			status=ModificationStatus.Exist,
+			type=partition_info.type,
+			start=partition_info.start,
+			length=partition_info.length,
+			fs_type=partition_info.fs_type,
+			dev_path=partition_info.path,
+			flags=partition_info.flags
+		)
+
+	@property
+	def is_boot(self) -> bool:
+		return Path('/boot') == self.mountpoint
+
+	@property
+	def is_root(self) -> bool:
+		return Path('/') == self.mountpoint
 
 	@property
 	def relative_mountpoint(self) -> Path:
@@ -404,14 +475,10 @@ class PartitionModification:
 		"""
 		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
-	def __post_init__(self):
-		if self.is_exists_or_modify() and not self.dev_path:
-			raise ValueError('If partition marked as existing a path must be set')
-
-	def modify(self) -> bool:
+	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
 
-	def exists(self) -> bool:
+	def is_exists(self) -> bool:
 		return self.status == ModificationStatus.Exist
 
 	def is_exists_or_modify(self) -> bool:
@@ -484,6 +551,12 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
+	def get_boot_partition(self) -> Optional[PartitionModification]:
+		return next(filter(lambda x: x.is_boot(), self.partitions), None)
+
+	def get_root_partition(self) -> Optional[PartitionModification]:
+		return next(filter(lambda x: x.is_root(), self.partitions), None)
+
 	def __dump__(self) -> Dict[str, Any]:
 		"""
 		Called when generating configuration files
@@ -493,3 +566,162 @@ class DeviceModification:
 			'wipe': self.wipe,
 			'partitions': [p.__dump__() for p in self.partitions]
 		}
+
+
+@dataclass
+class LsblkInfo:
+	name: str = ""
+	path: Path = ""
+	pkname: str = ""
+	size: Size = Size(0, Unit.B)
+	log_sec: int = 0
+	pttype: str = ""
+	ptuuid: str = ""
+	rota: bool = False
+	tran: Optional[str] = None
+	partuuid: Optional[str] = None
+	uuid: Optional[str] = None
+	fstype: Optional[str] = None
+	fsver: Optional[str] = None
+	fsavail: Optional[str] = None
+	fsuse_percentage: Optional[str] = None
+	type: Optional[str] = None
+	mountpoints: List[Path] = field(default_factory=list)
+	children: List[LsblkInfo] = field(default_factory=list)
+
+	def json(self) -> Dict[str, Any]:
+		return {
+			'name': self.name,
+			'path': str(self.path),
+			'pkname': self.pkname,
+			'size': self.size.format_size(Unit.MiB),
+			'log_sec': self.log_sec,
+			'pttype': self.pttype,
+			'ptuuid': self.ptuuid,
+			'rota': self.rota,
+			'tran': self.tran,
+			'partuuid': self.partuuid,
+			'uuid': self.uuid,
+			'fstype': self.fstype,
+			'fsver': self.fsver,
+			'fsavail': self.fsavail,
+			'fsuse_percentage': self.fsuse_percentage,
+			'type': self.type,
+			'mountpoints': [str(m) for m in self.mountpoints],
+			'children': [c.json() for c in self.children]
+		}
+
+	@classmethod
+	def exclude(cls) -> List[str]:
+		return ['children']
+
+	@classmethod
+	def fields(cls) -> List[str]:
+		return [f.name for f in dataclasses.fields(LsblkInfo) if f.name not in cls.exclude()]
+
+	@classmethod
+	def from_json(cls, blockdevice: Dict[str, Any]) -> LsblkInfo:
+		info = cls()
+
+		for f in cls.fields():
+			lsblk_field = _clean_field(f, CleanType.Blockdevice)
+			data_field = _clean_field(f, CleanType.Dataclass)
+
+			if isinstance(getattr(info, data_field), Path):
+				val = Path(blockdevice[lsblk_field])
+			elif isinstance(getattr(info, data_field), Size):
+				val = Size(blockdevice[lsblk_field], Unit.B)
+			else:
+				val = blockdevice[lsblk_field]
+
+			setattr(info, data_field, val)
+
+		info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
+
+		# sometimes lsblk returns 'mountpoint': [null]
+		info.mountpoints = [Path(mountpoint) for mountpoint in info.mountpoints if mountpoint]
+
+		return info
+
+
+class CleanType(Enum):
+	Blockdevice = auto()
+	Dataclass = auto()
+	Lsblk = auto()
+
+
+def _clean_field(name: str, clean_type: CleanType) -> str:
+	match clean_type:
+		case CleanType.Blockdevice:
+			return name.replace('_percentage', '%').replace('_', '-')
+		case CleanType.Dataclass:
+			return name.lower().replace('-', '_').replace('%', '_percentage')
+		case CleanType.Lsblk:
+			return name.replace('_percentage', '%').replace('_', '-')
+
+
+def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 3) -> List[LsblkInfo]:
+	fields = [_clean_field(f, CleanType.Lsblk) for f in LsblkInfo.fields()]
+	lsblk_fields = ','.join(fields)
+
+	if not dev_path:
+		dev_path = ''
+
+	try:
+		result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+	except SysCallError as error:
+		# It appears as if lsblk can return exit codes like 8192 to indicate something.
+		# But it does return output so we'll try to catch it.
+		if error.worker:
+			err = error.worker.decode('UTF-8')
+			log(f'Error calling lsblk: {err}', fg="red", level=logging.ERROR)
+
+			if retry > 0:
+				log('Retrying fetching info with lsblk...', level=logging.INFO)
+				time.sleep(1)
+				return _fetch_lsblk_info(dev_path, retry-1)
+		raise error
+
+	if result.exit_code == 0:
+		try:
+			if decoded := result.decode('utf-8'):
+				block_devices = json.loads(decoded)
+				blockdevices = block_devices['blockdevices']
+				return [LsblkInfo.from_json(device) for device in blockdevices]
+		except json.decoder.JSONDecodeError as err:
+			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
+			raise err
+
+	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
+
+
+def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
+	if infos := _fetch_lsblk_info(dev_path):
+		return infos[0]
+
+	raise DiskError(f'lsblk failed to retrieve information for "{dev_path}"')
+
+
+def get_all_lsblk_info() -> List[LsblkInfo]:
+	return _fetch_lsblk_info()
+
+
+def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
+	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:
+		devices = []
+		for entry in infos:
+			if as_prefix:
+				matches = [m for m in entry.mountpoints if str(m).startswith(str(mountpoint))]
+				if matches:
+					devices += [entry]
+			elif mountpoint in entry.mountpoints:
+				devices += [entry]
+
+			if len(entry.children) > 0:
+				if len(match := _check(entry.children)) > 0:
+					devices += match
+
+		return devices
+
+	all_info = get_all_lsblk_info()
+	return _check(all_info)

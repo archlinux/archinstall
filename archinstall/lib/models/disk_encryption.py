@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class EncryptionType(Enum):
+	NoEncryption = auto()
 	Partition = auto()
 	# FullDiskEncryption = auto()
 

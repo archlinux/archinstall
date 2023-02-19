@@ -150,7 +150,7 @@ def select_partitions_to_encrypt(
 		partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
 	# do not allow encrypting existing partitions that are not marked as wipe
-	partitions = list(filter(lambda x: not x.exists(), partitions))
+	partitions = list(filter(lambda x: not x.is_exists(), partitions))
 
 	if partitions:
 		title = str(_('Select which partitions to encrypt'))

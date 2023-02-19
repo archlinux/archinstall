@@ -5,13 +5,15 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer
-from archinstall.lib.disk.filesystem import perform_filesystem_operations
+from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, device_handler, DiskEncryption
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
 from ..lib.disk import disk_layouts
-from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType
+from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType
+from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.models.disk_encryption import EncryptionType
 from ..lib.output import log
+from ..lib.user_interaction.disk_conf import suggest_single_disk_layout
 
 if TYPE_CHECKING:
 	_: Any
@@ -119,76 +121,48 @@ def perform_installation(mountpoint: Path):
 	formatted and setup prior to entering this function.
 	"""
 	log('Starting installation', level=logging.INFO)
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+
+	# Retrieve list of additional repositories and set boolean values appropriately
+	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
+	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
+
+	locale = f"{archinstall.arguments.get('sys-language', 'en_US')} {archinstall.arguments.get('sys-encoding', 'UTF-8').upper()}"
+
+	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
 		mountpoint,
-		disk_encryption=archinstall.arguments.get('disk_encryption', None),
+		disk_config,
+		disk_encryption=disk_encryption,
 		kernels=archinstall.arguments.get('kernels', ['linux'])
 	) as installation:
-		disk_config: DiskLayoutConfiguration = archinstall.arguments.get('disk_layouts', [])
-
 		# Mount all the drives to the desired mountpoint
-		# This *can* be done outside of the installation,
-		# but the installer can deal with it.
 		if disk_config.layout_type != DiskLayoutType.Pre_mount:
-			installation.mount_ordered_layout(disk_config.layouts)
+			installation.mount_ordered_layout()
 
-			# generate encryption key files for the mounted luks devices
-			installation.generate_key_files()
+		installation.sanity_check()
 
-		1/0
+		if disk_config.layout_type != DiskLayoutType.Pre_mount:
+			if disk_encryption and disk_encryption.encryption_type != EncryptionType.NoEncryption:
+				# generate encryption key files for the mounted luks devices
+				installation.generate_key_files()
 
-		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
-		for partition in installation.partitions:
-			if partition.mountpoint == installation.target + '/boot':
-				if partition.size < 0.19: # ~200 MiB in GiB
-					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
-
-		# if len(mirrors):
-		# Certain services might be running that affects the system during installation.
-		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while archinstall.service_state('reflector') not in ('dead', 'failed'):
-			time.sleep(1)
-
-		# If we've activated NTP, make sure it's active in the ISO too and
-		# make sure at least one time-sync finishes before we continue with the installation
 		if archinstall.arguments.get('ntp', False):
-			# Activate NTP in the ISO
-			archinstall.SysCommand('timedatectl set-ntp true')
-
-			# TODO: This block might be redundant, but this service is not activated unless
-			# `timedatectl set-ntp true` is executed.
-			logged = False
-			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
-				if not logged:
-					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-					logged = True
-				time.sleep(1)
-
-			logged = False
-			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-				if not logged:
-					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-					logged = True
-				time.sleep(1)
+			installation.activate_time_syncronization()
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
-			archinstall.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
-		# Retrieve list of additional repositories and set boolean values appropriately
-		if archinstall.arguments.get('additional-repositories', None) is not None:
-			enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', None)
-			enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', None)
-		else:
-			enable_testing = False
-			enable_multilib = False
+		res = installation.minimal_installation(
+			testing=enable_testing,
+			multilib=enable_multilib,
+			hostname=archinstall.arguments.get('hostname', 'archlinux'),
+			locales=[locale]
+		)
 
-		if installation.minimal_installation(
-				testing=enable_testing, multilib=enable_multilib, hostname=archinstall.arguments['hostname'],
-				locales=[f"{archinstall.arguments['sys-language']} {archinstall.arguments['sys-encoding'].upper()}"]):
+		if res:
 			if archinstall.arguments.get('mirror-region') is not None:
 				if archinstall.arguments.get("mirrors", None) is not None:
 					installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
@@ -196,6 +170,7 @@ def perform_installation(mountpoint: Path):
 				installation.setup_swap('zram')
 			if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
+
 			installation.add_bootloader(archinstall.arguments["bootloader"])
 
 			# If user selected to copy the current ISO network configuration
@@ -255,6 +230,7 @@ def perform_installation(mountpoint: Path):
 		installation.genfstab()
 
 		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
 			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
@@ -264,14 +240,14 @@ def perform_installation(mountpoint: Path):
 				except:
 					pass
 
-	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
+	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
 
 
 if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
+
 
 if not archinstall.arguments.get('offline'):
 	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
@@ -286,6 +262,7 @@ if not archinstall.arguments.get('offline'):
 			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 			exit(1)
+
 
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
@@ -307,45 +284,52 @@ archinstall.configuration_sanity_check()
 
 
 
+mods = device_handler.discover_modifications_by_mountpoint(Path('/mnt/archinstall'))
+
+archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+	DiskLayoutType.Pre_mount,
+	layouts=mods
+)
 
 
 
 
 
-# from ..lib.disk.device_handler import device_handler, DeviceModification, \
-# 	PartitionModification, PartitionType, FilesystemType, Size, Unit
-# from pathlib import Path
-# from parted import Geometry
-# from ..lib.disk.encryption import DiskEncryption, EncryptionType
+
 #
-# dev_path = Path('/dev/sda')
-# p = Path('/dev/sda3')
+#
+# dev_path = Path('/dev/sdf')
 #
 # device = device_handler.get_device(dev_path)
-# partition = device_handler.find_partition(p)
-# g: Geometry = partition.partition.geometry
-# start = Size(g.start, Unit.sectors, device.device_info.sector_size)
-# length = Size(g.length, Unit.sectors, device.device_info.sector_size)
+# # partition = device_handler.find_partition(p)
+# # g: Geometry = partition.partition.geometry
+# # start = Size(g.start, Unit.sectors, device.device_info.sector_size)
+# # length = Size(g.length, Unit.sectors, device.device_info.sector_size)
 #
 #
-# part_mod = PartitionModification(
-# 	PartitionType.Primary,
-# 	start,
-# 	length,
-# 	wipe=True,
-# 	fs_type=FilesystemType.Ext4,
-# 	existing=True,
-# 	path=p
+# mods = suggest_single_disk_layout(
+# 	device,
+# 	FilesystemType.Ext4,
+# 	separate_home=True
 # )
 #
+# enc_part = None
+# for p in mods.partitions:
+# 	if p.mountpoint == Path('/boot'):
+# 		p.dev_path = Path('/dev/sdf1')
+# 		p.partuuid = '8ba32858-0c6d-41b6-a451-9f990bad0863'
+# 	elif p.mountpoint == Path('/'):
+# 		p.dev_path = Path('/dev/sdf2')
+# 		p.partuuid = 'cccf3391-9d8e-47a7-af76-7efc2e944628'
+# 	elif p.mountpoint == Path('/home'):
+# 		p.dev_path = Path('/dev/sdf3')
+# 		p.partuuid = '137df112-c205-4b0d-bf5c-95b6f1671c78'
+# 		enc_part = p
 #
-# mod = DeviceModification(device, wipe=False, partitions=[part_mod])
-# enc_conf = DiskEncryption(EncryptionType.Partition, 'a', [part_mod])
+# archinstall.arguments['disk_encryption'] = DiskEncryption(EncryptionType.Partition, 't', [enc_part])
+# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(DiskLayoutType.Default, [mods])
 #
-# device_handler.partition(mod)
-# device_handler.format(mod, enc_conf)
-#
-# 1/0
+
 
 
 

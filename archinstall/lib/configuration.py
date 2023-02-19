@@ -67,7 +67,6 @@ class ConfigurationOutput:
 				from .profiles_handler import ProfileHandler
 				self._user_config[key] = ProfileHandler().to_json(self._config[key])
 			else:
-				log(key)
 				self._user_config[key] = self._config[key]
 
 	def user_config_to_json(self) -> str:

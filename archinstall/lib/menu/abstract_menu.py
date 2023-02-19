@@ -82,6 +82,11 @@ class Selector:
 		self._preview_func = preview_func
 		self.mandatory = mandatory
 		self._no_store = no_store
+		self._default = default
+
+	@property
+	def default(self) -> Any:
+		return self._default
 
 	@property
 	def description(self) -> str:
@@ -187,6 +192,8 @@ class AbstractMenu:
 		self.preview_size = preview_size
 		self._last_choice = None
 
+		self._populate_default_values()
+
 	@property
 	def last_choice(self):
 		return self._last_choice
@@ -213,6 +220,11 @@ class AbstractMenu:
 	@property
 	def translation_handler(self) -> TranslationHandler:
 		return self._translation_handler
+
+	def _populate_default_values(self):
+		for config_key, selector in self._menu_options.items():
+			if selector.default is not None and config_key not in self._data_store:
+				self._data_store[config_key] = selector.default
 
 	def _missing_configs(self) -> List[str]:
 		def check(s):

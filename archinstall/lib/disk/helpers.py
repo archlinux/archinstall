@@ -4,12 +4,13 @@ import glob
 import json
 import logging
 import os  # type: ignore
-import pathlib
 import re
 import time
+from pathlib import Path
 from typing import Union, List, Dict, Optional, Any, TYPE_CHECKING
 
 from .blockdevice import BlockDevice
+from .device import get_all_lsblk_info, get_lsblk_info
 from .dmcryptdev import DMCryptDev
 from .mapperdev import MapperDev
 from ..exceptions import SysCallError, DiskError
@@ -17,7 +18,6 @@ from ..general import SysCommand, JSON
 # https://stackoverflow.com/a/39757388/929999
 from ..output import log
 from ..storage import storage
-from ..utils.diskinfo import get_lsblk_info, get_all_lsblk_info
 
 if TYPE_CHECKING:
 	from .partition import Partition
@@ -116,12 +116,12 @@ def get_loop_info(path :str) -> Dict[str, Any]:
 def enrich_blockdevice_information(information :Dict[str, Any]) -> Dict[str, Any]:
 	result = {}
 	for device_path, device_information in information.items():
-		dev_name = pathlib.Path(device_information['PATH']).name
+		dev_name = Path(device_information['PATH']).name
 		if not device_information.get('TYPE') or not device_information.get('DEVTYPE'):
 			with open(f"/sys/class/block/{dev_name}/uevent") as fh:
 				device_information.update(uevent(fh.read()))
 
-		if (dmcrypt_name := pathlib.Path(f"/sys/class/block/{dev_name}/dm/name")).exists():
+		if (dmcrypt_name := Path(f"/sys/class/block/{dev_name}/dm/name")).exists():
 			with dmcrypt_name.open('r') as fh:
 				device_information['DMCRYPT_NAME'] = fh.read().strip()
 
@@ -171,7 +171,7 @@ def all_blockdevices(
 	# we'll iterate the /sys/class definitions and find the information
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
-		device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+		device_path = Path(f"/dev/{Path(block_device).readlink().name}")
 
 		if device_path.exists() is False:
 			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
@@ -180,7 +180,7 @@ def all_blockdevices(
 		try:
 			if exclude_iso_dev:
 				# exclude all devices associated with the iso boot locations
-				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
+				iso_devs = [Path('/run/archiso/airootfs'), Path('/run/archiso/bootmnt')]
 				info = get_lsblk_info(device_path)
 				if any([dev in info.mountpoints for dev in iso_devs]):
 					continue
@@ -197,7 +197,7 @@ def all_blockdevices(
 
 				except SysCallError:
 					print("Not a loop device, trying uevent rules.")
-					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
+					information = get_blockdevice_uevent(Path(block_device).readlink().name)
 			else:
 				# We could not reliably get any information, perhaps the disk is clean of information?
 				print("Raising ex because:", ex.exit_code)
@@ -211,7 +211,7 @@ def all_blockdevices(
 				instances[path] = DMCryptDev(dev_path=path)
 			elif path_info.get('PARTUUID') or path_info.get('PART_ENTRY_NUMBER'):
 				if partitions:
-					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(pathlib.Path(path))))
+					instances[path] = Partition(path, block_device=BlockDevice(get_parent_of_partition(Path(path))))
 			elif path_info.get('PTTYPE', False) is not False or path_info.get('TYPE') == 'loop':
 				instances[path] = BlockDevice(path, path_info)
 			elif path_info.get('TYPE') in ('squashfs', 'erofs'):
@@ -222,18 +222,18 @@ def all_blockdevices(
 
 	if mappers:
 		for block_device in glob.glob("/dev/mapper/*"):
-			if (pathobj := pathlib.Path(block_device)).is_symlink():
+			if (pathobj := Path(block_device)).is_symlink():
 				instances[f"/dev/mapper/{pathobj.name}"] = MapperDev(mappername=pathobj.name)
 
 	return instances
 
 
-def get_parent_of_partition(path :pathlib.Path) -> pathlib.Path:
+def get_parent_of_partition(path :Path) -> Path:
 	partition_name = path.name
-	pci_device = (pathlib.Path("/sys/class/block") / partition_name).resolve()
+	pci_device = (Path("/sys/class/block") / partition_name).resolve()
 	return f"/dev/{pci_device.parent.name}"
 
-def split_bind_name(path :Union[pathlib.Path, str]) -> list:
+def split_bind_name(path :Union[Path, str]) -> list:
 	# log(f"[Deprecated] Partition().subvolumes now contain the split bind name via it's subvolume.name instead.", level=logging.WARNING, fg="yellow")
 	# we check for the bind notation. if exist we'll only use the "true" device path
 	if '[' in str(path) :  # is a bind path (btrfs subvolume path)
@@ -251,7 +251,7 @@ def find_mountpoint(device_path :str) -> Dict[str, Any]:
 	except SysCallError:
 		return {}
 
-def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recurse :bool = True) -> Dict[str, Any]:
+def findmnt(path :Path, traverse :bool = False, ignore :List = [], recurse :bool = True) -> Dict[str, Any]:
 	for traversal in list(map(str, [str(path)] + list(path.parents))):
 		if traversal in ignore:
 			continue
@@ -271,14 +271,14 @@ def findmnt(path :pathlib.Path, traverse :bool = False, ignore :List = [], recur
 	raise DiskError(f"Could not get mount information for path {path}")
 
 
-def get_mount_info(path :Union[pathlib.Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
+def get_mount_info(path :Union[Path, str], traverse :bool = False, return_real_path :bool = False, ignore :List = []) -> Dict[str, Any]:
 	import traceback
 
 	log(f"Deprecated: archinstall.get_mount_info(). Use archinstall.findmnt() instead, which does not do any automatic parsing. Please change at:\n{''.join(traceback.format_stack())}")
 	device_path, bind_path = split_bind_name(path)
 	output = {}
 
-	for traversal in list(map(str, [str(device_path)] + list(pathlib.Path(str(device_path)).parents))):
+	for traversal in list(map(str, [str(device_path)] + list(Path(str(device_path)).parents))):
 		if traversal in ignore:
 			continue
 
@@ -359,8 +359,8 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 
 	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
 		# Since all_blockdevices() returns PosixPath objects, we need to convert
-		# findmnt paths to pathlib.Path() first:
-		mountpoint = pathlib.Path(mountpoint)
+		# findmnt paths to Path() first:
+		mountpoint = Path(mountpoint)
 
 		if mountpoint in block_devices_mountpoints:
 			if mountpoint not in mounts:

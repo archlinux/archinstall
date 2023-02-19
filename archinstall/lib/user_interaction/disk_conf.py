@@ -213,7 +213,8 @@ def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
 def suggest_single_disk_layout(
 	device: BDevice,
 	filesystem_type: Optional[FilesystemType] = None,
-	advanced_options: bool = False
+	advanced_options: bool = False,
+	separate_home: Optional[bool] = None
 ) -> DeviceModification:
 	if not filesystem_type:
 		filesystem_type = ask_for_main_filesystem_format(advanced_options)
@@ -252,9 +253,14 @@ def suggest_single_disk_layout(
 
 	if not using_subvolumes:
 		if device_size_gib >= min_size_to_allow_home_part:
-			prompt = str(_('Would you like to create a separate partition for /home?'))
-			choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-			using_home_partition = choice.value == Menu.yes()
+			if separate_home is None:
+				prompt = str(_('Would you like to create a separate partition for /home?'))
+				choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
+				using_home_partition = choice.value == Menu.yes()
+			elif separate_home is True:
+				using_home_partition = True
+			else:
+				using_home_partition = False
 
 	# root partition
 	start = Size(513, Unit.MiB) if has_uefi() else Size(206, Unit.MiB)

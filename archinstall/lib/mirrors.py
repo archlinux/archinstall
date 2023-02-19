@@ -121,7 +121,7 @@ def insert_mirrors(mirrors :Dict[str, Any], *args :str, **kwargs :str) -> bool:
 
 
 def use_mirrors(
-	regions: Mapping[str, Iterable[str]],
+	regions: Dict[str, Iterable[str]],
 	destination: str = '/etc/pacman.d/mirrorlist'
 ) -> None:
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)

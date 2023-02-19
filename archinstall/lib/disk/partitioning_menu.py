@@ -62,7 +62,7 @@ class PartitioningList(ListManager):
 		not_filter = []
 
 		# only display formatting if the partition exists already
-		if not selection.exists():
+		if not selection.is_exists():
 			not_filter += [self._actions['mark_formatting']]
 		else:
 			# only allow these options if the existing partition
@@ -157,10 +157,10 @@ class PartitioningList(ListManager):
 
 	def _prompt_formatting(self, partition: PartitionModification):
 		# an existing partition can toggle between Exist or Modify
-		if partition.modify():
+		if partition.is_modify():
 			partition.status = ModificationStatus.Exist
 			return
-		elif partition.exists():
+		elif partition.is_exists():
 			partition.status = ModificationStatus.Modify
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
@@ -299,7 +299,7 @@ class PartitioningList(ListManager):
 	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
-		if any([not entry.exists() for entry in data]):
+		if any([not entry.is_exists() for entry in data]):
 			choice = self._reset_confirmation()
 			if choice.value == Menu.no():
 				return []
@@ -325,15 +325,7 @@ def manual_partitioning(
 		# we'll display the existing partitions of the device
 		for partition in device.partition_info:
 			manual_preset.append(
-				PartitionModification(
-					status=ModificationStatus.Exist,
-					type=partition.type,
-					start=partition.start,
-					length=partition.length,
-					fs_type=partition.fs_type,
-					dev_path=partition.path,
-					flags=partition.flags
-				)
+				PartitionModification.from_existing_partition(partition)
 			)
 	else:
 		manual_preset = preset

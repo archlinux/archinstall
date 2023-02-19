@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Union, Iterator
 
+from ..disk.device import get_lsblk_info
 from .blockdevice import BlockDevice
 from .helpers import get_filesystem_type, convert_size_to_gb, split_bind_name
 from ..storage import storage
@@ -17,7 +18,6 @@ from ..output import log
 from ..general import SysCommand
 from .btrfs.btrfs_helpers import subvolume_info_from_path
 from .btrfs.btrfssubvolumeinfo import BtrfsSubvolumeInfo
-from ..utils.diskinfo import get_lsblk_info
 
 
 @dataclass
@@ -600,9 +600,9 @@ class Partition:
 		return True
 
 
-def get_mount_fs_type(fs :str) -> str:
-	if fs == 'ntfs':
-		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
-	elif fs == 'fat32':
-		return 'vfat'  # This is the actual type used for fat32 mounting
-	return fs
+# def get_mount_fs_type(fs :str) -> str:
+# 	if fs == 'ntfs':
+# 		return 'ntfs3'  # Needed to use the Paragon R/W NTFS driver
+# 	elif fs == 'fat32':
+# 		return 'vfat'  # This is the actual type used for fat32 mounting
+# 	return fs
