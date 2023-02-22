@@ -1,19 +1,17 @@
 import logging
 import os
-import time
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, device_handler, DiskEncryption
+from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
 from ..lib.disk import disk_layouts
-from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType
+from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType
 from ..lib.disk.filesystem import perform_filesystem_operations
 from ..lib.models.disk_encryption import EncryptionType
 from ..lib.output import log
-from ..lib.user_interaction.disk_conf import suggest_single_disk_layout
 
 if TYPE_CHECKING:
 	_: Any
@@ -149,7 +147,7 @@ def perform_installation(mountpoint: Path):
 				installation.generate_key_files()
 
 		if archinstall.arguments.get('ntp', False):
-			installation.activate_time_syncronization()
+			installation.activate_ntp()
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
@@ -162,61 +160,62 @@ def perform_installation(mountpoint: Path):
 			locales=[locale]
 		)
 
-		if res:
-			if archinstall.arguments.get('mirror-region') is not None:
-				if archinstall.arguments.get("mirrors", None) is not None:
-					installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
-			if archinstall.arguments.get('swap'):
-				installation.setup_swap('zram')
-			if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
-				installation.add_additional_packages("grub")
+		if archinstall.arguments.get('mirror-region') is not None:
+			if archinstall.arguments.get("mirrors", None) is not None:
+				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
 
-			installation.add_bootloader(archinstall.arguments["bootloader"])
+		if archinstall.arguments.get('swap'):
+			installation.setup_swap('zram')
 
-			# If user selected to copy the current ISO network configuration
-			# Perform a copy of the config
-			network_config = archinstall.arguments.get('nic', None)
+		if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
+			installation.add_additional_packages("grub")
 
-			if network_config:
-				handler = NetworkConfigurationHandler(network_config)
-				handler.config_installer(installation)
+		installation.add_bootloader(archinstall.arguments["bootloader"])
 
-			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', None))
+		# If user selected to copy the current ISO network configuration
+		# Perform a copy of the config
+		network_config = archinstall.arguments.get('nic', None)
 
-			if archinstall.arguments.get('profile', None):
-				installation.install_profile(archinstall.arguments.get('profile', None))
+		if network_config:
+			handler = NetworkConfigurationHandler(network_config)
+			handler.config_installer(installation)
 
-			if users := archinstall.arguments.get('!users', None):
-				installation.create_users(users)
+		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
+			installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
-			if audio := archinstall.arguments.get('audio', None):
-				installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
-				if audio == 'pipewire':
-					PipewireProfile().install(installation)
-				elif audio == 'pulseaudio':
-					installation.add_additional_packages("pulseaudio")
-			else:
-				installation.log("No audio server will be installed.", level=logging.INFO)
+		if archinstall.arguments.get('profile', None):
+			installation.install_profile(archinstall.arguments.get('profile', None))
 
-			if timezone := archinstall.arguments.get('timezone', None):
-				installation.set_timezone(timezone)
+		if users := archinstall.arguments.get('!users', None):
+			installation.create_users(users)
 
-			if archinstall.arguments.get('ntp', False):
-				installation.activate_time_syncronization()
+		if audio := archinstall.arguments.get('audio', None):
+			installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
+			if audio == 'pipewire':
+				PipewireProfile().install(installation)
+			elif audio == 'pulseaudio':
+				installation.add_additional_packages("pulseaudio")
+		else:
+			installation.log("No audio server will be installed.", level=logging.INFO)
 
-			if archinstall.accessibility_tools_in_use():
-				installation.enable_espeakup()
+		if timezone := archinstall.arguments.get('timezone', None):
+			installation.set_timezone(timezone)
 
-			if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
-				installation.user_set_pw('root', root_pw)
+		if archinstall.arguments.get('ntp', False):
+			installation.activate_time_syncronization()
 
-			# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
-			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+		if archinstall.accessibility_tools_in_use():
+			installation.enable_espeakup()
 
-			if profile := archinstall.arguments.get('profile', None):
-				profile.post_install(installation)
+		if (root_pw := archinstall.arguments.get('!root-password', None)) and len(root_pw):
+			installation.user_set_pw('root', root_pw)
+
+		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
+		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
+		installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+
+		if profile := archinstall.arguments.get('profile', None):
+			profile.post_install(installation)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
@@ -283,56 +282,13 @@ if not archinstall.arguments.get('silent'):
 archinstall.configuration_sanity_check()
 
 
-
-mods = device_handler.discover_modifications_by_mountpoint(Path('/mnt/archinstall'))
-
-archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-	DiskLayoutType.Pre_mount,
-	layouts=mods
-)
-
-
-
-
-
-
+# mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
 #
-#
-# dev_path = Path('/dev/sdf')
-#
-# device = device_handler.get_device(dev_path)
-# # partition = device_handler.find_partition(p)
-# # g: Geometry = partition.partition.geometry
-# # start = Size(g.start, Unit.sectors, device.device_info.sector_size)
-# # length = Size(g.length, Unit.sectors, device.device_info.sector_size)
-#
-#
-# mods = suggest_single_disk_layout(
-# 	device,
-# 	FilesystemType.Ext4,
-# 	separate_home=True
+# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+# 	DiskLayoutType.Pre_mount,
+# 	layouts=mods,
+# 	relative_mountpoint=Path('/mnt/archinstall')
 # )
-#
-# enc_part = None
-# for p in mods.partitions:
-# 	if p.mountpoint == Path('/boot'):
-# 		p.dev_path = Path('/dev/sdf1')
-# 		p.partuuid = '8ba32858-0c6d-41b6-a451-9f990bad0863'
-# 	elif p.mountpoint == Path('/'):
-# 		p.dev_path = Path('/dev/sdf2')
-# 		p.partuuid = 'cccf3391-9d8e-47a7-af76-7efc2e944628'
-# 	elif p.mountpoint == Path('/home'):
-# 		p.dev_path = Path('/dev/sdf3')
-# 		p.partuuid = '137df112-c205-4b0d-bf5c-95b6f1671c78'
-# 		enc_part = p
-#
-# archinstall.arguments['disk_encryption'] = DiskEncryption(EncryptionType.Partition, 't', [enc_part])
-# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(DiskLayoutType.Default, [mods])
-#
-
-
-
-
 
 
 perform_filesystem_operations(

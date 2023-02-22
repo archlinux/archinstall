@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Optional, List
 
-from archinstall import device_handler
+from ...disk import device_handler
 from .btrfssubvolumeinfo import BtrfsSubvolumeInfo
 from ..helpers import get_mount_info
 from ...exceptions import SysCallError, DiskError

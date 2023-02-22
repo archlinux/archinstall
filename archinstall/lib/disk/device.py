@@ -41,6 +41,8 @@ class DiskLayoutType(Enum):
 class DiskLayoutConfiguration:
 	layout_type: DiskLayoutType
 	layouts: List[DeviceModification] = field(default_factory=list)
+	# used for pre-mounted config
+	relative_mountpoint: Optional[Path] = None
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
@@ -206,6 +208,7 @@ class PartitionInfo:
 	flags: List[PartitionFlag]
 	partuuid: str
 	disk: Disk
+	mountpoints: List[Path]
 
 	def as_json(self) -> Dict[str, Any]:
 		return {
@@ -219,7 +222,7 @@ class PartitionInfo:
 		}
 
 	@classmethod
-	def create(cls, partition: Partition) -> PartitionInfo:
+	def create_from_partition(cls, partition: Partition) -> PartitionInfo:
 		lsblk_info = get_lsblk_info(partition.path)
 
 		fs_type = FilesystemType.determine_fs_type(partition, lsblk_info)
@@ -244,7 +247,8 @@ class PartitionInfo:
 			length=length,
 			flags=flags,
 			partuuid=lsblk_info.partuuid,
-			disk=partition.disk
+			disk=partition.disk,
+			mountpoints=lsblk_info.mountpoints
 		)
 
 
@@ -327,6 +331,7 @@ class BDevice:
 
 
 class PartitionType(Enum):
+	Boot = 'boot'
 	Primary = 'primary'
 
 	@classmethod
@@ -338,6 +343,8 @@ class PartitionType(Enum):
 	def get_partition_code(self) -> Optional[int]:
 		if self == PartitionType.Primary:
 			return parted.PARTITION_NORMAL
+		elif self == PartitionType.Boot:
+			return parted.PARTITION_BOOT
 		return None
 
 
@@ -449,6 +456,7 @@ class PartitionModification:
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
+		mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
 		return PartitionModification(
 			status=ModificationStatus.Exist,
 			type=partition_info.type,
@@ -456,16 +464,9 @@ class PartitionModification:
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
-			flags=partition_info.flags
+			flags=partition_info.flags,
+			mountpoint=mountpoint
 		)
-
-	@property
-	def is_boot(self) -> bool:
-		return Path('/boot') == self.mountpoint
-
-	@property
-	def is_root(self) -> bool:
-		return Path('/') == self.mountpoint
 
 	@property
 	def relative_mountpoint(self) -> Path:
@@ -475,10 +476,18 @@ class PartitionModification:
 		"""
 		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
+	def is_boot(self) -> bool:
+		return PartitionFlag.Boot in self.flags
+
+	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
+		if relative_mountpoint is not None:
+			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
+		return Path('/') == self.mountpoint
+
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify
 
-	def is_exists(self) -> bool:
+	def exists(self) -> bool:
 		return self.status == ModificationStatus.Exist
 
 	def is_exists_or_modify(self) -> bool:
@@ -522,7 +531,7 @@ class PartitionModification:
 		"""
 		info = {
 			'Status': self.status.value,
-			'Device path': str(self.dev_path) if self.dev_path else '',
+			'Device': str(self.dev_path) if self.dev_path else '',
 			'Type': self.type.value,
 			'Start': self.start.format_size(Unit.MiB),
 			'Length': self.length.format_size(Unit.MiB),
@@ -554,8 +563,8 @@ class DeviceModification:
 	def get_boot_partition(self) -> Optional[PartitionModification]:
 		return next(filter(lambda x: x.is_boot(), self.partitions), None)
 
-	def get_root_partition(self) -> Optional[PartitionModification]:
-		return next(filter(lambda x: x.is_root(), self.partitions), None)
+	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
+		return next(filter(lambda x: x.is_root(relative_path), self.partitions), None)
 
 	def __dump__(self) -> Dict[str, Any]:
 		"""

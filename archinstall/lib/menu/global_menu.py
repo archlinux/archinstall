@@ -233,23 +233,23 @@ class GlobalMenu(AbstractMenu):
 		if selector.has_selection():
 			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
 
-			device_modifications: List[DeviceModification] = \
+			device_mods: List[DeviceModification] = \
 				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.layouts))
 
-			if device_modifications:
-				output_partition = ''
+			if device_mods:
+				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.layout_type.display_msg())
 				output_btrfs = ''
 
-				for modification in device_modifications:
+				for mod in device_mods:
 					# create partition table
-					partition_table = FormattedOutput.as_table(modification.partitions)
+					partition_table = FormattedOutput.as_table(mod.partitions)
 
-					output_partition += f'{modification.device_path}: {modification.device.device_info.model}\n'
+					output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
 					output_partition += partition_table + '\n'
 
 					# create btrfs table
 					btrfs_partitions = list(
-						filter(lambda p: len(p.btrfs) > 0, modification.partitions)
+						filter(lambda p: len(p.btrfs) > 0, mod.partitions)
 					)
 					for partition in btrfs_partitions:
 						output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'

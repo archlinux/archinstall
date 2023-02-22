@@ -11,8 +11,7 @@ from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union,
 
 from archinstall.profiles.profiles import Profile
 from .disk import Partition
-from .disk.btrfs import mount_subvolume
-from .disk.device import DeviceModification, PartitionModification, FilesystemType, DiskLayoutConfiguration, \
+from .disk.device import PartitionModification, DiskLayoutConfiguration, \
 	Size, Unit, get_lsblk_by_mountpoint
 from .disk.device_handler import device_handler
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -221,30 +220,30 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
-		log('Mounting all partitions', level=logging.INFO)
+		log('Mounting partitions in order', level=logging.INFO)
 
-		modifications: List[DeviceModification] = self._disk_config.layouts
-
-		for mod in modifications:
-			enc_partitions = []
+		for mod in self._disk_config.layouts:
+			# partitions have to mounted in the right order
+			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint)
 
 			if self._disk_encryption.encryption_type is not EncryptionType.NoEncryption:
-				enc_partitions = list(
-					filter(lambda x: x in self._disk_encryption.partitions, mod.partitions)
-				)
+				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
+			else:
+				enc_partitions = []
 
-			not_enc_partitions = list(
-				filter(lambda x: x not in enc_partitions, mod.partitions)
-			)
+			# attempt to decrypt all luks partitions
+			luks_handlers = self._prepare_luks_partitions(enc_partitions)
 
-			# attempt to mount all luks partitions
-			luks_handlers = self._mount_enc_partitions(enc_partitions)
+			for part_mod in sorted_part_mods:
+				if part_mod not in luks_handlers:  # non-enc partition
+					# attempt to mount all other partitions including the decrypted luks partition
+					self._mount_partition(part_mod)
+				else:  # enc partition
+					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
-			# attempt to mount subvolumes including decrypted luks partitions
-			self._mount_subvolumes(not_enc_partitions, luks_handlers)
+			# # attempt to mount subvolumes including decrypted luks partitions
+			# self._mount_subvolumes(not_enc_partitions, luks_handlers)
 
-			# attempt to mount all other partitions including the decrypted luks partition
-			self._mount_partition(not_enc_partitions, luks_handlers)
 
 		# # We then handle any special cases, such as btrfs
 		# for partition in btrfs_subvolumes:
@@ -257,7 +256,7 @@ class Installer:
 		# 				subvolume=sub_vol
 		# 			)
 
-	def _mount_enc_partitions(self, partitions: List[PartitionModification]) -> Dict[PartitionModification, Luks2]:
+	def _prepare_luks_partitions(self, partitions: List[PartitionModification]) -> Dict[PartitionModification, Luks2]:
 		luks_handlers = {}
 
 		for part_mod in partitions:
@@ -294,23 +293,17 @@ class Installer:
 
 		# TODO mount luks partitions
 
-	def _mount_partition(
-		self,
-		partitions: List[PartitionModification],
-		luks_handlers: Dict[PartitionModification, Luks2]
-	):
-		# mount all ordinary partitions
-		for part_mod in partitions:
-			# it would be none if it's btrfs as the subvolumes
-			# will have the mountpoints defined
-			if part_mod.mountpoint is not None:
-				target = self.target / part_mod.relative_mountpoint
-				device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+	def _mount_partition(self, part_mod: PartitionModification):
+		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
+		if part_mod.mountpoint is not None:
+			target = self.target / part_mod.relative_mountpoint
+			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
-		for part_mod, luks_handler in luks_handlers.items():
-			if part_mod.mountpoint is not None:
-				target = self.target / part_mod.relative_mountpoint
-				device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+	def _mount_luks_partiton(self, part_mod: PartitionModification, luks_handler: Luks2):
+		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
+		if part_mod.mountpoint is not None:
+			target = self.target / part_mod.relative_mountpoint
+			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
 	def generate_key_files(self):
 		for part_mod in self._disk_encryption.partitions:
@@ -341,27 +334,25 @@ class Installer:
 		# 		log(f"creating key-file for {ppath}",level=logging.INFO)
 		# 		self._create_keyfile(handle[0],handle[1],handle[2])
 
-	# TODO
-	# WHERE IS THIS COMMING FROM????
-	# def activate_ntp(self):
-	# 	"""
-	# 	If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
-	# 	"""
-	# 	SysCommand('timedatectl set-ntp true')
-	#
-	# 	logged = False
-	# 	while service_state('dbus-org.freedesktop.timesync1.service') not in ['running']:
-	# 		if not logged:
-	# 			log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-	# 			logged = True
-	# 		time.sleep(1)
-	#
-	# 	logged = False
-	# 	while 'Server: n/a' in SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-	# 		if not logged:
-	# 			log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-	# 			logged = True
-	# 		time.sleep(1)
+	def activate_ntp(self):
+		"""
+		If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
+		"""
+		SysCommand('timedatectl set-ntp true')
+
+		logged = False
+		while service_state('dbus-org.freedesktop.timesync1.service') not in ['running']:
+			if not logged:
+				log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
+				logged = True
+			time.sleep(1)
+
+		logged = False
+		while 'Server: n/a' in SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
+			if not logged:
+				log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
+				logged = True
+			time.sleep(1)
 
 
 
@@ -758,7 +749,7 @@ class Installer:
 		multilib: bool = False,
 		hostname: str = 'archinstall',
 		locales: List[str] = ['en_US.UTF-8 UTF-8']
-	) -> bool:
+	):
 
 		for mod in self._disk_config.layouts:
 			for part in mod.partitions:
@@ -860,8 +851,6 @@ class Installer:
 			if hasattr(plugin, 'on_install'):
 				plugin.on_install(self)
 
-		return True
-
 	def setup_swap(self, kind :str = 'zram'):
 		if kind == 'zram':
 			self.log(f"Setting up swap on zram")
@@ -887,7 +876,7 @@ class Installer:
 
 	def _get_root_partition(self) -> Optional[PartitionModification]:
 		for layout in self._disk_config.layouts:
-			if root := layout.get_root_partition():
+			if root := layout.get_root_partition(self._disk_config.relative_mountpoint):
 				return root
 		return None
 
@@ -1113,7 +1102,7 @@ class Installer:
 		if boot_partition is None or root_partition is None:
 			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
 
-		self.log(f'Adding bootloader {bootloader.value} to {boot_partition if boot_partition else root_partition}', level=logging.INFO)
+		self.log(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}', level=logging.INFO)
 
 		match bootloader:
 			case Bootloader.Systemd:

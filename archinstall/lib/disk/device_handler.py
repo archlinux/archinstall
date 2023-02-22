@@ -39,7 +39,7 @@ class DeviceHandler(object):
 			disk = Disk(device)
 			device_info = DeviceInfo.create(disk)
 
-			partition_info = [PartitionInfo.create(p) for p in disk.partitions]
+			partition_info = [PartitionInfo.create_from_partition(p) for p in disk.partitions]
 
 			block_device = BDevice(disk, device_info, partition_info)
 			block_devices[block_device.device_info.path] = block_device
@@ -252,6 +252,7 @@ class DeviceHandler(object):
 			Unit.sectors,
 			block_device.device_info.sector_size
 		)
+
 		length_sector = part_mod.length.convert(
 			Unit.sectors,
 			block_device.device_info.sector_size
@@ -348,7 +349,7 @@ class DeviceHandler(object):
 
 		for part_mod in modification.partitions:
 			# don't touch existing partitions
-			if not part_mod.is_exists():
+			if not part_mod.exists():
 				# if the entire disk got nuked then we don't have to delete
 				# any existing partitions anymore because they're all gone already
 				requires_delete = modification.wipe is False
@@ -415,7 +416,7 @@ class DeviceHandler(object):
 						log(f'Unable to umount partition {mountpoint}: {err.message}', level=logging.DEBUG)
 						raise DiskError(err.message)
 
-	def discover_modifications_by_mountpoint(self, base_mountpoint: Path) -> List[DeviceModification]:
+	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
 		lsblk_infos = get_lsblk_by_mountpoint(base_mountpoint, as_prefix=True)
 		part_mods = {}
 
@@ -430,15 +431,15 @@ class DeviceHandler(object):
 			if not part_info:
 				raise DiskError(f'Unable to find partition information: {lsblk.path}')
 
-			part_mods.setdefault(part_info.disk.device.path, []).append(
-				PartitionModification.from_existing_partition(part_info)
-			)
+			path = Path(part_info.disk.device.path)
+
+			part_mods.setdefault(path, [])
+			part_mods[path].append(PartitionModification.from_existing_partition(part_info))
 
 		mods = []
 		for device_path, part_mods in part_mods.items():
-			mods.append(
-				DeviceModification(self._devices.get(device_path), False, part_mods)
-			)
+			device_mod = DeviceModification(self._devices.get(device_path), False, part_mods)
+			mods.append(device_mod)
 
 		return mods
 

@@ -26,7 +26,7 @@ class PartitioningList(ListManager):
 		self._device = device
 		self._actions = {
 			'create_new_partition': str(_('Create a new partition')),
-			'suggest_partiton_layout': str(_('Suggest partition layout')),
+			'suggest_partition_layout': str(_('Suggest partition layout')),
 			'remove_added_partitions': str(_('Remove all newly added partitions')),
 			'assign_mountpoint': str(_('Assign mountpoint')),
 			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
@@ -62,7 +62,7 @@ class PartitioningList(ListManager):
 		not_filter = []
 
 		# only display formatting if the partition exists already
-		if not selection.is_exists():
+		if not selection.exists():
 			not_filter += [self._actions['mark_formatting']]
 		else:
 			# only allow these options if the existing partition
@@ -98,7 +98,7 @@ class PartitioningList(ListManager):
 			case 'create_new_partition':
 				new_partition = self._create_new_partition()
 				data += [new_partition]
-			case 'suggest_partiton_layout':
+			case 'suggest_partition_layout':
 				new_partitions = self._suggest_partition_layout(data)
 				if len(new_partitions) > 0:
 					data = new_partitions
@@ -160,7 +160,7 @@ class PartitioningList(ListManager):
 		if partition.is_modify():
 			partition.status = ModificationStatus.Exist
 			return
-		elif partition.is_exists():
+		elif partition.exists():
 			partition.status = ModificationStatus.Modify
 
 		# If we mark a partition for formatting, but the format is CRYPTO LUKS, there's no point in formatting it really
@@ -299,7 +299,7 @@ class PartitioningList(ListManager):
 	def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
 		# if modifications have been done already, inform the user
 		# that this operation will erase those modifications
-		if any([not entry.is_exists() for entry in data]):
+		if any([not entry.exists() for entry in data]):
 			choice = self._reset_confirmation()
 			if choice.value == Menu.no():
 				return []

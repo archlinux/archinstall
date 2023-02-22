@@ -16,6 +16,7 @@ from ..models.subvolume import Subvolume
 from ..output import FormattedOutput
 from ..output import log
 from ..storage import storage
+from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
 	_: Any
@@ -145,7 +146,13 @@ def select_disk_layout(
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
 			if choice.value == pre_mount_mode:
-				return DiskLayoutConfiguration(layout_type=DiskLayoutType.Pre_mount)
+				path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')))
+				mods = device_handler.detect_pre_mounted_mods(path)
+				return DiskLayoutConfiguration(
+					layout_type=DiskLayoutType.Pre_mount,
+					relative_mountpoint=path,
+					layouts=mods
+				)
 
 			preset_devices = [mod.device for mod in preset.layouts] if preset else None
 

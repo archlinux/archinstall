@@ -7,6 +7,7 @@ from ..configuration import ConfigurationOutput
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log
+from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
 	_: Any
@@ -50,12 +51,7 @@ def save_config(config: Dict):
 	if choice.type_ == MenuSelectionType.Skip:
 		return
 
-	while True:
-		path = input(_('Enter a directory for the configuration(s) to be saved: ')).strip(' ')
-		dest_path = Path(path)
-		if dest_path.exists() and dest_path.is_dir():
-			break
-		log(_('Not a valid directory: {}').format(dest_path), fg='red')
+	dest_path = prompt_dir(str(_('Enter a directory for the configuration(s) to be saved: ')))
 
 	if options['user_config'] == choice.value:
 		config_output.save_user_config(dest_path)

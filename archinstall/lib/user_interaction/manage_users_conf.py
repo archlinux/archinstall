@@ -90,7 +90,7 @@ class UserList(ListManager):
 		choice = Menu(
 			str(_('Should "{}" be a superuser (sudo)?')).format(username), Menu.yes_no(),
 			skip=False,
-			default_option=Menu.no(),
+			default_option=Menu.yes(),
 			clear_screen=False,
 			show_search_hint=False
 		).run()

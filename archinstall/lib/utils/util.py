@@ -1,12 +1,23 @@
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 from ..menu import Menu
+from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
+
+
+def prompt_dir(text: str) -> Path:
+	while True:
+		path = input(text).strip(' ')
+		dest_path = Path(path)
+		if dest_path.exists() and dest_path.is_dir():
+			return dest_path
+		log(_('Not a valid directory: {}').format(dest_path), fg='red')
 
 
 def do_countdown() -> bool:
