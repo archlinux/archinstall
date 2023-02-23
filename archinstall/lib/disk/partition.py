@@ -98,13 +98,17 @@ class Partition:
 		if mountpoint:
 			self.mount(mountpoint)
 
-		self._partition_info = self._fetch_information()
+		try:
+			self._partition_info = self._fetch_information()
+	
+			if not autodetect_filesystem and filesystem:
+				self._partition_info.filesystem_type = filesystem
 
-		if not autodetect_filesystem and filesystem:
-			self._partition_info.filesystem_type = filesystem
+			if self._partition_info.filesystem_type == 'crypto_LUKS':
+				self._encrypted = True
+		except DiskError:
+			self._partition_info = None
 
-		if self._partition_info.filesystem_type == 'crypto_LUKS':
-			self._encrypted = True
 
 	# I hate doint this but I'm currently unsure where this
 	# is acutally used to be able to fix the typing issues properly
@@ -120,14 +124,17 @@ class Partition:
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		mount_repr = ''
-		if mountpoint := self._partition_info.get_first_mountpoint():
-			mount_repr = f", mounted={mountpoint}"
-		elif self._target_mountpoint:
-			mount_repr = f", rel_mountpoint={self._target_mountpoint}"
+		if self._partition_info:
+			if mountpoint := self._partition_info.get_first_mountpoint():
+				mount_repr = f", mounted={mountpoint}"
+			elif self._target_mountpoint:
+				mount_repr = f", rel_mountpoint={self._target_mountpoint}"
 
 		classname = self.__class__.__name__
 
-		if self._encrypted:
+		if not self._partition_info:
+			return f'{classname}(path={self._path})'
+		elif self._encrypted:
 			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self._partition_info.filesystem_type}{mount_repr})'
 		else:
 			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self._partition_info.filesystem_type}{mount_repr})'
@@ -146,7 +153,7 @@ class Partition:
 			'encrypted': self._encrypted,
 			'start': self.start,
 			'size': self.end,
-			'filesystem': self._partition_info.filesystem_type
+			'filesystem': self._partition_info.filesystem_type if self._partition_info else 'Unknown'
 		}
 
 		return partition_info
@@ -164,7 +171,7 @@ class Partition:
 			'start': self.start,
 			'size': self.end,
 			'filesystem': {
-				'format': self._partition_info.filesystem_type
+				'format': self._partition_info.filesystem_type if self._partition_info else 'None'
 			}
 		}
 
@@ -193,7 +200,7 @@ class Partition:
 				except json.decoder.JSONDecodeError:
 					log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
 		
-		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
+		raise DiskError(f'Failed to partition "{self.device_path}" with lsblk')
 
 	def _call_sfdisk(self) -> Dict[str, Any]:
 		output = SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8')
@@ -245,7 +252,8 @@ class Partition:
 
 	@property
 	def filesystem(self) -> str:
-		return self._partition_info.filesystem_type
+		if self._partition_info:
+			return self._partition_info.filesystem_type
 
 	@property
 	def mountpoint(self) -> Optional[Path]:
@@ -255,43 +263,51 @@ class Partition:
 
 	@property
 	def mountpoints(self) -> List[Path]:
-		return self._partition_info.mountpoints
+		if self._partition_info:
+			return self._partition_info.mountpoints
 
 	@property
 	def sector_size(self) -> int:
-		return self._partition_info.sector_size
+		if self._partition_info:
+			return self._partition_info.sector_size
 
 	@property
 	def start(self) -> Optional[int]:
-		return self._partition_info.start
+		if self._partition_info:
+			return self._partition_info.start
 
 	@property
 	def end(self) -> Optional[int]:
-		return self._partition_info.end
+		if self._partition_info:
+			return self._partition_info.end
 
 	@property
 	def end_sectors(self) -> Optional[int]:
-		start = self._partition_info.start
-		end = self._partition_info.end
-		if start and end:
-			return start + end
-		return None
+		if self._partition_info:
+			start = self._partition_info.start
+			end = self._partition_info.end
+			if start and end:
+				return start + end
 
 	@property
 	def size(self) -> Optional[float]:
-		return self._partition_info.size
+		if self._partition_info:
+			return self._partition_info.size
 
 	@property
 	def boot(self) -> bool:
-		return self._partition_info.bootable
+		if self._partition_info:
+			return self._partition_info.bootable
 
 	@property
 	def partition_type(self) -> Optional[str]:
-		return self._partition_info.pttype
+		if self._partition_info:
+			return self._partition_info.pttype
 
 	@property
 	def part_uuid(self) -> str:
-		return self._partition_info.partuuid
+		if self._partition_info:
+			return self._partition_info.partuuid
 
 	@property
 	def uuid(self) -> Optional[str]:
@@ -357,7 +373,8 @@ class Partition:
 
 			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
 
-		return self._partition_info.uuid
+		if self._partition_info:
+			return self._partition_info.uuid
 
 	@property
 	def encrypted(self) -> Union[bool, None]:
