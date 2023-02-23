@@ -223,8 +223,11 @@ class Partition:
 		lsblk_info = self._call_lsblk()
 		sfdisk_info = self._call_sfdisk()
 
-		if not (device := lsblk_info.get('blockdevices', [None])[0]):
+		if not (device := lsblk_info.get('blockdevices', [])):
 			raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
+
+		# Grab the first (and only) block device in the list as we're targeting a specific partition
+		device = device[0]
 
 		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
 		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'

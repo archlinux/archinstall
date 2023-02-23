@@ -423,7 +423,6 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 		return {}
 
 	output = json.loads(output)
-	# print(output)
 
 	mounts = {}
 
