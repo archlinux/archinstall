@@ -190,8 +190,10 @@ class Partition:
 				output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 			except SysCallError as error:
 				# It appears as if lsblk can return exit codes like 8192 to indicate something.
-				# But it does return output so we'll try to catch it.
+				# But it does return output in stderr so we'll try to catch it minus the message/info.
 				output = error.worker.decode('UTF-8')
+				if '{' in output:
+					output = output[output.find('{'):]
 
 			if output:
 				try:
@@ -200,7 +202,7 @@ class Partition:
 				except json.decoder.JSONDecodeError:
 					log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
 		
-		raise DiskError(f'Failed to partition "{self.device_path}" with lsblk')
+		raise DiskError(f'Failed to get partition information "{self.device_path}" with lsblk')
 
 	def _call_sfdisk(self) -> Dict[str, Any]:
 		output = SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8')

@@ -214,9 +214,7 @@ def all_disks() -> List[BlockDevice]:
 
 def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str, Any]:
 	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
-		print(f"Attempt {retry_attempt} on {device_path}")
 		partprobe(device_path)
-		print('Partprobe done at least')
 		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt))
 		
 		try:
@@ -227,9 +225,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
 					continue
 
-			print('Using blkid')
 			information = blkid(f'blkid -p -o export {device_path}')
-			print('Returning')
 			return enrich_blockdevice_information(information)
 		except SysCallError as ex:
 			if ex.exit_code in (512, 2):
@@ -253,10 +249,8 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 			else:
 				# We could not reliably get any information, perhaps the disk is clean of information?
 				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] -1:
-					print("Raising ex because:", ex.exit_code)
+					print("Raising exception for blkid because:", ex.exit_code)
 					raise ex
-
-	print(f"Could not find info for {device_path}")
 
 def all_blockdevices(
 	mappers: bool = False,
@@ -282,7 +276,6 @@ def all_blockdevices(
 			continue
 
 		information = get_blockdevice_info(device_path)
-		print(f'Done gathering info for {device_path}')
 		if not information:
 			continue
 
