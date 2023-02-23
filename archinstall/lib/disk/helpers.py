@@ -266,7 +266,10 @@ def all_blockdevices(
 	# we'll iterate the /sys/class definitions and find the information
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
-		device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+		try:
+			device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+		except FileNotFoundError:
+			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
 
 		if device_path.exists() is False:
 			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
