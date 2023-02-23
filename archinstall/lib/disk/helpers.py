@@ -434,11 +434,13 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 			continue
 
 		if isinstance(blockdev, Partition):
-			for blockdev_mountpoint in blockdev.mountpoints:
-				block_devices_mountpoints[blockdev_mountpoint] = blockdev
+			if blockdev.mountpoints:
+				for blockdev_mountpoint in blockdev.mountpoints:
+					block_devices_mountpoints[blockdev_mountpoint] = blockdev
 		else:
-			for blockdev_mountpoint in blockdev.mount_information:
-				block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
+			if blockdev.mount_information:
+				for blockdev_mountpoint in blockdev.mount_information:
+					block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
