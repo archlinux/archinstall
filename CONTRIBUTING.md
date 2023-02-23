@@ -58,16 +58,18 @@ documentation or to the implementation of the code you are changing.
 Also, do not squash your commits after you have submitted a pull request, as this erases context during review. We will
 squash commits when the pull request is merged.
 
-At present the current contributors are (alphabetically):
+Maintainer:
+* Anton Hvornum ([@Torxed](https://github.com/Torxed))
 
+At present the current contributors are (alphabetically):
 * Anton Hvornum ([@Torxed](https://github.com/Torxed))
 * Borislav Kosharov ([@nikibobi](https://github.com/nikibobi))
 * demostanis ([@demostanis](https://github.com/demostanis))
 * Dylan Taylor ([@dylanmtaylor](https://github.com/dylanmtaylor))
 * Giancarlo Razzolini (@[grazzolini](https://github.com/grazzolini))
-* j-james ([@j-james](https://github.com/j-james))
 * Jerker Bengtsson ([@jaybent](https://github.com/jaybent))
+* j-james ([@j-james](https://github.com/j-james))
 * Ninchester ([@ninchester](https://github.com/ninchester))
+* nullrequest ([@advaithm](https://github.com/advaithm))
 * Philipp Schaffrath ([@phisch](https://github.com/phisch))
 * Varun Madiath ([@vamega](https://github.com/vamega))
-* nullrequest ([@advaithm](https://github.com/advaithm))
