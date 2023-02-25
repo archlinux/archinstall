@@ -37,6 +37,11 @@ doc = ["sphinx"]
 include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]
 exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
 
+[tool.flit.metadata]
+requires = {wheel = {file = "dep/btrfsutil-6.1.3.tar.gz"}}
+
 [tool.bandit]
 targets = ["ourkvm"]
 exclude = ["/tests"]
+
+

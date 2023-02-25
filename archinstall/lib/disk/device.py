@@ -44,6 +44,10 @@ class DiskLayoutConfiguration:
 	# used for pre-mounted config
 	relative_mountpoint: Optional[Path] = None
 
+	def __post_init__(self):
+		if self.layout_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
+			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
+
 	def __dump__(self) -> Dict[str, Any]:
 		return {
 			'layout_type': self.layout_type.value,
@@ -439,7 +443,7 @@ class PartitionModification:
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
-	btrfs: List[Subvolume] = field(default_factory=list)
+	btrfs_subvols: List[Subvolume] = field(default_factory=list)
 	dev_path: Optional[Path] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
@@ -522,7 +526,7 @@ class PartitionModification:
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
-			'btrfs': [subvol.__dump__() for subvol in self.btrfs]
+			'btrfs': [subvol.__dump__() for subvol in self.btrfs_subvols]
 		}
 
 	def as_json(self) -> Dict[str, Any]:
@@ -541,8 +545,8 @@ class PartitionModification:
 			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
-		if self.btrfs:
-			info['btrfs'] = f'{len(self.btrfs)} subvolumes'
+		if self.btrfs_subvols:
+			info['btrfs'] = f'{len(self.btrfs_subvols)} subvolumes'
 
 		return info
 
@@ -651,6 +655,13 @@ class LsblkInfo:
 		info.mountpoints = [Path(mountpoint) for mountpoint in info.mountpoints if mountpoint]
 
 		return info
+
+
+
+@dataclass
+class BtrfsInfo:
+	pass
+
 
 
 class CleanType(Enum):

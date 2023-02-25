@@ -19,13 +19,8 @@ def perform_filesystem_operations(
 	enc_conf: Optional[DiskEncryption] = None,
 	show_countdown: bool = True
 ):
-	"""
-		Issue a final warning before we continue with something un-revertable.
-		We mention the drive one last time, and count from 5 to 0.
-	"""
-
 	if disk_layouts.layout_type == DiskLayoutType.Pre_mount:
-		log('Disk layout configuration is set to pre-mount, not perforforming any operations', level=logging.DEBUG)
+		log('Disk layout configuration is set to pre-mount, not performing any operations', level=logging.DEBUG)
 		return
 
 	device_mods = list(filter(lambda x: len(x.partitions) > 0, disk_layouts.layouts))
@@ -36,6 +31,8 @@ def perform_filesystem_operations(
 
 	device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
 
+	# Issue a final warning before we continue with something un-revertable.
+	# We mention the drive one last time, and count from 5 to 0.
 	print(str(_(' ! Formatting {} in ')).format(device_paths))
 
 	if show_countdown:

@@ -28,7 +28,7 @@ validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxe
 
 prepare() {
   cd $pkgname-$pkgver
-  #use real directories for examples and profiles, as symlinks do not work
+  # use real directories for examples and profiles, as symlinks do not work
   # with flit or setuptools PEP517 backends
   rm -fv $pkgname/{examples,profiles}
   mv -v examples profiles $pkgname/

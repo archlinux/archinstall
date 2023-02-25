@@ -49,7 +49,7 @@ class DeviceHandler(object):
 	def get_device(self, path: Path) -> Optional[BDevice]:
 		return self._devices.get(path, None)
 
-	def get_device_by_partition(self, partition_path: Path) -> Optional[BDevice]:
+	def get_device_by_partition_path(self, partition_path: Path) -> Optional[BDevice]:
 		partition = self.find_partition(partition_path)
 		if partition:
 			return partition.disk.device
@@ -104,7 +104,7 @@ class DeviceHandler(object):
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					type=PartitionType(partition['type']),
 					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
-					btrfs=Subvolume.parse_arguments(partition.get('btrfs', []))
+					btrfs_subvols=Subvolume.parse_arguments(partition.get('btrfs', []))
 				)
 				device_partitions.append(device_partition)
 

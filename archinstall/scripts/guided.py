@@ -282,13 +282,13 @@ if not archinstall.arguments.get('silent'):
 archinstall.configuration_sanity_check()
 
 
-# mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
-#
-# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-# 	DiskLayoutType.Pre_mount,
-# 	layouts=mods,
-# 	relative_mountpoint=Path('/mnt/archinstall')
-# )
+mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
+
+archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+	DiskLayoutType.Pre_mount,
+	layouts=mods,
+	relative_mountpoint=Path('/mnt/archinstall')
+)
 
 
 perform_filesystem_operations(

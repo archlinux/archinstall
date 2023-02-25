@@ -29,34 +29,6 @@ GIGA = 2 ** 30
 def convert_size_to_gb(size :Union[int, float]) -> float:
 	return round(size / GIGA,1)
 
-def convert_to_gigabytes(string :str) -> float:
-	unit = string.strip()[-1]
-	size = float(string.strip()[:-1])
-
-	if unit == 'M':
-		size = size / 1024
-	elif unit == 'T':
-		size = size * 1024
-
-	return size
-
-def device_state(name :str, *args :str, **kwargs :str) -> Optional[bool]:
-	# Based out of: https://askubuntu.com/questions/528690/how-to-get-list-of-all-non-removable-disk-device-names-ssd-hdd-and-sata-ide-onl/528709#528709
-	if os.path.isfile('/sys/block/{}/device/block/{}/removable'.format(name, name)):
-		with open('/sys/block/{}/device/block/{}/removable'.format(name, name)) as f:
-			if f.read(1) == '1':
-				return
-
-	path = ROOT_DIR_PATTERN.sub('', os.readlink('/sys/block/{}'.format(name)))
-	hotplug_buses = ("usb", "ieee1394", "mmc", "pcmcia", "firewire")
-	for bus in hotplug_buses:
-		if os.path.exists('/sys/bus/{}'.format(bus)):
-			for device_bus in os.listdir('/sys/bus/{}/devices'.format(bus)):
-				device_link = ROOT_DIR_PATTERN.sub('', os.readlink('/sys/bus/{}/devices/{}'.format(bus, device_bus)))
-				if re.search(device_link, path):
-					return
-	return True
-
 
 def cleanup_bash_escapes(data :str) -> str:
 	return data.replace(r'\ ', ' ')
@@ -328,52 +300,6 @@ def get_all_targets(data :Dict[str, Any], filters :Dict[str, None] = {}) -> Dict
 
 	return filters
 
-def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
-	from .partition import Partition
-
-	try:
-		output = SysCommand(f"/usr/bin/findmnt --json -R {mountpoint}").decode('UTF-8')
-	except SysCallError:
-		return {}
-
-	if not output:
-		return {}
-
-	output = json.loads(output)
-	mounts = {}
-	block_devices_available = all_blockdevices(mappers=True, partitions=True, error=True)
-	block_devices_mountpoints = {}
-
-	for blockdev in block_devices_available.values():
-		if not type(blockdev) in (Partition, MapperDev):
-			continue
-
-		if isinstance(blockdev, Partition):
-			for blockdev_mountpoint in blockdev.mountpoints:
-				block_devices_mountpoints[blockdev_mountpoint] = blockdev
-		else:
-			for blockdev_mountpoint in blockdev.mount_information:
-				block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
-
-	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
-
-	for mountpoint in list(get_all_targets(output['filesystems']).keys()):
-		# Since all_blockdevices() returns PosixPath objects, we need to convert
-		# findmnt paths to Path() first:
-		mountpoint = Path(mountpoint)
-
-		if mountpoint in block_devices_mountpoints:
-			if mountpoint not in mounts:
-				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
-			# If the already defined mountpoint is a DMCryptDev, and the newly found
-			# mountpoint is a MapperDev, it has precedence and replaces the old mountpoint definition.
-			elif type(mounts[mountpoint]) == DMCryptDev and type(block_devices_mountpoints[mountpoint]) == MapperDev:
-				mounts[mountpoint] = block_devices_mountpoints[mountpoint]
-
-	log(f"Available partitions: {mounts}", level=logging.DEBUG)
-
-	return mounts
-
 
 def get_filesystem_type(path :str) -> Optional[str]:
 	try:
@@ -401,22 +327,3 @@ def partprobe(path :str = '') -> bool:
 	except SysCallError:
 		pass
 	return False
-
-def convert_device_to_uuid(path :str) -> str:
-	device_name, bind_name = split_bind_name(path)
-
-	for i in range(storage['DISK_RETRY_ATTEMPTS']):
-		partprobe(device_name)
-		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * i)) # TODO: Remove, we should be relying on blkid instead of lsblk
-
-		# TODO: Convert lsblk to blkid
-		# (lsblk supports BlockDev and Partition UUID grabbing, blkid requires you to pick PTUUID and PARTUUID)
-		try:
-			lsblk_info = get_lsblk_info(device_name)
-
-			if dev_uuid := lsblk_info.uuid:
-				return dev_uuid
-		except Exception:
-			pass
-
-	raise DiskError(f"Could not retrieve the UUID of {path} within a timely manner.")

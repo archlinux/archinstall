@@ -249,10 +249,10 @@ class GlobalMenu(AbstractMenu):
 
 					# create btrfs table
 					btrfs_partitions = list(
-						filter(lambda p: len(p.btrfs) > 0, mod.partitions)
+						filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
 					)
 					for partition in btrfs_partitions:
-						output_btrfs += FormattedOutput.as_table(partition.btrfs) + '\n'
+						output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
 
 				output = output_partition + output_btrfs
 				return output.rstrip()

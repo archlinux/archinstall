@@ -300,7 +300,7 @@ def suggest_single_disk_layout(
 			Subvolume('@pkg', Path('/var/cache/pacman/pkg')),
 			Subvolume('@.snapshots', Path('/.snapshots'))
 		]
-		root_partition.btrfs = subvolumes
+		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..

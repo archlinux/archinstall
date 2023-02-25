@@ -150,9 +150,9 @@ class PartitioningList(ListManager):
 			partition.mount_options.append(compression)
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification):
-		partition.btrfs = SubvolumeList(
+		partition.btrfs_subvols = SubvolumeList(
 			_("Manage btrfs subvolumes for current partition"),
-			partition.btrfs
+			partition.btrfs_subvols
 		).run()
 
 	def _prompt_formatting(self, partition: PartitionModification):

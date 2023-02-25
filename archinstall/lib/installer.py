@@ -390,7 +390,7 @@ class Installer:
 		if part_mod.mountpoint == Path('/'):
 			return True
 
-		for subvol in part_mod.btrfs:
+		for subvol in part_mod.btrfs_subvols:
 			if subvol.mountpoint == Path('/'):
 				return True
 
@@ -947,7 +947,7 @@ class Installer:
 				options_entry = f'rw rootfstype={root_partition.fs_type.fs_type_mount} {" ".join(self.KERNEL_PARAMS)}\n'
 
 				# TODO: Fix btrfs
-				for subvolume in root_partition.btrfs:
+				for subvolume in root_partition.btrfs_subvols:
 					if subvolume.root is True and subvolume.name != '<FS_TREE>':
 						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
@@ -1069,7 +1069,7 @@ class Installer:
 				log(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.fs_type.value} {" ".join(self.KERNEL_PARAMS)}')
 
-			device = device_handler.get_device_by_partition(boot_partition.dev_path)
+			device = device_handler.get_device_by_partition_path(boot_partition.dev_path)
 			SysCommand(f'efibootmgr --disk {device.path} --part {device.path} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
 		self.helper_flags['bootloader'] = "efistub"
