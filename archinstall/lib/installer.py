@@ -293,7 +293,7 @@ class Installer:
 			else:
 				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
 
-		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
+		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.DEBUG, fg="white")
 
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
@@ -642,6 +642,11 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
+		# mkinitcpio will error out if there's no vconsole.
+		if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
+			with vconsole.open('w') as fh:
+				fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
+
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
@@ -754,14 +759,6 @@ class Installer:
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
-
-		if self._disk_encryption and self._disk_encryption.hsm_device:
-			# TODO:
-			# A bit of a hack, but we need to get vconsole.conf in there
-			# before running `mkinitcpio` because it expects it in HSM mode.
-			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
-				with vconsole.open('w') as fh:
-					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
 		self.mkinitcpio('-P')
 

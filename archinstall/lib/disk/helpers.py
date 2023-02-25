@@ -251,7 +251,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 					return enrich_blockdevice_information(information)
 			else:
 				# We could not reliably get any information, perhaps the disk is clean of information?
-				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] -1:
+				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] - 1:
 					raise ex
 
 def all_blockdevices(

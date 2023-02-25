@@ -109,10 +109,7 @@ class Partition:
 		except DiskError:
 			self._partition_info = None
 
-
-	# I hate doint this but I'm currently unsure where this
-	# is acutally used to be able to fix the typing issues properly
-	@typing.no_type_check
+	@typing.no_type_check # I hate doint this but I'm currently unsure where this is used.
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
