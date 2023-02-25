@@ -221,7 +221,12 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 			if exclude_iso_dev:
 				# exclude all devices associated with the iso boot locations
 				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
-				lsblk_info = get_lsblk_info(device_path)
+
+				try:
+					lsblk_info = get_lsblk_info(device_path)
+				except DiskError:
+					continue
+
 				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
 					continue
 
