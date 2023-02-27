@@ -192,6 +192,9 @@ class SysCommandWorker:
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
 
+		if peak_output:
+			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
+
 		if not callbacks:
 			callbacks = {}
 		if not environment_vars:
@@ -420,6 +423,9 @@ class SysCommand:
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
+
+		if peak_output:
+			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
 
 		_callbacks = {}
 		if callbacks:
