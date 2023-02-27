@@ -113,7 +113,7 @@ class Filesystem:
 				format_options = partition.get('options',[]) + partition.get('filesystem',{}).get('format_options',[])
 				disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
 
-				if partition in disk_encryption.partitions:
+				if disk_encryption and partition in disk_encryption.partitions:
 					if not partition['device_instance']:
 						raise DiskError(f"Internal error caused us to loose the partition. Please report this issue upstream!")
 
