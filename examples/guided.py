@@ -173,15 +173,15 @@ def perform_installation(mountpoint):
 		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while archinstall.service_state('reflector') not in ('dead', 'failed'):
+		while archinstall.service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		installation.log('Waiting pacman-init.service to complete.', level=logging.INFO)
-		while archinstall.service_state('pacman-init') not in ('dead', 'failed'):
+		while archinstall.service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		installation.log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
-		while archinstall.service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed'):
+		while archinstall.service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		# Set mirrors used by pacstrap (outside of installation)
