@@ -397,7 +397,7 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True).exit_code == 0
+			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
@@ -921,15 +921,15 @@ class Installer:
 		if has_uefi():
 			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as error:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
 		else:
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peek_output=True)
 			except SysCallError as error:
 				raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
 
