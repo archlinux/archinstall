@@ -212,6 +212,47 @@ def all_disks() -> List[BlockDevice]:
 	log(f"[Deprecated] archinstall.all_disks() is deprecated. Use archinstall.all_blockdevices() with the appropriate filters instead.", level=logging.WARNING, fg="yellow")
 	return all_blockdevices(partitions=False, mappers=False)
 
+def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str, Any]:
+	for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+		partprobe(device_path)
+		time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt))
+		
+		try:
+			if exclude_iso_dev:
+				# exclude all devices associated with the iso boot locations
+				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
+
+				try:
+					lsblk_info = get_lsblk_info(device_path)
+				except DiskError:
+					continue
+
+				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
+					continue
+
+			information = blkid(f'blkid -p -o export {device_path}')
+			return enrich_blockdevice_information(information)
+		except SysCallError as ex:
+			if ex.exit_code in (512, 2):
+				# Assume that it's a loop device, and try to get info on it
+				try:
+					resolved_device_name = device_path.readlink().name
+				except OSError:
+					resolved_device_name = device_path.name
+
+				try:
+					information = get_loop_info(device_path)
+					if not information:
+						raise SysCallError(f"Could not get loop information for {resolved_device_name}", exit_code=1)
+					return enrich_blockdevice_information(information)
+
+				except SysCallError:
+					information = get_blockdevice_uevent(resolved_device_name)
+					return enrich_blockdevice_information(information)
+			else:
+				# We could not reliably get any information, perhaps the disk is clean of information?
+				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] - 1:
+					raise ex
 
 def all_blockdevices(
 	mappers: bool = False,
@@ -230,40 +271,18 @@ def all_blockdevices(
 	# we'll iterate the /sys/class definitions and find the information
 	# from there.
 	for block_device in glob.glob("/sys/class/block/*"):
-		device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+		try:
+			device_path = pathlib.Path(f"/dev/{pathlib.Path(block_device).readlink().name}")
+		except FileNotFoundError:
+			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
 
 		if device_path.exists() is False:
 			log(f"Unknown device found by '/sys/class/block/*', ignoring: {device_path}", level=logging.WARNING, fg="yellow")
 			continue
 
-		try:
-			if exclude_iso_dev:
-				# exclude all devices associated with the iso boot locations
-				iso_devs = ['/run/archiso/airootfs', '/run/archiso/bootmnt']
-				lsblk_info = get_lsblk_info(device_path)
-				if any([dev in lsblk_info.mountpoints for dev in iso_devs]):
-					continue
-
-			information = blkid(f'blkid -p -o export {device_path}')
-		except SysCallError as ex:
-			if ex.exit_code in (512, 2):
-				# Assume that it's a loop device, and try to get info on it
-				try:
-					information = get_loop_info(device_path)
-					if not information:
-						print("Exit code for blkid -p -o export was:", ex.exit_code)
-						raise SysCallError("Could not get loop information", exit_code=1)
-
-				except SysCallError:
-					print("Not a loop device, trying uevent rules.")
-					information = get_blockdevice_uevent(pathlib.Path(block_device).readlink().name)
-			else:
-				# We could not reliably get any information, perhaps the disk is clean of information?
-				print("Raising ex because:", ex.exit_code)
-				raise ex
-				# return instances
-
-		information = enrich_blockdevice_information(information)
+		information = get_blockdevice_info(device_path)
+		if not information:
+			continue
 
 		for path, path_info in information.items():
 			if path_info.get('DMCRYPT_NAME'):
@@ -409,7 +428,6 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 		return {}
 
 	output = json.loads(output)
-	# print(output)
 
 	mounts = {}
 
@@ -421,11 +439,13 @@ def get_partitions_in_use(mountpoint :str) -> Dict[str, Any]:
 			continue
 
 		if isinstance(blockdev, Partition):
-			for blockdev_mountpoint in blockdev.mountpoints:
-				block_devices_mountpoints[blockdev_mountpoint] = blockdev
+			if blockdev.mountpoints:
+				for blockdev_mountpoint in blockdev.mountpoints:
+					block_devices_mountpoints[blockdev_mountpoint] = blockdev
 		else:
-			for blockdev_mountpoint in blockdev.mount_information:
-				block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
+			if blockdev.mount_information:
+				for blockdev_mountpoint in blockdev.mount_information:
+					block_devices_mountpoints[blockdev_mountpoint['target']] = blockdev
 
 	log(f'Filtering available mounts {block_devices_mountpoints} to those under {mountpoint}', level=logging.DEBUG)
 
