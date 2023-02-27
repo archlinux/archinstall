@@ -146,14 +146,6 @@ def perform_installation(mountpoint):
 				if partition.size < 0.19: # ~200 MiB in GiB
 					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
 
-		# if len(mirrors):
-		# Certain services might be running that affects the system during installation.
-		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
-		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
-		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while archinstall.service_state('reflector') not in ('dead', 'failed'):
-			time.sleep(1)
-
 		# If we've activated NTP, make sure it's active in the ISO too and
 		# make sure at least one time-sync finishes before we continue with the installation
 		if archinstall.arguments.get('ntp', False):
@@ -175,6 +167,22 @@ def perform_installation(mountpoint):
 					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
 					logged = True
 				time.sleep(1)
+		
+		# if len(mirrors):
+		# Certain services might be running that affects the system during installation.
+		# Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
+		# We need to wait for it before we continue since we opted in to use a custom mirror/region.
+		installation.log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
+		while archinstall.service_state('reflector') not in ('dead', 'failed', 'exited'):
+			time.sleep(1)
+
+		installation.log('Waiting pacman-init.service to complete.', level=logging.INFO)
+		while archinstall.service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+			time.sleep(1)
+
+		installation.log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
+		while archinstall.service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
+			time.sleep(1)
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
