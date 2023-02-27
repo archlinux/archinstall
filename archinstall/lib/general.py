@@ -186,6 +186,7 @@ class SysCommandWorker:
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Any]] = None,
 		peek_output :Optional[bool] = False,
+		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
 		working_directory :Optional[str] = './',
@@ -209,6 +210,8 @@ class SysCommandWorker:
 		self.cmd = cmd
 		self.callbacks = callbacks
 		self.peek_output = peek_output
+		if not self.peek_output and peak_output:
+			self.peek_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
@@ -413,6 +416,7 @@ class SysCommand:
 		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peek_output :Optional[bool] = False,
+		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
@@ -427,6 +431,8 @@ class SysCommand:
 		self.cmd = cmd
 		self._callbacks = _callbacks
 		self.peek_output = peek_output
+		if not self.peek_output and peak_output:
+			self.peek_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
