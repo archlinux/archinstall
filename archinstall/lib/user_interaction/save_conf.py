@@ -77,7 +77,6 @@ def save_config(config: Dict):
 		'/sys',
 		'/usr',
 		'/var',
-		'/test',
 	]
 	archinstall.log(
 		'When picking a directory to save configuration files to,'
