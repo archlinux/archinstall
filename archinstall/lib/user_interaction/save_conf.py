@@ -61,6 +61,7 @@ def save_config(config: Dict):
 
 	if choice.type_ == MenuSelectionType.Skip:
 		return
+	
 
 	dirs_to_exclude = [
 		'/bin',
@@ -83,6 +84,9 @@ def save_config(config: Dict):
 		' by default we will ignore the following folders: ' + ','.join(dirs_to_exclude),
 		level=logging.DEBUG
 	)
+
+	log("Finding possible directories to save configuration files ...", level=logging.INFO)
+	
 	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
 	file_picker_command = f'find / {find_exclude} -o -type d -print0'
 	possible_save_dirs = list(
