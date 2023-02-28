@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: roxfr <roxfr@outlook.fr>\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Un fichier journal a été créé ici : {} {}"
@@ -67,9 +67,6 @@ msgstr "Utiliser NetworkManager (nécessaire pour configurer graphiquement Inter
 
 msgid "Select one network interface to configure"
 msgstr "Sélectionner une interface réseau à configurer"
-
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Sélectionner le mode à configurer pour \"{}\" ou ignorer pour utiliser le mode par défaut \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Entrer l'IP et le sous-réseau pour {} (exemple : 192.168.0.5/24) : "
@@ -212,9 +209,6 @@ msgstr ""
 
 msgid "All open-source (default)"
 msgstr "Tout open-source (par défaut)"
-
-msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Choisir les noyaux à utiliser ou laissez vide par défaut \"{}\""
 
 msgid "Choose which locale language to use"
 msgstr "Choisir la langue locale à utiliser"
@@ -659,7 +653,6 @@ msgstr "Une installation très basique qui vous permet de personnaliser Arch Lin
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Fournit une sélection de divers paquets de serveur à installer et à activer, par ex. httpd, nginx, mariadb"
 
-#, fuzzy
 msgid "Choose which servers to install, if none then a minimal installation will be done"
 msgstr "Choisir les serveurs à installer, s'il n'y en a pas, une installation minimale sera effectuée"
 
@@ -756,7 +749,7 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "Le mot de passe root ou au moins 1 utilisateur avec des privilèges sudo doit être spécifié"
 
 msgid "Enter username (leave blank to skip): "
-msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) :"
+msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Le nom d'utilisateur que vous avez saisi n'est pas valide. Réessayer"
@@ -764,38 +757,35 @@ msgstr "Le nom d'utilisateur que vous avez saisi n'est pas valide. Réessayer"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\" devrait-il être un superutilisateur (sudo) ?"
 
-#, fuzzy
 msgid "Select which partitions to encrypt"
-msgstr "Sélectionner la partition à marquer comme chiffrée"
+msgstr "Sélectionner les partitions à chiffrer"
 
 msgid "very weak"
-msgstr ""
+msgstr "très faible"
 
 msgid "weak"
-msgstr ""
+msgstr "faible"
 
 msgid "moderate"
-msgstr ""
+msgstr "modéré"
 
 msgid "strong"
-msgstr ""
+msgstr "fort"
 
-#, fuzzy
 msgid "Add subvolume"
-msgstr " Sous-volume : {:16}"
+msgstr "Ajouter un sous-volume"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Modifier le sous-volume"
 
-#, fuzzy
 msgid "Delete subvolume"
-msgstr "Supprimer l'utilisateur"
+msgstr "Supprimer le sous-volume"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Interfaces {} configurées"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Cette option active le nombre de téléchargements parallèles qui peuvent se produire pendant l'installation"
 
 #, python-brace-format
 msgid ""
@@ -803,32 +793,43 @@ msgid ""
 " (Enter a value between 1 to {max_downloads})\n"
 "Note:"
 msgstr ""
+"Saisir le nombre de téléchargements parallèles à activer.\n"
+"  (Entrer une valeur comprise entre 1 et {max_downloads})\n"
+"Note :"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Valeur maximale : {max_downloads} (Autorise {max_downloads} téléchargements parallèles, autorise {max_downloads+1} téléchargements à la fois)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Valeur minimale : 1 (Autorise 1 téléchargement parallèle, autorise 2 téléchargements à la fois)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Désactiver/Défaut : 0 (Désactive le téléchargement parallèle, n'autorise qu'un seul téléchargement à la fois)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {max_downloads}, ou 0 pour désactiver]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Téléchargements parallèles"
 
-#, fuzzy
 msgid "ESC to skip"
-msgstr "Utiliser ESC pour ignorer"
+msgstr "ESC pour ignorer"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C pour réinitialiser"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB pour sélectionner"
+
+msgid "[Default value: 0] > "
+msgstr "[Valeur par défaut : 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Pour pouvoir utiliser cette traduction, veuillez installer manuellement une police prenant en charge la langue."
+
+msgid "The font should be stored as {}"
+msgstr "La police doit être stockée sous {}"
 
 #~ msgid "Select disk layout"
 #~ msgstr "Sélectionner la disposition du disque"
