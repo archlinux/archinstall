@@ -17,14 +17,14 @@ class Selector:
 	def __init__(
 		self,
 		description :str,
-		func :Callable = None,
-		display_func :Callable = None,
+		func :Optional[Callable] = None,
+		display_func :Optional[Callable] = None,
 		default :Any = None,
 		enabled :bool = False,
 		dependencies :List = [],
 		dependencies_not :List = [],
-		exec_func :Callable = None,
-		preview_func :Callable = None,
+		exec_func :Optional[Callable] = None,
+		preview_func :Optional[Callable] = None,
 		mandatory :bool = False,
 		no_store :bool = False
 	):
@@ -165,7 +165,7 @@ class Selector:
 
 
 class AbstractMenu:
-	def __init__(self, data_store: Dict[str, Any] = None, auto_cursor=False, preview_size :float = 0.2):
+	def __init__(self, data_store: Optional[Dict[str, Any]] = None, auto_cursor=False, preview_size :float = 0.2):
 		"""
 		Create a new selection menu.
 
@@ -226,7 +226,7 @@ class AbstractMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selection_name: str = None, value: Any = None):
+	def post_callback(self, selection_name: Optional[str] = None, value: Any = None):
 		""" will be called after each action in the menu """
 		return True
 
@@ -356,7 +356,7 @@ class AbstractMenu:
 		config_name, selector = self._find_selection(selection_name)
 		return self.exec_option(config_name, selector)
 
-	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
+	def exec_option(self, config_name :str, p_selector :Optional[Selector] = None) -> bool:
 		""" processes the execution of a given menu entry
 		- pre process callback
 		- selection function
@@ -372,13 +372,13 @@ class AbstractMenu:
 		self.pre_callback(config_name)
 
 		result = None
-		if selector.func:
+		if selector.func is not None:
 			presel_val = self.option(config_name).get_selection()
 			result = selector.func(presel_val)
 			self._menu_options[config_name].set_current_selection(result)
 			if selector.do_store():
 				self._data_store[config_name] = result
-		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
+		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func is not None else False
 		self.post_callback(config_name,result)
 
 		if exec_ret_val and self._check_mandatory_status():
@@ -478,7 +478,7 @@ class AbstractMenu:
 
 
 class AbstractSubMenu(AbstractMenu):
-	def __init__(self, data_store: Dict[str, Any] = None):
+	def __init__(self, data_store: Optional[Dict[str, Any]] = None):
 		super().__init__(data_store=data_store)
 
 		self._menu_options['__separator__'] = Selector('')
