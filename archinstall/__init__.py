@@ -221,11 +221,8 @@ def load_config():
 			selected_region = arguments.get('mirror-region', None)
 			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
 
-	if arguments.get('sys-language', None) is not None:
-		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
-
-	if arguments.get('sys-encoding', None) is not None:
-		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+    arguments.setdefault('sys-language', 'en_US')
+    arguments.setdefault('sys-encoding', 'utf-8')
 
 	if arguments.get('gfx_driver', None) is not None:
 		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
