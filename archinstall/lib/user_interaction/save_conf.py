@@ -95,6 +95,7 @@ def save_config(config: Dict):
 		_('Select directory (or directories) for saving configuration files'),
 		possible_save_dirs,
 		multi=True,
+		skip=True,
 	).run()
 
 	match selection.type_:
@@ -119,15 +120,16 @@ def save_config(config: Dict):
 		level=logging.DEBUG
 	)
 	
-	for save_dir_str in save_dirs:
-		save_dir = Path(save_dir_str)
-		if options['user_config'] == choice.value:
-			config_output.save_user_config(save_dir)
-		elif options['user_creds'] == choice.value:
-			config_output.save_user_creds(save_dir)
-		elif options['disk_layout'] == choice.value:
-			config_output.save_disk_layout(save_dir)
-		elif options['all'] == choice.value:
-			config_output.save_user_config(save_dir)
-			config_output.save_user_creds(save_dir)
-			config_output.save_disk_layout(save_dir)
+	if save_dirs is not None:
+		for save_dir_str in save_dirs:
+			save_dir = Path(save_dir_str)
+			if options['user_config'] == choice.value:
+				config_output.save_user_config(save_dir)
+			elif options['user_creds'] == choice.value:
+				config_output.save_user_creds(save_dir)
+			elif options['disk_layout'] == choice.value:
+				config_output.save_disk_layout(save_dir)
+			elif options['all'] == choice.value:
+				config_output.save_user_config(save_dir)
+				config_output.save_user_creds(save_dir)
+				config_output.save_disk_layout(save_dir)
