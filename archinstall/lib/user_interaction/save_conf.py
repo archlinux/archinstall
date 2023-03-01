@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import archinstall
 import logging
 
 from pathlib import Path
@@ -78,7 +77,7 @@ def save_config(config: Dict):
 		'/usr',
 		'/var',
 	]
-	archinstall.log(
+	log(
 		'When picking a directory to save configuration files to,'
 		' by default we will ignore the following folders: ' + ','.join(dirs_to_exclude),
 		level=logging.DEBUG
@@ -112,7 +111,7 @@ def save_config(config: Dict):
 	if save_confirmation == Menu.no():
 		return
 	
-	archinstall.log(
+	log(
 		'Saving {} configuration files to {}'.format(
 			list(options.keys())[list(options.values()).index(choice.value)],
 			save_dirs
