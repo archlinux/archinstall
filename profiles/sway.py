@@ -71,7 +71,7 @@ def _prep_function(*args, **kwargs):
 
 """
 def _post_install(*args, **kwargs):
-	if "seatd" in _sway_system_privilege_control:
+	if "seatd" in sway_sys_priv_ctrl:
 		print(_('After booting, add user(s) to the `seat` user group and re-login to use Sway'))
 	return True
 """
