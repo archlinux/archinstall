@@ -197,11 +197,11 @@ class GlobalMenu(AbstractMenu):
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
-	def _update_install_text(self, name :str = None, result :Any = None):
+	def _update_install_text(self, name :Optional[str] = None, result :Any = None):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
-	def post_callback(self,name :str = None ,result :Any = None):
+	def post_callback(self,name :Optional[str] = None ,result :Any = None):
 		self._update_install_text(name, result)
 
 	def _install_text(self):
@@ -377,9 +377,9 @@ class GlobalMenu(AbstractMenu):
 
 		return harddrives
 
-	def _select_profile(self, preset):
+	def _select_profile(self, preset) -> Optional[Profile]:
+		ret: Optional[Profile] = None
 		profile = select_profile(preset)
-		ret = None
 
 		if profile is None:
 			if any([
@@ -403,7 +403,7 @@ class GlobalMenu(AbstractMenu):
 			namespace = f'{profile.namespace}.py'
 			with profile.load_instructions(namespace=namespace) as imported:
 				if imported._prep_function(servers=servers, desktop=desktop, desktop_env=desktop_env, gfx_driver=gfx_driver):
-					ret: Profile = profile
+					ret = profile
 
 					match ret.name:
 						case 'minimal':

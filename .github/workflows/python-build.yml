@@ -19,7 +19,7 @@ jobs:
           pip install build twine
       - name: Build archinstall
         run: |
-          python -m build
+          python -m build . --wheel
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall
