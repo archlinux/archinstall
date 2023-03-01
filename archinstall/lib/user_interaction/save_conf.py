@@ -78,12 +78,12 @@ def save_config(config: Dict):
 		'/var',
 	]
 	log(
-		'When picking a directory to save configuration files to,'
-		' by default we will ignore the following folders: ' + ','.join(dirs_to_exclude),
+		_('When picking a directory to save configuration files to,'
+		' by default we will ignore the following folders: ') + ','.join(dirs_to_exclude),
 		level=logging.DEBUG
 	)
 
-	log("Finding possible directories to save configuration files ...", level=logging.INFO)
+	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
 	
 	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
 	file_picker_command = f'find / {find_exclude} -o -type d -print0'
@@ -104,7 +104,7 @@ def save_config(config: Dict):
 		case _:
 			save_dirs = selection.value
 
-	prompt = 'Do you want to save {} configuration file(s) in the following locations?\n\n{}'.format(
+	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
 		list(options.keys())[list(options.values()).index(choice.value)],
 		save_dirs
 	)
@@ -113,7 +113,7 @@ def save_config(config: Dict):
 		return
 	
 	log(
-		'Saving {} configuration files to {}'.format(
+		_('Saving {} configuration files to {}').format(
 			list(options.keys())[list(options.values()).index(choice.value)],
 			save_dirs
 		),
