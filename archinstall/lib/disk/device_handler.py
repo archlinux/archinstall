@@ -5,25 +5,26 @@ import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
+import btrfsutil
 import parted
 from _ped import PartitionException
-from parted import Device, Disk, Geometry, FileSystem
-
-from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError
-from ..models.subvolume import Subvolume
-from ..output import log
-from ..luks import Luks2
+from parted import Disk, Geometry, FileSystem
 
 from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
 	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
-	ModificationStatus, get_lsblk_info, get_lsblk_by_mountpoint
+	ModificationStatus, get_lsblk_info, get_lsblk_by_mountpoint, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification
+from ..exceptions import DiskError, UnknownFilesystemFormat
+from ..general import SysCommand, SysCallError
+from ..luks import Luks2
+from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
 
 
 class DeviceHandler(object):
+	TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs_test')
+
 	def __init__(self):
 		self._devices: Dict[Path, BDevice] = {}
 		self.load_devices()
@@ -37,14 +38,48 @@ class DeviceHandler(object):
 
 		for device in parted.getAllDevices():
 			disk = Disk(device)
-			device_info = DeviceInfo.create(disk)
+			device_info = DeviceInfo.from_disk(disk)
+			partition_infos = []
 
-			partition_info = [PartitionInfo.create_from_partition(p) for p in disk.partitions]
+			for partition in disk.partitions:
+				lsblk_info = get_lsblk_info(partition.path)
+				fs_type = self._determine_fs_type(partition, lsblk_info)
+				subvol_infos = []
 
-			block_device = BDevice(disk, device_info, partition_info)
+				if fs_type == FilesystemType.Btrfs:
+					mountpoint = lsblk_info.mountpoints[0] if lsblk_info.mountpoints else None
+					subvol_infos = self.get_btrfs_info(partition.path, mountpoint)
+
+				partition_infos.append(
+					PartitionInfo.from_partition(
+						partition,
+						fs_type,
+						lsblk_info.partuuid,
+						lsblk_info.mountpoints,
+						subvol_infos
+					)
+				)
+
+			block_device = BDevice(disk, device_info, partition_infos)
 			block_devices[block_device.device_info.path] = block_device
 
 		self._devices = block_devices
+
+	def _determine_fs_type(
+		self,
+		partition: parted.Partition,
+		lsblk_info: Optional[LsblkInfo] = None
+	) -> Optional[FilesystemType]:
+		try:
+			if partition.fileSystem:
+				return FilesystemType(partition.fileSystem.type)
+			elif lsblk_info is not None:
+				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
+			return None
+		except ValueError:
+			log(f'Could not determine the filesystem: {partition.fileSystem}', level=logging.DEBUG)
+
+		return None
 
 	def get_device(self, path: Path) -> Optional[BDevice]:
 		return self._devices.get(path, None)
@@ -104,7 +139,7 @@ class DeviceHandler(object):
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					type=PartitionType(partition['type']),
 					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
-					btrfs_subvols=Subvolume.parse_arguments(partition.get('btrfs', []))
+					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', []))
 				)
 				device_partitions.append(device_partition)
 
@@ -116,6 +151,25 @@ class DeviceHandler(object):
 	def get_uuid_for_path(self, path: Path) -> Optional[str]:
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
+
+	def get_btrfs_info(self, path: Path, existing_mountpoint: Optional[Path] = None) -> List[BtrfsSubvolumeInfo]:
+		mountpoint = existing_mountpoint
+
+		if not existing_mountpoint:
+			self.mount(path, self.TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			mountpoint = self.TMP_BTRFS_MOUNT
+
+		subvol_infos = []
+
+		with btrfsutil.SubvolumeIterator(mountpoint, info=True) as it:
+			for path, util_info in it:
+				subvol_info = BtrfsSubvolumeInfo.from_subvolume(path, util_info)
+				subvol_infos.append(subvol_info)
+
+		if not existing_mountpoint:
+			self.umount(path)
+
+		return subvol_infos
 
 	def _perform_formatting(
 		self,

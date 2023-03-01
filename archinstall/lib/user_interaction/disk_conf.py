@@ -5,14 +5,14 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List
 
 from ..disk.device import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
-	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus
+	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus, \
+	SubvolumeModification
 from ..disk.device_handler import device_handler
 from ..disk.partitioning_menu import manual_partitioning
 from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
-from ..models.subvolume import Subvolume
 from ..output import FormattedOutput
 from ..output import log
 from ..storage import storage
@@ -294,11 +294,11 @@ def suggest_single_disk_layout(
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		subvolumes = [
-			Subvolume('@', Path('/')),
-			Subvolume('@home', Path('/home')),
-			Subvolume('@log', Path('/var/log')),
-			Subvolume('@pkg', Path('/var/cache/pacman/pkg')),
-			Subvolume('@.snapshots', Path('/.snapshots'))
+			SubvolumeModification('@', Path('/')),
+			SubvolumeModification('@home', Path('/home')),
+			SubvolumeModification('@log', Path('/var/log')),
+			SubvolumeModification('@pkg', Path('/var/cache/pacman/pkg')),
+			SubvolumeModification('@.snapshots', Path('/.snapshots'))
 		]
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:

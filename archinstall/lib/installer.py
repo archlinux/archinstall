@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
 from archinstall.profiles.profiles import Profile
-from .disk import Partition
 from .disk.device import PartitionModification, DiskLayoutConfiguration, \
 	Size, Unit, get_lsblk_by_mountpoint
 from .disk.device_handler import device_handler
@@ -397,11 +396,11 @@ class Installer:
 		return False
 
 
-	def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
-		if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
-			os.makedirs(f'{self.target}{mountpoint}')
-
-		partition.mount(f'{self.target}{mountpoint}', options=options)
+	# def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
+	# 	if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
+	# 		os.makedirs(f'{self.target}{mountpoint}')
+	#
+	# 	partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -704,20 +703,20 @@ class Installer:
 
 		return True
 
-	def _detect_encryption(self, partition :Partition) -> bool:
-		from .disk.mapperdev import MapperDev
-		from .disk.dmcryptdev import DMCryptDev
-		from .disk.helpers import get_filesystem_type
-
-		if type(partition) is MapperDev:
-			# Returns MapperDev.partition
-			return partition.partition
-		elif type(partition) is DMCryptDev:
-			return partition.MapperDev.partition
-		elif get_filesystem_type(partition.path) == 'crypto_LUKS':
-			return partition
-
-		return False
+	# def _detect_encryption(self, partition :Partition) -> bool:
+	# 	from .disk.mapperdev import MapperDev
+	# 	from .disk.dmcryptdev import DMCryptDev
+	# 	from .disk.helpers import get_filesystem_type
+	#
+	# 	if type(partition) is MapperDev:
+	# 		# Returns MapperDev.partition
+	# 		return partition.partition
+	# 	elif type(partition) is DMCryptDev:
+	# 		return partition.MapperDev.partition
+	# 	elif get_filesystem_type(partition.path) == 'crypto_LUKS':
+	# 		return partition
+	#
+	# 	return False
 
 	def mkinitcpio(self, *flags :str) -> bool:
 		for plugin in plugins.values():
@@ -750,7 +749,6 @@ class Installer:
 		hostname: str = 'archinstall',
 		locales: List[str] = ['en_US.UTF-8 UTF-8']
 	):
-
 		for mod in self._disk_config.layouts:
 			for part in mod.partitions:
 				if (pkg := part.fs_type.installation_pkg) is not None:

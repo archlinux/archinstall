@@ -12,12 +12,12 @@ from pathlib import Path
 from typing import Optional, List, Any, Dict, Union
 from typing import TYPE_CHECKING
 
+import btrfsutil
 import parted
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
-from ..models.subvolume import Subvolume
 from ..output import log
 from ..storage import storage
 
@@ -213,9 +213,10 @@ class PartitionInfo:
 	partuuid: str
 	disk: Disk
 	mountpoints: List[Path]
+	btrfs_infos: List[BtrfsSubvolumeInfo] = field(default_factory=list)
 
 	def as_json(self) -> Dict[str, Any]:
-		return {
+		info = {
 			'Name': self.name,
 			'Type': self.type.value,
 			'Filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
@@ -225,11 +226,20 @@ class PartitionInfo:
 			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
-	@classmethod
-	def create_from_partition(cls, partition: Partition) -> PartitionInfo:
-		lsblk_info = get_lsblk_info(partition.path)
+		if self.btrfs_infos:
+			info['Btrfs vol.'] = f'{len(self.btrfs_infos)} subvolumes'
 
-		fs_type = FilesystemType.determine_fs_type(partition, lsblk_info)
+		return info
+
+	@classmethod
+	def from_partition(
+		cls,
+		partition: Partition,
+		fs_type: FilesystemType,
+		partuuid: str,
+		mountpoints: List[Path],
+		btrfs_subvol_infos: List[BtrfsSubvolumeInfo] = []
+	) -> PartitionInfo:
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
 
@@ -250,9 +260,98 @@ class PartitionInfo:
 			start=start,
 			length=length,
 			flags=flags,
-			partuuid=lsblk_info.partuuid,
+			partuuid=partuuid,
 			disk=partition.disk,
-			mountpoints=lsblk_info.mountpoints
+			mountpoints=mountpoints,
+			btrfs_infos=btrfs_subvol_infos
+		)
+
+
+@dataclass
+class SubvolumeModification:
+	name: str
+	mountpoint: Path
+	compress: bool = False
+	nodatacow: bool = False
+
+	@classmethod
+	def from_existing_subvol_info(cls, info: BtrfsSubvolumeInfo) -> SubvolumeModification:
+		pass
+
+	@classmethod
+	def parse_args(cls, subvol_args: List[Dict[str, Any]]) -> List[SubvolumeModification]:
+		mods = []
+		for entry in subvol_args:
+			if not entry.get('name', None) or not entry.get('mountpoint', None):
+				log(f'Subvolume arg is missing name: {entry}', level=logging.DEBUG)
+				continue
+
+			mods.append(
+				SubvolumeModification(
+					entry['name'],
+					entry['mountpoint'],
+					entry.get('compress', False),
+					entry.get('nodatacow', False)
+				)
+			)
+
+		return mods
+
+	@property
+	def relative_mountpoint(self) -> Path:
+		"""
+		Will return the relative path based on the anchor
+		e.g. Path('/mnt/test') -> Path('mnt/test')
+		"""
+		return self.mountpoint.relative_to(self.mountpoint.anchor)
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'name': self.name,
+			'mountpoint': self.mountpoint,
+			'compress': self.compress,
+			'nodatacow': self.nodatacow
+		}
+
+	def as_json(self) -> Dict[str, Any]:
+		return {
+			'name': self.name,
+			'mountpoint': str(self.mountpoint),
+			'compress': self.compress,
+			'nodatacow': self.nodatacow
+		}
+
+
+@dataclass
+class BtrfsSubvolumeInfo:
+	path: Path
+	uuid: str
+	# count: int
+	# ctime:
+	# ctransid:
+	# dir_id:
+	# flags:
+	# generation:
+	# id:
+	# index:
+	# n_fields:
+	# n_sequence_fields:
+	# n_unnamed_fields:
+	# otime:
+	# otransid:
+	# parent_id:
+	# parent_uuid:
+	# received_uuid:
+	# rtime:
+	# rtransid:
+	# stime:
+	# stransid:
+
+	@classmethod
+	def from_subvolume(cls, path: Path, subvol: btrfsutil.SubvolumeInfo) -> BtrfsSubvolumeInfo:
+		return BtrfsSubvolumeInfo(
+			path,
+			subvol.uuid
 		)
 
 
@@ -305,7 +404,7 @@ class DeviceInfo:
 		}
 
 	@classmethod
-	def create(cls, disk: Disk) -> DeviceInfo:
+	def from_disk(cls, disk: Disk) -> DeviceInfo:
 		device = disk.device
 		device_type = parted.devices[device.type]
 
@@ -408,23 +507,6 @@ class FilesystemType(Enum):
 			case FilesystemType.Btrfs: return 'btrfs'
 			case _: return None
 
-	@classmethod
-	def determine_fs_type(
-		cls,
-		partition: Partition,
-		lsblk_info: Optional[LsblkInfo] = None
-	) -> Optional[FilesystemType]:
-		try:
-			if partition.fileSystem:
-				return FilesystemType(partition.fileSystem.type)
-			elif lsblk_info is not None:
-				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
-			return None
-		except ValueError:
-			log(f'Could not determine the filesystem: {partition.fileSystem}', level=logging.DEBUG)
-
-		return None
-
 
 class ModificationStatus(Enum):
 	Exist = 'existing'
@@ -443,7 +525,7 @@ class PartitionModification:
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
-	btrfs_subvols: List[Subvolume] = field(default_factory=list)
+	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 	dev_path: Optional[Path] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
@@ -461,6 +543,8 @@ class PartitionModification:
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
 		mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
+		subvol_mods = [SubvolumeModification.from_existing_subvol_info(info) for info in partition_info.btrfs_infos]
+
 		return PartitionModification(
 			status=ModificationStatus.Exist,
 			type=partition_info.type,
@@ -469,7 +553,8 @@ class PartitionModification:
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
 			flags=partition_info.flags,
-			mountpoint=mountpoint
+			mountpoint=mountpoint,
+			btrfs_subvols=subvol_mods
 		)
 
 	@property
@@ -526,7 +611,7 @@ class PartitionModification:
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
-			'btrfs': [subvol.__dump__() for subvol in self.btrfs_subvols]
+			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
 	def as_json(self) -> Dict[str, Any]:
@@ -542,11 +627,11 @@ class PartitionModification:
 			'FS type': self.fs_type.value,
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
-			'Flags': ', '.join([f.name for f in self.flags])
+			'Flags': ', '.join([f.name for f in self.flags]),
 		}
 
 		if self.btrfs_subvols:
-			info['btrfs'] = f'{len(self.btrfs_subvols)} subvolumes'
+			info['Btrfs vol.'] = f'{len(self.btrfs_subvols)} subvolumes'
 
 		return info
 
@@ -655,13 +740,6 @@ class LsblkInfo:
 		info.mountpoints = [Path(mountpoint) for mountpoint in info.mountpoints if mountpoint]
 
 		return info
-
-
-
-@dataclass
-class BtrfsInfo:
-	pass
-
 
 
 class CleanType(Enum):

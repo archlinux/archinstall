@@ -1,36 +1,36 @@
-import pathlib
-from typing import TYPE_CHECKING
+# import pathlib
+# from typing import TYPE_CHECKING
+#
+# from ..partition import Partition
+# from ..helpers import findmnt
+# from .btrfs_helpers import (
+# 	subvolume_info_from_path
+# )
+#
+# if TYPE_CHECKING:
+# 	pass
 
-from ..partition import Partition
-from ..helpers import findmnt
-from .btrfs_helpers import (
-	subvolume_info_from_path
-)
-
-if TYPE_CHECKING:
-	pass
-
-
-class BTRFSPartition(Partition):
-	def __init__(self, *args, **kwargs):
-		Partition.__init__(self, *args, **kwargs)
-
-	@property
-	def subvolumes(self):
-		for filesystem in findmnt(pathlib.Path(self.path), recurse=True).get('filesystems', []):
-			if '[' in filesystem.get('source', ''):
-				yield subvolume_info_from_path(filesystem['target'])
-
-			def iterate_children(struct):
-				for c in struct.get('children', []):
-					if '[' in child.get('source', ''):
-						yield subvolume_info_from_path(c['target'])
-
-					for sub_child in iterate_children(c):
-						yield sub_child
-
-			for child in iterate_children(filesystem):
-				yield child
+#
+# class BTRFSPartition(Partition):
+# 	def __init__(self, *args, **kwargs):
+# 		Partition.__init__(self, *args, **kwargs)
+#
+# 	@property
+# 	def subvolumes(self):
+# 		for filesystem in findmnt(pathlib.Path(self.path), recurse=True).get('filesystems', []):
+# 			if '[' in filesystem.get('source', ''):
+# 				yield subvolume_info_from_path(filesystem['target'])
+#
+# 			def iterate_children(struct):
+# 				for c in struct.get('children', []):
+# 					if '[' in child.get('source', ''):
+# 						yield subvolume_info_from_path(c['target'])
+#
+# 					for sub_child in iterate_children(c):
+# 						yield sub_child
+#
+# 			for child in iterate_children(filesystem):
+# 				yield child
 
 	# def create_subvolume(self, subvolume :pathlib.Path, installation :Optional['Installer'] = None) -> 'BtrfsSubvolumeInfo':
 	# 	"""

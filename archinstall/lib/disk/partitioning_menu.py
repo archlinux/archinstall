@@ -11,7 +11,7 @@ from ..menu.list_manager import ListManager
 from ..menu.menu import MenuSelection
 from ..menu.text_input import TextInput
 from ..output import FormattedOutput, log
-from ..user_interaction.subvolume_config import SubvolumeList
+from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any
@@ -21,7 +21,6 @@ class PartitioningList(ListManager):
 	"""
 	subclass of ListManager for the managing of user accounts
 	"""
-
 	def __init__(self, prompt: str, device: BDevice, device_partitions: List[PartitionModification]):
 		self._device = device
 		self._actions = {
@@ -150,7 +149,7 @@ class PartitioningList(ListManager):
 			partition.mount_options.append(compression)
 
 	def _set_btrfs_subvolumes(self, partition: PartitionModification):
-		partition.btrfs_subvols = SubvolumeList(
+		partition.btrfs_subvols = SubvolumeMenu(
 			_("Manage btrfs subvolumes for current partition"),
 			partition.btrfs_subvols
 		).run()
