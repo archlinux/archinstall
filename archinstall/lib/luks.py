@@ -49,7 +49,7 @@ class Luks2:
 		return True
 
 	def _default_key_file(self) -> Path:
-		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')  # TODO: Make disk-pw-file randomly unique?
+		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
 
 	def encrypt(
 		self,
@@ -61,7 +61,7 @@ class Luks2:
 		if self.password is None:
 			raise ValueError('Password was not defined')
 
-		log(f'Encrypting {self.luks_dev_path} (This might take a while)', level=logging.INFO)
+		log(f'Luks2 encrypting: {self.luks_dev_path}', level=logging.INFO)
 
 		if type(self.password) != bytes:
 			byte_password = bytes(self.password, 'UTF-8')
@@ -135,12 +135,13 @@ class Luks2:
 
 	def unlock(self, key_file: Optional[Path] = None):
 		"""
-		Mounts a luks2 compatible partition to a given mountpoint.
-		Keyfile must be specified as there's no way to interact with the pw-prompt atm.
+		Unlocks the luks device, an optional key file location for unlocking can be specified,
+		otherwise a default location for the key file will be used.
 
 		:param key_file: An alternative key file
 		:type key_file: Path
 		"""
+		log(f'Unlocking luks2 device: {self.luks_dev_path}', level=logging.DEBUG)
 
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')

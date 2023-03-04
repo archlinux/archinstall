@@ -11,7 +11,7 @@ from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union,
 
 from archinstall.profiles.profiles import Profile
 from .disk.device import PartitionModification, DiskLayoutConfiguration, \
-	Size, Unit, get_lsblk_by_mountpoint
+	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType
 from .disk.device_handler import device_handler
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -234,10 +234,9 @@ class Installer:
 			luks_handlers = self._prepare_luks_partitions(enc_partitions)
 
 			for part_mod in sorted_part_mods:
-				if part_mod not in luks_handlers:  # non-enc partition
-					# attempt to mount all other partitions including the decrypted luks partition
+				if part_mod not in luks_handlers:  # partition is not encrypted
 					self._mount_partition(part_mod)
-				else:  # enc partition
+				else:  # mount encrypted partition
 					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
 			# # attempt to mount subvolumes including decrypted luks partitions
@@ -259,23 +258,15 @@ class Installer:
 		luks_handlers = {}
 
 		for part_mod in partitions:
-			luks_handler = Luks2(
+			luks_handler = device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
-				mapper_name=part_mod.mapper_name,
-				password=self._disk_encryption.encryption_password
+				part_mod.mapper_name,
+				self._disk_encryption.encryption_password
 			)
-
-			if not luks_handler.is_unlocked():
-				luks_handler.unlock()
-
-			if not luks_handler.is_unlocked():
-				raise DiskError(f'Failed to unlock luks device: {part_mod.dev_path}')
-
 			luks_handlers[part_mod] = luks_handler
 
 		return luks_handlers
 
-	# TODO handle BTRFS stuff
 	def _mount_subvolumes(
 		self,
 		partitions: List[PartitionModification],
@@ -298,11 +289,23 @@ class Installer:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
+		if part_mod.fs_type == FilesystemType.Btrfs:
+			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
+
 	def _mount_luks_partiton(self, part_mod: PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint is not None:
 			target = self.target / part_mod.relative_mountpoint
 			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+
+		if part_mod.fs_type == FilesystemType.Btrfs:
+			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
+
+	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[SubvolumeModification]):
+		for subvol in subvolumes:
+			self.target / subvol.relative_mountpoint
+			mount_options = subvol.mount_options + [f'subvol={subvol.name}']
+			device_handler.mount(dev_path, mount_options, options=mount_options)
 
 	def generate_key_files(self):
 		for part_mod in self._disk_encryption.partitions:

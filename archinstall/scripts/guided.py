@@ -139,6 +139,8 @@ def perform_installation(mountpoint: Path):
 		if disk_config.layout_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
+		exit(0)
+
 		installation.sanity_check()
 
 		if disk_config.layout_type != DiskLayoutType.Pre_mount:
@@ -282,18 +284,30 @@ if not archinstall.arguments.get('silent'):
 archinstall.configuration_sanity_check()
 
 
-mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
 
-archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-	DiskLayoutType.Pre_mount,
-	layouts=mods,
-	relative_mountpoint=Path('/mnt/archinstall')
-)
+
+# from ..lib.disk.device_handler import device_handler
+#
+# mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
+#
+# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+# 	DiskLayoutType.Pre_mount,
+# 	layouts=mods,
+# 	relative_mountpoint=Path('/mnt/archinstall')
+# )
+#
+# from pprint import pprint
+# print(len(mods))
+# pprint(mods[0].partitions)
+#
+# exit(1)
 
 
 perform_filesystem_operations(
 	archinstall.arguments['disk_layouts'],
 	archinstall.arguments.get('disk_encryption', None)
 )
+
+# exit(1)
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

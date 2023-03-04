@@ -12,18 +12,19 @@ from parted import Disk, Geometry, FileSystem
 
 from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
 	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
-	ModificationStatus, get_lsblk_info, get_lsblk_by_mountpoint, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification
+	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError
 from ..luks import Luks2
 from ..output import log
+from ..utils.util import is_subpath
 
 if TYPE_CHECKING:
 	_: Any
 
 
 class DeviceHandler(object):
-	TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs_test')
+	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs_test_test')
 
 	def __init__(self):
 		self._devices: Dict[Path, BDevice] = {}
@@ -47,8 +48,7 @@ class DeviceHandler(object):
 				subvol_infos = []
 
 				if fs_type == FilesystemType.Btrfs:
-					mountpoint = lsblk_info.mountpoints[0] if lsblk_info.mountpoints else None
-					subvol_infos = self.get_btrfs_info(partition.path, mountpoint)
+					subvol_infos = self.get_btrfs_info(partition.path, lsblk_info)
 
 				partition_infos.append(
 					PartitionInfo.from_partition(
@@ -92,7 +92,7 @@ class DeviceHandler(object):
 
 	def find_partition(self, path: Path) -> Optional[PartitionInfo]:
 		for device in self._devices.values():
-			part = next(filter(lambda x: str(x.path) == str(path), device.partition_info), None)
+			part = next(filter(lambda x: str(x.path) == str(path), device.partition_infos), None)
 			if part is not None:
 				return part
 		return None
@@ -152,21 +152,21 @@ class DeviceHandler(object):
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
-	def get_btrfs_info(self, path: Path, existing_mountpoint: Optional[Path] = None) -> List[BtrfsSubvolumeInfo]:
-		mountpoint = existing_mountpoint
+	def get_btrfs_info(self, path: Path, lsblk_info: LsblkInfo) -> List[BtrfsSubvolumeInfo]:
+		mountpoint = lsblk_info.mountpoint
 
-		if not existing_mountpoint:
-			self.mount(path, self.TMP_BTRFS_MOUNT, create_target_mountpoint=True)
-			mountpoint = self.TMP_BTRFS_MOUNT
+		if not mountpoint:
+			self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			mountpoint = self._TMP_BTRFS_MOUNT
 
 		subvol_infos = []
 
 		with btrfsutil.SubvolumeIterator(mountpoint, info=True) as it:
-			for path, util_info in it:
-				subvol_info = BtrfsSubvolumeInfo.from_subvolume(path, util_info)
+			for name, _ in it:
+				subvol_info = BtrfsSubvolumeInfo.from_subvolume(name, lsblk_info.btrfs_subvol_info)
 				subvol_infos.append(subvol_info)
 
-		if not existing_mountpoint:
+		if not mountpoint:
 			self.umount(path)
 
 		return subvol_infos
@@ -225,7 +225,7 @@ class DeviceHandler(object):
 		except SysCallError as error:
 			msg = f'Could not format {path} with {fs_type.value}: {error.message}'
 			log(msg, fg='red')
-			raise DiskError(msg)
+			raise DiskError(msg) from error
 
 	def _perform_enc_formatting(
 		self,
@@ -238,10 +238,9 @@ class DeviceHandler(object):
 			password=enc_conf.encryption_password
 		)
 
-		log(f'luks2 encrypting device: {part_mod.dev_path}', level=logging.INFO)
 		key_file = luks_handler.encrypt()
 
-		log(f'luks2 unlocking device: {part_mod.dev_path}', level=logging.INFO)
+		log(f'Unlocking luks2 device: {part_mod.dev_path}', level=logging.DEBUG)
 		luks_handler.unlock(key_file=key_file)
 
 		if not luks_handler.mapper_dev:
@@ -354,10 +353,65 @@ class DeviceHandler(object):
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+	def create_btrfs_volumes(
+		self,
+		part_mod: PartitionModification,
+		enc_conf: Optional['DiskEncryption'] = None
+	):
+		log(f'Creating subvolumes: {part_mod.dev_path}', level=logging.INFO)
+
+		luks_handler = None
+
+		# unlock the partition first if it's encrypted
+		if enc_conf is not None and part_mod in enc_conf.partitions:
+			luks_handler = self.unlock_luks2_dev(
+				part_mod.dev_path,
+				part_mod.mapper_name,
+				enc_conf.encryption_password
+			)
+			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+		else:
+			self.mount(part_mod.dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+
+		for sub_vol in part_mod.btrfs_subvols:
+			log(f'Creating subvolume: {sub_vol.name}', level=logging.DEBUG)
+
+			if luks_handler is not None:
+				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+			else:
+				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
+
+			btrfsutil.create_subvolume(subvol_path)
+
+			if sub_vol.nodatacow:
+				if (result := SysCommand(f'chattr +C {subvol_path}')).exit_code != 0:
+					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {result.decode()}')
+
+			if sub_vol.compress:
+				if (result := SysCommand(f'chattr +c {subvol_path}')).exit_code != 0:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {result}')
+
+		if luks_handler is not None:
+			self.umount(luks_handler.mapper_dev)
+			luks_handler.lock()
+		else:
+			self.umount(part_mod.dev_path)
+
+	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
+		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
+
+		if not luks_handler.is_unlocked():
+			luks_handler.unlock()
+
+		if not luks_handler.is_unlocked():
+			raise DiskError(f'Failed to unlock luks2 device: {dev_path}')
+
+		return luks_handler
+
 	def _umount_all_existing(self, modification: DeviceModification):
 		log(f'Unmounting existing partitions: {modification.device_path}', level=logging.INFO)
 
-		existing_partitions = self._devices[modification.device_path].partition_info
+		existing_partitions = self._devices[modification.device_path].partition_infos
 
 		for partition in existing_partitions:
 			log(f'Unmounting: {partition.path}', level=logging.INFO)
@@ -403,11 +457,13 @@ class DeviceHandler(object):
 
 		for part_mod in modification.partitions:
 			# don't touch existing partitions
-			if not part_mod.exists():
-				# if the entire disk got nuked then we don't have to delete
-				# any existing partitions anymore because they're all gone already
-				requires_delete = modification.wipe is False
-				self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
+			if part_mod.exists():
+				continue
+
+			# if the entire disk got nuked then we don't have to delete
+			# any existing partitions anymore because they're all gone already
+			requires_delete = modification.wipe is False
+			self._perform_partitioning(part_mod, modification.device, disk, requires_delete=requires_delete)
 
 		self.partprobe(modification.device.device_info.path)
 
@@ -449,7 +505,7 @@ class DeviceHandler(object):
 	def umount(self, path: Path, recursive: bool = False):
 		lsblk_info = get_lsblk_info(path)
 
-		if len(lsblk_info.mountpoints) > 0:
+		if lsblk_info.mountpoint:
 			log(f'Partition {path} is currently mounted at: {lsblk_info.mountpoints}')
 
 			for mountpoint in lsblk_info.mountpoints:
@@ -471,24 +527,15 @@ class DeviceHandler(object):
 						raise DiskError(err.message)
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
-		lsblk_infos = get_lsblk_by_mountpoint(base_mountpoint, as_prefix=True)
 		part_mods = {}
 
-		for lsblk in lsblk_infos:
-			# we are looking for the real partition not the mapper
-			if lsblk.type == 'crypt':
-				parent_lsblk = get_lsblk_info(f'/dev/{lsblk.pkname}')
-				part_info = self.find_partition(parent_lsblk.path)
-			else:
-				part_info = self.find_partition(lsblk.path)
-
-			if not part_info:
-				raise DiskError(f'Unable to find partition information: {lsblk.path}')
-
-			path = Path(part_info.disk.device.path)
-
-			part_mods.setdefault(path, [])
-			part_mods[path].append(PartitionModification.from_existing_partition(part_info))
+		for device in self.devices:
+			for part_info in device.partition_infos:
+				for mountpoint in part_info.mountpoints:
+					if is_subpath(mountpoint, base_mountpoint):
+						path = Path(part_info.disk.device.path)
+						part_mods.setdefault(path, [])
+						part_mods[path].append(PartitionModification.from_existing_partition(part_info))
 
 		mods = []
 		for device_path, part_mods in part_mods.items():
@@ -528,7 +575,7 @@ class DeviceHandler(object):
 		auto-discovery tools don't recognize anything here.
 		"""
 		log(f'Wiping partitions and metadata: {block_device.device_info.path}')
-		for partition in block_device.partition_info:
+		for partition in block_device.partition_infos:
 			self._wipe(partition.path)
 
 		self._wipe(block_device.device_info.path)

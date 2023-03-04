@@ -322,7 +322,7 @@ def manual_partitioning(
 
 	if not preset:
 		# we'll display the existing partitions of the device
-		for partition in device.partition_info:
+		for partition in device.partition_infos:
 			manual_preset.append(
 				PartitionModification.from_existing_partition(partition)
 			)

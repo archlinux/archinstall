@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Optional, List, Any, Dict, Union
 from typing import TYPE_CHECKING
 
-import btrfsutil
 import parted
 from parted import Disk, Geometry, Partition
 
@@ -213,7 +212,7 @@ class PartitionInfo:
 	partuuid: str
 	disk: Disk
 	mountpoints: List[Path]
-	btrfs_infos: List[BtrfsSubvolumeInfo] = field(default_factory=list)
+	btrfs_subvol_infos: List[BtrfsSubvolumeInfo] = field(default_factory=list)
 
 	def as_json(self) -> Dict[str, Any]:
 		info = {
@@ -226,8 +225,8 @@ class PartitionInfo:
 			'Flags': ', '.join([f.name for f in self.flags])
 		}
 
-		if self.btrfs_infos:
-			info['Btrfs vol.'] = f'{len(self.btrfs_infos)} subvolumes'
+		if self.btrfs_subvol_infos:
+			info['Btrfs vol.'] = f'{len(self.btrfs_subvol_infos)} subvolumes'
 
 		return info
 
@@ -263,20 +262,20 @@ class PartitionInfo:
 			partuuid=partuuid,
 			disk=partition.disk,
 			mountpoints=mountpoints,
-			btrfs_infos=btrfs_subvol_infos
+			btrfs_subvol_infos=btrfs_subvol_infos
 		)
 
 
 @dataclass
 class SubvolumeModification:
 	name: str
-	mountpoint: Path
+	mountpoint: Optional[Path] = None
 	compress: bool = False
 	nodatacow: bool = False
 
 	@classmethod
 	def from_existing_subvol_info(cls, info: BtrfsSubvolumeInfo) -> SubvolumeModification:
-		pass
+		return SubvolumeModification(info.name, mountpoint=info.mountpoint)
 
 	@classmethod
 	def parse_args(cls, subvol_args: List[Dict[str, Any]]) -> List[SubvolumeModification]:
@@ -298,6 +297,13 @@ class SubvolumeModification:
 		return mods
 
 	@property
+	def mount_options(self) -> List[str]:
+		options = []
+		options += ['compress'] if self.compress else [],
+		options += ['nodatacow'] if self.nodatacow else []
+		return options
+
+	@property
 	def relative_mountpoint(self) -> Path:
 		"""
 		Will return the relative path based on the anchor
@@ -308,7 +314,7 @@ class SubvolumeModification:
 	def __dump__(self) -> Dict[str, Any]:
 		return {
 			'name': self.name,
-			'mountpoint': self.mountpoint,
+			'mountpoint': str(self.mountpoint),
 			'compress': self.compress,
 			'nodatacow': self.nodatacow
 		}
@@ -324,35 +330,17 @@ class SubvolumeModification:
 
 @dataclass
 class BtrfsSubvolumeInfo:
-	path: Path
-	uuid: str
-	# count: int
-	# ctime:
-	# ctransid:
-	# dir_id:
-	# flags:
-	# generation:
-	# id:
-	# index:
-	# n_fields:
-	# n_sequence_fields:
-	# n_unnamed_fields:
-	# otime:
-	# otransid:
-	# parent_id:
-	# parent_uuid:
-	# received_uuid:
-	# rtime:
-	# rtransid:
-	# stime:
-	# stransid:
+	name: str
+	mountpoint: Optional[Path]
 
 	@classmethod
-	def from_subvolume(cls, path: Path, subvol: btrfsutil.SubvolumeInfo) -> BtrfsSubvolumeInfo:
-		return BtrfsSubvolumeInfo(
-			path,
-			subvol.uuid
-		)
+	def from_subvolume(cls, name: str, subvol_mount_info: Dict[Path, Path]) -> BtrfsSubvolumeInfo:
+		mountpoint = None
+		for subvol, mount in subvol_mount_info.items():
+			if subvol.relative_to(subvol.anchor) == Path(name):
+				mountpoint = mount
+
+		return BtrfsSubvolumeInfo(name, mountpoint)
 
 
 class DeviceGeometry:
@@ -427,7 +415,7 @@ class DeviceInfo:
 class BDevice:
 	disk: Disk
 	device_info: DeviceInfo
-	partition_info: List[PartitionInfo]
+	partition_infos: List[PartitionInfo]
 
 	def __hash__(self):
 		return hash(self.disk.device.path)
@@ -543,7 +531,7 @@ class PartitionModification:
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
 		mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
-		subvol_mods = [SubvolumeModification.from_existing_subvol_info(info) for info in partition_info.btrfs_infos]
+		subvol_mods = [SubvolumeModification.from_existing_subvol_info(info) for info in partition_info.btrfs_subvol_infos]
 
 		return PartitionModification(
 			status=ModificationStatus.Exist,
@@ -684,7 +672,9 @@ class LsblkInfo:
 	fsavail: Optional[str] = None
 	fsuse_percentage: Optional[str] = None
 	type: Optional[str] = None
+	mountpoint: Optional[Path] = None
 	mountpoints: List[Path] = field(default_factory=list)
+	fsroots: List[Path] = field(default_factory=list)
 	children: List[LsblkInfo] = field(default_factory=list)
 
 	def json(self) -> Dict[str, Any]:
@@ -705,9 +695,24 @@ class LsblkInfo:
 			'fsavail': self.fsavail,
 			'fsuse_percentage': self.fsuse_percentage,
 			'type': self.type,
+			'mountpoint': self.mountpoint,
 			'mountpoints': [str(m) for m in self.mountpoints],
+			'fsroots': [str(r) for r in self.fsroots],
 			'children': [c.json() for c in self.children]
 		}
+
+	@property
+	def btrfs_subvol_info(self) -> Dict[Path, Path]:
+		"""
+		It is assumed that lsblk will contain the fields as
+
+		"mountpoints": ["/mnt/archinstall/log", "/mnt/archinstall/home", "/mnt/archinstall", ...]
+		"fsroots": ["/@log", "/@home", "/@"...]
+
+		we'll thereby map the fsroot, which are the mounted filesystem roots
+		to the corresponding mountpoints
+		"""
+		return dict(zip(self.fsroots, self.mountpoints))
 
 	@classmethod
 	def exclude(cls) -> List[str]:
@@ -736,8 +741,10 @@ class LsblkInfo:
 
 		info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
 
-		# sometimes lsblk returns 'mountpoint': [null]
-		info.mountpoints = [Path(mountpoint) for mountpoint in info.mountpoints if mountpoint]
+		# sometimes lsblk returns 'mountpoints': [null]
+		info.mountpoints = [Path(mnt) for mnt in info.mountpoints if mnt]
+
+		info.fsroots = [Path(r) for r in info.fsroots if r]
 
 		return info
 
@@ -765,20 +772,22 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	if not dev_path:
 		dev_path = ''
 
-	try:
-		result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
-	except SysCallError as error:
-		# It appears as if lsblk can return exit codes like 8192 to indicate something.
-		# But it does return output so we'll try to catch it.
-		if error.worker:
-			err = error.worker.decode('UTF-8')
-			log(f'Error calling lsblk: {err}', fg="red", level=logging.ERROR)
+	if retry == 0:
+		retry = 1
 
-			if retry > 0:
-				log('Retrying fetching info with lsblk...', level=logging.INFO)
+	result = None
+
+	for i in range(retry):
+		try:
+			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+		except SysCallError as error:
+			# It appears as if lsblk can return exit codes like 8192 to indicate something.
+			# But it does return output so we'll try to catch it.
+			if error.worker:
+				err = error.worker.decode('UTF-8')
+				log(f'Error calling lsblk: {err}', level=logging.DEBUG)
 				time.sleep(1)
-				return _fetch_lsblk_info(dev_path, retry-1)
-		raise error
+			raise error
 
 	if result.exit_code == 0:
 		try:

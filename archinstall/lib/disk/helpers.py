@@ -5,22 +5,20 @@ import json
 import logging
 import os  # type: ignore
 import re
-import time
 from pathlib import Path
 from typing import Union, List, Dict, Optional, Any, TYPE_CHECKING
 
 from .blockdevice import BlockDevice
 from .device import get_all_lsblk_info, get_lsblk_info
-from .dmcryptdev import DMCryptDev
-from .mapperdev import MapperDev
+# from .dmcryptdev import DMCryptDev
+# from .mapperdev import MapperDev
 from ..exceptions import SysCallError, DiskError
 from ..general import SysCommand, JSON
 # https://stackoverflow.com/a/39757388/929999
 from ..output import log
-from ..storage import storage
 
 if TYPE_CHECKING:
-	from .partition import Partition
+	pass
 
 
 ROOT_DIR_PATTERN = re.compile('^.*?/devices')
@@ -235,7 +233,6 @@ def findmnt(path :Path, traverse :bool = False, ignore :List = [], recurse :bool
 
 		except SysCallError as error:
 			log(f"Could not get mount information on {path} but continuing and ignoring: {error}", level=logging.INFO, fg="gray")
-			pass
 
 		if not traverse:
 			break
@@ -261,7 +258,6 @@ def get_mount_info(path :Union[Path, str], traverse :bool = False, return_real_p
 
 		except SysCallError as error:
 			print('ERROR:', error)
-			pass
 
 		if not traverse:
 			break
