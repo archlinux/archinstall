@@ -155,7 +155,7 @@ class DeviceHandler(object):
 	def get_btrfs_info(self, path: Path, lsblk_info: LsblkInfo) -> List[BtrfsSubvolumeInfo]:
 		mountpoint = lsblk_info.mountpoint
 
-		if not mountpoint:
+		if not lsblk_info.mountpoint:
 			self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 			mountpoint = self._TMP_BTRFS_MOUNT
 
@@ -166,7 +166,7 @@ class DeviceHandler(object):
 				subvol_info = BtrfsSubvolumeInfo.from_subvolume(name, lsblk_info.btrfs_subvol_info)
 				subvol_infos.append(subvol_info)
 
-		if not mountpoint:
+		if not lsblk_info.mountpoint:
 			self.umount(path)
 
 		return subvol_infos
@@ -486,7 +486,7 @@ class DeviceHandler(object):
 			log(f'Device already mounted at {target_mountpoint}')
 			return
 
-		log(f'Mounting {dev_path} to {target_mountpoint}', level=logging.INFO)
+		log(f'Mounting {dev_path} -> {target_mountpoint}', level=logging.INFO)
 
 		options = ','.join(options)
 		options = f'-o {options}' if options else ''

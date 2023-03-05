@@ -285,10 +285,12 @@ class SubvolumeModification:
 				log(f'Subvolume arg is missing name: {entry}', level=logging.DEBUG)
 				continue
 
+			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
+
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
-					entry['mountpoint'],
+					mountpoint,
 					entry.get('compress', False),
 					entry.get('nodatacow', False)
 				)
@@ -299,7 +301,7 @@ class SubvolumeModification:
 	@property
 	def mount_options(self) -> List[str]:
 		options = []
-		options += ['compress'] if self.compress else [],
+		options += ['compress'] if self.compress else []
 		options += ['nodatacow'] if self.nodatacow else []
 		return options
 
@@ -310,6 +312,9 @@ class SubvolumeModification:
 		e.g. Path('/mnt/test') -> Path('mnt/test')
 		"""
 		return self.mountpoint.relative_to(self.mountpoint.anchor)
+
+	def is_root(self) -> bool:
+		return self.mountpoint == Path('/')
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
@@ -559,7 +564,14 @@ class PartitionModification:
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
 		if relative_mountpoint is not None:
 			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
-		return Path('/') == self.mountpoint
+		elif self.mountpoint is not None:
+			return Path('/') == self.mountpoint
+		else:
+			for subvol in self.btrfs_subvols:
+				if subvol.is_root():
+					return True
+
+		return False
 
 	def is_modify(self) -> bool:
 		return self.status == ModificationStatus.Modify

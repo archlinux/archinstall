@@ -41,15 +41,7 @@
 # 		return True
 #
 #
-# def mount_subvolume(dev_path: Path, target_mountpoint: Path, subvolume: Subvolume):
-# 	"""
-# 	Mount a subvolume of a Btrfs partition to a given target path
-# 	"""
-# 	mountpoint = target_mountpoint / subvolume.relative_mountpoint
-# 	mount_options = subvolume.options + [f'subvol={subvolume.clean_name}']
-# 	device_handler.mount(dev_path, mountpoint, mount_fs='btrfs', options=mount_options)
-#
-#
+
 # def create_subvolume(subvolume: Path):
 # 	"""
 # 	Subvolumes have to be created within a mountpoint.
@@ -147,41 +139,3 @@
 # 			plugins['FstabBtrfsCompressionPlugin'] = FstabBtrfsCompressionPlugin([subvolume])
 #
 #
-# def subvolume_info_from_path(path: Path) -> Optional[BtrfsSubvolumeInfo]:
-# 	try:
-# 		subvolume_name = ''
-# 		result = {}
-# 		for index, line in enumerate(SysCommand(f"btrfs subvolume show {path}")):
-# 			if index == 0:
-# 				subvolume_name = line.strip().decode('UTF-8')
-# 				continue
-#
-# 			if b':' in line:
-# 				key, value = line.strip().decode('UTF-8').split(':', 1)
-#
-# 				# A bit of a hack, until I figure out how @dataclass
-# 				# allows for hooking in a pre-processor to do this we have to do it here:
-# 				result[key.lower().replace(' ', '_').replace('(s)', 's')] = value.strip()
-#
-# 		return BtrfsSubvolumeInfo(**{'full_path' : path, 'name' : subvolume_name, **result})  # type: ignore
-# 	except SysCallError as error:
-# 		log(f"Could not retrieve subvolume information from {path}: {error}", level=logging.WARNING, fg="orange")
-#
-# 	return None
-#
-#
-# def find_parent_subvolume(path: Path, filters=[]) -> Optional[BtrfsSubvolumeInfo]:
-# 	# A root path cannot have a parent
-# 	if str(path) == '/':
-# 		return None
-#
-# 	if found_mount := get_mount_info(str(path.parent), traverse=True, ignore=filters):
-# 		if not (subvolume := subvolume_info_from_path(found_mount['target'])):
-# 			if found_mount['target'] == '/':
-# 				return None
-#
-# 			return find_parent_subvolume(path.parent, filters=[*filters, found_mount['target']])
-#
-# 		return subvolume
-#
-# 	return None

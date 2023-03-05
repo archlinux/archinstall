@@ -139,8 +139,6 @@ def perform_installation(mountpoint: Path):
 		if disk_config.layout_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
-		exit(0)
-
 		installation.sanity_check()
 
 		if disk_config.layout_type != DiskLayoutType.Pre_mount:

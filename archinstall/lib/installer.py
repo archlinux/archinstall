@@ -222,8 +222,10 @@ class Installer:
 		log('Mounting partitions in order', level=logging.INFO)
 
 		for mod in self._disk_config.layouts:
-			# partitions have to mounted in the right order
-			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint)
+			# partitions have to mounted in the right order on btrfs the mountpoint will
+			# be empty as the actual subvolumes are getting mounted instead so we'll use
+			# '/' just for sorting
+			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint if x.mountpoint else Path('/'))
 
 			if self._disk_encryption.encryption_type is not EncryptionType.NoEncryption:
 				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
@@ -239,21 +241,6 @@ class Installer:
 				else:  # mount encrypted partition
 					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
-			# # attempt to mount subvolumes including decrypted luks partitions
-			# self._mount_subvolumes(not_enc_partitions, luks_handlers)
-
-
-		# # We then handle any special cases, such as btrfs
-		# for partition in btrfs_subvolumes:
-		# 	subvolumes: List[Subvolume] = partition['btrfs']['subvolumes']
-		# 	for subvolume in sorted(subvolumes, key=lambda item: item.path):
-		# 		# We cache the mount call for later
-		# 		mount_queue[subvolume.mountpoint] = lambda sub_vol=subvolume, device=partition['device_instance']: mount_subvolume(
-		# 				installation=self,
-		# 				device=device,
-		# 				subvolume=sub_vol
-		# 			)
-
 	def _prepare_luks_partitions(self, partitions: List[PartitionModification]) -> Dict[PartitionModification, Luks2]:
 		luks_handlers = {}
 
@@ -266,22 +253,6 @@ class Installer:
 			luks_handlers[part_mod] = luks_handler
 
 		return luks_handlers
-
-	def _mount_subvolumes(
-		self,
-		partitions: List[PartitionModification],
-		luks_handlers: Dict[PartitionModification, Luks2]
-	):
-		pass
-		# for part_mod in partitions:
-		# 	if part_mod.fs_type == FilesystemType.Btrfs:
-		# 		for subvol in part_mod.btrfs:
-		# 			mount_subvolume(part_mod.dev_path, self.target, subvol)
-		#
-		# 			setup_subvolumes(installation=self, partition_dict=partition)
-		# 			device_instance.unmount()
-
-		# TODO mount luks partitions
 
 	def _mount_partition(self, part_mod: PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
@@ -303,13 +274,12 @@ class Installer:
 
 	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[SubvolumeModification]):
 		for subvol in subvolumes:
-			self.target / subvol.relative_mountpoint
+			mountpoint = self.target / subvol.relative_mountpoint
 			mount_options = subvol.mount_options + [f'subvol={subvol.name}']
-			device_handler.mount(dev_path, mount_options, options=mount_options)
+			device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self):
 		for part_mod in self._disk_encryption.partitions:
-			has_root = self._has_root(part_mod)
 			gen_enc_file = self._disk_encryption.should_generate_encryption_file(part_mod)
 
 			luks_handler = Luks2(
@@ -318,11 +288,11 @@ class Installer:
 				password=self._disk_encryption.encryption_password
 			)
 
-			if gen_enc_file and not has_root:
+			if gen_enc_file and not part_mod.is_root():
 				log(f'Creating key-file: {part_mod.dev_path}', level=logging.INFO)
 				luks_handler.create_keyfile(self.target)
 
-			if has_root and not gen_enc_file:
+			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
 					Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
@@ -384,26 +354,6 @@ class Installer:
 				shutil.copy2(absolute_logfile, f"{self.target}/{absolute_logfile}")
 
 		return True
-
-	def _has_root(self, part_mod: PartitionModification) -> bool:
-		"""
-		Determine if a partition is mounted at root '/'
-		"""
-		if part_mod.mountpoint == Path('/'):
-			return True
-
-		for subvol in part_mod.btrfs_subvols:
-			if subvol.mountpoint == Path('/'):
-				return True
-
-		return False
-
-
-	# def mount(self, partition :Partition, mountpoint :str, create_mountpoint :bool = True, options='') -> None:
-	# 	if create_mountpoint and not os.path.isdir(f'{self.target}{mountpoint}'):
-	# 		os.makedirs(f'{self.target}{mountpoint}')
-	#
-	# 	partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -502,7 +452,7 @@ class Installer:
 
 		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
 
-	def genfstab(self, flags :str = '-pU') -> bool:
+	def genfstab(self, flags :str = '-pU'):
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
 		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).exit_code == 0:
@@ -519,7 +469,32 @@ class Installer:
 				if plugin.on_genfstab(self) is True:
 					break
 
-		return True
+		for mod in self._disk_config.layouts:
+			for part_mod in mod.partitions:
+				if part_mod.fs_type == FilesystemType.Btrfs:
+					with open(f"{self.target}/etc/fstab", 'r') as fp:
+						fstab = fp.read()
+
+						# Replace the {installation}/etc/fstab with entries
+						# using the compress=zstd where the mountpoint has compression set.
+						with open(f"{self.target}/etc/fstab", 'w') as fp:
+							for line in fstab.split('\n'):
+								# So first we grab the mount options by using subvol=.*? as a locator.
+								# And we also grab the mountpoint for the entry, for instance /var/log
+								subvoldef = re.findall(',.*?subvol=.*?[\t ]', line)
+								mountpoint = re.findall('[\t ]/.*?[\t ]', line)
+
+								if subvoldef and mountpoint:
+									for sub_vol in part_mod.btrfs_subvols:
+										# We then locate the correct subvolume and check if it's compressed
+										if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()):
+											# We then sneak in the compress=zstd option if it doesn't already exist:
+											# We skip entries where compression is already defined
+											if ',compress=zstd,' not in line:
+												line = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
+												break
+
+								fp.write(f'{line}\n')
 
 	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
@@ -947,10 +922,9 @@ class Installer:
 
 				options_entry = f'rw rootfstype={root_partition.fs_type.fs_type_mount} {" ".join(self.KERNEL_PARAMS)}\n'
 
-				# TODO: Fix btrfs
-				for subvolume in root_partition.btrfs_subvols:
-					if subvolume.root is True and subvolume.name != '<FS_TREE>':
-						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
+				for sub_vol in root_partition.btrfs_subvols:
+					if sub_vol.is_root():
+						options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
 
 				# Zswap should be disabled when using zram.
 				# https://github.com/archlinux/archinstall/issues/881
