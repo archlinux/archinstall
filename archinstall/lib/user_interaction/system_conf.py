@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
-from ..disk import all_blockdevices
 from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
@@ -39,36 +38,6 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Selection: return choice.value  # type: ignore
-
-
-def select_harddrives(preset: List[str] = []) -> List[str]:
-	"""
-	Asks the user to select one or multiple hard drives
-
-	:return: List of selected hard drives
-	:rtype: list
-	"""
-	hard_drives = all_blockdevices(partitions=False).values()
-	options = {f'{option}': option for option in hard_drives}
-
-	title = str(_('Select one or more hard drives to use and configure\n'))
-	title += str(_('Any modifications to the existing setting will reset the disk layout!'))
-
-	warning = str(_('If you reset the harddrive selection this will also reset the current disk layout. Are you sure?'))
-
-	selected_harddrive = Menu(
-		title,
-		list(options.keys()),
-		preset_values=preset,
-		multi=True,
-		allow_reset=True,
-		allow_reset_warning_msg=warning
-	).run()
-
-	match selected_harddrive.type_:
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return [options[i] for i in selected_harddrive.value]  # type: ignore
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:

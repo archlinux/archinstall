@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 
 from ..disk.device_handler import PartitionModification
-from ..hsm.fido import Fido2Device
+from archinstall.lib.disk.fido import Fido2Device
 
 if TYPE_CHECKING:
 	_: Any

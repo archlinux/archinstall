@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, List
 
-from .disk.device import get_lsblk_info
+from .disk.device_model import get_lsblk_info
 from .general import SysCommand, generate_password, SysCommandWorker
 from .output import log
 from .exceptions import SysCallError, DiskError

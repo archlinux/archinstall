@@ -7,9 +7,8 @@ import archinstall
 from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
-from ..lib.disk import disk_layouts
-from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType
-from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType
+from ..lib.disk.device_handler import disk_layouts
 from ..lib.models.disk_encryption import EncryptionType
 from ..lib.output import log
 
@@ -136,12 +135,12 @@ def perform_installation(mountpoint: Path):
 		kernels=archinstall.arguments.get('kernels', ['linux'])
 	) as installation:
 		# Mount all the drives to the desired mountpoint
-		if disk_config.layout_type != DiskLayoutType.Pre_mount:
+		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
 		installation.sanity_check()
 
-		if disk_config.layout_type != DiskLayoutType.Pre_mount:
+		if disk_config.config_type != DiskLayoutType.Pre_mount:
 			if disk_encryption and disk_encryption.encryption_type != EncryptionType.NoEncryption:
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
@@ -284,16 +283,16 @@ archinstall.configuration_sanity_check()
 
 
 
-# from ..lib.disk.device_handler import device_handler
-#
-# mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
-#
-# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-# 	DiskLayoutType.Pre_mount,
-# 	layouts=mods,
-# 	relative_mountpoint=Path('/mnt/archinstall')
-# )
-#
+from ..lib.disk.device_handler import device_handler
+
+mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
+
+archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+	DiskLayoutType.Pre_mount,
+	device_modifications=mods,
+	relative_mountpoint=Path('/mnt/archinstall')
+)
+
 # from pprint import pprint
 # print(len(mods))
 # pprint(mods[0].partitions)
@@ -301,10 +300,10 @@ archinstall.configuration_sanity_check()
 # exit(1)
 
 
-perform_filesystem_operations(
-	archinstall.arguments['disk_layouts'],
-	archinstall.arguments.get('disk_encryption', None)
-)
+# perform_filesystem_operations(
+# 	archinstall.arguments['disk_layouts'],
+# 	archinstall.arguments.get('disk_encryption', None)
+# )
 
 # exit(1)
 

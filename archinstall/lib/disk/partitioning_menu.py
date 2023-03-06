@@ -4,14 +4,14 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
-from .device import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
+from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus
 from ..menu import Menu
 from ..menu.list_manager import ListManager
 from ..menu.menu import MenuSelection
 from ..menu.text_input import TextInput
 from ..output import FormattedOutput, log
-from archinstall.lib.disk.subvolume_menu import SubvolumeMenu
+from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
 	_: Any

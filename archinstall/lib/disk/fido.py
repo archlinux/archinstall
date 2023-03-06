@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from ..disk.device import PartitionModification
+from .device_model import PartitionModification
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
-from ..general import log
+from ..output import log
 
 
 @dataclass

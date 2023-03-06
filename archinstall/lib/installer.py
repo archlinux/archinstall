@@ -10,13 +10,13 @@ from pathlib import Path
 from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
 from archinstall.profiles.profiles import Profile
-from .disk.device import PartitionModification, DiskLayoutConfiguration, \
+from .disk.device_model import PartitionModification, DiskLayoutConfiguration, \
 	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType
 from .disk.device_handler import device_handler
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
-from .hsm import Fido2
+from .disk.fido import Fido2
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors
@@ -221,7 +221,7 @@ class Installer:
 	def mount_ordered_layout(self):
 		log('Mounting partitions in order', level=logging.INFO)
 
-		for mod in self._disk_config.layouts:
+		for mod in self._disk_config.device_modifications:
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
 			# '/' just for sorting
@@ -300,12 +300,6 @@ class Installer:
 						self._disk_encryption.encryption_password
 					)
 
-		# for handle in list_luks_handles:
-		# 	ppath = handle[1]['device_instance'].path
-		# 	if self._disk_encryption.should_generate_encryption_file(part_mod):
-		# 		log(f"creating key-file for {ppath}",level=logging.INFO)
-		# 		self._create_keyfile(handle[0],handle[1],handle[2])
-
 	def activate_ntp(self):
 		"""
 		If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
@@ -325,21 +319,6 @@ class Installer:
 				log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
 				logged = True
 			time.sleep(1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
@@ -469,7 +448,7 @@ class Installer:
 				if plugin.on_genfstab(self) is True:
 					break
 
-		for mod in self._disk_config.layouts:
+		for mod in self._disk_config.device_modifications:
 			for part_mod in mod.partitions:
 				if part_mod.fs_type == FilesystemType.Btrfs:
 					with open(f"{self.target}/etc/fstab", 'r') as fp:
@@ -681,21 +660,6 @@ class Installer:
 
 		return True
 
-	# def _detect_encryption(self, partition :Partition) -> bool:
-	# 	from .disk.mapperdev import MapperDev
-	# 	from .disk.dmcryptdev import DMCryptDev
-	# 	from .disk.helpers import get_filesystem_type
-	#
-	# 	if type(partition) is MapperDev:
-	# 		# Returns MapperDev.partition
-	# 		return partition.partition
-	# 	elif type(partition) is DMCryptDev:
-	# 		return partition.MapperDev.partition
-	# 	elif get_filesystem_type(partition.path) == 'crypto_LUKS':
-	# 		return partition
-	#
-	# 	return False
-
 	def mkinitcpio(self, *flags :str) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
@@ -727,7 +691,7 @@ class Installer:
 		hostname: str = 'archinstall',
 		locales: List[str] = ['en_US.UTF-8 UTF-8']
 	):
-		for mod in self._disk_config.layouts:
+		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
 				if (pkg := part.fs_type.installation_pkg) is not None:
 					self.base_packages.append(pkg)
@@ -845,14 +809,14 @@ class Installer:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
 	def _get_boot_partition(self) -> Optional[PartitionModification]:
-		for layout in self._disk_config.layouts:
+		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
 				return boot
 		return None
 
 	def _get_root_partition(self) -> Optional[PartitionModification]:
-		for layout in self._disk_config.layouts:
-			if root := layout.get_root_partition(self._disk_config.relative_mountpoint):
+		for mod in self._disk_config.device_modifications:
+			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
 				return root
 		return None
 
@@ -1074,8 +1038,11 @@ class Installer:
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
 
-		if boot_partition is None or root_partition is None:
-			raise ValueError(f"Could not detect root ({root_partition}) or boot ({boot_partition}) in {self.target} based on: {self.partitions}")
+		if boot_partition is None:
+			raise ValueError(f'Could not detect boot at mountpoint {self.target}')
+
+		if root_partition is None:
+			raise ValueError(f'Could not detect root at mountpoint {self.target}')
 
 		self.log(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}', level=logging.INFO)
 

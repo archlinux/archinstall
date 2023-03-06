@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List
 
-from ..disk.device import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
+from ..disk.device_model import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
 	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus, \
 	SubvolumeModification
 from ..disk.device_handler import device_handler
@@ -127,7 +127,7 @@ def select_disk_layout(
 	pre_mount_mode = DiskLayoutType.Pre_mount.display_msg()
 
 	options = [default_layout, manual_mode, pre_mount_mode]
-	preset_value = preset.layout_type.display_msg() if preset else None
+	preset_value = preset.config_type.display_msg() if preset else None
 	warning = str(_('Are you sure you want to reset this setting?'))
 
 	choice = Menu(
@@ -149,12 +149,12 @@ def select_disk_layout(
 				path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')))
 				mods = device_handler.detect_pre_mounted_mods(path)
 				return DiskLayoutConfiguration(
-					layout_type=DiskLayoutType.Pre_mount,
+					config_type=DiskLayoutType.Pre_mount,
 					relative_mountpoint=path,
-					layouts=mods
+					device_modifications=mods
 				)
 
-			preset_devices = [mod.device for mod in preset.layouts] if preset else None
+			preset_devices = [mod.device for mod in preset.device_modifications] if preset else None
 
 			devices = select_devices(preset_devices)
 
@@ -165,17 +165,17 @@ def select_disk_layout(
 				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
 				if modifications:
 					return DiskLayoutConfiguration(
-						layout_type=DiskLayoutType.Default,
-						layouts=modifications
+						config_type=DiskLayoutType.Default,
+						device_modifications=modifications
 					)
 			elif choice.value == manual_mode:
-				preset_mods = preset.layouts if preset else []
+				preset_mods = preset.device_modifications if preset else []
 				modifications = _manual_partitioning(preset_mods, devices)
 
 				if modifications:
 					return DiskLayoutConfiguration(
-						layout_type=DiskLayoutType.Manual,
-						layouts=modifications
+						config_type=DiskLayoutType.Manual,
+						device_modifications=modifications
 					)
 
 	return None

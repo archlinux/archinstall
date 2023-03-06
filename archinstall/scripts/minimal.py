@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, List
 import archinstall
 from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption
 from archinstall.profiles.minimal import MinimalProfile
-from ..lib.disk.device import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
+from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
 	PartitionModification
 from ..lib.disk.filesystem import perform_filesystem_operations
 from ..lib.models.disk_encryption import EncryptionType
@@ -60,8 +60,8 @@ def prompt_disk_layout():
 	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
 	archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-		layout_type=DiskLayoutType.Default,
-		layouts=[modifications]
+		config_type=DiskLayoutType.Default,
+		device_modifications=[modifications]
 	)
 
 

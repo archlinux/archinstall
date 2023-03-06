@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device import DeviceModification, DiskLayoutConfiguration, PartitionModification
+from .device_model import DeviceModification, DiskLayoutConfiguration, PartitionModification
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
@@ -9,7 +9,7 @@ from ..models.disk_encryption import EncryptionType, DiskEncryption
 from ..user_interaction.utils import get_password
 from ..menu import Menu
 from ..general import secret
-from ..hsm.fido import Fido2Device, Fido2
+from .fido import Fido2Device, Fido2
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:
@@ -52,7 +52,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._menu_options['partitions'] = \
 			Selector(
 				_('Partitions'),
-				func=lambda preset: select_partitions_to_encrypt(self._disk_layouts.layouts, preset),
+				func=lambda preset: select_partitions_to_encrypt(self._disk_layouts.device_modifications, preset),
 				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.partitions,

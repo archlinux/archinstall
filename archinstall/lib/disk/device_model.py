@@ -38,19 +38,19 @@ class DiskLayoutType(Enum):
 
 @dataclass
 class DiskLayoutConfiguration:
-	layout_type: DiskLayoutType
-	layouts: List[DeviceModification] = field(default_factory=list)
+	config_type: DiskLayoutType
+	device_modifications: List[DeviceModification] = field(default_factory=list)
 	# used for pre-mounted config
 	relative_mountpoint: Optional[Path] = None
 
 	def __post_init__(self):
-		if self.layout_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
+		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
 			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
-			'layout_type': self.layout_type.value,
-			'layouts': [mod.__dump__() for mod in self.layouts]
+			'layout_type': self.config_type.value,
+			'layouts': [mod.__dump__() for mod in self.device_modifications]
 		}
 
 
@@ -313,7 +313,9 @@ class SubvolumeModification:
 		"""
 		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
-	def is_root(self) -> bool:
+	def is_root(self,  relative_mountpoint: Optional[Path] = None) -> bool:
+		if relative_mountpoint is not None:
+			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
 		return self.mountpoint == Path('/')
 
 	def __dump__(self) -> Dict[str, Any]:
@@ -335,17 +337,8 @@ class SubvolumeModification:
 
 @dataclass
 class BtrfsSubvolumeInfo:
-	name: str
+	name: Path
 	mountpoint: Optional[Path]
-
-	@classmethod
-	def from_subvolume(cls, name: str, subvol_mount_info: Dict[Path, Path]) -> BtrfsSubvolumeInfo:
-		mountpoint = None
-		for subvol, mount in subvol_mount_info.items():
-			if subvol.relative_to(subvol.anchor) == Path(name):
-				mountpoint = mount
-
-		return BtrfsSubvolumeInfo(name, mountpoint)
 
 
 class DeviceGeometry:
@@ -535,8 +528,16 @@ class PartitionModification:
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
-		mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
-		subvol_mods = [SubvolumeModification.from_existing_subvol_info(info) for info in partition_info.btrfs_subvol_infos]
+		if partition_info.btrfs_subvol_infos:
+			mountpoint = None
+			subvol_mods = []
+			for info in partition_info.btrfs_subvol_infos:
+				subvol_mods.append(
+					SubvolumeModification.from_existing_subvol_info(info)
+				)
+		else:
+			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
+			subvol_mods = []
 
 		return PartitionModification(
 			status=ModificationStatus.Exist,
@@ -562,13 +563,13 @@ class PartitionModification:
 		return PartitionFlag.Boot in self.flags
 
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
-		if relative_mountpoint is not None:
+		if relative_mountpoint is not None and self.mountpoint is not None:
 			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
 		elif self.mountpoint is not None:
 			return Path('/') == self.mountpoint
 		else:
 			for subvol in self.btrfs_subvols:
-				if subvol.is_root():
+				if subvol.is_root(relative_mountpoint):
 					return True
 
 		return False
@@ -756,7 +757,13 @@ class LsblkInfo:
 		# sometimes lsblk returns 'mountpoints': [null]
 		info.mountpoints = [Path(mnt) for mnt in info.mountpoints if mnt]
 
-		info.fsroots = [Path(r) for r in info.fsroots if r]
+		fs_roots = []
+		for r in info.fsroots:
+			if r:
+				path = Path(r)
+				# store the fsroot entries without the leading /
+				fs_roots.append(path.relative_to(path.anchor))
+		info.fsroots = fs_roots
 
 		return info
 

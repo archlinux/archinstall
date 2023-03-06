@@ -1,20 +1,23 @@
 from __future__ import annotations
 
+import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
-import btrfsutil
 import parted
 from _ped import PartitionException
 from parted import Disk, Geometry, FileSystem
 
-from .device import DeviceModification, PartitionModification, BDevice, DeviceInfo, PartitionInfo, \
-	DiskLayoutConfiguration, DiskLayoutType, FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
-	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification
+from .device_model import DeviceModification, PartitionModification, \
+	BDevice, DeviceInfo, PartitionInfo, DiskLayoutConfiguration, DiskLayoutType, \
+	FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
+	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification, \
+	get_all_lsblk_info
 from ..exceptions import DiskError, UnknownFilesystemFormat
-from ..general import SysCommand, SysCallError
+from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
 from ..output import log
 from ..utils.util import is_subpath
@@ -48,7 +51,7 @@ class DeviceHandler(object):
 				subvol_infos = []
 
 				if fs_type == FilesystemType.Btrfs:
-					subvol_infos = self.get_btrfs_info(partition.path, lsblk_info)
+					subvol_infos = self.get_btrfs_info(partition.path)
 
 				partition_infos.append(
 					PartitionInfo.from_partition(
@@ -107,8 +110,8 @@ class DeviceHandler(object):
 
 		device_modifications: List[DeviceModification] = []
 		config = DiskLayoutConfiguration(
-			layout_type=DiskLayoutType(layout_type),
-			layouts=device_modifications
+			config_type=DiskLayoutType(layout_type),
+			device_modifications=device_modifications
 		)
 
 		for entry in disk_layouts.get('layouts', []):
@@ -152,22 +155,43 @@ class DeviceHandler(object):
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
-	def get_btrfs_info(self, path: Path, lsblk_info: LsblkInfo) -> List[BtrfsSubvolumeInfo]:
-		mountpoint = lsblk_info.mountpoint
-
-		if not lsblk_info.mountpoint:
-			self.mount(path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
-			mountpoint = self._TMP_BTRFS_MOUNT
-
+	def get_btrfs_info(self, dev_path: Path) -> List[BtrfsSubvolumeInfo]:
+		lsblk_info = get_lsblk_info(dev_path)
 		subvol_infos = []
 
-		with btrfsutil.SubvolumeIterator(mountpoint, info=True) as it:
-			for name, _ in it:
-				subvol_info = BtrfsSubvolumeInfo.from_subvolume(name, lsblk_info.btrfs_subvol_info)
-				subvol_infos.append(subvol_info)
+		if not lsblk_info.mountpoint:
+			self.mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			mountpoint = self._TMP_BTRFS_MOUNT
+		else:
+			# when multiple subvolumes are mounted then the lsblk output may look like
+			# "mountpoint": "/mnt/archinstall/.snapshots"
+			# "mountpoints": ["/mnt/archinstall/.snapshots", "/mnt/archinstall/home", ..]
+			# so we'll determine the minimum common path and assume that's the root
+			path_strings = [str(m) for m in lsblk_info.mountpoints]
+			common_prefix = os.path.commonprefix(path_strings)
+			mountpoint = Path(common_prefix)
+
+		try:
+			result = SysCommand(f'btrfs subvolume list {mountpoint}')
+		except SysCallError as err:
+			log(f'Failed to read btrfs subvolume information: {err}', level=logging.DEBUG)
+			return subvol_infos
+
+		if result.exit_code == 0:
+			try:
+				if decoded := result.decode('utf-8'):
+					# ID 256 gen 16 top level 5 path @
+					for line in decoded.splitlines():
+						# ID 257 gen 8 top level 5 path @home
+						name = Path(line.split(' ')[-1])
+						mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+						subvol_infos.append(BtrfsSubvolumeInfo(name, mountpoint))
+			except json.decoder.JSONDecodeError as err:
+				log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
+				raise err
 
 		if not lsblk_info.mountpoint:
-			self.umount(path)
+			self.umount(dev_path)
 
 		return subvol_infos
 
@@ -381,7 +405,7 @@ class DeviceHandler(object):
 			else:
 				subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			btrfsutil.create_subvolume(subvol_path)
+			SysCommand(f"btrfs subvolume create {subvol_path}")
 
 			if sub_vol.nodatacow:
 				if (result := SysCommand(f'chattr +C {subvol_path}')).exit_code != 0:
@@ -409,12 +433,12 @@ class DeviceHandler(object):
 		return luks_handler
 
 	def _umount_all_existing(self, modification: DeviceModification):
-		log(f'Unmounting existing partitions: {modification.device_path}', level=logging.INFO)
+		log(f'Unmounting all partitions: {modification.device_path}', level=logging.INFO)
 
 		existing_partitions = self._devices[modification.device_path].partition_infos
 
 		for partition in existing_partitions:
-			log(f'Unmounting: {partition.path}', level=logging.INFO)
+			log(f'Unmounting: {partition.path}', level=logging.DEBUG)
 
 			# un-mount for existing encrypted partitions
 			if partition.fs_type == FilesystemType.Crypto_luks:
@@ -430,25 +454,21 @@ class DeviceHandler(object):
 		"""
 		Create a partition table on the block device and create all partitions.
 		"""
-
 		if modification.wipe and not partition_table:
-			raise ValueError('modification is marked as wipe but no partitioning table was provided')
+			raise ValueError('Modification is marked as wipe but no partitioning table was provided')
 
-		# TODO this check should probably run in the setup process rather than during the installation
 		if modification.wipe and partition_table.MBR and len(modification.partitions) > 3:
-			raise DiskError("Too many partitions on disk, MBR disks can only have 3 primary partitions")
+			raise DiskError('Too many partitions on disk, MBR disks can only have 3 primary partitions')
 
 		# make sure all devices are unmounted
 		self._umount_all_existing(modification)
 
 		# WARNING: the entire device will be wiped and all data lost
 		if modification.wipe:
-			log(f'Wipe all data: {modification.device_path}')
 			self.wipe_dev(modification.device)
-
 			disk = parted.freshDisk(modification.device.disk.device, partition_table.value)
 		else:
-			log(f'Re-use existing device: {modification.device_path}')
+			log(f'Use existing device: {modification.device_path}')
 			disk = modification.device.disk
 
 		log(f'Creating partitions: {modification.device_path}')
@@ -486,14 +506,14 @@ class DeviceHandler(object):
 			log(f'Device already mounted at {target_mountpoint}')
 			return
 
-		log(f'Mounting {dev_path} -> {target_mountpoint}', level=logging.INFO)
-
 		options = ','.join(options)
 		options = f'-o {options}' if options else ''
 
 		mount_fs = f'-t {mount_fs}' if mount_fs else ''
 
 		command = f'mount {mount_fs} {options} {dev_path} {target_mountpoint}'
+
+		log(f'Mounting {dev_path}: command', level=logging.DEBUG)
 
 		try:
 			result = SysCommand(command)
@@ -502,14 +522,23 @@ class DeviceHandler(object):
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
-	def umount(self, path: Path, recursive: bool = False):
-		lsblk_info = get_lsblk_info(path)
+	def umount(self, dev_path: Path, recursive: bool = False):
+		try:
+			lsblk_info = get_lsblk_info(dev_path)
+		except SysCallError as ex:
+			# this could happen if before partitioning the device contained 3 partitions
+			# and after partitioning only 2 partitions were created, then the modifications object
+			# will have a reference to /dev/sX3 which is being tried to umount here now
+			if 'not a block device' in ex.message:
+				return
 
-		if lsblk_info.mountpoint:
-			log(f'Partition {path} is currently mounted at: {lsblk_info.mountpoints}')
+			raise ex
+
+		if len(lsblk_info.mountpoints) > 0:
+			log(f'Partition {dev_path} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}', level=logging.DEBUG)
 
 			for mountpoint in lsblk_info.mountpoints:
-				log(f'Attempting to umount: {mountpoint}')
+				log(f'Unmounting mountpoint: {mountpoint}', level=logging.DEBUG)
 
 				command = 'umount'
 
@@ -536,6 +565,7 @@ class DeviceHandler(object):
 						path = Path(part_info.disk.device.path)
 						part_mods.setdefault(path, [])
 						part_mods[path].append(PartitionModification.from_existing_partition(part_info))
+						break
 
 		mods = []
 		for device_path, part_mods in part_mods.items():
@@ -582,3 +612,15 @@ class DeviceHandler(object):
 
 
 device_handler = DeviceHandler()
+
+
+def disk_layouts() -> str:
+	try:
+		lsblk_info = get_all_lsblk_info()
+		return json.dumps(lsblk_info, indent=4, sort_keys=True, cls=JSON)
+	except SysCallError as err:
+		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
+		return None
+	except json.decoder.JSONDecodeError as err:
+		log(f"Could not return disk layouts: {err}", level=logging.WARNING, fg="yellow")
+		return None

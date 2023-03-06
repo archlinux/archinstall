@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.device import DiskLayoutConfiguration, DeviceModification
+from ..disk.device_model import DiskLayoutConfiguration, DeviceModification
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
@@ -206,7 +206,7 @@ class GlobalMenu(AbstractMenu):
 				return str(cur_value)
 
 	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
-		from ..disk.encryption import DiskEncryptionMenu
+		from ..disk.encryption_menu import DiskEncryptionMenu
 		data_store: Dict[str, Any] = {}
 
 		selector = self._menu_options['disk_layouts']
@@ -234,10 +234,10 @@ class GlobalMenu(AbstractMenu):
 			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
 
 			device_mods: List[DeviceModification] = \
-				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.layouts))
+				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
 
 			if device_mods:
-				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.layout_type.display_msg())
+				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
 				output_btrfs = ''
 
 				for mod in device_mods:
@@ -261,7 +261,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:
-			return current_value.layout_type.display_msg()
+			return current_value.config_type.display_msg()
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:

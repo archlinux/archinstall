@@ -6,7 +6,7 @@ import sys
 import time
 from typing import Any, Optional, TYPE_CHECKING
 
-from .device import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType
+from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType
 from .device_handler import device_handler
 from ..hardware import has_uefi
 from ..models.disk_encryption import DiskEncryption
@@ -22,11 +22,11 @@ def perform_filesystem_operations(
 	enc_conf: Optional[DiskEncryption] = None,
 	show_countdown: bool = True
 ):
-	if disk_layouts.layout_type == DiskLayoutType.Pre_mount:
+	if disk_layouts.config_type == DiskLayoutType.Pre_mount:
 		log('Disk layout configuration is set to pre-mount, not performing any operations', level=logging.DEBUG)
 		return
 
-	device_mods = list(filter(lambda x: len(x.partitions) > 0, disk_layouts.layouts))
+	device_mods = list(filter(lambda x: len(x.partitions) > 0, disk_layouts.device_modifications))
 
 	if not device_mods:
 		log('No modifications required', level=logging.DEBUG)

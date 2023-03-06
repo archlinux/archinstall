@@ -22,6 +22,10 @@ dependencies = [
     "simple-term-menu==1.5.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "mypy==1.0.1",
+]
 
 [project.urls]
 Home = "https://archlinux.org"

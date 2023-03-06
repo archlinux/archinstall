@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Optional, Any, TYPE_CHECKING
 
-from .device import SubvolumeModification
+from .device_model import SubvolumeModification
 from ..menu.list_manager import ListManager
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
