@@ -94,4 +94,4 @@ perform_filesystem_operations(
 	archinstall.arguments.get('disk_encryption', None)
 )
 
-perform_installation(archinstall.storage.get('MOUNT_POINT', pathlib.Path('/mnt')))
+perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

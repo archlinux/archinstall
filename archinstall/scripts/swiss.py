@@ -20,7 +20,7 @@ import pathlib
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from .. import ask_ntp
+from .. import ask_ntp, Selector
 from ..lib.configuration import ConfigurationOutput
 from ..lib.disk import disk_layouts
 from ..lib.models.network_configuration import NetworkConfigurationHandler
@@ -265,7 +265,7 @@ class MyMenu(archinstall.GlobalMenu):
 				self.option(entry).set_enabled(False)
 		self._update_install_text()
 
-	def post_callback(self,option=None,value=None):
+	def post_callback(self, name: str, value: str):
 		self._update_install_text(self._execution_mode)
 
 	def _missing_configs(self,mode='full'):
@@ -285,7 +285,7 @@ class MyMenu(archinstall.GlobalMenu):
 	# 			missing += 1
 	# 	return missing
 
-	def _install_text(self,mode='full'):
+	def _install_text(self, mode='full'):
 		missing = self._missing_configs(mode)
 		if missing > 0:
 			return f'Instalation ({missing} config(s) missing)'
@@ -329,11 +329,14 @@ def ask_user_questions(mode: str):
 				global_menu.exec_option(entry)
 				archinstall.arguments[entry] = global_menu.option(entry).get_selection()
 		else:
-			global_menu.set_option('install',
-							archinstall.Selector(
-								global_menu._install_text(mode),
-								exec_func=lambda n,v: True if global_menu._missing_configs(mode) == 0 else False,
-								enabled=True))
+			global_menu.set_option(
+				'install',
+				Selector(
+					global_menu._install_text(mode),
+					exec_func=lambda n,v: True if global_menu._missing_configs(mode) == 0 else False,
+					enabled=True
+				)
+			)
 
 			global_menu.run()
 

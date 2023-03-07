@@ -42,11 +42,11 @@ class SubvolumeMenu(ListManager):
 	def _prompt_options(self, editing: Optional[SubvolumeModification] = None) -> List[str]:
 		preset_options = []
 		if editing:
-			preset_options = editing.options
+			preset_options = editing.mount_options
 
 		choice = Menu(
 			str(_("Select the desired subvolume options ")),
-			['nodatacow','compress'],
+			['nodatacow', 'compress'],
 			skip=True,
 			preset_values=preset_options,
 			multi=True

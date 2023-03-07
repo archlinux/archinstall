@@ -15,7 +15,6 @@ from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
 from ..output import FormattedOutput
 from ..output import log
-from ..storage import storage
 from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
@@ -114,14 +113,6 @@ def select_disk_layout(
 	preset: Optional[DiskLayoutConfiguration] = None,
 	advanced_option: bool = False
 ) -> Optional[DiskLayoutConfiguration]:
-	def _preview(selection: str) -> Optional[str]:
-		if selection == pre_mount_mode:
-			return _(
-				"You will use whatever drive-setup is mounted at {} (experimental)\n"
-				"WARNING: Archinstall won't check the suitability of this setup"
-			).format(storage['MOUNT_POINT'])
-		return None
-
 	default_layout = DiskLayoutType.Default.display_msg()
 	manual_mode = DiskLayoutType.Manual.display_msg()
 	pre_mount_mode = DiskLayoutType.Pre_mount.display_msg()
@@ -136,7 +127,6 @@ def select_disk_layout(
 		allow_reset=True,
 		allow_reset_warning_msg=warning,
 		sort=False,
-		preview_command=_preview,
 		preview_size=0.2,
 		preset_values=preset_value
 	).run()
@@ -145,9 +135,13 @@ def select_disk_layout(
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
-			if choice.value == pre_mount_mode:
-				path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')))
+			if choice.single_value == pre_mount_mode:
+				output = "You will use whatever drive-setup is mounted at the specified directory\n"
+				output += "WARNING: Archinstall won't check the suitability of this setup\n"
+
+				path = prompt_dir(str(_('Enter the root directory of the mounted devices: ')), output)
 				mods = device_handler.detect_pre_mounted_mods(path)
+
 				return DiskLayoutConfiguration(
 					config_type=DiskLayoutType.Pre_mount,
 					relative_mountpoint=path,

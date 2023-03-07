@@ -27,6 +27,14 @@ class MenuSelection:
 	type_: MenuSelectionType
 	value: Optional[Union[str, List[str]]] = None
 
+	@property
+	def single_value(self) -> str:
+		return self.value
+
+	@property
+	def multi_value(self) -> List[str]:
+		return self.value
+
 
 class Menu(TerminalMenu):
 

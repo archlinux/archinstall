@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class DeviceHandler(object):
-	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs_test_test')
+	_TMP_BTRFS_MOUNT = Path('/mnt/arch_btrfs')
 
 	def __init__(self):
 		self._devices: Dict[Path, BDevice] = {}

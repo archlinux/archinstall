@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device_model import DeviceModification, DiskLayoutConfiguration, PartitionModification
+from .device_model import DeviceModification, PartitionModification
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType
 from ..menu.table_selection_menu import TableMenu
@@ -21,14 +21,14 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self,
 		data_store: Dict[str, Any],
 		preset: Optional[DiskEncryption],
-		disk_layouts: DiskLayoutConfiguration
+		mods: List[DeviceModification]
 	):
 		if preset:
 			self._preset = preset
 		else:
 			self._preset = DiskEncryption()
 
-		self._disk_layouts = disk_layouts
+		self._modifications = mods
 		super().__init__(data_store=data_store)
 
 	def _setup_selection_menu_options(self):
@@ -52,7 +52,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._menu_options['partitions'] = \
 			Selector(
 				_('Partitions'),
-				func=lambda preset: select_partitions_to_encrypt(self._disk_layouts.device_modifications, preset),
+				func=lambda preset: select_partitions_to_encrypt(self._modifications.device_modifications, preset),
 				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.partitions,

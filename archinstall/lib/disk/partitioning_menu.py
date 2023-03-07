@@ -39,14 +39,14 @@ class PartitioningList(ListManager):
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
 
-	def reformat(self, data: List[PartitionModification]) -> Dict[str, PartitionModification]:
+	def reformat(self, data: List[PartitionModification]) -> Dict[str, Optional[PartitionModification]]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[PartitionModification]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
 		for row, user in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
@@ -105,26 +105,26 @@ class PartitioningList(ListManager):
 				choice = self._reset_confirmation()
 				if choice.value == Menu.yes():
 					data = [part for part in data if part.is_exists_or_modify()]
-			case 'assign_mountpoint':
+			case 'assign_mountpoint' if entry:
 				entry.mountpoint = self._prompt_mountpoint()
 				if entry.mountpoint == Path('/boot'):
 					entry.set_flag(PartitionFlag.Boot)
-			case 'mark_formatting':
+			case 'mark_formatting' if entry:
 				self._prompt_formatting(entry)
-			case 'mark_bootable':
+			case 'mark_bootable' if entry:
 				entry.invert_flag(PartitionFlag.Boot)
-			case 'set_filesystem':
+			case 'set_filesystem' if entry:
 				fs_type = self._prompt_partition_fs_type()
 				if fs_type:
 					entry.fs_type = fs_type
 					# btrfs subvolumes will define mountpoints
 					if fs_type == FilesystemType.Btrfs:
 						entry.mountpoint = None
-			case 'btrfs_mark_compressed':
+			case 'btrfs_mark_compressed' if entry:
 				self._set_compressed(entry)
-			case 'btrfs_set_subvolumes':
+			case 'btrfs_set_subvolumes' if entry:
 				self._set_btrfs_subvolumes(entry)
-			case 'delete_partition':
+			case 'delete_partition' if entry:
 				data = self._delete_partition(entry, data)
 
 		return data
@@ -194,7 +194,7 @@ class PartitioningList(ListManager):
 
 		prompt = prompt + '\n' + str(_('Enter a desired filesystem type for the partition'))
 		choice = Menu(prompt, options, sort=False, skip=False).run()
-		return options[choice.value]
+		return options[choice.single_value]
 
 	def _validate_sector(self, start_sector: str, end_sector: Optional[str] = None) -> bool:
 		if not start_sector.isdigit():
@@ -263,7 +263,7 @@ class PartitioningList(ListManager):
 
 		return start_size, end_size
 
-	def _create_new_partition(self) -> Optional[PartitionModification]:
+	def _create_new_partition(self) -> PartitionModification:
 		fs_type = self._prompt_partition_fs_type()
 
 		start_size, end_size = self._prompt_sectors()

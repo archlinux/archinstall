@@ -16,17 +16,17 @@ if TYPE_CHECKING:
 class Selector:
 	def __init__(
 		self,
-		description :str,
-		func :Callable = None,
-		display_func :Callable = None,
-		default :Any = None,
-		enabled :bool = False,
-		dependencies :List = [],
-		dependencies_not :List = [],
-		exec_func :Callable = None,
-		preview_func :Callable = None,
-		mandatory :bool = False,
-		no_store :bool = False
+		description: str,
+		func: Optional[Callable[[str], Any]] = None,
+		display_func: Optional[Callable] = None,
+		default: Optional[Any] = None,
+		enabled: bool = False,
+		dependencies: List = [],
+		dependencies_not: List = [],
+		exec_func: Optional[Callable] = None,
+		preview_func: Optional[Callable] = None,
+		mandatory: bool = False,
+		no_store: bool = False
 	):
 		"""
 		Create a new menu selection entry
@@ -111,14 +111,14 @@ class Selector:
 	def do_store(self) -> bool:
 		return self._no_store is False
 
-	def set_enabled(self, status :bool = True):
+	def set_enabled(self, status: bool = True):
 		self.enabled = status
 
-	def update_description(self, description :str):
+	def update_description(self, description: str):
 		self._description = description
 
 	def menu_text(self, padding: int = 0) -> str:
-		if self._description == '': # special menu option for __separator__
+		if self._description == '':  # special menu option for __separator__
 			return ''
 
 		current = ''
@@ -139,7 +139,7 @@ class Selector:
 
 		return f'{description} {current}'
 
-	def set_current_selection(self, current :Optional[str]):
+	def set_current_selection(self, current: Optional[str]):
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
@@ -168,7 +168,12 @@ class Selector:
 
 
 class AbstractMenu:
-	def __init__(self, data_store: Dict[str, Any] = None, auto_cursor: bool = False, preview_size :float = 0.2):
+	def __init__(
+		self,
+		data_store: Dict[str, Any] = {},
+		auto_cursor: bool = False,
+		preview_size: float = 0.2
+	):
 		"""
 		Create a new selection menu.
 
@@ -182,10 +187,10 @@ class AbstractMenu:
 		;type preview_size: float (range 0..1)
 
 		"""
-		self._enabled_order :List[str] = []
+		self._enabled_order: List[str] = []
 		self._translation_handler = TranslationHandler()
 		self.is_context_mgr = False
-		self._data_store = data_store if data_store is not None else {}
+		self._data_store = data_store
 		self.auto_cursor = auto_cursor
 		self._menu_options: Dict[str, Selector] = {}
 		self._setup_selection_menu_options()
@@ -198,11 +203,11 @@ class AbstractMenu:
 	def last_choice(self):
 		return self._last_choice
 
-	def __enter__(self, *args :Any, **kwargs :Any) -> AbstractMenu:
+	def __enter__(self, *args: Any, **kwargs: Any) -> AbstractMenu:
 		self.is_context_mgr = True
 		return self
 
-	def __exit__(self, *args :Any, **kwargs :Any) -> None:
+	def __exit__(self, *args: Any, **kwargs: Any) -> None:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
@@ -242,7 +247,8 @@ class AbstractMenu:
 		for key, selector in mandatory_fields.items():
 			if key in ['!root-password', '!users']:
 				if not check('!root-password') and not has_superuser():
-					missing += [str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
+					missing += [
+						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
 			elif key == 'disk_layouts':
 				if not check('disk_layouts'):
 					missing += [self._menu_options['disk_layouts'].description]
@@ -259,7 +265,7 @@ class AbstractMenu:
 		""" will be called before each action in the menu """
 		return
 
-	def post_callback(self, selection_name: str = None, value: Any = None):
+	def post_callback(self, selection_name: str, value: Any):
 		""" will be called after each action in the menu """
 		return True
 
@@ -267,7 +273,7 @@ class AbstractMenu:
 		""" will be called at the end of the processing of the menu """
 		return
 
-	def synch(self, selector_name :str, omit_if_set :bool = False,omit_if_disabled :bool = False):
+	def synch(self, selector_name: str, omit_if_set: bool = False, omit_if_disabled: bool = False):
 		""" loads menu options with data_store value """
 		arg = self._data_store.get(selector_name, None)
 		# don't display the menu option if it was defined already
@@ -304,7 +310,8 @@ class AbstractMenu:
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
 		enabled_menus = self._menus_to_enable()
 		padding = self._get_menu_text_padding(list(enabled_menus.values()))
-		option = [(k, v) for k, v in self._menu_options.items() if v.menu_text(padding).strip() == selection_name.strip()]
+		option = [(k, v) for k, v in self._menu_options.items() if
+				  v.menu_text(padding).strip() == selection_name.strip()]
 
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')
@@ -318,7 +325,6 @@ class AbstractMenu:
 		for item in self.list_options():
 			self.synch(item)
 
-		self.post_callback()  # as all the values can vary i have to exec this callback
 		cursor_pos = None
 
 		while True:
@@ -371,13 +377,13 @@ class AbstractMenu:
 						break
 
 		# we get the last action key
-		actions = {str(v.description):k for k,v in self._menu_options.items()}
+		actions = {str(v.description): k for k, v in self._menu_options.items()}
 		self._last_choice = actions[selection.value.strip()]  # type: ignore
 
 		if not self.is_context_mgr:
 			self.__exit__()
 
-	def _process_selection(self, selection_name :str) -> bool:
+	def _process_selection(self, selection_name: str) -> bool:
 		"""  determines and executes the selection y
 			Can / Should be extended to handle specific selection issues
 			Returns true if the menu shall continue, False if it has ended
@@ -386,7 +392,7 @@ class AbstractMenu:
 		config_name, selector = self._find_selection(selection_name)
 		return self.exec_option(config_name, selector)
 
-	def exec_option(self, config_name :str, p_selector :Selector = None) -> bool:
+	def exec_option(self, config_name: str, p_selector: Optional[Selector] = None) -> bool:
 		""" processes the execution of a given menu entry
 		- pre process callback
 		- selection function
@@ -402,14 +408,17 @@ class AbstractMenu:
 		self.pre_callback(config_name)
 
 		result = None
-		if selector.func:
+
+		if selector.func is not None:
 			presel_val = self.option(config_name).get_selection()
 			result = selector.func(presel_val)
 			self._menu_options[config_name].set_current_selection(result)
 			if selector.do_store():
 				self._data_store[config_name] = result
-		exec_ret_val = selector.exec_func(config_name,result) if selector.exec_func else False
-		self.post_callback(config_name,result)
+
+		exec_ret_val = selector.exec_func(config_name, result) if selector.exec_func else False
+
+		self.post_callback(config_name, result)
 
 		if exec_ret_val:
 			return False
@@ -423,7 +432,7 @@ class AbstractMenu:
 		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
 			set_keyboard_language(self._data_store['keyboard-layout'])
 
-	def _verify_selection_enabled(self, selection_name :str) -> bool:
+	def _verify_selection_enabled(self, selection_name: str) -> bool:
 		""" general """
 		if selection := self._menu_options.get(selection_name, None):
 			if not selection.enabled:
@@ -460,7 +469,7 @@ class AbstractMenu:
 
 		return ordered_menus
 
-	def option(self,name :str) -> Selector:
+	def option(self, name: str) -> Selector:
 		# TODO check inexistent name
 		return self._menu_options[name]
 
@@ -478,7 +487,7 @@ class AbstractMenu:
 			if item in self._menus_to_enable():
 				yield item
 
-	def set_option(self, name :str, selector :Selector):
+	def set_option(self, name: str, selector: Selector):
 		self._menu_options[name] = selector
 		self.synch(name)
 
@@ -489,7 +498,7 @@ class AbstractMenu:
 
 
 class AbstractSubMenu(AbstractMenu):
-	def __init__(self, data_store: Dict[str, Any] = None):
+	def __init__(self, data_store: Dict[str, Any] = {}):
 		super().__init__(data_store=data_store)
 
 		self._menu_options['__separator__'] = Selector('')

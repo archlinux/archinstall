@@ -183,12 +183,12 @@ class GlobalMenu(AbstractMenu):
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
 
-	def _update_install_text(self, name :str = None, result :Any = None):
+	def _update_install_text(self, name: str, value: str):
 		text = self._install_text()
 		self._menu_options['install'].update_description(text)
 
-	def post_callback(self,name :str = None ,result :Any = None):
-		self._update_install_text(name, result)
+	def post_callback(self, name: str, value: str):
+		self._update_install_text(name, value)
 
 	def _install_text(self):
 		missing = len(self._missing_configs())
@@ -212,12 +212,12 @@ class GlobalMenu(AbstractMenu):
 		selector = self._menu_options['disk_layouts']
 
 		if selector.has_selection():
-			layouts: List[DeviceModification] = selector.current_selection
+			mods: List[DeviceModification] = selector.current_selection
 		else:
 			# this should not happen as the encryption menu has the disk layout as dependency
 			raise ValueError('No disk layout specified')
 
-		disk_encryption = DiskEncryptionMenu(data_store, preset, layouts).run()
+		disk_encryption = DiskEncryptionMenu(data_store, preset, mods).run()
 		return disk_encryption
 
 	def _prev_network_config(self) -> Optional[str]:
@@ -323,7 +323,10 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_disk_layout(self, preset: Optional[DiskLayoutConfiguration] = None) -> DiskLayoutConfiguration:
+	def _select_disk_layout(
+		self,
+		preset: Optional[DiskLayoutConfiguration] = None
+	) -> Optional[DiskLayoutConfiguration]:
 		return select_disk_layout(
 			preset,
 			storage['arguments'].get('advanced', False)
