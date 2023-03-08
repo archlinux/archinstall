@@ -37,7 +37,7 @@ def _check_driver() -> bool:
 	return True
 
 def _get_system_privelege_control_preference():
-	## need to activate seat service and add to seat group
+	# need to activate seat service and add to seat group
 	title = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
 	title += str(_('\n\nChoose an option to give Sway access to your hardware'))
 	choice = Menu(title, ["polkit", "seatd"]).run()
@@ -68,6 +68,7 @@ def _prep_function(*args, **kwargs):
 		return True
 
 	return False
+
 
 """
 def _post_install(*args, **kwargs):
