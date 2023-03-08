@@ -60,7 +60,6 @@ def save_config(config: Dict):
 
 	if choice.type_ == MenuSelectionType.Skip:
 		return
-	
 
 	dirs_to_exclude = [
 		'/bin',
