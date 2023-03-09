@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any, TYPE_CHECKING, List
+from typing import Dict, Optional, Any, TYPE_CHECKING
 
 from ..menu.abstract_menu import Selector, AbstractSubMenu
 from ..menu.menu import MenuSelectionType

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 
 from ..hsm.fido import Fido2Device
