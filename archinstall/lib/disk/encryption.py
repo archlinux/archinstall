@@ -46,7 +46,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 			Selector(
 				_('Partitions'),
 				func=lambda preset: select_partitions_to_encrypt(self._disk_layouts, preset),
-				display_func=lambda x: f'{len(x)} {_("Partitions")}' if x else None,
+				display_func=lambda x: f'{sum([len(y) for y in x.values()])} {_("Partitions")}' if x else None,
 				dependencies=['encryption_password'],
 				default=self._preset.partitions,
 				preview_func=self._prev_disk_layouts,
@@ -86,9 +86,14 @@ class DiskEncryptionMenu(AbstractSubMenu):
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['partitions']
 		if selector.has_selection():
-			partitions: List[Any] = selector.current_selection
+			partitions: Dict[str, Any] = selector.current_selection
+
+			all_partitions = []
+			for parts in partitions.values():
+				all_partitions += parts
+
 			output = str(_('Partitions to be encrypted')) + '\n'
-			output += current_partition_layout(partitions, with_title=False)
+			output += current_partition_layout(all_partitions, with_title=False)
 			return output.rstrip()
 		return None
 
@@ -132,7 +137,7 @@ def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 	return None
 
 
-def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]) -> List[Any]:
+def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: Dict[str, Any]) -> Dict[str, Any]:
 	# If no partitions was marked as encrypted, but a password was supplied and we have some disks to format..
 	# Then we need to identify which partitions to encrypt. This will default to / (root).
 	all_partitions = []
@@ -157,6 +162,13 @@ def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: List[Any]
 			case MenuSelectionType.Skip:
 				return preset
 			case MenuSelectionType.Selection:
-				return choice.value  # type: ignore
+				selections = choice.value  # type: ignore
+				partitions = {}
 
-	return []
+				for path, device in disk_layouts.items():
+					for part in selections:
+						if part in device.get('partitions', []):
+							partitions.setdefault(path, []).append(part)
+
+				return partitions
+	return {}

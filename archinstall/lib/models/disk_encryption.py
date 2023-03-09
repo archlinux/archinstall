@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
@@ -9,8 +11,7 @@ if TYPE_CHECKING:
 
 
 class EncryptionType(Enum):
-	Partition = auto()
-	# FullDiskEncryption = auto()
+	Partition = 'partition'
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
@@ -35,9 +36,39 @@ class EncryptionType(Enum):
 class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.Partition
 	encryption_password: str = ''
-	partitions: List[str] = field(default_factory=list)
+	partitions: Dict[str, Dict[str, Any]] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
 
+	@property
+	def all_partitions(self) -> List[Dict[str, Any]]:
+		_all = []
+		for parts in self.partitions.values():
+			_all += parts
+		return _all
+
 	def generate_encryption_file(self, partition) -> bool:
-		return partition in self.partitions and partition['mountpoint'] != '/'
-	
+		return partition in self.all_partitions and partition['mountpoint'] != '/'
+
+	def json(self) -> Dict[str, Any]:
+		obj = {
+			'encryption_type': self.encryption_type.value,
+			'partitions': self.partitions
+		}
+
+		if self.hsm_device:
+			obj['hsm_device'] = self.hsm_device.json()
+
+		return obj
+
+	@classmethod
+	def parse_arg(cls, arg: Dict[str, Any], password: str = '') -> 'DiskEncryption':
+		enc = DiskEncryption(
+			EncryptionType(arg['encryption_type']),
+			password,
+			arg['partitions']
+		)
+
+		if hsm := arg.get('hsm_device', None):
+			enc.hsm_device = Fido2Device.parse_arg(hsm)
+
+		return enc

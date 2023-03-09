@@ -247,7 +247,7 @@ class Installer:
 
 		# we manage the encrypted partititons
 		if self._disk_encryption:
-			for partition in self._disk_encryption.partitions:
+			for partition in self._disk_encryption.all_partitions:
 				# open the luks device and all associate stuff
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
