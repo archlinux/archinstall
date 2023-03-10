@@ -319,6 +319,11 @@ class Installer:
 		partition.mount(f'{self.target}{mountpoint}', options=options)
 
 	def add_swapfile(self, size = '4G', enable_resume = True, file='/swapfile'):
+		if file[:1] != '/':
+			file = f"/{file}"
+		if len(file.strip()) <= 0 or file == '/':
+			raise ValueError(f"The filename for the swap file has to be a valid path, not: {self.target}{file}")
+			
 		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
 		SysCommand(f'chmod 0600 {self.target}{file}')
 		SysCommand(f'mkswap {self.target}{file}')
