@@ -36,7 +36,7 @@ class EncryptionType(Enum):
 class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.Partition
 	encryption_password: str = ''
-	partitions: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+	partitions: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
 	hsm_device: Optional[Fido2Device] = None
 
 	@property
@@ -70,7 +70,7 @@ class DiskEncryption:
 		# we have to map the enc partition config to the disk layout objects
 		# they both need to point to the same object as it will get modified
 		# during the installation process
-		enc_partitions: Dict[str, Dict[str, Any]] = {}
+		enc_partitions: Dict[str, List[Dict[str, Any]]] = {}
 
 		for path, partitions in disk_layout.items():
 			conf_partitions = arg['partitions'].get(path, [])
