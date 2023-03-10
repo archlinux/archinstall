@@ -36,7 +36,7 @@ class EncryptionType(Enum):
 class DiskEncryption:
 	encryption_type: EncryptionType = EncryptionType.Partition
 	encryption_password: str = ''
-	partitions: Dict[str, Dict[str, Any]] = field(default_factory=list)
+	partitions: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 	hsm_device: Optional[Fido2Device] = None
 
 	@property
@@ -61,11 +61,27 @@ class DiskEncryption:
 		return obj
 
 	@classmethod
-	def parse_arg(cls, arg: Dict[str, Any], password: str = '') -> 'DiskEncryption':
+	def parse_arg(
+		cls,
+		disk_layout: Dict[str, Any],
+		arg: Dict[str, Any],
+		password: str = ''
+	) -> 'DiskEncryption':
+		# we have to map the enc partition config to the disk layout objects
+		# they both need to point to the same object as it will get modified
+		# during the installation process
+		enc_partitions = {}
+
+		for path, partitions in disk_layout.items():
+			conf_partitions = arg['partitions'].get(path, [])
+			for part in partitions['partitions']:
+				if part in conf_partitions:
+					enc_partitions.setdefault(path, []).append(part)
+
 		enc = DiskEncryption(
 			EncryptionType(arg['encryption_type']),
 			password,
-			arg['partitions']
+			enc_partitions
 		)
 
 		if hsm := arg.get('hsm_device', None):
