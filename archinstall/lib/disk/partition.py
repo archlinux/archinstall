@@ -98,17 +98,18 @@ class Partition:
 		if mountpoint:
 			self.mount(mountpoint)
 
-		self._partition_info = self._fetch_information()
+		try:
+			self._partition_info = self._fetch_information()
+	
+			if not autodetect_filesystem and filesystem:
+				self._partition_info.filesystem_type = filesystem
 
-		if not autodetect_filesystem and filesystem:
-			self._partition_info.filesystem_type = filesystem
+			if self._partition_info.filesystem_type == 'crypto_LUKS':
+				self._encrypted = True
+		except DiskError:
+			self._partition_info = None
 
-		if self._partition_info.filesystem_type == 'crypto_LUKS':
-			self._encrypted = True
-
-	# I hate doint this but I'm currently unsure where this
-	# is acutally used to be able to fix the typing issues properly
-	@typing.no_type_check
+	@typing.no_type_check # I hate doint this but I'm currently unsure where this is used.
 	def __lt__(self, left_comparitor :BlockDevice) -> bool:
 		if type(left_comparitor) == Partition:
 			left_comparitor = left_comparitor.path
@@ -120,14 +121,17 @@ class Partition:
 
 	def __repr__(self, *args :str, **kwargs :str) -> str:
 		mount_repr = ''
-		if mountpoint := self._partition_info.get_first_mountpoint():
-			mount_repr = f", mounted={mountpoint}"
-		elif self._target_mountpoint:
-			mount_repr = f", rel_mountpoint={self._target_mountpoint}"
+		if self._partition_info:
+			if mountpoint := self._partition_info.get_first_mountpoint():
+				mount_repr = f", mounted={mountpoint}"
+			elif self._target_mountpoint:
+				mount_repr = f", rel_mountpoint={self._target_mountpoint}"
 
 		classname = self.__class__.__name__
 
-		if self._encrypted:
+		if not self._partition_info:
+			return f'{classname}(path={self._path})'
+		elif self._encrypted:
 			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, parent={self.real_device}, fs={self._partition_info.filesystem_type}{mount_repr})'
 		else:
 			return f'{classname}(path={self._path}, size={self.size}, PARTUUID={self.part_uuid}, fs={self._partition_info.filesystem_type}{mount_repr})'
@@ -146,7 +150,7 @@ class Partition:
 			'encrypted': self._encrypted,
 			'start': self.start,
 			'size': self.end,
-			'filesystem': self._partition_info.filesystem_type
+			'filesystem': self._partition_info.filesystem_type if self._partition_info else 'Unknown'
 		}
 
 		return partition_info
@@ -164,34 +168,38 @@ class Partition:
 			'start': self.start,
 			'size': self.end,
 			'filesystem': {
-				'format': self._partition_info.filesystem_type
+				'format': self._partition_info.filesystem_type if self._partition_info else 'None'
 			}
 		}
 
 	def _call_lsblk(self) -> Dict[str, Any]:
-		self.partprobe()
-		# This sleep might be overkill, but lsblk is known to
-		# work against a chaotic cache that can change during call
-		# causing no information to be returned (blkid is better)
-		# time.sleep(1)
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+			self.partprobe()
+			time.sleep(max(0.1, storage['DISK_TIMEOUTS'] * retry_attempt)) # TODO: Remove, we should be relying on blkid instead of lsblk
+			# This sleep might be overkill, but lsblk is known to
+			# work against a chaotic cache that can change during call
+			# causing no information to be returned (blkid is better)
+			# time.sleep(1)
 
-		# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
+			# TODO: Maybe incorporate a re-try system here based on time.sleep(max(0.1, storage.get('DISK_TIMEOUTS', 1)))
 
-		try:
-			output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
-		except SysCallError as error:
-			# It appears as if lsblk can return exit codes like 8192 to indicate something.
-			# But it does return output so we'll try to catch it.
-			output = error.worker.decode('UTF-8')
-
-		if output:
 			try:
-				lsblk_info = json.loads(output)
-				return lsblk_info
-			except json.decoder.JSONDecodeError:
-				log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
+				output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
+			except SysCallError as error:
+				# It appears as if lsblk can return exit codes like 8192 to indicate something.
+				# But it does return output in stderr so we'll try to catch it minus the message/info.
+				output = error.worker.decode('UTF-8')
+				if '{' in output:
+					output = output[output.find('{'):]
 
-		raise DiskError(f'Failed to read disk "{self.device_path}" with lsblk')
+			if output:
+				try:
+					lsblk_info = json.loads(output)
+					return lsblk_info
+				except json.decoder.JSONDecodeError:
+					log(f"Could not decode JSON: {output}", fg="red", level=logging.ERROR)
+		
+		raise DiskError(f'Failed to get partition information "{self.device_path}" with lsblk')
 
 	def _call_sfdisk(self) -> Dict[str, Any]:
 		output = SysCommand(f"sfdisk --json {self.block_device.path}").decode('UTF-8')
@@ -212,8 +220,11 @@ class Partition:
 		lsblk_info = self._call_lsblk()
 		sfdisk_info = self._call_sfdisk()
 
-		if not (device := lsblk_info.get('blockdevices', [None])[0]):
+		if not (device := lsblk_info.get('blockdevices', [])):
 			raise DiskError(f'Failed to retrieve information for "{self.device_path}" with lsblk')
+
+		# Grab the first (and only) block device in the list as we're targeting a specific partition
+		device = device[0]
 
 		mountpoints = [Path(mountpoint) for mountpoint in device['mountpoints'] if mountpoint]
 		bootable = sfdisk_info.get('bootable', False) or sfdisk_info.get('type', '') == 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B'
@@ -243,7 +254,8 @@ class Partition:
 
 	@property
 	def filesystem(self) -> str:
-		return self._partition_info.filesystem_type
+		if self._partition_info:
+			return self._partition_info.filesystem_type
 
 	@property
 	def mountpoint(self) -> Optional[Path]:
@@ -253,43 +265,51 @@ class Partition:
 
 	@property
 	def mountpoints(self) -> List[Path]:
-		return self._partition_info.mountpoints
+		if self._partition_info:
+			return self._partition_info.mountpoints
 
 	@property
 	def sector_size(self) -> int:
-		return self._partition_info.sector_size
+		if self._partition_info:
+			return self._partition_info.sector_size
 
 	@property
 	def start(self) -> Optional[int]:
-		return self._partition_info.start
+		if self._partition_info:
+			return self._partition_info.start
 
 	@property
 	def end(self) -> Optional[int]:
-		return self._partition_info.end
+		if self._partition_info:
+			return self._partition_info.end
 
 	@property
 	def end_sectors(self) -> Optional[int]:
-		start = self._partition_info.start
-		end = self._partition_info.end
-		if start and end:
-			return start + end
-		return None
+		if self._partition_info:
+			start = self._partition_info.start
+			end = self._partition_info.end
+			if start and end:
+				return start + end
 
 	@property
 	def size(self) -> Optional[float]:
-		return self._partition_info.size
+		if self._partition_info:
+			return self._partition_info.size
 
 	@property
 	def boot(self) -> bool:
-		return self._partition_info.bootable
+		if self._partition_info:
+			return self._partition_info.bootable
 
 	@property
 	def partition_type(self) -> Optional[str]:
-		return self._partition_info.pttype
+		if self._partition_info:
+			return self._partition_info.pttype
 
 	@property
 	def part_uuid(self) -> str:
-		return self._partition_info.partuuid
+		if self._partition_info:
+			return self._partition_info.partuuid
 
 	@property
 	def uuid(self) -> Optional[str]:
@@ -355,7 +375,8 @@ class Partition:
 
 			log(f"Could not get PARTUUID of partition using 'blkid -s PARTUUID -o value {self.device_path}': {error}")
 
-		return self._partition_info.uuid
+		if self._partition_info:
+			return self._partition_info.uuid
 
 	@property
 	def encrypted(self) -> Union[bool, None]:

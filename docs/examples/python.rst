@@ -35,10 +35,10 @@ To do this, we'll begin by importing `archinstall` in our `./archinstall/example
 
     import archinstall
     
-    all_drives = archinstall.list_drives()
-    print(all_drives)
+    all_drives = archinstall.all_blockdevices(partitions=False)
+    print(list(all_drives.keys()))
 
-This should print out a list of drives and some meta-information about them.
+This should print out a list of drives.
 As an example, this will do just fine.
 
 Now, go ahead and install the library either as a user-module or system-wide.

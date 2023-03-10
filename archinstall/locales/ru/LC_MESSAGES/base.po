@@ -832,6 +832,12 @@ msgstr "TAB, чтобы выбрать"
 msgid "[Default value: 0] > "
 msgstr "[Значение по умолчанию: 0] > "
 
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Чтобы иметь возможность использовать этот перевод, пожалуйста, установите вручную шрифт, поддерживающий данный язык."
+
+msgid "The font should be stored as {}"
+msgstr "Шрифт должен быть сохранен как {}"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"

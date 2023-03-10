@@ -15,7 +15,7 @@ from .exceptions import RequirementError
 
 def configuration_sanity_check():
 	disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
-	if disk_encryption.hsm_device:
+	if disk_encryption is not None and disk_encryption.hsm_device:
 		if not Fido2.get_fido2_devices():
 			raise RequirementError(
 				f"In order to use HSM to pair with the disk encryption,"

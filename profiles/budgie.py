@@ -4,12 +4,14 @@ import archinstall
 
 is_top_level_profile = False
 
-# "It is recommended also to install the gnome group, which contains applications required for the standard GNOME experience." - Arch Wiki
 __packages__ = [
-	"budgie-desktop",
-	"gnome",
+	"arc-gtk-theme",
+	"budgie",
 	"lightdm",
 	"lightdm-gtk-greeter",
+	"mate-terminal",
+	"nemo",
+	"papirus-icon-theme",
 ]
 
 

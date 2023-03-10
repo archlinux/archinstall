@@ -47,7 +47,7 @@ from .lib.configuration import *
 from .lib.udev import udevadm_info
 parser = ArgumentParser()
 
-__version__ = "2.5.2"
+__version__ = "2.5.3"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -221,11 +221,8 @@ def load_config():
 			selected_region = arguments.get('mirror-region', None)
 			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
 
-	if arguments.get('sys-language', None) is not None:
-		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
-
-	if arguments.get('sys-encoding', None) is not None:
-		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
+	arguments.setdefault('sys-language', 'en_US')
+	arguments.setdefault('sys-encoding', 'utf-8')
 
 	if arguments.get('gfx_driver', None) is not None:
 		storage['gfx_driver_packages'] = AVAILABLE_GFX_DRIVERS.get(arguments.get('gfx_driver', None), None)
