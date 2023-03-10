@@ -890,16 +890,14 @@ class Installer:
 						else:
 							kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
 
-<<<<<<< HEAD
 						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-=======
+
 					if self._disk_encryption and self._disk_encryption.hsm_device:
 						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
 						# Note: tpm2-device and fido2-device don't play along very well:
 						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
->>>>>>> 6c879962016c5a75000d1a7971f8a020be549927
 					else:
 						log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
 						entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
