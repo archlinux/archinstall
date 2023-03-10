@@ -95,13 +95,15 @@ def save_config(config: Dict):
 		possible_save_dirs,
 		multi=True,
 		skip=True,
+		allow_reset=False,
 	).run()
 
 	match selection.type_:
-		case MenuSelectionType.Reset:
-			save_dirs = []
+		case MenuSelectionType.Skip:
+			return
 		case _:
 			save_dirs = selection.value
+
 
 	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
 		list(options.keys())[list(options.values()).index(choice.value)],
