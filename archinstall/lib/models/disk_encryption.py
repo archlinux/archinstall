@@ -41,7 +41,7 @@ class DiskEncryption:
 
 	@property
 	def all_partitions(self) -> List[Dict[str, Any]]:
-		_all = []
+		_all: List[Dict[str, Any]] = []
 		for parts in self.partitions.values():
 			_all += parts
 		return _all
@@ -70,7 +70,7 @@ class DiskEncryption:
 		# we have to map the enc partition config to the disk layout objects
 		# they both need to point to the same object as it will get modified
 		# during the installation process
-		enc_partitions = {}
+		enc_partitions: Dict[str, Dict[str, Any]] = {}
 
 		for path, partitions in disk_layout.items():
 			conf_partitions = arg['partitions'].get(path, [])

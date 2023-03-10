@@ -158,11 +158,11 @@ def select_partitions_to_encrypt(disk_layouts: Dict[str, Any], preset: Dict[str,
 
 		match choice.type_:
 			case MenuSelectionType.Reset:
-				return []
+				return {}
 			case MenuSelectionType.Skip:
 				return preset
 			case MenuSelectionType.Selection:
-				selections = choice.value  # type: ignore
+				selections: List[Any] = choice.value  # type: ignore
 				partitions = {}
 
 				for path, device in disk_layouts.items():
