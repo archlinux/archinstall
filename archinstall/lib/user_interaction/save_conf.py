@@ -104,7 +104,6 @@ def save_config(config: Dict):
 		case _:
 			save_dirs = selection.value
 
-
 	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
 		list(options.keys())[list(options.values()).index(choice.value)],
 		save_dirs
