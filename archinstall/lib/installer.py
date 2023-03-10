@@ -198,7 +198,7 @@ class Installer:
 	def _create_keyfile(self,luks_handle , partition :dict, password :str):
 		""" roiutine to create keyfiles, so it can be moved elsewhere
 		"""
-		if self._disk_encryption.generate_encryption_file(partition):
+		if self._disk_encryption and self._disk_encryption.generate_encryption_file(partition):
 			if not (cryptkey_dir := pathlib.Path(f"{self.target}/etc/cryptsetup-keys.d")).exists():
 				cryptkey_dir.mkdir(parents=True)
 			# Once we store the key as ../xyzloop.key systemd-cryptsetup can automatically load this key
@@ -246,20 +246,21 @@ class Installer:
 		mount_queue = {}
 
 		# we manage the encrypted partititons
-		for partition in self._disk_encryption.partitions:
-			# open the luks device and all associate stuff
-			loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
+		if self._disk_encryption:
+			for partition in self._disk_encryption.partitions:
+				# open the luks device and all associate stuff
+				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
-			# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
-			with (luks_handle := luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
-				if self._disk_encryption.generate_encryption_file(partition) and not self._has_root(partition):
-					list_luks_handles.append([luks_handle, partition, self._disk_encryption.encryption_password])
-				# this way all the requesrs will be to the dm_crypt device and not to the physical partition
-				partition['device_instance'] = unlocked_device
+				# note that we DON'T auto_unmount (i.e. close the encrypted device so it can be used
+				with (luks_handle := luks2(partition['device_instance'], loopdev, self._disk_encryption.encryption_password, auto_unmount=False)) as unlocked_device:
+					if self._disk_encryption.generate_encryption_file(partition) and not self._has_root(partition):
+						list_luks_handles.append([luks_handle, partition, self._disk_encryption.encryption_password])
+					# this way all the requesrs will be to the dm_crypt device and not to the physical partition
+					partition['device_instance'] = unlocked_device
 
-			if self._has_root(partition) and self._disk_encryption.generate_encryption_file(partition) is False:
-				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(self._disk_encryption.hsm_device, partition['device_instance'], self._disk_encryption.encryption_password)
+				if self._has_root(partition) and self._disk_encryption.generate_encryption_file(partition) is False:
+					if self._disk_encryption.hsm_device:
+						Fido2.fido2_enroll(self._disk_encryption.hsm_device, partition['device_instance'], self._disk_encryption.encryption_password)
 
 		btrfs_subvolumes = [entry for entry in list_part if entry.get('btrfs', {}).get('subvolumes', [])]
 
@@ -292,7 +293,7 @@ class Installer:
 			else:
 				mount_queue[mountpoint] = lambda instance=partition['device_instance'], target=f"{self.target}{mountpoint}": instance.mount(target)
 
-		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.INFO, fg="white")
+		log(f"Using mount order: {list(sorted(mount_queue.items(), key=lambda item: item[0]))}", level=logging.DEBUG, fg="white")
 
 		# We mount everything by sorting on the mountpoint itself.
 		for mountpoint, frozen_func in sorted(mount_queue.items(), key=lambda item: item[0]):
@@ -396,7 +397,7 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True).exit_code == 0
+			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
@@ -641,12 +642,17 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
+		# mkinitcpio will error out if there's no vconsole.
+		if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
+			with vconsole.open('w') as fh:
+				fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
+
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
 			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
 
-			if not self._disk_encryption.hsm_device:
+			if self._disk_encryption and not self._disk_encryption.hsm_device:
 				# For now, if we don't use HSM we revert to the old
 				# way of setting up encryption hooks for mkinitcpio.
 				# This is purely for stability reasons, we're going away from this.
@@ -690,7 +696,7 @@ class Installer:
 					self.HOOKS.remove('fsck')
 
 			if self.detect_encryption(partition):
-				if self._disk_encryption.hsm_device:
+				if self._disk_encryption and self._disk_encryption.hsm_device:
 					# Required bby mkinitcpio to add support for fido2-device options
 					self.pacstrap('libfido2')
 
@@ -753,14 +759,6 @@ class Installer:
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
-
-		if self._disk_encryption.hsm_device:
-			# TODO:
-			# A bit of a hack, but we need to get vconsole.conf in there
-			# before running `mkinitcpio` because it expects it in HSM mode.
-			if (vconsole := pathlib.Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
-				with vconsole.open('w') as fh:
-					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
 		self.mkinitcpio('-P')
 
@@ -892,7 +890,16 @@ class Installer:
 						else:
 							kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
 
+<<<<<<< HEAD
 						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
+=======
+					if self._disk_encryption and self._disk_encryption.hsm_device:
+						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+						kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
+						# Note: tpm2-device and fido2-device don't play along very well:
+						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
+>>>>>>> 6c879962016c5a75000d1a7971f8a020be549927
 					else:
 						log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
 						entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
@@ -924,15 +931,15 @@ class Installer:
 		if has_uefi():
 			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as error:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
 		else:
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peek_output=True)
 			except SysCallError as error:
 				raise DiskError(f"Could not install GRUB to {boot_partition.path}: {error}")
 

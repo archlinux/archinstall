@@ -24,7 +24,7 @@ jobs:
           pip install build twine
       - name: Build archinstall
         run: |
-          python -m build
+          python -m build . --wheel
       - name: Publish archinstall to PyPi
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}

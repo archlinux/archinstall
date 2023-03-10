@@ -174,7 +174,10 @@ def select_profile(preset) -> Optional[Profile]:
 			storage['profile_minimal'] = False
 			storage['_selected_servers'] = []
 			storage['_desktop_profile'] = None
+			storage['sway_sys_priv_ctrl'] = None
+			storage['arguments']['sway_sys_priv_ctrl'] = None
 			storage['arguments']['desktop-environment'] = None
+			storage['arguments']['gfx_driver'] = None
 			storage['arguments']['gfx_driver_packages'] = None
 			return None
 		case MenuSelectionType.Skip:

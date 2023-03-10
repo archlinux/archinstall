@@ -1,6 +1,6 @@
 [build-system]
-requires = ["flit_core >=3.5.1,<4", "setuptools>=45", "wheel"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=67"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
@@ -18,6 +18,7 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX :: Linux",
 ]
@@ -33,14 +34,10 @@ archinstall = "archinstall:run_as_a_module"
 [project.optional-dependencies]
 doc = ["sphinx"]
 
-[tool.flit.sdist]
-include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]
-exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
-
 [tool.mypy]
 python_version = "3.10"
 exclude = "tests"
 
 [tool.bandit]
-targets = ["ourkvm"]
+targets = ["archinstall"]
 exclude = ["/tests"]
