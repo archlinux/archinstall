@@ -168,6 +168,7 @@ you can replace the version of archinstall with a new version and run that with 
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
 6. Build the project and install it using `python setup.py install`
+   *If you get a 'No Module named setuptools' error, run `pacman -S python-setuptools`*
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
 
