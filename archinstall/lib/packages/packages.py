@@ -106,7 +106,7 @@ def installed_package(package :str) -> LocalPackage:
 	package_info = {}
 	try:
 		for line in run_pacman(f"-Q --info {package}"):
-			if b':' in line:
+			if b':' in line and not line.startswith(b'warning'):
 				key, value = line.decode().split(':', 1)
 				package_info[key.strip().lower().replace(' ', '_')] = value.strip()
 	except SysCallError:
