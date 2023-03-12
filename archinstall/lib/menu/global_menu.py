@@ -75,7 +75,6 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: self._select_disk_layout(preset),
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),
-				# dependencies=['devices']
 			)
 		self._menu_options['disk_encryption'] = \
 			Selector(

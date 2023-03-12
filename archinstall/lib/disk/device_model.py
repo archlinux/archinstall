@@ -49,9 +49,63 @@ class DiskLayoutConfiguration:
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
-			'layout_type': self.config_type.value,
-			'layouts': [mod.__dump__() for mod in self.device_modifications]
+			'config_type': self.config_type.value,
+			'device_modifications': [mod.__dump__() for mod in self.device_modifications]
 		}
+
+	@classmethod
+	def parse_arg(cls, disk_config: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
+		from .device_handler import device_handler
+
+		device_modifications: List[DeviceModification] = []
+		config_type = disk_config.get('config_type', None)
+
+		if not config_type:
+			raise ValueError('Missing disk layout configuration: config_type')
+
+		config = DiskLayoutConfiguration(
+			config_type=DiskLayoutType(config_type),
+			device_modifications=device_modifications
+		)
+
+		for entry in disk_config.get('device_modifications', []):
+			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
+
+			if not device_path:
+				continue
+
+			device = device_handler.get_device(device_path)
+
+			if not device:
+				continue
+
+			device_modification = DeviceModification(
+				wipe=entry.get('wipe', False),
+				device=device
+			)
+
+			device_partitions: List[PartitionModification] = []
+
+			for partition in entry.get('partitions', []):
+				device_partition = PartitionModification(
+					status=ModificationStatus(partition['status']),
+					fs_type=FilesystemType(partition['fs_type']),
+					start=Size.parse_args(partition['start']),
+					length=Size.parse_args(partition['length']),
+					mount_options=partition['mount_options'],
+					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
+					type=PartitionType(partition['type']),
+					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
+					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
+				)
+				# special 'invisible attr to internally identify the part mod
+				setattr(device_partition, '_obj_id', partition['obj_id'])
+				device_partitions.append(device_partition)
+
+			device_modification.partitions = device_partitions
+			device_modifications.append(device_modification)
+
+		return config
 
 
 class PartitionTable(Enum):
@@ -518,13 +572,14 @@ class PartitionModification:
 
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
-		self._id = uuid.uuid4()
+		if not hasattr(self, '_obj_id'):
+			self._obj_id = uuid.uuid4()
 
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
 	def __hash__(self):
-		return hash(self._id)
+		return hash(self._obj_id)
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
@@ -599,11 +654,12 @@ class PartitionModification:
 		else:
 			self.set_flag(flag)
 
-	def __dump__(self) -> Dict[str, Any]:
+	def json(self) -> Dict[str, Any]:
 		"""
 		Called for configuration settings
 		"""
 		return {
+			'obj_id': str(self._obj_id),
 			'status': self.status.value,
 			'type': self.type.value,
 			'start': self.start.__dump__(),
@@ -663,7 +719,7 @@ class DeviceModification:
 		return {
 			'device': str(self.device.device_info.path),
 			'wipe': self.wipe,
-			'partitions': [p.__dump__() for p in self.partitions]
+			'partitions': [p.json() for p in self.partitions]
 		}
 
 

@@ -31,7 +31,7 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 
 	def _preview_device_selection(selection: DeviceInfo) -> Optional[str]:
 		dev = device_handler.get_device(selection.path)
-		if dev:
+		if dev and dev.partition_infos:
 			return FormattedOutput.as_table(dev.partition_infos)
 		return None
 

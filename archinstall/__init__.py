@@ -2,7 +2,7 @@
 import importlib
 from argparse import ArgumentParser, Namespace
 
-from .lib.disk.device_handler import device_handler
+from .lib.disk.device_model import DiskLayoutConfiguration
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
@@ -202,7 +202,7 @@ def load_config():
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
 	if layouts := arguments.get('disk_layouts', {}):
-		arguments['disk_layouts'] = device_handler.parse_device_arguments(layouts)
+		arguments['disk_layouts'] = DiskLayoutConfiguration.parse_arg(layouts)
 
 	if profile := arguments.get('profile', None):
 		arguments['profile'] = ProfileHandler().parse_profile_config(profile)
@@ -235,6 +235,14 @@ def load_config():
 
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = Bootloader.from_arg(arguments['bootloader'])
+
+	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_layouts', None) is not None:
+		password = arguments.get('encryption_password', '')
+		arguments['disk_encryption'] = DiskEncryption.parse_arg(
+			arguments['disk_layouts'],
+			arguments['disk_encryption'],
+			password
+		)
 
 
 def post_process_arguments(arguments):

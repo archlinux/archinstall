@@ -69,7 +69,7 @@ class Menu(TerminalMenu):
 		preview_title: str = 'Info',
 		header :Union[List[str],str] = None,
 		allow_reset :bool = False,
-		allow_reset_warning_msg :str = '',
+		allow_reset_warning_msg: Optional[str] = None,
 		clear_screen: bool = True,
 		show_search_hint: bool = True,
 		cycle_cursor: bool = True,
@@ -121,7 +121,7 @@ class Menu(TerminalMenu):
 		:param allow_reset: This will explicitly handle a ctrl+c instead and return that specific state
 		:type allow_reset: bool
 
-		param allow_reset_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
+		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warnign is set, a user confirmation is displayed
 		type allow_reset_warning_msg: str
 
 		:param extra_bottom_space: Add an extra empty line at the end of the menu
@@ -271,7 +271,7 @@ class Menu(TerminalMenu):
 		selection = self._show()
 
 		if selection.type_ == MenuSelectionType.Reset:
-			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
+			if self._raise_error_on_interrupt and self._raise_error_warning_msg is not None:
 				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()

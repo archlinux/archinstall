@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, List, Union, Any, TYPE_CHECKING
 
-from .password_strength import PasswordStrength
-
 if TYPE_CHECKING:
 	_: Any
 
@@ -25,13 +23,6 @@ class User:
 			'!password': self.password,
 			'sudo': self.sudo
 		}
-
-	def display(self) -> str:
-		password = '*' * (len(self.password) if self.password else 0)
-		if password:
-			strength = PasswordStrength.strength(self.password)
-			password += f' ({strength.value})'
-		return f'{_("Username")}: {self.username:16} {_("Password")}: {password:20} sudo: {str(self.sudo)}'
 
 	@classmethod
 	def _parse(cls, config_users: List[Dict[str, Any]]) -> List['User']:

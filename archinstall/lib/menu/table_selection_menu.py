@@ -19,7 +19,7 @@ class TableMenu(Menu):
 		preview_title: str = 'Info',
 		preview_size: float = 0.0,
 		allow_reset: bool = True,
-		allow_reset_warning_msg: str = None,
+		allow_reset_warning_msg: Optional[str] = None,
 	):
 		"""
 		param title: Text that will be displayed above the menu

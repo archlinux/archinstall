@@ -12,10 +12,8 @@ from _ped import PartitionException
 from parted import Disk, Geometry, FileSystem
 
 from .device_model import DeviceModification, PartitionModification, \
-	BDevice, DeviceInfo, PartitionInfo, DiskLayoutConfiguration, DiskLayoutType, \
-	FilesystemType, Size, Unit, PartitionType, PartitionFlag, PartitionTable, \
-	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, SubvolumeModification, \
-	get_all_lsblk_info
+	BDevice, DeviceInfo, PartitionInfo, FilesystemType, Unit, PartitionTable, \
+	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, get_all_lsblk_info
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
@@ -99,57 +97,6 @@ class DeviceHandler(object):
 			if part is not None:
 				return part
 		return None
-
-	def parse_device_arguments(self, disk_layouts: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
-		if not disk_layouts:
-			return None
-
-		layout_type = disk_layouts.get('layout_type', None)
-		if not layout_type:
-			raise ValueError('Missing disk layout configuration: layout_type')
-
-		device_modifications: List[DeviceModification] = []
-		config = DiskLayoutConfiguration(
-			config_type=DiskLayoutType(layout_type),
-			device_modifications=device_modifications
-		)
-
-		for entry in disk_layouts.get('layouts', []):
-			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
-
-			if not device_path:
-				continue
-
-			device = self.get_device(device_path)
-
-			if not device:
-				continue
-
-			device_modification = DeviceModification(
-				wipe=entry.get('wipe', False),
-				device=device
-			)
-
-			device_partitions: List[PartitionModification] = []
-
-			for partition in entry.get('partitions', []):
-				device_partition = PartitionModification(
-					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']),
-					start=Size.parse_args(partition['start']),
-					length=Size.parse_args(partition['length']),
-					mount_options=partition['mount_options'],
-					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
-					type=PartitionType(partition['type']),
-					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
-					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', []))
-				)
-				device_partitions.append(device_partition)
-
-			device_modification.partitions = device_partitions
-			device_modifications.append(device_modification)
-
-		return config
 
 	def get_uuid_for_path(self, path: Path) -> Optional[str]:
 		partition = self.find_partition(path)

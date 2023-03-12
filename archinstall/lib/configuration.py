@@ -45,7 +45,7 @@ class ConfigurationOutput:
 		self._user_creds_file = "user_credentials.json"
 
 		self._sensitive = ['!users']
-		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run', 'disk_encryption', 'devices']
+		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()
 
@@ -68,6 +68,10 @@ class ConfigurationOutput:
 				self._user_config[key] = ProfileHandler().to_json(self._config[key])
 			else:
 				self._user_config[key] = self._config[key]
+
+			# special handling for encryption password
+			if key == 'disk_encryption':
+				self._user_credentials['encryption_password'] = self._config[key].encryption_password
 
 	def user_config_to_json(self) -> str:
 		return json.dumps({

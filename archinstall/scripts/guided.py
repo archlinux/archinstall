@@ -9,6 +9,7 @@ from archinstall.lib.models.network_configuration import NetworkConfigurationHan
 from archinstall.profiles.applications.pipewire import PipewireProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType
 from ..lib.disk.device_handler import disk_layouts
+from ..lib.disk.filesystem import perform_filesystem_operations
 from ..lib.models.disk_encryption import EncryptionType
 from ..lib.output import log
 
@@ -283,27 +284,26 @@ archinstall.configuration_sanity_check()
 
 
 
-from ..lib.disk.device_handler import device_handler
-
-mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
-
-archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
-	DiskLayoutType.Pre_mount,
-	device_modifications=mods,
-	relative_mountpoint=Path('/mnt/archinstall')
-)
-
+# from ..lib.disk.device_handler import device_handler
+#
+# mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
+#
+# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+# 	DiskLayoutType.Pre_mount,
+# 	device_modifications=mods,
+# 	relative_mountpoint=Path('/mnt/archinstall')
+# )
+#
 # from pprint import pprint
 # print(len(mods))
 # pprint(mods[0].partitions)
 #
 # exit(1)
 
-
-# perform_filesystem_operations(
-# 	archinstall.arguments['disk_layouts'],
-# 	archinstall.arguments.get('disk_encryption', None)
-# )
+perform_filesystem_operations(
+	archinstall.arguments['disk_layouts'],
+	archinstall.arguments.get('disk_encryption', None)
+)
 
 # exit(1)
 
