@@ -19,12 +19,12 @@ classifiers = [
 ]
 dependencies = [
     "pyparted==3.12.0",
-    "simple-term-menu==1.5.0",
+    "simple-term-menu==1.6.1",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "mypy==1.0.1",
+    "mypy==1.1.1",
 ]
 
 [project.urls]
