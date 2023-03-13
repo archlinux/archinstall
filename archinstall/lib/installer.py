@@ -1070,6 +1070,26 @@ class Installer:
 		self.log(f'Installing archinstall profile(s) {absolute_name}', level=logging.INFO)
 		profile.install(self)
 
+	def install_audio(self, audio: str, enable_for_users: List[User] = []):
+			log(f'Installing audio server: {audio}', level=logging.INFO)
+			if audio == 'pipewire':
+				self.add_additional_packages([
+					'pipewire',
+					'pipewire-alsa',
+					'pipewire-jack',
+					'pipewire-pulse',
+					'gst-plugin-pipewire',
+					'libpulse',
+					'wireplumber'
+				])
+				self._enable_users('pipewire-pulse.service', enable_for_users)
+			elif audio == 'pulseaudio':
+				installation.add_additional_packages("pulseaudio")
+
+	def _enable_users(self, service: str, users: List[User]):
+		for user in users:
+			self.arch_chroot(f'systemctl enable --user {service}', run_as=user.username)
+
 	def enable_sudo(self, entity: str, group :bool = False):
 		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
 

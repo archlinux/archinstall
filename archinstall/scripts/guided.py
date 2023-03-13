@@ -6,7 +6,6 @@ from typing import Any, TYPE_CHECKING
 import archinstall
 from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from archinstall.profiles.applications.pipewire import PipewireProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystem import perform_filesystem_operations
@@ -182,20 +181,17 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 			installation.add_additional_packages(archinstall.arguments.get('packages', None))
 
-		if archinstall.arguments.get('profile', None):
-			installation.install_profile(archinstall.arguments.get('profile', None))
-
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
 
 		if audio := archinstall.arguments.get('audio', None):
-			installation.log(f"This audio server will be used: {audio}", level=logging.INFO)
-			if audio == 'pipewire':
-				PipewireProfile().install(installation)
-			elif audio == 'pulseaudio':
-				installation.add_additional_packages("pulseaudio")
+			users = archinstall.arguments.get('!users', [])
+			installation.install_audio(audio, enable_for_users=users)
 		else:
-			installation.log("No audio server will be installed.", level=logging.INFO)
+			installation.log('No audio server will be installed', level=logging.INFO)
+
+		if archinstall.arguments.get('profile', None):
+			installation.install_profile(archinstall.arguments.get('profile', None))
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -280,6 +276,9 @@ if not archinstall.arguments.get('silent'):
 
 archinstall.configuration_sanity_check()
 
+
+
+
 # from ..lib.disk.device_handler import device_handler
 #
 # mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
@@ -293,14 +292,14 @@ archinstall.configuration_sanity_check()
 # from pprint import pprint
 # print(len(mods))
 # pprint(mods[0].partitions)
-#
+
 # exit(1)
 
 perform_filesystem_operations(
 	archinstall.arguments['disk_layouts'],
 	archinstall.arguments.get('disk_encryption', None)
 )
-
+#
 # exit(1)
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

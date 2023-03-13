@@ -70,7 +70,7 @@ class ConfigurationOutput:
 				self._user_config[key] = self._config[key]
 
 			# special handling for encryption password
-			if key == 'disk_encryption':
+			if key == 'disk_encryption' and self._config[key] is not None:
 				self._user_credentials['encryption_password'] = self._config[key].encryption_password
 
 	def user_config_to_json(self) -> str:
