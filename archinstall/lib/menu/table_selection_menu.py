@@ -9,7 +9,7 @@ class TableMenu(Menu):
 	def __init__(
 		self,
 		title: str,
-		data: List[Any] = [],
+		data: Optional[List[Any]] = None,
 		table_data: Optional[Tuple[List[Any], str]] = None,
 		preset: List[Any] = [],
 		custom_menu_options: List[str] = [],

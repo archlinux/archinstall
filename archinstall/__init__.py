@@ -281,9 +281,6 @@ def run_as_a_module():
 	if script is None:
 		print('No script to run provided')
 
-	try:
-		mod_name = f'archinstall.scripts.{script}'
-		# by loading the module we'll automatically run the script
-		importlib.import_module(mod_name)
-	except ModuleNotFoundError:
-		print(f'Provided script could not be found: {script}')
+	mod_name = f'archinstall.scripts.{script}'
+	# by loading the module we'll automatically run the script
+	importlib.import_module(mod_name)

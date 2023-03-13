@@ -986,7 +986,8 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 				err = error.worker.decode('UTF-8')
 				log(f'Error calling lsblk: {err}', level=logging.DEBUG)
 				time.sleep(1)
-			raise error
+			else:
+				raise error
 
 	if result and result.exit_code == 0:
 		try:

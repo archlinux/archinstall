@@ -19,7 +19,7 @@ class PipewireProfile(Profile):
 		return [
 			'pipewire',
 			'pipewire-alsa',
-			'pipewire-jack',
+			# 'pipewire-jack',
 			'pipewire-pulse',
 			'gst-plugin-pipewire',
 			'libpulse',
