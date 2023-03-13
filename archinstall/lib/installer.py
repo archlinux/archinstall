@@ -11,7 +11,8 @@ from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union,
 
 from archinstall.profiles.profiles import Profile
 from .disk.device_model import PartitionModification, DiskLayoutConfiguration, \
-	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType
+	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType, \
+	DiskEncryption, EncryptionType
 from .disk.device_handler import device_handler
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -21,7 +22,6 @@ from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors
 from .models.bootloader import Bootloader
-from .models.disk_encryption import DiskEncryption, EncryptionType
 from .models.network_configuration import NetworkConfiguration
 from .models.users import User
 from .output import log

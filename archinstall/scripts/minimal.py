@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption
+from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, Installer
 from archinstall.profiles.minimal import MinimalProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
 	PartitionModification
@@ -24,8 +24,15 @@ if archinstall.arguments.get('help', None):
 
 
 def perform_installation(mountpoint: Path):
-	# We kick off the installer by telling it where the
-	with archinstall.Installer(mountpoint) as installation:
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+
+	with Installer(
+		mountpoint,
+		disk_config,
+		disk_encryption=disk_encryption,
+		kernels=archinstall.arguments.get('kernels', ['linux'])
+	) as installation:
 		# Strap in the base system, add a boot loader and configure
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():

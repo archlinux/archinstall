@@ -149,7 +149,6 @@ def select_installed_locale(mode):
 								default=archinstall.storage.get('CMD_LOCALE',{}).get(mode,'C'))
 
 
-
 class SetupMenu(archinstall.AbstractMenu):
 	def __init__(self,storage_area):
 		super().__init__(data_store=storage_area)

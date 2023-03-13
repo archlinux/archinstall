@@ -7,10 +7,9 @@ import archinstall
 from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.profiles.applications.pipewire import PipewireProfile
-from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType
+from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystem import perform_filesystem_operations
-from ..lib.models.disk_encryption import EncryptionType
 from ..lib.output import log
 
 if TYPE_CHECKING:
@@ -153,7 +152,7 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('mirror-region', None):
 			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
-		res = installation.minimal_installation(
+		installation.minimal_installation(
 			testing=enable_testing,
 			multilib=enable_multilib,
 			hostname=archinstall.arguments.get('hostname', 'archlinux'),
@@ -280,9 +279,6 @@ if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
 
 archinstall.configuration_sanity_check()
-
-
-
 
 # from ..lib.disk.device_handler import device_handler
 #

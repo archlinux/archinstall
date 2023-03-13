@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
 
 from ..configuration import ConfigurationOutput
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
-from ..output import log
 from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:

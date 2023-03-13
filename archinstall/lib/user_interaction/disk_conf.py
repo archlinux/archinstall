@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional, List
+from typing import Any, TYPE_CHECKING, Optional, List, Tuple
 
 from ..disk.device_model import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
 	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus, \
@@ -69,7 +69,6 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 					selected_devices.append(device)
 
 			return selected_devices
-
 
 def get_default_partition_layout(
 	devices: List[BDevice],
@@ -148,7 +147,7 @@ def select_disk_layout(
 					device_modifications=mods
 				)
 
-			preset_devices = [mod.device for mod in preset.device_modifications] if preset else None
+			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
 
 			devices = select_devices(preset_devices)
 
@@ -208,7 +207,7 @@ def ask_for_main_filesystem_format(advanced_options=False) -> FilesystemType:
 
 	prompt = _('Select which filesystem your main partition should use')
 	choice = Menu(prompt, options, skip=False, sort=False).run()
-	return options[choice.value]
+	return options[choice.single_value]
 
 
 def suggest_single_disk_layout(
@@ -333,8 +332,8 @@ def suggest_multi_disk_layout(
 		filesystem_type = ask_for_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
-	possible_devices = list(filter(lambda d: d.device_info.length >= min_home_partition_size, devices))
-	home_device = max(possible_devices, key=lambda d: d.device_info.length) if possible_devices else None
+	possible_devices = list(filter(lambda x: x.device_info.total_size >= min_home_partition_size, devices))
+	home_device = max(possible_devices, key=lambda d: d.device_info.total_size) if possible_devices else None
 
 	# find proper device for /root
 	devices_delta = {}

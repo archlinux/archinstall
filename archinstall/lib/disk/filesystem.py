@@ -6,10 +6,9 @@ import sys
 import time
 from typing import Any, Optional, TYPE_CHECKING
 
-from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType
+from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType, DiskEncryption
 from .device_handler import device_handler
 from ..hardware import has_uefi
-from ..models.disk_encryption import DiskEncryption
 from ..output import log
 from ..menu import Menu
 

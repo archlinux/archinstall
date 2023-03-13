@@ -39,9 +39,6 @@ class TableMenu(Menu):
 		:param preview_command: A function that should return a string that will be displayed in a preview window when a menu selection item is in focus
 		:type preview_command: Callable
 		"""
-		if not data and not table_data:
-			raise ValueError('Either "data" or "table_data" must be provided')
-
 		self._custom_options = custom_menu_options
 		self._multi = multi
 
@@ -50,11 +47,11 @@ class TableMenu(Menu):
 		else:
 			header_padding = 2
 
-		if data:
+		if data is not None:
 			table_text = FormattedOutput.as_table(data)
 			rows = table_text.split('\n')
 			table = self._create_table(data, rows, header_padding=header_padding)
-		else:
+		elif table_data is not None:
 			# we assume the table to be
 			# h1  |   h2
 			# -----------
@@ -62,6 +59,8 @@ class TableMenu(Menu):
 			data = table_data[0]
 			rows = table_data[1].split('\n')
 			table = self._create_table(data, rows, header_padding=header_padding)
+		else:
+			raise ValueError('Either "data" or "table_data" must be provided')
 
 		self._options, header = self._prepare_selection(table)
 

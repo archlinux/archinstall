@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import hashlib
 import json
 import logging
@@ -17,7 +18,7 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
-# https://stackoverflow.com/a/39757388/929999
+
 if TYPE_CHECKING:
 	from .installer import Installer
 

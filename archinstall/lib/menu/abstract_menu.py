@@ -310,8 +310,11 @@ class AbstractMenu:
 	def _find_selection(self, selection_name: str) -> Tuple[str, Selector]:
 		enabled_menus = self._menus_to_enable()
 		padding = self._get_menu_text_padding(list(enabled_menus.values()))
-		option = [(k, v) for k, v in self._menu_options.items() if
-				  v.menu_text(padding).strip() == selection_name.strip()]
+
+		option = []
+		for k, v in self._menu_options.items():
+			if v.menu_text(padding).strip() == selection_name.strip():
+				option.append((k, v))
 
 		if len(option) != 1:
 			raise ValueError(f'Selection not found: {selection_name}')

@@ -5,8 +5,8 @@ import logging
 import pathlib
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
-from archinstall.lib.disk.fido import Fido2
-from .models.disk_encryption import DiskEncryption
+from .disk.fido import Fido2
+from .disk.device_model import DiskEncryption
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log

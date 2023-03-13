@@ -7,10 +7,11 @@ import math
 import time
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum
+from enum import auto
 from pathlib import Path
-from typing import Optional, List, Any, Dict, Union
-from typing import TYPE_CHECKING
+from typing import Optional, List, Dict, TYPE_CHECKING, Any
+from typing import Union
 
 import parted
 from parted import Disk, Geometry, Partition
@@ -367,7 +368,7 @@ class SubvolumeModification:
 		"""
 		return self.mountpoint.relative_to(self.mountpoint.anchor)
 
-	def is_root(self,  relative_mountpoint: Optional[Path] = None) -> bool:
+	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
 		if relative_mountpoint is not None:
 			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
 		return self.mountpoint == Path('/')
@@ -566,6 +567,8 @@ class PartitionModification:
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+
+	# only set if the device was created or exists
 	dev_path: Optional[Path] = None
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
@@ -580,6 +583,12 @@ class PartitionModification:
 
 	def __hash__(self):
 		return hash(self._obj_id)
+
+	@property
+	def real_dev_path(self) -> Path:
+		if self.dev_path is None:
+			raise ValueError('Device path was not set')
+		return self.dev_path
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
@@ -721,6 +730,97 @@ class DeviceModification:
 			'wipe': self.wipe,
 			'partitions': [p.json() for p in self.partitions]
 		}
+
+
+class EncryptionType(Enum):
+	NoEncryption = "no_encryption"
+	Partition = "partition"
+
+	@classmethod
+	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
+		return {
+			# str(_('Full disk encryption')): EncryptionType.FullDiskEncryption,
+			str(_('Partition encryption')): EncryptionType.Partition
+		}
+
+	@classmethod
+	def text_to_type(cls, text: str) -> 'EncryptionType':
+		mapping = cls._encryption_type_mapper()
+		return mapping[text]
+
+	@classmethod
+	def type_to_text(cls, type_: 'EncryptionType') -> str:
+		mapping = cls._encryption_type_mapper()
+		type_to_text = {type_: text for text, type_ in mapping.items()}
+		return type_to_text[type_]
+
+
+@dataclass
+class DiskEncryption:
+	encryption_type: EncryptionType = EncryptionType.Partition
+	encryption_password: str = ''
+	partitions: List[PartitionModification] = field(default_factory=list)
+	hsm_device: Optional[Fido2Device] = None
+
+	def should_generate_encryption_file(self, part_mod: PartitionModification) -> bool:
+		return part_mod in self.partitions and part_mod.mountpoint != Path('/')
+
+	def json(self) -> Dict[str, Any]:
+		obj = {
+			'encryption_type': self.encryption_type.value,
+			'partitions': [str(p._obj_id) for p in self.partitions]
+		}
+
+		if self.hsm_device:
+			obj['hsm_device'] = self.hsm_device.json()
+
+		return obj
+
+	@classmethod
+	def parse_arg(
+		cls,
+		disk_config: DiskLayoutConfiguration,
+		arg: Dict[str, Any],
+		password: str = ''
+	) -> 'DiskEncryption':
+		enc_partitions = []
+		for mod in disk_config.device_modifications:
+			for part in mod.partitions:
+				if part._obj_id in arg.get('partitions', []):
+					enc_partitions.append(part)
+
+		enc = DiskEncryption(
+			EncryptionType(arg['encryption_type']),
+			password,
+			enc_partitions
+		)
+
+		if hsm := arg.get('hsm_device', None):
+			enc.hsm_device = Fido2Device.parse_arg(hsm)
+
+		return enc
+
+
+@dataclass
+class Fido2Device:
+	path: Path
+	manufacturer: str
+	product: str
+
+	def json(self) -> Dict[str, str]:
+		return {
+			'path': str(self.path),
+			'manufacturer': self.manufacturer,
+			'product': self.product
+		}
+
+	@classmethod
+	def parse_arg(cls, arg: Dict[str, str]) -> 'Fido2Device':
+		return Fido2Device(
+			Path(arg['path']),
+			arg['manufacturer'],
+			arg['product']
+		)
 
 
 @dataclass

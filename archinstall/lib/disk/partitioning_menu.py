@@ -267,7 +267,7 @@ class PartitioningList(ListManager):
 		fs_type = self._prompt_partition_fs_type()
 
 		start_size, end_size = self._prompt_sectors()
-		length = end_size-start_size
+		length = end_size - start_size
 
 		# new line for the next prompt
 		print()

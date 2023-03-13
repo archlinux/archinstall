@@ -3,12 +3,11 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from archinstall.profiles.profiles import Profile
-from ..disk.device_model import DiskLayoutConfiguration, DeviceModification
+from ..disk.device_model import DiskLayoutConfiguration, DeviceModification, DiskEncryption, EncryptionType
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu
 from ..models import NetworkConfiguration
 from ..models.bootloader import Bootloader
-from ..models.disk_encryption import DiskEncryption, EncryptionType
 from ..models.users import User
 from ..output import FormattedOutput
 from ..storage import storage

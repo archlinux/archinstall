@@ -4,8 +4,9 @@ import os
 import pathlib
 
 import archinstall
+from .. import Installer, DiskLayoutConfiguration, DiskEncryption
 from ..lib.configuration import ConfigurationOutput
-from ..lib.disk import disk_layouts
+from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystem import perform_filesystem_operations
 
 
@@ -41,17 +42,26 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	with archinstall.Installer(mountpoint, kernels=None) as installation:
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+
+	with Installer(
+		mountpoint,
+		disk_config,
+		disk_encryption=disk_encryption,
+		kernels=archinstall.arguments.get('kernels', ['linux'])
+	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
 		if archinstall.arguments.get('disk_layouts'):
-			installation.mount_ordered_layout(archinstall.arguments['disk_layouts'])
+			installation.mount_ordered_layout()
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
 		for partition in installation.partitions:
 			if partition.mountpoint == installation.target + '/boot':
 				if partition.size <= 0.25: # in GB
 					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 256MB and re-run the installation.")
+
 		# to generate a fstab directory holder. Avoids an error on exit and at the same time checks the procedure
 		target = pathlib.Path(f"{mountpoint}/etc/fstab")
 		if not target.parent.exists():
