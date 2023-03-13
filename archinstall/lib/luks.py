@@ -36,37 +36,34 @@ class Luks2:
 			raise ValueError('Partition must have a path set')
 
 	def __enter__(self):
-		self.unlock()
+		self.unlock(self.key_file)
 
-	def __exit__(self, *args: str, **kwargs: str) -> bool:
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+	def __exit__(self, *args: str, **kwargs: str):
 		if self.auto_unmount:
 			self.lock()
 
-		if len(args) >= 2 and args[1]:
-			raise args[1]
-
-		return True
-
 	def _default_key_file(self) -> Path:
 		return Path(f'/tmp/{self.luks_dev_path.name}.disk_pw')
+
+	def _password_bytes(self) -> bytes:
+		if not self.password:
+			raise ValueError('Password for luks2 device was not specified')
+
+		if isinstance(self.password, bytes):
+			return self.password
+		else:
+			return bytes(self.password, 'UTF-8')
 
 	def encrypt(
 		self,
 		key_size: int = 512,
 		hash_type: str = 'sha512',
 		iter_time: int = 10000,
-		key_file: Optional[str] = None
+		key_file: Optional[Path] = None
 	) -> Path:
-		if self.password is None:
-			raise ValueError('Password was not defined')
-
 		log(f'Luks2 encrypting: {self.luks_dev_path}', level=logging.INFO)
 
-		if type(self.password) != bytes:
-			byte_password = bytes(self.password, 'UTF-8')
-		else:
-			byte_password = self.password
+		byte_password = self._password_bytes()
 
 		if not key_file:
 			if self.key_file:
@@ -103,7 +100,8 @@ class Luks2:
 					break
 
 			if cmd_handle is not None and cmd_handle.exit_code != 0:
-				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {b"".join(cmd_handle)}')
+				output = str(b''.join(cmd_handle))
+				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
 		except SysCallError as err:
 			if err.exit_code == 256:
 				log(f'luks2 partition currently in use: {self.luks_dev_path}')
@@ -125,7 +123,7 @@ class Luks2:
 			if result.exit_code != 0:
 				raise DiskError(f'Unable to get UUID for Luks device: {result.decode()}')
 
-			return result.decode()
+			return result.decode()  # type: ignore
 		except SysCallError as err:
 			log(f'Unable to get UUID for Luks device: {self.luks_dev_path}', level=logging.INFO)
 			raise err
@@ -146,10 +144,7 @@ class Luks2:
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
 
-		if type(self.password) != bytes:
-			byte_password = bytes(self.password, 'UTF-8')
-		else:
-			byte_password = self.password
+		byte_password = self._password_bytes()
 
 		if not key_file:
 			if self.key_file:
@@ -166,7 +161,7 @@ class Luks2:
 
 		SysCommand(f'/usr/bin/cryptsetup open {self.luks_dev_path} {self.mapper_name} --key-file {key_file} --type luks2')
 
-		if not self.mapper_dev.is_symlink():
+		if not self.mapper_dev or not self.mapper_dev.is_symlink():
 			raise DiskError(f'Failed to open luks2 device: {self.luks_dev_path}')
 
 	def lock(self):
@@ -231,7 +226,7 @@ class Luks2:
 
 		while worker.is_alive():
 			if b'Enter any existing passphrase' in worker and pw_injected is False:
-				worker.write(bytes(self.password, 'UTF-8'))
+				worker.write(self._password_bytes())
 				pw_injected = True
 
 		if worker.exit_code != 0:

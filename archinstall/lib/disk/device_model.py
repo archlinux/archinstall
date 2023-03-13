@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Optional, List, Dict, TYPE_CHECKING, Any
 from typing import Union
 
-import parted
+import parted  # type: ignore
 from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
@@ -155,6 +155,16 @@ class Size:
 			elif self.total_size is None:
 				raise ValueError('Total size is required when unit is percentage')
 
+	@property
+	def _total_size(self) -> Size:
+		"""
+		Save method to get the total size, mainly to satisfy mypy
+		This shouldn't happen as the Size object fails instantiation on missing total size
+		"""
+		if self.unit == Unit.Percent and self.total_size is None:
+			raise ValueError('Percent unit size must specify a total size')
+		return self.total_size  # type: ignore
+
 	def __dump__(self) -> Dict[str, Any]:
 		return {
 			'value': self.value,
@@ -188,20 +198,16 @@ class Size:
 		if target_unit == Unit.Percent and total_size is None:
 			raise ValueError('Missing paramter total size to be able to convert to percentage')
 
-		# this shouldn't happen as the Size object fails intantiation on missing total size
-		if self.unit == Unit.Percent and self.total_size is None:
-			raise ValueError('Total size parameter missing to calculate percentage')
-
 		if self.unit == target_unit:
 			return self
 		elif self.unit == Unit.Percent:
-			amount = int(self.total_size._normalize() * (self.value / 100))
+			amount = int(self._total_size._normalize() * (self.value / 100))
 			return Size(amount, Unit.B)
 		elif self.unit == Unit.sectors:
 			norm = self._normalize()
 			return Size(norm, Unit.B).convert(target_unit, sector_size)
 		else:
-			if target_unit == Unit.sectors:
+			if target_unit == Unit.sectors and sector_size is not None:
 				norm = self._normalize()
 				sectors = math.ceil(norm / sector_size.value)
 				return Size(sectors, Unit.sectors, sector_size)
@@ -226,7 +232,7 @@ class Size:
 		"""
 		if self.unit == Unit.Percent:
 			return self.convert(Unit.B).value
-		elif self.unit == Unit.sectors:
+		elif self.unit == Unit.sectors and self.sector_size is not None:
 			return self.value * self.sector_size._normalize()
 		return int(self.value * self.unit.value)  # type: ignore
 
@@ -323,7 +329,7 @@ class PartitionInfo:
 
 @dataclass
 class SubvolumeModification:
-	name: str
+	name: Path
 	mountpoint: Optional[Path] = None
 	compress: bool = False
 	nodatacow: bool = False
@@ -366,12 +372,17 @@ class SubvolumeModification:
 		Will return the relative path based on the anchor
 		e.g. Path('/mnt/test') -> Path('mnt/test')
 		"""
-		return self.mountpoint.relative_to(self.mountpoint.anchor)
+		if self.mountpoint is not None:
+			return self.mountpoint.relative_to(self.mountpoint.anchor)
+
+		raise ValueError('Mountpoint is not specified')
 
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
-		if relative_mountpoint is not None:
-			return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
-		return self.mountpoint == Path('/')
+		if self.mountpoint:
+			if relative_mountpoint is not None:
+				return self.mountpoint.relative_to(relative_mountpoint) == Path('.')
+			return self.mountpoint == Path('/')
+		return False
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
@@ -479,10 +490,11 @@ class PartitionType(Enum):
 	Primary = 'primary'
 
 	@classmethod
-	def get_type_from_code(cls, code: int) -> Optional[PartitionType]:
+	def get_type_from_code(cls, code: int) -> PartitionType:
 		if code == parted.PARTITION_NORMAL:
 			return PartitionType.Primary
-		return None
+
+		raise DiskError(f'Partition code not supported: {code}')
 
 	def get_partition_code(self) -> Optional[int]:
 		if self == PartitionType.Primary:
@@ -585,6 +597,12 @@ class PartitionModification:
 		return hash(self._obj_id)
 
 	@property
+	def obj_id(self) -> str:
+		if hasattr(self, '_obj_id'):
+			return str(self._obj_id)
+		return ''
+
+	@property
 	def real_dev_path(self) -> Path:
 		if self.dev_path is None:
 			raise ValueError('Device path was not set')
@@ -621,7 +639,10 @@ class PartitionModification:
 		Will return the relative path based on the anchor
 		e.g. Path('/mnt/test') -> Path('mnt/test')
 		"""
-		return self.mountpoint.relative_to(self.mountpoint.anchor)
+		if self.mountpoint:
+			return self.mountpoint.relative_to(self.mountpoint.anchor)
+
+		raise ValueError('Mountpoint is not specified')
 
 	def is_boot(self) -> bool:
 		return PartitionFlag.Boot in self.flags
@@ -668,7 +689,7 @@ class PartitionModification:
 		Called for configuration settings
 		"""
 		return {
-			'obj_id': str(self._obj_id),
+			'obj_id': self.obj_id,
 			'status': self.status.value,
 			'type': self.type.value,
 			'start': self.start.__dump__(),
@@ -716,10 +737,12 @@ class DeviceModification:
 		self.partitions.append(partition)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
-		return next(filter(lambda x: x.is_boot(), self.partitions), None)
+		liltered = filter(lambda x: x.is_boot(), self.partitions)
+		return next(liltered, None)
 
 	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
-		return next(filter(lambda x: x.is_root(relative_path), self.partitions), None)
+		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
+		return next(filtered, None)
 
 	def __dump__(self) -> Dict[str, Any]:
 		"""
@@ -766,9 +789,9 @@ class DiskEncryption:
 		return part_mod in self.partitions and part_mod.mountpoint != Path('/')
 
 	def json(self) -> Dict[str, Any]:
-		obj = {
+		obj: Dict[str, Any] = {
 			'encryption_type': self.encryption_type.value,
-			'partitions': [str(p._obj_id) for p in self.partitions]
+			'partitions': [p.obj_id for p in self.partitions]
 		}
 
 		if self.hsm_device:
@@ -786,7 +809,7 @@ class DiskEncryption:
 		enc_partitions = []
 		for mod in disk_config.device_modifications:
 			for part in mod.partitions:
-				if part._obj_id in arg.get('partitions', []):
+				if part.obj_id in arg.get('partitions', []):
 					enc_partitions.append(part)
 
 		enc = DiskEncryption(
@@ -825,13 +848,13 @@ class Fido2Device:
 
 @dataclass
 class LsblkInfo:
-	name: str = ""
-	path: Path = ""
-	pkname: str = ""
+	name: str = ''
+	path: Path = Path()
+	pkname: str = ''
 	size: Size = Size(0, Unit.B)
 	log_sec: int = 0
-	pttype: str = ""
-	ptuuid: str = ""
+	pttype: str = ''
+	ptuuid: str = ''
 	rota: bool = False
 	tran: Optional[str] = None
 	partuuid: Optional[str] = None
@@ -899,6 +922,7 @@ class LsblkInfo:
 			lsblk_field = _clean_field(f, CleanType.Blockdevice)
 			data_field = _clean_field(f, CleanType.Dataclass)
 
+			val: Any = None
 			if isinstance(getattr(info, data_field), Path):
 				val = Path(blockdevice[lsblk_field])
 			elif isinstance(getattr(info, data_field), Size):
@@ -964,7 +988,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 				time.sleep(1)
 			raise error
 
-	if result.exit_code == 0:
+	if result and result.exit_code == 0:
 		try:
 			if decoded := result.decode('utf-8'):
 				block_devices = json.loads(decoded)
