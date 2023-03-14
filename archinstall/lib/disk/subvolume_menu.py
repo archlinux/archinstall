@@ -37,7 +37,7 @@ class SubvolumeMenu(ListManager):
 		return display_data
 
 	def selected_action_display(self, subvolume: SubvolumeModification) -> str:
-		return subvolume.name
+		return str(subvolume.name)
 
 	def _prompt_options(self, editing: Optional[SubvolumeModification] = None) -> List[str]:
 		preset_options = []
@@ -70,7 +70,7 @@ class SubvolumeMenu(ListManager):
 
 		options = self._prompt_options(editing)
 
-		subvolume = SubvolumeModification(name, Path(mountpoint))
+		subvolume = SubvolumeModification(Path(name), Path(mountpoint))
 		subvolume.compress = 'compress' in options
 		subvolume.nodatacow = 'nodatacow' in options
 

@@ -27,14 +27,14 @@ class UserList(ListManager):
 		]
 		super().__init__(prompt, lusers, [self._actions[0]], self._actions[1:])
 
-	def reformat(self, data: List[User]) -> Dict[str, User]:
+	def reformat(self, data: List[User]) -> Dict[str, Any]:
 		table = FormattedOutput.as_table(data)
 		rows = table.split('\n')
 
 		# these are the header rows of the table and do not map to any User obviously
 		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
 		# the selectable rows so the header has to be aligned
-		display_data = {f'  {rows[0]}': None, f'  {rows[1]}': None}
+		display_data: Dict[str, Optional[User]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
 
 		for row, user in zip(rows[2:], data):
 			row = row.replace('|', '\\|')
@@ -53,16 +53,16 @@ class UserList(ListManager):
 				# was created we'll replace the existing one
 				data = [d for d in data if d.username != new_user.username]
 				data += [new_user]
-		elif action == self._actions[1]:  # change password
+		elif action == self._actions[1] and entry:  # change password
 			prompt = str(_('Password for user "{}": ').format(entry.username))
 			new_password = get_password(prompt=prompt)
 			if new_password:
 				user = next(filter(lambda x: x == entry, data))
 				user.password = new_password
-		elif action == self._actions[2]:  # promote/demote
+		elif action == self._actions[2] and entry:  # promote/demote
 			user = next(filter(lambda x: x == entry, data))
 			user.sudo = False if user.sudo else True
-		elif action == self._actions[3]:  # delete
+		elif action == self._actions[3] and entry:  # delete
 			data = [d for d in data if d != entry]
 
 		return data
@@ -86,6 +86,9 @@ class UserList(ListManager):
 				break
 
 		password = get_password(prompt=str(_('Password for user "{}": ').format(username)))
+
+		if not password:
+			return None
 
 		choice = Menu(
 			str(_('Should "{}" be a superuser (sudo)?')).format(username), Menu.yes_no(),

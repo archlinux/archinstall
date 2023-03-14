@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable
+from typing import Dict, Union, List, Any, Callable, Optional
 
 from .storage import storage
 from dataclasses import asdict, is_dataclass
@@ -11,7 +11,12 @@ from dataclasses import asdict, is_dataclass
 class FormattedOutput:
 
 	@classmethod
-	def values(cls, o: Any, class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> Dict[str, Any]:
+	def values(
+		cls,
+		o: Any,
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = []
+	) -> Dict[str, Any]:
 		""" the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
 		Can transmit a filter list to the class_formatter,
@@ -40,8 +45,8 @@ class FormattedOutput:
 	def as_table(
 		cls,
 		obj: List[Any],
-		class_formatter: Union[str, Callable] = None,
-		filter_list: List[str] = None,
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = [],
 		capitalize: bool = False
 	) -> str:
 		""" variant of as_table (subtly different code) which has two additional parameters

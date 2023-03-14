@@ -5,9 +5,8 @@ import archinstall
 from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, Installer
 from archinstall.profiles.minimal import MinimalProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
-	PartitionModification
+	PartitionModification, EncryptionType
 from ..lib.disk.filesystem import perform_filesystem_operations
-from ..lib.models.disk_encryption import EncryptionType
 from ..lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:

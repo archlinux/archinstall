@@ -10,6 +10,7 @@ from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, Enc
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystem import perform_filesystem_operations
 from ..lib.output import log
+from ..profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -183,6 +184,15 @@ def perform_installation(mountpoint: Path):
 
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
+
+		if audio := archinstall.arguments.get('audio', None):
+			log(f'Installing audio server: {audio}', level=logging.INFO)
+			if audio == 'pipewire':
+				PipewireProfile().install(installation)
+			elif audio == 'pulseaudio':
+				installation.add_additional_packages("pulseaudio")
+		else:
+			installation.log("No audio server will be installed.", level=logging.INFO)
 
 		if audio := archinstall.arguments.get('audio', None):
 			users = archinstall.arguments.get('!users', [])

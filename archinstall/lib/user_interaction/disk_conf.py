@@ -287,11 +287,11 @@ def suggest_single_disk_layout(
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
 		subvolumes = [
-			SubvolumeModification('@', Path('/')),
-			SubvolumeModification('@home', Path('/home')),
-			SubvolumeModification('@log', Path('/var/log')),
-			SubvolumeModification('@pkg', Path('/var/cache/pacman/pkg')),
-			SubvolumeModification('@.snapshots', Path('/.snapshots'))
+			SubvolumeModification(Path('@'), Path('/')),
+			SubvolumeModification(Path('@home'), Path('/home')),
+			SubvolumeModification(Path('@log'), Path('/var/log')),
+			SubvolumeModification(Path('@pkg'), Path('/var/cache/pacman/pkg')),
+			SubvolumeModification(Path('@.snapshots'), Path('/.snapshots'))
 		]
 		root_partition.btrfs_subvols = subvolumes
 	elif using_home_partition:

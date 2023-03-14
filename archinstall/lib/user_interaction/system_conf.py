@@ -66,7 +66,7 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	return preset
 
 
-def select_driver(options: Dict[str, Any] = None, current_value: str = None) -> Optional[str]:
+def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = None) -> Optional[str]:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -75,7 +75,7 @@ def select_driver(options: Dict[str, Any] = None, current_value: str = None) -> 
 	there for appeal to the general public first and edge cases later)
 	"""
 
-	if options is None or len(options) == 0:
+	if not options:
 		options = AVAILABLE_GFX_DRIVERS
 
 	drivers = sorted(list(options.keys()))

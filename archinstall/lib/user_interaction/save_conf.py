@@ -15,16 +15,16 @@ def save_config(config: Dict):
 
 	def preview(selection: str):
 		if options['user_config'] == selection:
-			json_config = config_output.user_config_to_json()
-			return f'{config_output.user_configuration_file}\n{json_config}'
+			serialized = config_output.user_config_to_json()
+			return f'{config_output.user_configuration_file}\n{serialized}'
 		elif options['user_creds'] == selection:
-			if json_config := config_output.user_credentials_to_json():
-				return f'{config_output.user_credentials_file}\n{json_config}'
+			if maybe_serial := config_output.user_credentials_to_json():
+				return f'{config_output.user_credentials_file}\n{maybe_serial}'
 			else:
 				return str(_('No configuration'))
 		elif options['all'] == selection:
 			output = f'{config_output.user_configuration_file}\n'
-			if json_config := config_output.user_credentials_to_json():
+			if config_output.user_credentials_to_json():
 				output += f'{config_output.user_credentials_file}\n'
 			return output[:-1]
 		return None

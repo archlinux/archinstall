@@ -28,11 +28,11 @@ class MenuSelection:
 	value: Optional[Union[str, List[str]]] = None
 
 	@property
-	def single_value(self) -> str:
+	def single_value(self) -> Any:
 		return self.value
 
 	@property
-	def multi_value(self) -> List[str]:
+	def multi_value(self) -> List[Any]:
 		return self.value
 
 
