@@ -13,6 +13,9 @@ __packages__ = [
 	"sddm",
 	"plasma-wayland-session",
 	"egl-wayland"
+	"spectacle"
+	"gwenview"
+	"kcalc"
 ]
 
 
