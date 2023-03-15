@@ -836,3 +836,231 @@ msgstr "Per poter utilizzare questa traduzione, installa manualmente un font che
 
 msgid "The font should be stored as {}"
 msgstr "Il carattere dovrebbe essere memorizzato come {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Seleziona un'azione per '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Selezionare uno o più dischi rigidi da utilizzare e configurare"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Se si ripristina la selezione del disco rigido, verrà ripristinato anche il layout del disco corrente. Sei sicuro?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Aggiungendo la partizione...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Elimina una partizione"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Immettere una directory per le configurazioni da salvare: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Capacità minima per la partizione /home: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Capacità minima per la partizione Arch Linux: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Questo è un elenco di profili preprogrammati, che potrebbero semplificare l'installazione di elementi come gli ambienti desktop"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Layout della partizione corrente"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Crea una nuova partizione"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Assegna punto di montaggio per una partizione"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Seleziona/Deseleziona una partizione da formattare (cancella i dati)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Seleziona/Deseleziona una partizione come compressa (solo btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Elimina sottovolume"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Elimina una partizione"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * I punti di montaggio della partizione sono relativi all'interno dell'installazione, l'avvio sarebbe per esempio /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Directory non valida: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Inserisci il settore iniziale (percentuale o numero di blocco, predefinito: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Inserisci il settore finale (percentuale o numero di blocco, predefinito: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Password di crittografia"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Seleziona le partizioni da crittografare"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Cancella tutte le unità selezionate e utilizza un layout di partizione predefinito ottimale"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Configurazione manuale"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Nessuna configurazione"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Nessuna configurazione"
+
+#, fuzzy
+msgid "Password"
+msgstr "Password di root"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} contiene partizioni in coda, questo le rimuoverà, sei sicuro?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Pacchetti aggiuntivi"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profilo"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profilo"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Elimina interfaccia"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profilo"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Il nome utente inserito non è valido. Riprova"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Scrivi pacchetti aggiuntivi da installare (separati da spazi, lascia vuoto per saltare): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Scrivi pacchetti aggiuntivi da installare (separati da spazi, lascia vuoto per saltare): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

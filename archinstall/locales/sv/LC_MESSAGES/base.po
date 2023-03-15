@@ -837,5 +837,239 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "Välj hårddisk-layout"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Välj vad du vill göra med '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Om du återställer hårddiskvalen kommer det också återställa diskuppsättningen. Är du säker?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Skapar en partition...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Ta bort en partition"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Välj vilken mapp du vill spara konfigurerationerna till: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minsta kapaciteten för /home är: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minsta kapaciteten för Arch Linux partitionen är: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Detta är en lista med förprogrammerade profiler, dom kan göra installation av exempelvis skrivbordsmiljöer lite enklare"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Nuvarande partioneringslayout"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Skapa en ny partition"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Välj monteringspunkt för en partition"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Markera/Avmarkera en partition för formatering (tar bort alla data)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Markera/Avmarkera en partition för komprimering (BTRFS enbart)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Ta bort användare"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Ta bort en partition"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Partitionens monteringsplats är relativa till insidan av installationen, boot är exempelvis /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Inte en giltig mapp: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Mata in startsektor (procent eller block-nummer, standard: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Mata in slutsektor för partitionen (procent eller block-nummer, ex: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Välj ett krypterings-lösenord"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Välj vilken partition som skall markeras för kryptering"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Välj hårddisk-layout"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Töm alla partitioner och använd en generiskt rekommenderad partitionslayout"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Manuell konfiguration"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Ingen konfiguration"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Ingen konfiguration"
+
+#, fuzzy
+msgid "Password"
+msgstr "root-lösenord"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} innehåller uppköade partitionen och detta kommer ta bort dessa. Är du säker?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Extra paket"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Ta bort interface"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profil"
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Skriv ytterligare paket som skall installeras (separerade med mellanslag, lämna tom för att skippa): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Skriv ytterligare paket som skall installeras (separerade med mellanslag, lämna tom för att skippa): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

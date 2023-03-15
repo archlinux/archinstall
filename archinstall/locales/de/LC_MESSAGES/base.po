@@ -841,8 +841,242 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "Laufwerke-layout auswählen"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Wählen sie eine Aktion aus für '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Wenn sie die Laufwerkkonfiguration ändern, dann wird die Laufwer-layout zurückgesetzt. Sind sie sicher?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Partitionen werden hinzugefügt..."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Partition löschen"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimaler Speicherplatz für /home Partition: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Minimaler Speicherplatz für Arch Linux Partition: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Dies ist eine Liste von bereits programmierten Profilen, diese ermöglichen es einfacher Desktop Umgebungen einzustellen"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Momentanes Partitionslayout"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Neue Partition erstellen"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Mountort für Partition angeben"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Markieren welche Partition formattiert werden soll (alle Daten werden gelöscht)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Markieren/Unmarkieren Kompression von einer Partition (nur Btrfs) "
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Benutzerkonto löschen"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Partition löschen"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Die Mountorte sind relativ zur Installation, zum Beispiel boot würde gemountet auf /boot"
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Ordner existiert nicht: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Bitte geben Sie den start Sektor ein (in Prozent oder Blocknummer, default: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Bitte geben Sie den end Sektor ein (in Prozent oder Blocknummer, default: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Verschlüsselungspasswort angeben"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Bitte wählen sie welche Partition verschlüsselt werden soll"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Laufwerke-layout auswählen"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Alle Laufwerke löschen und ein vorgegebenes Partitionenlayout verwenden"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Manuelle konfiguration"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Keine Konfiguration"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Keine Konfiguration"
+
+#, fuzzy
+msgid "Password"
+msgstr "Root Passwort"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} enthält Partitionen in der Warteschlange, dies werden damit entfernt, sind sie sicher?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Zus. Packete"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profile"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profile"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Verbindung löschen"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profile"
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Schreiben Sie zusätzliche Packete die installiert werden sollen mit einem Leerzeichen getrennt (zum Überspringen leer lassen): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Schreiben Sie zusätzliche Packete die installiert werden sollen mit einem Leerzeichen getrennt (zum Überspringen leer lassen): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"

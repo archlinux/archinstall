@@ -827,3 +827,240 @@ msgstr "மீட்டமைக்க CTRL+C"
 
 msgid "TAB to select"
 msgstr "தேர்ந்தெடுக்க TAB"
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "'{}'க்கான செயலைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "நீங்கள் ஹார்ட் டிரைவ் தேர்வை மீட்டமைத்தால், இது தற்போதைய வட்டு அமைப்பையும் மீட்டமைக்கும். நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "பகிர்வை சேர்க்கிறது...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "ஒரு பகிர்வை நீக்கவும்"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "உள்ளமைவு(களை) சேமிக்க ஒரு கோப்பகத்தை உள்ளிடவும்: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home பகிர்வுக்கான குறைந்த பட்ச கொள்ளளவு: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "இது முன்-திட்டமிடப்பட்ட சுயவிவரங்களின் பட்டியல், அவை டெஸ்க்டாப் சூழல்கள் போன்றவற்றை நிறுவுவதை எளிதாக்கலாம்"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "தற்போதைய பகிர்வு தளவமைப்பு"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "புதிய பகிர்வை உருவாக்கவும்"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "ஒரு பகிர்வுக்கு ஏற்ற-புள்ளியை ஒதுக்கவும்"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "குறி/குறிநீக்கு வடிவமைக்கப்பட வேண்டிய பகிர்வை (தரவை அழிக்கிறது)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "ஒரு பகிர்வை சுருக்கப்பட்டதாகக் குறிக்கவும்/குறி நீக்கவும் (btrfs மட்டும்)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "துணைத்தொகுதியை நீக்கவும்"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "ஒரு பகிர்வை நீக்கவும்"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * பகிர்வு மவுண்ட்-பாயிண்ட்கள் நிறுவலின் உள்ளே தொடர்புடையவை, துவக்கம் /boot எடுத்துக்காட்டாக இருக்கும்."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "சரியான கோப்பகம் இல்லை: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "குறியாக்கம் செய்ய வேண்டிய பகிர்வுகளைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "தேர்ந்தெடுக்கப்பட்ட அனைத்து இயக்கிகளையும் துடைத்து, சிறந்த முயற்சி இயல்புநிலை பகிர்வு அமைப்பைப் பயன்படுத்தவும்"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "கைமுறை கட்டமைப்பு"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "கட்டமைப்பு இல்லை"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "கட்டமைப்பு இல்லை"
+
+#, fuzzy
+msgid "Password"
+msgstr "ரூட் கடவுச்சொல்"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "கூடுதல் தொகுப்புகள்"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "சுயவிவரம்"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "சுயவிவரம்"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "இடைமுகத்தை நீக்கு"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "சுயவிவரம்"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "நீங்கள் உள்ளிட்ட பயனர்பெயர் தவறானது. மீண்டும் முயற்சிக்கவும்"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "நிறுவ கூடுதல் தொகுப்புகளை எழுதவும் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "நிறுவ கூடுதல் தொகுப்புகளை எழுதவும் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

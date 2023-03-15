@@ -14,12 +14,14 @@ class I3wmProfileV2(XorgProfile):
 	@property
 	def packages(self) -> List[str]:
 		return [
+			'i3-wm'
 			'i3lock',
 			'i3status',
 			'i3blocks',
 			'xterm',
+			'lightdm-gtk-greeter',
+			'lightdm',
 			'dmenu',
-			'i3-wm'
 		]
 
 	@property

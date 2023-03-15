@@ -761,7 +761,8 @@ msgstr "您输入的用户名无效。 再试一次"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "将 \"{}\" 设置为超级用户(sudo)吗？"
 
-msgid "Select which partitions to encrypt:"
+#, fuzzy
+msgid "Select which partitions to encrypt"
 msgstr "选择要加密的分区："
 
 msgid "very weak"
@@ -834,3 +835,231 @@ msgstr "为了能够使用此翻译，请手动安装支持该语言的字体。
 
 msgid "The font should be stored as {}"
 msgstr "字体应存储为 {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "为“{}”选择一个操作"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "选择一个或多个硬盘驱动器来使用和配置"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "如果您重置硬盘驱动器选择，这也将重置当前磁盘布局。 你确定吗？"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "添加分区...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "删除一个分区"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "输入要保存配置的目录： "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home 分区的最小容量：{}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux 分区的最小容量：{}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "这是预编程配置文件的列表，它们可能使安装桌面环境之类的东西变得更容易"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "当前分区布局"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "创建新分区"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "为分区分配挂载点"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "标记/取消标记要格式化的分区（擦除数据）"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "将分区标记/取消标记为压缩（仅限 btrfs）"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "删除子卷"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "删除一个分区"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * 分区挂载点是相对于安装内部的，例如 boot 应该为 /boot。"
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "不是有效的目录：{}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "输入起始扇区（百分比或块号，默认：{}）： "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "输入分区的结束扇区（百分比或块号，例如：{}）： "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "加密密码"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "选择要加密的分区："
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "擦除所有选定的驱动器并使用最优的默认分区布局"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "手动配置"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "无配置"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "无配置"
+
+#, fuzzy
+msgid "Password"
+msgstr "Root 密码"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} 包含排队分区，这将删除这些分区，您确定吗？"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "附加包"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "配置文件"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "配置文件"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "删除接口"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "配置文件"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "您输入的用户名无效。 再试一次"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

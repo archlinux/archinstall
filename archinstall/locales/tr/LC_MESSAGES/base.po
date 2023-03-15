@@ -836,3 +836,239 @@ msgstr ""
 
 msgid "TAB to select"
 msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "'{}' için bir eylem seçin"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Eğer sabit disk seçimini sıfırlarsanız bu ayrıca mevcut disk şemasını da sıfırlayacaktır. Emin misiniz?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Disk bölümü ekleniyor…."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Disk bölümü sil"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "/home disk bölümü için minimum kapasite: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux disk bölümü için minimum kapasite: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Bu ön-programlanmış profillerin bir listesidir, bunlar masaüstü ortamları gibi şeyler kurmayı kolaylaştırabilir"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Mevcut disk bölümü düzeni"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Yeni disk bölümü oluştur"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Bir disk bölümü için mount (monte) noktası ata"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (veriyi temizler)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Bir disk bölümünü sıkıştırılmış olarak işaretle/işareti kaldır (sadece btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Kullanıcı Sil"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Disk bölümü sil"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Disk bölümü mount (monte) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Geçerli bir dizin değil: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Başlangıç kesimini girin (yüzde ya da blok numarası, varsayılan: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Disk bölümünün bitiş kesimini girin (yüzde ya da blok numarası, ör: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Şifreleme şifresi"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Bütün seçilmiş diskleri temizle ve elden gelen en iyi varsayılan disk bölümü düzenini kullan"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Manuel yapılandırma"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Yapılandırma yok"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Yapılandırma yok"
+
+#, fuzzy
+msgid "Password"
+msgstr "Root (kök) şifresi"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} işlem sırasında bekleyen disk bölümleri bulunduruyor, bu onları kaldıracak, emin misiniz?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Ek paketler"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Profil"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Arayüz sil"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Profil"
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

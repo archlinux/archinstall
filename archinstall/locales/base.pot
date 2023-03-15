@@ -843,3 +843,215 @@ msgstr ""
 
 msgid "The font should be stored as {}"
 msgstr ""
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+msgid "Select an execution mode"
+msgstr ""
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid ""
+"Profiles must have unique name, but profile definitions with duplicate name "
+"found: {}"
+msgstr ""
+
+msgid "Select one or more devices to use and configure"
+msgstr ""
+
+msgid ""
+"If you reset the device selection this will also reset the current disk "
+"layout. Are you sure?"
+msgstr ""
+
+msgid "Existing Partitions"
+msgstr ""
+
+msgid "Select a partitioning option"
+msgstr ""
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr ""
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr ""
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr ""
+
+msgid ""
+"This is a list of pre-programmed profiles_bck, they might make it easier to "
+"install things like desktop environments"
+msgstr ""
+
+msgid "Current profile selection"
+msgstr ""
+
+msgid "Remove all newly added partitions"
+msgstr ""
+
+msgid "Assign mountpoint"
+msgstr ""
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr ""
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+msgid "Mark/Unmark as compressed"
+msgstr ""
+
+msgid "Set subvolumes"
+msgstr ""
+
+msgid "Delete partition"
+msgstr ""
+
+msgid "Partition"
+msgstr ""
+
+msgid ""
+"This partition is currently encrypted, to format it a filesystem has to be "
+"specified"
+msgstr ""
+
+msgid ""
+"Partition mount-points are relative to inside the installation, the boot "
+"would be /boot as an example."
+msgstr ""
+
+msgid ""
+"If mountpoint /boot is set, then the partition will also be marked as "
+"bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+msgid "Total sectors: {}"
+msgstr ""
+
+msgid "Enter the start sector (default: {}): "
+msgstr ""
+
+msgid ""
+"Enter the end sector of the partition (percentage or block number, default: "
+"{}): "
+msgstr ""
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+msgid "Encryption type"
+msgstr ""
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+msgid "Partitions to be encrypted"
+msgstr ""
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+msgid "Use a best-effort default partition layout"
+msgstr ""
+
+msgid "Manual Partitioning"
+msgstr ""
+
+msgid "Pre-mounted configuration"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "All settings will be reset, are you sure?"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid ""
+"The proprietary Nvidia driver is not supported by Sway. It is likely that "
+"you will run into issues, are you okay with that?"
+msgstr ""
+
+msgid "Installed packages"
+msgstr ""
+
+msgid "Add profile"
+msgstr ""
+
+msgid "Edit profile"
+msgstr ""
+
+msgid "Delete profile"
+msgstr ""
+
+msgid "Profile name: "
+msgstr ""
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr ""
+
+msgid ""
+"Packages to be install with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+
+msgid ""
+"Services to be enabled with this profile (space separated, leave blank to "
+"skip): "
+msgstr ""
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""

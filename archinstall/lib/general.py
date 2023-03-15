@@ -386,6 +386,13 @@ class SysCommandWorker:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
+					# If history_logfile does not exist, ignore the error
+				except FileNotFoundError:
+					pass
+				except Exception as e:
+					exception_type = type(e).__name__
+					log(f"Unexpected {exception_type} occurred in {self.cmd}: {e}", level=logging.ERROR)
+					raise e
 
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):

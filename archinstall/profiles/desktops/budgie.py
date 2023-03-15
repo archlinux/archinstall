@@ -14,8 +14,11 @@ class BudgieProfileV2(XorgProfile):
 	@property
 	def packages(self) -> List[str]:
 		return [
-			"budgie-desktop",
-			"gnome"
+			"arc-gtk-theme",
+			"budgie",
+			"mate-terminal",
+			"nemo",
+			"papirus-icon-theme",
 		]
 
 	@property
