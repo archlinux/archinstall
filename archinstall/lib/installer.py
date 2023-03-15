@@ -148,36 +148,34 @@ class Installer:
 	def __enter__(self, *args: str, **kwargs: str) -> 'Installer':
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> None:
-		pass
-	# 	# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-	#
-	# 	if len(args) >= 2 and args[1]:
-	# 		self.log(args[1], level=logging.ERROR, fg='red')
-	#
-	# 		self.sync_log_to_install_medium()
-	#
-	# 		# We avoid printing /mnt/<log path> because that might confuse people if they note it down
-	# 		# and then reboot, and a identical log file will be found in the ISO medium anyway.
-	# 		print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
-	# 		print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
-	# 		raise args[1]
-	#
-	# 	if not (missing_steps := self.post_install_check()):
-	# 		self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
-	# 		self.sync_log_to_install_medium()
-	#
-	# 		return True
-	# 	else:
-	# 		self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
-	# 		for step in missing_steps:
-	# 			self.log(f' - {step}', fg='red', level=logging.WARNING)
-	#
-	# 		self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
-	# 		self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
-	#
-	# 		self.sync_log_to_install_medium()
-	# 		return False
+	def __exit__(self, *args :str, **kwargs :str) -> bool:
+		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
+
+		if len(args) >= 2 and args[1]:
+			self.log(args[1], level=logging.ERROR, fg='red')
+
+			self.sync_log_to_install_medium()
+
+			# We avoid printing /mnt/<log path> because that might confuse people if they note it down
+			# and then reboot, and a identical log file will be found in the ISO medium anyway.
+			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
+			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
+			raise args[1]
+
+		if not (missing_steps := self.post_install_check()):
+			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
+			self.sync_log_to_install_medium()
+			return True
+		else:
+			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
+			for step in missing_steps:
+				self.log(f' - {step}', fg='red', level=logging.WARNING)
+
+			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
+			self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
+
+			self.sync_log_to_install_medium()
+			return False
 
 	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
 		"""

@@ -45,4 +45,4 @@ repos:
     rev: v1.1.1
     hooks:
     - id: mypy
-      args: [--config-file, mypy.ini]
+      args: ["--config-file=mypy.ini"]
