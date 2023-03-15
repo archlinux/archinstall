@@ -36,10 +36,10 @@ if TYPE_CHECKING:
 
 
 class GlobalMenu(AbstractMenu):
-	def __init__(self, data_store):
+	def __init__(self, data_store: Dict[str, Any]):
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
-	def _setup_selection_menu_options(self):
+	def setup_selection_menu_options(self):
 		# archinstall.Language will not use preset values
 		self._menu_options['archinstall-language'] = \
 			Selector(

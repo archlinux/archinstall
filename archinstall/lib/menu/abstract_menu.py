@@ -193,7 +193,7 @@ class AbstractMenu:
 		self._data_store = data_store
 		self.auto_cursor = auto_cursor
 		self._menu_options: Dict[str, Selector] = {}
-		self._setup_selection_menu_options()
+		self.setup_selection_menu_options()
 		self.preview_size = preview_size
 		self._last_choice = None
 
@@ -255,7 +255,7 @@ class AbstractMenu:
 
 		return missing
 
-	def _setup_selection_menu_options(self):
+	def setup_selection_menu_options(self):
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per program calling self.set_option()
 		"""
@@ -272,19 +272,6 @@ class AbstractMenu:
 	def exit_callback(self):
 		""" will be called at the end of the processing of the menu """
 		return
-
-	def synch(self, selector_name: str, omit_if_set: bool = False, omit_if_disabled: bool = False):
-		""" loads menu options with data_store value """
-		arg = self._data_store.get(selector_name, None)
-		# don't display the menu option if it was defined already
-		if arg is not None and omit_if_set:
-			return
-
-		if not self.option(selector_name).is_enabled() and omit_if_disabled:
-			return
-
-		if arg is not None:
-			self._menu_options[selector_name].set_current_selection(arg)
 
 	def _update_enabled_order(self, selector_name: str):
 		self._enabled_order.append(selector_name)
@@ -323,11 +310,6 @@ class AbstractMenu:
 		return config_name, selector
 
 	def run(self, allow_reset: bool = False):
-		""" Calls the Menu framework"""
-		# we synch all the options just in case
-		for item in self.list_options():
-			self.synch(item)
-
 		cursor_pos = None
 
 		while True:
@@ -476,12 +458,6 @@ class AbstractMenu:
 		# TODO check inexistent name
 		return self._menu_options[name]
 
-	def list_options(self) -> Iterator:
-		""" Iterator to retrieve the enabled menu option names
-		"""
-		for item in self._menu_options:
-			yield item
-
 	def list_enabled_options(self) -> Iterator:
 		""" Iterator to retrieve the enabled menu options at a given time.
 		The results are dynamic (if between calls to the iterator some elements -still not retrieved- are (de)activated
@@ -489,10 +465,6 @@ class AbstractMenu:
 		for item in self._menu_options:
 			if item in self._menus_to_enable():
 				yield item
-
-	def set_option(self, name: str, selector: Selector):
-		self._menu_options[name] = selector
-		self.synch(name)
 
 	def _select_archinstall_language(self, preset_value: Language) -> Language:
 		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)

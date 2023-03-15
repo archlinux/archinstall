@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption
+from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
 from ..lib.disk.device_handler import disk_layouts
@@ -166,7 +166,7 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == "grub-install" and archinstall.has_uefi():
+		if archinstall.arguments.get("bootloader") == Bootloader.Grub and archinstall.has_uefi():
 			installation.add_additional_packages("grub")
 
 		installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -193,12 +193,6 @@ def perform_installation(mountpoint: Path):
 				installation.add_additional_packages("pulseaudio")
 		else:
 			installation.log("No audio server will be installed.", level=logging.INFO)
-
-		if audio := archinstall.arguments.get('audio', None):
-			users = archinstall.arguments.get('!users', [])
-			installation.install_audio(audio, enable_for_users=users)
-		else:
-			installation.log('No audio server will be installed', level=logging.INFO)
 
 		if archinstall.arguments.get('profile', None):
 			installation.install_profile(archinstall.arguments.get('profile', None))
@@ -285,9 +279,6 @@ if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
 
 archinstall.configuration_sanity_check()
-
-
-
 
 # from ..lib.disk.device_handler import device_handler
 #
