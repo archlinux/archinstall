@@ -6,7 +6,6 @@ from .lib.disk import *
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
-from .lib.installer import __packages__, Installer, accessibility_tools_in_use
 from .lib.locale_helpers import *
 from .lib.luks import *
 from .lib.mirrors import *
@@ -14,37 +13,14 @@ from .lib.models.network_configuration import NetworkConfigurationHandler
 from .lib.models.users import User
 from .lib.networking import *
 from .lib.output import *
-from .lib.models.dataclasses import (
-	VersionDef,
-	PackageSearchResult,
-	PackageSearch,
-	LocalPackage
-)
-from .lib.packages.packages import (
-	group_search,
-	package_search,
-	find_package,
-	find_packages,
-	installed_package,
-	validate_package_list,
-)
 from .lib.profiles import *
 from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
-from .lib.menu import Menu
-from .lib.menu.list_manager import ListManager
-from .lib.menu.text_input import TextInput
-from .lib.menu.global_menu import GlobalMenu
-from .lib.menu.abstract_menu import (
-	Selector,
-	AbstractMenu
-)
 from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
 from .lib.configuration import *
-from .lib.udev import udevadm_info
 parser = ArgumentParser()
 
 __version__ = "2.5.3"
@@ -194,7 +170,6 @@ def load_config():
 	"""
 	refine and set some arguments. Formerly at the scripts
 	"""
-	from .lib.models import NetworkConfiguration
 
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
