@@ -355,9 +355,7 @@ class Installer:
 
 		if enable_resume:
 			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
-			resume_offset = \
-			SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[
-				1].split("..", 1)[0].strip()
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
 			self.HOOKS.append('resume')
 			self.KERNEL_PARAMS.append(f'resume=UUID={resume_uuid}')

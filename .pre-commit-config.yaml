@@ -4,15 +4,11 @@ repos:
     rev: v2.0.2
     hooks:
       - id: autoflake
-        entry: bash -c 'autoflake "$@"; git add -u' --
         args:
-          [
-              "--in-place",
-              "--remove-all-unused-imports",
-              "--remove-unused-variables",
-              "--expand-star-imports",
-              "--ignore-init-module-imports",
-          ]
+          - "--in-place"
+          - "--expand-star-imports"
+          - "--remove-duplicate-keys"
+          - "--remove-unused-variables"
         files: \.py$
         require_serial: true
         fail_fast: true
