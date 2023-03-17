@@ -100,7 +100,7 @@ msgstr ""
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr ""
 
-msgid "Enter the end location (in parted units: "s", "GB", "%", etc. ; ex: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
