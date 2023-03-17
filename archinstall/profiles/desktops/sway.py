@@ -1,7 +1,7 @@
 from typing import List, Optional, TYPE_CHECKING, Any
 
 from archinstall import Menu, AVAILABLE_GFX_DRIVERS
-from archinstall.profiles.profile import Profile, ProfileType, GreeterType
+from archinstall.profiles.profile import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -43,6 +43,8 @@ class SwayProfile(XorgProfile):
 			return ['seatd']
 		elif "polkit" in self._control_preference:
 			return ['polkit']
+
+		return []
 
 	def _check_driver(self) -> bool:
 		if self.gfx_driver:
