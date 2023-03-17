@@ -94,6 +94,12 @@ msgstr "Zvolte co dělat s {}"
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Zadejte požadovaný souborový systém pro oddíl"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
 

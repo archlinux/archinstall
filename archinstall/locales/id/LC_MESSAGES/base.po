@@ -96,6 +96,12 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
 

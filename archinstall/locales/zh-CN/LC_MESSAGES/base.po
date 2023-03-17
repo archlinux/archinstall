@@ -96,6 +96,12 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "为分区输入所需的文件系统类型"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "输入起始扇区（百分比或块号，默认：{}）： "
 
