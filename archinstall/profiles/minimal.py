@@ -1,6 +1,6 @@
 from typing import Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import Profile, ProfileType
+from archinstall.profiles.profile import Profile, ProfileType
 
 if TYPE_CHECKING:
 	_: Any

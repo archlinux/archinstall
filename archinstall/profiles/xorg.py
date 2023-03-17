@@ -3,7 +3,7 @@ from typing import Any, TYPE_CHECKING
 
 from archinstall import log
 from archinstall.lib.hardware import AVAILABLE_GFX_DRIVERS
-from archinstall.profiles.profiles import Profile, ProfileType
+from archinstall.profiles.profile import Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

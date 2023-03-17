@@ -1,16 +1,22 @@
 from typing import List, Optional, TYPE_CHECKING, Any
 
-from archinstall import Menu, select_driver, AVAILABLE_GFX_DRIVERS
-from archinstall.profiles.profiles import Profile, ProfileType, GreeterType
+from archinstall import Menu, AVAILABLE_GFX_DRIVERS
+from archinstall.profiles.profile import Profile, ProfileType, GreeterType
+from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
 
 
-class SwayProfile(Profile):
+class SwayProfile(XorgProfile):
 	def __init__(self):
-		super().__init__('Sway', ProfileType.WindowMgr, description='')
+		super().__init__(
+			'Sway',
+			ProfileType.WindowMgr,
+			description=''
+		)
+		self._control_preference = []
 
 	@property
 	def packages(self) -> List[str]:
@@ -25,11 +31,18 @@ class SwayProfile(Profile):
 			"slurp",
 			"pavucontrol",
 			"foot"
-		]
+		] + self._control_preference
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Lightdm
+
+	@property
+	def services(self) -> List[str]:
+		if "seatd" in self._control_preference:
+			return ['seatd']
+		elif "polkit" in self._control_preference:
+			return ['polkit']
 
 	def _check_driver(self) -> bool:
 		if self.gfx_driver:
@@ -43,10 +56,15 @@ class SwayProfile(Profile):
 					return False
 		return True
 
+	def _get_system_privelege_control_preference(self):
+		# need to activate seat service and add to seat group
+		title = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		title += str(_('\n\nChoose an option to give Sway access to your hardware'))
+		choice = Menu(title, ["polkit", "seatd"], skip=False).run()
+		self._control_preference = [choice.value]
+
 	def do_on_select(self):
-		self.gfx_driver = select_driver(current_value=self.gfx_driver)
-		while not self._check_driver():
-			self.do_on_select()
+		self._get_system_privelege_control_preference()
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)

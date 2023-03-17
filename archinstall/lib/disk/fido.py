@@ -71,7 +71,7 @@ class Fido2:
 		part_mod: PartitionModification,
 		password: str
 	):
-		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {part_mod.dev_path}", peak_output=True)
+		worker = SysCommandWorker(f"systemd-cryptenroll --fido2-device={hsm_device.path} {part_mod.dev_path}", peek_output=True)
 		pw_inputted = False
 		pin_inputted = False
 

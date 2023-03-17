@@ -3,8 +3,8 @@ from typing import Any, TYPE_CHECKING, List
 
 from archinstall.lib.output import log
 from archinstall.lib.menu.menu import MenuSelectionType
-from archinstall.lib.profiles_handler import ProfileHandler
-from archinstall.profiles.profiles import ProfileType, Profile, SelectResult, TProfile
+from archinstall.lib.profiles_handler import profile_handler
+from archinstall.profiles.profile import ProfileType, Profile, SelectResult, TProfile
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -21,10 +21,9 @@ class ServerProfile(Profile):
 		)
 
 	def do_on_select(self) -> SelectResult:
-		handler = ProfileHandler()
-		available_servers = handler.get_server_profiles()
+		available_servers = profile_handler.get_server_profiles()
 
-		choice = handler.select_profile(
+		choice = profile_handler.select_profile(
 			available_servers,
 			self._current_selection,
 			title=str(_('Choose which servers to install, if none then a minimal installation will be done')),

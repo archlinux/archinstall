@@ -29,7 +29,7 @@ from .lib.packages.packages import (
 	installed_package,
 	validate_package_list,
 )
-from .lib.profiles_handler import ProfileHandler
+from .lib.profiles_handler import ProfileHandler, profile_handler
 from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
@@ -198,6 +198,9 @@ def load_config():
 	"""
 	from .lib.models import NetworkConfiguration
 
+	arguments.setdefault('sys-language', 'en_US')
+	arguments.setdefault('sys-encoding', 'utf-8')
+
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
@@ -205,7 +208,7 @@ def load_config():
 		arguments['disk_layouts'] = DiskLayoutConfiguration.parse_arg(layouts)
 
 	if profile := arguments.get('profile', None):
-		arguments['profile'] = ProfileHandler().parse_profile_config(profile)
+		arguments['profile'] = profile_handler.parse_profile_config(profile)
 
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
@@ -213,12 +216,6 @@ def load_config():
 		else:
 			selected_region = arguments.get('mirror-region', None)
 			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
-
-	if arguments.get('sys-language', None) is not None:
-		arguments['sys-language'] = arguments.get('sys-language', 'en_US')
-
-	if arguments.get('sys-encoding', None) is not None:
-		arguments['sys-encoding'] = arguments.get('sys-encoding', 'utf-8')
 
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)

@@ -1,6 +1,6 @@
 from typing import List, Optional, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType
+from archinstall.profiles.profile import ProfileType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class AwesomeProfileV2(XorgProfile):
+class AwesomeProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('Awesome', ProfileType.WindowMgr, description='')
 

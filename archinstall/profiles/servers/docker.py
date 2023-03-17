@@ -3,7 +3,7 @@ from typing import List, Union, TYPE_CHECKING
 import archinstall
 
 from archinstall import User
-from archinstall.profiles.profiles import Profile, ProfileType
+from archinstall.profiles.profile import Profile, ProfileType
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

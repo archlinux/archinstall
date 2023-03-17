@@ -182,18 +182,21 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	def encode(self, obj :Any) -> Any:
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
+
 class SysCommandWorker:
-	def __init__(self,
+	def __init__(
+		self,
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Any]] = None,
-		peak_output :Optional[bool] = False,
+		peek_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
 		working_directory :Optional[str] = './',
-		remove_vt100_escape_codes_from_lines :bool = True):
-
+		remove_vt100_escape_codes_from_lines :bool = True
+	):
 		if not callbacks:
 			callbacks = {}
+
 		if not environment_vars:
 			environment_vars = {}
 
@@ -209,7 +212,7 @@ class SysCommandWorker:
 
 		self.cmd = cmd
 		self.callbacks = callbacks
-		self.peak_output = peak_output
+		self.peek_output = peek_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
@@ -263,7 +266,7 @@ class SysCommandWorker:
 			except:
 				pass
 
-		if self.peak_output:
+		if self.peek_output:
 			# To make sure any peaked output didn't leave us hanging
 			# on the same line we were on.
 			sys.stdout.write("\n")
@@ -308,7 +311,7 @@ class SysCommandWorker:
 		self._trace_log_pos = min(max(0, pos), len(self._trace_log))
 
 	def peak(self, output: Union[str, bytes]) -> bool:
-		if self.peak_output:
+		if self.peek_output:
 			if type(output) == bytes:
 				try:
 					output = output.decode('UTF-8')
@@ -321,8 +324,8 @@ class SysCommandWorker:
 			if peak_logfile.exists() is False:
 				change_perm = True
 
-			with peak_logfile.open("a") as peak_output_log:
-				peak_output_log.write(output)
+			with peak_logfile.open("a") as peek_output_log:
+				peek_output_log.write(output)
 
 			if change_perm:
 				os.chmod(str(peak_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
@@ -420,7 +423,7 @@ class SysCommand:
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
 		start_callback :Optional[Callable[[Any], Any]] = None,
-		peak_output :Optional[bool] = False,
+		peek_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
@@ -434,7 +437,7 @@ class SysCommand:
 
 		self.cmd = cmd
 		self._callbacks = _callbacks
-		self.peak_output = peak_output
+		self.peek_output = peek_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
@@ -477,7 +480,7 @@ class SysCommand:
 		return {
 			'cmd': self.cmd,
 			'callbacks': self._callbacks,
-			'peak': self.peak_output,
+			'peak': self.peek_output,
 			'environment_vars': self.environment_vars,
 			'session': True if self.session else False
 		}
@@ -486,7 +489,7 @@ class SysCommand:
 		"""
 		Initiates a :ref:`SysCommandWorker` session in this class ``.session``.
 		It then proceeds to poll the process until it ends, after which it also
-		clears any printed output if ``.peak_output=True``.
+		clears any printed output if ``.peek_output=True``.
 		"""
 		if self.session:
 			return self.session
@@ -494,7 +497,7 @@ class SysCommand:
 		with SysCommandWorker(
 			self.cmd,
 			callbacks=self._callbacks,
-			peak_output=self.peak_output,
+			peek_output=self.peek_output,
 			environment_vars=self.environment_vars,
 			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
 			working_directory=self.working_directory) as session:
@@ -505,7 +508,7 @@ class SysCommand:
 			while self.session.ended is None:
 				self.session.poll()
 
-		if self.peak_output:
+		if self.peek_output:
 			sys.stdout.write('\n')
 			sys.stdout.flush()
 

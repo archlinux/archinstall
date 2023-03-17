@@ -5,7 +5,7 @@ import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 from typing import Union
 
-from archinstall.profiles.profiles import Profile
+from archinstall.profiles.profile import Profile
 from .system_conf import select_driver
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
@@ -150,9 +150,8 @@ def select_profile(
 	allow_reset: bool = True,
 	multi: bool = False
 ) -> Optional[Profile]:
-	from ..profiles_handler import ProfileHandler
-	handler = ProfileHandler()
-	top_level_profiles = handler.get_top_level_profiles()
+	from ..profiles_handler import profile_handler
+	top_level_profiles = profile_handler.get_top_level_profiles()
 
 	display_title = title
 	if not display_title:
@@ -164,7 +163,7 @@ def select_profile(
 			display_title += '\n\n' + str(_('Current profile selection'))
 			display_title += '\n\n' + output
 
-	choice = handler.select_profile(
+	choice = profile_handler.select_profile(
 		top_level_profiles,
 		current_profile=current_profile,
 		title=display_title,
@@ -175,7 +174,7 @@ def select_profile(
 
 	match choice.type_:
 		case MenuSelectionType.Selection:
-			profile_selection: Profile = choice.value
+			profile_selection: Profile = choice.single_value
 			select_result = profile_selection.do_on_select()
 
 			if not select_result:
@@ -193,10 +192,10 @@ def select_profile(
 					if profile_selection.is_graphic_driver_enabled():
 						profile_selection.gfx_driver = select_driver(current_value=profile_selection.gfx_driver)
 
-					handler.reset_top_level_profiles(exclude=[profile_selection])
+					profile_handler.reset_top_level_profiles(exclude=[profile_selection])
 					current_profile = profile_selection
 				case select_result.ResetCurrent:
-					handler.reset_top_level_profiles()
+					profile_handler.reset_top_level_profiles()
 					current_profile = None
 				case select_result.SameSelection:
 					pass

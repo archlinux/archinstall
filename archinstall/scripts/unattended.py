@@ -1,10 +1,9 @@
 import time
 
 import archinstall
-from archinstall import ProfileHandler
+from archinstall.lib.profiles_handler import profile_handler
 
-
-for profile in ProfileHandler().get_mac_addr_profiles():
+for profile in profile_handler.get_mac_addr_profiles():
 	# Tailored means it's a match for this machine
 	# based on it's MAC address (or some other criteria
 	# that fits the requirements for this machine specifically).

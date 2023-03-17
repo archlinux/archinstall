@@ -1,13 +1,13 @@
 from typing import List, Optional, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType, GreeterType
+from archinstall.profiles.profile import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class Xfce4ProfileV2(XorgProfile):
+class Xfce4Profile(XorgProfile):
 	def __init__(self):
 		super().__init__('Xfce4', ProfileType.DesktopEnv, description='')
 

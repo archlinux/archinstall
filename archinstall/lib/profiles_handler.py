@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
-from archinstall.profiles.profiles import Profile, TProfile, GreeterType
+from archinstall.profiles.profile import Profile, TProfile, GreeterType
 from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .networking import list_interfaces, fetch_data_from_url
 from .output import log
@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class ProfileHandler(Singleton):
+class ProfileHandler:
 	def __init__(self):
 		self._profiles_path: Path = storage['PROFILE']
-		self._profiles = self._find_available_profiles()
+		self._profiles = None
 
 		# special variable to keep track of a profile url configuration
 		# it is merely used to be able to export the path again when a user
@@ -132,6 +132,8 @@ class ProfileHandler(Singleton):
 		"""
 		List of all available profiles
 		"""
+		if self._profiles is None:
+			self._profiles = self._find_available_profiles()
 		return self._profiles
 
 	@cached_property
@@ -206,7 +208,7 @@ class ProfileHandler(Singleton):
 					if isinstance(cls_, Profile):
 						profiles.append(cls_)
 				except Exception:
-					log(f'Cannot import {module}, it does not appear to be a ProfileV2 class', level=logging.DEBUG)
+					log(f'Cannot import {module}, it does not appear to be a Profile class', level=logging.DEBUG)
 
 		return profiles
 
@@ -268,7 +270,7 @@ class ProfileHandler(Singleton):
 		profiles = []
 		for file in self._profiles_path.glob('**/*.py'):
 			# ignore the abstract profiles class
-			if 'profiles.py' in file.name:
+			if 'profile.py' in file.name:
 				continue
 			profiles += self._process_profile_file(file)
 
@@ -338,3 +340,6 @@ class ProfileHandler(Singleton):
 		"""
 		profile = self.get_profile_by_name(selection)
 		return profile.preview_text() if profile is not None else None
+
+
+profile_handler = ProfileHandler()

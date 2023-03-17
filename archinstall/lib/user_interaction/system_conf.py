@@ -89,7 +89,7 @@ def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = N
 		if has_nvidia_graphics():
 			title += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
-		title += str(_('\n\nSelect a graphics driver or leave blank to install all open-source drivers'))
+		title += str(_('\nSelect a graphics driver or leave blank to install all open-source drivers'))
 
 		preset = current_value if current_value else None
 		choice = Menu(title, drivers, preset_values=preset).run()

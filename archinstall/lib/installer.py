@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
-from archinstall.profiles.profiles import Profile
+from archinstall.profiles.profile import Profile
 from .disk.device_model import PartitionModification, DiskLayoutConfiguration, \
 	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType, \
 	DiskEncryption, EncryptionType
@@ -193,6 +193,14 @@ class Installer:
 		"""
 		log('Waiting for automatic mirror selection (reflector) to complete...', level=logging.INFO)
 		while service_state('reflector') not in ('dead', 'failed'):
+			time.sleep(1)
+
+		log('Waiting pacman-init.service to complete.', level=logging.INFO)
+		while service_state('pacman-init') not in ('dead', 'failed'):
+			time.sleep(1)
+
+		log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
+		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
@@ -434,7 +442,7 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peak_output=True).exit_code == 0
+			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
@@ -692,6 +700,11 @@ class Installer:
 				if plugin.on_mkinitcpio(self):
 					return True
 
+		# mkinitcpio will error out if there's no vconsole.
+		if (vconsole := Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
+			with vconsole.open('w') as fh:
+				fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
+
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
 			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
@@ -794,14 +807,6 @@ class Installer:
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
-
-		if self._disk_encryption.hsm_device:
-			# TODO:
-			# A bit of a hack, but we need to get vconsole.conf in there
-			# before running `mkinitcpio` because it expects it in HSM mode.
-			if (vconsole := Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
-				with vconsole.open('w') as fh:
-					fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
 
 		self.mkinitcpio('-P')
 
@@ -973,15 +978,15 @@ class Installer:
 			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peak_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as error:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
 		else:
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peak_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peek_output=True)
 			except SysCallError as error:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {error}")
 
@@ -1089,7 +1094,7 @@ class Installer:
 		"""
 		Installs a archinstall profile
 
-		:param profile: ProfileV2
+		:param profile: Profile
 		:return: Returns the imported script as a module, this way
 			you can access any remaining functions exposed by the profile.
 		:rtype: module

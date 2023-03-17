@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from archinstall.profiles.profiles import Profile
+from archinstall.profiles.profile import Profile
 from ..disk.device_model import DiskLayoutConfiguration, DeviceModification, DiskEncryption, EncryptionType
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu

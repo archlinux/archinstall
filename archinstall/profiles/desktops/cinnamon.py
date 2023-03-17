@@ -1,13 +1,13 @@
 from typing import Optional, List, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType, GreeterType
+from archinstall.profiles.profile import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class CinnamonProfileV2(XorgProfile):
+class CinnamonProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('Cinnamon', ProfileType.DesktopEnv, description='')
 

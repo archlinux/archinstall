@@ -1,6 +1,6 @@
 from typing import List
 
-from archinstall.profiles.profiles import Profile, ProfileType
+from archinstall.profiles.profile import Profile, ProfileType
 
 
 class NginxProfile(Profile):

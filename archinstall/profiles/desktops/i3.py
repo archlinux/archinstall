@@ -1,13 +1,13 @@
 from typing import Optional, List, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType, GreeterType
+from archinstall.profiles.profile import ProfileType, GreeterType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class I3wmProfileV2(XorgProfile):
+class I3wmProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('i3-wm', ProfileType.WindowMgr, description='')
 

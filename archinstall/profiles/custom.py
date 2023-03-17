@@ -4,8 +4,8 @@ from archinstall.lib.menu.list_manager import ListManager
 from archinstall.lib.menu.menu import Menu
 from archinstall.lib.menu.text_input import TextInput
 from archinstall.lib.output import log, FormattedOutput
-from archinstall.lib.profiles_handler import ProfileHandler
-from archinstall.profiles.profiles import Profile, ProfileType, SelectResult, ProfileInfo, TProfile
+from archinstall.lib.profiles_handler import profile_handler
+from archinstall.profiles.profile import Profile, ProfileType, SelectResult, ProfileInfo, TProfile
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -65,7 +65,7 @@ class CustomProfileList(ListManager):
 		return data
 
 	def _is_new_profile_name(self, name: str) -> bool:
-		existing_profile = ProfileHandler().get_profile_by_name(name)
+		existing_profile = profile_handler.get_profile_by_name(name)
 		if existing_profile is not None and existing_profile.profile_type != ProfileType.CustomType:
 			return False
 		return True
@@ -136,15 +136,14 @@ class CustomProfile(Profile):
 		return data
 
 	def do_on_select(self) -> SelectResult:
-		handler = ProfileHandler()
-		custom_profile_list = CustomProfileList('', handler.get_custom_profiles())
+		custom_profile_list = CustomProfileList('', profile_handler.get_custom_profiles())
 		custom_profiles = custom_profile_list.run()
 
 		# we'll first remove existing custom profiles with
 		# the same name and then add the new ones this
 		# will avoid errors of profiles with duplicate naming
-		handler.remove_custom_profiles(custom_profiles)
-		handler.add_custom_profiles(custom_profiles)
+		profile_handler.remove_custom_profiles(custom_profiles)
+		profile_handler.add_custom_profiles(custom_profiles)
 
 		self.set_current_selection(custom_profiles)
 

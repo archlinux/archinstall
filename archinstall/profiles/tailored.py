@@ -1,6 +1,6 @@
 from typing import List, Any, TYPE_CHECKING
 
-from archinstall.profiles.profiles import ProfileType
+from archinstall.profiles.profile import ProfileType
 from archinstall.profiles.xorg import XorgProfile
 
 if TYPE_CHECKING:
@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class TailoredProfileV2(XorgProfile):
+class TailoredProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('52-54-00-12-34-56', ProfileType.Tailored, description='')
 
