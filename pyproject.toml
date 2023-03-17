@@ -26,6 +26,7 @@ dependencies = [
 dev = [
     "mypy==1.1.1",
 ]
+doc = ["sphinx"]
 
 [project.urls]
 Home = "https://archlinux.org"
@@ -34,9 +35,6 @@ Source = "https://github.com/archlinux/archinstall"
 
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
-
-[project.optional-dependencies]
-doc = ["sphinx"]
 
 [tool.flit.sdist]
 include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]

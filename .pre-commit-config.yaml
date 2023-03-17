@@ -36,9 +36,10 @@ repos:
     rev: 6.0.0
     hooks:
     - id: flake8
-      args: [--config, .flake8]
+      args:
+        - "--config .flake8"
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.1.1
     hooks:
     - id: mypy
-      args: ["--config-file=mypy.ini"]
+      args: [--config, .flake8]

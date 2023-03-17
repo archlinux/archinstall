@@ -13,7 +13,7 @@ from .menu.menu import MenuSelectionType, Menu, MenuSelection
 from .networking import list_interfaces, fetch_data_from_url
 from .output import log
 from .storage import storage
-from .utils.singleton import Singleton
+
 
 if TYPE_CHECKING:
 	_: Any
