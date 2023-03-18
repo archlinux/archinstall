@@ -456,6 +456,7 @@ class Installer:
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
 			for entry in self.FSTAB_ENTRIES:
 				fstab_fh.write(f'{entry}\n')
+
 		return True
 
 	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
