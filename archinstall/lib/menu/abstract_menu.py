@@ -479,7 +479,7 @@ class AbstractSubMenu(AbstractMenu):
 		self._menu_options['__separator__'] = Selector('')
 		self._menu_options['back'] = \
 			Selector(
-				_('Back'),
+				Menu.back(),
 				no_store=True,
 				enabled=True,
 				exec_func=lambda n, v: True,

@@ -36,12 +36,11 @@ repos:
     rev: 6.0.0
     hooks:
     - id: flake8
-      args:
-        - "--config .flake8"
+      args: [--config=.flake8]
       fail_fast: true
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.1.1
     hooks:
     - id: mypy
-      args: [--config, .flake8]
+      args: [--config=mypy.ini]
       fail_fast: true

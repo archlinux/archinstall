@@ -30,7 +30,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		self._modifications = mods
 		super().__init__(data_store=data_store)
 
-	def _setup_selection_menu_options(self):
+	def setup_selection_menu_options(self):
 		self._menu_options['encryption_password'] = \
 			Selector(
 				_('Encryption password'),

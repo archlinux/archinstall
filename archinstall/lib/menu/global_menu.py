@@ -325,10 +325,15 @@ class GlobalMenu(AbstractMenu):
 		self,
 		preset: Optional[DiskLayoutConfiguration] = None
 	) -> Optional[DiskLayoutConfiguration]:
-		return select_disk_config(
+		disk_config = select_disk_config(
 			preset,
 			storage['arguments'].get('advanced', False)
 		)
+
+		if disk_config != preset:
+			self._menu_options['disk_encryption'].set_current_selection(None)
+
+		return disk_config
 
 	def _select_profile(self, current_profile: Optional[Profile]):
 		profile = select_profile(current_profile)
