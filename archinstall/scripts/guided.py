@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskEncryption, Bootloader
+from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
+from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, DiskEncryption
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystemhandler import FilesystemHandler
 from ..lib.output import log
@@ -277,8 +277,6 @@ if archinstall.arguments.get('dry_run'):
 
 if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
-
-archinstall.configuration_sanity_check()
 
 # from ..lib.disk.device_handler import device_handler
 #

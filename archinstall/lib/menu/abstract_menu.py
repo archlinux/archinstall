@@ -193,10 +193,10 @@ class AbstractMenu:
 		self._data_store = data_store
 		self.auto_cursor = auto_cursor
 		self._menu_options: Dict[str, Selector] = {}
-		self.setup_selection_menu_options()
 		self.preview_size = preview_size
 		self._last_choice = None
 
+		self.setup_selection_menu_options()
 		self._populate_default_values()
 
 	@property

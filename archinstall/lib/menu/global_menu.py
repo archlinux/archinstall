@@ -70,7 +70,7 @@ class GlobalMenu(AbstractMenu):
 				default='UTF-8')
 		self._menu_options['disk_config'] = \
 			Selector(
-				_('Disk layout'),
+				_('Disk configuration'),
 				lambda preset: self._select_disk_config(preset),
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),

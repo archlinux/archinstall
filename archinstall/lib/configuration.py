@@ -5,27 +5,12 @@ import logging
 import pathlib
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
-from .disk.fido import Fido2
-from .disk.device_model import DiskEncryption
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
 from .output import log
-from .exceptions import RequirementError
 
 if TYPE_CHECKING:
 	_: Any
-
-
-def configuration_sanity_check():
-	disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
-	if disk_encryption is not None and disk_encryption.hsm_device:
-		if not Fido2.get_fido2_devices():
-			raise RequirementError(
-				f"In order to use HSM to pair with the disk encryption,"
-				+ f" one needs to be accessible through /dev/hidraw* and support"
-				+ f" the FIDO2 protocol. You can check this by running"
-				+ f" 'systemd-cryptenroll --fido2-device=list'."
-			)
 
 
 class ConfigurationOutput:

@@ -4,11 +4,11 @@ repos:
     rev: v2.0.2
     hooks:
       - id: autoflake
-        args:
-          - "--in-place"
-          - "--expand-star-imports"
-          - "--remove-duplicate-keys"
-          - "--remove-unused-variables"
+        args: [
+          '--in-place',
+          '--remove-all-unused-imports',
+          '--ignore-init-module-imports'
+        ]
         files: \.py$
         require_serial: true
         fail_fast: true

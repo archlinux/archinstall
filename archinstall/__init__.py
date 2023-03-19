@@ -162,7 +162,7 @@ def get_arguments() -> Dict[str, Any]:
 	3) Amend
 		Change whatever is needed on the configuration dictionary (it could be done in post_process_arguments but  this ougth to be left to changes anywhere else in the code, not in the arguments dictionary
 	"""
-	config = {}
+	config: Dict[str, Any] = {}
 	args, unknowns = parser.parse_known_args()
 	# preprocess the JSON files.
 	# TODO Expand the url access to the other JSON file arguments ?
@@ -175,15 +175,15 @@ def get_arguments() -> Dict[str, Any]:
 			exit(1)
 
 	# load the parameters. first the known, then the unknowns
-	args = cleanup_empty_args(args)
-	config.update(args)
+	clean_args = cleanup_empty_args(args)
+	config.update(clean_args)
 	config.update(parse_unspecified_argument_list(unknowns))
 	# amend the parameters (check internal consistency)
 	# Installation can't be silent if config is not passed
-	if args.get('config') is None:
+	if clean_args.get('config') is None:
 		config["silent"] = False
 	else:
-		config["silent"] = args.get('silent')
+		config["silent"] = clean_args.get('silent')
 
 	# avoiding a compatibility issue
 	if 'dry-run' in config:
@@ -204,8 +204,8 @@ def load_config():
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
-	if layouts := arguments.get('disk_config', {}):
-		arguments['disk_config'] = DiskLayoutConfiguration.parse_arg(layouts)
+	if disk_config := arguments.get('disk_config', {}):
+		arguments['disk_config'] = DiskLayoutConfiguration.parse_arg(disk_config)
 
 	if profile := arguments.get('profile', None):
 		arguments['profile'] = profile_handler.parse_profile_config(profile)
@@ -233,7 +233,7 @@ def load_config():
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = Bootloader.from_arg(arguments['bootloader'])
 
-	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_config', None) is not None:
+	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = DiskEncryption.parse_arg(
 			arguments['disk_config'],
