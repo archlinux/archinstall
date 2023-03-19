@@ -64,11 +64,9 @@ class TableMenu(Menu):
 
 		self._options, header = self._prepare_selection(table)
 
-		extra_bottom_space = True if preview_command else False
+		preset_values = self._preset_values(preset)
 
-		preset_table = FormattedOutput.as_table(preset).strip()
-		preset_table_rows = preset_table.split('\n')[2:]  # get all data rows
-		preset_values = [p for p in preset_table_rows if self._escape_row(p) in self._options]
+		extra_bottom_space = True if preview_command else False
 
 		super().__init__(
 			title,
@@ -86,6 +84,20 @@ class TableMenu(Menu):
 			allow_reset=allow_reset,
 			allow_reset_warning_msg=allow_reset_warning_msg
 		)
+
+	def _preset_values(self, preset: List[Any]) -> List[str]:
+		# when we create the table of just the preset values it will
+		# be formatted a bit different due to spacing, so to determine
+		# correct rows lets remove all the spaces and compare apples with apples
+		preset_table = FormattedOutput.as_table(preset).strip()
+		data_rows = preset_table.split('\n')[2:]  # get all data rows
+		pure_data_rows = [self._escape_row(row.replace(' ', '')) for row in data_rows]
+
+		# the actual preset value has to be in non-escaped form
+		pure_option_rows = {o.replace(' ', ''): self._unescape_row(o) for o in self._options.keys()}
+		preset_rows = [row for pure, row in pure_option_rows.items() if pure in pure_data_rows]
+
+		return preset_rows
 
 	def _table_show_preview(self, preview_command: Optional[Callable], selection: Any) -> Optional[str]:
 		if preview_command:
@@ -108,6 +120,9 @@ class TableMenu(Menu):
 
 	def _escape_row(self, row: str) -> str:
 		return row.replace('|', '\\|')
+
+	def _unescape_row(self, row: str) -> str:
+		return row.replace('\\|', '|')
 
 	def _create_table(self, data: List[Any], rows: List[str], header_padding: int = 2) -> Dict[str, Any]:
 		# these are the header rows of the table and do not map to any data obviously
