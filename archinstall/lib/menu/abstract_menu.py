@@ -231,6 +231,28 @@ class AbstractMenu:
 			if selector.default is not None and config_key not in self._data_store:
 				self._data_store[config_key] = selector.default
 
+	def _sync_all(self):
+		for key in self._menu_options.keys():
+			self._sync(key)
+
+	def _sync(
+		self,
+		selector_name: str,
+		omit_if_set: bool = False,
+		omit_if_disabled: bool = False
+	):
+		""" loads menu options with data_store value """
+		value = self._data_store.get(selector_name, None)
+		# don't display the menu option if it was defined already
+		if value is not None and omit_if_set:
+			return
+
+		if not self.option(selector_name).is_enabled() and omit_if_disabled:
+			return
+
+		if value is not None:
+			self._menu_options[selector_name].set_current_selection(value)
+
 	def _missing_configs(self) -> List[str]:
 		def check(s):
 			return self._menu_options.get(s).has_selection()
@@ -282,6 +304,7 @@ class AbstractMenu:
 			self._menu_options[selector_name].set_enabled(True)
 			self._update_enabled_order(selector_name)
 			self._menu_options[selector_name].set_mandatory(mandatory)
+			self._sync(selector_name)
 		else:
 			raise ValueError(f'No selector found: {selector_name}')
 
@@ -310,6 +333,7 @@ class AbstractMenu:
 		return config_name, selector
 
 	def run(self, allow_reset: bool = False):
+		self._sync_all()
 		cursor_pos = None
 
 		while True:
