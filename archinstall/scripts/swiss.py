@@ -10,7 +10,7 @@ from archinstall import Selector, GlobalMenu, \
 from ..lib.configuration import ConfigurationOutput
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.device_model import DiskLayoutType, EncryptionType
-from ..lib.disk.filesystem import Filesystem
+from ..lib.disk.filesystemhandler import FilesystemHandler
 from ..lib.menu import Menu
 from ..lib.models.network_configuration import NetworkConfigurationHandler
 from ..profiles.applications.pipewire import PipewireProfile
@@ -342,11 +342,11 @@ if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
 if mode in (ExecutionMode.Full, ExecutionMode.Only_HD):
-	fs = Filesystem(
+	fs_handler = FilesystemHandler(
 		archinstall.arguments['disk_config'],
 		archinstall.arguments.get('disk_encryption', None)
 	)
 
-	fs.perform_filesystem_operations()
+	fs_handler.perform_filesystem_operations()
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')), mode)

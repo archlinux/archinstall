@@ -8,7 +8,7 @@ from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskE
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
 from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystem import Filesystem
+from ..lib.disk.filesystemhandler import FilesystemHandler
 from ..lib.output import log
 from ..profiles.applications.pipewire import PipewireProfile
 
@@ -296,12 +296,12 @@ archinstall.configuration_sanity_check()
 
 # exit(1)
 
-fs = Filesystem(
+fs_handler = FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
-fs.perform_filesystem_operations()
+fs_handler.perform_filesystem_operations()
 #
 # exit(1)
 

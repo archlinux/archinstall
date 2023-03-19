@@ -7,7 +7,7 @@ import archinstall
 from .. import Installer, DiskLayoutConfiguration, DiskEncryption
 from ..lib.configuration import ConfigurationOutput
 from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystem import Filesystem
+from ..lib.disk.filesystemhandler import FilesystemHandler
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -101,12 +101,12 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-fs = Filesystem(
+fs_handler = FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
 
-fs.perform_filesystem_operations()
+fs_handler.perform_filesystem_operations()
 
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', pathlib.Path('/mnt')))

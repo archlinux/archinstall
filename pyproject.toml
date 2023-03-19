@@ -1,6 +1,6 @@
 [build-system]
-requires = ["flit>=3.8.0", "setuptools>=45", "wheel"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=67"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
@@ -9,24 +9,37 @@ description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
+license = "GPL"
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["linux", "arch", "archinstall", "installer"]
+long_description = "file: README.md"
+long_description_content_type = "text/markdown"
 classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX :: Linux",
+]
+license_files = [
+    "LICENSE",
 ]
 dependencies = [
     "pyparted==3.12.0",
     "simple-term-menu==1.6.1",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "mypy==1.1.1",
-]
-doc = ["sphinx"]
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["archinstall", "archinstall.*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "archinstall.__version__"}
+readme = {file = ["README.rst", "USAGE.rst"]}
 
 [project.urls]
 Home = "https://archlinux.org"
@@ -36,10 +49,16 @@ Source = "https://github.com/archlinux/archinstall"
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
-[tool.flit.sdist]
-include = ["docs/", "profiles", "examples", "archinstall/profiles", "archinstall/examples"]
-exclude = ["docs/*.html", "docs/_static", "docs/*.png", "docs/*.psd"]
+[project.optional-dependencies]
+dev = [
+    "mypy==1.1.1",
+]
+doc = ["sphinx"]
+
+[tool.mypy]
+python_version = "3.10"
+exclude = "tests"
 
 [tool.bandit]
-targets = ["ourkvm"]
+targets = ["archinstall"]
 exclude = ["/tests"]

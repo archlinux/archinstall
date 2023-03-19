@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class Filesystem:
+class FilesystemHandler:
 	def __init__(
 		self,
 		disk_config: DiskLayoutConfiguration,

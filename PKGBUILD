@@ -12,7 +12,7 @@ arch=(any)
 url="https://github.com/archlinux/archinstall"
 license=(GPL3)
 depends=(python)
-makedepends=(python-pip python-build python-installer python-setuptools python-sphinx python-wheel)
+makedepends=(python-build python-installer python-setuptools python-sphinx python-wheel)
 provides=(python-archinstall)
 conflicts=(python-archinstall)
 replaces=(python-archinstall)
@@ -29,9 +29,7 @@ validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxe
 prepare() {
   cd $pkgname-$pkgver
   # use real directories for examples and profiles, as symlinks do not work
-  # with flit or setuptools PEP517 backends
   rm -fv $pkgname/{examples,profiles}
-  mv -v examples profiles $pkgname/
 }
 
 build() {
@@ -42,11 +40,6 @@ build() {
 
 package() {
   cd "$pkgname-$pkgver"
-
-  #install the dependencies
-  PIP_CONFIG_FILE=/dev/null flit install --only-deps
-  # install archinstall
-  PIP_CONFIG_FILE=/dev/null pip install --root="${pkgdir}" --ignore-installed dist/*.whl
-  # install the docs
+  python -m installer --destdir="$pkgdir" dist/*.whl
   install -vDm 644 docs/_build/man/archinstall.1 -t "$pkgdir/usr/share/man/man1/"
 }
