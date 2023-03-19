@@ -1064,3 +1064,21 @@ msgstr ""
 
 msgid "Create your own"
 msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"கிராபிக்ஸ் இயக்கியைத் தேர்ந்தெடுக்கவும் அல்லது அனைத்து திறந்த மூல இயக்கிகளையும் நிறுவ காலியாக விடவும்"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""

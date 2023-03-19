@@ -70,6 +70,11 @@ class TableMenu(Menu):
 		preset_table_rows = preset_table.split('\n')[2:]  # get all data rows
 		preset_values = [p for p in preset_table_rows if self._escape_row(p) in self._options]
 
+		from pprint import pprint
+		pprint(self._options)
+		pprint(preset_values)
+		exit(1)
+
 		super().__init__(
 			title,
 			self._options,

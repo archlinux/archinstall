@@ -1065,3 +1065,21 @@ msgstr ""
 
 msgid "Create your own"
 msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"모든 오픈 소스 드라이버를 설치하려면 그래픽 드라이버를 선택하거나 공백으로 두세요"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""

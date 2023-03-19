@@ -838,12 +838,255 @@ msgstr "Чтобы иметь возможность использовать э
 msgid "The font should be stored as {}"
 msgstr "Шрифт должен быть сохранен как {}"
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Для запуска Archinstall требуются привилегии root. Для получения дополнительной информации смотрите --help."
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Выберите действие для '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Выберите один или несколько жестких дисков для использования и настройте их"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Если вы сбросите выбор жесткого диска, это также сбросит текущую разметку диска. Вы уверены?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Добавление раздела...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Удалить раздел"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Введите каталог для сохранения конфигурации (-ций): "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Минимальный размер раздела /home: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Минимальный размер раздела Arch Linux: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Это список предварительно запрограммированных профилей, они могут облегчить установку таких вещей, как окружения рабочего стола"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Текущая разметка разделов"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Создать новый раздел"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Назначить точку монтирования для раздела"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Пометить/снять отметку с раздела, который будет отформатирован (стирание данных)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Пометить/снять отметку с раздела как сжатый (только для btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Удалить подтом"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Удалить раздел"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Точки монтирования разделов являются относительными внутри установки, например, загрузочный будет /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Недействительный каталог: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Введите начальный сектор (процент или номер блока, по умолчанию: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Введите конечный сектор раздела (процент или номер блока, например: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Пароль шифрования"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Выберите разделы для шифрования"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "Стереть все выбранные диски и использовать оптимальную схему разделов по умолчанию"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Ручная конфигурация"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Отсутствует конфигурация"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Configuration"
+msgstr "Отсутствует конфигурация"
+
+#, fuzzy
+msgid "Password"
+msgstr "Пароль root"
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} содержит разделы в очереди, это удалит их, вы уверены?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
+
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Дополнительные пакеты"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Профиль"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Профиль"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Удалить интерфейс"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Профиль"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Введенное вами имя пользователя недействительно. Попробуйте еще раз"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Напишите дополнительные пакеты для установки (разделите пробелами, оставьте пустым, чтобы пропустить): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Напишите дополнительные пакеты для установки (разделите пробелами, оставьте пустым, чтобы пропустить): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Выберите графический драйвер или оставьте пустым, чтобы установить все драйверы с открытым исходным кодом"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"
-
-#~ msgid "Archinstall requires root privileges to run. See --help for more."
-#~ msgstr "Для запуска Archinstall требуются привилегии root. Для получения дополнительной информации смотрите --help."
 
 #~ msgid " ! Formatting {archinstall.arguments['harddrives']} in "
 #~ msgstr " ! Форматирование {archinstall.arguments['harddrives']} в "
