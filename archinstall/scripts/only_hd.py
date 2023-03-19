@@ -7,8 +7,7 @@ import archinstall
 from .. import Installer, DiskLayoutConfiguration, DiskEncryption
 from ..lib.configuration import ConfigurationOutput
 from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystem import perform_filesystem_operations
-
+from ..lib.disk.filesystem import Filesystem
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -25,7 +24,7 @@ def ask_user_questions():
 
 	global_menu.enable('archinstall-language')
 
-	global_menu.enable('disk_layouts', mandatory=True)
+	global_menu.enable('disk_config', mandatory=True)
 	global_menu.enable('disk_encryption')
 	global_menu.enable('swap')
 
@@ -42,7 +41,7 @@ def perform_installation(mountpoint):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
 	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
@@ -53,7 +52,7 @@ def perform_installation(mountpoint):
 	) as installation:
 		# Mount all the drives to the desired mountpoint
 		# This *can* be done outside of the installation, but the installer can deal with it.
-		if archinstall.arguments.get('disk_layouts'):
+		if archinstall.arguments.get('disk_config'):
 			installation.mount_ordered_layout()
 
 		# Placing /boot check during installation because this will catch both re-use and wipe scenarios.
@@ -102,9 +101,12 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-perform_filesystem_operations(
-	archinstall.arguments['disk_layouts'],
+fs = Filesystem(
+	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
+
+fs.perform_filesystem_operations()
+
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', pathlib.Path('/mnt')))

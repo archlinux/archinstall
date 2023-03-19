@@ -8,7 +8,7 @@ from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, DiskE
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType
 from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.disk.filesystem import Filesystem
 from ..lib.output import log
 from ..profiles.applications.pipewire import PipewireProfile
 
@@ -60,7 +60,7 @@ def ask_user_questions():
 
 	global_menu.enable('sys-encoding')
 
-	global_menu.enable('disk_layouts', mandatory=True)
+	global_menu.enable('disk_config', mandatory=True)
 
 	# Specify disk encryption options
 	global_menu.enable('disk_encryption')
@@ -118,7 +118,7 @@ def perform_installation(mountpoint: Path):
 	formatted and setup prior to entering this function.
 	"""
 	log('Starting installation', level=logging.INFO)
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
@@ -284,7 +284,7 @@ archinstall.configuration_sanity_check()
 #
 # mods = device_handler.detect_pre_mounted_mods(Path('/mnt/archinstall'))
 #
-# archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+# archinstall.arguments['disk_config'] = DiskLayoutConfiguration(
 # 	DiskLayoutType.Pre_mount,
 # 	device_modifications=mods,
 # 	relative_mountpoint=Path('/mnt/archinstall')
@@ -296,10 +296,12 @@ archinstall.configuration_sanity_check()
 
 # exit(1)
 
-perform_filesystem_operations(
-	archinstall.arguments['disk_layouts'],
+fs = Filesystem(
+	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
+
+fs.perform_filesystem_operations()
 #
 # exit(1)
 

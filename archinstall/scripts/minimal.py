@@ -6,7 +6,7 @@ from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, I
 from archinstall.profiles.minimal import MinimalProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
 	PartitionModification, EncryptionType
-from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.disk.filesystem import Filesystem
 from ..lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if archinstall.arguments.get('help', None):
 
 
 def perform_installation(mountpoint: Path):
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
 	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
@@ -65,7 +65,7 @@ def prompt_disk_layout():
 	devices = select_devices()
 	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
-	archinstall.arguments['disk_layouts'] = DiskLayoutConfiguration(
+	archinstall.arguments['disk_config'] = DiskLayoutConfiguration(
 		config_type=DiskLayoutType.Default,
 		device_modifications=[modifications]
 	)
@@ -73,7 +73,7 @@ def prompt_disk_layout():
 
 def parse_disk_encryption():
 	if enc_password := archinstall.arguments.get('!encryption-password', None):
-		modification: List[DeviceModification] = archinstall.arguments['disk_layouts']
+		modification: List[DeviceModification] = archinstall.arguments['disk_config']
 		partitions: List[PartitionModification] = []
 
 		# encrypt all partitions except the /boot
@@ -95,9 +95,11 @@ config_output.show()
 
 input(str(_('Press Enter to continue.')))
 
-perform_filesystem_operations(
-	archinstall.arguments['disk_layouts'],
+fs = Filesystem(
+	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )
+
+fs.perform_filesystem_operations()
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')))

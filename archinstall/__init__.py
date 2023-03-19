@@ -204,8 +204,8 @@ def load_config():
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
-	if layouts := arguments.get('disk_layouts', {}):
-		arguments['disk_layouts'] = DiskLayoutConfiguration.parse_arg(layouts)
+	if layouts := arguments.get('disk_config', {}):
+		arguments['disk_config'] = DiskLayoutConfiguration.parse_arg(layouts)
 
 	if profile := arguments.get('profile', None):
 		arguments['profile'] = profile_handler.parse_profile_config(profile)
@@ -233,10 +233,10 @@ def load_config():
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = Bootloader.from_arg(arguments['bootloader'])
 
-	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_layouts', None) is not None:
+	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_config', None) is not None:
 		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = DiskEncryption.parse_arg(
-			arguments['disk_layouts'],
+			arguments['disk_config'],
 			arguments['disk_encryption'],
 			password
 		)

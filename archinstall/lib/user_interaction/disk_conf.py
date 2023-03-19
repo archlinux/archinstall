@@ -108,7 +108,7 @@ def _manual_partitioning(
 	return modifications
 
 
-def select_disk_layout(
+def select_disk_config(
 	preset: Optional[DiskLayoutConfiguration] = None,
 	advanced_option: bool = False
 ) -> Optional[DiskLayoutConfiguration]:

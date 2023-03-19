@@ -170,7 +170,7 @@ class Size:
 			'value': self.value,
 			'unit': self.unit.name,
 			'sector_size': self.sector_size.__dump__() if self.sector_size else None,
-			'total_size': self.total_size.__dump__() if self.total_size else None,
+			'total_size': self._total_size.__dump__() if self._total_size else None
 		}
 
 	@classmethod
@@ -309,7 +309,7 @@ class PartitionInfo:
 			Size(partition.disk.device.sectorSize, Unit.B)
 		)
 
-		length = Size(partition.getLength(unit='B'), Unit.B)
+		length = Size(int(partition.getLength(unit='B')), Unit.B)
 
 		return PartitionInfo(
 			partition=partition,
@@ -468,7 +468,7 @@ class DeviceInfo:
 			path=Path(device.path),
 			type=device_type,
 			sector_size=sector_size,
-			total_size=Size(device.getLength(unit='B'), Unit.B),
+			total_size=Size(int(device.getLength(unit='B')), Unit.B),
 			free_space_regions=free_space,
 			read_only=device.readOnly,
 			dirty=device.dirty

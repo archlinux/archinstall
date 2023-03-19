@@ -28,7 +28,7 @@ from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
 from ..user_interaction import select_profile
-from ..user_interaction.disk_conf import select_disk_layout
+from ..user_interaction.disk_conf import select_disk_config
 from ..user_interaction.save_conf import save_config
 
 if TYPE_CHECKING:
@@ -68,10 +68,10 @@ class GlobalMenu(AbstractMenu):
 				_('Locale encoding'),
 				lambda preset: select_locale_enc(preset),
 				default='UTF-8')
-		self._menu_options['disk_layouts'] = \
+		self._menu_options['disk_config'] = \
 			Selector(
 				_('Disk layout'),
-				lambda preset: self._select_disk_layout(preset),
+				lambda preset: self._select_disk_config(preset),
 				preview_func=self._prev_disk_layouts,
 				display_func=lambda x: self._display_disk_layout(x),
 			)
@@ -81,7 +81,7 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: self._disk_encryption(preset),
 				preview_func=self._prev_disk_encryption,
 				display_func=lambda x: self._display_disk_encryption(x),
-				dependencies=['disk_layouts'])
+				dependencies=['disk_config'])
 		self._menu_options['swap'] = \
 			Selector(
 				_('Swap'),
@@ -207,7 +207,7 @@ class GlobalMenu(AbstractMenu):
 		from ..disk.encryption_menu import DiskEncryptionMenu
 		data_store: Dict[str, Any] = {}
 
-		selector = self._menu_options['disk_layouts']
+		selector = self._menu_options['disk_config']
 
 		if selector.has_selection():
 			mods: List[DeviceModification] = selector.current_selection
@@ -227,7 +227,7 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_disk_layouts(self) -> Optional[str]:
-		selector = self._menu_options['disk_layouts']
+		selector = self._menu_options['disk_config']
 		if selector.has_selection():
 			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
 
@@ -321,11 +321,11 @@ class GlobalMenu(AbstractMenu):
 
 		return ntp
 
-	def _select_disk_layout(
+	def _select_disk_config(
 		self,
 		preset: Optional[DiskLayoutConfiguration] = None
 	) -> Optional[DiskLayoutConfiguration]:
-		return select_disk_layout(
+		return select_disk_config(
 			preset,
 			storage['arguments'].get('advanced', False)
 		)

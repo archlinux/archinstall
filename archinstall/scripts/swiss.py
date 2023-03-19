@@ -10,7 +10,7 @@ from archinstall import Selector, GlobalMenu, \
 from ..lib.configuration import ConfigurationOutput
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.device_model import DiskLayoutType, EncryptionType
-from ..lib.disk.filesystem import perform_filesystem_operations
+from ..lib.disk.filesystem import Filesystem
 from ..lib.menu import Menu
 from ..lib.models.network_configuration import NetworkConfigurationHandler
 from ..profiles.applications.pipewire import PipewireProfile
@@ -99,7 +99,7 @@ class SwissMainMenu(GlobalMenu):
 		match self._execution_mode:
 			case ExecutionMode.Full | ExecutionMode.Lineal:
 				options_list = [
-					'keyboard-layout', 'mirror-region', 'disk_layouts',
+					'keyboard-layout', 'mirror-region', 'disk_config',
 					'disk_encryption', 'swap', 'bootloader', 'hostname', '!root-password',
 					'!users', 'profile', 'audio', 'kernels', 'packages', 'additional-repositories', 'nic',
 					'timezone', 'ntp'
@@ -108,10 +108,10 @@ class SwissMainMenu(GlobalMenu):
 				if archinstall.arguments.get('advanced', False):
 					options_list.extend(['sys-language', 'sys-encoding'])
 
-				mandatory_list = ['disk_layouts', 'bootloader', 'hostname']
+				mandatory_list = ['disk_config', 'bootloader', 'hostname']
 			case ExecutionMode.Only_HD:
-				options_list = ['disk_layouts', 'disk_encryption','swap']
-				mandatory_list = ['disk_layouts']
+				options_list = ['disk_config', 'disk_encryption','swap']
+				mandatory_list = ['disk_config']
 			case ExecutionMode.Only_OS:
 				options_list = [
 					'keyboard-layout', 'mirror-region','bootloader', 'hostname',
@@ -178,7 +178,7 @@ def ask_user_questions(exec_mode: ExecutionMode = ExecutionMode.Full):
 
 
 def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_layouts']
+	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
 	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
@@ -342,9 +342,11 @@ if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
 if mode in (ExecutionMode.Full, ExecutionMode.Only_HD):
-	perform_filesystem_operations(
-		archinstall.arguments['disk_layouts'],
+	fs = Filesystem(
+		archinstall.arguments['disk_config'],
 		archinstall.arguments.get('disk_encryption', None)
 	)
+
+	fs.perform_filesystem_operations()
 
 perform_installation(archinstall.storage.get('MOUNT_POINT', Path('/mnt')), mode)

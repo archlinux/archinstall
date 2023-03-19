@@ -249,9 +249,9 @@ class AbstractMenu:
 				if not check('!root-password') and not has_superuser():
 					missing += [
 						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
-			elif key == 'disk_layouts':
-				if not check('disk_layouts'):
-					missing += [self._menu_options['disk_layouts'].description]
+			elif key == 'disk_config':
+				if not check('disk_config'):
+					missing += [self._menu_options['disk_config'].description]
 
 		return missing
 
