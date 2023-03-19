@@ -2,7 +2,7 @@
 import importlib
 from argparse import ArgumentParser, Namespace
 
-from .lib.disk.device_model import DiskLayoutConfiguration
+from .lib.disk.device_model import DiskLayoutConfiguration, DiskEncryption
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
