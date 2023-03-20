@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from archinstall.profiles.profile import Profile
+from archinstall.default_profiles.profile import Profile
 from ..disk.device_model import DiskLayoutConfiguration, DeviceModification, DiskEncryption, EncryptionType
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu
@@ -10,6 +10,7 @@ from ..models import NetworkConfiguration
 from ..models.bootloader import Bootloader
 from ..models.users import User
 from ..output import FormattedOutput
+from ..profile.profile_menu import ProfileConfiguration
 from ..storage import storage
 from ..user_interaction import add_number_of_parrallel_downloads
 from ..user_interaction import ask_additional_packages_to_install
@@ -27,7 +28,6 @@ from ..user_interaction import select_language
 from ..user_interaction import select_locale_enc
 from ..user_interaction import select_locale_lang
 from ..user_interaction import select_mirror_regions
-from ..user_interaction import select_profile
 from ..user_interaction.disk_conf import select_disk_config
 from ..user_interaction.save_conf import save_config
 
@@ -111,11 +111,11 @@ class GlobalMenu(AbstractMenu):
 				default={},
 				display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else None,
 				preview_func=self._prev_users)
-		self._menu_options['profile'] = \
+		self._menu_options['profile_config'] = \
 			Selector(
 				_('Profile'),
 				lambda preset: self._select_profile(preset),
-				display_func=lambda x: x.name if x else 'None',
+				display_func=lambda x: x.profile.name if x else 'None',
 				preview_func=self._prev_profile
 			)
 		self._menu_options['audio'] = \
@@ -212,7 +212,7 @@ class GlobalMenu(AbstractMenu):
 		if selector.has_selection():
 			mods: List[DeviceModification] = selector.current_selection
 		else:
-			# this should not happen as the encryption menu has the disk layout as dependency
+			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
 		disk_encryption = DiskEncryptionMenu(data_store, preset, mods).run()
@@ -302,10 +302,21 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_profile(self) -> Optional[str]:
-		selector = self._menu_options['profile']
+		selector = self._menu_options['profile_config']
 		if selector.has_selection():
-			profile: Profile = selector.current_selection
-			return FormattedOutput.as_table([profile.info()])
+			profile_config: ProfileConfiguration = selector.current_selection
+
+			profile_names = ', '.join(profile_config.profile.current_selection_names())
+			output = str(_('Profiles')) + ': ' + profile_names + '\n'
+
+			if profile_config.gfx_driver:
+				output += str(_('Graphics driver')) + ': ' + profile_config.gfx_driver + '\n'
+
+			if profile_config.greeter:
+				output += str(_('Greeter')) + ': ' + profile_config.greeter.value + '\n'
+
+			return output
+
 		return None
 
 	def _set_root_password(self) -> Optional[str]:
@@ -335,12 +346,20 @@ class GlobalMenu(AbstractMenu):
 
 		return disk_config
 
-	def _select_profile(self, current_profile: Optional[Profile]):
-		profile = select_profile(current_profile)
-		return profile
+	# TODO
+	# fix ctrl+c reset -> back in -> profile is there?
+	# move install gfx to profile handler
+	# installation install profile
+	# test default greeter suggestion
+
+
+	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
+		from archinstall.lib.profile.profile_menu import ProfileMenu
+		profile_config = ProfileMenu(current_profile).run()
+		return profile_config
 
 	def _select_audio(self, current: Union[str, None]) -> Union[str, None]:
-		profile: Profile = self._menu_options['profile'].current_selection
+		profile: Profile = self._menu_options['profile_config'].current_selection
 		is_desktop = profile.is_desktop_profile() if profile else False
 		selection = ask_for_audio_selection(is_desktop, current)
 		return selection

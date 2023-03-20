@@ -261,7 +261,13 @@ class Size:
 
 
 @dataclass
-class PartitionInfo:
+class _BtrfsSubvolumeInfo:
+	name: Path
+	mountpoint: Optional[Path]
+
+
+@dataclass
+class _PartitionInfo:
 	partition: Partition
 	name: str
 	type: PartitionType
@@ -273,7 +279,7 @@ class PartitionInfo:
 	partuuid: str
 	disk: Disk
 	mountpoints: List[Path]
-	btrfs_subvol_infos: List[BtrfsSubvolumeInfo] = field(default_factory=list)
+	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
 	def as_json(self) -> Dict[str, Any]:
 		info = {
@@ -298,8 +304,8 @@ class PartitionInfo:
 		fs_type: FilesystemType,
 		partuuid: str,
 		mountpoints: List[Path],
-		btrfs_subvol_infos: List[BtrfsSubvolumeInfo] = []
-	) -> PartitionInfo:
+		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
+	) -> _PartitionInfo:
 		partition_type = PartitionType.get_type_from_code(partition.type)
 		flags = [f for f in PartitionFlag if partition.getFlag(f.value)]
 
@@ -311,7 +317,7 @@ class PartitionInfo:
 
 		length = Size(int(partition.getLength(unit='B')), Unit.B)
 
-		return PartitionInfo(
+		return _PartitionInfo(
 			partition=partition,
 			name=partition.get_name(),
 			type=partition_type,
@@ -328,6 +334,49 @@ class PartitionInfo:
 
 
 @dataclass
+class _DeviceInfo:
+	model: str
+	path: Path
+	type: str
+	total_size: Size
+	free_space_regions: List[DeviceGeometry]
+	sector_size: Size
+	read_only: bool
+	dirty: bool
+
+	def as_json(self) -> Dict[str, Any]:
+		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
+		return {
+			'Model': self.model,
+			'Path': str(self.path),
+			'Type': self.type,
+			'Size': self.total_size.format_size(Unit.MiB),
+			'Free space': int(total_free_space),
+			'Sector size': self.sector_size.value,
+			'Read only': self.read_only
+		}
+
+	@classmethod
+	def from_disk(cls, disk: Disk) -> _DeviceInfo:
+		device = disk.device
+		device_type = parted.devices[device.type]
+
+		sector_size = Size(device.sectorSize, Unit.B)
+		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
+
+		return _DeviceInfo(
+			model=device.model.strip(),
+			path=Path(device.path),
+			type=device_type,
+			sector_size=sector_size,
+			total_size=Size(int(device.getLength(unit='B')), Unit.B),
+			free_space_regions=free_space,
+			read_only=device.readOnly,
+			dirty=device.dirty
+		)
+
+
+@dataclass
 class SubvolumeModification:
 	name: Path
 	mountpoint: Optional[Path] = None
@@ -335,7 +384,7 @@ class SubvolumeModification:
 	nodatacow: bool = False
 
 	@classmethod
-	def from_existing_subvol_info(cls, info: BtrfsSubvolumeInfo) -> SubvolumeModification:
+	def from_existing_subvol_info(cls, info: _BtrfsSubvolumeInfo) -> SubvolumeModification:
 		return SubvolumeModification(info.name, mountpoint=info.mountpoint)
 
 	@classmethod
@@ -401,12 +450,6 @@ class SubvolumeModification:
 		}
 
 
-@dataclass
-class BtrfsSubvolumeInfo:
-	name: Path
-	mountpoint: Optional[Path]
-
-
 class DeviceGeometry:
 	def __init__(self, geometry: Geometry, sector_size: Size):
 		self._geometry = geometry
@@ -433,53 +476,10 @@ class DeviceGeometry:
 
 
 @dataclass
-class DeviceInfo:
-	model: str
-	path: Path
-	type: str
-	total_size: Size
-	free_space_regions: List[DeviceGeometry]
-	sector_size: Size
-	read_only: bool
-	dirty: bool
-
-	def as_json(self) -> Dict[str, Any]:
-		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
-		return {
-			'Model': self.model,
-			'Path': str(self.path),
-			'Type': self.type,
-			'Size': self.total_size.format_size(Unit.MiB),
-			'Free space': int(total_free_space),
-			'Sector size': self.sector_size.value,
-			'Read only': self.read_only
-		}
-
-	@classmethod
-	def from_disk(cls, disk: Disk) -> DeviceInfo:
-		device = disk.device
-		device_type = parted.devices[device.type]
-
-		sector_size = Size(device.sectorSize, Unit.B)
-		free_space = [DeviceGeometry(g, sector_size) for g in disk.getFreeSpaceRegions()]
-
-		return DeviceInfo(
-			model=device.model.strip(),
-			path=Path(device.path),
-			type=device_type,
-			sector_size=sector_size,
-			total_size=Size(int(device.getLength(unit='B')), Unit.B),
-			free_space_regions=free_space,
-			read_only=device.readOnly,
-			dirty=device.dirty
-		)
-
-
-@dataclass
 class BDevice:
 	disk: Disk
-	device_info: DeviceInfo
-	partition_infos: List[PartitionInfo]
+	device_info: _DeviceInfo
+	partition_infos: List[_PartitionInfo]
 
 	def __hash__(self):
 		return hash(self.disk.device.path)
@@ -609,7 +609,7 @@ class PartitionModification:
 		return self.dev_path
 
 	@classmethod
-	def from_existing_partition(cls, partition_info: PartitionInfo) -> PartitionModification:
+	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
 		if partition_info.btrfs_subvol_infos:
 			mountpoint = None
 			subvol_mods = []

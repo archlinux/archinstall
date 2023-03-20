@@ -10,7 +10,7 @@ from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, Enc
 from ..lib.disk.device_handler import disk_layouts
 from ..lib.disk.filesystemhandler import FilesystemHandler
 from ..lib.output import log
-from ..profiles.applications.pipewire import PipewireProfile
+from ..default_profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -79,7 +79,7 @@ def ask_user_questions():
 	global_menu.enable('!users', mandatory=True)
 
 	# Ask for archinstall-specific profiles_bck (such as desktop environments etc)
-	global_menu.enable('profile')
+	global_menu.enable('profile_config')
 
 	# Ask about audio server selection if one is not already set
 	global_menu.enable('audio')
@@ -194,8 +194,8 @@ def perform_installation(mountpoint: Path):
 		else:
 			installation.log("No audio server will be installed.", level=logging.INFO)
 
-		if archinstall.arguments.get('profile', None):
-			installation.install_profile(archinstall.arguments.get('profile', None))
+		if archinstall.arguments.get('profile_config', None):
+			installation.install_profile(archinstall.arguments.get('profile_config', None))
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -213,7 +213,7 @@ def perform_installation(mountpoint: Path):
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 		installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
-		if profile := archinstall.arguments.get('profile', None):
+		if profile := archinstall.arguments.get('profile_config', None):
 			profile.post_install(installation)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.

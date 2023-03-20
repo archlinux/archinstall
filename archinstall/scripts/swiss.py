@@ -13,7 +13,7 @@ from ..lib.disk.device_model import DiskLayoutType, EncryptionType
 from ..lib.disk.filesystemhandler import FilesystemHandler
 from ..lib.menu import Menu
 from ..lib.models.network_configuration import NetworkConfigurationHandler
-from ..profiles.applications.pipewire import PipewireProfile
+from ..default_profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -101,7 +101,7 @@ class SwissMainMenu(GlobalMenu):
 				options_list = [
 					'keyboard-layout', 'mirror-region', 'disk_config',
 					'disk_encryption', 'swap', 'bootloader', 'hostname', '!root-password',
-					'!users', 'profile', 'audio', 'kernels', 'packages', 'additional-repositories', 'nic',
+					'!users', 'profile_config', 'audio', 'kernels', 'packages', 'additional-repositories', 'nic',
 					'timezone', 'ntp'
 				]
 
@@ -115,7 +115,7 @@ class SwissMainMenu(GlobalMenu):
 			case ExecutionMode.Only_OS:
 				options_list = [
 					'keyboard-layout', 'mirror-region','bootloader', 'hostname',
-					'!root-password', '!users', 'profile', 'audio', 'kernels',
+					'!root-password', '!users', 'profile_config', 'audio', 'kernels',
 					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp'
 				]
 
@@ -252,8 +252,8 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			else:
 				installation.log("No audio server will be installed.", level=logging.INFO)
 
-			if archinstall.arguments.get('profile', None):
-				installation.install_profile(archinstall.arguments.get('profile', None))
+			if archinstall.arguments.get('profile_config', None):
+				installation.install_profile(archinstall.arguments.get('profile_config', None))
 
 			if timezone := archinstall.arguments.get('timezone', None):
 				installation.set_timezone(timezone)
@@ -271,7 +271,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
 
-			if profile := archinstall.arguments.get('profile', None):
+			if profile := archinstall.arguments.get('profile_config', None):
 				profile.post_install(installation)
 
 			# If the user provided a list of services to be enabled, pass the list to the enable_service function.

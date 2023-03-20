@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, List
 
 import archinstall
 from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, Installer
-from archinstall.profiles.minimal import MinimalProfile
+from archinstall.default_profiles.minimal import MinimalProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
 	PartitionModification, EncryptionType
 from ..lib.disk.filesystemhandler import FilesystemHandler

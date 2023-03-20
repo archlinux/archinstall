@@ -5,14 +5,11 @@ import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 from typing import Union
 
-from archinstall.profiles.profile import Profile
-from .system_conf import select_driver
 from ..locale_helpers import list_keyboard_languages, list_timezones
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..menu.text_input import TextInput
 from ..mirrors import list_mirrors
-from ..output import FormattedOutput
 from ..output import log
 from ..packages.packages import validate_package_list
 from ..storage import storage
@@ -142,76 +139,6 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 			return preset_value
 		case MenuSelectionType.Selection:
 			return options[choice.value]
-
-
-def select_profile(
-	current_profile: Optional[Profile] = None,
-	title: str = None,
-	allow_reset: bool = True,
-	multi: bool = False
-) -> Optional[Profile]:
-	from ..profiles_handler import profile_handler
-	top_level_profiles = profile_handler.get_top_level_profiles()
-
-	display_title = title
-	if not display_title:
-		display_title = str(_('This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments'))
-
-	if current_profile is not None:
-		if profile_info := current_profile.info():
-			output = FormattedOutput.as_table([profile_info])
-			display_title += '\n\n' + str(_('Current profile selection'))
-			display_title += '\n\n' + output
-
-	choice = profile_handler.select_profile(
-		top_level_profiles,
-		current_profile=current_profile,
-		title=display_title,
-		allow_reset=allow_reset,
-		multi=multi,
-		with_back_option=True
-	)
-
-	match choice.type_:
-		case MenuSelectionType.Selection:
-			profile_selection: Profile = choice.single_value
-			select_result = profile_selection.do_on_select()
-
-			if not select_result:
-				return select_profile(
-					current_profile=current_profile,
-					title=title,
-					allow_reset=allow_reset,
-					multi=multi
-				)
-
-			# we're going to reset the currently selected profile(s) to avoid
-			# any stale data laying around
-			match select_result:
-				case select_result.NewSelection:
-					if profile_selection.is_graphic_driver_enabled():
-						profile_selection.gfx_driver = select_driver(current_value=profile_selection.gfx_driver)
-
-					profile_handler.reset_top_level_profiles(exclude=[profile_selection])
-					current_profile = profile_selection
-				case select_result.ResetCurrent:
-					profile_handler.reset_top_level_profiles()
-					current_profile = None
-				case select_result.SameSelection:
-					pass
-
-			# we're keep showing the profile menu unless we're actively exiting it
-			# by pressing ctrl+c or Esc
-			return select_profile(
-				current_profile=current_profile,
-				title=title,
-				allow_reset=allow_reset,
-				multi=multi
-			)
-		case MenuSelectionType.Reset:
-			return None
-		case MenuSelectionType.Skip:
-			return current_profile
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:

@@ -93,7 +93,7 @@ class NetworkConfigurationHandler:
 					enable_services=True)  # Sources the ISO network configuration to the install medium.
 			elif self._configuration.is_network_manager():
 				installation.add_additional_packages(["networkmanager"])
-				if (profile := storage['arguments'].get('profile')) and profile.is_desktop_type_profile:
+				if (profile := storage['arguments'].get('profile_config')) and profile.is_desktop_type_profile:
 					installation.add_additional_packages(["network-manager-applet"])
 				installation.enable_service('NetworkManager.service')
 

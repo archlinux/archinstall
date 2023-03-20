@@ -29,7 +29,8 @@ from .lib.packages.packages import (
 	installed_package,
 	validate_package_list,
 )
-from .lib.profiles_handler import ProfileHandler, profile_handler
+from archinstall.lib.profile.profiles_handler import ProfileHandler, profile_handler
+from .lib.profile.profile_menu import ProfileConfiguration
 from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
@@ -43,7 +44,7 @@ from .lib.menu.abstract_menu import (
 	AbstractMenu
 )
 from .lib.translationhandler import TranslationHandler, DeferredTranslation
-from .lib.plugins import plugins, load_plugin # This initiates the plugin loading ceremony
+from .lib.plugins import plugins, load_plugin  # This initiates the plugin loading ceremony
 from .lib.configuration import *
 
 
@@ -207,8 +208,8 @@ def load_config():
 	if disk_config := arguments.get('disk_config', {}):
 		arguments['disk_config'] = DiskLayoutConfiguration.parse_arg(disk_config)
 
-	if profile := arguments.get('profile', None):
-		arguments['profile'] = profile_handler.parse_profile_config(profile)
+	if profile_config := arguments.get('profile_config', None):
+		arguments['profile_config'] = ProfileConfiguration.parse_arg(profile_config)
 
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:

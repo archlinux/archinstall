@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List, Tuple
 
-from ..disk.device_model import BDevice, DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
+from ..disk.device_model import BDevice, _DeviceInfo, DeviceModification, DiskLayoutConfiguration, DiskLayoutType, \
 	FilesystemType, Size, Unit, PartitionModification, PartitionType, PartitionFlag, ModificationStatus, \
 	SubvolumeModification
 from ..disk.device_handler import device_handler
@@ -29,7 +29,7 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 	:rtype: list
 	"""
 
-	def _preview_device_selection(selection: DeviceInfo) -> Optional[str]:
+	def _preview_device_selection(selection: _DeviceInfo) -> Optional[str]:
 		dev = device_handler.get_device(selection.path)
 		if dev and dev.partition_infos:
 			return FormattedOutput.as_table(dev.partition_infos)
@@ -61,7 +61,7 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection:
-			selected_device_info: List[DeviceInfo] = choice.value  # type: ignore
+			selected_device_info: List[_DeviceInfo] = choice.value  # type: ignore
 			selected_devices = []
 
 			for device in devices:

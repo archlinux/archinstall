@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 storage: Dict[str, Any] = {
-	'PROFILE': Path(__file__).parent.parent.joinpath('profiles'),
+	'PROFILE': Path(__file__).parent.parent.joinpath('default_profiles'),
 	'LOG_PATH': '/var/log/archinstall',
 	'LOG_FILE': 'install.log',
 	'MOUNT_POINT': Path('/mnt/archinstall'),

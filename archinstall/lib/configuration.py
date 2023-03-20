@@ -48,9 +48,6 @@ class ConfigurationOutput:
 				self._user_credentials[key] = self._config[key]
 			elif key in self._ignore:
 				pass
-			elif key == 'profile':
-				from .profiles_handler import profile_handler
-				self._user_config[key] = profile_handler.to_json(self._config[key])
 			else:
 				self._user_config[key] = self._config[key]
 

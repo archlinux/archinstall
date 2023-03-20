@@ -11,8 +11,8 @@ import parted  # type: ignore
 from parted import Disk, Geometry, FileSystem, PartitionException
 
 from .device_model import DeviceModification, PartitionModification, \
-	BDevice, DeviceInfo, PartitionInfo, FilesystemType, Unit, PartitionTable, \
-	ModificationStatus, get_lsblk_info, LsblkInfo, BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
+	BDevice, _DeviceInfo, _PartitionInfo, FilesystemType, Unit, PartitionTable, \
+	ModificationStatus, get_lsblk_info, LsblkInfo, _BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
@@ -39,7 +39,7 @@ class DeviceHandler(object):
 
 		for device in parted.getAllDevices():
 			disk = Disk(device)
-			device_info = DeviceInfo.from_disk(disk)
+			device_info = _DeviceInfo.from_disk(disk)
 			partition_infos = []
 
 			for partition in disk.partitions:
@@ -51,7 +51,7 @@ class DeviceHandler(object):
 					subvol_infos = self.get_btrfs_info(partition.path)
 
 				partition_infos.append(
-					PartitionInfo.from_partition(
+					_PartitionInfo.from_partition(
 						partition,
 						fs_type,
 						lsblk_info.partuuid,
@@ -90,7 +90,7 @@ class DeviceHandler(object):
 			return partition.disk.device
 		return None
 
-	def find_partition(self, path: Path) -> Optional[PartitionInfo]:
+	def find_partition(self, path: Path) -> Optional[_PartitionInfo]:
 		for device in self._devices.values():
 			part = next(filter(lambda x: str(x.path) == str(path), device.partition_infos), None)
 			if part is not None:
@@ -101,9 +101,9 @@ class DeviceHandler(object):
 		partition = self.find_partition(path)
 		return partition.partuuid if partition else None
 
-	def get_btrfs_info(self, dev_path: Path) -> List[BtrfsSubvolumeInfo]:
+	def get_btrfs_info(self, dev_path: Path) -> List[_BtrfsSubvolumeInfo]:
 		lsblk_info = get_lsblk_info(dev_path)
-		subvol_infos: List[BtrfsSubvolumeInfo] = []
+		subvol_infos: List[_BtrfsSubvolumeInfo] = []
 
 		if not lsblk_info.mountpoint:
 			self.mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
@@ -132,7 +132,7 @@ class DeviceHandler(object):
 						# ID 257 gen 8 top level 5 path @home
 						name = Path(line.split(' ')[-1])
 						sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
-						subvol_infos.append(BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
+						subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 			except json.decoder.JSONDecodeError as err:
 				log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
 				raise err
