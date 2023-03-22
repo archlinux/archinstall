@@ -112,4 +112,10 @@ def installed_package(package :str) -> LocalPackage:
 	except SysCallError:
 		pass
 
+	# If package is installed (package_info dictionary is not empty), then return the LocalPackage object
+	if(bool(package_info)):
+		return LocalPackage(**package_info)
+	
+	# Else if the package is not installed (package_info dictionary is empty), then install the package
+	run_pacman(f"-S {package} -y --noconfirm")
 	return LocalPackage(**package_info)
