@@ -186,8 +186,7 @@ class Partition:
 			try:
 				output = SysCommand(f"lsblk --json -b -o+LOG-SEC,SIZE,PTTYPE,PARTUUID,UUID,FSTYPE {self.device_path}").decode('UTF-8')
 			except SysCallError as error:
-				# It appears as if lsblk can return exit codes like 8192 to indicate something.
-				# But it does return output in stderr so we'll try to catch it minus the message/info.
+				# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 				output = error.worker.decode('UTF-8')
 				if '{' in output:
 					output = output[output.find('{'):]
@@ -632,14 +631,7 @@ class Partition:
 		return False
 
 	def unmount(self) -> bool:
-		worker = SysCommand(f"/usr/bin/umount {self._path}")
-		exit_code = worker.exit_code
-
-		# Without to much research, it seams that low error codes are errors.
-		# And above 8k is indicators such as "/dev/x not mounted.".
-		# So anything in between 0 and 8k are errors (?).
-		if exit_code and 0 < exit_code < 8000:
-			raise SysCallError(f"Could not unmount {self._path} properly: {worker}", exit_code=exit_code)
+		SysCommand(f"/usr/bin/umount {self._path}")
 
 		# Update the partition info since the mount info has changed after this call.
 		self._partition_info = self._fetch_information()
