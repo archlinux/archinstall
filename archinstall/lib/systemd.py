@@ -97,8 +97,6 @@ class Boot:
 			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')
 		except SysCallError as error:
 			shutdown_exit_code = error.exit_code
-			# if error.exit_code == 256:
-			# 	pass
 
 		while self.session.is_alive():
 			time.sleep(0.25)
