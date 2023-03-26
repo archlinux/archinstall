@@ -96,6 +96,12 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Wprowadź typ systemu plików dla partycji"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
 

@@ -97,6 +97,12 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Mata in önskad filsystemtyp för partition"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "Mata in startsektor (procent eller block-nummer, standard: {}): "
 
