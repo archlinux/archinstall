@@ -319,7 +319,7 @@ class Installer:
 
 		partition.mount(f'{self.target}{mountpoint}', options=options)
 
-	def add_swapfile(self, size = '4G', enable_resume = True, file='/swapfile'):
+	def add_swapfile(self, size='4G', enable_resume=True, file='/swapfile'):
 		if file[:1] != '/':
 			file = f"/{file}"
 		if len(file.strip()) <= 0 or file == '/':
@@ -337,7 +337,7 @@ class Installer:
 
 			self.HOOKS.append('resume')
 			self.KERNEL_PARAMS.append(f'resume=UUID={resume_uuid}')
-			self.KERNEL_PARAMS.append(f'resume_offset={resume_offset}')			
+			self.KERNEL_PARAMS.append(f'resume_offset={resume_offset}')
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -456,7 +456,6 @@ class Installer:
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
 			for entry in self.FSTAB_ENTRIES:
 				fstab_fh.write(f'{entry}\n')
-
 
 		return True
 

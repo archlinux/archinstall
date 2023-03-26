@@ -355,10 +355,12 @@ class SysCommandWorker:
 			if self.ended or (got_output is False and pid_exists(self.pid) is False):
 				self.ended = time.time()
 				try:
-					self.exit_code = os.waitpid(self.pid, 0)[1]
+					wait_status = os.waitpid(self.pid, 0)[1]
+					self.exit_code = os.waitstatus_to_exitcode(wait_status)
 				except ChildProcessError:
 					try:
-						self.exit_code = os.waitpid(self.child_fd, 0)[1]
+						wait_status = os.waitpid(self.child_fd, 0)[1]
+						self.exit_code = os.waitstatus_to_exitcode(wait_status)
 					except ChildProcessError:
 						self.exit_code = 1
 

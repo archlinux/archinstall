@@ -208,7 +208,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			if fs_choice.type_ == MenuSelectionType.Skip:
 				continue
 
-			prompt = str(_('Enter the start sector (percentage or block number, default: {}): ')).format(
+			prompt = str(_('Enter the start location (in parted units: s, GB, %, etc. ; default: {}): ')).format(
 				block_device.first_free_sector
 			)
 			start = input(prompt).strip()
@@ -219,7 +219,7 @@ def manage_new_and_existing_partitions(block_device: 'BlockDevice') -> Dict[str,
 			else:
 				end_suggested = '100%'
 
-			prompt = str(_('Enter the end sector of the partition (percentage or block number, ex: {}): ')).format(
+			prompt = str(_('Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): ')).format(
 				end_suggested
 			)
 			end = input(prompt).strip()
