@@ -287,20 +287,6 @@ if archinstall.arguments.get('skip-mirror-check', False) is False and archinstal
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 
-if not archinstall.arguments.get('offline'):
-	latest_version_archlinux_keyring = max([k.pkg_version for k in archinstall.find_package('archlinux-keyring')])
-
-	# If we want to check for keyring updates
-	# and the installed package version is lower than the upstream version
-	if archinstall.arguments.get('skip-keyring-update', False) is False and \
-		archinstall.installed_package('archlinux-keyring').version < latest_version_archlinux_keyring:
-
-		# Then we update the keyring in the ISO environment
-		if not archinstall.update_keyring():
-			log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-			archinstall.log(f"Failed to update the keyring. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
-			exit(1)
-
 if not archinstall.arguments.get('silent'):
 	ask_user_questions()
 
