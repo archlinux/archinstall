@@ -1,3 +1,4 @@
+import dataclasses
 import json
 import ssl
 from typing import Dict, Any, Tuple, List
@@ -112,4 +113,4 @@ def installed_package(package :str) -> LocalPackage:
 	except SysCallError:
 		pass
 
-	return LocalPackage(**package_info)
+	return LocalPackage({field.name: package_info.get(field.name) for field in dataclasses.fields(LocalPackage)})

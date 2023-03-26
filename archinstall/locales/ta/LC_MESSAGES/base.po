@@ -96,6 +96,12 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "பகிர்வுக்கு தேவையான கோப்பு முறைமை வகையை உள்ளிடவும்"
 
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
+
 msgid "Enter the start sector (percentage or block number, default: {}): "
 msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
 

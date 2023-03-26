@@ -115,7 +115,7 @@ class luks2:
 			if cmd_handle.exit_code != 0:
 				raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
 		except SysCallError as err:
-			if err.exit_code == 256:
+			if err.exit_code == 1:
 				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
 				# Partition was in use, unmount it and try again
 				partition.unmount()
