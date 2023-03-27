@@ -25,6 +25,10 @@ class MapperDev:
 		return f"/dev/mapper/{self.mappername}"
 
 	@property
+	def part_uuid(self):
+		return self.partition.part_uuid
+
+	@property
 	def partition(self):
 		from .helpers import uevent, get_parent_of_partition
 		from .partition import Partition
