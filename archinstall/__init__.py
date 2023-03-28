@@ -240,6 +240,10 @@ def load_config():
 		superusers = arguments.get('!superusers', None)
 		arguments['!users'] = User.parse_arguments(users, superusers)
 
+	import time
+	print(arguments.get('disk_encryption', None))
+	print(arguments.get('disk_layouts', None))
+	time.sleep(10)
 	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_layouts', None) is not None:
 		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = DiskEncryption.parse_arg(
