@@ -418,7 +418,7 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
+			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
