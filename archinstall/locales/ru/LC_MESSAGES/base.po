@@ -103,12 +103,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Введите начальный сектор (процент или номер блока, по умолчанию: {}): "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Введите конечный сектор раздела (процент или номер блока, например: {}): "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} содержит разделы в очереди, это удалит их, вы уверены?"
 
@@ -843,6 +837,49 @@ msgstr "Чтобы иметь возможность использовать э
 
 msgid "The font should be stored as {}"
 msgstr "Шрифт должен быть сохранен как {}"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Пароль шифрования"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Выберите разделы для шифрования"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} содержит разделы в очереди, это удалит их, вы уверены?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Пароль root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Введите начальный сектор (процент или номер блока, по умолчанию: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Введите конечный сектор раздела (процент или номер блока, например: {}): "
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

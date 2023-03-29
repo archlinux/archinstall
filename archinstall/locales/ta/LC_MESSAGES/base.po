@@ -102,12 +102,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
 
@@ -833,3 +827,55 @@ msgstr "மீட்டமைக்க CTRL+C"
 
 msgid "TAB to select"
 msgstr "தேர்ந்தெடுக்க TAB"
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "குறியாக்கம் கடவுச்சொல்"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "குறியாக்கம் செய்ய வேண்டிய பகிர்வுகளைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "ரூட் கடவுச்சொல்"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "

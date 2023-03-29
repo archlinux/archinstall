@@ -841,8 +841,52 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "Laufwerke-layout auswählen"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Verschlüsselungspasswort angeben"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Bitte wählen sie welche Partition verschlüsselt werden soll"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Laufwerke-layout auswählen"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} enthält Partitionen in der Warteschlange, dies werden damit entfernt, sind sie sicher?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Root Passwort"
+
+msgid "Partition encryption"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"

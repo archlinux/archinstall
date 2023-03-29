@@ -102,12 +102,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "输入起始扇区（百分比或块号，默认：{}）： "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "输入分区的结束扇区（百分比或块号，例如：{}）： "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} 包含排队分区，这将删除这些分区，您确定吗？"
 
@@ -767,7 +761,8 @@ msgstr "您输入的用户名无效。 再试一次"
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "将 \"{}\" 设置为超级用户(sudo)吗？"
 
-msgid "Select which partitions to encrypt:"
+#, fuzzy
+msgid "Select which partitions to encrypt"
 msgstr "选择要加密的分区："
 
 msgid "very weak"
@@ -840,3 +835,46 @@ msgstr "为了能够使用此翻译，请手动安装支持该语言的字体。
 
 msgid "The font should be stored as {}"
 msgstr "字体应存储为 {}"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "加密密码"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "选择要加密的分区："
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} 包含排队分区，这将删除这些分区，您确定吗？"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Root 密码"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "输入起始扇区（百分比或块号，默认：{}）： "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "输入分区的结束扇区（百分比或块号，例如：{}）： "
