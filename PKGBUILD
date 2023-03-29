@@ -4,7 +4,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-#pkgver=2.5.4
+pkgver=2.5.4
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
@@ -13,7 +13,7 @@ license=(GPL3)
 depends=(python systemd)
 makedepends=(python-build python-installer python-setuptools python-sphinx python-wheel)
 provides=(python-archinstall)
-conflicts=(python-archinstall)
+conflicts=(python-archinstall archinstall-git)
 replaces=(python-archinstall)
 source=(
   $pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz
