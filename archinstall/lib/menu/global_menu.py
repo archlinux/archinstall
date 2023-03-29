@@ -279,8 +279,8 @@ class GlobalMenu(AbstractMenu):
 			output = str(_('Encryption type')) + f': {enc_type}\n'
 			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
 
-			if encryption.partitions:
-				output += 'Partitions: {} selected'.format(len(encryption.partitions)) + '\n'
+			if encryption.all_partitions:
+				output += 'Partitions: {} selected'.format(len(encryption.all_partitions)) + '\n'
 
 			if encryption.hsm_device:
 				output += f'HSM: {encryption.hsm_device.manufacturer}'

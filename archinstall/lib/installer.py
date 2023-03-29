@@ -248,7 +248,7 @@ class Installer:
 
 		# we manage the encrypted partititons
 		if self._disk_encryption:
-			for partition in self._disk_encryption.partitions:
+			for partition in self._disk_encryption.all_partitions:
 				# open the luks device and all associate stuff
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
@@ -324,7 +324,7 @@ class Installer:
 			file = f"/{file}"
 		if len(file.strip()) <= 0 or file == '/':
 			raise ValueError(f"The filename for the swap file has to be a valid path, not: {self.target}{file}")
-			
+
 		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
 		SysCommand(f'chmod 0600 {self.target}{file}')
 		SysCommand(f'mkswap {self.target}{file}')
@@ -452,7 +452,7 @@ class Installer:
 			if hasattr(plugin, 'on_genfstab'):
 				if plugin.on_genfstab(self) is True:
 					break
-		
+
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
 			for entry in self.FSTAB_ENTRIES:
 				fstab_fh.write(f'{entry}\n')
