@@ -47,7 +47,7 @@ from .lib.configuration import *
 from .lib.udev import udevadm_info
 parser = ArgumentParser()
 
-__version__ = "2.5.3"
+__version__ = "2.5.4"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
