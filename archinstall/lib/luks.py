@@ -102,45 +102,43 @@ class luks2:
 			'luksFormat', partition.path,
 		])
 
-		try:
-			# Retry formatting the volume because archinstall can some times be too quick
-			# which generates a "Device /dev/sdX does not exist or access denied." between
-			# setting up partitions and us trying to encrypt it.
-			for i in range(storage['DISK_RETRY_ATTEMPTS']):
-				if (cmd_handle := SysCommand(cryptsetup_args)).exit_code != 0:
-					time.sleep(storage['DISK_TIMEOUTS'])
-				else:
-					break
+		# Retry formatting the volume because archinstall can some times be too quick
+		# which generates a "Device /dev/sdX does not exist or access denied." between
+		# setting up partitions and us trying to encrypt it.
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+			try:
+				SysCommand(cryptsetup_args)
+				break
+			except SysCallError as error:
+				time.sleep(storage['DISK_TIMEOUTS'])
 
-			if cmd_handle.exit_code != 0:
-				raise DiskError(f'Could not encrypt volume "{partition.path}": {b"".join(cmd_handle)}')
-		except SysCallError as err:
-			if err.exit_code == 1:
-				log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
-				# Partition was in use, unmount it and try again
-				partition.unmount()
+				if retry_attempt == storage['DISK_RETRY_ATTEMPTS'] - 1:
+					if error.exit_code == 1:
+						log(f'{partition} is being used, trying to unmount and crypt-close the device and running one more attempt at encrypting the device.', level=logging.DEBUG)
+						# Partition was in use, unmount it and try again
+						partition.unmount()
 
-				# Get crypt-information about the device by doing a reverse lookup starting with the partition path
-				# For instance: /dev/sda
-				SysCommand(f'bash -c "partprobe"')
-				devinfo = json.loads(b''.join(SysCommand(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
+						# Get crypt-information about the device by doing a reverse lookup starting with the partition path
+						# For instance: /dev/sda
+						SysCommand(f'bash -c "partprobe"')
+						devinfo = json.loads(b''.join(SysCommand(f"lsblk --fs -J {partition.path}")).decode('UTF-8'))['blockdevices'][0]
 
-				# For each child (sub-partition/sub-device)
-				if len(children := devinfo.get('children', [])):
-					for child in children:
-						# Unmount the child location
-						if child_mountpoint := child.get('mountpoint', None):
-							log(f'Unmounting {child_mountpoint}', level=logging.DEBUG)
-							SysCommand(f"umount -R {child_mountpoint}")
+						# For each child (sub-partition/sub-device)
+						if len(children := devinfo.get('children', [])):
+							for child in children:
+								# Unmount the child location
+								if child_mountpoint := child.get('mountpoint', None):
+									log(f'Unmounting {child_mountpoint}', level=logging.DEBUG)
+									SysCommand(f"umount -R {child_mountpoint}")
 
-						# And close it if possible.
-						log(f"Closing crypt device {child['name']}", level=logging.DEBUG)
-						SysCommand(f"cryptsetup close {child['name']}")
+								# And close it if possible.
+								log(f"Closing crypt device {child['name']}", level=logging.DEBUG)
+								SysCommand(f"cryptsetup close {child['name']}")
 
-				# Then try again to set up the crypt-device
-				cmd_handle = SysCommand(cryptsetup_args)
-			else:
-				raise err
+						# Then try again to set up the crypt-device
+						SysCommand(cryptsetup_args)
+					else:
+						raise DiskError(f'Could not encrypt volume "{partition.path}": {error}')
 
 		return key_file
 
@@ -189,24 +187,26 @@ class luks2:
 		return os.path.islink(self.mapdev) is False
 
 	def format(self, path :str) -> None:
-		if (handle := SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")).exit_code != 0:
-			raise DiskError(f'Could not format {path} with {self.filesystem} because: {b"".join(handle)}')
+		try:
+			SysCommand(f"/usr/bin/cryptsetup -q -v luksErase {path}")
+		except SysCallError as error:
+			raise DiskError(f'Could not format {path} with {self.filesystem} because: {error}')
 
 	def add_key(self, path :pathlib.Path, password :str) -> bool:
 		if not path.exists():
 			raise OSError(2, f"Could not import {path} as a disk encryption key, file is missing.", str(path))
 
 		log(f'Adding additional key-file {path} for {self.partition}', level=logging.INFO)
-		worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}",
-							environment_vars={'LC_ALL':'C'})
-		pw_injected = False
-		while worker.is_alive():
-			if b'Enter any existing passphrase' in worker and pw_injected is False:
-				worker.write(bytes(password, 'UTF-8'))
-				pw_injected = True
-
-		if worker.exit_code != 0:
-			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {worker}')
+		try:
+			worker = SysCommandWorker(f"/usr/bin/cryptsetup -q -v luksAddKey {self.partition.path} {path}",
+								environment_vars={'LC_ALL':'C'})
+			pw_injected = False
+			while worker.is_alive():
+				if b'Enter any existing passphrase' in worker and pw_injected is False:
+					worker.write(bytes(password, 'UTF-8'))
+					pw_injected = True
+		except SysCallError as error:
+			raise DiskError(f'Could not add encryption key {path} to {self.partition} because: {error}')
 
 		return True
 
