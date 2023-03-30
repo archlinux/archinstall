@@ -418,7 +418,8 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
+			SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True)
+			return True
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
@@ -439,8 +440,10 @@ class Installer:
 	def genfstab(self, flags :str = '-pU') -> bool:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
-		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).exit_code == 0:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
+		try:
+			fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}')
+		except SysCallError as error:
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {error}')
 
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
 			fstab_fh.write(fstab.decode())
@@ -489,7 +492,11 @@ class Installer:
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
 			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
 
-		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
+			return True
+		except SysCallError:
+			return False
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
@@ -545,8 +552,10 @@ class Installer:
 	def enable_service(self, *services :str) -> None:
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
-			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
-				raise ServiceException(f"Unable to start service {service}: {output}")
+			try:
+				self.arch_chroot(f'systemctl enable {service}')
+			except SysCallError as error:
+				raise ServiceException(f"Unable to start service {service}: {error}")
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -687,7 +696,11 @@ class Installer:
 
 			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
 
-		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+			return True
+		except SysCallError:
+			return False
 
 	def minimal_installation(
 			self, testing: bool = False, multilib: bool = False,
@@ -1140,8 +1153,10 @@ class Installer:
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)
-			if not (output := SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')).exit_code == 0:
-				raise SystemError(f"Could not create user inside installation: {output}")
+			try:
+				SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
+			except SysCallError as error:
+				raise SystemError(f"Could not create user inside installation: {error}")
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_created'):
@@ -1169,17 +1184,28 @@ class Installer:
 		echo = shlex.join(['echo', combo])
 		sh = shlex.join(['sh', '-c', echo])
 
-		result = SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
-		return result.exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+			return True
+		except SysCallError:
+			return False
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"").exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
+			return True
+		except SysCallError:
+			return False
 
 	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
 		cleaned_path = path.replace('\'', '\\\'')
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'").exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
+			return True
+		except SysCallError:
+			return False
 
 	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
 		return InstallationFile(self, filename, owner)
@@ -1197,8 +1223,10 @@ class Installer:
 			with Boot(self) as session:
 				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
-				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+				try:
+					session.SysCommand(["localectl", "set-keymap", language])
+				except SysCallError as error:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {error}")
 
 				self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
@@ -1221,8 +1249,10 @@ class Installer:
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 
-				if (output := session.SysCommand(["localectl", "set-x11-keymap", language])).exit_code != 0:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
+				try:
+					session.SysCommand(["localectl", "set-x11-keymap", language])
+				except SysCallError as error:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {error}")
 		else:
 			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
