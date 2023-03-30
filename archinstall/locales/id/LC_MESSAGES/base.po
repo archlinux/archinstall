@@ -102,12 +102,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
 
@@ -836,3 +830,52 @@ msgstr "TAB untuk memilih"
 
 msgid "[Default value: 0] > "
 msgstr "[Nilai default: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Kata sandi enkripsi"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Pilih partisi mana yang akan dienkripsi"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Kata sandi root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "

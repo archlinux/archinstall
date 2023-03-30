@@ -102,12 +102,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
 
@@ -864,8 +858,58 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "انکرپشن پاس ورڈ سیٹ کریں"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "منتخب کریں کہ کس پارٹیشن کو انکرپٹڈ یا خفیہ رکھنا ہے"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "روٹ پاس ورڈ"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
 
 #~ msgid "Add :"
 #~ msgstr "شامل:"

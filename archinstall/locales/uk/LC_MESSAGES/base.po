@@ -102,12 +102,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Введіть кінцевий сектор розділу (відсоток або номер блоку, наприклад: {}): "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} містить розділи в черзі, це видалить їх, ви впевнені?"
 
@@ -861,9 +855,6 @@ msgstr "Оберіть параметр шифрування диска"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Оберіть пристрій FIDO2 для використання для HSM"
 
-msgid "Partition encryption"
-msgstr "Шифрування розділу"
-
 msgid "All settings will be reset, are you sure?"
 msgstr "Усі налаштування буде скинуто, ви впевнені?"
 
@@ -875,3 +866,12 @@ msgstr "Disk encryption"
 
 msgid "Password"
 msgstr "Пароль"
+
+msgid "Partition encryption"
+msgstr "Шифрування розділу"
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Введіть кінцевий сектор розділу (відсоток або номер блоку, наприклад: {}): "

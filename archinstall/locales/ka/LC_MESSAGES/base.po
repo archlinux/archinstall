@@ -103,12 +103,6 @@ msgstr ""
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
-
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
-
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} რიგში ჩაყენებულ დანაყოფებს შეიცავს. ეს წაშლის მათ. დარწმუნებული ბრძანდებით?"
 
@@ -876,3 +870,9 @@ msgstr "პაროლი"
 
 msgid "Partition encryption"
 msgstr "დანაყოფის დაშიფვრა"
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
