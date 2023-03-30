@@ -46,7 +46,7 @@ English
 Deutsch
 Español
 Français
-Indonesia
+Indonesian
 Italiano
 Nederlands
 Polskie
