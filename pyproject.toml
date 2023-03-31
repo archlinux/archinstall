@@ -9,7 +9,7 @@ description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
-license = {text = "GPLv3", file = ["LICENSE"]}
+license = {text = "GPLv3", file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.10"
 
