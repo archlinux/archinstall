@@ -33,6 +33,9 @@ doc = ["sphinx"]
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
+[tool.setuptools]
+packages = ["archinstall", "profiles", "examples"]
+
 [tool.setuptools.package-data]
 archinstall = [
     "examples/*.py",
