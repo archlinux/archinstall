@@ -32,6 +32,13 @@ archinstall = "archinstall:run_as_a_module"
 [project.optional-dependencies]
 doc = ["sphinx"]
 
+[tool.setuptools.package-data]
+archinstall = [
+    "examples/*.py",
+    "profiles/*.py",
+    "profiles/applications/*.py"
+]
+
 [tool.mypy]
 python_version = "3.10"
 exclude = "tests"
