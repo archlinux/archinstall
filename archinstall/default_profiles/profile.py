@@ -75,7 +75,7 @@ class Profile:
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
-		self.gfx_driver: Optional[str] = None
+		# self.gfx_driver: Optional[str] = None
 
 		self._current_selection = current_selection
 		self._packages = packages
@@ -158,6 +158,9 @@ class Profile:
 
 	def is_desktop_type_profile(self) -> bool:
 		return self.profile_type == ProfileType.DesktopEnv or self.profile_type == ProfileType.WindowMgr
+
+	def is_xorg_type_profile(self) -> bool:
+		return self.profile_type == ProfileType.Xorg
 
 	def is_tailored(self) -> bool:
 		return self.profile_type == ProfileType.Tailored

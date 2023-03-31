@@ -9,7 +9,7 @@ from ..menu.text_input import TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
 
 from ..networking import list_interfaces
-from ..menu import Menu
+from ..menu.menu import Menu
 from ..output import log, FormattedOutput
 from ..menu.list_manager import ListManager
 

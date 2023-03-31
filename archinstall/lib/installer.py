@@ -9,7 +9,6 @@ import time
 from pathlib import Path
 from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
-from archinstall.default_profiles.profile import Profile
 from .disk.device_model import PartitionModification, DiskLayoutConfiguration, \
 	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType, \
 	DiskEncryption, EncryptionType
@@ -1087,20 +1086,6 @@ class Installer:
 
 	def add_additional_packages(self, *packages: Union[str, List[str]]) -> bool:
 		return self.pacstrap(*packages)
-
-	def install_profile(self, profile: Profile):
-		"""
-		Installs a archinstall profile
-
-		:param profile: Profile
-		:return: Returns the imported script as a module, this way
-			you can access any remaining functions exposed by the profile.
-		:rtype: module
-		"""
-		profiles = profile.current_selection_names()
-		names = ', '.join(profiles)
-		self.log(f'Installing archinstall profile(s): {names}', level=logging.INFO)
-		profile.install(self)
 
 	def _enable_users(self, service: str, users: List[User]):
 		for user in users:

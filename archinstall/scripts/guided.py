@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader
+from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader, profile_handler
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, DiskEncryption
 from ..lib.disk.device_handler import disk_layouts
@@ -194,8 +194,8 @@ def perform_installation(mountpoint: Path):
 		else:
 			installation.log("No audio server will be installed.", level=logging.INFO)
 
-		if archinstall.arguments.get('profile_config', None):
-			installation.install_profile(archinstall.arguments.get('profile_config', None))
+		if profile_config := archinstall.arguments.get('profile_config', None):
+			profile_handler.install_profile_config(installation, profile_config)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)

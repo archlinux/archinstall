@@ -2,7 +2,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, Installer
+from archinstall import User, Bootloader, ConfigurationOutput, DiskEncryption, Installer, ProfileConfiguration, \
+	profile_handler
 from archinstall.default_profiles.minimal import MinimalProfile
 from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, FilesystemType, DeviceModification, \
 	PartitionModification, EncryptionType
@@ -44,8 +45,8 @@ def perform_installation(mountpoint: Path):
 
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 
-			profile = MinimalProfile()
-			installation.install_profile(profile)
+			profile_config = ProfileConfiguration(MinimalProfile())
+			profile_handler.install_profile_config(installation, profile_config)
 
 			user = User('devel', 'devel', False)
 			installation.create_users(user)

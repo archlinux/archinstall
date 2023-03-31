@@ -11,12 +11,15 @@ from types import ModuleType
 from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
-from archinstall.lib.menu.menu import MenuSelectionType, Menu, MenuSelection
-from archinstall.lib.networking import list_interfaces, fetch_data_from_url
-from archinstall.lib.output import log
-from archinstall.lib.storage import storage
+from .profile_model import ProfileConfiguration
+from ..hardware import AVAILABLE_GFX_DRIVERS
+from ..menu.menu import MenuSelectionType, Menu, MenuSelection
+from ..networking import list_interfaces, fetch_data_from_url
+from ..output import log
+from ..storage import storage
 
 if TYPE_CHECKING:
+	from ..installer import Installer
 	_: Any
 
 
@@ -35,22 +38,12 @@ class ProfileHandler:
 		Serialize the selected profile setting to JSON
 		"""
 		data: Dict[str, Any] = {}
-		custom_profile = self.get_profile_by_name('Custom')
 
 		if profile is not None:
 			data = {
 				'main': profile.name,
-				'details': [],
+				'details': [profile.name for profile in profile.current_selection],
 			}
-
-			if custom_profile is not None and profile.name != custom_profile.name:
-				data['details'] = [profile.name for profile in profile.current_selection]
-
-		# special handling for custom profile even if this profile was not selected we
-		# still want to export all the defined custom inactive default_profiles so don't they get lost
-		if custom_profile:
-			custom_json_export = custom_profile.json()
-			data['custom'] = custom_json_export.get('custom', {})
 
 		if self._url_path is not None:
 			data['path'] = self._url_path
@@ -168,7 +161,7 @@ class ProfileHandler:
 		match_mac_addr_profiles = list(filter(lambda x: x.name in self._local_mac_addresses, tailored))
 		return match_mac_addr_profiles
 
-	def install_greeter(self, greeter: GreeterType, install_session: 'Installer'):
+	def install_greeter(self, install_session: 'Installer', greeter: GreeterType):
 		packages = []
 		service = None
 
@@ -187,6 +180,50 @@ class ProfileHandler:
 			install_session.add_additional_packages(packages)
 		if service:
 			install_session.enable_service(service)
+
+	def install_gfx_driver(self, install_session: 'Installer', driver: str):
+		try:
+			driver_pkgs = AVAILABLE_GFX_DRIVERS[driver] if driver else []
+			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
+
+			if driver is not None:
+				if 'nvidia' in driver:
+					if "linux-zen" in install_session.base_packages or "linux-lts" in install_session.base_packages:
+						for kernel in install_session.kernels:
+							# Fixes https://github.com/archlinux/archinstall/issues/585
+							install_session.add_additional_packages(f"{kernel}-headers")
+
+						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
+						install_session.add_additional_packages("dkms xorg-server xorg-xinit nvidia-dkms")
+						return
+				elif 'amdgpu' in driver_pkgs:
+					# The order of these two are important if amdgpu is installed #808
+					if 'amdgpu' in install_session.MODULES:
+						install_session.MODULES.remove('amdgpu')
+					install_session.MODULES.append('amdgpu')
+
+					if 'radeon' in install_session.MODULES:
+						install_session.MODULES.remove('radeon')
+					install_session.MODULES.append('radeon')
+
+			install_session.add_additional_packages(additional_pkg)
+		except Exception as err:
+			log(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}", level=logging.WARNING, fg="yellow")
+			# Prep didn't run, so there's no driver to install
+			install_session.add_additional_packages("xorg-server xorg-xinit")
+
+	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
+		profile = profile_config.profile
+
+		if profile:
+			profile.install(install_session)
+
+		if profile and profile_config.gfx_driver:
+			if profile.is_xorg_type_profile() or profile.is_desktop_type_profile():
+				self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		if profile and profile_config.greeter:
+			self.install_greeter(install_session, profile_config.greeter)
 
 	def _import_profile_from_url(self, url: str):
 		"""

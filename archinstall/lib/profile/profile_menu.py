@@ -1,118 +1,118 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional, Dict
 
-from archinstall import profile_handler, AVAILABLE_GFX_DRIVERS
 from archinstall.default_profiles.profile import Profile, GreeterType
-from archinstall.lib.menu.abstract_menu import AbstractSubMenu, Selector
-from archinstall.lib.menu.menu import Menu, MenuSelectionType
-from archinstall.lib.user_interaction.system_conf import select_driver
+from .profile_model import ProfileConfiguration
+from ..hardware import AVAILABLE_GFX_DRIVERS
+from ..menu.abstract_menu import AbstractSubMenu, Selector
+from ..menu.menu import Menu, MenuSelectionType
+from ..user_interaction.system_conf import select_driver
 
 if TYPE_CHECKING:
 	_: Any
 
 
-@dataclass
-class ProfileConfiguration:
-	profile: Profile
-	gfx_driver: Optional[str] = None
-	greeter: Optional[GreeterType] = None
-
-	def json(self) -> Dict[str, Any]:
-		return {
-			'profile': profile_handler.to_json(self.profile),
-			'gfx_driver': self.gfx_driver,
-			'greeter': self.greeter.value if self.greeter else None
-		}
-
-	@classmethod
-	def parse_arg(cls, arg: Dict[str, Any]) -> 'ProfileConfiguration':
-		greeter = arg.get('greeter', None)
-
-		return ProfileConfiguration(
-			profile_handler.parse_profile_config(arg['profile']),
-			arg.get('gfx_driver', None),
-			GreeterType(greeter) if greeter else None
-		)
-
-
 class ProfileMenu(AbstractSubMenu):
-	def __init__(self, preset: Optional[ProfileConfiguration]):
-		self._preset = preset
-		super().__init__()
+	def __init__(
+		self,
+		data_store: Dict[str, Any],
+		preset: Optional[ProfileConfiguration] = None
+	):
+		if preset:
+			self._preset = preset
+		else:
+			self._preset = ProfileConfiguration()
+
+		super().__init__(data_store=data_store)
 
 	def setup_selection_menu_options(self):
-		self._menu_options['profile'] = \
-			Selector(
-				_('Profile'),
-				lambda x: select_profile(),
-				display_func=lambda x: x.name if x else None,
-				preview_func=self._preview_profile,
-				default=self._preset.profile if self._preset else None,
-				enabled=True
-			)
+		self._menu_options['profile'] = Selector(
+			_('Profile'),
+			lambda x: self._select_profile(x),
+			display_func=lambda x: x.name if x else None,
+			preview_func=self._preview_profile,
+			default=self._preset.profile,
+			enabled=True
+		)
 
-		self._menu_options['gfx_driver'] = \
-			Selector(
-				_('Graphics driver'),
-				lambda preset: self._select_gfx_driver(preset),
-				display_func=lambda x: x if x else None,
-				dependencies=['profile'],
-				enabled=True,
-				default=self._preset.gfx_driver if self._preset else 'All open-source (default)'
-			)
+		self._menu_options['gfx_driver'] = Selector(
+			_('Graphics driver'),
+			lambda preset: self._select_gfx_driver(preset),
+			display_func=lambda x: x if x else None,
+			dependencies=['profile'],
+			default=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
+			enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False
+		)
 
-		self._menu_options['greeter'] = \
-			Selector(
-				_('Greeter'),
-				lambda preset: select_greeter(self._menu_options['profile'].current_selection, preset),
-				display_func=lambda x: x.value if x else None,
-				dependencies=['profile'],
-				default=self._preset.greeter if self._preset else None,
-				enabled=True
-			)
+		self._menu_options['greeter'] = Selector(
+			_('Greeter'),
+			lambda preset: select_greeter(self._menu_options['profile'].current_selection, preset),
+			display_func=lambda x: x.value if x else None,
+			dependencies=['profile'],
+			default=self._preset.greeter if self._preset.profile and self._preset.profile.is_greeter_supported() else None,
+			enabled=self._preset.profile.is_greeter_supported() if self._preset.profile else False
+		)
 
 	def run(self, allow_reset: bool = True) -> Optional[ProfileConfiguration]:
 		super().run(allow_reset=allow_reset)
 
 		if self._data_store.get('profile', None):
 			return ProfileConfiguration(
-				self._data_store.get('profile', None),
-				self._data_store.get('gfx_driver', None),
-				self._data_store.get('greeter', None)
+				self._menu_options['profile'].current_selection,
+				self._menu_options['gfx_driver'].current_selection,
+				self._menu_options['greeter'].current_selection
 			)
 
 		return None
 
-	def _select_gfx_driver(self, preset: Optional[str] = None) -> Optional[str]:
-		driver = None
-		selector = self._menu_options['profile']
+	def _select_profile(self, preset: Optional[Profile]) -> Optional[Profile]:
+		profile = select_profile(preset)
+		if profile is not None:
+			if not profile.is_graphic_driver_supported():
+				self._menu_options['gfx_driver'].set_enabled(False)
+				self._menu_options['gfx_driver'].set_current_selection(None)
+			else:
+				self._menu_options['gfx_driver'].set_enabled(True)
+				self._menu_options['gfx_driver'].set_current_selection('All open-source (default)')
 
-		if selector.has_selection():
-			profile: Profile = selector.current_selection
+			if not profile.is_greeter_supported():
+				self._menu_options['greeter'].set_enabled(False)
+				self._menu_options['greeter'].set_current_selection(None)
+			else:
+				self._menu_options['greeter'].set_enabled(True)
+				self._menu_options['greeter'].set_current_selection(profile.default_greeter_type)
+		else:
+			self._menu_options['gfx_driver'].set_current_selection(None)
+			self._menu_options['greeter'].set_current_selection(None)
+
+		return profile
+
+	def _select_gfx_driver(self, preset: Optional[str] = None) -> Optional[str]:
+		driver = preset
+		profile: Optional[Profile] = self._menu_options['profile'].current_selection
+
+		if profile:
 			if profile.is_graphic_driver_supported():
 				driver = select_driver(current_value=preset)
 
-		profile: Profile = self._menu_options['profile'].current_selection
+			if driver and 'Sway' in profile.current_selection_names():
+				packages = AVAILABLE_GFX_DRIVERS[driver]
 
-		if driver and 'Sway' in profile.current_selection_names():
-			packages = AVAILABLE_GFX_DRIVERS[driver]
+				if packages and "nvidia" in packages:
+					prompt = str(
+						_('The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'))
+					choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
 
-			if packages and "nvidia" in packages:
-				prompt = str(
-					_('The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'))
-				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
-
-				if choice.value == Menu.no():
-					return None
+					if choice.value == Menu.no():
+						return None
 
 		return driver
 
 	def _preview_profile(self) -> Optional[str]:
-		selector = self._menu_options['profile']
-		if selector.has_selection():
-			profile: Profile = selector.current_selection
+		profile: Optional[Profile] = self._menu_options['profile'].current_selection
+
+		if profile:
 			names = profile.current_selection_names()
 			return '\n'.join(names)
 
@@ -126,6 +126,8 @@ def select_greeter(
 	if not profile or profile.is_greeter_supported():
 		title = str(_('Please chose which greeter to install'))
 		greeter_options = [greeter.value for greeter in GreeterType]
+
+		default_value: Optional[str] = None
 
 		if preset is not None:
 			default_value = preset.value

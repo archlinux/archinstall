@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from archinstall.default_profiles.profile import Profile
 from ..disk.device_model import DiskLayoutConfiguration, DeviceModification, DiskEncryption, EncryptionType
 from ..general import SysCommand, secret
 from ..menu.abstract_menu import Selector, AbstractMenu
@@ -205,17 +204,14 @@ class GlobalMenu(AbstractMenu):
 
 	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
 		from ..disk.encryption_menu import DiskEncryptionMenu
-		data_store: Dict[str, Any] = {}
+		mods: Optional[List[DeviceModification]] = self._menu_options['disk_config'].current_selection
 
-		selector = self._menu_options['disk_config']
-
-		if selector.has_selection():
-			mods: List[DeviceModification] = selector.current_selection
-		else:
+		if not mods:
 			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
-		disk_encryption = DiskEncryptionMenu(data_store, preset, mods).run()
+		data_store: Dict[str, Any] = {}
+		disk_encryption = DiskEncryptionMenu(mods, data_store, preset=preset).run()
 		return disk_encryption
 
 	def _prev_network_config(self) -> Optional[str]:
@@ -228,9 +224,9 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['disk_config']
-		if selector.has_selection():
-			disk_layout_conf: DiskLayoutConfiguration = selector.current_selection
+		disk_layout_conf: Optional[DiskLayoutConfiguration] = selector.current_selection
 
+		if disk_layout_conf:
 			device_mods: List[DeviceModification] = \
 				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
 
@@ -263,10 +259,8 @@ class GlobalMenu(AbstractMenu):
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
-		selector = self._menu_options['disk_encryption']
-		if selector.has_selection():
-			encryption: DiskEncryption = selector.current_selection
-
+		encryption: Optional[DiskEncryption] = self._menu_options['disk_encryption'].current_selection
+		if encryption:
 			enc_type = EncryptionType.type_to_text(encryption.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
 			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
@@ -296,18 +290,22 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_users(self) -> Optional[str]:
 		selector = self._menu_options['!users']
-		if selector.has_selection():
-			users: List[User] = selector.current_selection
+		users: Optional[List[User]] = selector.current_selection
+
+		if users:
 			return FormattedOutput.as_table(users)
 		return None
 
 	def _prev_profile(self) -> Optional[str]:
 		selector = self._menu_options['profile_config']
-		if selector.has_selection():
-			profile_config: ProfileConfiguration = selector.current_selection
+		profile_config: Optional[ProfileConfiguration] = selector.current_selection
 
-			profile_names = ', '.join(profile_config.profile.current_selection_names())
-			output = str(_('Profiles')) + ': ' + profile_names + '\n'
+		if profile_config and profile_config.profile:
+			output = str(_('Profiles')) + ': '
+			if profile_names := profile_config.profile.current_selection_names():
+				output += ', '.join(profile_names) + '\n'
+			else:
+				output += profile_config.profile.name + '\n'
 
 			if profile_config.gfx_driver:
 				output += str(_('Graphics driver')) + ': ' + profile_config.gfx_driver + '\n'
@@ -346,23 +344,19 @@ class GlobalMenu(AbstractMenu):
 
 		return disk_config
 
-	# TODO
-	# fix ctrl+c reset -> back in -> profile is there?
-	# move install gfx to profile handler
-	# installation install profile
-	# test default greeter suggestion
-
-
 	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
 		from archinstall.lib.profile.profile_menu import ProfileMenu
-		profile_config = ProfileMenu(current_profile).run()
+		store: Dict[str, Any] = {}
+		profile_config = ProfileMenu(store, preset=current_profile).run()
 		return profile_config
 
-	def _select_audio(self, current: Union[str, None]) -> Union[str, None]:
-		profile: Profile = self._menu_options['profile_config'].current_selection
-		is_desktop = profile.is_desktop_profile() if profile else False
-		selection = ask_for_audio_selection(is_desktop, current)
-		return selection
+	def _select_audio(self, current: Union[str, None]) -> Optional[str]:
+		profile_config: Optional[ProfileConfiguration] = self._menu_options['profile_config'].current_selection
+		if profile_config and profile_config.profile:
+			is_desktop = profile_config.profile.is_desktop_profile() if profile_config else False
+			selection = ask_for_audio_selection(is_desktop, current)
+			return selection
+		return None
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)

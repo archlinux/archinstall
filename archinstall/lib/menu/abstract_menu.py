@@ -101,7 +101,7 @@ class Selector:
 		return self._dependencies_not
 
 	@property
-	def current_selection(self):
+	def current_selection(self) -> Optional[Any]:
 		return self._current_selection
 
 	@property
@@ -139,7 +139,7 @@ class Selector:
 
 		return f'{description} {current}'
 
-	def set_current_selection(self, current: Optional[str]):
+	def set_current_selection(self, current: Optional[Any]):
 		self._current_selection = current
 
 	def has_selection(self) -> bool:
@@ -197,6 +197,7 @@ class AbstractMenu:
 		self._last_choice = None
 
 		self.setup_selection_menu_options()
+		self._sync_all()
 		self._populate_default_values()
 
 	@property
@@ -235,23 +236,14 @@ class AbstractMenu:
 		for key in self._menu_options.keys():
 			self._sync(key)
 
-	def _sync(
-		self,
-		selector_name: str,
-		omit_if_set: bool = False,
-		omit_if_disabled: bool = False
-	):
-		""" loads menu options with data_store value """
+	def _sync(self, selector_name: str):
 		value = self._data_store.get(selector_name, None)
-		# don't display the menu option if it was defined already
-		if value is not None and omit_if_set:
-			return
-
-		if not self.option(selector_name).is_enabled() and omit_if_disabled:
-			return
+		selector = self._menu_options.get(selector_name, None)
 
 		if value is not None:
 			self._menu_options[selector_name].set_current_selection(value)
+		elif selector is not None and selector.has_selection():
+			self._data_store[selector_name] = selector.current_selection
 
 	def _missing_configs(self) -> List[str]:
 		def check(s):

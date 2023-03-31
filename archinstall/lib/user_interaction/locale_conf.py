@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 from ..locale_helpers import list_locales
-from ..menu import Menu
+from ..menu.menu import Menu
 from ..menu.menu import MenuSelectionType
 
 if TYPE_CHECKING:

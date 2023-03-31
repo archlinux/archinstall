@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, List, Optional, Dict
 
 from archinstall.lib.menu.menu import MenuSelectionType
 from archinstall.lib.output import log
@@ -37,13 +37,14 @@ class DesktopProfile(Profile):
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
-		combined_greeters = set()
+		combined_greeters: Dict[GreeterType, int] = {}
 		for profile in self.current_selection:
 			if profile.default_greeter_type:
-				combined_greeters.add(profile.default_greeter_type)
+				combined_greeters.setdefault(profile.default_greeter_type, 0)
+				combined_greeters[profile.default_greeter_type] += 1
 
 		if len(combined_greeters) >= 1:
-			return list(combined_greeters)[0].value
+			return list(combined_greeters)[0]
 
 		return None
 

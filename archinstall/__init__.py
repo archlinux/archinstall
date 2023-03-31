@@ -35,7 +35,7 @@ from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
-from .lib.menu import Menu
+from .lib.menu.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
 from .lib.menu.global_menu import GlobalMenu

@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 class DiskEncryptionMenu(AbstractSubMenu):
 	def __init__(
 		self,
+		mods: List[DeviceModification],
 		data_store: Dict[str, Any],
-		preset: Optional[DiskEncryption],
-		mods: List[DeviceModification]
+		preset: Optional[DiskEncryption] = None
 	):
 		if preset:
 			self._preset = preset
@@ -90,9 +90,8 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		return None
 
 	def _prev_disk_layouts(self) -> Optional[str]:
-		selector = self._menu_options['partitions']
-		if selector.has_selection():
-			partitions: List[PartitionModification] = selector.current_selection
+		partitions: Optional[List[PartitionModification]] = self._menu_options['partitions'].current_selection
+		if partitions:
 			output = str(_('Partitions to be encrypted')) + '\n'
 			output += FormattedOutput.as_table(partitions)
 			return output.rstrip()

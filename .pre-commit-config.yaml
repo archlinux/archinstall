@@ -28,10 +28,6 @@ repos:
     # Python specific hooks:
     - id: check-ast  # Simply check whether files parse as valid python
     - id: check-docstring-first  # Checks for a common error of placing code before the docstring
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.33.0
-    hooks:
-    - id: markdownlint
   - repo: https://github.com/pycqa/flake8
     rev: 6.0.0
     hooks:
