@@ -39,8 +39,8 @@ validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxe
 
 pkgver() {
   cd $pkgname-$pkgver
-  
-  cat archinstall/__init__.py | grep '^__version__' | grep -o -E '[0-9.]{5}'
+
+  awk '$1 ~ /^__version__/ {gsub("\"", ""); print $3}' archinstall/__init__.py
 }
 
 prepare() {
