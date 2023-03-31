@@ -1,14 +1,15 @@
 [build-system]
-requires = ["setuptools>=67"]
+requires = ["setuptools>=67.5"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version", "entry-points", "license"]
+dynamic = ["version", "entry-points"]
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
 ]
+license = {text = "GPL-3.0-only"}
 readme = "README.md"
 requires-python = ">=3.10"
 
@@ -26,11 +27,24 @@ Home = "https://archlinux.org"
 Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
+[project.optional-dependencies]
+doc = ["sphinx"]
+
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
-[project.optional-dependencies]
-doc = ["sphinx"]
+[tool.setuptools]
+packages = ["archinstall", "profiles", "examples"]
+
+[tool.setuptools.package-data]
+archinstall = [
+    "examples/*.py",
+    "profiles/*.py",
+    "profiles/applications/*.py"
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "archinstall.__version__"}
 
 [tool.mypy]
 python_version = "3.10"
