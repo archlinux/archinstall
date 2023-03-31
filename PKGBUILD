@@ -10,28 +10,42 @@ pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
 url="https://github.com/archlinux/archinstall"
 license=(GPL3)
-depends=(python systemd)
-makedepends=(python-build python-installer python-setuptools python-sphinx python-wheel)
-provides=(python-archinstall)
+depends=(
+  'python'
+  'systemd'
+)
+makedepends=(
+  'python-setuptools'
+  'python-sphinx'
+  'python-build'
+  'python-installer'
+  'python-wheel'
+)
+optdepends=(
+  'python-systemd: Adds journald logging'
+)
+provides=(python-archinstall archinstall)
 conflicts=(python-archinstall archinstall-git)
-replaces=(python-archinstall)
+replaces=(python-archinstall archinstall-git)
 source=(
   $pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz
   $pkgname-$pkgver.tar.gz.sig::$url/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz.sig
 )
-sha512sums=('3bfdd2b33ef3a784bd6c847afce75b0d5c1997f8374db5f75adc6fe9e35ab135e7cdb2fdcef01999fcb6c03ed80159f02d3da560d28e8da8fe17043f4cdac108'
+sha512sums=('64cb3593c5091b3885ad14ef073cfab31090b4f9bcb4405b18cf9b19adb5ca42255ba8891ec62e21f92d59872541ef6d94f186fb05c625822af63525441e08d9'
             'SKIP')
-b2sums=('87c3ad807e87d834d59210cb28d14c93acabe8996bcc7407866307f9cdddf4e233a35c96e99e02aebbbb95548bdfa125772fb4703bf0152227e4163cd621860a'
+b2sums=('9c0ec0871841804377ba8310dc744711adcec4eed7319a8d89d684af8e7b822bb9d47540b00f4d746a9fcd7b9ea1b9e07bac773e6c28fabc760e4df38b16748b'
         'SKIP')
 validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxed) <anton@hvornum.se>
 
 pkgver() {
   cd $pkgname-$pkgver
-  git describe --long --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g' | grep -o -E '[0-9.]{5}'
+  
+  cat archinstall/__init__.py | grep '^__version__' | grep -o -E '[0-9.]{5}'
 }
 
 prepare() {
   cd $pkgname-$pkgver
+
   # use real directories for examples and profiles, as symlinks do not work
   rm -fv $pkgname/{examples,profiles}
   mv -v examples profiles $pkgname/
@@ -39,12 +53,14 @@ prepare() {
 
 build() {
   cd $pkgname-$pkgver
+
   python -m build --wheel --no-isolation
   PYTHONDONTWRITEBYTECODE=1 make man -C docs
 }
 
 package() {
   cd "$pkgname-$pkgver"
+
   python -m installer --destdir="$pkgdir" dist/*.whl
   install -vDm 644 docs/_build/man/archinstall.1 -t "$pkgdir/usr/share/man/man1/"
 }
