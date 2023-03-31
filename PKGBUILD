@@ -13,6 +13,7 @@ license=(GPL3)
 depends=(
   'python'
   'systemd'
+  'python-pyparted'
 )
 makedepends=(
   'python-setuptools'
