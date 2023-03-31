@@ -10,11 +10,23 @@ pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
 url="https://github.com/archlinux/archinstall"
 license=(GPL3)
-depends=(python systemd)
-makedepends=(python-build python-installer python-setuptools python-sphinx python-wheel)
-provides=(python-archinstall)
+depends=(
+  'python'
+  'systemd'
+)
+makedepends=(
+  'python-setuptools'
+  'python-sphinx'
+  'python-build'
+  'python-installer'
+  'python-wheel'
+)
+optdepends=(
+  'python-systemd: Adds journald logging'
+)
+provides=(python-archinstall archinstall)
 conflicts=(python-archinstall archinstall-git)
-replaces=(python-archinstall)
+replaces=(python-archinstall archinstall-git)
 source=(
   $pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz
   $pkgname-$pkgver.tar.gz.sig::$url/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz.sig
@@ -27,11 +39,13 @@ validpgpkeys=('256F73CEEFC6705C6BBAB20E5FBBB32941E3740A') # Anton Hvornum (Torxe
 
 pkgver() {
   cd $pkgname-$pkgver
-  git describe --long --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g' | grep -o -E '[0-9.]{5}'
+  
+  cat archinstall/__init__.py | grep '^__version__' | grep -o -E '[0-9.]{5}'
 }
 
 prepare() {
   cd $pkgname-$pkgver
+
   # use real directories for examples and profiles, as symlinks do not work
   rm -fv $pkgname/{examples,profiles}
   mv -v examples profiles $pkgname/
@@ -39,12 +53,14 @@ prepare() {
 
 build() {
   cd $pkgname-$pkgver
+
   python -m build --wheel --no-isolation
   PYTHONDONTWRITEBYTECODE=1 make man -C docs
 }
 
 package() {
   cd "$pkgname-$pkgver"
+
   python -m installer --destdir="$pkgdir" dist/*.whl
   install -vDm 644 docs/_build/man/archinstall.1 -t "$pkgdir/usr/share/man/man1/"
 }
