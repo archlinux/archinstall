@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "اس پارٹیشن کے لیے مطلوبہ فائل سسٹم درج کریں"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "اسٹارٹ سیکٹر درج کریں (فیصد یا بلاک نمبر، ڈیفالٹ: {}):"
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "پارٹیشن کا آخری سیکٹر درج کریں (فیصد یا بلاک نمبر، مثال کے طور پر: {}):"
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} پارٹیشنزکے گروپ پر مشتمل ہے، یہ ان کو مٹا دے گا، کیا آپ پر اعتماد ہیں؟"

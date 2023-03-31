@@ -97,11 +97,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Kies het gewenste bestandssysteem voor de partitie"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Voer de eindsector in (percentage of bloknummer - bijvoorbeeld: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"

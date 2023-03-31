@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Wprowadź typ systemu plików dla partycji"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Wprowadź sektor końcowy (procent lub numer bloku, domyślnie: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"

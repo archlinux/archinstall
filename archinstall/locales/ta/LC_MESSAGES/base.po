@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "பகிர்வுக்கு தேவையான கோப்பு முறைமை வகையை உள்ளிடவும்"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"

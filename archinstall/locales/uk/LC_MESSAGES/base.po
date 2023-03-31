@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Введіть бажаний тип файлової системи для розділу"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Введіть кінцевий сектор розділу (відсоток або номер блоку, наприклад: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} містить розділи в черзі, це видалить їх, ви впевнені?"

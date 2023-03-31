@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import getpass
 import logging
 from typing import List
@@ -5,6 +7,21 @@ from typing import List
 from .device_model import PartitionModification, Fido2Device
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
 from ..output import log
+
+	def json(self) -> Dict[str, str]:
+		return {
+			'path': str(self.path),
+			'manufacturer': self.manufacturer,
+			'product': self.product
+		}
+
+	@classmethod
+	def parse_arg(cls, arg: Dict[str, str]) -> 'Fido2Device':
+		return Fido2Device(
+			Path(arg['path']),
+			arg['manufacturer'],
+			arg['product']
+		)
 
 
 class Fido2:

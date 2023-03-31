@@ -131,7 +131,10 @@ class JsonEncoder:
 					copy[JsonEncoder._encode(key)] = val
 			return copy
 		elif hasattr(obj, 'json'):
-			return obj.json()
+			# json() is a friendly name for json-helper, it should return
+			# a dictionary representation of the object so that it can be
+			# processed by the json library.
+			return json.loads(json.dumps(obj.json(), cls=JSON))
 		elif hasattr(obj, '__dump__'):
 			return obj.__dump__()
 		elif isinstance(obj, (datetime, date)):
