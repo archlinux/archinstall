@@ -29,16 +29,6 @@ dependencies = [
     "simple-term-menu==1.6.1",
 ]
 
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-where = ["archinstall", "archinstall.*"]
-
-[tool.setuptools.dynamic]
-version = {attr = "archinstall.__version__"}
-readme = {file = ["README.rst", "USAGE.rst"]}
-
 [project.urls]
 Home = "https://archlinux.org"
 Documentation = "https://archinstall.readthedocs.io/"
@@ -53,7 +43,12 @@ doc = ["sphinx"]
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
+[tool.setuptools.dynamic]
+version = {attr = "archinstall.__version__"}
+readme = {file = ["README.rst", "USAGE.rst"]}
+
 [tool.setuptools]
+include-package-data = true
 packages = ["archinstall", "profiles", "examples"]
 
 [tool.setuptools.package-data]
