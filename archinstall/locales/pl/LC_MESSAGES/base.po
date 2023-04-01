@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
 "Last-Translator: MedzikUser <medzik@duck.com>\n"
 "Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
 "X-Generator: Poedit 2.4.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Wprowadź typ systemu plików dla partycji"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Wprowadź sektor końcowy (procent lub numer bloku, domyślnie: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
@@ -830,8 +830,58 @@ msgstr "Naciśnij Ctrl+C, aby zresetować"
 msgid "TAB to select"
 msgstr "Naciśnij Tab, aby wybrać"
 
-#~ msgid "Select disk layout"
-#~ msgstr "Wybierz układ dysku"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Hasło szyfrujące"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Wybierz partycja która ma zostać zaszyfrowana"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Wybierz układ dysku"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} zawiera partycje oczekujące w kolejce, to spowoduje ich usunięcie, czy jesteś pewien?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Hasło użytkownika root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Wprowadź sektor początkowy (procent lub numer bloku, domyślnie: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Wprowadź sektor końcowy (procent lub numer bloku, domyślnie: {}): "
 
 #~ msgid "Add :"
 #~ msgstr "Dodaj :"

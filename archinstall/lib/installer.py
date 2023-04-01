@@ -132,6 +132,7 @@ class Installer:
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
 		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
 		self.KERNEL_PARAMS = []
+		self.FSTAB_ENTRIES = []
 
 		self._zram_enabled = False
 
@@ -247,7 +248,7 @@ class Installer:
 
 		# we manage the encrypted partititons
 		if self._disk_encryption:
-			for partition in self._disk_encryption.partitions:
+			for partition in self._disk_encryption.all_partitions:
 				# open the luks device and all associate stuff
 				loopdev = f"{storage.get('ENC_IDENTIFIER', 'ai')}{pathlib.Path(partition['device_instance'].path).name}"
 
@@ -317,6 +318,26 @@ class Installer:
 			os.makedirs(f'{self.target}{mountpoint}')
 
 		partition.mount(f'{self.target}{mountpoint}', options=options)
+
+	def add_swapfile(self, size='4G', enable_resume=True, file='/swapfile'):
+		if file[:1] != '/':
+			file = f"/{file}"
+		if len(file.strip()) <= 0 or file == '/':
+			raise ValueError(f"The filename for the swap file has to be a valid path, not: {self.target}{file}")
+
+		SysCommand(f'dd if=/dev/zero of={self.target}{file} bs={size} count=1')
+		SysCommand(f'chmod 0600 {self.target}{file}')
+		SysCommand(f'mkswap {self.target}{file}')
+
+		self.FSTAB_ENTRIES.append(f'{file} none swap defaults 0 0')
+
+		if enable_resume:
+			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
+			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
+
+			self.HOOKS.append('resume')
+			self.KERNEL_PARAMS.append(f'resume=UUID={resume_uuid}')
+			self.KERNEL_PARAMS.append(f'resume_offset={resume_offset}')
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
@@ -397,7 +418,8 @@ class Installer:
 			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
 
 		try:
-			return SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf {self.target} {" ".join(packages)} --noconfirm', peek_output=True).exit_code == 0
+			SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True)
+			return True
 		except SysCallError as error:
 			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
 
@@ -418,8 +440,10 @@ class Installer:
 	def genfstab(self, flags :str = '-pU') -> bool:
 		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
 
-		if not (fstab := SysCommand(f'/usr/bin/genfstab {flags} {self.target}')).exit_code == 0:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
+		try:
+			fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}')
+		except SysCallError as error:
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {error}')
 
 		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
 			fstab_fh.write(fstab.decode())
@@ -431,6 +455,10 @@ class Installer:
 			if hasattr(plugin, 'on_genfstab'):
 				if plugin.on_genfstab(self) is True:
 					break
+
+		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
+			for entry in self.FSTAB_ENTRIES:
+				fstab_fh.write(f'{entry}\n')
 
 		return True
 
@@ -464,7 +492,11 @@ class Installer:
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
 			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
 
-		return True if SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen').exit_code == 0 else False
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
+			return True
+		except SysCallError:
+			return False
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
@@ -520,8 +552,10 @@ class Installer:
 	def enable_service(self, *services :str) -> None:
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
-			if (output := self.arch_chroot(f'systemctl enable {service}')).exit_code != 0:
-				raise ServiceException(f"Unable to start service {service}: {output}")
+			try:
+				self.arch_chroot(f'systemctl enable {service}')
+			except SysCallError as error:
+				raise ServiceException(f"Unable to start service {service}: {error}")
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -662,7 +696,11 @@ class Installer:
 
 			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
 
-		return SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}').exit_code == 0
+		try:
+			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+			return True
+		except SysCallError:
+			return False
 
 	def minimal_installation(
 			self, testing: bool = False, multilib: bool = False,
@@ -839,46 +877,58 @@ class Installer:
 			os.makedirs(f'{self.target}/boot/loader/entries')
 
 		for kernel in self.kernels:
-			# Setup the loader entry
-			with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}.conf', 'w') as entry:
-				entry.write('# Created by: archinstall\n')
-				entry.write(f'# Created on: {self.init_time}\n')
-				entry.write(f'title Arch Linux ({kernel})\n')
-				entry.write(f"linux /vmlinuz-{kernel}\n")
-				if not is_vm():
-					vendor = cpu_vendor()
-					if vendor == "AuthenticAMD":
-						entry.write("initrd /amd-ucode.img\n")
-					elif vendor == "GenuineIntel":
-						entry.write("initrd /intel-ucode.img\n")
+			for variant in ("", "-fallback"):
+				# Setup the loader entry
+				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
+					entry.write('# Created by: archinstall\n')
+					entry.write(f'# Created on: {self.init_time}\n')
+					entry.write(f'title Arch Linux ({kernel}{variant})\n')
+					entry.write(f"linux /vmlinuz-{kernel}\n")
+					if not is_vm():
+						vendor = cpu_vendor()
+						if vendor == "AuthenticAMD":
+							entry.write("initrd /amd-ucode.img\n")
+						elif vendor == "GenuineIntel":
+							entry.write("initrd /intel-ucode.img\n")
+						else:
+							self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.", level=logging.DEBUG)
+					entry.write(f"initrd /initramfs-{kernel}{variant}.img\n")
+					# blkid doesn't trigger on loopback devices really well,
+					# so we'll use the old manual method until we get that sorted out.
+					root_fs_type = get_mount_fs_type(root_partition.filesystem)
+
+					if root_fs_type is not None:
+						options_entry = f'rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
 					else:
-						self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.", level=logging.DEBUG)
-				entry.write(f"initrd /initramfs-{kernel}.img\n")
-				# blkid doesn't trigger on loopback devices really well,
-				# so we'll use the old manual method until we get that sorted out.
-				root_fs_type = get_mount_fs_type(root_partition.filesystem)
+						options_entry = f'rw {" ".join(self.KERNEL_PARAMS)}\n'
 
-				if root_fs_type is not None:
-					options_entry = f'rw rootfstype={root_fs_type} {" ".join(self.KERNEL_PARAMS)}\n'
-				else:
-					options_entry = f'rw {" ".join(self.KERNEL_PARAMS)}\n'
+					for subvolume in root_partition.subvolumes:
+						if subvolume.root is True and subvolume.name != '<FS_TREE>':
+							options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
 
-				for subvolume in root_partition.subvolumes:
-					if subvolume.root is True and subvolume.name != '<FS_TREE>':
-						options_entry = f"rootflags=subvol={subvolume.name} " + options_entry
+					# Zswap should be disabled when using zram.
+					#
+					# https://github.com/archlinux/archinstall/issues/881
+					if self._zram_enabled:
+						options_entry = "zswap.enabled=0 " + options_entry
 
-				# Zswap should be disabled when using zram.
-				#
-				# https://github.com/archlinux/archinstall/issues/881
-				if self._zram_enabled:
-					options_entry = "zswap.enabled=0 " + options_entry
+					if real_device := self.detect_encryption(root_partition):
+						# TODO: We need to detect if the encrypted device is a whole disk encryption,
+						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+						log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
 
-				if real_device := self.detect_encryption(root_partition):
-					# TODO: We need to detect if the encrypted device is a whole disk encryption,
-					#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-					log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}/{real_device.part_uuid}'.", level=logging.DEBUG)
+						kernel_options = f"options"
 
-					kernel_options = f"options"
+						if self._disk_encryption.hsm_device:
+							# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+							kernel_options += f" rd.luks.name={real_device.uuid}=luksdev"
+							# Note: tpm2-device and fido2-device don't play along very well:
+							# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+							kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
+						else:
+							kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
+
+						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 
 					if self._disk_encryption and self._disk_encryption.hsm_device:
 						# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
@@ -887,12 +937,8 @@ class Installer:
 						# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 						kernel_options += f" rd.luks.options=fido2-device=auto,password-echo=no"
 					else:
-						kernel_options += f" cryptdevice=PARTUUID={real_device.part_uuid}:luksdev"
-
-					entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-				else:
-					log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
-					entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
+						log(f"Identifying root partition by PARTUUID on {root_partition}, looking for '{root_partition.part_uuid}'.", level=logging.DEBUG)
+						entry.write(f'options root=PARTUUID={root_partition.part_uuid} {options_entry}')
 
 		self.helper_flags['bootloader'] = "systemd"
 
@@ -1107,8 +1153,10 @@ class Installer:
 
 		if not handled_by_plugin:
 			self.log(f'Creating user {user}', level=logging.INFO)
-			if not (output := SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')).exit_code == 0:
-				raise SystemError(f"Could not create user inside installation: {output}")
+			try:
+				SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
+			except SysCallError as error:
+				raise SystemError(f"Could not create user inside installation: {error}")
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_created'):
@@ -1136,17 +1184,28 @@ class Installer:
 		echo = shlex.join(['echo', combo])
 		sh = shlex.join(['sh', '-c', echo])
 
-		result = SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
-		return result.exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} " + sh[:-1] + " | chpasswd'")
+			return True
+		except SysCallError:
+			return False
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
 		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
 
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"").exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
+			return True
+		except SysCallError:
+			return False
 
 	def chown(self, owner :str, path :str, options :List[str] = []) -> bool:
 		cleaned_path = path.replace('\'', '\\\'')
-		return SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'").exit_code == 0
+		try:
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c 'chown {' '.join(options)} {owner} {cleaned_path}'")
+			return True
+		except SysCallError:
+			return False
 
 	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
 		return InstallationFile(self, filename, owner)
@@ -1164,8 +1223,10 @@ class Installer:
 			with Boot(self) as session:
 				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
-				if (output := session.SysCommand(["localectl", "set-keymap", language])).exit_code != 0:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {output}")
+				try:
+					session.SysCommand(["localectl", "set-keymap", language])
+				except SysCallError as error:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {error}")
 
 				self.log(f"Keyboard language for this installation is now set to: {language}")
 		else:
@@ -1188,8 +1249,10 @@ class Installer:
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 
-				if (output := session.SysCommand(["localectl", "set-x11-keymap", language])).exit_code != 0:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {output}")
+				try:
+					session.SysCommand(["localectl", "set-x11-keymap", language])
+				except SysCallError as error:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {error}")
 		else:
 			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 

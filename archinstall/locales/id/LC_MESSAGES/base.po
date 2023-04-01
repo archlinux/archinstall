@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] File log telah dibuat di sini: {} {}"
@@ -96,14 +96,14 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Masukkan jenis filesystem yang diinginkan untuk partisi"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Masukkan lokasi awal (dalam satuan parted: s, GB, %, dll. ; default: {}): "
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Masukkan lokasi akhir (dalam satuan parted: s, GB, %, dll. ; cth: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} berisi partisi yang mengantri, ini akan menghapusnya, apakah Anda yakin?"
+msgstr "{} berisi partisi yang telah di-queue, tindakan ini akan menghapusnya, apakah Anda yakin?"
 
 msgid ""
 "{}\n"
@@ -561,7 +561,7 @@ msgstr ""
 "Isi nilai yang diinginkan untuk subvolume baru\n"
 
 msgid "Subvolume name "
-msgstr " Nama subvolume"
+msgstr "Nama subvolume "
 
 msgid "Subvolume mountpoint"
 msgstr "Titik mount subvolume"
@@ -755,7 +755,7 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "Baik kata sandi root atau setidaknya 1 pengguna dengan hak sudo harus ditentukan"
 
 msgid "Enter username (leave blank to skip): "
-msgstr " Masukkan nama pengguna (kosongkan untuk melewati):"
+msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
 
 msgid "The username you entered is invalid. Try again"
 msgstr "Nama pengguna yang Anda masukkan tidak valid. Coba lagi"
@@ -830,3 +830,48 @@ msgstr "TAB untuk memilih"
 
 msgid "[Default value: 0] > "
 msgstr "[Nilai default: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Untuk dapat menggunakan terjemahan ini, silakan instal font yang mendukung bahasa tersebut secara manual."
+
+msgid "The font should be stored as {}"
+msgstr "Font harus disimpan sebagai {}"
+
+msgid "Encryption type"
+msgstr "Tipe enkripsi"
+
+msgid "Partitions"
+msgstr "Partisi"
+
+msgid "No HSM devices available"
+msgstr "Tidak ada perangkat HSM yang tersedia"
+
+msgid "Partitions to be encrypted"
+msgstr "Partisi yang akan dienkripsi"
+
+msgid "Select disk encryption option"
+msgstr "Pilih opsi enkripsi disk"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Pilih perangkat FID02 yang akan digunakan untuk HSM"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Semua pengaturan akan direset, apakah Anda yakin?"
+
+msgid "Back"
+msgstr "Kembali"
+
+msgid "Disk encryption"
+msgstr "Enkripsi disk"
+
+msgid "Password"
+msgstr "Kata sandi"
+
+msgid "Partition encryption"
+msgstr "Enkripsi partisi"
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Masukkan sektor awal (persentase atau nomor blok, default: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Masukkan sektor akhir partisi (persentase atau nomor blok, mis: {}): "

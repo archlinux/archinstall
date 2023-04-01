@@ -94,10 +94,10 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr ""
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
 msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
 msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
@@ -777,4 +777,46 @@ msgid "CTRL+C to reset"
 msgstr ""
 
 msgid "TAB to select"
+msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+msgid "Encryption type"
+msgstr ""
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+msgid "Partitions to be encrypted"
+msgstr ""
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+msgid "All settings will be reset, are you sure?"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Partition encryption"
 msgstr ""

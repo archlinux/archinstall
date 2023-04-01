@@ -44,7 +44,7 @@ class ConfigurationOutput:
 		self._disk_layout_file = "user_disk_layout.json"
 
 		self._sensitive = ['!users']
-		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run', 'disk_encryption']
+		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()
 
@@ -70,6 +70,9 @@ class ConfigurationOutput:
 				pass
 			else:
 				self._user_config[key] = self._config[key]
+
+				if key == 'disk_encryption' and self._config[key]:  # special handling for encryption password
+					self._user_credentials['encryption_password'] = self._config[key].encryption_password
 
 	def user_config_to_json(self) -> str:
 		return json.dumps({

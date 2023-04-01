@@ -60,7 +60,6 @@ def select_harddrives(preset: List[str] = []) -> List[str]:
 	selected_harddrive = Menu(
 		title,
 		list(options.keys()),
-		preset_values=preset,
 		multi=True,
 		allow_reset=True,
 		allow_reset_warning_msg=warning

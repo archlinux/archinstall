@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Immettere un tipo di filesystem desiderato per la partizione"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Inserisci il settore iniziale (percentuale o numero di blocco, predefinito: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Inserisci il settore finale (percentuale o numero di blocco, predefinito: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contiene partizioni in coda, questo le rimuoverà, sei sicuro?"
@@ -836,3 +836,46 @@ msgstr "Per poter utilizzare questa traduzione, installa manualmente un font che
 
 msgid "The font should be stored as {}"
 msgstr "Il carattere dovrebbe essere memorizzato come {}"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Password di crittografia"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Seleziona le partizioni da crittografare"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} contiene partizioni in coda, questo le rimuoverà, sei sicuro?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Password di root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Inserisci il settore iniziale (percentuale o numero di blocco, predefinito: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Inserisci il settore finale (percentuale o numero di blocco, predefinito: {}): "

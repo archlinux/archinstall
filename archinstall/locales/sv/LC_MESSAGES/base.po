@@ -97,11 +97,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Mata in önskad filsystemtyp för partition"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Mata in startsektor (procent eller block-nummer, standard: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Mata in slutsektor för partitionen (procent eller block-nummer, ex: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} innehåller uppköade partitionen och detta kommer ta bort dessa. Är du säker?"
@@ -837,5 +837,55 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "Välj hårddisk-layout"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Välj ett krypterings-lösenord"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Välj vilken partition som skall markeras för kryptering"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Välj hårddisk-layout"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} innehåller uppköade partitionen och detta kommer ta bort dessa. Är du säker?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "root-lösenord"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Mata in startsektor (procent eller block-nummer, standard: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Mata in slutsektor för partitionen (procent eller block-nummer, ex: {}): "

@@ -47,7 +47,7 @@ from .lib.configuration import *
 from .lib.udev import udevadm_info
 parser = ArgumentParser()
 
-__version__ = "2.5.3"
+__version__ = "2.5.4"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the
@@ -239,6 +239,14 @@ def load_config():
 		users = arguments.get('!users', None)
 		superusers = arguments.get('!superusers', None)
 		arguments['!users'] = User.parse_arguments(users, superusers)
+
+	if arguments.get('disk_encryption', None) is not None and arguments.get('disk_layouts', None) is not None:
+		password = arguments.get('encryption_password', '')
+		arguments['disk_encryption'] = DiskEncryption.parse_arg(
+			arguments['disk_layouts'],
+			arguments['disk_encryption'],
+			password
+		)
 
 
 def post_process_arguments(arguments):

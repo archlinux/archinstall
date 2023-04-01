@@ -97,11 +97,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Kies het gewenste bestandssysteem voor de partitie"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Voer de eindsector in (percentage of bloknummer - bijvoorbeeld: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
@@ -856,8 +856,58 @@ msgstr ""
 msgid "TAB to select"
 msgstr ""
 
-#~ msgid "Select disk layout"
-#~ msgstr "Kies een schijfindeling"
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Versleutelwachtwoord instellen"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Kies welke partitie moet worden versleuteld"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Kies een schijfindeling"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "‘{}’ bevat in behandeling zijnde partities, welke hierdoor worden verwijderd. Weet u zeker dat u wilt doorgaan?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Rootwachtwoord"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Voer de eindsector in (percentage of bloknummer - bijvoorbeeld: {}): "
 
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"

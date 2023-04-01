@@ -130,7 +130,10 @@ class JsonEncoder:
 					copy[JsonEncoder._encode(key)] = val
 			return copy
 		elif hasattr(obj, 'json'):
-			return obj.json()
+			# json() is a friendly name for json-helper, it should return
+			# a dictionary representation of the object so that it can be
+			# processed by the json library.
+			return json.loads(json.dumps(obj.json(), cls=JSON))
 		elif hasattr(obj, '__dump__'):
 			return obj.__dump__()
 		elif isinstance(obj, (datetime, date)):
@@ -355,10 +358,12 @@ class SysCommandWorker:
 			if self.ended or (got_output is False and pid_exists(self.pid) is False):
 				self.ended = time.time()
 				try:
-					self.exit_code = os.waitpid(self.pid, 0)[1]
+					wait_status = os.waitpid(self.pid, 0)[1]
+					self.exit_code = os.waitstatus_to_exitcode(wait_status)
 				except ChildProcessError:
 					try:
-						self.exit_code = os.waitpid(self.child_fd, 0)[1]
+						wait_status = os.waitpid(self.child_fd, 0)[1]
+						self.exit_code = os.waitstatus_to_exitcode(wait_status)
 					except ChildProcessError:
 						self.exit_code = 1
 
@@ -391,6 +396,13 @@ class SysCommandWorker:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
+				# If history_logfile does not exist, ignore the error
+				except FileNotFoundError:
+					pass
+				except Exception as e:
+					exception_type = type(e).__name__
+					log(f"Unexpected {exception_type} occurred in {self.cmd}: {e}", level=logging.ERROR)
+					raise e
 
 				os.execve(self.cmd[0], list(self.cmd), {**os.environ, **self.environment_vars})
 				if storage['arguments'].get('debug'):

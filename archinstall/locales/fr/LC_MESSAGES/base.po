@@ -68,6 +68,9 @@ msgstr "Utiliser NetworkManager (nécessaire pour configurer graphiquement Inter
 msgid "Select one network interface to configure"
 msgstr "Sélectionner une interface réseau à configurer"
 
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr ""
+
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Entrer l'IP et le sous-réseau pour {} (exemple : 192.168.0.5/24) : "
 
@@ -93,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Entrer un type de système de fichiers souhaité pour la partition"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Entrer le secteur de début (pourcentage ou numéro de bloc, par défaut : {}) : "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Entrer le secteur de fin de la partition (pourcentage ou numéro de bloc, ex : {}) : "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contient des partitions en file d'attente, cela les supprimera, êtes-vous sûr ?"
@@ -209,6 +212,9 @@ msgstr ""
 
 msgid "All open-source (default)"
 msgstr "Tout open-source (par défaut)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr ""
 
 msgid "Choose which locale language to use"
 msgstr "Choisir la langue locale à utiliser"
@@ -831,8 +837,49 @@ msgstr "Pour pouvoir utiliser cette traduction, veuillez installer manuellement 
 msgid "The font should be stored as {}"
 msgstr "La police doit être stockée sous {}"
 
-#~ msgid "Select disk layout"
-#~ msgstr "Sélectionner la disposition du disque"
+#, fuzzy
+msgid "Encryption type"
+msgstr "Mot de passe de chiffrement"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Sélectionner les partitions à chiffrer"
+
+#, fuzzy
+msgid "Select disk encryption option"
+msgstr "Sélectionner la disposition du disque"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} contient des partitions en file d'attente, cela les supprimera, êtes-vous sûr ?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Mot de passe root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Entrer le secteur de début (pourcentage ou numéro de bloc, par défaut : {}) : "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Entrer le secteur de fin de la partition (pourcentage ou numéro de bloc, ex : {}) : "
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

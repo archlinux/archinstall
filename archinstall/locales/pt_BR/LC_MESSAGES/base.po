@@ -94,11 +94,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Digite o tipo de sistema de arquivos desejado para a partição"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Digite o setor de início (porcentagem ou número do bloco, padrão: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex.: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
@@ -835,3 +835,46 @@ msgstr "Para poder usar esta tradução, instale manualmente uma fonte que supor
 
 msgid "The font should be stored as {}"
 msgstr "A fonte deve ser armazenada como {}"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Senha de encriptação"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Selecione quais partições encriptar"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Senha de root"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Digite o setor de início (porcentagem ou número do bloco, padrão: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex.: {}): "

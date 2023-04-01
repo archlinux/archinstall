@@ -94,11 +94,11 @@ msgstr "Zvolte co dělat s {}"
 msgid "Enter a desired filesystem type for the partition"
 msgstr "Zadejte požadovaný souborový systém pro oddíl"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, např. {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
@@ -821,3 +821,55 @@ msgstr ""
 
 msgid "TAB to select"
 msgstr ""
+
+msgid "[Default value: 0] > "
+msgstr ""
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr ""
+
+msgid "The font should be stored as {}"
+msgstr ""
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "Šifrovací heslo"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "Zvolte oddíl, který bude označen jako šifrovaný"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} obsahuje oddíly ve frontě, toto je odstraní, jste si jisti?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "Heslo správce (root)"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "Zadejte počáteční sektor (procenta nebo číslo bloku, výchozí: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "Zadejte koncový sektor oddílu (procenta nebo číslo bloku, např. {}): "

@@ -96,11 +96,11 @@ msgstr ""
 msgid "Enter a desired filesystem type for the partition"
 msgstr "파티션에 대해 원하는 파일 시스템 유형을 입력하세요"
 
-msgid "Enter the start sector (percentage or block number, default: {}): "
-msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr ""
 
-msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-msgstr "파티션의 끝 섹터를 입력하세요 (백분율 또는 블록 번호, 예시: {}): "
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr ""
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} 에 대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
@@ -763,7 +763,8 @@ msgstr "입력한 사용자 이름이 잘못되었습니다. 다시 시도하세
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "\"{}\"은(는) 슈퍼유저여야 합니까 (sudo)?"
 
-msgid "Select which partitions to encrypt:"
+#, fuzzy
+msgid "Select which partitions to encrypt"
 msgstr "암호화할 파티션을 선택하세요:"
 
 msgid "very weak"
@@ -836,3 +837,46 @@ msgstr "이 번역을 사용하려면 해당 언어를 지원하는 글꼴을 �
 
 msgid "The font should be stored as {}"
 msgstr "글꼴은 {} (으)로 저장해야 합니다"
+
+#, fuzzy
+msgid "Encryption type"
+msgstr "비밀번호 암호화"
+
+msgid "Partitions"
+msgstr ""
+
+msgid "No HSM devices available"
+msgstr ""
+
+#, fuzzy
+msgid "Partitions to be encrypted"
+msgstr "암호화할 파티션을 선택하세요:"
+
+msgid "Select disk encryption option"
+msgstr ""
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr ""
+
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} 에 대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
+
+msgid "Back"
+msgstr ""
+
+msgid "Disk encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Password"
+msgstr "루트 비밀번호"
+
+msgid "Partition encryption"
+msgstr ""
+
+#~ msgid "Enter the start sector (percentage or block number, default: {}): "
+#~ msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+
+#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
+#~ msgstr "파티션의 끝 섹터를 입력하세요 (백분율 또는 블록 번호, 예시: {}): "

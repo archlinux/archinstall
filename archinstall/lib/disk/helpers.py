@@ -233,7 +233,7 @@ def get_blockdevice_info(device_path, exclude_iso_dev :bool = True) -> Dict[str,
 			information = blkid(f'blkid -p -o export {device_path}')
 			return enrich_blockdevice_information(information)
 		except SysCallError as ex:
-			if ex.exit_code in (512, 2):
+			if ex.exit_code == 2:
 				# Assume that it's a loop device, and try to get info on it
 				try:
 					resolved_device_name = device_path.readlink().name
