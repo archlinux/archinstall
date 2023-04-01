@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
+
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
 
 from ..configuration import ConfigurationOutput
+from ..general import SysCommand
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log
@@ -58,20 +61,75 @@ def save_config(config: Dict):
 	if choice.type_ == MenuSelectionType.Skip:
 		return
 
-	while True:
-		path = input(_('Enter a directory for the configuration(s) to be saved: ')).strip(' ')
-		dest_path = Path(path)
-		if dest_path.exists() and dest_path.is_dir():
-			break
-		log(_('Not a valid directory: {}').format(dest_path), fg='red')
+	dirs_to_exclude = [
+		'/bin',
+		'/dev',
+		'/lib',
+		'/lib64',
+		'/lost+found',
+		'/opt',
+		'/proc',
+		'/run',
+		'/sbin',
+		'/srv',
+		'/sys',
+		'/usr',
+		'/var',
+	]
+	log(
+		_('When picking a directory to save configuration files to,'
+		' by default we will ignore the following folders: ') + ','.join(dirs_to_exclude),
+		level=logging.DEBUG
+	)
 
-	if options['user_config'] == choice.value:
-		config_output.save_user_config(dest_path)
-	elif options['user_creds'] == choice.value:
-		config_output.save_user_creds(dest_path)
-	elif options['disk_layout'] == choice.value:
-		config_output.save_disk_layout(dest_path)
-	elif options['all'] == choice.value:
-		config_output.save_user_config(dest_path)
-		config_output.save_user_creds(dest_path)
-		config_output.save_disk_layout(dest_path)
+	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
+	
+	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
+	file_picker_command = f'find / {find_exclude} -o -type d -print0'
+	possible_save_dirs = list(
+		filter(None, SysCommand(file_picker_command).decode().split('\x00'))
+	)
+
+	selection = Menu(
+		_('Select directory (or directories) for saving configuration files'),
+		possible_save_dirs,
+		multi=True,
+		skip=True,
+		allow_reset=False,
+	).run()
+
+	match selection.type_:
+		case MenuSelectionType.Skip:
+			return
+		case _:
+			save_dirs = selection.value
+
+	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
+		list(options.keys())[list(options.values()).index(choice.value)],
+		save_dirs
+	)
+	save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+	if save_confirmation == Menu.no():
+		return
+	
+	log(
+		_('Saving {} configuration files to {}').format(
+			list(options.keys())[list(options.values()).index(choice.value)],
+			save_dirs
+		),
+		level=logging.DEBUG
+	)
+	
+	if save_dirs is not None:
+		for save_dir_str in save_dirs:
+			save_dir = Path(save_dir_str)
+			if options['user_config'] == choice.value:
+				config_output.save_user_config(save_dir)
+			elif options['user_creds'] == choice.value:
+				config_output.save_user_creds(save_dir)
+			elif options['disk_layout'] == choice.value:
+				config_output.save_disk_layout(save_dir)
+			elif options['all'] == choice.value:
+				config_output.save_user_config(save_dir)
+				config_output.save_user_creds(save_dir)
+				config_output.save_disk_layout(save_dir)
