@@ -9,7 +9,7 @@ from ..configuration import ConfigurationOutput
 from ..general import SysCommand
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
-from ..utils.util import prompt_dir
+from ..output import log
 
 if TYPE_CHECKING:
 	_: Any
@@ -75,7 +75,7 @@ def save_config(config: Dict):
 	)
 
 	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
-	
+
 	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
 	file_picker_command = f'find / {find_exclude} -o -type d -print0'
 	possible_save_dirs = list(
@@ -103,7 +103,7 @@ def save_config(config: Dict):
 	save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 	if save_confirmation == Menu.no():
 		return
-	
+
 	log(
 		_('Saving {} configuration files to {}').format(
 			list(options.keys())[list(options.values()).index(choice.value)],
@@ -111,7 +111,7 @@ def save_config(config: Dict):
 		),
 		level=logging.DEBUG
 	)
-	
+
 	if save_dirs is not None:
 		for save_dir_str in save_dirs:
 			save_dir = Path(save_dir_str)

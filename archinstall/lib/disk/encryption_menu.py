@@ -163,16 +163,9 @@ def select_partitions_to_encrypt(
 
 		match choice.type_:
 			case MenuSelectionType.Reset:
-				return {}
+				return []
 			case MenuSelectionType.Skip:
 				return preset
 			case MenuSelectionType.Selection:
-				return choice.single_value
-
-				for path, device in disk_layouts.items():
-					for part in selections:
-						if part in device.get('partitions', []):
-							partitions.setdefault(path, []).append(part)
-
-				return partitions
-	return {}
+				return choice.multi_value
+	return []
