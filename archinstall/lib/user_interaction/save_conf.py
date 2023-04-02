@@ -53,6 +53,8 @@ def save_config(config: Dict):
 	if choice.type_ == MenuSelectionType.Skip:
 		return
 
+	save_config_value: str = [k for k, v in options.items() if v == choice.single_value][0]
+
 	dirs_to_exclude = [
 		'/bin',
 		'/dev',
@@ -68,21 +70,21 @@ def save_config(config: Dict):
 		'/usr',
 		'/var',
 	]
-	log(
-		_('When picking a directory to save configuration files to,'
-		' by default we will ignore the following folders: ') + ','.join(dirs_to_exclude),
-		level=logging.DEBUG
-	)
+
+	log('When picking a directory to save configuration files to, by default we will ignore the following folders: ' + ','.join(dirs_to_exclude), level=logging.DEBUG)
 
 	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
 
 	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
 	file_picker_command = f'find / {find_exclude} -o -type d -print0'
-	possible_save_dirs = list(
-		filter(None, SysCommand(file_picker_command).decode().split('\x00'))
-	)
+	decoded = SysCommand(file_picker_command).decode()
 
-	selection = Menu(
+	if not decoded:
+		raise ValueError(f'Error decoding command result: {file_picker_command}')
+
+	possible_save_dirs = list(filter(None, decoded.split('\x00')))
+
+	choice = Menu(
 		_('Select directory (or directories) for saving configuration files'),
 		possible_save_dirs,
 		multi=True,
@@ -90,38 +92,29 @@ def save_config(config: Dict):
 		allow_reset=False,
 	).run()
 
-	match selection.type_:
-		case MenuSelectionType.Skip:
-			return
-		case _:
-			save_dirs = selection.value
+	if choice.type_ == MenuSelectionType.Skip:
+		return
+
+	save_dirs = choice.single_value
 
 	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
-		list(options.keys())[list(options.values()).index(choice.value)],
-		save_dirs
+		save_config_value,
+		', '.join(save_dirs)
 	)
+
 	save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 	if save_confirmation == Menu.no():
 		return
 
-	log(
-		_('Saving {} configuration files to {}').format(
-			list(options.keys())[list(options.values()).index(choice.value)],
-			save_dirs
-		),
-		level=logging.DEBUG
-	)
+	log('Saving {} configuration files to {}'.format(save_config_value, save_dirs), level=logging.DEBUG)
 
 	if save_dirs is not None:
 		for save_dir_str in save_dirs:
 			save_dir = Path(save_dir_str)
-			if options['user_config'] == choice.value:
+			if options['user_config'] == save_config_value:
 				config_output.save_user_config(save_dir)
-			elif options['user_creds'] == choice.value:
+			elif options['user_creds'] == save_config_value:
 				config_output.save_user_creds(save_dir)
-			elif options['disk_layout'] == choice.value:
-				config_output.save_disk_layout(save_dir)
-			elif options['all'] == choice.value:
+			elif options['all'] == save_config_value:
 				config_output.save_user_config(save_dir)
 				config_output.save_user_creds(save_dir)
-				config_output.save_disk_layout(save_dir)
