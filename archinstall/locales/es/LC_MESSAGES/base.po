@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
+"PO-Revision-Date: 02/04/2023\n"
+"Last-Translator: RotaN8\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Seleccione qué partición marcar como encriptada"
+"Seleccione qué partición marcar como cifrada"
 
 msgid ""
 "{}\n"
@@ -232,7 +232,7 @@ msgid "Adding partition...."
 msgstr "Añadiendo partición..."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Debe ingresar un tipo de fs válido para continuar. Consulte `man parted` para conocer los tipos de fs válidos."
+msgstr "Debe ingresar un tipo de sistema de ficheros (FS) válido para continuar. Consulte `man parted` para conocer los tipos de sistema de ficheros válidos."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
 msgstr "Error: Enlistar perfiles en la URL \"{}\" resultó en:"
@@ -327,10 +327,10 @@ msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "Marcar/Desmarcar una partición para ser formateada (borra los datos)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Marcar/Desmarcar una partición como encriptada"
+msgstr "Marcar/Desmarcar una partición como cifrada"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Marcar/Desmarcar una partición como bootable (automática para /boot)"
+msgstr "Marcar/Desmarcar una partición como 'bootable' (automática para /boot)"
 
 msgid "Set desired filesystem for a partition"
 msgstr "Establecer el sistema de archivos deseado para una partición"
@@ -370,7 +370,7 @@ msgid "Enter a encryption password for {}"
 msgstr "Introduzca una contraseña de cifrado para {}"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Introduzca la contraseña de cifrado de disco (dejar en blanco para no cifrar): "
+msgstr "Introduzca la contraseña de cifrado de disco (déjela en blanco para no cifrarlo): "
 
 msgid "Create a required super-user with sudo privileges: "
 msgstr "Crear un super-usuario requerido con privilegios sudo: "
@@ -390,7 +390,9 @@ msgstr "Te gustaría utilizar la sincronización automática de hora (NTP) con l
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
-msgstr "La hora del hardware y otros pasos post-configuración pueden ser necesarios para que NTP funcione. Para más información, por favor, consulte la wiki de Arch"
+msgstr "" 
+"La hora del hardware y otros pasos post-configuración pueden ser necesarios para que NTP funcione.\n"
+"Para más información, por favor, consulte la wiki de Arch"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Introduzca un nombre de usuario para crear un usuario adicional (dejar en blanco para saltar): "
@@ -430,7 +432,7 @@ msgid "Copy to new key:"
 msgstr "Copiar a nueva clave:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Tipo de nic desconocido: {}. Los valores posibles son {}"
+msgstr "Tipo de tarjeta de red (NIC) desconocida: {}. Los valores posibles son {}"
 
 msgid ""
 "\n"
@@ -446,7 +448,7 @@ msgid "Pre-existing pacman lock never exited. Please clean up any existing pacma
 msgstr "El bloqueo de pacman preexistente nunca salió. Limpie cualquier sesión de pacman existente antes de usar archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Elija qué repositorios adicionales opcionales habilitar"
+msgstr "Elija qué repositorios opcionales adicionales desea habilitar"
 
 msgid "Add a user"
 msgstr "Añadir un usuario"
@@ -480,7 +482,7 @@ msgid "No network configuration"
 msgstr "Sin configuración de red"
 
 msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Establecer los subvolúmenes deseados en una partición btrfs"
+msgstr "Establecer los subvolúmenes deseados en una partición BTRFS"
 
 msgid ""
 "{}\n"
@@ -492,7 +494,7 @@ msgstr ""
 "Seleccione en qué partición configurar los subvolúmenes"
 
 msgid "Manage btrfs subvolumes for current partition"
-msgstr "Administrar subvolúmenes btrfs para la partición actual"
+msgstr "Administrar subvolúmenes BTRFS para la partición actual"
 
 msgid "No configuration"
 msgstr "Sin configuración"
@@ -534,7 +536,7 @@ msgid "Missing configurations:\n"
 msgstr "Configuraciones que faltan:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Se debe especificar una contraseña raíz o al menos 1 superusuario"
+msgstr "Se debe especificar una contraseña \"root\" o al menos 1 superusuario"
 
 msgid "Manage superuser accounts: "
 msgstr "Administrar cuentas de superusuario: "
@@ -589,7 +591,7 @@ msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "¿Le gustaría utilizar subvolúmenes BTRFS con una estructura predeterminada?"
 
 msgid "Would you like to use BTRFS compression?"
-msgstr "¿Te gustaría usar la compresión BTRFS?"
+msgstr "¿Desea usar compresión con BTRFS?"
 
 msgid "Would you like to create a separate partition for /home?"
 msgstr "¿Le gustaría crear una partición separada para /home?"
@@ -757,7 +759,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "El nombre de usuario que ingresó no es válido. Intente nuevamente"
+msgstr "El nombre de usuario que ingresó no es válido. Inténtelo nuevamente"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "¿Debe \"{}\" ser un superusuario (sudo)?"
@@ -766,33 +768,33 @@ msgid "Select which partitions to encrypt"
 msgstr "Seleccione qué particiones cifrar"
 
 msgid "very weak"
-msgstr ""
+msgstr "muy débil"
 
 msgid "weak"
-msgstr ""
+msgstr "débil"
 
 msgid "moderate"
-msgstr ""
+msgstr "moderada"
 
 msgid "strong"
-msgstr ""
+msgstr "fuerte"
 
 #, fuzzy
 msgid "Add subvolume"
-msgstr " Subvolumen :{:16}"
+msgstr "Añadir subvolumen"
 
 msgid "Edit subvolume"
-msgstr ""
+msgstr "Editar subvolumen"
 
 #, fuzzy
 msgid "Delete subvolume"
-msgstr "Eliminar usuario"
+msgstr "Eliminar subvolumen"
 
 msgid "Configured {} interfaces"
-msgstr ""
+msgstr "Interfaces {} configuradas"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr ""
+msgstr "Esta opción activa el número de descargas paralelas que puede haber durante la instalación"
 
 #, python-brace-format
 msgid ""
@@ -800,51 +802,54 @@ msgid ""
 " (Enter a value between 1 to {max_downloads})\n"
 "Note:"
 msgstr ""
+"Introduce el número de descargas en paralelo a habilitar.\n"
+" (Introduce un valor entre 1 y {max_downloads})\n"
+"Nota:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Valor máximo   : {max_downloads} ( Permite {max_downloads} descargas en paralelo, permite {max_downloads+1} descargas a la vez )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr " - Valor mínimo  : 1 (Permite 1 descarga en paralelo, permite 2 descargas a la vez)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr " - Deshabilitar/Defecto : 0 ( Deshabilita la descarga en paralelo, permite solo 1 descarga a la vez )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "¡Entrada inválida! Prueba otra vez una entrada válida [1 a {max_downloads}, o 0 para desactivarlo]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Descargas en paralelo"
 
 #, fuzzy
 msgid "ESC to skip"
 msgstr "Use ESC para saltar"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "CTRL+C para restablecer"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "TAB para seleccionar"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Valor por defecto: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Para poder usar esta traducción, por favor instale manualmente una fuente que soporte el idioma."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "La fuente debe guardarse como {}"
 
 #, fuzzy
 msgid "Encryption type"
-msgstr "Contraseña de cifrado"
+msgstr "Tipo de cifrado"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Particiones"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Dispositivos HSM no disponibles"
 
 #, fuzzy
 msgid "Partitions to be encrypted"
@@ -852,27 +857,27 @@ msgstr "Seleccione qué particiones cifrar"
 
 #, fuzzy
 msgid "Select disk encryption option"
-msgstr "Seleccione el diseño del disco"
+msgstr "Seleccione una opción de cifrado"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "Seleccione un dispositivo FIDO2 para usar HSM"
 
 #, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} contiene particiones en cola, esto eliminará esas particiones, ¿estás seguro?"
+msgstr "{} contiene particiones en cola, esto eliminará dichas particiones, ¿está seguro?"
 
 msgid "Back"
-msgstr ""
+msgstr "Atrás"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "Cifrado del disco"
 
 #, fuzzy
 msgid "Password"
 msgstr "Contraseña de root"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Cifrado de la partición"
 
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "Introduzca el sector de inicio (porcentaje o número de bloque, predeterminado: {}): "
