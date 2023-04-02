@@ -14,7 +14,7 @@ class I3wmProfile(XorgProfile):
 	@property
 	def packages(self) -> List[str]:
 		return [
-			'i3-wm'
+			'i3-wm',
 			'i3lock',
 			'i3status',
 			'i3blocks',
