@@ -49,7 +49,7 @@ Français
 Indonesian
 Italiano
 Nederlands
-Polskie
+Polski
 Português do Brasil
 Português
 Svenska
