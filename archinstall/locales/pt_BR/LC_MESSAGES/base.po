@@ -1,13 +1,19 @@
 # Translators:
 #  @Cain-dev (cain-dev.github.io)
 #  Rafael Fontenelle <rafaelff@gnome.org>
+#  Jefferson Michael <github.com/jeffersonjpr>
 msgid ""
 msgstr ""
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Jefferson Michael <github.com/jeffersonjpr>\n"
+"Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Um arquivo de log foi criado aqui: {} {}"
@@ -817,9 +823,8 @@ msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {max_
 msgid "Parallel Downloads"
 msgstr "Downloads Paralelos"
 
-#, fuzzy
 msgid "ESC to skip"
-msgstr "Use ESC para pular"
+msgstr "ESC para sair"
 
 msgid "CTRL+C to reset"
 msgstr "CTRL+C para reiniciar"
@@ -836,42 +841,38 @@ msgstr "Para poder usar esta tradução, instale manualmente uma fonte que supor
 msgid "The font should be stored as {}"
 msgstr "A fonte deve ser armazenada como {}"
 
-#, fuzzy
 msgid "Encryption type"
-msgstr "Senha de encriptação"
+msgstr "Tipo de encriptação"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Partições"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Nenhum dispositivo HSM disponivel"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr "Selecione quais partições encriptar"
+msgstr "Partições a serem encriptadas"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "Selecione a opção de encriptação de disco"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "Selecione um dispositivo FIDO2 para usar como HSM"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
+msgstr "Todas as configurações serão redefinidas,você tem certeza ?"
 
 msgid "Back"
-msgstr ""
+msgstr "Voltar"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "Encriptação de disco"
 
-#, fuzzy
 msgid "Password"
-msgstr "Senha de root"
+msgstr "Senha"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Encriptação de partição"
 
 msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
 msgstr ""
