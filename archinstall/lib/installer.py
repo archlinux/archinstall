@@ -945,7 +945,7 @@ class Installer:
 
 						kernel_options = f"options"
 
-						if self._disk_encryption.hsm_device:
+						if self._disk_encryption and self._disk_encryption.hsm_device:
 							# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
 							kernel_options += f' rd.luks.name={root_partition.uuid}=luksdev'
 							# Note: tpm2-device and fido2-device don't play along very well:
