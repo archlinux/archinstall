@@ -6,9 +6,7 @@ from typing import Any, TYPE_CHECKING, Optional, List, Tuple
 
 from .. import disk
 from ..hardware import has_uefi
-from ..menu import Menu
-from ..menu.menu import MenuSelectionType
-from ..menu.table_selection_menu import TableMenu
+from ..menu import Menu, MenuSelectionType, TableMenu
 from ..output import FormattedOutput
 from ..output import log
 from ..utils.util import prompt_dir

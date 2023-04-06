@@ -2,13 +2,6 @@ from .device_handler import device_handler, disk_layouts
 from .fido import Fido2
 from .filesystem import FilesystemHandler
 from .subvolume_menu import SubvolumeMenu
-from .encryption_menu import (
-	select_encryption_type,
-	select_encrypted_password,
-	select_hsm,
-	select_partitions_to_encrypt,
-	DiskEncryptionMenu,
-)
 from .partitioning_menu import (
 	manual_partitioning,
 	PartitioningList
@@ -37,4 +30,11 @@ from .device_model import (
 	get_lsblk_info,
 	get_all_lsblk_info,
 	get_lsblk_by_mountpoint
+)
+from .encryption_menu import (
+	select_encryption_type,
+	select_encrypted_password,
+	select_hsm,
+	select_partitions_to_encrypt,
+	DiskEncryptionMenu,
 )

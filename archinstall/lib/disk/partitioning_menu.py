@@ -6,10 +6,7 @@ from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus
-from ..menu.menu import Menu
-from ..menu.list_manager import ListManager
-from ..menu.menu import MenuSelection
-from ..menu.text_input import TextInput
+from ..menu import Menu, ListManager, MenuSelection, TextInput
 from ..output import FormattedOutput, log
 from .subvolume_menu import SubvolumeMenu
 

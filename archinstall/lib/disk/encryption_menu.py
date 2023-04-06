@@ -1,10 +1,18 @@
 from pathlib import Path
 from typing import Dict, Optional, Any, TYPE_CHECKING, List
 
-from .device_model import DeviceModification, PartitionModification, DiskEncryption, EncryptionType
-from ..menu.abstract_menu import Selector, AbstractSubMenu
-from ..menu.menu import MenuSelectionType
-from ..menu.table_selection_menu import TableMenu
+from ..disk import (
+	DeviceModification,
+	PartitionModification,
+	DiskEncryption,
+	EncryptionType
+)
+from ..menu import (
+	Selector,
+	AbstractSubMenu,
+	MenuSelectionType,
+	TableMenu
+)
 from ..user_interaction.utils import get_password
 from ..menu import Menu
 from ..general import secret

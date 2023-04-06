@@ -2,10 +2,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, TYPE_CHECKING
 
 from .device_model import SubvolumeModification
-from ..menu.list_manager import ListManager
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
-from ..menu import Menu
+from ..menu import Menu, TextInput, MenuSelectionType, ListManager
 from ..output import FormattedOutput
 
 if TYPE_CHECKING:

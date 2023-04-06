@@ -4,14 +4,12 @@ import ipaddress
 import logging
 from typing import Any, Optional, TYPE_CHECKING, List, Union, Dict
 
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
+from ..menu import MenuSelectionType, TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
 
 from ..networking import list_interfaces
-from ..menu.menu import Menu
 from ..output import log, FormattedOutput
-from ..menu.list_manager import ListManager
+from ..menu import ListManager, Menu
 
 if TYPE_CHECKING:
 	_: Any

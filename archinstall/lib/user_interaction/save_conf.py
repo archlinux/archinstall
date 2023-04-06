@@ -6,8 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
 
 from ..configuration import ConfigurationOutput
-from ..menu import Menu
-from ..menu.menu import MenuSelectionType
+from ..menu import Menu, MenuSelectionType
 from ..output import log
 
 if TYPE_CHECKING:

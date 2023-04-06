@@ -1,8 +1,7 @@
 from typing import Any, Tuple, List, Dict, Optional, Callable
 
-from .menu import MenuSelectionType, MenuSelection
+from .menu import MenuSelectionType, MenuSelection, Menu
 from ..output import FormattedOutput
-from ..menu import Menu
 
 
 class TableMenu(Menu):

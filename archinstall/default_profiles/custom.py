@@ -1,8 +1,6 @@
 from typing import List, Dict, Optional, TYPE_CHECKING, Any
 
-from archinstall.lib.menu.list_manager import ListManager
-from archinstall.lib.menu.menu import Menu
-from archinstall.lib.menu.text_input import TextInput
+from ..lib import menu
 from archinstall.lib.output import log, FormattedOutput
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, ProfileInfo, TProfile
@@ -12,7 +10,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class CustomProfileList(ListManager):
+class CustomProfileList(menu.ListManager):
 	def __init__(self, prompt: str, profiles: List[TProfile]):
 		self._actions = [
 			str(_('Add profile')),
@@ -74,7 +72,7 @@ class CustomProfileList(ListManager):
 		name_prompt = '\n\n' + str(_('Profile name: '))
 
 		while True:
-			profile_name = TextInput(name_prompt, editing.name if editing else '').run().strip()
+			profile_name = menu.TextInput(name_prompt, editing.name if editing else '').run().strip()
 
 			if not profile_name:
 				return None
@@ -87,22 +85,22 @@ class CustomProfileList(ListManager):
 
 		packages_prompt = str(_('Packages to be install with this profile (space separated, leave blank to skip): '))
 		edit_packages = ' '.join(editing.packages) if editing else ''
-		packages = TextInput(packages_prompt, edit_packages).run().strip()
+		packages = menu.TextInput(packages_prompt, edit_packages).run().strip()
 
 		services_prompt = str(_('Services to be enabled with this profile (space separated, leave blank to skip): '))
 		edit_services = ' '.join(editing.services) if editing else ''
-		services = TextInput(services_prompt, edit_services).run().strip()
+		services = menu.TextInput(services_prompt, edit_services).run().strip()
 
-		choice = Menu(
+		choice = menu.Menu(
 			str(_('Should this profile be enabled for installation?')),
-			Menu.yes_no(),
+			menu.Menu.yes_no(),
 			skip=False,
-			default_option=Menu.no(),
+			default_option=menu.Menu.no(),
 			clear_screen=False,
 			show_search_hint=False
 		).run()
 
-		enable_profile = True if choice.value == Menu.yes() else False
+		enable_profile = True if choice.value == menu.Menu.yes() else False
 
 		profile = CustomTypeProfile(
 			profile_name,

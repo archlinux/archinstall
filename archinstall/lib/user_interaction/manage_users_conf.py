@@ -4,8 +4,7 @@ import re
 from typing import Any, Dict, TYPE_CHECKING, List, Optional
 
 from .utils import get_password
-from ..menu.menu import Menu
-from ..menu.list_manager import ListManager
+from ..menu import Menu, ListManager
 from ..models.users import User
 from ..output import FormattedOutput
 

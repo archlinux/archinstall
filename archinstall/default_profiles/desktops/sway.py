@@ -1,8 +1,8 @@
 from typing import List, Optional, TYPE_CHECKING, Any
 
-from archinstall import Menu
 from archinstall.default_profiles.profile import ProfileType, GreeterType
 from archinstall.default_profiles.xorg import XorgProfile
+from archinstall.lib.menu import Menu
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

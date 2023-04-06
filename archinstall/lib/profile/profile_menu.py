@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional, Dict
 from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import AVAILABLE_GFX_DRIVERS
-from ..menu.abstract_menu import AbstractSubMenu, Selector
-from ..menu.menu import Menu, MenuSelectionType
+from ..menu import Menu, MenuSelectionType, AbstractSubMenu, Selector
 from ..user_interaction.system_conf import select_driver
 
 if TYPE_CHECKING:

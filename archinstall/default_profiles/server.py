@@ -2,7 +2,7 @@ import logging
 from typing import Any, TYPE_CHECKING, List
 
 from archinstall.lib.output import log
-from archinstall.lib.menu.menu import MenuSelectionType
+from archinstall.lib.menu import MenuSelectionType
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult, TProfile
 

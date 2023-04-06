@@ -6,8 +6,7 @@ from typing import List, Any, Optional, Dict, TYPE_CHECKING
 from typing import Union
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
-from ..menu.menu import MenuSelectionType, Menu
-from ..menu.text_input import TextInput
+from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
 from ..output import log
 from ..packages.packages import validate_package_list

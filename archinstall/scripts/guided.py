@@ -4,11 +4,17 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader, profile_handler
-from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from ..lib import disk
-from ..lib.output import log
+from ..lib.global_menu import GlobalMenu
 from ..default_profiles.applications.pipewire import PipewireProfile
+from ..lib.configuration import ConfigurationOutput
+from ..lib.installer import Installer
+from ..lib.menu import Menu
+from ..lib.mirrors import use_mirrors
+from ..lib.models.bootloader import Bootloader
+from ..lib.models.network_configuration import NetworkConfigurationHandler
+from ..lib.output import log
+from ..lib.profile.profiles_handler import profile_handler
 
 if TYPE_CHECKING:
 	_: Any
@@ -45,7 +51,7 @@ def ask_user_questions():
 	# the default value specified in the menu options; in
 	# case it will be changed by the user we'll also update
 	# the system immediately
-	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
+	global_menu = GlobalMenu(data_store=archinstall.arguments)
 
 	global_menu.enable('archinstall-language')
 

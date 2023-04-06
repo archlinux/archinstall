@@ -3,6 +3,7 @@ import importlib
 from argparse import ArgumentParser, Namespace
 
 from .lib import disk as disk
+from .lib import menu as menu
 
 from .lib.exceptions import *
 from .lib.general import *
@@ -36,14 +37,7 @@ from .lib.services import *
 from .lib.storage import *
 from .lib.systemd import *
 from .lib.user_interaction import *
-from .lib.menu.menu import Menu
-from .lib.menu.list_manager import ListManager
-from .lib.menu.text_input import TextInput
-from archinstall.lib.global_menu import GlobalMenu
-from .lib.menu.abstract_menu import (
-	Selector,
-	AbstractMenu
-)
+from .lib.global_menu import GlobalMenu
 from .lib.translationhandler import TranslationHandler, DeferredTranslation
 from .lib.plugins import plugins, load_plugin  # This initiates the plugin loading ceremony
 from .lib.configuration import *
@@ -80,6 +74,7 @@ def define_arguments():
 	parser.add_argument("--offline", action="store_true", default=False, help="Disabled online upstream services such as package search and key-ring auto update.")
 	parser.add_argument("--no-pkg-lookups", action="store_true", default=False, help="Disabled package validation specifically prior to starting installation.")
 	parser.add_argument("--plugin", nargs="?", type=str)
+
 
 def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
@@ -207,7 +202,7 @@ def load_config():
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
 
 	if disk_config := arguments.get('disk_config', {}):
-		arguments['disk_config'] = DiskLayoutConfiguration.parse_arg(disk_config)
+		arguments['disk_config'] = disk.DiskLayoutConfiguration.parse_arg(disk_config)
 
 	if profile_config := arguments.get('profile_config', None):
 		arguments['profile_config'] = ProfileConfiguration.parse_arg(profile_config)
@@ -237,7 +232,7 @@ def load_config():
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')
-		arguments['disk_encryption'] = DiskEncryption.parse_arg(
+		arguments['disk_encryption'] = disk.DiskEncryption.parse_arg(
 			arguments['disk_config'],
 			arguments['disk_encryption'],
 			password

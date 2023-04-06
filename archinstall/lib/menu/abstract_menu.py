@@ -7,7 +7,6 @@ from .menu import Menu, MenuSelectionType
 from ..locale_helpers import set_keyboard_language
 from ..output import log
 from ..translationhandler import TranslationHandler, Language
-from ..user_interaction.general_conf import select_archinstall_language
 
 if TYPE_CHECKING:
 	_: Any
@@ -483,6 +482,7 @@ class AbstractMenu:
 				yield item
 
 	def _select_archinstall_language(self, preset_value: Language) -> Language:
+		from ..user_interaction.general_conf import select_archinstall_language
 		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)
 		self._translation_handler.activate(language)
 		return language

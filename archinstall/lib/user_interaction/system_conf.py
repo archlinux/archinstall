@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
 from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
-from ..menu.menu import Menu
-from ..menu.menu import MenuSelectionType
+from ..menu import MenuSelectionType, Menu
 from ..models.bootloader import Bootloader
 
 if TYPE_CHECKING:

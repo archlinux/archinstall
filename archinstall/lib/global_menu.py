@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import SysCommand, secret
-from .menu.abstract_menu import Selector, AbstractMenu
+from .menu import Selector, AbstractMenu
 from .models import NetworkConfiguration
 from .models.bootloader import Bootloader
 from .models.users import User
@@ -344,7 +344,7 @@ class GlobalMenu(AbstractMenu):
 		return disk_config
 
 	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
-		from archinstall.lib.profile.profile_menu import ProfileMenu
+		from .profile.profile_menu import ProfileMenu
 		store: Dict[str, Any] = {}
 		profile_config = ProfileMenu(store, preset=current_profile).run()
 		return profile_config

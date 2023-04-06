@@ -1,6 +1,6 @@
 from typing import Any, TYPE_CHECKING, List, Optional, Dict
 
-from archinstall.lib.menu.menu import MenuSelectionType
+from archinstall.lib import menu
 from archinstall.lib.output import log
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, GreeterType
@@ -61,13 +61,13 @@ class DesktopProfile(Profile):
 		)
 
 		match choice.type_:
-			case MenuSelectionType.Selection:
+			case menu.MenuSelectionType.Selection:
 				self.set_current_selection(choice.value)  # type: ignore
 				self._do_on_select_profiles()
 				return SelectResult.NewSelection
-			case MenuSelectionType.Skip:
+			case menu.MenuSelectionType.Skip:
 				return SelectResult.SameSelection
-			case MenuSelectionType.Reset:
+			case menu.MenuSelectionType.Reset:
 				return SelectResult.ResetCurrent
 
 	def post_install(self, install_session: 'Installer'):

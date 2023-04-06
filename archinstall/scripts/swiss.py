@@ -5,10 +5,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
 import archinstall
+from ..lib.mirrors import use_mirrors
+from ..lib.models.bootloader import Bootloader
+from ..lib.profile.profiles_handler import profile_handler
 from ..lib import disk
-from archinstall import Selector, GlobalMenu, log, Installer, use_mirrors, Bootloader, profile_handler
+from ..lib.menu import Selector, Menu
+from ..lib.global_menu import GlobalMenu
+from ..lib.output import log
+from ..lib.installer import Installer
 from ..lib.configuration import ConfigurationOutput
-from ..lib.menu import Menu
 from ..lib.models.network_configuration import NetworkConfigurationHandler
 from ..default_profiles.applications.pipewire import PipewireProfile
 
