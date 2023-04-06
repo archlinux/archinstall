@@ -993,3 +993,21 @@ msgid ""
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+msgid "Disk configuration"
+msgstr ""
+
+msgid "Profiles"
+msgstr ""

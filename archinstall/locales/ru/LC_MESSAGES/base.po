@@ -1084,6 +1084,26 @@ msgid ""
 "Choose an option to give Sway access to your hardware"
 msgstr ""
 
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Отсутствует конфигурация"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Профиль"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"

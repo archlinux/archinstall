@@ -995,7 +995,7 @@ msgid "Unknown"
 msgstr ""
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Encriptação de partição"
 
 msgid " ! Formatting {} in "
 msgstr ""
@@ -1006,25 +1006,12 @@ msgstr ""
 msgid "Disk encryption"
 msgstr "Encriptação de disco"
 
-msgid "Password"
-msgstr "Senha"
-
-msgid "Partition encryption"
-msgstr "Encriptação de partição"
-
-msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
-msgstr ""
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr ""
-
 #, fuzzy
 msgid "Configuration"
 msgstr "Nenhuma configuração"
 
-#, fuzzy
 msgid "Password"
-msgstr "Senha de root"
+msgstr "Senha"
 
 #, fuzzy
 msgid "All settings will be reset, are you sure?"
@@ -1097,3 +1084,23 @@ msgid ""
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Nenhuma configuração"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Perfil"
