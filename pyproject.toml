@@ -12,16 +12,18 @@ authors = [
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
 requires-python = ">=3.10"
-
+long_description = "file: README.md"
+long_description_content_type = "text/markdown"
+license_files = [
+    "LICENSE",
+]
 keywords = ["linux", "arch", "archinstall", "installer"]
-
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Operating System :: POSIX :: Linux",
 ]
-
 dependencies = [
     "pyparted==3.12.0",
     "simple-term-menu==1.6.1",
