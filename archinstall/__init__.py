@@ -2,8 +2,8 @@
 import importlib
 from argparse import ArgumentParser, Namespace
 
-from .lib import disk as disk
-from .lib import menu as menu
+from .lib import disk
+from .lib import menu
 
 from .lib.exceptions import *
 from .lib.general import *

@@ -4,9 +4,10 @@ from typing import TYPE_CHECKING, Any
 
 import archinstall
 from archinstall import log, Installer, use_mirrors, Bootloader, \
-	NetworkConfigurationHandler, profile_handler, Menu
+	NetworkConfigurationHandler, profile_handler
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
+from archinstall import menu
 
 if TYPE_CHECKING:
 	_: Any
@@ -197,8 +198,8 @@ def perform_installation(mountpoint: Path):
 
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-			choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-			if choice.value == Menu.yes():
+			choice = menu.Menu(prompt, menu.Menu.yes_no(), default_option=menu.Menu.yes()).run()
+			if choice.value == menu.Menu.yes():
 				try:
 					installation.drop_to_shell()
 				except:
