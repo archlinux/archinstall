@@ -2,7 +2,8 @@
 import importlib
 from argparse import ArgumentParser, Namespace
 
-from .lib.disk.device_model import DiskLayoutConfiguration, DiskEncryption
+from .lib import disk as disk
+
 from .lib.exceptions import *
 from .lib.general import *
 from .lib.hardware import *
@@ -38,7 +39,7 @@ from .lib.user_interaction import *
 from .lib.menu.menu import Menu
 from .lib.menu.list_manager import ListManager
 from .lib.menu.text_input import TextInput
-from .lib.menu.global_menu import GlobalMenu
+from archinstall.lib.global_menu import GlobalMenu
 from .lib.menu.abstract_menu import (
 	Selector,
 	AbstractMenu

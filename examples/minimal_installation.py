@@ -2,11 +2,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import DiskLayoutConfiguration, Installer, Bootloader, ProfileConfiguration, profile_handler, User
+from archinstall.lib import disk
+from archinstall import Installer, Bootloader, ProfileConfiguration, profile_handler, User
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.disk.device_model import DeviceModification, PartitionModification, DiskEncryption, \
-	EncryptionType, FilesystemType, DiskLayoutType
-from archinstall.lib.disk.filesystemhandler import FilesystemHandler
 from archinstall.lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:
@@ -14,8 +12,8 @@ if TYPE_CHECKING:
 
 
 def perform_installation(mountpoint: Path):
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
-	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
+	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
 		mountpoint,
@@ -45,28 +43,28 @@ def perform_installation(mountpoint: Path):
 def prompt_disk_layout():
 	fs_type = None
 	if filesystem := archinstall.arguments.get('filesystem', None):
-		fs_type = FilesystemType(filesystem)
+		fs_type = disk.FilesystemType(filesystem)
 
 	devices = select_devices()
 	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
-	archinstall.arguments['disk_config'] = DiskLayoutConfiguration(
-		config_type=DiskLayoutType.Default,
+	archinstall.arguments['disk_config'] = disk.DiskLayoutConfiguration(
+		config_type=disk.DiskLayoutType.Default,
 		device_modifications=[modifications]
 	)
 
 
 def parse_disk_encryption():
 	if enc_password := archinstall.arguments.get('!encryption-password', None):
-		modification: List[DeviceModification] = archinstall.arguments['disk_config']
-		partitions: List[PartitionModification] = []
+		modification: List[disk.DeviceModification] = archinstall.arguments['disk_config']
+		partitions: List[disk.PartitionModification] = []
 
 		# encrypt all partitions except the /boot
 		for mod in modification:
 			partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
-		archinstall.arguments['disk_encryption'] = DiskEncryption(
-			encryption_type=EncryptionType.Partition,
+		archinstall.arguments['disk_encryption'] = disk.DiskEncryption(
+			encryption_type=disk.EncryptionType.Partition,
 			encryption_password=enc_password,
 			partitions=partitions
 		)
@@ -75,7 +73,7 @@ def parse_disk_encryption():
 prompt_disk_layout()
 parse_disk_encryption()
 
-fs_handler = FilesystemHandler(
+fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )

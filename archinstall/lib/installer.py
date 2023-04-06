@@ -9,14 +9,10 @@ import time
 from pathlib import Path
 from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
 
-from .disk.device_model import PartitionModification, DiskLayoutConfiguration, \
-	Size, Unit, get_lsblk_by_mountpoint, SubvolumeModification, FilesystemType, \
-	DiskEncryption, EncryptionType
-from .disk.device_handler import device_handler
+from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
 from .hardware import has_uefi, is_vm, cpu_vendor
-from .disk.fido import Fido2
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors
@@ -96,8 +92,8 @@ class Installer:
 	def __init__(
 		self,
 		target: Path,
-		disk_config: DiskLayoutConfiguration,
-		disk_encryption: Optional[DiskEncryption] = None,
+		disk_config: disk.DiskLayoutConfiguration,
+		disk_encryption: Optional[disk.DiskEncryption] = None,
 		base_packages: List[str] = [],
 		kernels: Optional[List[str]] = None
 	):
@@ -113,7 +109,7 @@ class Installer:
 		self._disk_encryption = disk_encryption
 
 		if self._disk_encryption is None:
-			self._disk_encryption = DiskEncryption(EncryptionType.NoEncryption)
+			self._disk_encryption = disk.DiskEncryption(disk.EncryptionType.NoEncryption)
 
 		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
@@ -211,10 +207,10 @@ class Installer:
 		NOTE: this function should be run AFTER running the mount_ordered_layout function
 		"""
 		boot_mount = self.target / 'boot'
-		lsblk_info = get_lsblk_by_mountpoint(boot_mount)
+		lsblk_info = disk.get_lsblk_by_mountpoint(boot_mount)
 
 		if len(lsblk_info) > 0:
-			if lsblk_info[0].size < Size(200, Unit.MiB):
+			if lsblk_info[0].size < disk.Size(200, disk.Unit.MiB):
 				raise DiskError(
 					f'The boot partition mounted at {boot_mount} is not large enough to install a boot loader. '
 					f'Please resize it to at least 200MiB and re-run the installation.'
@@ -233,7 +229,7 @@ class Installer:
 			# '/' just for sorting
 			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint if x.mountpoint else Path('/'))
 
-			if self._disk_encryption.encryption_type is not EncryptionType.NoEncryption:
+			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
 				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
 			else:
 				enc_partitions = []
@@ -247,11 +243,11 @@ class Installer:
 				else:  # mount encrypted partition
 					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
-	def _prepare_luks_partitions(self, partitions: List[PartitionModification]) -> Dict[PartitionModification, Luks2]:
+	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
 		luks_handlers = {}
 
 		for part_mod in partitions:
-			luks_handler = device_handler.unlock_luks2_dev(
+			luks_handler = disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
 				part_mod.mapper_name,
 				self._disk_encryption.encryption_password
@@ -260,29 +256,29 @@ class Installer:
 
 		return luks_handlers
 
-	def _mount_partition(self, part_mod: PartitionModification):
+	def _mount_partition(self, part_mod: disk.PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint is not None:
 			target = self.target / part_mod.relative_mountpoint
-			device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
-		if part_mod.fs_type == FilesystemType.Btrfs:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
 
-	def _mount_luks_partiton(self, part_mod: PartitionModification, luks_handler: Luks2):
+	def _mount_luks_partiton(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint is not None:
 			target = self.target / part_mod.relative_mountpoint
-			device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
+			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
-		if part_mod.fs_type == FilesystemType.Btrfs:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
 
-	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[SubvolumeModification]):
+	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[disk.SubvolumeModification]):
 		for subvol in subvolumes:
 			mountpoint = self.target / subvol.relative_mountpoint
 			mount_options = subvol.mount_options + [f'subvol={subvol.name}']
-			device_handler.mount(dev_path, mountpoint, options=mount_options)
+			disk.device_handler.mount(dev_path, mountpoint, options=mount_options)
 
 	def generate_key_files(self):
 		for part_mod in self._disk_encryption.partitions:
@@ -300,7 +296,7 @@ class Installer:
 
 			if part_mod.is_root() and not gen_enc_file:
 				if self._disk_encryption.hsm_device:
-					Fido2.fido2_enroll(
+					disk.Fido2.fido2_enroll(
 						self._disk_encryption.hsm_device,
 						part_mod,
 						self._disk_encryption.encryption_password
@@ -483,7 +479,7 @@ class Installer:
 
 		for mod in self._disk_config.device_modifications:
 			for part_mod in mod.partitions:
-				if part_mod.fs_type == FilesystemType.Btrfs:
+				if part_mod.fs_type == disk.FilesystemType.Btrfs:
 					with open(f"{self.target}/etc/fstab", 'r') as fp:
 						fstab = fp.read()
 
@@ -848,19 +844,19 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
-	def _get_boot_partition(self) -> Optional[PartitionModification]:
+	def _get_boot_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
 				return boot
 		return None
 
-	def _get_root_partition(self) -> Optional[PartitionModification]:
+	def _get_root_partition(self) -> Optional[disk.PartitionModification]:
 		for mod in self._disk_config.device_modifications:
 			if root := mod.get_root_partition(self._disk_config.relative_mountpoint):
 				return root
 		return None
 
-	def _add_systemd_bootloader(self, root_partition: PartitionModification):
+	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
 		self.pacstrap('efibootmgr')
 
 		if not has_uefi():
@@ -963,8 +959,8 @@ class Installer:
 
 	def _add_grub_bootloader(
 		self,
-		boot_partition: PartitionModification,
-		root_partition: PartitionModification
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
 	):
 		self.pacstrap('grub')  # no need?
 
@@ -1009,8 +1005,8 @@ class Installer:
 
 	def _add_efistub_bootloader(
 		self,
-		boot_partition: PartitionModification,
-		root_partition: PartitionModification
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
 	):
 		self.pacstrap('efibootmgr')
 
@@ -1051,7 +1047,7 @@ class Installer:
 				log(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.fs_type.value} {" ".join(self.KERNEL_PARAMS)}')
 
-			device = device_handler.get_device_by_partition_path(boot_partition.dev_path)
+			device = disk.device_handler.get_device_by_partition_path(boot_partition.dev_path)
 			SysCommand(f'efibootmgr --disk {device.path} --part {device.path} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
 
 		self.helper_flags['bootloader'] = "efistub"

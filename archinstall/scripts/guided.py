@@ -6,9 +6,7 @@ from typing import Any, TYPE_CHECKING
 import archinstall
 from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader, profile_handler
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, DiskEncryption
-from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystemhandler import FilesystemHandler
+from ..lib import disk
 from ..lib.output import log
 from ..default_profiles.applications.pipewire import PipewireProfile
 
@@ -32,7 +30,7 @@ archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM
 archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
+archinstall.log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 def ask_user_questions():
@@ -118,7 +116,7 @@ def perform_installation(mountpoint: Path):
 	formatted and setup prior to entering this function.
 	"""
 	log('Starting installation', level=logging.INFO)
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
+	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
@@ -126,7 +124,7 @@ def perform_installation(mountpoint: Path):
 
 	locale = f"{archinstall.arguments.get('sys-language', 'en_US')} {archinstall.arguments.get('sys-encoding', 'UTF-8').upper()}"
 
-	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
 		mountpoint,
@@ -135,13 +133,13 @@ def perform_installation(mountpoint: Path):
 		kernels=archinstall.arguments.get('kernels', ['linux'])
 	) as installation:
 		# Mount all the drives to the desired mountpoint
-		if disk_config.config_type != DiskLayoutType.Pre_mount:
+		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
 			installation.mount_ordered_layout()
 
 		installation.sanity_check()
 
-		if disk_config.config_type != DiskLayoutType.Pre_mount:
-			if disk_encryption and disk_encryption.encryption_type != EncryptionType.NoEncryption:
+		if disk_config.config_type != disk.DiskLayoutType.Pre_mount:
+			if disk_encryption and disk_encryption.encryption_type != disk.EncryptionType.NoEncryption:
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
@@ -238,7 +236,7 @@ def perform_installation(mountpoint: Path):
 				except:
 					pass
 
-	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
+	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
@@ -262,7 +260,7 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input(str(_('Press Enter to continue.')))
 
-fs_handler = FilesystemHandler(
+fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )

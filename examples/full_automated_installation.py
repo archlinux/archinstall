@@ -2,43 +2,39 @@ from pathlib import Path
 
 from archinstall import Installer, ProfileConfiguration, profile_handler, User
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.disk import device_handler
-from archinstall.lib.disk.device_model import FilesystemType, DeviceModification, ModificationStatus, \
-	Size, Unit, PartitionType, PartitionModification, DiskLayoutConfiguration, DiskLayoutType, \
-	DiskEncryption, EncryptionType, PartitionFlag
-from archinstall.lib.disk.filesystemhandler import FilesystemHandler
+from archinstall import disk
 
 # we're creating a new ext4 filesystem installation
-fs_type = FilesystemType('ext4')
+fs_type = disk.FilesystemType('ext4')
 device_path = Path('/dev/sda')
 
 # get the physical disk device
-device = device_handler.get_device(device_path)
+device = disk.device_handler.get_device(device_path)
 
 if not device:
 	raise ValueError('No device found for given path')
 
 # create a new modification for the specific device
-device_modification = DeviceModification(device, wipe=True)
+device_modification = disk.DeviceModification(device, wipe=True)
 
 # create a new boot partition
-boot_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
-	start=Size(1, Unit.MiB),
-	length=Size(512, Unit.MiB),
+boot_partition = disk.PartitionModification(
+	status=disk.ModificationStatus.Create,
+	type=disk.PartitionType.Primary,
+	start=disk.Size(1, disk.Unit.MiB),
+	length=disk.Size(512, disk.Unit.MiB),
 	mountpoint=Path('/boot'),
-	fs_type=FilesystemType.Fat32,
-	flags=[PartitionFlag.Boot]
+	fs_type=disk.FilesystemType.Fat32,
+	flags=[disk.PartitionFlag.Boot]
 )
 device_modification.add_partition(boot_partition)
 
 # create a root partition
-root_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
-	start=Size(513, Unit.MiB),
-	length=Size(20, Unit.GiB),
+root_partition = disk.PartitionModification(
+	status=disk.ModificationStatus.Create,
+	type=disk.PartitionType.Primary,
+	start=disk.Size(513, disk.Unit.MiB),
+	length=disk.Size(20, disk.Unit.GiB),
 	mountpoint=None,
 	fs_type=fs_type,
 	mount_options=[],
@@ -46,32 +42,32 @@ root_partition = PartitionModification(
 device_modification.add_partition(root_partition)
 
 # create a new home partition
-home_partition = PartitionModification(
-	status=ModificationStatus.Create,
-	type=PartitionType.Primary,
+home_partition = disk.PartitionModification(
+	status=disk.ModificationStatus.Create,
+	type=disk.PartitionType.Primary,
 	start=root_partition.length,
-	length=Size(100, Unit.Percent, total_size=device.device_info.total_size),
+	length=disk.Size(100, disk.Unit.Percent, total_size=device.device_info.total_size),
 	mountpoint=Path('/home'),
 	fs_type=fs_type,
 	mount_options=[]
 )
 device_modification.add_partition(home_partition)
 
-disk_config = DiskLayoutConfiguration(
-	config_type=DiskLayoutType.Default,
+disk_config = disk.DiskLayoutConfiguration(
+	config_type=disk.DiskLayoutType.Default,
 	device_modifications=[device_modification]
 )
 
 # disk encryption configuration (Optional)
-disk_encryption = DiskEncryption(
+disk_encryption = disk.DiskEncryption(
 	encryption_password="enc_password",
-	encryption_type=EncryptionType.Partition,
+	encryption_type=disk.EncryptionType.Partition,
 	partitions=[home_partition],
 	hsm_device=None
 )
 
 # initiate file handler with the disk config and the optional disk encryption config
-fs_handler = FilesystemHandler(disk_config, disk_encryption)
+fs_handler = disk.FilesystemHandler(disk_config, disk_encryption)
 
 # perform all file operations
 # WARNING: this will potentially format the filesystem and delete all data

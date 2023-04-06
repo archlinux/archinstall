@@ -2,9 +2,8 @@ import logging
 from pathlib import Path
 
 import archinstall
-from archinstall import DiskLayoutConfiguration, DiskEncryption, Installer
-from archinstall.lib.disk.device_handler import disk_layouts
-from archinstall.lib.disk.filesystemhandler import FilesystemHandler
+from archinstall import Installer
+from archinstall.lib import disk
 
 
 def ask_user_questions():
@@ -29,8 +28,8 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
-	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
+	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
 		mountpoint,
@@ -49,12 +48,12 @@ def perform_installation(mountpoint: Path):
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
+	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 ask_user_questions()
 
-fs_handler = FilesystemHandler(
+fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )

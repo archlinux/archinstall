@@ -115,7 +115,7 @@ from archinstall import Installer, ProfileConfiguration, profile_handler, User
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.disk.device_model import FilesystemType
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
-from archinstall.lib.disk.filesystemhandler import FilesystemHandler
+from archinstall.lib.disk.filesystem import FilesystemHandler
 from archinstall.lib.user_interaction.disk_conf import select_disk_config
 
 fs_type = FilesystemType('ext4')
@@ -137,22 +137,22 @@ fs_handler.perform_filesystem_operations()
 mountpoint = Path('/tmp')
 
 with Installer(
-    mountpoint,
-    disk_config,
-  disk_encryption=disk_encryption,
-  kernels=['linux']
+        mountpoint,
+        disk_config,
+        disk_encryption=disk_encryption,
+        kernels=['linux']
 ) as installation:
-    installation.mount_ordered_layout()
-    installation.minimal_installation(hostname='minimal-arch')
-    installation.add_additional_packages(['nano', 'wget', 'git'])
+   installation.mount_ordered_layout()
+   installation.minimal_installation(hostname='minimal-arch')
+   installation.add_additional_packages(['nano', 'wget', 'git'])
 
    # Optionally, install a profile of choice.
    # In this case, we install a minimal profile that is empty
-   profile_config = ProfileConfiguration(MinimalProfile())
-   profile_handler.install_profile_config(installation, profile_config)
+profile_config = ProfileConfiguration(MinimalProfile())
+profile_handler.install_profile_config(installation, profile_config)
 
-   user = User('archinstall', 'password', True)
-	installation.create_users(user)
+user = User('archinstall', 'password', True)
+installation.create_users(user)
 ```
 
 This installer will perform the following:

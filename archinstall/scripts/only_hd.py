@@ -3,10 +3,9 @@ import os
 from pathlib import Path
 
 import archinstall
-from .. import Installer, DiskLayoutConfiguration, DiskEncryption
+from .. import Installer
 from ..lib.configuration import ConfigurationOutput
-from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystemhandler import FilesystemHandler
+from ..lib import disk
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
@@ -40,8 +39,8 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	disk_config: DiskLayoutConfiguration = archinstall.arguments['disk_config']
-	disk_encryption: DiskEncryption = archinstall.arguments.get('disk_encryption', None)
+	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
+	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
 		mountpoint,
@@ -60,7 +59,7 @@ def perform_installation(mountpoint: Path):
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
+	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
@@ -71,7 +70,7 @@ archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM
 archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
+archinstall.log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
@@ -94,7 +93,7 @@ if archinstall.arguments.get('dry_run'):
 if not archinstall.arguments.get('silent'):
 	input('Press Enter to continue.')
 
-fs_handler = FilesystemHandler(
+fs_handler = disk.FilesystemHandler(
 	archinstall.arguments['disk_config'],
 	archinstall.arguments.get('disk_encryption', None)
 )

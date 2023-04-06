@@ -2,33 +2,33 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
-from ..disk.device_model import DiskLayoutConfiguration, DeviceModification, DiskEncryption, EncryptionType
-from ..general import SysCommand, secret
-from ..menu.abstract_menu import Selector, AbstractMenu
-from ..models import NetworkConfiguration
-from ..models.bootloader import Bootloader
-from ..models.users import User
-from ..output import FormattedOutput
-from ..profile.profile_menu import ProfileConfiguration
-from ..storage import storage
-from ..user_interaction import add_number_of_parrallel_downloads
-from ..user_interaction import ask_additional_packages_to_install
-from ..user_interaction import ask_for_additional_users
-from ..user_interaction import ask_for_audio_selection
-from ..user_interaction import ask_for_bootloader
-from ..user_interaction import ask_for_swap
-from ..user_interaction import ask_hostname
-from ..user_interaction import ask_ntp
-from ..user_interaction import ask_to_configure_network
-from ..user_interaction import get_password, ask_for_a_timezone
-from ..user_interaction import select_additional_repositories
-from ..user_interaction import select_kernel
-from ..user_interaction import select_language
-from ..user_interaction import select_locale_enc
-from ..user_interaction import select_locale_lang
-from ..user_interaction import select_mirror_regions
-from ..user_interaction.disk_conf import select_disk_config
-from ..user_interaction.save_conf import save_config
+from . import disk
+from .general import SysCommand, secret
+from .menu.abstract_menu import Selector, AbstractMenu
+from .models import NetworkConfiguration
+from .models.bootloader import Bootloader
+from .models.users import User
+from .output import FormattedOutput
+from .profile.profile_menu import ProfileConfiguration
+from .storage import storage
+from .user_interaction import add_number_of_parrallel_downloads
+from .user_interaction import ask_additional_packages_to_install
+from .user_interaction import ask_for_additional_users
+from .user_interaction import ask_for_audio_selection
+from .user_interaction import ask_for_bootloader
+from .user_interaction import ask_for_swap
+from .user_interaction import ask_hostname
+from .user_interaction import ask_ntp
+from .user_interaction import ask_to_configure_network
+from .user_interaction import get_password, ask_for_a_timezone
+from .user_interaction import select_additional_repositories
+from .user_interaction import select_kernel
+from .user_interaction import select_language
+from .user_interaction import select_locale_enc
+from .user_interaction import select_locale_lang
+from .user_interaction import select_mirror_regions
+from .user_interaction.disk_conf import select_disk_config
+from .user_interaction.save_conf import save_config
 
 if TYPE_CHECKING:
 	_: Any
@@ -202,16 +202,15 @@ class GlobalMenu(AbstractMenu):
 			else:
 				return str(cur_value)
 
-	def _disk_encryption(self, preset: Optional[DiskEncryption]) -> Optional[DiskEncryption]:
-		from ..disk.encryption_menu import DiskEncryptionMenu
-		mods: Optional[List[DeviceModification]] = self._menu_options['disk_config'].current_selection
+	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
+		mods: Optional[List[disk.DeviceModification]] = self._menu_options['disk_config'].current_selection
 
 		if not mods:
 			# this should not happen as the encryption menu has the disk_config as dependency
 			raise ValueError('No disk layout specified')
 
 		data_store: Dict[str, Any] = {}
-		disk_encryption = DiskEncryptionMenu(mods, data_store, preset=preset).run()
+		disk_encryption = disk.DiskEncryptionMenu(mods, data_store, preset=preset).run()
 		return disk_encryption
 
 	def _prev_network_config(self) -> Optional[str]:
@@ -224,10 +223,10 @@ class GlobalMenu(AbstractMenu):
 
 	def _prev_disk_layouts(self) -> Optional[str]:
 		selector = self._menu_options['disk_config']
-		disk_layout_conf: Optional[DiskLayoutConfiguration] = selector.current_selection
+		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = selector.current_selection
 
 		if disk_layout_conf:
-			device_mods: List[DeviceModification] = \
+			device_mods: List[disk.DeviceModification] = \
 				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
 
 			if device_mods:
@@ -253,15 +252,15 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
+	def _display_disk_layout(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
 		if current_value:
 			return current_value.config_type.display_msg()
 		return ''
 
 	def _prev_disk_encryption(self) -> Optional[str]:
-		encryption: Optional[DiskEncryption] = self._menu_options['disk_encryption'].current_selection
+		encryption: Optional[disk.DiskEncryption] = self._menu_options['disk_encryption'].current_selection
 		if encryption:
-			enc_type = EncryptionType.type_to_text(encryption.encryption_type)
+			enc_type = disk.EncryptionType.type_to_text(encryption.encryption_type)
 			output = str(_('Encryption type')) + f': {enc_type}\n'
 			output += str(_('Password')) + f': {secret(encryption.encryption_password)}\n'
 
@@ -275,9 +274,9 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _display_disk_encryption(self, current_value: Optional[DiskEncryption]) -> str:
+	def _display_disk_encryption(self, current_value: Optional[disk.DiskEncryption]) -> str:
 		if current_value:
-			return EncryptionType.type_to_text(current_value.encryption_type)
+			return disk.EncryptionType.type_to_text(current_value.encryption_type)
 		return ''
 
 	def _prev_install_missing_config(self) -> Optional[str]:
@@ -332,8 +331,8 @@ class GlobalMenu(AbstractMenu):
 
 	def _select_disk_config(
 		self,
-		preset: Optional[DiskLayoutConfiguration] = None
-	) -> Optional[DiskLayoutConfiguration]:
+		preset: Optional[disk.DiskLayoutConfiguration] = None
+	) -> Optional[disk.DiskLayoutConfiguration]:
 		disk_config = select_disk_config(
 			preset,
 			storage['arguments'].get('advanced', False)
