@@ -871,6 +871,26 @@ msgstr "პაროლი"
 msgid "Partition encryption"
 msgstr "დანაყოფის დაშიფვრა"
 
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "კონფიგურაციი შენახვა"
+
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
 

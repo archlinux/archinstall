@@ -903,6 +903,26 @@ msgstr "Rootwachtwoord"
 msgid "Partition encryption"
 msgstr ""
 
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Selecteer één of meer in te stellen harde schijven"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Configuratie vastleggen"
+
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "Voer de beginsector in (percentage of bloknummer - standaard: {}): "
 

@@ -874,6 +874,26 @@ msgstr "ரூட் கடவுச்சொல்"
 msgid "Partition encryption"
 msgstr ""
 
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "உள்ளமைவைச் சேமிக்கவும்"
+
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
 

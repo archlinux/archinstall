@@ -870,6 +870,26 @@ msgstr "Пароль"
 msgid "Partition encryption"
 msgstr "Шифрування розділу"
 
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Оберіть один або кілька жорстких дисків для використання та налаштування"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Зберегти конфігурацію"
+
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "Введіть початковий сектор (відсоток або номер блоку, за замовчуванням: {}): "
 

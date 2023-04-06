@@ -390,7 +390,7 @@ msgstr "Te gustaría utilizar la sincronización automática de hora (NTP) con l
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
-msgstr "" 
+msgstr ""
 "La hora del hardware y otros pasos post-configuración pueden ser necesarios para que NTP funcione.\n"
 "Para más información, por favor, consulte la wiki de Arch"
 
@@ -878,6 +878,26 @@ msgstr "Contraseña de root"
 
 msgid "Partition encryption"
 msgstr "Cifrado de la partición"
+
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Seleccione uno o más discos duros para usar y configurar"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Guardar configuración"
 
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "Introduzca el sector de inicio (porcentaje o número de bloque, predeterminado: {}): "

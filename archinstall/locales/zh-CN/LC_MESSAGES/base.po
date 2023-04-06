@@ -873,6 +873,26 @@ msgstr "Root 密码"
 msgid "Partition encryption"
 msgstr ""
 
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "选择一个或多个硬盘驱动器来使用和配置"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following locations?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "保存配置"
+
 #~ msgid "Enter the start sector (percentage or block number, default: {}): "
 #~ msgstr "输入起始扇区（百分比或块号，默认：{}）： "
 
