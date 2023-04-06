@@ -142,17 +142,17 @@ with Installer(
         disk_encryption=disk_encryption,
         kernels=['linux']
 ) as installation:
-   installation.mount_ordered_layout()
-   installation.minimal_installation(hostname='minimal-arch')
-   installation.add_additional_packages(['nano', 'wget', 'git'])
+    installation.mount_ordered_layout()
+    installation.minimal_installation(hostname='minimal-arch')
+    installation.add_additional_packages(['nano', 'wget', 'git'])
 
-   # Optionally, install a profile of choice.
-   # In this case, we install a minimal profile that is empty
-profile_config = ProfileConfiguration(MinimalProfile())
-profile_handler.install_profile_config(installation, profile_config)
+    # Optionally, install a profile of choice.
+    # In this case, we install a minimal profile that is empty
+    profile_config = ProfileConfiguration(MinimalProfile())
+    profile_handler.install_profile_config(installation, profile_config)
 
-user = User('archinstall', 'password', True)
-installation.create_users(user)
+    user = User('archinstall', 'password', True)
+    installation.create_users(user)
 ```
 
 This installer will perform the following:
