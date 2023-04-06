@@ -47,7 +47,13 @@ packages = ["archinstall"]
 
 [tool.setuptools.package-data]
 # We could specify locales/lancuages.json etc instead, but catchall works too.
-"archinstall" = ["**/*.py", "**/*.mo", "**/*.po", "**/*.pot", "**/*.json"]
+"archinstall" = [
+    "**/*.py",
+    "**/*.mo",
+    "**/*.po",
+    "**/*.pot",
+    "**/*.json",
+]
 
 # [tool.setuptools.packages.find]
 # where = ["archinstall"]

@@ -178,8 +178,34 @@ For an example of a fully scripted, automated installation please see the exampl
 Archinstall comes with an [unattended](https://github.com/archlinux/archinstall/blob/master/examples/mac_address_installation.py)
 example which will look for a matching profile for the machine it is being run on, based on any local MAC address.
 For instance, if the machine the code is executed on has the MAC address `52:54:00:12:34:56` it will look for a profile called
-[profiles/52-54-00-12-34-56.py](https://github.com/archlinux/archinstall/default_profiles/tailored.py).
+[52-54-00-12-34-56.py](https://github.com/archlinux/archinstall/default_profiles/tailored.py).
 If it's found, the unattended installation will commence and source that profile as its installation procedure.
+
+# Profiles
+
+`archinstall` ships with a set of pre-defined profiles that can be chosen during the installation process.
+
+| *Desktop*     | *Server*   |
+|---------------|------------|
+| Awesome       | Cockpit    |
+| Bspwm         | Docker     |
+| Budgie        | Lighttpd   |
+| Cinnamon      | Mariadb    |
+| Cutefish      | Nginx      |
+| Deepin        | Postgresql |
+| Enlightenment | Tomcat     |
+| Gnome         | httpd      |
+| Kde           | sshd       |
+| Lxqt          |            |
+| Mate          |            |
+| Qtile         |            |
+| Sway          |            |
+| Xfce4         |            |
+| i3-wm         |            |
+
+The definitions of the profiles and what packages they will install can be seen directly in the menu or
+[default profiles](https://github.com/archlinux/archinstall/default_profiles)
+
 
 # Testing
 
