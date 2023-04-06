@@ -70,6 +70,7 @@ def select_devices(preset: List[BDevice] = []) -> List[BDevice]:
 
 			return selected_devices
 
+
 def get_default_partition_layout(
 	devices: List[BDevice],
 	filesystem_type: Optional[FilesystemType] = None,

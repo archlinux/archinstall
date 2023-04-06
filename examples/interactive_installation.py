@@ -1,52 +1,20 @@
 import logging
-import os
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import ConfigurationOutput, Menu, Installer, use_mirrors, Bootloader, profile_handler
-from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from ..lib.disk.device_model import DiskLayoutConfiguration, DiskLayoutType, EncryptionType, DiskEncryption
-from ..lib.disk.device_handler import disk_layouts
-from ..lib.disk.filesystemhandler import FilesystemHandler
-from ..lib.output import log
-from ..default_profiles.applications.pipewire import PipewireProfile
+from archinstall import log, DiskLayoutConfiguration, DiskEncryption, Installer, use_mirrors, Bootloader, \
+	NetworkConfigurationHandler, profile_handler, Menu
+from archinstall.default_profiles.applications.pipewire import PipewireProfile
+from archinstall.lib.disk.device_handler import disk_layouts
+from archinstall.lib.disk.device_model import DiskLayoutType, EncryptionType
+from archinstall.lib.disk.filesystemhandler import FilesystemHandler
 
 if TYPE_CHECKING:
 	_: Any
 
 
-if archinstall.arguments.get('help'):
-	print("See `man archinstall` for help.")
-	exit(0)
-
-if os.getuid() != 0:
-	print(_("Archinstall requires root privileges to run. See --help for more."))
-	exit(1)
-
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk_layouts()}", level=logging.DEBUG)
-
-
 def ask_user_questions():
-	"""
-		First, we'll ask the user for a bunch of user input.
-		Not until we're satisfied with what we want to install
-		will we continue with the actual installation steps.
-	"""
-
-	# ref: https://github.com/archlinux/archinstall/pull/831
-	# we'll set NTP to true by default since this is also
-	# the default value specified in the menu options; in
-	# case it will be changed by the user we'll also update
-	# the system immediately
 	global_menu = archinstall.GlobalMenu(data_store=archinstall.arguments)
 
 	global_menu.enable('archinstall-language')
@@ -241,26 +209,7 @@ def perform_installation(mountpoint: Path):
 	archinstall.log(f"Disk states after installing: {disk_layouts()}", level=logging.DEBUG)
 
 
-if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
-	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
-	exit(1)
-
-if not archinstall.arguments.get('silent'):
-	ask_user_questions()
-
-config_output = ConfigurationOutput(archinstall.arguments)
-
-if not archinstall.arguments.get('silent'):
-	config_output.show()
-
-config_output.save()
-
-if archinstall.arguments.get('dry_run'):
-	exit(0)
-
-if not archinstall.arguments.get('silent'):
-	input(str(_('Press Enter to continue.')))
+ask_user_questions()
 
 fs_handler = FilesystemHandler(
 	archinstall.arguments['disk_config'],

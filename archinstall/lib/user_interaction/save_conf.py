@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
 
 from ..configuration import ConfigurationOutput
-from ..general import SysCommand
 from ..menu import Menu
 from ..menu.menu import MenuSelectionType
 from ..output import log
@@ -53,58 +52,59 @@ def save_config(config: Dict):
 	if choice.type_ == MenuSelectionType.Skip:
 		return
 
-	save_config_value: str = [k for k, v in options.items() if v == choice.single_value][0]
+	save_config_value: str = choice.single_value
 
-	dirs_to_exclude = [
-		'/bin',
-		'/dev',
-		'/lib',
-		'/lib64',
-		'/lost+found',
-		'/opt',
-		'/proc',
-		'/run',
-		'/sbin',
-		'/srv',
-		'/sys',
-		'/usr',
-		'/var',
-	]
+	# dirs_to_exclude = [
+	# 	'/bin',
+	# 	'/dev',
+	# 	'/lib',
+	# 	'/lib64',
+	# 	'/lost+found',
+	# 	'/opt',
+	# 	'/proc',
+	# 	'/run',
+	# 	'/sbin',
+	# 	'/srv',
+	# 	'/sys',
+	# 	'/usr',
+	# 	'/var',
+	# ]
 
-	log('When picking a directory to save configuration files to, by default we will ignore the following folders: ' + ','.join(dirs_to_exclude), level=logging.DEBUG)
+	# log('When picking a directory to save configuration files to, by default we will ignore the following folders: ' + ','.join(dirs_to_exclude), level=logging.DEBUG)
 
-	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
+	# log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
+	#
+	# find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
+	# file_picker_command = f'find / {find_exclude} -o -type d -print0'
+	# decoded = SysCommand(file_picker_command).decode()
+	#
+	# if not decoded:
+	# 	raise ValueError(f'Error decoding command result: {file_picker_command}')
+	#
+	# possible_save_dirs = list(filter(None, decoded.split('\x00')))
+	#
+	# choice = Menu(
+	# 	_('Select directory (or directories) for saving configuration files'),
+	# 	possible_save_dirs,
+	# 	multi=True,
+	# 	skip=True,
+	# 	allow_reset=False,
+	# ).run()
 
-	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
-	file_picker_command = f'find / {find_exclude} -o -type d -print0'
-	decoded = SysCommand(file_picker_command).decode()
-
-	if not decoded:
-		raise ValueError(f'Error decoding command result: {file_picker_command}')
-
-	possible_save_dirs = list(filter(None, decoded.split('\x00')))
-
-	choice = Menu(
-		_('Select directory (or directories) for saving configuration files'),
-		possible_save_dirs,
-		multi=True,
-		skip=True,
-		allow_reset=False,
-	).run()
-
-	if choice.type_ == MenuSelectionType.Skip:
-		return
+	# if choice.type_ == MenuSelectionType.Skip:
+	# 	return
 
 	save_dirs = choice.single_value
+	save_dirs = ['/tmp']
 
-	prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
-		save_config_value,
-		', '.join(save_dirs)
-	)
+	# prompt = _('Do you want to save {} configuration file(s) in the following locations?\n\n{}').format(
+	# 	save_config_value,
+	# 	', '.join(save_dirs)
+	# )
 
-	save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-	if save_confirmation == Menu.no():
-		return
+	# save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+	# if save_confirmation == Menu.no():
+	# 	return
 
 	log('Saving {} configuration files to {}'.format(save_config_value, save_dirs), level=logging.DEBUG)
 
