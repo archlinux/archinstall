@@ -146,27 +146,10 @@ def perform_installation(mountpoint):
 				if partition.size < 0.19: # ~200 MiB in GiB
 					raise archinstall.DiskError(f"The selected /boot partition in use is not large enough to properly install a boot loader. Please resize it to at least 200MiB and re-run the installation.")
 
-		# If we've activated NTP, make sure it's active in the ISO too and
-		# make sure at least one time-sync finishes before we continue with the installation
-		if archinstall.arguments.get('ntp', False):
-			# Activate NTP in the ISO
-			archinstall.SysCommand('timedatectl set-ntp true')
-
-			# TODO: This block might be redundant, but this service is not activated unless
-			# `timedatectl set-ntp true` is executed.
-			logged = False
-			while archinstall.service_state('dbus-org.freedesktop.timesync1.service') not in ('running'):
-				if not logged:
-					installation.log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-					logged = True
-				time.sleep(1)
-
-			logged = False
-			while 'Server: n/a' in archinstall.SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-				if not logged:
-					installation.log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-					logged = True
-				time.sleep(1)
+		# Make sure a time sync finishes before we continue with the installation
+		installation.log('Waiting for time sync (systemd-timesyncd.service) to complete.', level=logging.INFO)
+		while archinstall.SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
+			time.sleep(1)
 		
 		# if len(mirrors):
 		# Certain services might be running that affects the system during installation.

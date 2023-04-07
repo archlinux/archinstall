@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 import archinstall
 from ..disk.encryption import DiskEncryptionMenu
-from ..general import SysCommand, secret
+from ..general import secret
 from ..hardware import has_uefi
 from ..menu import Menu
 from ..menu.abstract_menu import Selector, AbstractMenu
@@ -179,7 +179,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Automatic time sync (NTP)'),
-				lambda preset: self._select_ntp(preset),
+				lambda preset: ask_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
 			Selector('')
@@ -342,14 +342,6 @@ class GlobalMenu(AbstractMenu):
 	# 	if passwd := get_password(prompt=str(_('Enter disk encryption password (leave blank for no encryption): '))):
 	# 		return passwd
 	# 	return None
-
-	def _select_ntp(self, preset :bool = True) -> bool:
-		ntp = ask_ntp(preset)
-
-		value = str(ntp).lower()
-		SysCommand(f'timedatectl set-ntp {value}')
-
-		return ntp
 
 	def _select_harddrives(self, old_harddrives: List[str] = []) -> List:
 		harddrives = select_harddrives(old_harddrives)

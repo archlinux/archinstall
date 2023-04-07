@@ -203,9 +203,6 @@ class SetupMenu(archinstall.AbstractMenu):
 			enabled=True))
 
 	def exit_callback(self):
-		if self._data_store.get('ntp',False):
-			archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
-			archinstall.SysCommand('timedatectl set-ntp true')
 		if self._data_store.get('mode',None):
 			archinstall.arguments['mode'] = self._data_store['mode']
 			archinstall.log(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
@@ -333,9 +330,6 @@ def ask_user_questions(mode):
 			else:
 				setup.run()
 		archinstall.arguments['archinstall-language'] = setup_area.get('archinstall-language')
-	else:
-		archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
-		archinstall.SysCommand('timedatectl set-ntp true')
 
 	with MyMenu(data_store=archinstall.arguments,mode=mode) as global_menu:
 
