@@ -3,8 +3,9 @@ from typing import TYPE_CHECKING, Any, List
 
 import archinstall
 from archinstall.lib import disk
-from archinstall import Installer, Bootloader, ProfileConfiguration, profile_handler, User
+from archinstall import Installer, ProfileConfiguration, profile_handler
 from archinstall.default_profiles.minimal import MinimalProfile
+from archinstall.lib.models import Bootloader, User
 from archinstall.lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:

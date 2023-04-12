@@ -2,10 +2,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import User, Bootloader, ConfigurationOutput, Installer, ProfileConfiguration, \
-	profile_handler
+from archinstall import ConfigurationOutput, Installer, ProfileConfiguration, profile_handler
 from archinstall.default_profiles.minimal import MinimalProfile
 from ..lib import disk
+from ..lib.models import Bootloader, User
 from ..lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:

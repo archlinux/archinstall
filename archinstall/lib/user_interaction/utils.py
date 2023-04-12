@@ -3,7 +3,7 @@ from __future__ import annotations
 import getpass
 from typing import Any, Optional, TYPE_CHECKING
 
-from ..models.password_strength import PasswordStrength
+from ..models import PasswordStrength
 from ..output import log
 
 if TYPE_CHECKING:

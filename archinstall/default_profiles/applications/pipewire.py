@@ -1,9 +1,9 @@
 from typing import List, Union, Any, TYPE_CHECKING
 
 import archinstall
-from archinstall import User
 
 from archinstall.default_profiles.profile import Profile, ProfileType
+from archinstall.lib.models import User
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer

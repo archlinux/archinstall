@@ -1,12 +1,9 @@
+from dataclasses import dataclass
 from typing import Optional, List
-from pydantic import BaseModel
 
-"""
-This python file is not in use.
-Pydantic is not a builtin, and we use the dataclasses.py instead!
-"""
 
-class VersionDef(BaseModel):
+@dataclass
+class VersionDef:
 	version_string: str
 
 	@classmethod
@@ -42,7 +39,7 @@ class VersionDef(BaseModel):
 
 			return True
 		return False
-		
+
 	def __lt__(self, other :'VersionDef') -> bool:
 		if self.major > other.major:
 			return False
@@ -55,7 +52,8 @@ class VersionDef(BaseModel):
 		return self.version_string
 
 
-class PackageSearchResult(BaseModel):
+@dataclass
+class PackageSearchResult:
 	pkgname: str
 	pkgbase: str
 	repo: str
@@ -94,14 +92,21 @@ class PackageSearchResult(BaseModel):
 		return self.pkg_version < other.pkg_version
 
 
-class PackageSearch(BaseModel):
+@dataclass
+class PackageSearch:
 	version: int
 	limit: int
 	valid: bool
+	num_pages: int
+	page: int
 	results: List[PackageSearchResult]
 
+	def __post_init__(self):
+		self.results = [PackageSearchResult(**x) for x in self.results]
 
-class LocalPackage(BaseModel):
+
+@dataclass
+class LocalPackage:
 	name: str
 	version: str
 	description:str
@@ -122,6 +127,7 @@ class LocalPackage(BaseModel):
 	install_reason: str
 	install_script: str
 	validated_by: str
+	provides: str
 
 	@property
 	def pkg_version(self) -> str:

@@ -3,11 +3,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import log, Installer, use_mirrors, Bootloader, \
-	NetworkConfigurationHandler, profile_handler
+from archinstall import log, Installer, use_mirrors, profile_handler
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
+from archinstall.lib.models import Bootloader, NetworkConfigurationHandler
 
 if TYPE_CHECKING:
 	_: Any
