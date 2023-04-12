@@ -135,6 +135,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('Kernels'),
 				lambda preset: select_kernel(preset),
+				display_func=lambda x: ', '.join(x) if x else None,
 				default=['linux'])
 		self._menu_options['packages'] = \
 			Selector(
@@ -146,6 +147,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('Optional repositories'),
 				select_additional_repositories,
+				display_func=lambda x: ', '.join(x) if x else None,
 				default=[])
 		self._menu_options['nic'] = \
 			Selector(

@@ -255,18 +255,19 @@ class AbstractMenu:
 			return False
 
 		mandatory_fields = dict(filter(lambda x: x[1].is_mandatory(), self._menu_options.items()))
-		missing = []
+		missing = set()
 
 		for key, selector in mandatory_fields.items():
 			if key in ['!root-password', '!users']:
 				if not check('!root-password') and not has_superuser():
-					missing += [
-						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))]
+					missing.add(
+						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
+					)
 			elif key == 'disk_config':
 				if not check('disk_config'):
-					missing += [self._menu_options['disk_config'].description]
+					missing.add(self._menu_options['disk_config'].description)
 
-		return missing
+		return list(missing)
 
 	def setup_selection_menu_options(self):
 		""" Define the menu options.
