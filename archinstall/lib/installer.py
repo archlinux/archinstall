@@ -479,30 +479,35 @@ class Installer:
 
 		for mod in self._disk_config.device_modifications:
 			for part_mod in mod.partitions:
-				if part_mod.fs_type == disk.FilesystemType.Btrfs:
-					with open(f"{self.target}/etc/fstab", 'r') as fp:
-						fstab = fp.read()
+				if part_mod.fs_type != disk.FilesystemType.Btrfs:
+					continue
 
-						# Replace the {installation}/etc/fstab with entries
-						# using the compress=zstd where the mountpoint has compression set.
-						with open(f"{self.target}/etc/fstab", 'w') as fp:
-							for line in fstab.split('\n'):
-								# So first we grab the mount options by using subvol=.*? as a locator.
-								# And we also grab the mountpoint for the entry, for instance /var/log
-								subvoldef = re.findall(',.*?subvol=.*?[\t ]', line)
-								mountpoint = re.findall('[\t ]/.*?[\t ]', line)
+				fstab_file = Path(f'{self.target}/etc/fstab')
 
-								if subvoldef and mountpoint:
-									for sub_vol in part_mod.btrfs_subvols:
-										# We then locate the correct subvolume and check if it's compressed
-										if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()):
-											# We then sneak in the compress=zstd option if it doesn't already exist:
-											# We skip entries where compression is already defined
-											if ',compress=zstd,' not in line:
-												line = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
-												break
+				with fstab_file.open('r') as fp:
+					fstab = fp.readlines()
 
-								fp.write(f'{line}\n')
+				# Replace the {installation}/etc/fstab with entries
+				# using the compress=zstd where the mountpoint has compression set.
+				for index, line in enumerate(fstab):
+					# So first we grab the mount options by using subvol=.*? as a locator.
+					# And we also grab the mountpoint for the entry, for instance /var/log
+					subvoldef = re.findall(',.*?subvol=.*?[\t ]', line)
+					mountpoint = re.findall('[\t ]/.*?[\t ]', line)
+
+					if not subvoldef or not mountpoint:
+						continue
+
+					for sub_vol in part_mod.btrfs_subvols:
+						# We then locate the correct subvolume and check if it's compressed,
+						# and skip entries where compression is already defined
+						# We then sneak in the compress=zstd option if it doesn't already exist:
+						if sub_vol.compress and str(sub_vol.mountpoint) == Path(mountpoint[0].strip()) and ',compress=zstd,' not in line:
+							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
+							break
+
+				with fstab_file.open('w') as fp:
+					fp.writelines(fstab)
 
 	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
