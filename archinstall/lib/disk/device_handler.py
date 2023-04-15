@@ -498,7 +498,6 @@ class DeviceHandler(object):
 			# will have a reference to /dev/sX3 which is being tried to umount here now
 			if 'not a block device' in ex.message:
 				return
-
 			raise ex
 
 		if len(lsblk_info.mountpoints) > 0:
@@ -512,15 +511,7 @@ class DeviceHandler(object):
 				if recursive:
 					command += ' -R'
 
-				try:
-					SysCommand(f'{command} {mountpoint}')
-				except SysCallError as err:
-					# Without to much research, it seams that low error codes are errors.
-					# And above 8k is indicators such as "/dev/x not mounted.".
-					# So anything in between 0 and 8k are errors (?).
-					if err and err.exit_code and 0 < err.exit_code < 8000:
-						log(f'Unable to umount partition {mountpoint}: {err.message}', level=logging.DEBUG)
-						raise DiskError(err.message)
+				SysCommand(f'{command} {mountpoint}')
 
 	def detect_pre_mounted_mods(self, base_mountpoint: Path) -> List[DeviceModification]:
 		part_mods: Dict[Path, List[PartitionModification]] = {}
