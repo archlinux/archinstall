@@ -2,7 +2,7 @@ import os
 import json
 import stat
 import logging
-import pathlib
+from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .storage import storage
@@ -23,9 +23,9 @@ class ConfigurationOutput:
 		:type config: Dict
 		"""
 		self._config = config
-		self._user_credentials = {}
-		self._user_config = {}
-		self._default_save_path = pathlib.Path(storage.get('LOG_PATH', '.'))
+		self._user_credentials: Dict[str, Any] = {}
+		self._user_config: Dict[str, Any] = {}
+		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
 
@@ -76,7 +76,7 @@ class ConfigurationOutput:
 
 		print()
 
-	def _is_valid_path(self, dest_path :pathlib.Path) -> bool:
+	def _is_valid_path(self, dest_path: Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
 			log(
 				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
@@ -85,7 +85,7 @@ class ConfigurationOutput:
 			return False
 		return True
 
-	def save_user_config(self, dest_path :pathlib.Path = None):
+	def save_user_config(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_config_file
 
@@ -94,7 +94,7 @@ class ConfigurationOutput:
 
 			os.chmod(str(dest_path / self._user_config_file), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save_user_creds(self, dest_path :pathlib.Path = None):
+	def save_user_creds(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
@@ -104,7 +104,7 @@ class ConfigurationOutput:
 
 				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save(self, dest_path :pathlib.Path = None):
+	def save(self, dest_path: Optional[Path] = None):
 		if not dest_path:
 			dest_path = self._default_save_path
 

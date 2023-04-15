@@ -79,10 +79,6 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 	return result
 
 
-def get_interface_from_mac(mac :str) -> str:
-	return list_interfaces().get(mac.lower(), None)
-
-
 def wireless_scan(interface :str) -> None:
 	interfaces = enrich_iface_types(list(list_interfaces().values()))
 	if interfaces[interface] != 'WIRELESS':
