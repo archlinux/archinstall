@@ -103,7 +103,7 @@ class Luks2:
 				output = str(b''.join(cmd_handle))
 				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
 		except SysCallError as err:
-			if err.exit_code == 256:
+			if err.exit_code == 1:
 				log(f'luks2 partition currently in use: {self.luks_dev_path}')
 				log('Attempting to unmount, crypt-close and trying encryption again')
 
