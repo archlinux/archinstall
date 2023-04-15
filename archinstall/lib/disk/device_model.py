@@ -980,8 +980,7 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 		try:
 			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
 		except SysCallError as error:
-			# It appears as if lsblk can return exit codes like 8192 to indicate something.
-			# But it does return output so we'll try to catch it.
+			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 			if error.worker:
 				err = error.worker.decode('UTF-8')
 				log(f'Error calling lsblk: {err}', level=logging.DEBUG)
