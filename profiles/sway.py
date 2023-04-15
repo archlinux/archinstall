@@ -12,15 +12,17 @@ is_top_level_profile = False
 
 __packages__ = [
 	"sway",
+	"swaybg",
 	"swaylock",
 	"swayidle",
 	"waybar",
 	"dmenu",
-	"light",
+	"brightnessctl",
 	"grim",
 	"slurp",
 	"pavucontrol",
 	"foot",
+	"xorg-xwayland",
 ]
 
 
