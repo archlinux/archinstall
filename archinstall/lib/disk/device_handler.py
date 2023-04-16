@@ -560,8 +560,7 @@ class DeviceHandler(object):
 				log(f'Error calling partprobe: {result.decode()}', level=logging.DEBUG)
 				raise DiskError(f'Could not perform partprobe on {path}: {result.decode()}')
 		except SysCallError as error:
-			log(f"partprobe experienced an error for {path}: {error}", level=logging.DEBUG)
-			raise DiskError(f'Could not perform partprobe on {path}: {error}')
+			log(f"partprobe experienced an error with {path}: {error}", level=logging.DEBUG)
 
 	def _wipe(self, dev_path: Path):
 		"""
