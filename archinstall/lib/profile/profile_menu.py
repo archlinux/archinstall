@@ -126,17 +126,25 @@ def select_greeter(
 		title = str(_('Please chose which greeter to install'))
 		greeter_options = [greeter.value for greeter in GreeterType]
 
-		default_value: Optional[str] = None
+		default: Optional[GreeterType] = None
 
 		if preset is not None:
-			default_value = preset.value
+			default = preset
 		elif profile is not None:
 			default_greeter = profile.default_greeter_type
-			default_value = default_greeter.value if default_greeter else None
-		else:
-			default_value = None
+			default = default_greeter if default_greeter else None
 
-		choice = Menu(title, greeter_options, skip=False, default_option=default_value).run()
+		choice = Menu(
+			title,
+			greeter_options,
+			skip=True,
+			default_option=default.value if default else None
+		).run()
+
+		match choice.type_:
+			case MenuSelectionType.Skip:
+				return default
+
 		return GreeterType(choice.single_value)
 
 	return None

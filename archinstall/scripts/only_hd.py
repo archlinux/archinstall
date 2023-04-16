@@ -3,9 +3,9 @@ import os
 from pathlib import Path
 
 import archinstall
-from .. import Installer
-from ..lib.configuration import ConfigurationOutput
-from ..lib import disk
+from archinstall import Installer
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall import disk
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")

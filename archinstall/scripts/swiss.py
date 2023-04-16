@@ -5,17 +5,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
 import archinstall
-from ..lib.mirrors import use_mirrors
-from ..lib.models.bootloader import Bootloader
-from ..lib.profile.profiles_handler import profile_handler
-from ..lib import disk
-from ..lib.menu import Selector, Menu
-from ..lib.global_menu import GlobalMenu
-from ..lib.output import log
-from ..lib.installer import Installer
-from ..lib.configuration import ConfigurationOutput
-from ..lib.models.network_configuration import NetworkConfigurationHandler
-from ..default_profiles.applications.pipewire import PipewireProfile
+from archinstall.lib.mirrors import use_mirrors
+from archinstall import models
+from archinstall import disk
+from archinstall.lib.profile.profiles_handler import profile_handler
+from archinstall import menu
+from archinstall.lib.global_menu import GlobalMenu
+from archinstall.lib.output import log
+from archinstall import Installer
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.default_profiles.applications.pipewire import PipewireProfile
 
 if TYPE_CHECKING:
 	_: Any
@@ -41,7 +40,7 @@ class ExecutionMode(Enum):
 
 def select_mode() -> ExecutionMode:
 	options = [str(e.value) for e in ExecutionMode]
-	choice = Menu(
+	choice = menu.Menu(
 		str(_('Select an execution mode')),
 		options,
 		default_option=ExecutionMode.Full.value,
@@ -58,13 +57,13 @@ class SetupMenu(GlobalMenu):
 	def setup_selection_menu_options(self):
 		super().setup_selection_menu_options()
 
-		self._menu_options['mode'] = Selector(
+		self._menu_options['mode'] = menu.Selector(
 			'Excution mode',
 			lambda x : select_mode(),
 			display_func=lambda x: x.value if x else '',
 			default=ExecutionMode.Full)
 
-		self._menu_options['continue'] = Selector(
+		self._menu_options['continue'] = menu.Selector(
 			'Continue',
 			exec_func=lambda n,v: True)
 
@@ -226,7 +225,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if archinstall.arguments.get('swap'):
 				installation.setup_swap('zram')
 
-			if archinstall.arguments.get("bootloader") == Bootloader.Grub and archinstall.has_uefi():
+			if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and archinstall.has_uefi():
 				installation.add_additional_packages("grub")
 
 			installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -236,7 +235,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			network_config = archinstall.arguments.get('nic', None)
 
 			if network_config:
-				handler = NetworkConfigurationHandler(network_config)
+				handler = models.NetworkConfigurationHandler(network_config)
 				handler.config_installer(installation)
 
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
@@ -294,8 +293,8 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if not archinstall.arguments.get('silent'):
 				prompt = str(
 					_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
-				choice = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
-				if choice.value == Menu.yes():
+				choice = menu.Menu(prompt, menu.Menu.yes_no(), default_option=menu.Menu.yes()).run()
+				if choice.value == menu.Menu.yes():
 					try:
 						installation.drop_to_shell()
 					except:

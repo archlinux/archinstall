@@ -4,17 +4,17 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
-from ..lib import disk
-from ..lib.global_menu import GlobalMenu
-from ..default_profiles.applications.pipewire import PipewireProfile
-from ..lib.configuration import ConfigurationOutput
-from ..lib.installer import Installer
-from ..lib.menu import Menu
-from ..lib.mirrors import use_mirrors
-from ..lib.models.bootloader import Bootloader
-from ..lib.models.network_configuration import NetworkConfigurationHandler
-from ..lib.output import log
-from ..lib.profile.profiles_handler import profile_handler
+from archinstall.lib import disk
+from archinstall.lib.global_menu import GlobalMenu
+from archinstall.default_profiles.applications.pipewire import PipewireProfile
+from archinstall.lib.configuration import ConfigurationOutput
+from archinstall.lib.installer import Installer
+from archinstall.lib.menu import Menu
+from archinstall.lib.mirrors import use_mirrors
+from archinstall.lib.models.bootloader import Bootloader
+from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
+from archinstall.lib.output import log
+from archinstall.lib.profile.profiles_handler import profile_handler
 
 if TYPE_CHECKING:
 	_: Any
