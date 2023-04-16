@@ -7,12 +7,20 @@ import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
-import parted  # type: ignore
-from parted import Disk, Geometry, FileSystem, PartitionException
+from parted import (  # type: ignore
+	Disk, Geometry, FileSystem,
+	PartitionException, DiskLabelException,
+	getAllDevices, freshDisk, Partition,
+)
 
-from .device_model import DeviceModification, PartitionModification, \
-	BDevice, _DeviceInfo, _PartitionInfo, FilesystemType, Unit, PartitionTable, \
-	ModificationStatus, get_lsblk_info, LsblkInfo, _BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
+from .device_model import (
+	DeviceModification, PartitionModification,
+	BDevice, _DeviceInfo, _PartitionInfo,
+	FilesystemType, Unit, PartitionTable,
+	ModificationStatus, get_lsblk_info, LsblkInfo,
+	_BtrfsSubvolumeInfo, get_all_lsblk_info, DiskEncryption
+)
+
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
@@ -37,8 +45,16 @@ class DeviceHandler(object):
 	def load_devices(self):
 		block_devices = {}
 
-		for device in parted.getAllDevices():
-			disk = Disk(device)
+		for device in getAllDevices():
+			try:
+				disk = Disk(device)
+			except DiskLabelException as error:
+				if 'unrecognised disk label' in getattr(error, 'message', str(error)):
+					disk = freshDisk(device, PartitionTable.GPT.value)
+				else:
+					log(f'Unable to get disk from device: {device}', level=logging.DEBUG)
+					continue
+
 			device_info = _DeviceInfo.from_disk(disk)
 			partition_infos = []
 
@@ -67,7 +83,7 @@ class DeviceHandler(object):
 
 	def _determine_fs_type(
 		self,
-		partition: parted.Partition,
+		partition: Partition,
 		lsblk_info: Optional[LsblkInfo] = None
 	) -> Optional[FilesystemType]:
 		try:
@@ -301,7 +317,7 @@ class DeviceHandler(object):
 
 		filesystem = FileSystem(type=part_mod.fs_type.value, geometry=geometry)
 
-		partition = parted.Partition(
+		partition = Partition(
 			disk=disk,
 			type=part_mod.type.get_partition_code(),
 			fs=filesystem,
@@ -433,7 +449,7 @@ class DeviceHandler(object):
 		if modification.wipe:
 			self.wipe_dev(modification.device)
 			part_table = partition_table.value if partition_table else None
-			disk = parted.freshDisk(modification.device.disk.device, part_table)
+			disk = freshDisk(modification.device.disk.device, part_table)
 		else:
 			log(f'Use existing device: {modification.device_path}')
 			disk = modification.device.disk
