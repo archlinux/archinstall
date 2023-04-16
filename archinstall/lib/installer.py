@@ -187,15 +187,15 @@ class Installer:
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 		log('Waiting for automatic mirror selection (reflector) to complete...', level=logging.INFO)
-		while service_state('reflector') not in ('dead', 'failed'):
+		while service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		log('Waiting pacman-init.service to complete.', level=logging.INFO)
-		while service_state('pacman-init') not in ('dead', 'failed'):
+		while service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
-		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed'):
+		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
