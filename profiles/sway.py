@@ -21,6 +21,7 @@ __packages__ = [
 	"slurp",
 	"pavucontrol",
 	"foot",
+	"xorg-xwayland",
 ]
 
 
