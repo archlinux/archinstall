@@ -30,7 +30,7 @@ from .lib.configuration import *
 
 parser = ArgumentParser()
 
-__version__ = "2.5.2"
+__version__ = "2.5.4"
 storage['__version__'] = __version__
 
 # add the custome _ as a builtin, it can now be used anywhere in the

@@ -18,8 +18,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
       - name: Build archinstall
-        run: |
-          python -m build . --wheel
+        run: python -m build --wheel --no-isolation
+      - name: Install archinstall
+        run: python -m pip install -Ue .
+      - name: Run archinstall
+        run: archinstall -v
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall
