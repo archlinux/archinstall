@@ -1128,6 +1128,13 @@ msgstr "Geen configuratie"
 msgid "Profiles"
 msgstr "Profiel"
 
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Selecteer één of meer in te stellen harde schijven"
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

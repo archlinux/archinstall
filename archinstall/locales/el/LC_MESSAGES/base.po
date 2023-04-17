@@ -1103,3 +1103,10 @@ msgstr "Καμία διαμόρφωση"
 #, fuzzy
 msgid "Profiles"
 msgstr "Προφίλ"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"

@@ -1102,3 +1102,10 @@ msgstr "கட்டமைப்பு இல்லை"
 #, fuzzy
 msgid "Profiles"
 msgstr "சுயவிவரம்"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"

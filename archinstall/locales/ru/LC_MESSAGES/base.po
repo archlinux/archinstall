@@ -1104,6 +1104,13 @@ msgstr "Отсутствует конфигурация"
 msgid "Profiles"
 msgstr "Профиль"
 
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Выберите один или несколько жестких дисков для использования и настройте их"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Редактировать {origkey}:"

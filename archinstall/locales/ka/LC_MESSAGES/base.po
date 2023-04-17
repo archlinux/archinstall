@@ -1101,3 +1101,10 @@ msgstr "მორგების გარეშე"
 #, fuzzy
 msgid "Profiles"
 msgstr "პროფილი"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"

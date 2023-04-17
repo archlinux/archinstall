@@ -1111,3 +1111,10 @@ msgstr "Ingen konfiguration"
 #, fuzzy
 msgid "Profiles"
 msgstr "Profil"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Välj en eller flera hårddiskar som skall användas och konfigureras"

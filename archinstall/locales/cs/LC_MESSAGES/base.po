@@ -1096,3 +1096,10 @@ msgstr "Žádná konfigurace"
 #, fuzzy
 msgid "Profiles"
 msgstr "Profil"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"

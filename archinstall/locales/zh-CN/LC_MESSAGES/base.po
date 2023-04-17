@@ -1101,3 +1101,10 @@ msgstr "无配置"
 #, fuzzy
 msgid "Profiles"
 msgstr "配置文件"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "选择一个或多个硬盘驱动器来使用和配置"

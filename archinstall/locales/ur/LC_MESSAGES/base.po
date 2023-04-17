@@ -1131,6 +1131,13 @@ msgstr "کوئی کنفیگریشن نہیں"
 msgid "Profiles"
 msgstr "پروفائل"
 
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 

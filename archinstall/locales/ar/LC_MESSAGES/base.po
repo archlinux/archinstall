@@ -1020,3 +1020,10 @@ msgstr ""
 
 msgid "Profiles"
 msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "حدِّد واجهة شبكة واحدة للإعداد"

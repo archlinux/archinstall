@@ -1102,3 +1102,10 @@ msgstr "Nessuna configurazione"
 #, fuzzy
 msgid "Profiles"
 msgstr "Profilo"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Selezionare uno o più dischi rigidi da utilizzare e configurare"

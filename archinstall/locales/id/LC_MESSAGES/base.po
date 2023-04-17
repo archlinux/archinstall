@@ -1102,3 +1102,10 @@ msgstr "Tidak ada konfigurasi"
 #, fuzzy
 msgid "Profiles"
 msgstr "Profil"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"

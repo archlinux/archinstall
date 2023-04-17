@@ -1100,3 +1100,10 @@ msgstr "Конфігурація відсутня"
 #, fuzzy
 msgid "Profiles"
 msgstr "Профіль"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Оберіть один або кілька жорстких дисків для використання та налаштування"

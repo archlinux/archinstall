@@ -1116,6 +1116,13 @@ msgstr "Keine Konfiguration"
 msgid "Profiles"
 msgstr "Profile"
 
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen"
+
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"
 

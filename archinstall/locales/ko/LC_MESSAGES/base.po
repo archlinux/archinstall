@@ -1103,3 +1103,10 @@ msgstr "구성 없음"
 #, fuzzy
 msgid "Profiles"
 msgstr "프로필"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"

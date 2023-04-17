@@ -1110,3 +1110,10 @@ msgstr "Yapılandırma yok"
 #, fuzzy
 msgid "Profiles"
 msgstr "Profil"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"

@@ -1011,3 +1011,9 @@ msgstr ""
 
 msgid "Profiles"
 msgstr ""
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr ""
