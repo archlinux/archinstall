@@ -435,7 +435,7 @@ class SubvolumeModification:
 
 	def __dump__(self) -> Dict[str, Any]:
 		return {
-			'name': self.name,
+			'name': str(self.name),
 			'mountpoint': str(self.mountpoint),
 			'compress': self.compress,
 			'nodatacow': self.nodatacow
