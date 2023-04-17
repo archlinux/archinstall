@@ -22,15 +22,17 @@ class SwayProfile(XorgProfile):
 	def packages(self) -> List[str]:
 		return [
 			"sway",
+			"swaybg",
 			"swaylock",
 			"swayidle",
 			"waybar",
 			"dmenu",
-			"light",
+			"brightnessctl",
 			"grim",
 			"slurp",
 			"pavucontrol",
-			"foot"
+			"foot",
+			"xorg-xwayland"
 		] + self._control_preference
 
 	@property
