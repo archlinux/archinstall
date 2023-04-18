@@ -531,15 +531,6 @@ class Installer:
 		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
 		self.enable_service('systemd-timesyncd')
 
-		with open(f"{self.target}/etc/systemd/timesyncd.conf", "w") as fh:
-			fh.write("[Time]\n")
-			fh.write("NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org\n")
-			fh.write("FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org\n")
-
-		from .systemd import Boot
-		with Boot(self) as session:
-			session.SysCommand(["timedatectl", "set-ntp", 'true'])
-
 	def enable_espeakup(self) -> None:
 		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
 		self.enable_service('espeakup')
