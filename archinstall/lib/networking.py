@@ -1,8 +1,12 @@
 import logging
 import os
 import socket
+import ssl
 import struct
-from typing import Union, Dict, Any, List
+from typing import Union, Dict, Any, List, Optional
+from urllib.error import URLError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from .exceptions import HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -39,7 +43,7 @@ def check_mirror_reachable() -> bool:
 		elif os.geteuid() != 0:
 			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 	except SysCallError as err:
-		log(err, level=logging.DEBUG)
+		log(f'exit_code: {err.exit_code}, Error: {err.message}', level=logging.DEBUG)
 
 	return False
 
@@ -75,12 +79,8 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 	return result
 
 
-def get_interface_from_mac(mac :str) -> str:
-	return list_interfaces().get(mac.lower(), None)
-
-
 def wireless_scan(interface :str) -> None:
-	interfaces = enrich_iface_types(list_interfaces().values())
+	interfaces = enrich_iface_types(list(list_interfaces().values()))
 	if interfaces[interface] != 'WIRELESS':
 		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
 
@@ -107,3 +107,22 @@ def get_wireless_networks(interface :str) -> None:
 
 	for line in SysCommand(f"iwctl station {interface} get-networks"):
 		print(line)
+
+
+def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:
+	ssl_context = ssl.create_default_context()
+	ssl_context.check_hostname = False
+	ssl_context.verify_mode = ssl.CERT_NONE
+
+	if params is not None:
+		encoded = urlencode(params)
+		full_url = f'{url}?{encoded}'
+	else:
+		full_url = url
+
+	try:
+		response = urlopen(full_url, context=ssl_context)
+		data = response.read().decode('UTF-8')
+		return data
+	except URLError:
+		raise ValueError(f'Unable to fetch data from url: {url}')

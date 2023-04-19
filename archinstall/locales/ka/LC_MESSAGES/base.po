@@ -838,6 +838,126 @@ msgstr "თარგმანის გამოსაყენებლად �
 msgid "The font should be stored as {}"
 msgstr "ფონტი {}-ში უნდა იყოს შენახული"
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "აირჩიეთ ქმედება '{}'-სთვის"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "ეს მყარი დისკის არჩევანს და მიმდინარე დისკის განლაგებას საწყის მნიშვნელობებზე დააბრუნებს. დარწმუნებული ბრძანდებით?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "დანაყოფები"
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "მინიმალური სივრცე დანაყოფისთვის /home: {}გბ\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "მინიმალური სივრცე ArchLinux-ის დანაყოფისთვის: {}გბ"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "ეს წინასწარ მითითებული პროფილების სიაა. მათი დახმარებით ისეთი რამების, როგორიცაა სამუშაო მაგიდის გარემოები, დაყენება უფრო ადვილია"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "მიმდინარე დანაყოფების განლაგება"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "ახალი დანაყოფის შექმნა"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "დანაყოფის მიმაგრების წერტილის მინიჭება"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "დანაყოფის დასაფორმატებლობის ჭდის მოხსნა/დადება (მონაცემები წაიშლება)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "დანაყოფზე შეკუმშულობის ჭდის მოხსნა/დადება (მხოლოდ btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "ქვეტომის წაშლა"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "დანაყოფის წაშლა"
+
+#, fuzzy
+msgid "Partition"
+msgstr "დანაყოფები"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * დანაყოფის მიმაგრების წერტილები შედარებითია დაყენების შიგნით. ჩატვირთვა, მაგალითად, /boot შეიძლება, იყოს."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "არასწორი საქაღალდე: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
 msgid "Encryption type"
 msgstr "დაშიფვრის ტიპი"
 
@@ -856,23 +976,135 @@ msgstr "აირჩიეთ დისკის დაშიფვრის პ
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "აირჩიეთ HSM-სთვის გამოსაყენებელი FIDO2 მოწყობილობა"
 
+#, fuzzy
+msgid "Use a best-effort default partition layout"
+msgstr "მონიშნულ დისკებზე ყველაფრის წაშლა და დანაყოფების განლაგების საუკეთესო განლაგების გამოყენება"
+
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "დანაყოფები"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "მორგების გარეშე"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr "დანაყოფის დაშიფვრა"
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+#, fuzzy
+msgid "← Back"
+msgstr "უკან"
+
+msgid "Disk encryption"
+msgstr "დისკის დაშიფვრა"
+
+#, fuzzy
+msgid "Configuration"
+msgstr "მორგების გარეშე"
+
+msgid "Password"
+msgstr "პაროლი"
+
 msgid "All settings will be reset, are you sure?"
 msgstr "ყველა პარამეტრი დაბრუნდება. დარწმუნებული ბრძანდებით?"
 
 msgid "Back"
 msgstr "უკან"
 
-msgid "Disk encryption"
-msgstr "დისკის დაშიფვრა"
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
 
-msgid "Password"
-msgstr "პაროლი"
+msgid "Environment type: {}"
+msgstr ""
 
-msgid "Partition encryption"
-msgstr "დანაყოფის დაშიფვრა"
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
 
-#~ msgid "Enter the start sector (percentage or block number, default: {}): "
-#~ msgstr "შეიყვანეთ საწყისი სექტორი (პროცენტებში ან ბლოკის ნომერი. ნაგულისხმები: {}): "
+#, fuzzy
+msgid "Installed packages"
+msgstr "დამატებითი პაკეტები"
 
-#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-#~ msgstr "შეიყვანეთ დანაყოფის ბოლო სექტორი (პროცენტულად ან ბლოკის ნომერი. მაგ: {}): "
+#, fuzzy
+msgid "Add profile"
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "ინტერფეისის წაშლა"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "პროფილი"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "შეყვანილი მომხმარებლის სახელი არასწორია. კიდევ სცადეთ"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "დამატებითი პაკეტები დასაყენებლად (გამოტოვებით გამოყოფილი, გამოსატოვებლად ცარიელი დატოვეთ): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"აირჩიეთ გრაფიკის დრაივერი ან, ღია კოდის მქონე დრაივერის დასაყენებლად, ცარიელი დატოვეთ"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "მორგების გარეშე"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "პროფილი"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"

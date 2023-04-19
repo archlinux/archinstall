@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Union, List, Any, Callable
+from typing import Dict, Union, List, Any, Callable, Optional
 
 from .storage import storage
 from dataclasses import asdict, is_dataclass
@@ -11,7 +11,12 @@ from dataclasses import asdict, is_dataclass
 class FormattedOutput:
 
 	@classmethod
-	def values(cls, o: Any, class_formatter: str = None, filter_list: List[str] = None) -> Dict[str, Any]:
+	def values(
+		cls,
+		o: Any,
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = []
+	) -> Dict[str, Any]:
 		""" the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
 		Can transmit a filter list to the class_formatter,
@@ -25,7 +30,8 @@ class FormattedOutput:
 			elif hasattr(o, class_formatter) and callable(getattr(o, class_formatter)):
 				func = getattr(o, class_formatter)
 				return func(filter_list)
-		# kept as to make it backward compatible
+
+			raise ValueError('Unsupported formatting call')
 		elif hasattr(o, 'as_json'):
 			return o.as_json()
 		elif hasattr(o, 'json'):
@@ -36,7 +42,13 @@ class FormattedOutput:
 			return o.__dict__
 
 	@classmethod
-	def as_table(cls, obj: List[Any], class_formatter: Union[str, Callable] = None, filter_list: List[str] = None) -> str:
+	def as_table(
+		cls,
+		obj: List[Any],
+		class_formatter: Optional[Union[str, Callable]] = None,
+		filter_list: List[str] = [],
+		capitalize: bool = False
+	) -> str:
 		""" variant of as_table (subtly different code) which has two additional parameters
 		filter which is a list of fields which will be shon
 		class_formatter a special method to format the outgoing data
@@ -46,6 +58,7 @@ class FormattedOutput:
 		As_table_filter can be a drop in replacement for as_table
 		"""
 		raw_data = [cls.values(o, class_formatter, filter_list) for o in obj]
+
 		# determine the maximum column size
 		column_width: Dict[str, int] = {}
 		for o in raw_data:
@@ -55,14 +68,20 @@ class FormattedOutput:
 					column_width[k] = max([column_width[k], len(str(v)), len(k)])
 
 		if not filter_list:
-			filter_list = (column_width.keys())
+			filter_list = list(column_width.keys())
+
 		# create the header lines
 		output = ''
 		key_list = []
 		for key in filter_list:
 			width = column_width[key]
-			key = key.replace('!', '')
+			key = key.replace('!', '').replace('_', ' ')
+
+			if capitalize:
+				key = key.capitalize()
+
 			key_list.append(key.ljust(width))
+
 		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
 
@@ -79,6 +98,20 @@ class FormattedOutput:
 				else:
 					obj_data.append(str(value).ljust(width))
 			output += ' | '.join(obj_data) + '\n'
+
+		return output
+
+	@classmethod
+	def as_columns(cls, entries: List[str], cols: int) -> str:
+		chunks = []
+		output = ''
+
+		for i in range(0, len(entries), cols):
+			chunks.append(entries[i:i + cols])
+
+		for row in chunks:
+			out_fmt = '{: <30} ' * len(row)
+			output += out_fmt.format(*row) + '\n'
 
 		return output
 
@@ -204,6 +237,6 @@ def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> No
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
 	# fix issue #94
-	if kwargs.get('level', logging.INFO) != logging.DEBUG or storage['arguments'].get('verbose', False):
+	if kwargs.get('level', logging.INFO) != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
 		sys.stdout.write(f"{string}\n")
 		sys.stdout.flush()

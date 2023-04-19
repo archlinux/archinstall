@@ -838,6 +838,125 @@ msgstr ""
 msgid "The font should be stored as {}"
 msgstr ""
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Προσθέτωντας τη διαμέριση...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Διαγραφή διαμέρισης"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Τρέχουσα διάταξη διαμέρισης"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Δημιουργία καινούργιας διαμέρισης"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Διαγραφή υποόγκου"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Διαγραφή διαμέρισης"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Μη έγκυρος φάκελος: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
 #, fuzzy
 msgid "Encryption type"
 msgstr "Κωδικός κρυπτογράφησης"
@@ -859,24 +978,135 @@ msgid "Select a FIDO2 device to use for HSM"
 msgstr ""
 
 #, fuzzy
-msgid "All settings will be reset, are you sure?"
-msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
+msgid "Use a best-effort default partition layout"
+msgstr "Διαγραφή όλων των επιλεγμένων δίσκων και χρήση μίας προκαθορισμένης διάταξης βέλτιστης προσπάθειας"
 
-msgid "Back"
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Χειροκίνητη διαμόρφωση"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Καμία διαμόρφωση"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
 msgstr ""
 
 #, fuzzy
+msgid "Configuration"
+msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
 msgid "Password"
 msgstr "Κωδικός root"
 
-msgid "Partition encryption"
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
+
+msgid "Back"
 msgstr ""
 
-#~ msgid "Enter the start sector (percentage or block number, default: {}): "
-#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
 
-#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-#~ msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Περαιτέρω πακέτα"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Διαγραφή διεπαφής"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Επιλέξτε έναν οδηγώ γραφικών ή αφήστε άδειο για να εγκατασταθούν όλοι οι οδηγοί ανοιχτής πηγής"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Προφίλ"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"

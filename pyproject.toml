@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version", "entry-points"]
+dynamic = ["version"]
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
@@ -12,14 +12,16 @@ authors = [
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
 requires-python = ">=3.10"
-
 keywords = ["linux", "arch", "archinstall", "installer"]
-
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "pyparted==3.12.0",
+    "simple-term-menu==1.6.1",
 ]
 
 [project.urls]
@@ -28,23 +30,33 @@ Documentation = "https://archinstall.readthedocs.io/"
 Source = "https://github.com/archlinux/archinstall"
 
 [project.optional-dependencies]
+dev = [
+    "mypy==1.1.1",
+]
 doc = ["sphinx"]
 
 [project.scripts]
 archinstall = "archinstall:run_as_a_module"
 
-[tool.setuptools]
-packages = ["archinstall", "profiles", "examples"]
-
-[tool.setuptools.package-data]
-archinstall = [
-    "examples/*.py",
-    "profiles/*.py",
-    "profiles/applications/*.py"
-]
-
 [tool.setuptools.dynamic]
 version = {attr = "archinstall.__version__"}
+readme = {file = ["README.rst", "USAGE.rst"]}
+
+[tool.setuptools]
+packages = ["archinstall"]
+
+[tool.setuptools.package-data]
+# We could specify locales/lancuages.json etc instead, but catchall works too.
+"archinstall" = [
+    "**/*.py",
+    "**/*.mo",
+    "**/*.po",
+    "**/*.pot",
+    "**/*.json",
+]
+
+# [tool.setuptools.packages.find]
+# where = ["archinstall"]
 
 [tool.mypy]
 python_version = "3.10"

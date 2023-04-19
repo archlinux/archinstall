@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import hashlib
 import json
 import logging
@@ -17,7 +18,7 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
-# https://stackoverflow.com/a/39757388/929999
+
 if TYPE_CHECKING:
 	from .installer import Installer
 
@@ -140,7 +141,7 @@ class JsonEncoder:
 			return obj.isoformat()
 		elif isinstance(obj, (list, set, tuple)):
 			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
-		elif isinstance(obj, (pathlib.Path)):
+		elif isinstance(obj, pathlib.Path):
 			return str(obj)
 		else:
 			return obj
@@ -184,22 +185,21 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	def encode(self, obj :Any) -> Any:
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
+
 class SysCommandWorker:
-	def __init__(self,
+	def __init__(
+		self,
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Any]] = None,
 		peek_output :Optional[bool] = False,
-		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
 		working_directory :Optional[str] = './',
-		remove_vt100_escape_codes_from_lines :bool = True):
-
-		if peak_output:
-			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
-
+		remove_vt100_escape_codes_from_lines :bool = True
+	):
 		if not callbacks:
 			callbacks = {}
+
 		if not environment_vars:
 			environment_vars = {}
 
@@ -216,8 +216,6 @@ class SysCommandWorker:
 		self.cmd = cmd
 		self.callbacks = callbacks
 		self.peek_output = peek_output
-		if not self.peek_output and peak_output:
-			self.peek_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
@@ -396,7 +394,7 @@ class SysCommandWorker:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
-				# If history_logfile does not exist, ignore the error
+					# If history_logfile does not exist, ignore the error
 				except FileNotFoundError:
 					pass
 				except Exception as e:
@@ -431,13 +429,9 @@ class SysCommand:
 		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peek_output :Optional[bool] = False,
-		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
-
-		if peak_output:
-			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
 
 		_callbacks = {}
 		if callbacks:
@@ -449,8 +443,6 @@ class SysCommand:
 		self.cmd = cmd
 		self._callbacks = _callbacks
 		self.peek_output = peek_output
-		if not self.peek_output and peak_output:
-			self.peek_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
@@ -575,9 +567,8 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
 
-		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
+		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
-		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :
