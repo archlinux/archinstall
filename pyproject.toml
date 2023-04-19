@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "archinstall"
-dynamic = ["version", "entry-points"]
+dynamic = ["version"]
 description = "Arch Linux installer - guided, templates etc."
 authors = [
     {name = "Anton Hvornum", email = "anton@hvornum.se"},
