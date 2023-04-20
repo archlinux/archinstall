@@ -974,32 +974,33 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	if retry == 0:
 		retry = 1
 
-	result = None
-
-	for i in range(retry):
+	for retry_attempt in range(retry):
 		try:
 			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
+			break
 		except SysCallError as error:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
 			if error.worker:
 				err = error.worker.decode('UTF-8')
 				log(f'Error calling lsblk: {err}', level=logging.DEBUG)
-				time.sleep(1)
 			else:
 				raise error
 
-	if result and result.exit_code == 0:
-		try:
-			if decoded := result.decode('utf-8'):
-				block_devices = json.loads(decoded)
-				blockdevices = block_devices['blockdevices']
-				return [LsblkInfo.from_json(device) for device in blockdevices]
-		except json.decoder.JSONDecodeError as err:
-			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
-			raise err
+			if retry_attempt == retry - 1:
+				raise error
+
+			time.sleep(1)
+
+	try:
+		if decoded := result.decode('utf-8'):
+			block_devices = json.loads(decoded)
+			blockdevices = block_devices['blockdevices']
+			return [LsblkInfo.from_json(device) for device in blockdevices]
+	except json.decoder.JSONDecodeError as err:
+		log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
+		raise err
 
 	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
-
 
 def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
 	if infos := _fetch_lsblk_info(dev_path):
