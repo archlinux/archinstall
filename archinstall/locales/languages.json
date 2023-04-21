@@ -182,5 +182,5 @@
  {"abbr": "yo", "lang": "Yoruba"},
  {"abbr": "za", "lang": "Zhuang"},
  {"abbr": "zh-TW", "lang": "Traditional Chinese"},
- {"abbr": "zh-CN", "lang": "Simplified Chinese"},
+ {"abbr": "zh-CN", "lang": "Simplified Chinese", "translated_lang": "简体中文"},
  {"abbr": "zu", "lang": "Zulu"}]
