@@ -906,7 +906,7 @@ msgid "Mark/Unmark as bootable"
 msgstr ""
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "Mudar arquivo do sistema"
 
 #, fuzzy
 msgid "Mark/Unmark as compressed"
@@ -921,7 +921,7 @@ msgid "Delete partition"
 msgstr "Deletar uma partição"
 
 msgid "Partition"
-msgstr ""
+msgstr "Partição: "
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
 msgstr ""
@@ -934,7 +934,7 @@ msgid "If mountpoint /boot is set, then the partition will also be marked as boo
 msgstr ""
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Ponto de montagem: "
 
 msgid "Current free sectors on device {}:"
 msgstr ""
@@ -958,7 +958,7 @@ msgid "Partition management: {}"
 msgstr ""
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "Tamanho total: {}"
 
 #, fuzzy
 msgid "Encryption type"
@@ -985,30 +985,30 @@ msgstr "Apagar todos os discos selecionados e usar um esquema de partições pad
 
 #, fuzzy
 msgid "Manual Partitioning"
-msgstr "Configuração manual"
+msgstr "Particionamento manual"
 
 #, fuzzy
 msgid "Pre-mounted configuration"
 msgstr "Nenhuma configuração"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 msgid "Partition encryption"
 msgstr "Encriptação de partição"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Formatando {} em "
 
 msgid "← Back"
-msgstr ""
+msgstr "← Voltar"
 
 msgid "Disk encryption"
 msgstr "Encriptação de disco"
 
 #, fuzzy
 msgid "Configuration"
-msgstr "Nenhuma configuração"
+msgstr "Configuração"
 
 msgid "Password"
 msgstr "Senha"
@@ -1018,7 +1018,7 @@ msgid "All settings will be reset, are you sure?"
 msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
 
 msgid "Back"
-msgstr ""
+msgstr "Voltar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
@@ -1035,23 +1035,23 @@ msgstr "Pacotes adicionais"
 
 #, fuzzy
 msgid "Add profile"
-msgstr "Perfil"
+msgstr "Adicionar perfil"
 
 #, fuzzy
 msgid "Edit profile"
-msgstr "Perfil"
+msgstr "Editar perfil"
 
 #, fuzzy
 msgid "Delete profile"
-msgstr "Deletar interface"
+msgstr "Deletar perfil"
 
 #, fuzzy
 msgid "Profile name: "
-msgstr "Perfil"
+msgstr "Nome do perfil: "
 
 #, fuzzy
 msgid "The profile name you entered is already in use. Try again"
-msgstr "O nome de usuário que você digitou é inválido. Tente novamente"
+msgstr "O nome de usuário que você digitou já esta em uso. Tente outro"
 
 #, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
@@ -1065,7 +1065,7 @@ msgid "Should this profile be enabled for installation?"
 msgstr ""
 
 msgid "Create your own"
-msgstr ""
+msgstr "Crie o seu próprio"
 
 #, fuzzy
 msgid ""
@@ -1086,7 +1086,7 @@ msgid ""
 msgstr ""
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Driver gráfico"
 
 msgid "Greeter"
 msgstr ""
@@ -1099,14 +1099,14 @@ msgstr ""
 
 #, fuzzy
 msgid "Disk configuration"
-msgstr "Nenhuma configuração"
+msgstr "Configuração do disco"
 
 #, fuzzy
 msgid "Profiles"
 msgstr "Perfil"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Procurando possiveis diretórios para salvar os arquivos de configuração ..."
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
