@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] ஒரு பதிவு கோப்பு இங்கே உருவாக்கப்பட்டது: {} {}"
@@ -97,10 +97,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "பகிர்வுக்கு தேவையான கோப்பு முறைமை வகையை உள்ளிடவும்"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "தொடக்க இடத்தை உள்ளிடவும் (பிரிக்கப்பட்ட அலகுகளில்: s, GB, %, முதலியன ; இயல்புநிலை: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "இறுதி இடத்தை உள்ளிடவும் (பிரிக்கப்பட்ட அலகுகளில்: s, GB, %, etc. ; ex: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
@@ -829,283 +829,247 @@ msgid "TAB to select"
 msgstr "தேர்ந்தெடுக்க TAB"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[இயல்புநிலை மதிப்பு: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "இந்த மொழிபெயர்ப்பைப் பயன்படுத்த, மொழியை ஆதரிக்கும் எழுத்துருவை கைமுறையாக நிறுவவும்."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "எழுத்துரு {} ஆக சேமிக்கப்பட வேண்டும்"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall ஐ இயக்க ரூட் சிறப்புரிமைகள் தேவை. மேலும் பார்க்க --help."
 
-#, fuzzy
 msgid "Select an execution mode"
-msgstr "'{}'க்கான செயலைத் தேர்ந்தெடுக்கவும்"
+msgstr "செயல்படுத்தும் பயன்முறையைத் தேர்ந்தெடுக்கவும்"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "குறிப்பிட்ட url இலிருந்து சுயவிவரத்தைப் பெற முடியவில்லை: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "சுயவிவரங்கள் தனிப்பட்ட பெயரைக் கொண்டிருக்க வேண்டும், ஆனால் நகல் பெயருடன் சுயவிவர வரையறைகள் காணப்படுகின்றன: {}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட சாதனங்களைத் தேர்ந்தெடுக்கவும்"
 
-#, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "நீங்கள் ஹார்ட் டிரைவ் தேர்வை மீட்டமைத்தால், இது தற்போதைய வட்டு அமைப்பையும் மீட்டமைக்கும். நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+msgstr "சாதனத் தேர்வை மீட்டமைத்தால், இது தற்போதைய வட்டு அமைப்பையும் மீட்டமைக்கும். நீங்கள் உறுதியாக இருக்கிறீர்களா?"
 
-#, fuzzy
 msgid "Existing Partitions"
-msgstr "பகிர்வை சேர்க்கிறது...."
+msgstr "ஏற்கனவே உள்ள பகிர்வுகள்"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "ஒரு பகிர்வை நீக்கவும்"
+msgstr "பகிர்வு விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "உள்ளமைவு(களை) சேமிக்க ஒரு கோப்பகத்தை உள்ளிடவும்: "
+msgstr "ஏற்றப்பட்ட சாதனங்களின் ரூட் கோப்பகத்தை உள்ளிடவும்: "
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "/home பகிர்வுக்கான குறைந்த பட்ச கொள்ளளவு: {}GB\n"
+msgstr ""
+"/home பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}GiB\n"
+"\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}GB"
+msgstr "ஆர்ச் லினக்ஸ் பகிர்வுக்கான குறைந்தபட்ச கொள்ளளவு: {}ஜிபி"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "இது முன்-திட்டமிடப்பட்ட சுயவிவரங்களின் பட்டியல், அவை டெஸ்க்டாப் சூழல்கள் போன்றவற்றை நிறுவுவதை எளிதாக்கலாம்"
+msgstr "இது முன்-திட்டமிடப்பட்ட profiles_bck இன் பட்டியல், அவை டெஸ்க்டாப் சூழல்கள் போன்றவற்றை நிறுவுவதை எளிதாக்கலாம்"
 
-#, fuzzy
 msgid "Current profile selection"
-msgstr "தற்போதைய பகிர்வு தளவமைப்பு"
+msgstr "தற்போதைய சுயவிவரத் தேர்வு"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "புதிய பகிர்வை உருவாக்கவும்"
+msgstr "புதிதாக சேர்க்கப்பட்ட அனைத்து பகிர்வுகளையும் அகற்றவும்"
 
-#, fuzzy
 msgid "Assign mountpoint"
-msgstr "ஒரு பகிர்வுக்கு ஏற்ற-புள்ளியை ஒதுக்கவும்"
+msgstr "பகிர்வுக்கு ஏற்ற-புள்ளியை ஒதுக்கவும்"
 
-#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "குறி/குறிநீக்கு வடிவமைக்கப்பட வேண்டிய பகிர்வை (தரவை அழிக்கிறது)"
+msgstr "வடிவமைக்கப்பட வேண்டியவையை குறி/குறிநீக்கு (தரவை அழிக்கிறது)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "துவக்கக்கூடியதாகக் குறி/குறிநீக்கு"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "கோப்பு முறைமையை மாற்றவும்"
 
-#, fuzzy
 msgid "Mark/Unmark as compressed"
-msgstr "ஒரு பகிர்வை சுருக்கப்பட்டதாகக் குறிக்கவும்/குறி நீக்கவும் (btrfs மட்டும்)"
+msgstr "சுருக்கப்பட்டதாகக் குறி/குறிநீக்கு"
 
-#, fuzzy
 msgid "Set subvolumes"
-msgstr "துணைத்தொகுதியை நீக்கவும்"
+msgstr "துணைத் தொகுதிகளை அமைக்கவும்"
 
-#, fuzzy
 msgid "Delete partition"
-msgstr "ஒரு பகிர்வை நீக்கவும்"
+msgstr "பகிர்வை நீக்கு"
 
 msgid "Partition"
-msgstr ""
+msgstr "பகிர்வு"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "இந்த பகிர்வு தற்போது குறியாக்கம் செய்யப்பட்டுள்ளது, அதை வடிவமைக்க ஒரு கோப்பு முறைமை குறிப்பிடப்பட வேண்டும்"
 
-#, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * பகிர்வு மவுண்ட்-பாயிண்ட்கள் நிறுவலின் உள்ளே தொடர்புடையவை, துவக்கம் /boot எடுத்துக்காட்டாக இருக்கும்."
+msgstr "பகிர்வு மவுண்ட்-பாயிண்ட்கள் நிறுவலின் உள்ளே தொடர்புடையவை, துவக்கம் /boot எடுத்துக்காட்டாக இருக்கும்."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "மவுண்ட்பாயிண்ட் /boot அமைக்கப்பட்டால், பகிர்வு துவக்கக்கூடியதாகக் குறிக்கப்படும்."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "மவுண்ட்பாயிண்ட்: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "{} சாதனத்தில் தற்போதைய இலவசப் பிரிவுகள்:"
 
-#, fuzzy
 msgid "Total sectors: {}"
-msgstr "சரியான கோப்பகம் இல்லை: {}"
+msgstr "மொத்த பிரிவுகள்: {}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
-msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
+msgstr "தொடக்கப் பிரிவை உள்ளிடவும் (இயல்புநிலை: {}): "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், எ.கா: {}): "
+msgstr "பகிர்வின் இறுதிப் பகுதியை உள்ளிடவும் (சதவீதம் அல்லது தொகுதி எண், இயல்புநிலை: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "இது புதிதாக சேர்க்கப்பட்ட அனைத்து பகிர்வுகளையும் அகற்றும், தொடரவா?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "பகிர்வு மேலாண்மை: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "முழு நீளம்: {}"
 
-#, fuzzy
 msgid "Encryption type"
-msgstr "குறியாக்கம் கடவுச்சொல்"
+msgstr "குறியாக்க வகை"
 
 msgid "Partitions"
-msgstr ""
+msgstr "பகிர்வுகள்"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "HSM சாதனங்கள் எதுவும் இல்லை"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr "குறியாக்கம் செய்ய வேண்டிய பகிர்வுகளைத் தேர்ந்தெடுக்கவும்"
+msgstr "குறியாக்கம் செய்யப்பட வேண்டிய பகிர்வுகள்"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "வட்டு குறியாக்க விருப்பத்தைத் தேர்ந்தெடுக்கவும்"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "HSM க்கு பயன்படுத்த FIDO2 சாதனத்தைத் தேர்ந்தெடுக்கவும்"
 
-#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr "தேர்ந்தெடுக்கப்பட்ட அனைத்து இயக்கிகளையும் துடைத்து, சிறந்த முயற்சி இயல்புநிலை பகிர்வு அமைப்பைப் பயன்படுத்தவும்"
+msgstr "சிறந்த முயற்சி இயல்புநிலை பகிர்வு தளவமைப்பைப் பயன்படுத்தவும்"
 
-#, fuzzy
 msgid "Manual Partitioning"
-msgstr "கைமுறை கட்டமைப்பு"
+msgstr "கைமுறை பகிர்வு"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "கட்டமைப்பு இல்லை"
+msgstr "முன்-ஏற்றப்பட்ட கட்டமைப்பு"
 
 msgid "Unknown"
-msgstr ""
+msgstr "தெரியவில்லை/தெரியாதது"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "பகிர்வு குறியாக்கம்"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! வடிவமைத்தல் {} உள்ள "
 
 msgid "← Back"
-msgstr ""
+msgstr "← பின்"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "வட்டு குறியாக்கம்"
 
-#, fuzzy
 msgid "Configuration"
-msgstr "கட்டமைப்பு இல்லை"
+msgstr "கட்டமைப்பு"
 
-#, fuzzy
 msgid "Password"
-msgstr "ரூட் கடவுச்சொல்"
+msgstr "கடவுச்சொல்"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} வரிசைப்படுத்தப்பட்ட பகிர்வுகளைக் கொண்டுள்ளது, இது அவற்றை அகற்றும், நீங்கள் உறுதியாக இருக்கிறீர்களா?"
+msgstr "எல்லா அமைப்புகளும் மீட்டமைக்கப்படும், உறுதியாக இருக்கிறீர்களா?"
 
 msgid "Back"
-msgstr ""
+msgstr "திரும்பவும்"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "தேர்ந்தெடுக்கப்பட்ட சுயவிவரங்களுக்கு எந்த வாழ்த்துரை நிறுவ வேண்டும் என்பதைத் தேர்வுசெய்யவும்: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "சுற்றுச்சூழல் வகை: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "தனியுரிம Nvidia இயக்கி ஸ்வே ஆல் ஆதரிக்கப்படவில்லை. நீங்கள் சிக்கலில் சிக்க வாய்ப்புள்ளது, உனக்கு அது சரியா?"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "கூடுதல் தொகுப்புகள்"
+msgstr "நிறுவப்பட்ட தொகுப்புகள்"
 
-#, fuzzy
 msgid "Add profile"
-msgstr "சுயவிவரம்"
+msgstr "சுயவிவரத்தைச் சேர்க்கவும்"
 
-#, fuzzy
 msgid "Edit profile"
-msgstr "சுயவிவரம்"
+msgstr "சுயவிவரத்தைத் திருத்தவும்"
 
-#, fuzzy
 msgid "Delete profile"
-msgstr "இடைமுகத்தை நீக்கு"
+msgstr "சுயவிவரத்தை நீக்கு"
 
-#, fuzzy
 msgid "Profile name: "
-msgstr "சுயவிவரம்"
+msgstr "சுயவிவரப் பெயர்: "
 
-#, fuzzy
 msgid "The profile name you entered is already in use. Try again"
-msgstr "நீங்கள் உள்ளிட்ட பயனர்பெயர் தவறானது. மீண்டும் முயற்சிக்கவும்"
+msgstr "நீங்கள் உள்ளிட்ட சுயவிவரப் பெயர் ஏற்கனவே பயன்பாட்டில் உள்ளது. மீண்டும் முயற்சிக்கவும்"
 
-#, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "நிறுவ கூடுதல் தொகுப்புகளை எழுதவும் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
+msgstr "இந்த சுயவிவரத்துடன் நிறுவப்பட வேண்டிய தொகுப்புகள் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
 
-#, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "நிறுவ கூடுதல் தொகுப்புகளை எழுதவும் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
+msgstr "இந்தச் சுயவிவரத்துடன் இயக்கப்பட வேண்டிய சேவைகள் (இடம் பிரிக்கப்பட்டது, தவிர்க்க காலியாக விடவும்): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "நிறுவலுக்கு இந்த சுயவிவரம் இயக்கப்பட வேண்டுமா?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "சொந்தமாக உருவாக்கவும்"
 
-#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
-"\n"
-"கிராபிக்ஸ் இயக்கியைத் தேர்ந்தெடுக்கவும் அல்லது அனைத்து திறந்த மூல இயக்கிகளையும் நிறுவ காலியாக விடவும்"
+"அனைத்து திறந்த மூல இயக்கிகளையும் நிறுவ வரைகலை இயக்கிகளை தேர்ந்தெடுக்கவும் அல்லது காலியாக விடவும்"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "ஸ்வேக்கு உங்கள் இருக்கைக்கான அணுகல் தேவை (வன்பொருள் சாதனங்களின் சேகரிப்பு அதாவது விசைப்பலகை, சுட்டி போன்றவை)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"உங்கள் வன்பொருளுக்கான அணுகலை வழங்குவதற்கான விருப்பத்தைத் தேர்வுசெய்யவும்"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "வரைகலை இயக்கி"
 
 msgid "Greeter"
-msgstr ""
+msgstr "வாழ்த்துபவர்"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "எந்த வாழ்த்துரை நிறுவ வேண்டும் என்பதைத் தேர்வுசெய்யவும்"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "இது முன்-திட்டமிடப்பட்ட default_profiles பட்டியல்"
 
-#, fuzzy
 msgid "Disk configuration"
-msgstr "கட்டமைப்பு இல்லை"
+msgstr "வட்டு கட்டமைப்பு"
 
-#, fuzzy
 msgid "Profiles"
-msgstr "சுயவிவரம்"
+msgstr "சுயவிவரங்கள்"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "உள்ளமைவு கோப்புகளைச் சேமிக்க சாத்தியமான கோப்பகங்களைக் கண்டறிதல் ..."
 
-#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+msgstr "உள்ளமைவு கோப்புகளை சேமிக்க கோப்பகத்தை (அல்லது கோப்பகங்களை) தேர்ந்தெடுக்கவும்"
