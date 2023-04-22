@@ -4,7 +4,7 @@ from argparse import ArgumentParser, Namespace
 
 from .lib import disk
 from .lib import menu
-from .lib import models as models
+from .lib import models
 from .lib import packages
 
 from .lib.exceptions import *
@@ -203,17 +203,17 @@ def load_config():
 		storage['_selected_servers'] = arguments.get('servers', None)
 
 	if arguments.get('nic', None) is not None:
-		handler = NetworkConfigurationHandler()
+		handler = models.NetworkConfigurationHandler()
 		handler.parse_arguments(arguments.get('nic'))
 		arguments['nic'] = handler.configuration
 
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
 		superusers = arguments.get('!superusers', None)
-		arguments['!users'] = User.parse_arguments(users, superusers)
+		arguments['!users'] = models.User.parse_arguments(users, superusers)
 
 	if arguments.get('bootloader', None) is not None:
-		arguments['bootloader'] = Bootloader.from_arg(arguments['bootloader'])
+		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')
