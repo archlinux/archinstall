@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
 "PO-Revision-Date: 2022-05-25 17:42+0300\n"
-"Last-Translator: Abdullah Koyuncu @wiseweb-works <wisewebworks@outlook.com>\n"
+"Last-Translator: Eren İnce @ernince <erenince@proton.me>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -815,42 +815,42 @@ msgstr ""
 "Not:"
 
 msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr "- Maksimum değer : {max_downloads} ( {max_downloads} paralel indirmeye izin verir, bir seferde {max_downloads+1} indirmeye izin verir)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr "- Minimum değer : 1 ( 1 paralel indirmeye izin verir, bir seferde 2 indirmeye izin verir )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Geçersiz Giriş! Geçerli bir girişle tekrar deneyin [1 - {max_downloads} veya 0 devre dışı bırakmak için]"
 
 msgid "Parallel Downloads"
-msgstr ""
+msgstr "Paralel İndirmeler"
 
 #, fuzzy
 msgid "ESC to skip"
 msgstr "Geçmek için ESC'yi kullanın"
 
 msgid "CTRL+C to reset"
-msgstr ""
+msgstr "Sıfırlamak için CTRL+C"
 
 msgid "TAB to select"
-msgstr ""
+msgstr "Seçmek için TAB"
 
 msgid "[Default value: 0] > "
 msgstr ""
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr ""
+msgstr "Bu çeviriyi kullanabilmek için lütfen dili destekleyen bir yazı tipini manuel olarak yükleyin."
 
 msgid "The font should be stored as {}"
-msgstr ""
+msgstr "Yazı tipi {} olarak saklanmalıdır."
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall'ın çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
 
 #, fuzzy
 msgid "Select an execution mode"
@@ -1031,13 +1031,13 @@ msgid "Back"
 msgstr "Geri"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Lütfen seçilen profiller için hangi karşılayıcının kurulacağını seçin: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Ortam türü: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
 
 #, fuzzy
 msgid "Installed packages"
@@ -1060,7 +1060,7 @@ msgid "Profile name: "
 msgstr "Profil"
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr ""
+msgstr "Girdiğiniz profil adı zaten kullanımda. Tekrar deneyin"
 
 #, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
@@ -1071,10 +1071,10 @@ msgid "Services to be enabled with this profile (space separated, leave blank to
 msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Bu profil kurulum için etkinleştirilmeli mi?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "Kendinizinkini oluşturun"
 
 #, fuzzy
 msgid ""
@@ -1093,18 +1093,21 @@ msgid ""
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Grafik sürücüsü"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Karşılayıcı"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Lütfen hangi karşılayıcının kurulacağını seçin"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "Bu, önceden programlanmış default_profiles listesidir"
 
 #, fuzzy
 msgid "Disk configuration"
@@ -1115,7 +1118,7 @@ msgid "Profiles"
 msgstr "Profil"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Yapılandırma dosyalarını kaydetmek için olası dizinler aranıyor..."
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
