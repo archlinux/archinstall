@@ -611,19 +611,7 @@ class Installer:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
 	def configure_nic(self, network_config: NetworkConfiguration) -> None:
-		from .systemd import Networkd
-
-		if network_config.dhcp:
-			conf = Networkd(Match={"Name": network_config.iface}, Network={"DHCP": "yes"})
-		else:
-			network = {"Address": network_config.ip}
-			if network_config.gateway:
-				network["Gateway"] = network_config.gateway
-			if network_config.dns:
-				dns = network_config.dns
-				network["DNS"] = dns if isinstance(dns, list) else [dns]
-
-			conf = Networkd(Match={"Name": network_config.iface}, Network=network)
+		conf = network_config.as_systemd_config()
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
