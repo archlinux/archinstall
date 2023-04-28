@@ -341,15 +341,34 @@ class DeviceHandler(object):
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
 
-			info = get_lsblk_info(part_mod.dev_path)
-
-			if not info.partuuid:
-				raise DiskError(f'Unable to determine new partition uuid: {part_mod.dev_path}')
+			info = self._fetch_partuuid(part_mod.dev_path)
 
 			part_mod.partuuid = info.partuuid
 			part_mod.uuid = info.uuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
+
+	def _fetch_partuuid(self, path: Path) -> LsblkInfo:
+		attempts = 3
+		info: Optional[LsblkInfo] = None
+
+		self.partprobe(path)
+		for attempt_nr in range(attempts):
+			time.sleep(attempt_nr + 1)
+			info = get_lsblk_info(path)
+
+			if info.partuuid:
+				break
+
+			self.partprobe(path)
+
+		if not info or not info.partuuid:
+			log(f'Unable to determine new partition uuid: {path}\n{info}', level=logging.DEBUG)
+			raise DiskError(f'Unable to determine new partition uuid: {path}')
+
+		log(f'partuuid found: {info.json()}', level=logging.DEBUG)
+
+		return info
 
 	def create_btrfs_volumes(
 		self,
@@ -555,12 +574,13 @@ class DeviceHandler(object):
 			command = 'partprobe'
 
 		try:
+			log(f'Calling partprobe: {command}', level=logging.DEBUG)
 			result = SysCommand(command)
+
 			if result.exit_code != 0:
-				log(f'Error calling partprobe: {result.decode()}', level=logging.DEBUG)
-				raise DiskError(f'Could not perform partprobe on {path}: {result.decode()}')
+				log(f'"{command}" returned a failure: {result.decode()}', level=logging.DEBUG)
 		except SysCallError as error:
-			log(f"partprobe experienced an error with {path}: {error}", level=logging.DEBUG)
+			log(f'"{command}" failed to run: {error}', level=logging.DEBUG)
 
 	def _wipe(self, dev_path: Path):
 		"""
