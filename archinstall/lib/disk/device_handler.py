@@ -352,14 +352,15 @@ class DeviceHandler(object):
 		attempts = 3
 		info: Optional[LsblkInfo] = None
 
+		self.partprobe(path)
 		for attempt_nr in range(attempts):
-			self.partprobe(path)
+			time.sleep(attempt_nr + 1)
 			info = get_lsblk_info(path)
 
 			if info.partuuid:
 				break
 
-			time.sleep(attempt_nr + 1)
+			self.partprobe(path)
 
 		if not info or not info.partuuid:
 			log(f'Unable to determine new partition uuid: {path}\n{info}', level=logging.DEBUG)
