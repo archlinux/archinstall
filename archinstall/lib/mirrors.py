@@ -8,6 +8,7 @@ from .general import SysCommand
 from .output import log
 from .storage import storage
 
+
 def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	"""
 	This function can sort /etc/pacman.d/mirrorlist according to the
