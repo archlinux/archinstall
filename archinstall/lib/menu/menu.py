@@ -141,8 +141,6 @@ class Menu(TerminalMenu):
 			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError("Menu() requires an iterable as option.")
 
-		self._default_str = str(_('(default)'))
-
 		if isinstance(p_options,dict):
 			options = list(p_options.keys())
 		else:
@@ -193,8 +191,7 @@ class Menu(TerminalMenu):
 		if default_option:
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well
-			default = f'{default_option} {self._default_str}'
-			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
+			self._menu_options = [self._default_menu_value] + [o for o in self._menu_options if default_option != o]
 
 		if display_back_option and not multi and skip:
 			skip_empty_entries = True
@@ -204,10 +201,12 @@ class Menu(TerminalMenu):
 			skip_empty_entries = True
 			self._menu_options += ['']
 
+		preset_list: Optional[List[str]] = None
+
 		if preset_values and isinstance(preset_values, str):
-			calc_cursor_idx = self._determine_cursor_pos([preset_values], cursor_index)
-		else:
-			calc_cursor_idx = self._determine_cursor_pos(preset_values, cursor_index)
+			preset_list = [preset_values]
+
+		calc_cursor_idx = self._determine_cursor_pos(preset_list, cursor_index)
 
 		# when we're not in multi selection mode we don't care about
 		# passing the pre-selection list to the menu as the position
@@ -240,12 +239,17 @@ class Menu(TerminalMenu):
 			skip_empty_entries=skip_empty_entries
 		)
 
+	@property
+	def _default_menu_value(self) -> str:
+		default_str = str(_('(default)'))
+		return f'{self._default_option} {default_str}'
+
 	def _show_preview(self, preview_command: Optional[Callable], selection: str) -> Optional[str]:
 		if selection == self.back():
 			return None
 
 		if preview_command:
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' == selection:
+			if self._default_option is not None and self._default_menu_value == selection:
 				selection = self._default_option
 			return preview_command(selection)
 
@@ -258,7 +262,7 @@ class Menu(TerminalMenu):
 			return MenuSelection(type_=MenuSelectionType.Reset)
 
 		def check_default(elem):
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
+			if self._default_option is not None and self._default_menu_value in elem:
 				return self._default_option
 			else:
 				return elem
@@ -311,24 +315,39 @@ class Menu(TerminalMenu):
 		preset: Optional[List[str]] = None,
 		cursor_index: Optional[int] = None
 	) -> Optional[int]:
+		"""
+			The priority order to determine the cursor position is:
+			1. A static cursor position was provided
+			2. Preset values have been provided so the cursor will be
+				positioned on those
+			3. A default value for a selection is given so the cursor
+				will be placed on such
+		"""
 		if cursor_index:
 			return cursor_index
 
 		if preset:
 			indexes = []
+
 			for p in preset:
 				try:
-					print(self._menu_options)
+					# the options of the table selection menu
+					# are already escaped so we have to escape
+					# the preset values as well for the comparison
+					if '|' in p:
+						p = p.replace('|', '\\|')
+
 					idx = self._menu_options.index(p)
 					indexes.append(idx)
-				except IndexError:
-					pass
+				except (IndexError, ValueError):
+					log(f'Error finding index of {p}: {self._menu_options}', level=logging.DEBUG)
+
 			if len(indexes) == 0:
 				indexes.append(0)
 
 			return indexes[0]
 
 		if self._default_option:
-			return self._menu_options.index(self._default_option)
+			return self._menu_options.index(self._default_menu_value)
 
 		return None
