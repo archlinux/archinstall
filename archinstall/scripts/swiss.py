@@ -236,7 +236,10 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			if network_config:
 				handler = models.NetworkConfigurationHandler(network_config)
-				handler.config_installer(installation)
+				handler.config_installer(
+					installation,
+					archinstall.arguments.get('profile_config', None)
+				)
 
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 				installation.add_additional_packages(archinstall.arguments.get('packages', None))
