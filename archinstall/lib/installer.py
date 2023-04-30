@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
+from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -34,32 +34,6 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 
 # Additional packages that are installed if the user is running the Live ISO with accessibility tools enabled
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
-
-
-class InstallationFile:
-	def __init__(self, installation :'Installer', filename :str, owner :str, mode :str = "w"):
-		self.installation = installation
-		self.filename = filename
-		self.owner = owner
-		self.mode = mode
-		self.fh = None
-
-	def __enter__(self) -> 'InstallationFile':
-		self.fh = open(self.filename, self.mode)
-		return self
-
-	def __exit__(self, *args :str) -> None:
-		self.fh.close()
-		self.installation.chown(self.owner, self.filename)
-
-	def write(self, data: Union[str, bytes]) -> int:
-		return self.fh.write(data)
-
-	def read(self, *args) -> Union[str, bytes]:
-		return self.fh.read(*args)
-
-# 	def poll(self, *args) -> bool:
-# 		return self.fh.poll(*args)
 
 
 def accessibility_tools_in_use() -> bool:
@@ -124,7 +98,7 @@ class Installer:
 		if accessibility_tools_in_use():
 			self.base_packages.extend(__accessibility_packages__)
 
-		self.post_base_install = []
+		self.post_base_install: List[Callable] = []
 
 		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
 		storage['session'] = self
@@ -1188,9 +1162,6 @@ class Installer:
 			return True
 		except SysCallError:
 			return False
-
-	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
-		return InstallationFile(self, filename, owner)
 
 	def set_keyboard_language(self, language: str) -> bool:
 		log(f"Setting keyboard language to {language}", level=logging.INFO)
