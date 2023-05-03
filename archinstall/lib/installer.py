@@ -570,6 +570,8 @@ class Installer:
 	def enable_service(self, services: Union[str, List[str]]) -> None:
 		if type(services[0]) in (list, tuple):
 			services = services[0]
+		if type(services) == str:
+			services = [services, ]
 
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
