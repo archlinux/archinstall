@@ -60,7 +60,7 @@ packages = ["archinstall"]
 
 [tool.mypy]
 python_version = "3.10"
-files = archinstall/
+files = "archinstall/"
 exclude = "tests"
 
 [tool.bandit]
