@@ -6,7 +6,7 @@ from enum import Enum
 from typing import List, Optional, Dict, Union, Any, TYPE_CHECKING, Tuple
 
 from ..output import log
-from ..storage import storage
+from ..profile import ProfileConfiguration
 
 if TYPE_CHECKING:
 	_: Any
@@ -103,7 +103,11 @@ class NetworkConfigurationHandler:
 	def configuration(self):
 		return self._configuration
 
-	def config_installer(self, installation: Any):
+	def config_installer(
+		self,
+		installation: Any,
+		profile_config: Optional[ProfileConfiguration] = None
+	):
 		if self._configuration is None:
 			return
 
@@ -122,8 +126,9 @@ class NetworkConfigurationHandler:
 				)
 			elif self._configuration.is_network_manager():
 				installation.add_additional_packages(["networkmanager"])
-				if (profile := storage['arguments'].get('profile_config')) and profile.is_desktop_type_profile:
-					installation.add_additional_packages(["network-manager-applet"])
+				if profile_config and profile_config.profile:
+					if profile_config.profile.is_desktop_type_profile():
+						installation.add_additional_packages(["network-manager-applet"])
 				installation.enable_service('NetworkManager.service')
 
 	def _parse_manual_config(self, configs: List[Dict[str, Any]]) -> Optional[List[NetworkConfiguration]]:
