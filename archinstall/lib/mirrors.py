@@ -3,12 +3,22 @@ import pathlib
 import urllib.error
 import urllib.request
 from typing import Union, Iterable, Dict, Any, List
+from dataclasses import dataclass
 
 from .general import SysCommand
 from .output import log
 from .storage import storage
 
-def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
+
+@dataclass
+class CustomMirror:
+	url: str
+	signcheck: str
+	signoptions: str
+	name: str
+
+
+def sort_mirrorlist(raw_data :bytes, sort_order: List[str] = ['https', 'http']) -> bytes:
 	"""
 	This function can sort /etc/pacman.d/mirrorlist according to the
 	mirror's URL prefix. By default places HTTPS before HTTP but it also
@@ -28,8 +38,9 @@ def sort_mirrorlist(raw_data :bytes, sort_order=["https", "http"]) -> bytes:
 	from server url definitions (commented or uncommented).
 	"""
 	comments_and_whitespaces = b""
+	sort_order += ['Unknown']
+	categories: Dict[str, List] = {key: [] for key in sort_order}
 
-	categories = {key: [] for key in sort_order + ["Unknown"]}
 	for line in raw_data.split(b"\n"):
 		if line[0:2] in (b'##', b''):
 			comments_and_whitespaces += line + b'\n'
@@ -82,18 +93,18 @@ def filter_mirrors_by_region(regions :str,
 		return new_list.decode('UTF-8')
 
 
-def add_custom_mirrors(mirrors: List[str], *args :str, **kwargs :str) -> bool:
+def add_custom_mirrors(mirrors: List[CustomMirror]) -> bool:
 	"""
 	This will append custom mirror definitions in pacman.conf
 
-	:param mirrors: A list of mirror data according to: `{'url': 'http://url.com', 'signcheck': 'Optional', 'signoptions': 'TrustAll', 'name': 'testmirror'}`
-	:type mirrors: dict
+	:param mirrors: A list of custom mirrors
+	:type mirrors: List[CustomMirror]
 	"""
 	with open('/etc/pacman.conf', 'a') as pacman:
 		for mirror in mirrors:
-			pacman.write(f"[{mirror['name']}]\n")
-			pacman.write(f"SigLevel = {mirror['signcheck']} {mirror['signoptions']}\n")
-			pacman.write(f"Server = {mirror['url']}\n")
+			pacman.write(f"[{mirror.name}]\n")
+			pacman.write(f"SigLevel = {mirror.signcheck} {mirror.signoptions}\n")
+			pacman.write(f"Server = {mirror.url}\n")
 
 	return True
 
@@ -123,7 +134,7 @@ def insert_mirrors(mirrors :Dict[str, Any], *args :str, **kwargs :str) -> bool:
 def use_mirrors(
 	regions: Dict[str, Iterable[str]],
 	destination: str = '/etc/pacman.d/mirrorlist'
-) -> None:
+):
 	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
 	with open(destination, 'w') as mirrorlist:
 		for region, mirrors in regions.items():
@@ -146,7 +157,7 @@ def re_rank_mirrors(
 
 
 def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
-	regions = {}
+	regions: Dict[str, Dict[str, Any]] = {}
 
 	if storage['arguments']['offline']:
 		with pathlib.Path('/etc/pacman.d/mirrorlist').open('rb') as fh:
@@ -170,18 +181,19 @@ def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 		if len(line.strip()) == 0:
 			continue
 
-		line = line.decode('UTF-8').strip('\n').strip('\r')
-		if line[:3] == '## ':
-			region = line[3:]
-		elif line[:10] == '#Server = ':
+		clean_line = line.decode('UTF-8').strip('\n').strip('\r')
+
+		if clean_line[:3] == '## ':
+			region = clean_line[3:]
+		elif clean_line[:10] == '#Server = ':
 			regions.setdefault(region, {})
 
-			url = line.lstrip('#Server = ')
+			url = clean_line.lstrip('#Server = ')
 			regions[region][url] = True
-		elif line.startswith('Server = '):
+		elif clean_line.startswith('Server = '):
 			regions.setdefault(region, {})
 
-			url = line.lstrip('Server = ')
+			url = clean_line.lstrip('Server = ')
 			regions[region][url] = True
 
 	return regions

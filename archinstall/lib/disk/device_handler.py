@@ -269,13 +269,13 @@ class DeviceHandler(object):
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
-					part_mod.real_dev_path,
+					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.fs_type,
 					enc_conf
 				)
 			else:
-				self._perform_formatting(part_mod.fs_type, part_mod.real_dev_path)
+				self._perform_formatting(part_mod.fs_type, part_mod.safe_dev_path)
 
 	def _perform_partitioning(
 		self,
@@ -287,11 +287,11 @@ class DeviceHandler(object):
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
 		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
-			log(f'Delete existing partition: {part_mod.real_dev_path}', level=logging.INFO)
-			part_info = self.find_partition(part_mod.real_dev_path)
+			log(f'Delete existing partition: {part_mod.safe_dev_path}', level=logging.INFO)
+			part_info = self.find_partition(part_mod.safe_dev_path)
 
 			if not part_info:
-				raise DiskError(f'No partition for dev path found: {part_mod.real_dev_path}')
+				raise DiskError(f'No partition for dev path found: {part_mod.safe_dev_path}')
 
 			disk.deletePartition(part_info.partition)
 			disk.commit()
@@ -375,7 +375,7 @@ class DeviceHandler(object):
 		part_mod: PartitionModification,
 		enc_conf: Optional['DiskEncryption'] = None
 	):
-		log(f'Creating subvolumes: {part_mod.real_dev_path}', level=logging.INFO)
+		log(f'Creating subvolumes: {part_mod.safe_dev_path}', level=logging.INFO)
 
 		luks_handler = None
 
@@ -385,7 +385,7 @@ class DeviceHandler(object):
 				raise ValueError('No device path specified for modification')
 
 			luks_handler = self.unlock_luks2_dev(
-				part_mod.real_dev_path,
+				part_mod.safe_dev_path,
 				part_mod.mapper_name,
 				enc_conf.encryption_password
 			)
@@ -395,7 +395,7 @@ class DeviceHandler(object):
 
 			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 		else:
-			self.mount(part_mod.real_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(part_mod.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			log(f'Creating subvolume: {sub_vol.name}', level=logging.DEBUG)
@@ -419,7 +419,7 @@ class DeviceHandler(object):
 			self.umount(luks_handler.mapper_dev)
 			luks_handler.lock()
 		else:
-			self.umount(part_mod.real_dev_path)
+			self.umount(part_mod.safe_dev_path)
 
 	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)

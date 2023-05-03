@@ -233,7 +233,8 @@ def post_process_arguments(arguments):
 		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
 
 	if arguments.get('plugin', None):
-		load_plugin(arguments['plugin'])
+		path = arguments['plugin']
+		load_plugin(path)
 
 	load_config()
 
