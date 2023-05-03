@@ -223,7 +223,7 @@ def perform_installation(mountpoint: Path):
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
 		if archinstall.arguments.get('services', None):
-			installation.enable_service(*archinstall.arguments['services'])
+			installation.enable_service(archinstall.arguments.get('services', []))
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):

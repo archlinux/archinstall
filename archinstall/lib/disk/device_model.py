@@ -603,7 +603,7 @@ class PartitionModification:
 		return ''
 
 	@property
-	def real_dev_path(self) -> Path:
+	def safe_dev_path(self) -> Path:
 		if self.dev_path is None:
 			raise ValueError('Device path was not set')
 		return self.dev_path
