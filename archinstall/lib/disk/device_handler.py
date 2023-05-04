@@ -139,19 +139,18 @@ class DeviceHandler(object):
 			log(f'Failed to read btrfs subvolume information: {err}', level=logging.DEBUG)
 			return subvol_infos
 
-		if result.exit_code == 0:
-			try:
-				if decoded := result.decode('utf-8'):
-					# ID 256 gen 16 top level 5 path @
-					for line in decoded.splitlines():
-						# expected output format:
-						# ID 257 gen 8 top level 5 path @home
-						name = Path(line.split(' ')[-1])
-						sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
-						subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
-			except json.decoder.JSONDecodeError as err:
-				log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
-				raise err
+		try:
+			if decoded := result.decode('utf-8'):
+				# ID 256 gen 16 top level 5 path @
+				for line in decoded.splitlines():
+					# expected output format:
+					# ID 257 gen 8 top level 5 path @home
+					name = Path(line.split(' ')[-1])
+					sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+					subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
+		except json.decoder.JSONDecodeError as err:
+			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
+			raise err
 
 		if not lsblk_info.mountpoint:
 			self.umount(dev_path)
@@ -206,9 +205,7 @@ class DeviceHandler(object):
 		log(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
 
 		try:
-			if (handle := SysCommand(f"/usr/bin/{command} {options_str} {path}")).exit_code != 0:
-				mkfs_error = handle.decode()
-				raise DiskError(f'Could not format {path} with {fs_type.value}: {mkfs_error}')
+			SysCommand(f"/usr/bin/{command} {options_str} {path}")
 		except SysCallError as error:
 			msg = f'Could not format {path} with {fs_type.value}: {error.message}'
 			log(msg, fg='red')
@@ -408,12 +405,16 @@ class DeviceHandler(object):
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
 			if sub_vol.nodatacow:
-				if (result := SysCommand(f'chattr +C {subvol_path}')).exit_code != 0:
-					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {result.decode()}')
+				try:
+					SysCommand(f'chattr +C {subvol_path}')
+				except SysCallError as error:
+					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {error}')
 
 			if sub_vol.compress:
-				if (result := SysCommand(f'chattr +c {subvol_path}')).exit_code != 0:
-					raise DiskError(f'Could not set compress attribute at {subvol_path}: {result}')
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as error:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {error}')
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			self.umount(luks_handler.mapper_dev)
@@ -518,9 +519,7 @@ class DeviceHandler(object):
 		log(f'Mounting {dev_path}: command', level=logging.DEBUG)
 
 		try:
-			result = SysCommand(command)
-			if result.exit_code != 0:
-				raise DiskError(f'Could not mount {dev_path}: {command}\n{result.decode()}')
+			SysCommand(command)
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
@@ -575,10 +574,7 @@ class DeviceHandler(object):
 
 		try:
 			log(f'Calling partprobe: {command}', level=logging.DEBUG)
-			result = SysCommand(command)
-
-			if result.exit_code != 0:
-				log(f'"{command}" returned a failure: {result.decode()}', level=logging.DEBUG)
+			SysCommand(command)
 		except SysCallError as error:
 			log(f'"{command}" failed to run: {error}', level=logging.DEBUG)
 

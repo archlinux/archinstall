@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from .general import SysCommand
 from .output import log
+from .exceptions import SysCallError
 from .storage import storage
 
 
@@ -148,8 +149,9 @@ def re_rank_mirrors(
 	src: str = '/etc/pacman.d/mirrorlist',
 	dst: str = '/etc/pacman.d/mirrorlist',
 ) -> bool:
-	cmd = SysCommand(f"/usr/bin/rankmirrors -n {top} {src}")
-	if cmd.exit_code != 0:
+	try:
+		cmd = SysCommand(f"/usr/bin/rankmirrors -n {top} {src}")
+	except SysCallError:
 		return False
 	with open(dst, 'w') as f:
 		f.write(str(cmd))

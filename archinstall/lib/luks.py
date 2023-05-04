@@ -88,30 +88,28 @@ class Luks2:
 			'luksFormat', str(self.luks_dev_path),
 		])
 
-		try:
-			# Retry formatting the volume because archinstall can some times be too quick
-			# which generates a "Device /dev/sdX does not exist or access denied." between
-			# setting up partitions and us trying to encrypt it.
-			cmd_handle = None
-			for i in range(storage['DISK_RETRY_ATTEMPTS']):
-				if (cmd_handle := SysCommand(cryptsetup_args)).exit_code != 0:
-					time.sleep(storage['DISK_TIMEOUTS'])
-				else:
-					break
-
-			if cmd_handle is not None and cmd_handle.exit_code != 0:
-				output = str(b''.join(cmd_handle))
-				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
-		except SysCallError as err:
-			if err.exit_code == 1:
-				log(f'luks2 partition currently in use: {self.luks_dev_path}')
-				log('Attempting to unmount, crypt-close and trying encryption again')
-
-				self.lock()
-				# Then try again to set up the crypt-device
+		# Retry formatting the volume because archinstall can some times be too quick
+		# which generates a "Device /dev/sdX does not exist or access denied." between
+		# setting up partitions and us trying to encrypt it.
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+			try:
 				SysCommand(cryptsetup_args)
-			else:
-				raise err
+				break
+			except SysCallError as error:
+				time.sleep(storage['DISK_TIMEOUTS'])
+
+				if retry_attempt != storage['DISK_RETRY_ATTEMPTS'] - 1:
+					continue
+
+				if error.exit_code == 1:
+					log(f'luks2 partition currently in use: {self.luks_dev_path}')
+					log('Attempting to unmount, crypt-close and trying encryption again')
+
+					self.lock()
+					# Then try again to set up the crypt-device
+					SysCommand(cryptsetup_args)
+				else:
+					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {error}')
 
 		return key_file
 
@@ -119,11 +117,7 @@ class Luks2:
 		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
-			result = SysCommand(command)
-			if result.exit_code != 0:
-				raise DiskError(f'Unable to get UUID for Luks device: {result.decode()}')
-
-			return result.decode()  # type: ignore
+			return SysCommand(command).decode().strip()  # type: ignore
 		except SysCallError as err:
 			log(f'Unable to get UUID for Luks device: {self.luks_dev_path}', level=logging.INFO)
 			raise err
