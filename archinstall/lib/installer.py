@@ -162,7 +162,7 @@ class Installer:
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
-		Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
+		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
 		log('Waiting for time sync (systemd-timesyncd.service) to complete.', level=logging.INFO)
