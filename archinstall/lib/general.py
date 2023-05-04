@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import hashlib
 import json
 import logging
@@ -17,9 +18,15 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
-# https://stackoverflow.com/a/39757388/929999
+
+from .exceptions import RequirementError, SysCallError
+from .output import log
+from .storage import storage
+
+
 if TYPE_CHECKING:
 	from .installer import Installer
+
 
 if sys.platform == 'linux':
 	from select import epoll, EPOLLIN, EPOLLHUP
@@ -52,30 +59,15 @@ else:
 			except OSError:
 				return []
 
-from .exceptions import RequirementError, SysCallError
-from .output import log
-from .storage import storage
 
 def gen_uid(entropy_length :int = 256) -> str:
 	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
+
 
 def generate_password(length :int = 64) -> str:
 	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
 	return ''.join(secrets.choice(haystack) for i in range(length))
 
-def multisplit(s :str, splitters :List[str]) -> str:
-	s = [s, ]
-	for key in splitters:
-		ns = []
-		for obj in s:
-			x = obj.split(key)
-			for index, part in enumerate(x):
-				if len(part):
-					ns.append(part)
-				if index < len(x) - 1:
-					ns.append(key)
-		s = ns
-	return s
 
 def locate_binary(name :str) -> str:
 	for PATH in os.environ['PATH'].split(':'):
@@ -87,20 +79,20 @@ def locate_binary(name :str) -> str:
 
 	raise RequirementError(f"Binary {name} does not exist.")
 
-def clear_vt100_escape_codes(data :Union[bytes, str]):
+
+def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	# https://stackoverflow.com/a/43627833/929999
 	if type(data) == bytes:
-		vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
-	else:
+		byte_vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
+		data = re.sub(byte_vt100_escape_regex, b'', data)
+	elif type(data) == str:
 		vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
-
-	for match in re.findall(vt100_escape_regex, data, re.IGNORECASE):
-		data = data.replace(match, '' if type(data) == str else b'')
+		data = re.sub(vt100_escape_regex, '', data)
+	else:
+		raise ValueError(f'Unsupported data type: {type(data)}')
 
 	return data
 
-def json_dumps(*args :str, **kwargs :str) -> str:
-	return json.dumps(*args, **{**kwargs, 'cls': JSON})
 
 class JsonEncoder:
 	@staticmethod
@@ -140,7 +132,7 @@ class JsonEncoder:
 			return obj.isoformat()
 		elif isinstance(obj, (list, set, tuple)):
 			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
-		elif isinstance(obj, (pathlib.Path)):
+		elif isinstance(obj, pathlib.Path):
 			return str(obj)
 		else:
 			return obj
@@ -184,22 +176,21 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	def encode(self, obj :Any) -> Any:
 		return super(UNSAFE_JSON, self).encode(self._encode(obj))
 
+
 class SysCommandWorker:
-	def __init__(self,
+	def __init__(
+		self,
 		cmd :Union[str, List[str]],
 		callbacks :Optional[Dict[str, Any]] = None,
 		peek_output :Optional[bool] = False,
-		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		logfile :Optional[None] = None,
 		working_directory :Optional[str] = './',
-		remove_vt100_escape_codes_from_lines :bool = True):
-
-		if peak_output:
-			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
-
+		remove_vt100_escape_codes_from_lines :bool = True
+	):
 		if not callbacks:
 			callbacks = {}
+
 		if not environment_vars:
 			environment_vars = {}
 
@@ -216,8 +207,6 @@ class SysCommandWorker:
 		self.cmd = cmd
 		self.callbacks = callbacks
 		self.peek_output = peek_output
-		if not self.peek_output and peak_output:
-			self.peek_output = peak_output
 		# define the standard locale for command outputs. For now the C ascii one. Can be overridden
 		self.environment_vars = {**storage.get('CMD_LOCALE',{}),**environment_vars}
 		self.logfile = logfile
@@ -247,10 +236,12 @@ class SysCommandWorker:
 	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
 			if line:
-				if self.remove_vt100_escape_codes_from_lines:
-					line = clear_vt100_escape_codes(line)
+				escaped_line: bytes = line
 
-				yield line + b'\n'
+				if self.remove_vt100_escape_codes_from_lines:
+					escaped_line = clear_vt100_escape_codes(line)  # type: ignore
+
+				yield escaped_line + b'\n'
 
 		self._trace_log_pos = self._trace_log.rfind(b'\n')
 
@@ -281,7 +272,11 @@ class SysCommandWorker:
 			log(args[1], level=logging.DEBUG, fg='red')
 
 		if self.exit_code != 0:
-			raise SysCallError(f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {self._trace_log[-500:]}", self.exit_code, worker=self)
+			raise SysCallError(
+				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self._trace_log[-500:])}",
+				self.exit_code,
+				worker=self
+			)
 
 	def is_alive(self) -> bool:
 		self.poll()
@@ -330,7 +325,7 @@ class SysCommandWorker:
 				change_perm = True
 
 			with peak_logfile.open("a") as peek_output_log:
-				peek_output_log.write(output)
+				peek_output_log.write(str(output))
 
 			if change_perm:
 				os.chmod(str(peak_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
@@ -396,7 +391,7 @@ class SysCommandWorker:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 				except PermissionError:
 					pass
-				# If history_logfile does not exist, ignore the error
+					# If history_logfile does not exist, ignore the error
 				except FileNotFoundError:
 					pass
 				except Exception as e:
@@ -431,13 +426,9 @@ class SysCommand:
 		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peek_output :Optional[bool] = False,
-		peak_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
-
-		if peak_output:
-			log("SysCommandWorker()'s peak_output is deprecated, use peek_output instead.", level=logging.WARNING, fg='red')
 
 		_callbacks = {}
 		if callbacks:
@@ -449,8 +440,6 @@ class SysCommand:
 		self.cmd = cmd
 		self._callbacks = _callbacks
 		self.peek_output = peek_output
-		if not self.peek_output and peak_output:
-			self.peek_output = peak_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
 		self.remove_vt100_escape_codes_from_lines = remove_vt100_escape_codes_from_lines
@@ -505,7 +494,7 @@ class SysCommand:
 		clears any printed output if ``.peek_output=True``.
 		"""
 		if self.session:
-			return self.session
+			return True
 
 		with SysCommandWorker(
 			self.cmd,
@@ -575,9 +564,8 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
 			temp_script.write(command)
 
-		execution_output = SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
+		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
-		log(execution_output)
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :

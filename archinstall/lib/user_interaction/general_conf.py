@@ -5,13 +5,10 @@ import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
-from ..menu import Menu
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
+from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
 from ..output import log
 from ..packages.packages import validate_package_list
-from ..profiles import Profile, list_profiles
 from ..storage import storage
 from ..translationhandler import Language
 
@@ -31,12 +28,18 @@ def ask_ntp(preset: bool = True) -> bool:
 	return False if choice.value == Menu.no() else True
 
 
-def ask_hostname(preset: str = None) -> str:
-	hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip(' ')
-	return hostname
+def ask_hostname(preset: str = '') -> str:
+	while True:
+		hostname = TextInput(
+			str(_('Desired hostname for the installation: ')),
+			preset
+		).run().strip()
+
+		if hostname:
+			return hostname
 
 
-def ask_for_a_timezone(preset: str = None) -> str:
+def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 	timezones = list_timezones()
 	default = 'UTC'
 
@@ -49,10 +52,12 @@ def ask_for_a_timezone(preset: str = None) -> str:
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return None
 
 
-def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
+def ask_for_audio_selection(desktop: bool = True, preset: Optional[str] = None) -> Optional[str]:
 	no_audio = str(_('No audio server'))
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', no_audio]
 	default = 'pipewire' if desktop else no_audio
@@ -61,10 +66,12 @@ def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return None
 
 
-def select_language(preset_value: str = None) -> str:
+def select_language(preset: Optional[str] = None) -> Optional[str]:
 	"""
 	Asks the user to select a language
 	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
@@ -76,17 +83,18 @@ def select_language(preset_value: str = None) -> str:
 	# sort alphabetically and then by length
 	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
 
-	selected_lang = Menu(
+	choice = Menu(
 		_('Select keyboard layout'),
 		sorted_kb_lang,
-		preset_values=preset_value,
+		preset_values=preset,
 		sort=False
 	).run()
 
-	if selected_lang.value is None:
-		return preset_value
+	match choice.type_:
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Selection: return choice.single_value
 
-	return selected_lang.value
+	return None
 
 
 def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
@@ -101,8 +109,10 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		preselected = None
 	else:
 		preselected = list(preset_values.keys())
+
 	mirrors = list_mirrors()
-	selected_mirror = Menu(
+
+	choice = Menu(
 		_('Select one of the regions to download packages from'),
 		list(mirrors.keys()),
 		preset_values=preselected,
@@ -110,13 +120,18 @@ def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 		allow_reset=True
 	).run()
 
-	match selected_mirror.type_:
-		case MenuSelectionType.Reset: return {}
-		case MenuSelectionType.Skip: return preset_values
-		case _: return {selected: mirrors[selected] for selected in selected_mirror.value}
+	match choice.type_:
+		case MenuSelectionType.Reset:
+			return {}
+		case MenuSelectionType.Skip:
+			return preset_values
+		case MenuSelectionType.Selection:
+			return {selected: mirrors[selected] for selected in choice.multi_value}
+
+	return {}
 
 
-def select_archinstall_language(languages: List[Language], preset_value: Language) -> Language:
+def select_archinstall_language(languages: List[Language], preset: Language) -> Language:
 	# these are the displayed language names which can either be
 	# the english name of a language or, if present, the
 	# name of the language in its own language
@@ -129,59 +144,15 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 	choice = Menu(
 		title,
 		list(options.keys()),
-		default_option=preset_value.display_name,
+		default_option=preset.display_name,
 		preview_size=0.5
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip:
-			return preset_value
-		case MenuSelectionType.Selection:
-			return options[choice.value]
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Selection: return options[choice.single_value]
 
-
-def select_profile(preset) -> Optional[Profile]:
-	"""
-	# Asks the user to select a profile from the available profiles.
-	#
-	# :return: The name/dictionary key of the selected profile
-	# :rtype: str
-	# """
-	top_level_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
-	options = {}
-
-	for profile in top_level_profiles:
-		profile = Profile(None, profile)
-		description = profile.get_profile_description()
-
-		option = f'{profile.profile}: {description}'
-		options[option] = profile
-
-	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
-	warning = str(_('Are you sure you want to reset this setting?'))
-
-	selection = Menu(
-		title=title,
-		p_options=list(options.keys()),
-		allow_reset=True,
-		allow_reset_warning_msg=warning
-	).run()
-
-	match selection.type_:
-		case MenuSelectionType.Selection:
-			return options[selection.value] if selection.value is not None else None
-		case MenuSelectionType.Reset:
-			storage['profile_minimal'] = False
-			storage['_selected_servers'] = []
-			storage['_desktop_profile'] = None
-			storage['sway_sys_priv_ctrl'] = None
-			storage['arguments']['sway_sys_priv_ctrl'] = None
-			storage['arguments']['desktop-environment'] = None
-			storage['arguments']['gfx_driver'] = None
-			storage['arguments']['gfx_driver_packages'] = None
-			return None
-		case MenuSelectionType.Skip:
-			return None
+	raise ValueError('Language selection not handled')
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
@@ -268,4 +239,6 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.value
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return []
