@@ -200,9 +200,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					# generate encryption key files for the mounted luks devices
 					installation.generate_key_files()
 
-			if archinstall.arguments.get('ntp', False):
-				installation.activate_ntp()
-
 			# Set mirrors used by pacstrap (outside of installation)
 			if archinstall.arguments.get('mirror-region', None):
 				use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium

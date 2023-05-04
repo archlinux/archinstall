@@ -286,26 +286,6 @@ class Installer:
 						self._disk_encryption.encryption_password
 					)
 
-	def activate_ntp(self):
-		"""
-		If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
-		"""
-		SysCommand('timedatectl set-ntp true')
-
-		logged = False
-		while service_state('dbus-org.freedesktop.timesync1.service') not in ['running']:
-			if not logged:
-				log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-				logged = True
-			time.sleep(1)
-
-		logged = False
-		while 'Server: n/a' in SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-			if not logged:
-				log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-				logged = True
-			time.sleep(1)
-
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
 		# at least the base has been strapped in, otherwise we won't have a filesystem/structure to copy to.
