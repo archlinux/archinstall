@@ -162,10 +162,14 @@ class Installer:
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
-		Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
+		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		log('Waiting for automatic mirror selection (reflector) to complete...', level=logging.INFO)
+		log('Waiting for time sync (systemd-timesyncd.service) to complete.', level=logging.INFO)
+		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
+			time.sleep(1)
+
+		log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
 		while service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
@@ -281,26 +285,6 @@ class Installer:
 						part_mod,
 						self._disk_encryption.encryption_password
 					)
-
-	def activate_ntp(self):
-		"""
-		If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
-		"""
-		SysCommand('timedatectl set-ntp true')
-
-		logged = False
-		while service_state('dbus-org.freedesktop.timesync1.service') not in ['running']:
-			if not logged:
-				log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-				logged = True
-			time.sleep(1)
-
-		logged = False
-		while 'Server: n/a' in SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-			if not logged:
-				log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-				logged = True
-			time.sleep(1)
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if

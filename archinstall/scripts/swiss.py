@@ -74,9 +74,6 @@ class SetupMenu(GlobalMenu):
 		self.enable('abort')
 
 	def exit_callback(self):
-		if self._data_store.get('ntp', False):
-			archinstall.SysCommand('timedatectl set-ntp true')
-
 		if self._data_store.get('mode', None):
 			archinstall.arguments['mode'] = self._data_store['mode']
 			log(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
@@ -202,9 +199,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				if disk_encryption and disk_encryption.encryption_type != disk.EncryptionType.NoEncryption:
 					# generate encryption key files for the mounted luks devices
 					installation.generate_key_files()
-
-			if archinstall.arguments.get('ntp', False):
-				installation.activate_ntp()
 
 			# Set mirrors used by pacstrap (outside of installation)
 			if archinstall.arguments.get('mirror-region', None):
