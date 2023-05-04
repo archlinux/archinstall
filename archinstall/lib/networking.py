@@ -38,11 +38,11 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 def check_mirror_reachable() -> bool:
 	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
 	try:
-		if run_pacman("-Sy").exit_code == 0:
-			return True
-		elif os.geteuid() != 0:
-			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
+		run_pacman("-Sy")
+		return True
 	except SysCallError as err:
+		if os.geteuid() != 0:
+			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
 		log(f'exit_code: {err.exit_code}, Error: {err.message}', level=logging.DEBUG)
 
 	return False
@@ -50,11 +50,12 @@ def check_mirror_reachable() -> bool:
 
 def update_keyring() -> bool:
 	log("Updating archlinux-keyring ...", level=logging.INFO)
-	if run_pacman("-Sy --noconfirm archlinux-keyring").exit_code == 0:
+	try:
+		run_pacman("-Sy --noconfirm archlinux-keyring")
 		return True
-
-	elif os.geteuid() != 0:
-		log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
+	except SysCallError:
+		if os.geteuid() != 0:
+			log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
 
 	return False
 
@@ -84,8 +85,10 @@ def wireless_scan(interface :str) -> None:
 	if interfaces[interface] != 'WIRELESS':
 		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
 
-	if not (output := SysCommand(f"iwctl station {interface} scan")).exit_code == 0:
-		raise SystemError(f"Could not scan for wireless networks: {output}")
+	try:
+		SysCommand(f"iwctl station {interface} scan")
+	except SysCallError as error:
+		raise SystemError(f"Could not scan for wireless networks: {error}")
 
 	if '_WIFI' not in storage:
 		storage['_WIFI'] = {}
