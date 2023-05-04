@@ -392,8 +392,8 @@ class Installer:
 					pacman_conf.write(line)
 
 	def _pacstrap(self, packages: Union[str, List[str]]) -> bool:
-		if type(packages[0]) in (list, tuple):
-			packages = packages[0]
+		if isinstance(packages, str):
+			packages = [packages]
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_pacstrap'):
@@ -568,13 +568,12 @@ class Installer:
 		self.enable_service("fstrim.timer")
 
 	def enable_service(self, services: Union[str, List[str]]) -> None:
-		if type(services[0]) in (list, tuple):
-			services = services[0]
-		if type(services) == str:
-			services = [services, ]
+		if isinstance(services, str):
+			services = [services]
 
 		for service in services:
 			self.log(f'Enabling service {service}', level=logging.INFO)
+
 			try:
 				self.arch_chroot(f'systemctl enable {service}')
 			except SysCallError as error:
