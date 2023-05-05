@@ -851,7 +851,7 @@ class LsblkInfo:
 	name: str = ''
 	path: Path = Path()
 	pkname: str = ''
-	size: Size = Size(0, Unit.B)
+	size: Size = field(default_factory=lambda: Size(0, Unit.B))
 	log_sec: int = 0
 	pttype: str = ''
 	ptuuid: str = ''
