@@ -42,11 +42,6 @@ class SelectResult(Enum):
 	ResetCurrent = auto()
 
 
-class CustomProfileSetting:
-	key: str
-	value: Any
-
-
 class Profile:
 	def __init__(
 		self,
@@ -57,7 +52,7 @@ class Profile:
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
-		support_greeter: bool = False,
+		support_greeter: bool = False
 	):
 		self.name = name
 		self.description = description
