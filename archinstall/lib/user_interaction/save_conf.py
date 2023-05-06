@@ -72,7 +72,7 @@ def save_config(config: Dict):
         prompt = _(
             "Do you want to save {} configuration file(s) in the following location?\n\n{}"
         ).format(
-            list(options.keys())[list(options.values()).index(save_choice.value)],
+            list(options.keys())[list(options.values()).index(str(save_choice.value))],
             dest_path.absolute(),
         )
         save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
@@ -81,7 +81,7 @@ def save_config(config: Dict):
 
         log(
             _("Saving {} configuration files to {}").format(
-                list(options.keys())[list(options.values()).index(save_choice.value)],
+                list(options.keys())[list(options.values()).index(str(save_choice.value))],
                 dest_path.absolute(),
             ),
             level=logging.DEBUG,
