@@ -74,9 +74,6 @@ class SetupMenu(GlobalMenu):
 		self.enable('abort')
 
 	def exit_callback(self):
-		if self._data_store.get('ntp', False):
-			archinstall.SysCommand('timedatectl set-ntp true')
-
 		if self._data_store.get('mode', None):
 			archinstall.arguments['mode'] = self._data_store['mode']
 			log(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
@@ -203,9 +200,6 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					# generate encryption key files for the mounted luks devices
 					installation.generate_key_files()
 
-			if archinstall.arguments.get('ntp', False):
-				installation.activate_ntp()
-
 			# Set mirrors used by pacstrap (outside of installation)
 			if archinstall.arguments.get('mirror-region', None):
 				use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
@@ -236,10 +230,13 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			if network_config:
 				handler = models.NetworkConfigurationHandler(network_config)
-				handler.config_installer(installation)
+				handler.config_installer(
+					installation,
+					archinstall.arguments.get('profile_config', None)
+				)
 
 			if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-				installation.add_additional_packages(archinstall.arguments.get('packages', None))
+				installation.add_additional_packages(archinstall.arguments.get('packages', []))
 
 			if users := archinstall.arguments.get('!users', None):
 				installation.create_users(users)
@@ -278,7 +275,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 			# Note that while it's called enable_service, it can actually take a list of services and iterate it.
 			if archinstall.arguments.get('services', None):
-				installation.enable_service(*archinstall.arguments['services'])
+				installation.enable_service(archinstall.arguments.get('services', []))
 
 			# If the user provided custom commands to be run post-installation, execute them now.
 			if archinstall.arguments.get('custom-commands', None):

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 
 from . import disk
-from .general import SysCommand, secret
+from .general import secret
 from .menu import Selector, AbstractMenu
 from .models import NetworkConfiguration
 from .models.bootloader import Bootloader
@@ -164,7 +164,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Automatic time sync (NTP)'),
-				lambda preset: self._select_ntp(preset),
+				lambda preset: ask_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
 			Selector('')
@@ -322,14 +322,6 @@ class GlobalMenu(AbstractMenu):
 		prompt = str(_('Enter root password (leave blank to disable root): '))
 		password = get_password(prompt=prompt)
 		return password
-
-	def _select_ntp(self, preset :bool = True) -> bool:
-		ntp = ask_ntp(preset)
-
-		value = str(ntp).lower()
-		SysCommand(f'timedatectl set-ntp {value}')
-
-		return ntp
 
 	def _select_disk_config(
 		self,

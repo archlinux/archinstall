@@ -43,6 +43,7 @@ class ProfileHandler:
 			data = {
 				'main': profile.name,
 				'details': [profile.name for profile in profile.current_selection],
+				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection}
 			}
 
 		if self._url_path is not None:
@@ -71,33 +72,34 @@ class ProfileHandler:
 			else:
 				self._import_profile_from_url(url_path)
 
-		if custom := profile_config.get('custom', None):
-			from archinstall.default_profiles.custom import CustomTypeProfile
-			custom_types = []
-
-			for entry in custom:
-				custom_types.append(
-					CustomTypeProfile(
-						entry['name'],
-						entry['enabled'],
-						entry.get('packages', []),
-						entry.get('services', [])
-					)
-				)
-
-			self.remove_custom_profiles(custom_types)
-			self.add_custom_profiles(custom_types)
-
-			# this doesn't mean it's actual going to be set as a selection
-			# but we are simply populating the custom profile with all
-			# possible custom definitions
-			if custom_profile := self.get_profile_by_name('Custom'):
-				custom_profile.set_current_selection(custom_types)
+		# if custom := profile_config.get('custom', None):
+		# 	from archinstall.default_profiles.custom import CustomTypeProfile
+		# 	custom_types = []
+		#
+		# 	for entry in custom:
+		# 		custom_types.append(
+		# 			CustomTypeProfile(
+		# 				entry['name'],
+		# 				entry['enabled'],
+		# 				entry.get('packages', []),
+		# 				entry.get('services', [])
+		# 			)
+		# 		)
+		#
+		# 	self.remove_custom_profiles(custom_types)
+		# 	self.add_custom_profiles(custom_types)
+		#
+		# 	# this doesn't mean it's actual going to be set as a selection
+		# 	# but we are simply populating the custom profile with all
+		# 	# possible custom definitions
+		# 	if custom_profile := self.get_profile_by_name('Custom'):
+		# 		custom_profile.set_current_selection(custom_types)
 
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
 		valid: List[Profile] = []
+
 		if details := profile_config.get('details', []):
 			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
 			valid = [p for p in resolved.values() if p is not None]
@@ -105,6 +107,12 @@ class ProfileHandler:
 
 			if invalid:
 				log(f'No profile definition found: {invalid}')
+
+		custom_settings = profile_config.get('custom_settings', {})
+		for profile in valid:
+			profile.set_custom_settings(
+				custom_settings.get(profile.name, {})
+			)
 
 		if profile is not None:
 			profile.set_current_selection(valid)
@@ -194,23 +202,23 @@ class ProfileHandler:
 							install_session.add_additional_packages(f"{kernel}-headers")
 
 						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-						install_session.add_additional_packages("dkms xorg-server xorg-xinit nvidia-dkms")
+						install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', 'nvidia-dkms'])
 						return
 				elif 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
-					if 'amdgpu' in install_session.MODULES:
-						install_session.MODULES.remove('amdgpu')
-					install_session.MODULES.append('amdgpu')
+					if 'amdgpu' in install_session.modules:
+						install_session.modules.remove('amdgpu')
+					install_session.modules.append('amdgpu')
 
-					if 'radeon' in install_session.MODULES:
-						install_session.MODULES.remove('radeon')
-					install_session.MODULES.append('radeon')
+					if 'radeon' in install_session.modules:
+						install_session.modules.remove('radeon')
+					install_session.modules.append('radeon')
 
 			install_session.add_additional_packages(additional_pkg)
 		except Exception as err:
 			log(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}", level=logging.WARNING, fg="yellow")
 			# Prep didn't run, so there's no driver to install
-			install_session.add_additional_packages("xorg-server xorg-xinit")
+			install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile

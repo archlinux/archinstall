@@ -1,7 +1,7 @@
 import logging
 from typing import Iterator, List, Callable, Optional
 
-from .exceptions import ServiceException
+from .exceptions import ServiceException, SysCallError
 from .general import SysCommand
 from .output import log
 from .storage import storage
@@ -161,8 +161,10 @@ def set_keyboard_language(locale :str) -> bool:
 			log(f"Invalid keyboard locale specified: {locale}", fg="red", level=logging.ERROR)
 			return False
 
-		if (output := SysCommand(f'localectl set-keymap {locale}')).exit_code != 0:
-			raise ServiceException(f"Unable to set locale '{locale}' for console: {output}")
+		try:
+			SysCommand(f'localectl set-keymap {locale}')
+		except SysCallError as error:
+			raise ServiceException(f"Unable to set locale '{locale}' for console: {error}")
 
 		return True
 

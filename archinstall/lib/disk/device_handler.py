@@ -139,19 +139,18 @@ class DeviceHandler(object):
 			log(f'Failed to read btrfs subvolume information: {err}', level=logging.DEBUG)
 			return subvol_infos
 
-		if result.exit_code == 0:
-			try:
-				if decoded := result.decode('utf-8'):
-					# ID 256 gen 16 top level 5 path @
-					for line in decoded.splitlines():
-						# expected output format:
-						# ID 257 gen 8 top level 5 path @home
-						name = Path(line.split(' ')[-1])
-						sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
-						subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
-			except json.decoder.JSONDecodeError as err:
-				log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
-				raise err
+		try:
+			if decoded := result.decode('utf-8'):
+				# ID 256 gen 16 top level 5 path @
+				for line in decoded.splitlines():
+					# expected output format:
+					# ID 257 gen 8 top level 5 path @home
+					name = Path(line.split(' ')[-1])
+					sub_vol_mountpoint = lsblk_info.btrfs_subvol_info.get(name, None)
+					subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
+		except json.decoder.JSONDecodeError as err:
+			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
+			raise err
 
 		if not lsblk_info.mountpoint:
 			self.umount(dev_path)
@@ -206,9 +205,7 @@ class DeviceHandler(object):
 		log(f'Formatting filesystem: /usr/bin/{command} {options_str} {path}')
 
 		try:
-			if (handle := SysCommand(f"/usr/bin/{command} {options_str} {path}")).exit_code != 0:
-				mkfs_error = handle.decode()
-				raise DiskError(f'Could not format {path} with {fs_type.value}: {mkfs_error}')
+			SysCommand(f"/usr/bin/{command} {options_str} {path}")
 		except SysCallError as error:
 			msg = f'Could not format {path} with {fs_type.value}: {error.message}'
 			log(msg, fg='red')
@@ -269,13 +266,13 @@ class DeviceHandler(object):
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
-					part_mod.real_dev_path,
+					part_mod.safe_dev_path,
 					part_mod.mapper_name,
 					part_mod.fs_type,
 					enc_conf
 				)
 			else:
-				self._perform_formatting(part_mod.fs_type, part_mod.real_dev_path)
+				self._perform_formatting(part_mod.fs_type, part_mod.safe_dev_path)
 
 	def _perform_partitioning(
 		self,
@@ -287,11 +284,11 @@ class DeviceHandler(object):
 		# when we require a delete and the partition to be (re)created
 		# already exists then we have to delete it first
 		if requires_delete and part_mod.status in [ModificationStatus.Modify, ModificationStatus.Delete]:
-			log(f'Delete existing partition: {part_mod.real_dev_path}', level=logging.INFO)
-			part_info = self.find_partition(part_mod.real_dev_path)
+			log(f'Delete existing partition: {part_mod.safe_dev_path}', level=logging.INFO)
+			part_info = self.find_partition(part_mod.safe_dev_path)
 
 			if not part_info:
-				raise DiskError(f'No partition for dev path found: {part_mod.real_dev_path}')
+				raise DiskError(f'No partition for dev path found: {part_mod.safe_dev_path}')
 
 			disk.deletePartition(part_info.partition)
 			disk.commit()
@@ -341,22 +338,41 @@ class DeviceHandler(object):
 			# the partition has a real path now as it was created
 			part_mod.dev_path = Path(partition.path)
 
-			info = get_lsblk_info(part_mod.dev_path)
-
-			if not info.partuuid:
-				raise DiskError(f'Unable to determine new partition uuid: {part_mod.dev_path}')
+			info = self._fetch_partuuid(part_mod.dev_path)
 
 			part_mod.partuuid = info.partuuid
 			part_mod.uuid = info.uuid
 		except PartitionException as ex:
 			raise DiskError(f'Unable to add partition, most likely due to overlapping sectors: {ex}') from ex
 
+	def _fetch_partuuid(self, path: Path) -> LsblkInfo:
+		attempts = 3
+		info: Optional[LsblkInfo] = None
+
+		self.partprobe(path)
+		for attempt_nr in range(attempts):
+			time.sleep(attempt_nr + 1)
+			info = get_lsblk_info(path)
+
+			if info.partuuid:
+				break
+
+			self.partprobe(path)
+
+		if not info or not info.partuuid:
+			log(f'Unable to determine new partition uuid: {path}\n{info}', level=logging.DEBUG)
+			raise DiskError(f'Unable to determine new partition uuid: {path}')
+
+		log(f'partuuid found: {info.json()}', level=logging.DEBUG)
+
+		return info
+
 	def create_btrfs_volumes(
 		self,
 		part_mod: PartitionModification,
 		enc_conf: Optional['DiskEncryption'] = None
 	):
-		log(f'Creating subvolumes: {part_mod.real_dev_path}', level=logging.INFO)
+		log(f'Creating subvolumes: {part_mod.safe_dev_path}', level=logging.INFO)
 
 		luks_handler = None
 
@@ -366,7 +382,7 @@ class DeviceHandler(object):
 				raise ValueError('No device path specified for modification')
 
 			luks_handler = self.unlock_luks2_dev(
-				part_mod.real_dev_path,
+				part_mod.safe_dev_path,
 				part_mod.mapper_name,
 				enc_conf.encryption_password
 			)
@@ -376,7 +392,7 @@ class DeviceHandler(object):
 
 			self.mount(luks_handler.mapper_dev, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 		else:
-			self.mount(part_mod.real_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+			self.mount(part_mod.safe_dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 
 		for sub_vol in part_mod.btrfs_subvols:
 			log(f'Creating subvolume: {sub_vol.name}', level=logging.DEBUG)
@@ -389,18 +405,22 @@ class DeviceHandler(object):
 			SysCommand(f"btrfs subvolume create {subvol_path}")
 
 			if sub_vol.nodatacow:
-				if (result := SysCommand(f'chattr +C {subvol_path}')).exit_code != 0:
-					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {result.decode()}')
+				try:
+					SysCommand(f'chattr +C {subvol_path}')
+				except SysCallError as error:
+					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {error}')
 
 			if sub_vol.compress:
-				if (result := SysCommand(f'chattr +c {subvol_path}')).exit_code != 0:
-					raise DiskError(f'Could not set compress attribute at {subvol_path}: {result}')
+				try:
+					SysCommand(f'chattr +c {subvol_path}')
+				except SysCallError as error:
+					raise DiskError(f'Could not set compress attribute at {subvol_path}: {error}')
 
 		if luks_handler is not None and luks_handler.mapper_dev is not None:
 			self.umount(luks_handler.mapper_dev)
 			luks_handler.lock()
 		else:
-			self.umount(part_mod.real_dev_path)
+			self.umount(part_mod.safe_dev_path)
 
 	def unlock_luks2_dev(self, dev_path: Path, mapper_name: str, enc_password: str) -> Luks2:
 		luks_handler = Luks2(dev_path, mapper_name=mapper_name, password=enc_password)
@@ -499,9 +519,7 @@ class DeviceHandler(object):
 		log(f'Mounting {dev_path}: command', level=logging.DEBUG)
 
 		try:
-			result = SysCommand(command)
-			if result.exit_code != 0:
-				raise DiskError(f'Could not mount {dev_path}: {command}\n{result.decode()}')
+			SysCommand(command)
 		except SysCallError as err:
 			raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
@@ -555,12 +573,10 @@ class DeviceHandler(object):
 			command = 'partprobe'
 
 		try:
-			result = SysCommand(command)
-			if result.exit_code != 0:
-				log(f'Error calling partprobe: {result.decode()}', level=logging.DEBUG)
-				raise DiskError(f'Could not perform partprobe on {path}: {result.decode()}')
+			log(f'Calling partprobe: {command}', level=logging.DEBUG)
+			SysCommand(command)
 		except SysCallError as error:
-			log(f"partprobe experienced an error with {path}: {error}", level=logging.DEBUG)
+			log(f'"{command}" failed to run: {error}', level=logging.DEBUG)
 
 	def _wipe(self, dev_path: Path):
 		"""

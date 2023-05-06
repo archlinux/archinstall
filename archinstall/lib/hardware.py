@@ -2,7 +2,7 @@ import os
 import logging
 from functools import partial
 from pathlib import Path
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Dict
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -61,15 +61,15 @@ AVAILABLE_GFX_DRIVERS = {
 	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
 }
 
-CPUINFO = Path("/proc/cpuinfo")
-MEMINFO = Path("/proc/meminfo")
-
 
 def cpuinfo() -> Iterator[dict[str, str]]:
-	"""Yields information about the CPUs of the system."""
-	cpu = {}
+	"""
+	Yields information about the CPUs of the system
+	"""
+	cpu_info_path = Path("/proc/cpuinfo")
+	cpu: Dict[str, str] = {}
 
-	with CPUINFO.open() as file:
+	with cpu_info_path.open() as file:
 		for line in file:
 			if not (line := line.strip()):
 				yield cpu
@@ -80,24 +80,31 @@ def cpuinfo() -> Iterator[dict[str, str]]:
 			cpu[key.strip()] = value.strip()
 
 
-def meminfo(key: Optional[str] = None) -> Union[dict[str, int], Optional[int]]:
-	"""Returns a dict with memory info if called with no args
+def all_meminfo() -> Dict[str, int]:
+	"""
+	Returns a dict with memory info if called with no args
 	or the value of the given key of said dict.
 	"""
-	with MEMINFO.open() as file:
-		mem_info = {
-			(columns := line.strip().split())[0].rstrip(':'): int(columns[1])
-			for line in file
-		}
+	mem_info_path = Path("/proc/meminfo")
+	mem_info: Dict[str, int] = {}
 
-	if key is None:
-		return mem_info
+	with mem_info_path.open() as file:
+		for line in file:
+			key, value = line.strip().split(':')
+			num = value.split()[0]
+			mem_info[key] = int(num)
 
-	return mem_info.get(key)
+	return mem_info
+
+
+def meminfo_for_key(key: str) -> int:
+	info = all_meminfo()
+	return info[key]
 
 
 def has_wifi() -> bool:
-	return 'WIRELESS' in enrich_iface_types(list_interfaces().values()).values()
+	ifaces = list(list_interfaces().values())
+	return 'WIRELESS' in enrich_iface_types(ifaces).values()
 
 
 def has_cpu_vendor(vendor_id: str) -> bool:
@@ -160,15 +167,15 @@ def product_name() -> Optional[str]:
 
 
 def mem_available() -> Optional[int]:
-	return meminfo('MemAvailable')
+	return meminfo_for_key('MemAvailable')
 
 
 def mem_free() -> Optional[int]:
-	return meminfo('MemFree')
+	return meminfo_for_key('MemFree')
 
 
 def mem_total() -> Optional[int]:
-	return meminfo('MemTotal')
+	return meminfo_for_key('MemTotal')
 
 
 def virtualization() -> Optional[str]:
@@ -182,9 +189,9 @@ def virtualization() -> Optional[str]:
 
 def is_vm() -> bool:
 	try:
-		return b"none" not in b"".join(SysCommand("systemd-detect-virt")).lower()
+		result = SysCommand("systemd-detect-virt")
+		return b"none" not in b"".join(result).lower()
 	except SysCallError as error:
 		log(f"System is not running in a VM: {error}", level=logging.DEBUG)
-	return None
 
-# TODO: Add more identifiers
+	return False

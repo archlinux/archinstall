@@ -112,9 +112,6 @@ def perform_installation(mountpoint: Path):
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
-		if archinstall.arguments.get('ntp', False):
-			installation.activate_ntp()
-
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
 			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
@@ -144,10 +141,13 @@ def perform_installation(mountpoint: Path):
 
 		if network_config:
 			handler = NetworkConfigurationHandler(network_config)
-			handler.config_installer(installation)
+			handler.config_installer(
+				installation,
+				archinstall.arguments.get('profile_config', None)
+			)
 
 		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
-			installation.add_additional_packages(archinstall.arguments.get('packages', None))
+			installation.add_additional_packages(archinstall.arguments.get('packages', []))
 
 		if users := archinstall.arguments.get('!users', None):
 			installation.create_users(users)
@@ -186,7 +186,7 @@ def perform_installation(mountpoint: Path):
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
 		if archinstall.arguments.get('services', None):
-			installation.enable_service(*archinstall.arguments['services'])
+			installation.enable_service(archinstall.arguments.get('services', []))
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):

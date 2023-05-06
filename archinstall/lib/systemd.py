@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Iterator
+from typing import Iterator, Optional
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
@@ -8,51 +8,11 @@ from .output import log
 from .storage import storage
 
 
-class Ini:
-	def __init__(self, *args :str, **kwargs :str):
-		"""
-		Limited INI handler for now.
-		Supports multiple keywords through dictionary list items.
-		"""
-		self.kwargs = kwargs
-
-	def __str__(self) -> str:
-		result = ''
-		first_row_done = False
-		for top_level in self.kwargs:
-			if first_row_done:
-				result += f"\n[{top_level}]\n"
-			else:
-				result += f"[{top_level}]\n"
-				first_row_done = True
-
-			for key, val in self.kwargs[top_level].items():
-				if type(val) == list:
-					for item in val:
-						result += f"{key}={item}\n"
-				else:
-					result += f"{key}={val}\n"
-
-		return result
-
-
-class Systemd(Ini):
-	"""
-	Placeholder class to do systemd specific setups.
-	"""
-
-
-class Networkd(Systemd):
-	"""
-	Placeholder class to do systemd-network specific setups.
-	"""
-
-
 class Boot:
 	def __init__(self, installation: Installer):
 		self.instance = installation
 		self.container_name = 'archinstall'
-		self.session = None
+		self.session: Optional[SysCommandWorker] = None
 		self.ready = False
 
 	def __enter__(self) -> 'Boot':
@@ -63,17 +23,18 @@ class Boot:
 			self.session = existing_session.session
 			self.ready = existing_session.ready
 		else:
+			# '-P' or --console=pipe  could help us not having to do a bunch
+			# of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 			self.session = SysCommandWorker([
 				'/usr/bin/systemd-nspawn',
-				'-D', self.instance.target,
+				'-D', str(self.instance.target),
 				'--timezone=off',
 				'-b',
 				'--no-pager',
 				'--machine', self.container_name
 			])
-			# '-P' or --console=pipe  could help us not having to do a bunch of os.write() calls, but instead use pipes (stdin, stdout and stderr) as usual.
 
-		if not self.ready:
+		if not self.ready and self.session:
 			while self.session.is_alive():
 				if b' login:' in self.session:
 					self.ready = True
@@ -91,25 +52,31 @@ class Boot:
 			log(f"The error above occurred in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
 
 		shutdown = None
-		shutdown_exit_code = -1
+		shutdown_exit_code: Optional[int] = -1
 
 		try:
 			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')
 		except SysCallError as error:
 			shutdown_exit_code = error.exit_code
 
-		while self.session.is_alive():
-			time.sleep(0.25)
+		if self.session:
+			while self.session.is_alive():
+				time.sleep(0.25)
 
-		if shutdown:
+		if shutdown and shutdown.exit_code:
 			shutdown_exit_code = shutdown.exit_code
 
-		if self.session.exit_code == 0 or shutdown_exit_code == 0:
+		if self.session and (self.session.exit_code == 0 or shutdown_exit_code == 0):
 			storage['active_boot'] = None
 		else:
-			raise SysCallError(f"Could not shut down temporary boot of {self.instance}: {self.session.exit_code}/{shutdown_exit_code}", exit_code=next(filter(bool, [self.session.exit_code, shutdown_exit_code])))
+			session_exit_code = self.session.exit_code if self.session else -1
 
-	def __iter__(self) -> Iterator[str]:
+			raise SysCallError(
+				f"Could not shut down temporary boot of {self.instance}: {session_exit_code}/{shutdown_exit_code}",
+				exit_code=next(filter(bool, [session_exit_code, shutdown_exit_code]))
+			)
+
+	def __iter__(self) -> Iterator[bytes]:
 		if self.session:
 			for value in self.session:
 				yield value
