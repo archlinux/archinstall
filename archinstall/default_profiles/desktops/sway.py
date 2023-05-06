@@ -53,7 +53,7 @@ class SwayProfile(XorgProfile):
 	@property
 	def services(self) -> List[str]:
 		if pref := self.custom_settings.get('seat_access', None):
-			return pref.value
+			return [pref.value]
 		return []
 
 	def _ask_seat_access(self):
