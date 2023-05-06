@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional, TYPE_CHECKING, Any
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType
@@ -9,6 +10,11 @@ if TYPE_CHECKING:
 	_: Any
 
 
+class SeatAccess(Enum):
+	seatd = 'seatd'
+	polkit = 'polkit'
+
+
 class SwayProfile(XorgProfile):
 	def __init__(self):
 		super().__init__(
@@ -16,10 +22,15 @@ class SwayProfile(XorgProfile):
 			ProfileType.WindowMgr,
 			description=''
 		)
-		self._control_preference = []
+
+		self.custom_settings = {'seat_access': None}
 
 	@property
 	def packages(self) -> List[str]:
+		additional = []
+		if seat := self.custom_settings.get('seat_access', None):
+			additional = [seat]
+
 		return [
 			"sway",
 			"swaybg",
@@ -33,7 +44,7 @@ class SwayProfile(XorgProfile):
 			"pavucontrol",
 			"foot",
 			"xorg-xwayland"
-		] + self._control_preference
+		] + additional
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
@@ -41,22 +52,26 @@ class SwayProfile(XorgProfile):
 
 	@property
 	def services(self) -> List[str]:
-		if "seatd" in self._control_preference:
-			return ['seatd']
-		elif "polkit" in self._control_preference:
-			return ['polkit']
-
+		if pref := self.custom_settings.get('seat_access', None):
+			return pref.value
 		return []
 
-	def _get_system_privelege_control_preference(self):
+	def _ask_seat_access(self):
 		# need to activate seat service and add to seat group
 		title = str(_('Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
 		title += str(_('\n\nChoose an option to give Sway access to your hardware'))
-		choice = Menu(title, ["polkit", "seatd"], skip=False).run()
-		self._control_preference = [choice.value]
+
+		options = [e.value for e in SeatAccess]
+		default = None
+
+		if seat := self.custom_settings.get('seat_access', None):
+			default = seat
+
+		choice = Menu(title, options, skip=False, preset_values=default).run()
+		self.custom_settings['seat_access'] = choice.single_value
 
 	def do_on_select(self):
-		self._get_system_privelege_control_preference()
+		self._ask_seat_access()
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum, auto
 from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
 
@@ -43,18 +42,9 @@ class SelectResult(Enum):
 	ResetCurrent = auto()
 
 
-@dataclass
-class ProfileInfo:
-	name: str
-	details: Optional[str]
-	gfx_driver: Optional[str] = None
-	greeter: Optional[str] = None
-
-	@property
-	def absolute_name(self) -> str:
-		if self.details is not None:
-			return self.details
-		return self.name
+class CustomProfileSetting:
+	key: str
+	value: Any
 
 
 class Profile:
@@ -67,11 +57,13 @@ class Profile:
 		packages: List[str] = [],
 		services: List[str] = [],
 		support_gfx_driver: bool = False,
-		support_greeter: bool = False
+		support_greeter: bool = False,
 	):
 		self.name = name
 		self.description = description
 		self.profile_type = profile_type
+		self.custom_settings: Dict[str, Any] = {}
+
 		self._support_gfx_driver = support_gfx_driver
 		self._support_greeter = support_greeter
 
@@ -134,6 +126,14 @@ class Profile:
 		Hook that will be called when a profile is selected
 		"""
 		return SelectResult.NewSelection
+
+	def set_custom_settings(self, settings: Dict[str, Any]):
+		"""
+		Set the custom settings for the profile.
+		This is also called when the settings are parsed from the config
+		and can be overriden to perform further actions based on the profile
+		"""
+		self.custom_settings = settings
 
 	def current_selection_names(self) -> List[str]:
 		if self._current_selection:
