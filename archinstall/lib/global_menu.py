@@ -18,6 +18,7 @@ from .user_interaction import ask_for_audio_selection
 from .user_interaction import ask_for_bootloader
 from .user_interaction import ask_for_swap
 from .user_interaction import ask_hostname
+from .user_interaction import ask_ntp
 from .user_interaction import ask_to_configure_network
 from .user_interaction import get_password, ask_for_a_timezone
 from .user_interaction import select_additional_repositories
@@ -163,6 +164,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Automatic time sync (NTP)'),
+				lambda preset: ask_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
 			Selector('')
