@@ -25,7 +25,7 @@ class DockerProfile(Profile):
 		return ['docker']
 
 	def post_install(self, install_session: 'Installer'):
-		users: Union[User, List[User]] = archinstall.arguments.get('!users', None)
+		users: Union[User, List[User]] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]
 

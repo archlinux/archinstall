@@ -27,7 +27,7 @@ class PipewireProfile(Profile):
 		]
 
 	def _enable_pipewire_for_all(self, install_session: 'Installer'):
-		users: Union[User, List[User]] = archinstall.arguments.get('!users', None)
+		users: Union[User, List[User]] = archinstall.arguments.get('!users', [])
 		if not isinstance(users, list):
 			users = [users]
 
