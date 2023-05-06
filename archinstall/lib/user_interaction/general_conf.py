@@ -3,15 +3,13 @@ from __future__ import annotations
 import logging
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
+from typing import Union
 
 from ..locale_helpers import list_keyboard_languages, list_timezones
-from ..menu import Menu
-from ..menu.menu import MenuSelectionType
-from ..menu.text_input import TextInput
+from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
 from ..output import log
 from ..packages.packages import validate_package_list
-from ..profiles import Profile, list_profiles
 from ..storage import storage
 from ..translationhandler import Language
 
@@ -32,9 +30,10 @@ def ask_ntp(preset: bool = True) -> bool:
 
 
 def ask_hostname(preset: str = None) -> str:
-	hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip(' ')
-	return hostname
-
+	while True:
+		hostname = TextInput(_('Desired hostname for the installation: '), preset).run().strip()
+		if hostname:
+			return hostname
 
 def ask_for_a_timezone(preset: str = None) -> str:
 	timezones = list_timezones()
@@ -52,7 +51,7 @@ def ask_for_a_timezone(preset: str = None) -> str:
 		case MenuSelectionType.Selection: return choice.value
 
 
-def ask_for_audio_selection(desktop: bool = True, preset: str = None) -> str:
+def ask_for_audio_selection(desktop: bool = True, preset: Union[str, None] = None) -> Union[str, None]:
 	no_audio = str(_('No audio server'))
 	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', no_audio]
 	default = 'pipewire' if desktop else no_audio
@@ -138,50 +137,6 @@ def select_archinstall_language(languages: List[Language], preset_value: Languag
 			return preset_value
 		case MenuSelectionType.Selection:
 			return options[choice.value]
-
-
-def select_profile(preset) -> Optional[Profile]:
-	"""
-	# Asks the user to select a profile from the available profiles.
-	#
-	# :return: The name/dictionary key of the selected profile
-	# :rtype: str
-	# """
-	top_level_profiles = sorted(list(list_profiles(filter_top_level_profiles=True)))
-	options = {}
-
-	for profile in top_level_profiles:
-		profile = Profile(None, profile)
-		description = profile.get_profile_description()
-
-		option = f'{profile.profile}: {description}'
-		options[option] = profile
-
-	title = _('This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments')
-	warning = str(_('Are you sure you want to reset this setting?'))
-
-	selection = Menu(
-		title=title,
-		p_options=list(options.keys()),
-		allow_reset=True,
-		allow_reset_warning_msg=warning
-	).run()
-
-	match selection.type_:
-		case MenuSelectionType.Selection:
-			return options[selection.value] if selection.value is not None else None
-		case MenuSelectionType.Reset:
-			storage['profile_minimal'] = False
-			storage['_selected_servers'] = []
-			storage['_desktop_profile'] = None
-			storage['sway_sys_priv_ctrl'] = None
-			storage['arguments']['sway_sys_priv_ctrl'] = None
-			storage['arguments']['desktop-environment'] = None
-			storage['arguments']['gfx_driver'] = None
-			storage['arguments']['gfx_driver_packages'] = None
-			return None
-		case MenuSelectionType.Skip:
-			return None
 
 
 def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:

@@ -1,9 +1,13 @@
 import logging
 import pathlib
 import time
+from typing import TYPE_CHECKING, Any
 
 from .general import SysCommand
 from .output import log
+
+if TYPE_CHECKING:
+	_: Any
 
 
 def run_pacman(args :str, default_cmd :str = 'pacman') -> SysCommand:

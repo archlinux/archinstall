@@ -1,10 +1,11 @@
 import logging
-from typing import Iterator, List, Callable
+from typing import Iterator, List, Callable, Optional
 
 from .exceptions import ServiceException
 from .general import SysCommand
 from .output import log
 from .storage import storage
+
 
 def list_keyboard_languages() -> Iterator[str]:
 	for line in SysCommand("localectl --no-pager list-keymaps", environment_vars={'SYSTEMD_COLORS': '0'}):
@@ -45,20 +46,25 @@ def get_locale_mode_text(mode):
 		mode_text = "Unassigned"
 	return mode_text
 
+
 def reset_cmd_locale():
 	""" sets the cmd_locale to its saved default """
 	storage['CMD_LOCALE'] = storage.get('CMD_LOCALE_DEFAULT',{})
+
 
 def unset_cmd_locale():
 	""" archinstall will use the execution environment default """
 	storage['CMD_LOCALE'] = {}
 
-def set_cmd_locale(general :str = None,
-				charset :str = 'C',
-				numbers :str = 'C',
-				time :str = 'C',
-				collate :str = 'C',
-				messages :str = 'C'):
+
+def set_cmd_locale(
+	general: Optional[str] = None,
+	charset :str = 'C',
+	numbers :str = 'C',
+	time :str = 'C',
+	collate :str = 'C',
+	messages :str = 'C'
+):
 	"""
 	Set the cmd locale.
 	If the parameter general is specified, it takes precedence over the rest (might as well not exist)

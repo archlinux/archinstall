@@ -3,7 +3,7 @@ from enum import Enum, auto
 from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
-from .simple_menu import TerminalMenu
+from simple_term_menu import TerminalMenu
 
 from ..exceptions import RequirementError
 from ..output import log
@@ -27,42 +27,56 @@ class MenuSelection:
 	type_: MenuSelectionType
 	value: Optional[Union[str, List[str]]] = None
 
+	@property
+	def single_value(self) -> Any:
+		return self.value
+
+	@property
+	def multi_value(self) -> List[Any]:
+		return self.value
+
 
 class Menu(TerminalMenu):
 
 	@classmethod
-	def yes(cls):
+	def back(cls) -> str:
+		return str(_('← Back'))
+
+	@classmethod
+	def yes(cls) -> str:
 		return str(_('yes'))
 
 	@classmethod
-	def no(cls):
+	def no(cls) -> str:
 		return str(_('no'))
 
 	@classmethod
-	def yes_no(cls):
+	def yes_no(cls) -> List[str]:
 		return [cls.yes(), cls.no()]
 
 	def __init__(
 		self,
-		title :str,
-		p_options :Union[List[str], Dict[str, Any]],
-		skip :bool = True,
-		multi :bool = False,
-		default_option : Optional[str] = None,
-		sort :bool = True,
-		preset_values :Union[str, List[str]] = None,
-		cursor_index : Optional[int] = None,
+		title: str,
+		p_options: Union[List[str], Dict[str, Any]],
+		skip: bool = True,
+		multi: bool = False,
+		default_option: Optional[str] = None,
+		sort: bool = True,
+		preset_values: Optional[Union[str, List[str]]] = None,
+		cursor_index: Optional[int] = None,
 		preview_command: Optional[Callable] = None,
 		preview_size: float = 0.0,
 		preview_title: str = 'Info',
-		header :Union[List[str],str] = None,
-		allow_reset :bool = False,
-		allow_reset_warning_msg :str = '',
+		header: Union[List[str],str] = None,
+		allow_reset: bool = False,
+		allow_reset_warning_msg: Optional[str] = None,
 		clear_screen: bool = True,
 		show_search_hint: bool = True,
 		cycle_cursor: bool = True,
 		clear_menu_on_exit: bool = True,
-		skip_empty_entries: bool = False
+		skip_empty_entries: bool = False,
+		display_back_option: bool = False,
+		extra_bottom_space: bool = False
 	):
 		"""
 		Creates a new menu
@@ -72,7 +86,7 @@ class Menu(TerminalMenu):
 
 		:param p_options: Options to be displayed in the menu to chose from;
 		if dict is specified then the keys of such will be used as options
-		:type options: list, dict
+		:type p_options: list, dict
 
 		:param skip: Indicate if the selection is not mandatory and can be skipped
 		:type skip: bool
@@ -101,16 +115,17 @@ class Menu(TerminalMenu):
 		:param preview_title: Title of the preview window
 		:type preview_title: str
 
-		param header: one or more header lines for the menu
-		type param: string or list
+		:param header: one or more header lines for the menu
+		:type header: string or list
 
-		param raise_error_on_interrupt: This will explicitly handle a ctrl+c instead and return that specific state
-		type param: bool
+		:param allow_reset: This will explicitly handle a ctrl+c instead and return that specific state
+		:type allow_reset: bool
 
-		param raise_error_warning_msg: If raise_error_on_interrupt is True and this is non-empty, there will be a warning with a user confirmation displayed
-		type param: str
+		param allow_reset_warning_msg: If raise_error_on_interrupt is True the warnign is set, a user confirmation is displayed
+		type allow_reset_warning_msg: str
 
-		:param kwargs : any SimpleTerminal parameter
+		:param extra_bottom_space: Add an extra empty line at the end of the menu
+		:type extra_bottom_space: bool
 		"""
 		# we guarantee the inmutability of the options outside the class.
 		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
@@ -152,7 +167,6 @@ class Menu(TerminalMenu):
 		self._multi = multi
 		self._raise_error_on_interrupt = allow_reset
 		self._raise_error_warning_msg = allow_reset_warning_msg
-		self._preview_command = preview_command
 
 		action_info = ''
 		if skip:
@@ -182,6 +196,14 @@ class Menu(TerminalMenu):
 			default = f'{default_option} {self._default_str}'
 			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
 
+		if display_back_option and not multi and skip:
+			skip_empty_entries = True
+			self._menu_options += ['', self.back()]
+
+		if extra_bottom_space:
+			skip_empty_entries = True
+			self._menu_options += ['']
+
 		self._preselection(preset_values,cursor_index)
 
 		cursor = "> "
@@ -194,13 +216,10 @@ class Menu(TerminalMenu):
 			menu_cursor=cursor,
 			menu_cursor_style=main_menu_cursor_style,
 			menu_highlight_style=main_menu_style,
-			# cycle_cursor=True,
-			# clear_screen=True,
 			multi_select=multi,
-			# show_search_hint=True,
 			preselected_entries=self.preset_values,
 			cursor_index=self.cursor_index,
-			preview_command=lambda x: self._preview_wrapper(preview_command, x),
+			preview_command=lambda x: self._show_preview(preview_command, x),
 			preview_size=preview_size,
 			preview_title=preview_title,
 			raise_error_on_interrupt=self._raise_error_on_interrupt,
@@ -211,6 +230,17 @@ class Menu(TerminalMenu):
 			clear_menu_on_exit=clear_menu_on_exit,
 			skip_empty_entries=skip_empty_entries
 		)
+
+	def _show_preview(self, preview_command: Optional[Callable], selection: str) -> Optional[str]:
+		if selection == self.back():
+			return None
+
+		if preview_command:
+			if self._default_option is not None and f'{self._default_option} {self._default_str}' == selection:
+				selection = self._default_option
+			return preview_command(selection)
+
+		return None
 
 	def _show(self) -> MenuSelection:
 		try:
@@ -225,39 +255,37 @@ class Menu(TerminalMenu):
 				return elem
 
 		if idx is not None:
-			if isinstance(idx, (list, tuple)):
+			if isinstance(idx, (list, tuple)):  # on multi selection
 				results = []
 				for i in idx:
 					option = check_default(self._menu_options[i])
 					results.append(option)
 				return MenuSelection(type_=MenuSelectionType.Selection, value=results)
-			else:
+			else:  # on single selection
 				result = check_default(self._menu_options[idx])
 				return MenuSelection(type_=MenuSelectionType.Selection, value=result)
 		else:
 			return MenuSelection(type_=MenuSelectionType.Skip)
 
-	def _preview_wrapper(self, preview_command: Optional[Callable], current_selection: str) -> Optional[str]:
-		if preview_command:
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' == current_selection:
-				current_selection = self._default_option
-			return preview_command(current_selection)
-		return None
-
 	def run(self) -> MenuSelection:
-		ret = self._show()
+		selection = self._show()
 
-		if ret.type_ == MenuSelectionType.Reset:
-			if self._raise_error_on_interrupt and len(self._raise_error_warning_msg) > 0:
+		if selection.type_ == MenuSelectionType.Reset:
+			if self._raise_error_on_interrupt and self._raise_error_warning_msg is not None:
 				response = Menu(self._raise_error_warning_msg, Menu.yes_no(), skip=False).run()
 				if response.value == Menu.no():
 					return self.run()
-		elif ret.type_ is MenuSelectionType.Skip:
+		elif selection.type_ is MenuSelectionType.Skip:
 			if not self._skip:
 				system('clear')
 				return self.run()
 
-		return ret
+		if selection.type_ == MenuSelectionType.Selection:
+			if selection.value == self.back():
+				selection.type_ = MenuSelectionType.Skip
+				selection.value = None
+
+		return selection
 
 	def set_cursor_pos(self,pos :int):
 		if pos and 0 < pos < len(self._menu_entries):
