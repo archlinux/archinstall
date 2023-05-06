@@ -2,6 +2,18 @@
 
 zprofile="/tmp/archlive/airootfs/root/.zprofile"
 
+# Packages to add to the archiso profile packages
+packages=(
+	git
+	python
+	python-pip
+	python-build
+	python-flit
+	python-setuptools
+	python-wheel
+	python-pyparted
+)
+
 mkdir -p /tmp/archlive/airootfs/root/archinstall-git
 cp -r . /tmp/archlive/airootfs/root/archinstall-git
 
@@ -23,7 +35,10 @@ pacman --noconfirm -S git archiso
 
 cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
 
-echo -e "git\npython\npython-pip\npython-build\npython-flit\npython-setuptools\npython-wheel\npython-pyparted" >> /tmp/archlive/packages.x86_64
+# Add packages to the archiso profile packages
+for package in "${packages[@]}"; do
+	echo "$package" >> /tmp/archlive/packages.x86_64
+done
 
 find /tmp/archlive
 cd /tmp/archlive
