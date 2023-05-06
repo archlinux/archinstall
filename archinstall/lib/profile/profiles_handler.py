@@ -43,6 +43,7 @@ class ProfileHandler:
 			data = {
 				'main': profile.name,
 				'details': [profile.name for profile in profile.current_selection],
+				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection}
 			}
 
 		if self._url_path is not None:
@@ -98,6 +99,7 @@ class ProfileHandler:
 			profile = self.get_profile_by_name(main) if main else None
 
 		valid: List[Profile] = []
+
 		if details := profile_config.get('details', []):
 			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
 			valid = [p for p in resolved.values() if p is not None]
@@ -105,6 +107,12 @@ class ProfileHandler:
 
 			if invalid:
 				log(f'No profile definition found: {invalid}')
+
+		custom_settings = profile_config.get('custom_settings', {})
+		for profile in valid:
+			profile.set_custom_settings(
+				custom_settings.get(profile.name, {})
+			)
 
 		if profile is not None:
 			profile.set_current_selection(valid)
