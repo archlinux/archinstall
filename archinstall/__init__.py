@@ -39,6 +39,11 @@ from .lib.general import (
 if TYPE_CHECKING:
 	_: Any
 
+
+__version__ = "2.5.6"
+storage['__version__'] = __version__
+
+
 # add the custome _ as a builtin, it can now be used anywhere in the
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
@@ -60,9 +65,6 @@ if os.getuid() != 0:
 
 
 parser = ArgumentParser()
-
-__version__ = "2.5.6"
-storage['__version__'] = __version__
 
 
 def define_arguments():
