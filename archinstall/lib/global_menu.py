@@ -27,6 +27,7 @@ from .interactions import select_language
 from .interactions import select_locale_enc
 from .interactions import select_locale_lang
 from .interactions import select_mirror_regions
+from .interactions import ask_ntp
 from .interactions.disk_conf import select_disk_config
 
 if TYPE_CHECKING:
@@ -163,6 +164,7 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['ntp'] = \
 			Selector(
 				_('Automatic time sync (NTP)'),
+				lambda preset: ask_ntp(preset),
 				default=True)
 		self._menu_options['__separator__'] = \
 			Selector('')
