@@ -1,5 +1,7 @@
 #!/bin/bash
 
+packages_file="/tmp/archlive/packages.x86_64"
+
 # Packages to add to the archiso profile packages
 packages=(
 	git
@@ -16,7 +18,6 @@ mkdir -p /tmp/archlive/airootfs/root/archinstall-git
 cp -r . /tmp/archlive/airootfs/root/archinstall-git
 
 cat <<- _EOF_ | tee /tmp/archlive/airootfs/root/.zprofile
-	pip uninstall archinstall -y
 	cd archinstall-git
 	rm -rf dist
 
@@ -33,9 +34,11 @@ pacman --noconfirm -S git archiso
 
 cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
 
+sed -i /archinstall/d $packages_file
+
 # Add packages to the archiso profile packages
 for package in "${packages[@]}"; do
-	echo "$package" >> /tmp/archlive/packages.x86_64
+	echo "$package" >> $packages_file
 done
 
 find /tmp/archlive
