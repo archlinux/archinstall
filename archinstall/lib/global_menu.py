@@ -107,7 +107,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('User account'),
 				lambda x: self._create_user_account(x),
-				default={},
+				default=[],
 				display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else None,
 				preview_func=self._prev_users)
 		self._menu_options['profile_config'] = \
