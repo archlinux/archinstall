@@ -1,7 +1,5 @@
 #!/bin/bash
 
-zprofile="/tmp/archlive/airootfs/root/.zprofile"
-
 # Packages to add to the archiso profile packages
 packages=(
 	git
@@ -17,18 +15,18 @@ packages=(
 mkdir -p /tmp/archlive/airootfs/root/archinstall-git
 cp -r . /tmp/archlive/airootfs/root/archinstall-git
 
-echo "pip uninstall archinstall -y" > $zprofile
-echo "cd archinstall-git" >> $zprofile
-echo "rm -rf dist" >> $zprofile
+cat <<- _EOF_ | tee /tmp/archlive/airootfs/root/.zprofile
+	pip uninstall archinstall -y
+	cd archinstall-git
+	rm -rf dist
 
-echo "python -m build --wheel --no-isolation" >> $zprofile
-echo "pip install dist/archinstall*.whl" >> $zprofile
+	python -m build --wheel --no-isolation
+	pip install dist/archinstall*.whl
 
-echo "echo \"This is an unofficial ISO for development and testing of archinstall. No support will be provided.\"" >> $zprofile
-echo "echo \"This ISO was built from Git SHA $GITHUB_SHA\"" >> $zprofile
-echo "echo \"Type archinstall to launch the installer.\"" >> $zprofile
-
-cat $zprofile
+	echo "This is an unofficial ISO for development and testing of archinstall. No support will be provided."
+	echo "This ISO was built from Git SHA $GITHUB_SHA"
+	echo "Type archinstall to launch the installer."
+_EOF_
 
 pacman -Sy
 pacman --noconfirm -S git archiso
