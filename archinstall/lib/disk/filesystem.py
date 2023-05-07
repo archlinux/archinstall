@@ -8,7 +8,7 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType, DiskEncryption
 from .device_handler import device_handler
-from ..hardware import has_uefi
+from ..hardware import SysInfo
 from ..output import log
 from ..menu import Menu
 
@@ -48,7 +48,7 @@ class FilesystemHandler:
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
 		partition_table = PartitionTable.GPT
-		if has_uefi() is False:
+		if SysInfo.has_uefi() is False:
 			partition_table = PartitionTable.MBR
 
 		for mod in device_mods:

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional, List, Tuple
+from typing import Any, TYPE_CHECKING
+from typing import Optional, List, Tuple
 
 from .. import disk
-from ..hardware import has_uefi
-from ..menu import Menu, MenuSelectionType, TableMenu
+from ..hardware import SysInfo
+from ..menu import Menu
+from ..menu import TableMenu
+from ..menu.menu import MenuSelectionType
 from ..output import FormattedOutput
 from ..output import log
 from ..utils.util import prompt_dir
@@ -170,7 +173,7 @@ def select_disk_config(
 
 
 def _boot_partition() -> disk.PartitionModification:
-	if has_uefi():
+	if SysInfo.has_uefi():
 		start = disk.Size(1, disk.Unit.MiB)
 		size = disk.Size(512, disk.Unit.MiB)
 	else:
@@ -189,7 +192,7 @@ def _boot_partition() -> disk.PartitionModification:
 	)
 
 
-def ask_for_main_filesystem_format(advanced_options=False) -> disk.FilesystemType:
+def select_main_filesystem_format(advanced_options=False) -> disk.FilesystemType:
 	options = {
 		'btrfs': disk.FilesystemType.Btrfs,
 		'ext4': disk.FilesystemType.Ext4,
@@ -212,7 +215,7 @@ def suggest_single_disk_layout(
 	separate_home: Optional[bool] = None
 ) -> disk.DeviceModification:
 	if not filesystem_type:
-		filesystem_type = ask_for_main_filesystem_format(advanced_options)
+		filesystem_type = select_main_filesystem_format(advanced_options)
 
 	min_size_to_allow_home_part = disk.Size(40, disk.Unit.GiB)
 	root_partition_size = disk.Size(20, disk.Unit.GiB)
@@ -258,7 +261,7 @@ def suggest_single_disk_layout(
 				using_home_partition = False
 
 	# root partition
-	start = disk.Size(513, disk.Unit.MiB) if has_uefi() else disk.Size(206, disk.Unit.MiB)
+	start = disk.Size(513, disk.Unit.MiB) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB)
 
 	# Set a size for / (/root)
 	if using_subvolumes or device_size_gib < min_size_to_allow_home_part or not using_home_partition:
@@ -324,7 +327,7 @@ def suggest_multi_disk_layout(
 	compression = False
 
 	if not filesystem_type:
-		filesystem_type = ask_for_main_filesystem_format(advanced_options)
+		filesystem_type = select_main_filesystem_format(advanced_options)
 
 	# find proper disk for /home
 	possible_devices = list(filter(lambda x: x.device_info.total_size >= min_home_partition_size, devices))
@@ -368,7 +371,7 @@ def suggest_multi_disk_layout(
 	root_partition = disk.PartitionModification(
 		status=disk.ModificationStatus.Create,
 		type=disk.PartitionType.Primary,
-		start=disk.Size(513, disk.Unit.MiB) if has_uefi() else disk.Size(206, disk.Unit.MiB),
+		start=disk.Size(513, disk.Unit.MiB) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB),
 		length=disk.Size(100, disk.Unit.Percent, total_size=root_device.device_info.total_size),
 		mountpoint=Path('/'),
 		mount_options=['compress=zstd'] if compression else [],

@@ -300,7 +300,7 @@ class PartitioningList(ListManager):
 			if choice.value == Menu.no():
 				return []
 
-		from ..user_interaction.disk_conf import suggest_single_disk_layout
+		from ..interactions.disk_conf import suggest_single_disk_layout
 
 		device_modification = suggest_single_disk_layout(self._device)
 		return device_modification.partitions

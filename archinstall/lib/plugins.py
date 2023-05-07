@@ -28,7 +28,7 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 		log(f"The above error was detected when loading the plugin: {plugin_definition}", fg="red", level=logging.ERROR)
 
 
-def localize_path(path: Path) -> Path:
+def _localize_path(path: Path) -> Path:
 	"""
 	Support structures for load_plugin()
 	"""
@@ -45,7 +45,7 @@ def localize_path(path: Path) -> Path:
 		return path
 
 
-def import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str]:
+def _import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str]:
 	if not namespace:
 		namespace = os.path.basename(path)
 
@@ -72,7 +72,7 @@ def import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str
 	return namespace
 
 
-def find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
+def _find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
 	indices = [idx for idx, elem in enumerate(haystack) if elem == needle]
 	if n <= len(indices):
 		return indices[n - 1]
@@ -88,16 +88,16 @@ def load_plugin(path: Path):
 	if not parsed_url.scheme:
 		# Path was not found in any known examples, check if it's an absolute path
 		if os.path.isfile(path):
-			namespace = import_via_path(path)
+			namespace = _import_via_path(path)
 	elif parsed_url.scheme in ('https', 'http'):
-		localized = localize_path(path)
-		namespace = import_via_path(localized)
+		localized = _localize_path(path)
+		namespace = _import_via_path(localized)
 
 	if namespace and namespace in sys.modules:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
 		if hasattr(sys.modules[namespace], '__archinstall__version__'):
-			archinstall_major_and_minor_version = float(storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
+			archinstall_major_and_minor_version = float(storage['__version__'][:_find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
 				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.", fg="red", level=logging.ERROR)

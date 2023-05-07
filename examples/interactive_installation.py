@@ -3,7 +3,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import log, Installer, use_mirrors, profile_handler
+from archinstall import log, Installer
+from archinstall import profile
+from archinstall import SysInfo
+from archinstall import mirrors
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
@@ -114,7 +117,7 @@ def perform_installation(mountpoint: Path):
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
-			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+			mirrors.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
 		installation.minimal_installation(
 			testing=enable_testing,
@@ -130,7 +133,7 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == Bootloader.Grub and archinstall.has_uefi():
+		if archinstall.arguments.get("bootloader") == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
 		installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -162,7 +165,7 @@ def perform_installation(mountpoint: Path):
 			installation.log("No audio server will be installed.", level=logging.INFO)
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
-			profile_handler.install_profile_config(installation, profile_config)
+			profile.profile_handler.install_profile_config(installation, profile_config)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)

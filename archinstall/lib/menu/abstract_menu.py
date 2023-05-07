@@ -4,7 +4,7 @@ import logging
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
-from ..locale_helpers import set_keyboard_language
+from ..locale import set_keyboard_language
 from ..output import log
 from ..translationhandler import TranslationHandler, Language
 
@@ -483,7 +483,7 @@ class AbstractMenu:
 				yield item
 
 	def _select_archinstall_language(self, preset: Language) -> Language:
-		from ..user_interaction.general_conf import select_archinstall_language
+		from ..interactions.general_conf import select_archinstall_language
 		language = select_archinstall_language(self.translation_handler.translated_languages, preset)
 		self._translation_handler.activate(language)
 		return language

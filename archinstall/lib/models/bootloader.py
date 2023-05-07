@@ -5,7 +5,7 @@ import sys
 from enum import Enum
 from typing import List
 
-from ..hardware import has_uefi
+from ..hardware import SysInfo
 from ..output import log
 
 
@@ -23,7 +23,7 @@ class Bootloader(Enum):
 
 	@classmethod
 	def get_default(cls) -> Bootloader:
-		if has_uefi():
+		if SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
 			return Bootloader.Grub

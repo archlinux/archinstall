@@ -1,17 +1,33 @@
 """Arch Linux installer - guided, templates etc."""
 import importlib
+import logging
+import os
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 from .lib import disk
 from .lib import menu
 from .lib import models
 from .lib import packages
+from .lib import exceptions
+from .lib import luks
+from .lib import locale
+from .lib import mirrors
+from .lib import networking
+from .lib import profile
+from .lib import interactions
+from . import default_profiles
 
-from .lib.exceptions import (
-	RequirementError, DiskError, UnknownFilesystemFormat,
-	SysCallError, HardwareIncompatibilityError, ServiceException,
-	PackageError
-)
+from .lib.hardware import SysInfo, AVAILABLE_GFX_DRIVERS
+from .lib.installer import Installer, accessibility_tools_in_use
+from .lib.output import FormattedOutput, Journald, log
+from .lib.storage import storage
+from .lib.global_menu import GlobalMenu
+from .lib.systemd import Boot
+from .lib.translationhandler import TranslationHandler, Language, DeferredTranslation
+from .lib.plugins import plugins, load_plugin
+from .lib.configuration import ConfigurationOutput
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
@@ -19,39 +35,34 @@ from .lib.general import (
 	run_custom_user_commands, json_stream_to_structure, secret
 )
 
-from .lib.hardware import (
-	AVAILABLE_GFX_DRIVERS,
-	cpu_info, all_meminfo, _meminfo_for_key, has_wifi, has_cpu_vendor, has_uefi, graphics_devices,
-has_nvidia_graphics, has_amd_graphics, has_intel_graphics, cpu_vendor, cpu_model,
-sys_vendor, product_name, mem_available, mem_total,
-)
 
-from .lib.installer import __packages__, Installer, accessibility_tools_in_use
-from .lib.locale_helpers import *
-from .lib.luks import *
-from .lib.mirrors import *
-from .lib.networking import *
-from .lib.output import *
-from archinstall.lib.profile.profiles_handler import ProfileHandler, profile_handler
-from .lib.profile.profile_menu import ProfileConfiguration
-from .lib.services import *
-from .lib.storage import *
-from .lib.systemd import *
-from .lib.user_interaction import *
-from .lib.global_menu import GlobalMenu
-from .lib.translationhandler import TranslationHandler, DeferredTranslation
-from .lib.plugins import plugins, load_plugin  # This initiates the plugin loading ceremony
-from .lib.configuration import *
+if TYPE_CHECKING:
+	_: Any
+
+# add the custome _ as a builtin, it can now be used anywhere in the
+# project to mark strings as translatable with _('translate me')
+DeferredTranslation.install()
+
+# Log various information about hardware before starting the installation. This might assist in troubleshooting
+log(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}", level=logging.DEBUG)
+log(f"Processor model detected: {SysInfo.cpu_model()}", level=logging.DEBUG)
+log(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed", level=logging.DEBUG)
+log(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}", level=logging.DEBUG)
+log(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}", level=logging.DEBUG)
+
+# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
+log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
+
+
+if os.getuid() != 0:
+	print(_("Archinstall requires root privileges to run. See --help for more."))
+	exit(1)
 
 
 parser = ArgumentParser()
 
 __version__ = "2.5.4"
 storage['__version__'] = __version__
-
-# add the custome _ as a builtin, it can now be used anywhere in the
-# project to mark strings as translatable with _('translate me')
-DeferredTranslation.install()
 
 
 def define_arguments():
@@ -128,7 +139,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 	return config
 
 
-def cleanup_empty_args(args: Union[Namespace, dict]) -> dict:
+def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	"""
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
@@ -206,14 +217,14 @@ def load_config():
 		arguments['disk_config'] = disk.DiskLayoutConfiguration.parse_arg(disk_config)
 
 	if profile_config := arguments.get('profile_config', None):
-		arguments['profile_config'] = ProfileConfiguration.parse_arg(profile_config)
+		arguments['profile_config'] = profile.ProfileConfiguration.parse_arg(profile_config)
 
 	if arguments.get('mirror-region', None) is not None:
 		if type(arguments.get('mirror-region', None)) is dict:
 			arguments['mirror-region'] = arguments.get('mirror-region', None)
 		else:
 			selected_region = arguments.get('mirror-region', None)
-			arguments['mirror-region'] = {selected_region: list_mirrors()[selected_region]}
+			arguments['mirror-region'] = {selected_region: mirrors.list_mirrors()[selected_region]}
 
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)

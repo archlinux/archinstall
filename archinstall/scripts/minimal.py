@@ -2,11 +2,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import ConfigurationOutput, Installer, ProfileConfiguration, profile_handler
+from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall import disk
-from archinstall import models
-from archinstall.lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
+from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
+from archinstall.lib.models import Bootloader, User
+from archinstall.lib.profile import ProfileConfiguration, profile_handler
+from archinstall.lib import disk
 
 if TYPE_CHECKING:
 	_: Any
@@ -35,7 +36,7 @@ def perform_installation(mountpoint: Path):
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
 			installation.set_hostname('minimal-arch')
-			installation.add_bootloader(models.Bootloader.Systemd)
+			installation.add_bootloader(Bootloader.Systemd)
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):
@@ -46,7 +47,7 @@ def perform_installation(mountpoint: Path):
 			profile_config = ProfileConfiguration(MinimalProfile())
 			profile_handler.install_profile_config(installation, profile_config)
 
-			user = models.User('devel', 'devel', False)
+			user = User('devel', 'devel', False)
 			installation.create_users(user)
 
 	# Once this is done, we output some useful information to the user

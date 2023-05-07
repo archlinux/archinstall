@@ -9,7 +9,6 @@ from dataclasses import asdict, is_dataclass
 
 
 class FormattedOutput:
-
 	@classmethod
 	def values(
 		cls,
@@ -134,16 +133,13 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-# TODO: Replace log() for session based logging.
-class SessionLogging:
-	def __init__(self):
-		pass
-
-
-# Found first reference here: https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
-# And re-used this: https://github.com/django/django/blob/master/django/core/management/color.py#L12
-def supports_color() -> bool:
+def _supports_color() -> bool:
 	"""
+	Found first reference here:
+		https://stackoverflow.com/questions/7445658/how-to-detect-if-the-console-does-support-ansi-escape-codes-in-python
+	And re-used this:
+		https://github.com/django/django/blob/master/django/core/management/color.py#L12
+
 	Return True if the running system's terminal supports color,
 	and False otherwise.
 	"""
@@ -154,10 +150,13 @@ def supports_color() -> bool:
 	return supported_platform and is_a_tty
 
 
-# Heavily influenced by: https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
-# Color options here: https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
-def stylize_output(text: str, *opts :str, **kwargs) -> str:
+def _stylize_output(text: str, *opts :str, **kwargs) -> str:
 	"""
+	Heavily influenced by:
+		https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
+	Color options here:
+		https://askubuntu.com/questions/528928/how-to-do-underline-bold-italic-strikethrough-color-background-and-size-i
+
 	Adds styling to a text given a set of color arguments.
 	"""
 	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
@@ -207,9 +206,9 @@ def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> No
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
-	if supports_color():
+	if _supports_color():
 		kwargs = {'fg': 'white', **kwargs}
-		string = stylize_output(string, **kwargs)
+		string = _stylize_output(string, **kwargs)
 
 	# If a logfile is defined in storage,
 	# we use that one to output everything

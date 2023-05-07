@@ -3,18 +3,14 @@ import os
 from pathlib import Path
 
 import archinstall
-from archinstall import Installer
+from archinstall.lib.installer import Installer
 from archinstall.lib.configuration import ConfigurationOutput
-from archinstall import disk
+from archinstall.lib import disk
+from archinstall.lib.networking import check_mirror_reachable
 
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
-
-
-if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
-	exit(1)
 
 
 def ask_user_questions():
@@ -62,18 +58,7 @@ def perform_installation(mountpoint: Path):
 	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
-
-
-if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
+if archinstall.arguments.get('skip-mirror-check', False) is False and check_mirror_reachable() is False:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)

@@ -12,8 +12,8 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable, It
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
-from .hardware import has_uefi, is_vm, cpu_vendor
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .hardware import SysInfo
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors
 from .models.bootloader import Bootloader
@@ -22,7 +22,6 @@ from .models.users import User
 from .output import log
 from .pacman import run_pacman
 from .plugins import plugins
-from .services import service_state
 from .storage import storage
 
 if TYPE_CHECKING:
@@ -170,15 +169,15 @@ class Installer:
 			time.sleep(1)
 
 		log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while service_state('reflector') not in ('dead', 'failed', 'exited'):
+		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		log('Waiting pacman-init.service to complete.', level=logging.INFO)
-		while service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 		log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
-		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
+		while self._service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
@@ -713,11 +712,11 @@ class Installer:
 						if 'encrypt' not in self._hooks:
 							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
-		if not is_vm():
-			vendor = cpu_vendor()
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
 			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
 				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
@@ -812,7 +811,7 @@ class Installer:
 	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
 		self._pacstrap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -862,8 +861,8 @@ class Installer:
 					entry.write(f'# Created on: {self.init_time}\n')
 					entry.write(f'title Arch Linux ({kernel}{variant})\n')
 					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not is_vm():
-						vendor = cpu_vendor()
+					if not SysInfo.is_vm():
+						vendor = SysInfo.cpu_vendor()
 						if vendor == "AuthenticAMD":
 							entry.write("initrd /amd-ucode.img\n")
 						elif vendor == "GenuineIntel":
@@ -933,7 +932,7 @@ class Installer:
 
 		log(f"GRUB boot partition: {boot_partition.dev_path}", level=logging.INFO)
 
-		if has_uefi():
+		if SysInfo.has_uefi():
 			self._pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
@@ -975,7 +974,7 @@ class Installer:
 	):
 		self._pacstrap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -989,8 +988,8 @@ class Installer:
 
 			kernel_parameters = []
 
-			if not is_vm():
-				vendor = cpu_vendor()
+			if not SysInfo.is_vm():
+				vendor = SysInfo.cpu_vendor()
 				if vendor == "AuthenticAMD":
 					kernel_parameters.append("initrd=\\amd-ucode.img")
 				elif vendor == "GenuineIntel":
@@ -1229,3 +1228,11 @@ class Installer:
 			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
 
 		return True
+
+	def _service_state(self, service_name: str) -> str:
+		if os.path.splitext(service_name)[1] != '.service':
+			service_name += '.service'  # Just to be safe
+
+		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
+
+		return state.strip().decode('UTF-8')

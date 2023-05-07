@@ -116,7 +116,7 @@ from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.disk.device_model import FilesystemType
 from archinstall.lib.disk.encryption_menu import DiskEncryptionMenu
 from archinstall.lib.disk.filesystem import FilesystemHandler
-from archinstall.lib.user_interaction.disk_conf import select_disk_config
+from archinstall.lib.interactions.disk_conf import select_disk_config
 
 fs_type = FilesystemType('ext4')
 

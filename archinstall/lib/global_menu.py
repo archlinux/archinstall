@@ -11,23 +11,23 @@ from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .storage import storage
-from .user_interaction import add_number_of_parrallel_downloads
-from .user_interaction import ask_additional_packages_to_install
-from .user_interaction import ask_for_additional_users
-from .user_interaction import ask_for_audio_selection
-from .user_interaction import ask_for_bootloader
-from .user_interaction import ask_for_swap
-from .user_interaction import ask_hostname
-from .user_interaction import ask_to_configure_network
-from .user_interaction import get_password, ask_for_a_timezone
-from .user_interaction import select_additional_repositories
-from .user_interaction import select_kernel
-from .user_interaction import select_language
-from .user_interaction import select_locale_enc
-from .user_interaction import select_locale_lang
-from .user_interaction import select_mirror_regions
-from .user_interaction.disk_conf import select_disk_config
-from .user_interaction.save_conf import save_config
+from .configuration import save_config
+from .interactions import add_number_of_parrallel_downloads
+from .interactions import ask_additional_packages_to_install
+from .interactions import ask_for_additional_users
+from .interactions import ask_for_audio_selection
+from .interactions import ask_for_bootloader
+from .interactions import ask_for_swap
+from .interactions import ask_hostname
+from .interactions import ask_to_configure_network
+from .interactions import get_password, ask_for_a_timezone
+from .interactions import select_additional_repositories
+from .interactions import select_kernel
+from .interactions import select_language
+from .interactions import select_locale_enc
+from .interactions import select_locale_lang
+from .interactions import select_mirror_regions
+from .interactions.disk_conf import select_disk_config
 
 if TYPE_CHECKING:
 	_: Any

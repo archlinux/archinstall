@@ -8,11 +8,9 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from .exceptions import HardwareIncompatibilityError, SysCallError
-from .general import SysCommand
+from .exceptions import SysCallError
 from .output import log
 from .pacman import run_pacman
-from .storage import storage
 
 
 def get_hw_addr(ifname :str) -> str:
@@ -78,38 +76,6 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 			result[iface] = 'UNKNOWN'
 
 	return result
-
-
-def wireless_scan(interface :str) -> None:
-	interfaces = enrich_iface_types(list(list_interfaces().values()))
-	if interfaces[interface] != 'WIRELESS':
-		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
-
-	try:
-		SysCommand(f"iwctl station {interface} scan")
-	except SysCallError as error:
-		raise SystemError(f"Could not scan for wireless networks: {error}")
-
-	if '_WIFI' not in storage:
-		storage['_WIFI'] = {}
-	if interface not in storage['_WIFI']:
-		storage['_WIFI'][interface] = {}
-
-	storage['_WIFI'][interface]['scanning'] = True
-
-
-# TODO: Full WiFi experience might get evolved in the future, pausing for now 2021-01-25
-def get_wireless_networks(interface :str) -> None:
-	# TODO: Make this oneliner pritter to check if the interface is scanning or not.
-	# TODO: Rename this to list_wireless_networks() as it doesn't return anything
-	if '_WIFI' not in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning', False) is False:
-		import time
-
-		wireless_scan(interface)
-		time.sleep(5)
-
-	for line in SysCommand(f"iwctl station {interface} get-networks"):
-		print(line)
 
 
 def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:

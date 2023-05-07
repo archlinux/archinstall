@@ -3,7 +3,7 @@ from pathlib import Path
 
 import archinstall
 from archinstall import Installer
-from archinstall.lib import disk
+from archinstall import disk
 
 
 def ask_user_questions():
