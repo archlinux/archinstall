@@ -8,7 +8,6 @@ packages=(
 	python
 	python-pip
 	python-build
-	python-flit
 	python-setuptools
 	python-wheel
 	python-pyparted
