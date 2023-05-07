@@ -61,7 +61,7 @@ if os.getuid() != 0:
 
 parser = ArgumentParser()
 
-__version__ = "2.5.4"
+__version__ = "2.5.6"
 storage['__version__'] = __version__
 
 

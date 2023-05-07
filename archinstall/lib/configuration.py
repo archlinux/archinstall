@@ -30,7 +30,7 @@ class ConfigurationOutput:
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
 
-		self._sensitive = ['!users']
+		self._sensitive = ['!users', '!root-password']
 		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()

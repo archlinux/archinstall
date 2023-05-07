@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional, TYPE_CHECKING
 from parted import (  # type: ignore
 	Disk, Geometry, FileSystem,
 	PartitionException, DiskLabelException,
-	getAllDevices, freshDisk, Partition,
+	getAllDevices, freshDisk, Partition, Device
 )
 
 from .device_model import (
@@ -103,7 +103,8 @@ class DeviceHandler(object):
 	def get_device_by_partition_path(self, partition_path: Path) -> Optional[BDevice]:
 		partition = self.find_partition(partition_path)
 		if partition:
-			return partition.disk.device
+			device: Device = partition.disk.device
+			return self.get_device(Path(device.path))
 		return None
 
 	def find_partition(self, path: Path) -> Optional[_PartitionInfo]:

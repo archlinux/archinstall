@@ -337,7 +337,10 @@ class Menu(TerminalMenu):
 					if '|' in p:
 						p = p.replace('|', '\\|')
 
-					idx = self._menu_options.index(p)
+					if p in self._menu_options:
+						idx = self._menu_options.index(p)
+					else:
+						idx = self._menu_options.index(self._default_menu_value)
 					indexes.append(idx)
 				except (IndexError, ValueError):
 					log(f'Error finding index of {p}: {self._menu_options}', level=logging.DEBUG)
