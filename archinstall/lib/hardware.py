@@ -9,19 +9,6 @@ from .networking import list_interfaces, enrich_iface_types
 from .exceptions import SysCallError
 from .output import log
 
-__packages__ = [
-	"mesa",
-	"xf86-video-amdgpu",
-	"xf86-video-ati",
-	"xf86-video-nouveau",
-	"xf86-video-vmware",
-	"libva-mesa-driver",
-	"libva-intel-driver",
-	"intel-media-driver",
-	"vulkan-radeon",
-	"vulkan-intel",
-	"nvidia",
-]
 
 AVAILABLE_GFX_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
@@ -62,7 +49,8 @@ AVAILABLE_GFX_DRIVERS = {
 }
 
 
-def cpuinfo() -> Iterator[dict[str, str]]:
+
+def cpu_info() -> Iterator[dict[str, str]]:
 	"""
 	Yields information about the CPUs of the system
 	"""
@@ -97,7 +85,7 @@ def all_meminfo() -> Dict[str, int]:
 	return mem_info
 
 
-def meminfo_for_key(key: str) -> int:
+def _meminfo_for_key(key: str) -> int:
 	info = all_meminfo()
 	return info[key]
 
@@ -108,7 +96,7 @@ def has_wifi() -> bool:
 
 
 def has_cpu_vendor(vendor_id: str) -> bool:
-	return any(cpu.get("vendor_id") == vendor_id for cpu in cpuinfo())
+	return any(cpu.get("vendor_id") == vendor_id for cpu in cpu_info())
 
 
 has_amd_cpu = partial(has_cpu_vendor, "AuthenticAMD")
@@ -143,14 +131,14 @@ def has_intel_graphics() -> bool:
 
 
 def cpu_vendor() -> Optional[str]:
-	for cpu in cpuinfo():
+	for cpu in cpu_info():
 		return cpu.get("vendor_id")
 
 	return None
 
 
 def cpu_model() -> Optional[str]:
-	for cpu in cpuinfo():
+	for cpu in cpu_info():
 		return cpu.get("model name")
 
 	return None
@@ -167,15 +155,15 @@ def product_name() -> Optional[str]:
 
 
 def mem_available() -> Optional[int]:
-	return meminfo_for_key('MemAvailable')
+	return _meminfo_for_key('MemAvailable')
 
 
 def mem_free() -> Optional[int]:
-	return meminfo_for_key('MemFree')
+	return _meminfo_for_key('MemFree')
 
 
 def mem_total() -> Optional[int]:
-	return meminfo_for_key('MemTotal')
+	return _meminfo_for_key('MemTotal')
 
 
 def virtualization() -> Optional[str]:

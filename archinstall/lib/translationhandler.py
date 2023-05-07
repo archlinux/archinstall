@@ -8,7 +8,6 @@ from dataclasses import dataclass
 
 from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING, Optional
-from .exceptions import TranslationError
 
 if TYPE_CHECKING:
 	_: Any
@@ -81,7 +80,7 @@ class TranslationHandler:
 				language = Language(abbr, lang, translation, percent, translated_lang)
 				languages.append(language)
 			except FileNotFoundError as error:
-				raise TranslationError(f"Could not locate language file for '{lang}': {error}")
+				raise FileNotFoundError(f"Could not locate language file for '{lang}': {error}")
 
 		return languages
 

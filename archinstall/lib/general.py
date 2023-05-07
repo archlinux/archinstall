@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
 import os
@@ -18,6 +17,7 @@ import urllib.error
 import pathlib
 from datetime import datetime, date
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
+from select import epoll, EPOLLIN, EPOLLHUP
 
 from .exceptions import RequirementError, SysCallError
 from .output import log
@@ -26,42 +26,6 @@ from .storage import storage
 
 if TYPE_CHECKING:
 	from .installer import Installer
-
-
-if sys.platform == 'linux':
-	from select import epoll, EPOLLIN, EPOLLHUP
-else:
-	import select
-	EPOLLIN = 0
-	EPOLLHUP = 0
-
-	class epoll():
-		""" #!if windows
-		Create a epoll() implementation that simulates the epoll() behavior.
-		This so that the rest of the code doesn't need to worry weither we're using select() or epoll().
-		"""
-		def __init__(self) -> None:
-			self.sockets: Dict[str, Any] = {}
-			self.monitoring: Dict[int, Any] = {}
-
-		def unregister(self, fileno :int, *args :List[Any], **kwargs :Dict[str, Any]) -> None:
-			try:
-				del(self.monitoring[fileno]) # noqa: E275
-			except:
-				pass
-
-		def register(self, fileno :int, *args :int, **kwargs :Dict[str, Any]) -> None:
-			self.monitoring[fileno] = True
-
-		def poll(self, timeout: float = 0.05, *args :str, **kwargs :Dict[str, Any]) -> List[Any]:
-			try:
-				return [[fileno, 1] for fileno in select.select(list(self.monitoring.keys()), [], [], timeout)[0]]
-			except OSError:
-				return []
-
-
-def gen_uid(entropy_length :int = 256) -> str:
-	return hashlib.sha512(os.urandom(entropy_length)).hexdigest()
 
 
 def generate_password(length :int = 64) -> str:
@@ -156,6 +120,7 @@ class JsonEncoder:
 		else:
 			return JsonEncoder._encode(obj)
 
+
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	A safe JSON encoder that will omit private information in dicts (starting with !)
@@ -165,6 +130,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 
 	def encode(self, obj :Any) -> Any:
 		return super(JSON, self).encode(self._encode(obj))
+
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
@@ -350,7 +316,7 @@ class SysCommandWorker:
 					self.ended = time.time()
 					break
 
-			if self.ended or (got_output is False and pid_exists(self.pid) is False):
+			if self.ended or (got_output is False and _pid_exists(self.pid) is False):
 				self.ended = time.time()
 				try:
 					wait_status = os.waitpid(self.pid, 0)[1]
@@ -535,22 +501,7 @@ class SysCommand:
 		return None
 
 
-def prerequisite_check() -> bool:
-	"""
-	This function is used as a safety check before
-	continuing with an installation.
-
-	Could be anything from checking that /boot is big enough
-	to check if nvidia hardware exists when nvidia driver was chosen.
-	"""
-
-	return True
-
-def reboot():
-	SysCommand("/usr/bin/reboot")
-
-
-def pid_exists(pid: int) -> bool:
+def _pid_exists(pid: int) -> bool:
 	try:
 		return any(subprocess.check_output(['/usr/bin/ps', '--no-headers', '-o', 'pid', '-p', str(pid)]).strip())
 	except subprocess.CalledProcessError:
@@ -567,6 +518,7 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
 
 		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
+
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :
 	"""
@@ -607,6 +559,7 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 				return False
 
 	return True
+
 
 def secret(x :str):
 	""" return * with len equal to to the input string """
