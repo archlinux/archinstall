@@ -34,3 +34,7 @@ class ServiceException(BaseException):
 
 class PackageError(BaseException):
 	pass
+
+
+class Deprecated(BaseException):
+	pass
