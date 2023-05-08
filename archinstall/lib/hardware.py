@@ -1,5 +1,4 @@
 import os
-import logging
 from functools import cached_property
 from pathlib import Path
 from typing import Optional, Dict
@@ -7,8 +6,7 @@ from typing import Optional, Dict
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .exceptions import SysCallError
-from .output import log
-
+from .output import debug
 
 AVAILABLE_GFX_DRIVERS = {
 	# Sub-dicts are layer-2 options to be selected
@@ -157,8 +155,8 @@ class SysInfo:
 	def virtualization() -> Optional[str]:
 		try:
 			return str(SysCommand("systemd-detect-virt")).strip('\r\n')
-		except SysCallError as error:
-			log(f"Could not detect virtual system: {error}", level=logging.DEBUG)
+		except SysCallError as err:
+			debug(f"Could not detect virtual system: {err}")
 
 		return None
 
@@ -167,7 +165,7 @@ class SysInfo:
 		try:
 			result = SysCommand("systemd-detect-virt")
 			return b"none" not in b"".join(result).lower()
-		except SysCallError as error:
-			log(f"System is not running in a VM: {error}", level=logging.DEBUG)
+		except SysCallError as err:
+			debug(f"System is not running in a VM: {err}")
 
 		return False

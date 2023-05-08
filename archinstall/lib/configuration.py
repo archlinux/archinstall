@@ -1,14 +1,13 @@
 import os
 import json
 import stat
-import logging
 from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from .storage import storage
 from .general import JSON, UNSAFE_JSON, SysCommand
-from .output import log
+from .output import debug, info, warn
 
 if TYPE_CHECKING:
 	_: Any
@@ -70,18 +69,18 @@ class ConfigurationOutput:
 
 	def show(self):
 		print(_('\nThis is your chosen configuration:'))
-		log(" -- Chosen configuration --", level=logging.DEBUG)
+		debug(" -- Chosen configuration --")
 
 		user_conig = self.user_config_to_json()
-		log(user_conig, level=logging.INFO)
+		info(user_conig)
 
 		print()
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
-			log(
-				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
-				fg="yellow"
+			warn(
+				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
+				'Configuration files can not be saved'
 			)
 			return False
 		return True
@@ -171,8 +170,8 @@ def save_config(config: Dict):
 		'/var',
 	]
 
-	log('Ignore configuration option folders: ' + ','.join(dirs_to_exclude), level=logging.DEBUG)
-	log(_('Finding possible directories to save configuration files ...'), level=logging.INFO)
+	debug('Ignore configuration option folders: ' + ','.join(dirs_to_exclude))
+	info(_('Finding possible directories to save configuration files ...'))
 
 	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
 	file_picker_command = f'find / {find_exclude} -o -type d -print0'
@@ -198,7 +197,7 @@ def save_config(config: Dict):
 
 	save_dirs = selection.multi_value
 
-	log(f'Saving {saving_key} configuration files to {save_dirs}', level=logging.DEBUG)
+	debug(f'Saving {saving_key} configuration files to {save_dirs}')
 
 	if save_dirs is not None:
 		for save_dir_str in save_dirs:

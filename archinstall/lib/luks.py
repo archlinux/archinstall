@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import shlex
 import time
 from dataclasses import dataclass
@@ -9,7 +8,7 @@ from typing import Optional, List
 
 from . import disk
 from .general import SysCommand, generate_password, SysCommandWorker
-from .output import log
+from .output import info, debug
 from .exceptions import SysCallError, DiskError
 from .storage import storage
 
@@ -61,7 +60,7 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[Path] = None
 	) -> Path:
-		log(f'Luks2 encrypting: {self.luks_dev_path}', level=logging.INFO)
+		info(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		byte_password = self._password_bytes()
 
@@ -95,21 +94,21 @@ class Luks2:
 			try:
 				SysCommand(cryptsetup_args)
 				break
-			except SysCallError as error:
+			except SysCallError as err:
 				time.sleep(storage['DISK_TIMEOUTS'])
 
 				if retry_attempt != storage['DISK_RETRY_ATTEMPTS'] - 1:
 					continue
 
-				if error.exit_code == 1:
-					log(f'luks2 partition currently in use: {self.luks_dev_path}')
-					log('Attempting to unmount, crypt-close and trying encryption again')
+				if err.exit_code == 1:
+					info(f'luks2 partition currently in use: {self.luks_dev_path}')
+					info('Attempting to unmount, crypt-close and trying encryption again')
 
 					self.lock()
 					# Then try again to set up the crypt-device
 					SysCommand(cryptsetup_args)
 				else:
-					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {error}')
+					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
 
 		return key_file
 
@@ -119,7 +118,7 @@ class Luks2:
 		try:
 			return SysCommand(command).decode().strip()  # type: ignore
 		except SysCallError as err:
-			log(f'Unable to get UUID for Luks device: {self.luks_dev_path}', level=logging.INFO)
+			info(f'Unable to get UUID for Luks device: {self.luks_dev_path}')
 			raise err
 
 	def is_unlocked(self) -> bool:
@@ -133,7 +132,7 @@ class Luks2:
 		:param key_file: An alternative key file
 		:type key_file: Path
 		"""
-		log(f'Unlocking luks2 device: {self.luks_dev_path}', level=logging.DEBUG)
+		debug(f'Unlocking luks2 device: {self.luks_dev_path}')
 
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
@@ -170,11 +169,11 @@ class Luks2:
 		for child in lsblk_info.children:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
-				log(f'Unmounting {mountpoint}', level=logging.DEBUG)
+				debug(f'Unmounting {mountpoint}')
 				disk.device_handler.umount(mountpoint, recursive=True)
 
 			# And close it if possible.
-			log(f"Closing crypt device {child.name}", level=logging.DEBUG)
+			debug(f"Closing crypt device {child.name}")
 			SysCommand(f"cryptsetup close {child.name}")
 
 		self._mapper_dev = None
@@ -194,10 +193,10 @@ class Luks2:
 
 		if key_file.exists():
 			if not override:
-				log(f'Key file {key_file} already exists, keeping existing')
+				info(f'Key file {key_file} already exists, keeping existing')
 				return
 			else:
-				log(f'Key file {key_file} already exists, overriding')
+				info(f'Key file {key_file} already exists, overriding')
 
 		key_file_path.mkdir(parents=True, exist_ok=True)
 
@@ -210,7 +209,7 @@ class Luks2:
 		self._crypttab(crypttab_path, key_file, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
-		log(f'Adding additional key-file {key_file}', level=logging.INFO)
+		info(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
@@ -230,7 +229,7 @@ class Luks2:
 		key_file: Path,
 		options: List[str]
 	) -> None:
-		log(f'Adding crypttab entry for key {key_file}', level=logging.INFO)
+		info(f'Adding crypttab entry for key {key_file}')
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)

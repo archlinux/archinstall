@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import logging
 import sys
 from enum import Enum
 from typing import List
 
 from ..hardware import SysInfo
-from ..output import log
+from ..output import warn
 
 
 class Bootloader(Enum):
@@ -35,6 +34,6 @@ class Bootloader(Enum):
 
 		if bootloader not in cls.values():
 			values = ', '.join(cls.values())
-			log(f'Invalid bootloader value "{bootloader}". Allowed values: {values}', level=logging.WARN)
+			warn(f'Invalid bootloader value "{bootloader}". Allowed values: {values}')
 			sys.exit(1)
 		return Bootloader(bootloader)

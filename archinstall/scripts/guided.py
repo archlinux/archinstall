@@ -1,9 +1,9 @@
-import logging
 import os
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
+from archinstall import info, debug
 from archinstall import SysInfo
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
@@ -15,7 +15,6 @@ from archinstall.lib.mirrors import use_mirrors
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.lib.networking import check_mirror_reachable
-from archinstall.lib.output import log
 from archinstall.lib.profile.profiles_handler import profile_handler
 
 if TYPE_CHECKING:
@@ -109,7 +108,7 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	log('Starting installation', level=logging.INFO)
+	info('Starting installation')
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
@@ -178,13 +177,13 @@ def perform_installation(mountpoint: Path):
 			installation.create_users(users)
 
 		if audio := archinstall.arguments.get('audio', None):
-			log(f'Installing audio server: {audio}', level=logging.INFO)
+			info(f'Installing audio server: {audio}')
 			if audio == 'pipewire':
 				PipewireProfile().install(installation)
 			elif audio == 'pulseaudio':
 				installation.add_additional_packages("pulseaudio")
 		else:
-			installation.log("No audio server will be installed.", level=logging.INFO)
+			info("No audio server will be installed")
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile_handler.install_profile_config(installation, profile_config)
@@ -219,7 +218,7 @@ def perform_installation(mountpoint: Path):
 
 		installation.genfstab()
 
-		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
@@ -230,12 +229,12 @@ def perform_installation(mountpoint: Path):
 				except:
 					pass
 
-	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
+	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
 if archinstall.arguments.get('skip-mirror-check', False) is False and check_mirror_reachable() is False:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	info(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.")
 	exit(1)
 
 if not archinstall.arguments.get('silent'):

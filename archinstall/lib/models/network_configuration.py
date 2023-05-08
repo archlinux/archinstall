@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Dict, Union, Any, TYPE_CHECKING, Tuple
 
-from ..output import log
+from ..output import debug
 from ..profile import ProfileConfiguration
 
 if TYPE_CHECKING:
@@ -138,8 +137,7 @@ class NetworkConfigurationHandler:
 			iface = manual_config.get('iface', None)
 
 			if iface is None:
-				log(_('No iface specified for manual configuration'))
-				exit(1)
+				raise ValueError('No iface specified for manual configuration')
 
 			if manual_config.get('dhcp', False) or not any([manual_config.get(v, '') for v in ['ip', 'gateway', 'dns']]):
 				configurations.append(
@@ -148,8 +146,7 @@ class NetworkConfigurationHandler:
 			else:
 				ip = manual_config.get('ip', '')
 				if not ip:
-					log(_('Manual nic configuration with no auto DHCP requires an IP address'), fg='red')
-					exit(1)
+					raise ValueError('Manual nic configuration with no auto DHCP requires an IP address')
 
 				dns = manual_config.get('dns', [])
 				if not isinstance(dns, list):
@@ -173,8 +170,7 @@ class NetworkConfigurationHandler:
 			return NicType(nic_type)
 		except ValueError:
 			options = [e.value for e in NicType]
-			log(_('Unknown nic type: {}. Possible values are {}').format(nic_type, options), fg='red')
-			exit(1)
+			raise ValueError(f'Unknown nic type: {nic_type}. Possible values are {options}')
 
 	def parse_arguments(self, config: Any):
 		if isinstance(config, list):  # new data format
@@ -187,4 +183,4 @@ class NetworkConfigurationHandler:
 			else:  # manual configuration settings
 				self._configuration = self._parse_manual_config([config])
 		else:
-			log(f'Unable to parse network configuration: {config}', level=logging.DEBUG)
+			debug(f'Unable to parse network configuration: {config}')

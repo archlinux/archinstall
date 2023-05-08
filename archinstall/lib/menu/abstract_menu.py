@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import logging
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from ..locale import set_keyboard_language
-from ..output import log
+from ..output import error
 from ..translationhandler import TranslationHandler, Language
 
 if TYPE_CHECKING:
@@ -211,7 +210,7 @@ class AbstractMenu:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
+			error(args[1])
 			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 

@@ -1,9 +1,7 @@
-import logging
 from pathlib import Path
 
 import archinstall
-from archinstall import Installer
-from archinstall import disk
+from archinstall import Installer, disk, debug
 
 
 def ask_user_questions():
@@ -48,7 +46,7 @@ def perform_installation(mountpoint: Path):
 			target.parent.mkdir(parents=True)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
-	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
+	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
 ask_user_questions()

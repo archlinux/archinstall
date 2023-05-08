@@ -1,6 +1,5 @@
 """Arch Linux installer - guided, templates etc."""
 import importlib
-import logging
 import os
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -21,7 +20,10 @@ from . import default_profiles
 
 from .lib.hardware import SysInfo, AVAILABLE_GFX_DRIVERS
 from .lib.installer import Installer, accessibility_tools_in_use
-from .lib.output import FormattedOutput, Journald, log
+from .lib.output import (
+	FormattedOutput, log, error,
+	check_log_permissions, debug, warn, info
+)
 from .lib.storage import storage
 from .lib.global_menu import GlobalMenu
 from .lib.systemd import Boot
@@ -49,14 +51,14 @@ storage['__version__'] = __version__
 DeferredTranslation.install()
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
-log(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}", level=logging.DEBUG)
-log(f"Processor model detected: {SysInfo.cpu_model()}", level=logging.DEBUG)
-log(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed", level=logging.DEBUG)
-log(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}", level=logging.DEBUG)
-log(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}", level=logging.DEBUG)
+debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
+debug(f"Processor model detected: {SysInfo.cpu_model()}")
+debug(f"Memory statistics: {SysInfo.mem_available()} available out of {SysInfo.mem_total()} total installed")
+debug(f"Virtualization detected: {SysInfo.virtualization()}; is VM: {SysInfo.is_vm()}")
+debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
+debug(f"Disk states before installing: {disk.disk_layouts()}")
 
 
 if os.getuid() != 0:
@@ -90,7 +92,7 @@ def define_arguments():
 	parser.add_argument("--plugin", nargs="?", type=str)
 
 
-def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, error :bool = False) -> dict:
+def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, err :bool = False) -> dict:
 	"""We accept arguments not defined to the parser. (arguments "ad hoc").
 	Internally argparse return to us a list of words so we have to parse its contents, manually.
 	We accept following individual syntax for each argument
@@ -134,7 +136,7 @@ def parse_unspecified_argument_list(unknowns :list, multiple :bool = False, erro
 						config[last_key] = [config[last_key],element]
 					else:
 						config[last_key].append(element)
-				elif error:
+				elif err:
 					raise ValueError(f"Entry {element} is not related to any argument")
 				else:
 					print(f" We ignore the entry {element} as it isn't related to any argument")
@@ -259,7 +261,7 @@ def post_process_arguments(arguments):
 		storage['MOUNT_POINT'] = Path(mountpoint)
 
 	if arguments.get('debug', False):
-		log(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!", fg="red", level=logging.WARNING)
+		warn(f"Warning: --debug mode will write certain credentials to {storage['LOG_PATH']}/{storage['LOG_FILE']}!")
 
 	if arguments.get('plugin', None):
 		path = arguments['plugin']

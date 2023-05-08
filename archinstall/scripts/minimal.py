@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
+from archinstall import info
 from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
@@ -13,13 +14,13 @@ if TYPE_CHECKING:
 	_: Any
 
 
-archinstall.log("Minimal only supports:")
-archinstall.log(" * Being installed to a single disk")
+info("Minimal only supports:")
+info(" * Being installed to a single disk")
 
 if archinstall.arguments.get('help', None):
-	archinstall.log(" - Optional disk encryption via --!encryption-password=<password>")
-	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
-	archinstall.log(" - Optional systemd network via --network")
+	info(" - Optional disk encryption via --!encryption-password=<password>")
+	info(" - Optional filesystem type via --filesystem=<fs type>")
+	info(" - Optional systemd network via --network")
 
 
 def perform_installation(mountpoint: Path):
@@ -52,9 +53,9 @@ def perform_installation(mountpoint: Path):
 
 	# Once this is done, we output some useful information to the user
 	# And the installation is complete.
-	archinstall.log("There are two new accounts in your installation after reboot:")
-	archinstall.log(" * root (password: airoot)")
-	archinstall.log(" * devel (password: devel)")
+	info("There are two new accounts in your installation after reboot:")
+	info(" * root (password: airoot)")
+	info(" * devel (password: devel)")
 
 
 def prompt_disk_layout():

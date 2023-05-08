@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.util
-import logging
 import sys
 from collections import Counter
 from functools import cached_property
@@ -15,7 +14,7 @@ from .profile_model import ProfileConfiguration
 from ..hardware import AVAILABLE_GFX_DRIVERS
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
-from ..output import log
+from ..output import error, debug, info, warn
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -106,7 +105,7 @@ class ProfileHandler:
 			invalid = ', '.join([k for k, v in resolved.items() if v is None])
 
 			if invalid:
-				log(f'No profile definition found: {invalid}')
+				info(f'No profile definition found: {invalid}')
 
 		custom_settings = profile_config.get('custom_settings', {})
 		for profile in valid:
@@ -216,7 +215,7 @@ class ProfileHandler:
 
 			install_session.add_additional_packages(additional_pkg)
 		except Exception as err:
-			log(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}", level=logging.WARNING, fg="yellow")
+			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
 			# Prep didn't run, so there's no driver to install
 			install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
 
@@ -250,7 +249,7 @@ class ProfileHandler:
 			self.add_custom_profiles(profiles)
 		except ValueError:
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
-			log(err, level=logging.ERROR, fg="red")
+			error(err)
 
 	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
 		"""
@@ -264,7 +263,7 @@ class ProfileHandler:
 					if isinstance(cls_, Profile):
 						profiles.append(cls_)
 				except Exception:
-					log(f'Cannot import {module}, it does not appear to be a Profile class', level=logging.DEBUG)
+					debug(f'Cannot import {module}, it does not appear to be a Profile class')
 
 		return profiles
 
@@ -278,7 +277,7 @@ class ProfileHandler:
 
 		if len(duplicates) > 0:
 			err = str(_('Profiles must have unique name, but profile definitions with duplicate name found: {}')).format(duplicates[0][0])
-			log(err, level=logging.ERROR, fg="red")
+			error(err)
 			sys.exit(1)
 
 	def _is_legacy(self, file: Path) -> bool:
@@ -297,15 +296,15 @@ class ProfileHandler:
 		Process a file for profile definitions
 		"""
 		if self._is_legacy(file):
-			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
+			info(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
 
 		if not file.is_file():
-			log(f'Cannot find profile file {file}')
+			info(f'Cannot find profile file {file}')
 			return []
 
 		name = file.name.removesuffix(file.suffix)
-		log(f'Importing profile: {file}', level=logging.DEBUG)
+		debug(f'Importing profile: {file}')
 
 		try:
 			spec = importlib.util.spec_from_file_location(name, file)
@@ -315,7 +314,7 @@ class ProfileHandler:
 					spec.loader.exec_module(imported)
 					return self._load_profile_class(imported)
 		except Exception as e:
-			log(f'Unable to parse file {file}: {e}', level=logging.ERROR)
+			error(f'Unable to parse file {file}: {e}')
 
 		return []
 

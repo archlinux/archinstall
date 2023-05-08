@@ -1,4 +1,3 @@
-import logging
 import os
 import socket
 import ssl
@@ -9,15 +8,15 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from .exceptions import SysCallError
-from .output import log
+from .output import error, info, debug
 from .pacman import run_pacman
 
 
 def get_hw_addr(ifname :str) -> str:
 	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
-	return ':'.join('%02x' % b for b in info[18:24])
+	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+	return ':'.join('%02x' % b for b in ret[18:24])
 
 
 def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
@@ -34,26 +33,26 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 
 
 def check_mirror_reachable() -> bool:
-	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
+	info("Testing connectivity to the Arch Linux mirrors...")
 	try:
 		run_pacman("-Sy")
 		return True
 	except SysCallError as err:
 		if os.geteuid() != 0:
-			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
-		log(f'exit_code: {err.exit_code}, Error: {err.message}', level=logging.DEBUG)
+			error("check_mirror_reachable() uses 'pacman -Sy' which requires root.")
+		debug(f'exit_code: {err.exit_code}, Error: {err.message}')
 
 	return False
 
 
 def update_keyring() -> bool:
-	log("Updating archlinux-keyring ...", level=logging.INFO)
+	info("Updating archlinux-keyring ...")
 	try:
 		run_pacman("-Sy --noconfirm archlinux-keyring")
 		return True
 	except SysCallError:
 		if os.geteuid() != 0:
-			log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
+			error("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.")
 
 	return False
 

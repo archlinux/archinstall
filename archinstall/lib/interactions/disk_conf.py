@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 from typing import Optional, List, Tuple
@@ -10,8 +9,7 @@ from ..hardware import SysInfo
 from ..menu import Menu
 from ..menu import TableMenu
 from ..menu.menu import MenuSelectionType
-from ..output import FormattedOutput
-from ..output import log
+from ..output import FormattedOutput, debug
 from ..utils.util import prompt_dir
 
 if TYPE_CHECKING:
@@ -356,9 +354,10 @@ def suggest_multi_disk_layout(
 		compression = choice.value == Menu.yes()
 
 	device_paths = ', '.join([str(d.device_info.path) for d in devices])
-	log(f"Suggesting multi-disk-layout for devices: {device_paths}", level=logging.DEBUG)
-	log(f"/root: {root_device.device_info.path}", level=logging.DEBUG)
-	log(f"/home: {home_device.device_info.path}", level=logging.DEBUG)
+
+	debug(f"Suggesting multi-disk-layout for devices: {device_paths}")
+	debug(f"/root: {root_device.device_info.path}")
+	debug(f"/home: {home_device.device_info.path}")
 
 	root_device_modification = disk.DeviceModification(root_device, wipe=True)
 	home_device_modification = disk.DeviceModification(home_device, wipe=True)

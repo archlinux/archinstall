@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
-import logging
 import os
 import gettext
 from dataclasses import dataclass
 
 from pathlib import Path
 from typing import List, Dict, Any, TYPE_CHECKING, Optional
+
+from .output import error, debug
 
 if TYPE_CHECKING:
 	_: Any
@@ -79,8 +80,8 @@ class TranslationHandler:
 
 				language = Language(abbr, lang, translation, percent, translated_lang)
 				languages.append(language)
-			except FileNotFoundError as error:
-				raise FileNotFoundError(f"Could not locate language file for '{lang}': {error}")
+			except FileNotFoundError as err:
+				raise FileNotFoundError(f"Could not locate language file for '{lang}': {err}")
 
 		return languages
 
@@ -88,12 +89,12 @@ class TranslationHandler:
 		"""
 		Set the provided font as the new terminal font
 		"""
-		from .general import SysCommand, log
+		from .general import SysCommand
 		try:
-			log(f'Setting font: {font}', level=logging.DEBUG)
+			debug(f'Setting font: {font}')
 			SysCommand(f'setfont {font}')
 		except Exception:
-			log(f'Unable to set font {font}', level=logging.ERROR)
+			error(f'Unable to set font {font}')
 
 	def _load_language_mappings(self) -> List[Dict[str, Any]]:
 		"""

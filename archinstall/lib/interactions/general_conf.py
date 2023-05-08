@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import logging
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
 from ..locale import list_keyboard_languages, list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
-from ..output import log
+from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
 from ..translationhandler import Language
@@ -176,7 +175,7 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 				valid, invalid = validate_package_list(packages)
 
 				if invalid:
-					log(f"Some packages could not be found in the repository: {invalid}", level=logging.WARNING, fg='red')
+					warn(f"Some packages could not be found in the repository: {invalid}")
 					packages = read_packages(valid)
 					continue
 			break

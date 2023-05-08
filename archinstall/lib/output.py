@@ -1,11 +1,13 @@
 import logging
 import os
 import sys
+from enum import Enum
+
 from pathlib import Path
 from typing import Dict, Union, List, Any, Callable, Optional
+from dataclasses import asdict, is_dataclass
 
 from .storage import storage
-from dataclasses import asdict, is_dataclass
 
 
 class FormattedOutput:
@@ -115,22 +117,28 @@ class FormattedOutput:
 		return output
 
 
-class Journald:
-	@staticmethod
-	def log(message :str, level :int = logging.DEBUG) -> None:
-		try:
-			import systemd.journal  # type: ignore
-		except ModuleNotFoundError:
-			return None
+def check_log_permissions():
+	filename = storage.get('LOG_FILE', None)
 
-		log_adapter = logging.getLogger('archinstall')
-		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
-		log_ch = systemd.journal.JournalHandler()
-		log_ch.setFormatter(log_fmt)
-		log_adapter.addHandler(log_ch)
-		log_adapter.setLevel(logging.DEBUG)
+	if not filename:
+		return
 
-		log_adapter.log(level, message)
+	log_dir = storage.get('LOG_PATH', Path('./'))
+	absolute_logfile = log_dir / filename
+
+	try:
+		log_dir.mkdir(exist_ok=True, parents=True)
+		with absolute_logfile.open('a') as fp:
+			fp.write('')
+	except PermissionError:
+		# Fallback to creating the log file in the current folder
+		fallback_log_file = Path('./').absolute() / filename
+		absolute_logfile = fallback_log_file
+		absolute_logfile.mkdir(exist_ok=True, parents=True)
+		storage['LOG_PATH'] = Path('./').absolute()
+
+		err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
+		warn(err_string)
 
 
 def _supports_color() -> bool:
@@ -150,7 +158,22 @@ def _supports_color() -> bool:
 	return supported_platform and is_a_tty
 
 
-def _stylize_output(text: str, *opts :str, **kwargs) -> str:
+class Font(Enum):
+	bold = '1'
+	italic = '3'
+	underscore = '4'
+	blink = '5'
+	reverse = '7'
+	conceal = '8'
+
+
+def _stylize_output(
+	text: str,
+	fg: str,
+	bg: Optional[str],
+	reset: bool,
+	font: List[Font] = [],
+) -> str:
 	"""
 	Heavily influenced by:
 		https://github.com/django/django/blob/ae8338daf34fd746771e0678081999b656177bae/django/utils/termcolors.py#L13
@@ -159,7 +182,6 @@ def _stylize_output(text: str, *opts :str, **kwargs) -> str:
 
 	Adds styling to a text given a set of color arguments.
 	"""
-	opt_dict = {'bold': '1', 'italic': '3', 'underscore': '4', 'blink': '5', 'reverse': '7', 'conceal': '8'}
 	colors = {
 		'black' : '0',
 		'red' : '1',
@@ -177,65 +199,68 @@ def _stylize_output(text: str, *opts :str, **kwargs) -> str:
 		'darkgray' : '8;5;240',
 		'lightgray' : '8;5;256'
 	}
+
 	foreground = {key: f'3{colors[key]}' for key in colors}
 	background = {key: f'4{colors[key]}' for key in colors}
-	reset = '0'
-
 	code_list = []
-	if text == '' and len(opts) == 1 and opts[0] == 'reset':
-		return '\x1b[%sm' % reset
 
-	for k, v in kwargs.items():
-		if k == 'fg':
-			code_list.append(foreground[str(v)])
-		elif k == 'bg':
-			code_list.append(background[str(v)])
+	if text == '' and reset:
+		return '\x1b[%sm' % '0'
 
-	for o in opts:
-		if o in opt_dict:
-			code_list.append(opt_dict[o])
+	code_list.append(foreground[str(fg)])
 
-	if 'noreset' not in opts:
-		text = '%s\x1b[%sm' % (text or '', reset)
+	if bg:
+		code_list.append(background[str(bg)])
+
+	for o in font:
+		code_list.append(o.value)
 
 	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
 
 
-def log(*args :str, **kwargs :Union[str, int, Dict[str, Union[str, int]]]) -> None:
-	string = orig_string = ' '.join([str(x) for x in args])
+def info(*msgs: str):
+	log(*msgs, level=logging.INFO)
+
+
+def debug(*msgs: str):
+	log(*msgs, level=logging.DEBUG)
+
+
+def error(*msgs: str):
+	log(*msgs, level=logging.ERROR, fg='red')
+
+
+def warn(*msgs: str):
+	log(*msgs, level=logging.WARNING, fg='yellow')
+
+
+def log(
+	*msgs: str,
+	level: int = logging.INFO,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	text = orig_string = ' '.join([str(x) for x in msgs])
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
 	if _supports_color():
-		kwargs = {'fg': 'white', **kwargs}
-		string = _stylize_output(string, **kwargs)
+		text = _stylize_output(text, fg, bg, reset, font)
 
 	# If a logfile is defined in storage,
 	# we use that one to output everything
 	if filename := storage.get('LOG_FILE', None):
-		absolute_logfile = os.path.join(storage.get('LOG_PATH', './'), filename)
+		log_dir = storage.get('LOG_PATH', Path('./'))
+		absolute_logfile = log_dir / filename
 
-		try:
-			Path(absolute_logfile).parents[0].mkdir(exist_ok=True, parents=True)
-			with open(absolute_logfile, 'a') as log_file:
-				log_file.write("")
-		except PermissionError:
-			# Fallback to creating the log file in the current folder
-			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {Path('./').absolute() / filename} instead."
-			absolute_logfile = Path('./').absolute() / filename
-			absolute_logfile.parents[0].mkdir(exist_ok=True)
-			absolute_logfile = str(absolute_logfile)
-			storage['LOG_PATH'] = './'
-			log(err_string, fg="red")
-
-		with open(absolute_logfile, 'a') as log_file:
-			log_file.write(f"{orig_string}\n")
-
-	Journald.log(string, level=int(str(kwargs.get('level', logging.INFO))))
+		with open(absolute_logfile, 'a') as fp:
+			fp.write(f"{orig_string}\n")
 
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and
 	# fix issue #94
-	if kwargs.get('level', logging.INFO) != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-		sys.stdout.write(f"{string}\n")
+	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+		sys.stdout.write(f"{text}\n")
 		sys.stdout.flush()
