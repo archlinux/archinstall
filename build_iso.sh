@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 packages_file="/tmp/archlive/packages.x86_64"
 
 # Packages to add to the archiso profile packages
