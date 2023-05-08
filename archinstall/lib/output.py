@@ -215,7 +215,9 @@ def _stylize_output(
 	for o in font:
 		code_list.append(o.value)
 
-	return '%s%s' % (('\x1b[%sm' % ';'.join(code_list)), text or '')
+	ansi = ';'.join(code_list)
+
+	return f'\033[{ansi}m{text}\033[0m'
 
 
 def info(*msgs: str):
