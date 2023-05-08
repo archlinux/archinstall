@@ -9,8 +9,8 @@ from archinstall import mirrors
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
-from archinstall.lib.models import Bootloader, NetworkConfigurationHandler
-from archinstall.lib.output import info, debug
+from archinstall import models
+from archinstall import info, debug
 
 if TYPE_CHECKING:
 	_: Any
@@ -133,7 +133,7 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == Bootloader.Grub and SysInfo.has_uefi():
+		if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
 		installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -143,7 +143,7 @@ def perform_installation(mountpoint: Path):
 		network_config = archinstall.arguments.get('nic', None)
 
 		if network_config:
-			handler = NetworkConfigurationHandler(network_config)
+			handler = models.NetworkConfigurationHandler(network_config)
 			handler.config_installer(
 				installation,
 				archinstall.arguments.get('profile_config', None)

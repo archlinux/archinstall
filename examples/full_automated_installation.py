@@ -4,7 +4,7 @@ from archinstall import Installer
 from archinstall import profile
 from archinstall.default_profiles.minimal import MinimalProfile
 from archinstall import disk
-from archinstall.lib.models import User
+from archinstall import models
 
 # we're creating a new ext4 filesystem installation
 fs_type = disk.FilesystemType('ext4')
@@ -92,5 +92,5 @@ with Installer(
 profile_config = profile.ProfileConfiguration(MinimalProfile())
 profile.profile_handler.install_profile_config(installation, profile_config)
 
-user = User('archinstall', 'password', True)
+user = models.User('archinstall', 'password', True)
 installation.create_users(user)
