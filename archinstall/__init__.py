@@ -50,6 +50,8 @@ storage['__version__'] = __version__
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
 
+check_log_permissions()
+
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
 debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
 debug(f"Processor model detected: {SysInfo.cpu_model()}")
