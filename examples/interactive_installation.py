@@ -1,13 +1,16 @@
-import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import archinstall
-from archinstall import log, Installer, use_mirrors, profile_handler
+from archinstall import Installer
+from archinstall import profile
+from archinstall import SysInfo
+from archinstall import mirrors
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
-from archinstall.lib.models import Bootloader, NetworkConfigurationHandler
+from archinstall import models
+from archinstall import info, debug
 
 if TYPE_CHECKING:
 	_: Any
@@ -84,7 +87,7 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	log('Starting installation', level=logging.INFO)
+	info('Starting installation')
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
@@ -114,7 +117,7 @@ def perform_installation(mountpoint: Path):
 
 		# Set mirrors used by pacstrap (outside of installation)
 		if archinstall.arguments.get('mirror-region', None):
-			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+			mirrors.use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
 
 		installation.minimal_installation(
 			testing=enable_testing,
@@ -130,7 +133,7 @@ def perform_installation(mountpoint: Path):
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == Bootloader.Grub and archinstall.has_uefi():
+		if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
 		installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -140,7 +143,7 @@ def perform_installation(mountpoint: Path):
 		network_config = archinstall.arguments.get('nic', None)
 
 		if network_config:
-			handler = NetworkConfigurationHandler(network_config)
+			handler = models.NetworkConfigurationHandler(network_config)
 			handler.config_installer(
 				installation,
 				archinstall.arguments.get('profile_config', None)
@@ -153,16 +156,16 @@ def perform_installation(mountpoint: Path):
 			installation.create_users(users)
 
 		if audio := archinstall.arguments.get('audio', None):
-			log(f'Installing audio server: {audio}', level=logging.INFO)
+			info(f'Installing audio server: {audio}')
 			if audio == 'pipewire':
 				PipewireProfile().install(installation)
 			elif audio == 'pulseaudio':
 				installation.add_additional_packages("pulseaudio")
 		else:
-			installation.log("No audio server will be installed.", level=logging.INFO)
+			info("No audio server will be installed.")
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
-			profile_handler.install_profile_config(installation, profile_config)
+			profile.profile_handler.install_profile_config(installation, profile_config)
 
 		if timezone := archinstall.arguments.get('timezone', None):
 			installation.set_timezone(timezone)
@@ -194,7 +197,7 @@ def perform_installation(mountpoint: Path):
 
 		installation.genfstab()
 
-		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
@@ -202,10 +205,10 @@ def perform_installation(mountpoint: Path):
 			if choice.value == menu.Menu.yes():
 				try:
 					installation.drop_to_shell()
-				except:
+				except Exception:
 					pass
 
-	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
+	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
 ask_user_questions()

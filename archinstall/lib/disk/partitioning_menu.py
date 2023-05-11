@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus
 from ..menu import Menu, ListManager, MenuSelection, TextInput
-from ..output import FormattedOutput, log
+from ..output import FormattedOutput, warn
 from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
@@ -229,7 +228,7 @@ class PartitioningList(ListManager):
 			if not start_sector or self._validate_sector(start_sector):
 				break
 
-			log(f'Invalid start sector entered: {start_sector}', fg='red', level=logging.INFO)
+			warn(f'Invalid start sector entered: {start_sector}')
 
 		if not start_sector:
 			start_sector = str(largest_free_area.start)
@@ -245,7 +244,7 @@ class PartitioningList(ListManager):
 			if not end_value or self._validate_sector(start_sector, end_value):
 				break
 
-			log(f'Invalid end sector entered: {start_sector}', fg='red', level=logging.INFO)
+			warn(f'Invalid end sector entered: {start_sector}')
 
 		# override the default value with the user value
 		if end_value:
@@ -300,7 +299,7 @@ class PartitioningList(ListManager):
 			if choice.value == Menu.no():
 				return []
 
-		from ..user_interaction.disk_conf import suggest_single_disk_layout
+		from ..interactions.disk_conf import suggest_single_disk_layout
 
 		device_modification = suggest_single_disk_layout(self._device)
 		return device_modification.partitions

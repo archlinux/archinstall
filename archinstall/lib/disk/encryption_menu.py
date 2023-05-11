@@ -13,7 +13,7 @@ from ..menu import (
 	MenuSelectionType,
 	TableMenu
 )
-from ..user_interaction.utils import get_password
+from ..interactions.utils import get_password
 from ..menu import Menu
 from ..general import secret
 from .fido import Fido2Device, Fido2
