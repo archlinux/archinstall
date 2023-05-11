@@ -1,4 +1,3 @@
-import logging
 import pathlib
 import urllib.error
 import urllib.request
@@ -6,7 +5,7 @@ from typing import Union, Iterable, Dict, Any, List
 from dataclasses import dataclass
 
 from .general import SysCommand
-from .output import log
+from .output import info, warn
 from .exceptions import SysCallError
 from .storage import storage
 
@@ -136,7 +135,7 @@ def use_mirrors(
 	regions: Dict[str, Iterable[str]],
 	destination: str = '/etc/pacman.d/mirrorlist'
 ):
-	log(f'A new package mirror-list has been created: {destination}', level=logging.INFO)
+	info(f'A new package mirror-list has been created: {destination}')
 	with open(destination, 'w') as mirrorlist:
 		for region, mirrors in regions.items():
 			for mirror in mirrors:
@@ -170,7 +169,7 @@ def list_mirrors(sort_order :List[str] = ["https", "http"]) -> Dict[str, Any]:
 		try:
 			response = urllib.request.urlopen(url)
 		except urllib.error.URLError as err:
-			log(f'Could not fetch an active mirror-list: {err}', level=logging.WARNING, fg="orange")
+			warn(f'Could not fetch an active mirror-list: {err}')
 			return regions
 
 		mirrorlist = response.read()

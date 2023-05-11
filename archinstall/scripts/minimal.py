@@ -2,23 +2,25 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall import ConfigurationOutput, Installer, ProfileConfiguration, profile_handler
+from archinstall import info
+from archinstall import Installer, ConfigurationOutput
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall import disk
-from archinstall import models
-from archinstall.lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
+from archinstall.lib.interactions import suggest_single_disk_layout, select_devices
+from archinstall.lib.models import Bootloader, User
+from archinstall.lib.profile import ProfileConfiguration, profile_handler
+from archinstall.lib import disk
 
 if TYPE_CHECKING:
 	_: Any
 
 
-archinstall.log("Minimal only supports:")
-archinstall.log(" * Being installed to a single disk")
+info("Minimal only supports:")
+info(" * Being installed to a single disk")
 
 if archinstall.arguments.get('help', None):
-	archinstall.log(" - Optional disk encryption via --!encryption-password=<password>")
-	archinstall.log(" - Optional filesystem type via --filesystem=<fs type>")
-	archinstall.log(" - Optional systemd network via --network")
+	info(" - Optional disk encryption via --!encryption-password=<password>")
+	info(" - Optional filesystem type via --filesystem=<fs type>")
+	info(" - Optional systemd network via --network")
 
 
 def perform_installation(mountpoint: Path):
@@ -35,7 +37,7 @@ def perform_installation(mountpoint: Path):
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
 			installation.set_hostname('minimal-arch')
-			installation.add_bootloader(models.Bootloader.Systemd)
+			installation.add_bootloader(Bootloader.Systemd)
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):
@@ -46,14 +48,14 @@ def perform_installation(mountpoint: Path):
 			profile_config = ProfileConfiguration(MinimalProfile())
 			profile_handler.install_profile_config(installation, profile_config)
 
-			user = models.User('devel', 'devel', False)
+			user = User('devel', 'devel', False)
 			installation.create_users(user)
 
 	# Once this is done, we output some useful information to the user
 	# And the installation is complete.
-	archinstall.log("There are two new accounts in your installation after reboot:")
-	archinstall.log(" * root (password: airoot)")
-	archinstall.log(" * devel (password: devel)")
+	info("There are two new accounts in your installation after reboot:")
+	info(" * root (password: airoot)")
+	info(" * devel (password: devel)")
 
 
 def prompt_disk_layout():

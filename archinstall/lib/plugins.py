@@ -1,6 +1,5 @@
 import hashlib
 import importlib
-import logging
 import os
 import sys
 import urllib.parse
@@ -9,7 +8,7 @@ from importlib import metadata
 from pathlib import Path
 from typing import Optional, List
 
-from .output import log
+from .output import error, info, warn
 from .storage import storage
 
 plugins = {}
@@ -24,11 +23,13 @@ for plugin_definition in metadata.entry_points().select(group='archinstall.plugi
 	try:
 		plugins[plugin_definition.name] = plugin_entrypoint()
 	except Exception as err:
-		log(f'Error: {err}', level=logging.ERROR)
-		log(f"The above error was detected when loading the plugin: {plugin_definition}", fg="red", level=logging.ERROR)
+		error(
+			f'Error: {err}',
+			f"The above error was detected when loading the plugin: {plugin_definition}"
+		)
 
 
-def localize_path(path: Path) -> Path:
+def _localize_path(path: Path) -> Path:
 	"""
 	Support structures for load_plugin()
 	"""
@@ -45,7 +46,7 @@ def localize_path(path: Path) -> Path:
 		return path
 
 
-def import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str]:
+def _import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str]:
 	if not namespace:
 		namespace = os.path.basename(path)
 
@@ -61,8 +62,10 @@ def import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str
 
 		return namespace
 	except Exception as err:
-		log(f'Error: {err}', level=logging.ERROR)
-		log(f"The above error was detected when loading the plugin: {path}", fg="red", level=logging.ERROR)
+		error(
+			f'Error: {err}',
+			f"The above error was detected when loading the plugin: {path}"
+		)
 
 		try:
 			del sys.modules[namespace]
@@ -72,7 +75,7 @@ def import_via_path(path: Path, namespace: Optional[str] = None) -> Optional[str
 	return namespace
 
 
-def find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
+def _find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
 	indices = [idx for idx, elem in enumerate(haystack) if elem == needle]
 	if n <= len(indices):
 		return indices[n - 1]
@@ -82,34 +85,36 @@ def find_nth(haystack: List[str], needle: str, n: int) -> Optional[int]:
 def load_plugin(path: Path):
 	namespace: Optional[str] = None
 	parsed_url = urllib.parse.urlparse(str(path))
-	log(f"Loading plugin from url {parsed_url}.", level=logging.INFO)
+	info(f"Loading plugin from url {parsed_url}")
 
 	# The Profile was not a direct match on a remote URL
 	if not parsed_url.scheme:
 		# Path was not found in any known examples, check if it's an absolute path
 		if os.path.isfile(path):
-			namespace = import_via_path(path)
+			namespace = _import_via_path(path)
 	elif parsed_url.scheme in ('https', 'http'):
-		localized = localize_path(path)
-		namespace = import_via_path(localized)
+		localized = _localize_path(path)
+		namespace = _import_via_path(localized)
 
 	if namespace and namespace in sys.modules:
 		# Version dependency via __archinstall__version__ variable (if present) in the plugin
 		# Any errors in version inconsistency will be handled through normal error handling if not defined.
 		if hasattr(sys.modules[namespace], '__archinstall__version__'):
-			archinstall_major_and_minor_version = float(storage['__version__'][:find_nth(storage['__version__'], '.', 2)])
+			archinstall_major_and_minor_version = float(storage['__version__'][:_find_nth(storage['__version__'], '.', 2)])
 
 			if sys.modules[namespace].__archinstall__version__ < archinstall_major_and_minor_version:
-				log(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.", fg="red", level=logging.ERROR)
+				error(f"Plugin {sys.modules[namespace]} does not support the current Archinstall version.")
 
 		# Locate the plugin entry-point called Plugin()
 		# This in accordance with the entry_points() from setup.cfg above
 		if hasattr(sys.modules[namespace], 'Plugin'):
 			try:
 				plugins[namespace] = sys.modules[namespace].Plugin()
-				log(f"Plugin {plugins[namespace]} has been loaded.", fg="gray", level=logging.INFO)
+				info(f"Plugin {plugins[namespace]} has been loaded.")
 			except Exception as err:
-				log(f'Error: {err}', level=logging.ERROR)
-				log(f"The above error was detected when initiating the plugin: {path}", fg="red", level=logging.ERROR)
+				error(
+					f'Error: {err}',
+					f"The above error was detected when initiating the plugin: {path}"
+				)
 		else:
-			log(f"Plugin '{path}' is missing a valid entry-point or is corrupt.", fg="yellow", level=logging.WARNING)
+			warn(f"Plugin '{path}' is missing a valid entry-point or is corrupt.")

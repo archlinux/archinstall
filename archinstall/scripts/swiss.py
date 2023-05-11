@@ -1,18 +1,18 @@
-import logging
 import os
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
 import archinstall
+from archinstall import SysInfo, info, debug
 from archinstall.lib.mirrors import use_mirrors
-from archinstall import models
-from archinstall import disk
+from archinstall.lib import models
+from archinstall.lib import disk
+from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
-from archinstall import menu
+from archinstall.lib import menu
 from archinstall.lib.global_menu import GlobalMenu
-from archinstall.lib.output import log
-from archinstall import Installer
+from archinstall.lib.installer import Installer
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 
@@ -23,11 +23,6 @@ if TYPE_CHECKING:
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
-
-
-if os.getuid() != 0:
-	print("Archinstall requires root privileges to run. See --help for more.")
-	exit(1)
 
 
 class ExecutionMode(Enum):
@@ -76,7 +71,7 @@ class SetupMenu(GlobalMenu):
 	def exit_callback(self):
 		if self._data_store.get('mode', None):
 			archinstall.arguments['mode'] = self._data_store['mode']
-			log(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
+			info(f"Archinstall will execute under {archinstall.arguments['mode']} mode")
 
 
 class SwissMainMenu(GlobalMenu):
@@ -124,7 +119,7 @@ class SwissMainMenu(GlobalMenu):
 			case ExecutionMode.Minimal:
 				pass
 			case _:
-				archinstall.log(f' Execution mode {self._execution_mode} not supported')
+				info(f' Execution mode {self._execution_mode} not supported')
 				exit(1)
 
 		if self._execution_mode != ExecutionMode.Lineal:
@@ -219,7 +214,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 			if archinstall.arguments.get('swap'):
 				installation.setup_swap('zram')
 
-			if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and archinstall.has_uefi():
+			if archinstall.arguments.get("bootloader") == models.Bootloader.Grub and SysInfo.has_uefi():
 				installation.add_additional_packages("grub")
 
 			installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -242,13 +237,13 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 				installation.create_users(users)
 
 			if audio := archinstall.arguments.get('audio', None):
-				log(f'Installing audio server: {audio}', level=logging.INFO)
+				info(f'Installing audio server: {audio}')
 				if audio == 'pipewire':
 					PipewireProfile().install(installation)
 				elif audio == 'pulseaudio':
 					installation.add_additional_packages("pulseaudio")
 			else:
-				installation.log("No audio server will be installed.", level=logging.INFO)
+				info("No audio server will be installed.")
 
 			if profile_config := archinstall.arguments.get('profile_config', None):
 				profile_handler.install_profile_config(installation, profile_config)
@@ -283,9 +278,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			installation.genfstab()
 
-			installation.log(
-				"For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation",
-				fg="yellow")
+			info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 			if not archinstall.arguments.get('silent'):
 				prompt = str(
@@ -297,23 +290,12 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 					except:
 						pass
 
-		archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
+		debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
-
-
-if not archinstall.check_mirror_reachable():
+if not check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	info(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'")
 	exit(1)
 
 param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
@@ -321,7 +303,7 @@ param_mode = archinstall.arguments.get('mode', ExecutionMode.Full.value).lower()
 try:
 	mode = ExecutionMode(param_mode)
 except KeyError:
-	log(f'Mode "{param_mode}" is not supported')
+	info(f'Mode "{param_mode}" is not supported')
 	exit(1)
 
 if not archinstall.arguments.get('silent'):
