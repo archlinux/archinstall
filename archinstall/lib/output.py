@@ -117,6 +117,24 @@ class FormattedOutput:
 		return output
 
 
+class Journald:
+	@staticmethod
+	def log(message: str, level: int = logging.DEBUG) -> None:
+		try:
+			import systemd.journal  # type: ignore
+		except ModuleNotFoundError:
+			return None
+
+		log_adapter = logging.getLogger('archinstall')
+		log_fmt = logging.Formatter("[%(levelname)s]: %(message)s")
+		log_ch = systemd.journal.JournalHandler()
+		log_ch.setFormatter(log_fmt)
+		log_adapter.addHandler(log_ch)
+		log_adapter.setLevel(logging.DEBUG)
+
+		log_adapter.log(level, message)
+
+
 def check_log_permissions():
 	filename = storage.get('LOG_FILE', None)
 
@@ -259,6 +277,8 @@ def log(
 
 		with open(absolute_logfile, 'a') as fp:
 			fp.write(f"{orig_string}\n")
+
+	Journald.log(text, level=level)
 
 	# Finally, print the log unless we skipped it based on level.
 	# We use sys.stdout.write()+flush() instead of print() to try and

@@ -26,7 +26,7 @@ from .lib.output import (
 )
 from .lib.storage import storage
 from .lib.global_menu import GlobalMenu
-from .lib.systemd import Boot
+from .lib.boot import Boot
 from .lib.translationhandler import TranslationHandler, Language, DeferredTranslation
 from .lib.plugins import plugins, load_plugin
 from .lib.configuration import ConfigurationOutput

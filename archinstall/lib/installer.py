@@ -1163,7 +1163,7 @@ class Installer:
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
@@ -1190,7 +1190,7 @@ class Installer:
 				error(f"Invalid x11-keyboard language specified: {language}")
 				return False
 
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 
