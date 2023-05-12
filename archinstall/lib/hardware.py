@@ -1,7 +1,7 @@
 import os
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
@@ -169,3 +169,22 @@ class SysInfo:
 			debug(f"System is not running in a VM: {err}")
 
 		return False
+
+	@staticmethod
+	def _loaded_modules() -> List[str]:
+		"""
+		Returns loaded kernel modules
+		"""
+		modules_path = Path('/proc/modules')
+		modules: List[str] = []
+
+		with modules_path.open() as file:
+			for line in file:
+				module = line.split(maxsplit=1)[0]
+				modules.append(module)
+
+		return modules
+
+	@staticmethod
+	def requires_sof() -> bool:
+		return 'snd_sof' in SysInfo._loaded_modules()
