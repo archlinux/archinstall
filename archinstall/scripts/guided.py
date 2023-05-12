@@ -182,6 +182,9 @@ def perform_installation(mountpoint: Path):
 				PipewireProfile().install(installation)
 			elif audio == 'pulseaudio':
 				installation.add_additional_packages("pulseaudio")
+
+			if SysInfo.requires_sof():
+				installation.add_additional_packages('sof-firmware')
 		else:
 			info("No audio server will be installed")
 
