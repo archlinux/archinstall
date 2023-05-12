@@ -86,6 +86,21 @@ class _SysInfo:
 	def mem_info_by_key(self, key: str) -> int:
 		return self.mem_info[key]
 
+	@cached_property
+	def loaded_modules(self) -> List[str]:
+		"""
+		Returns loaded kernel modules
+		"""
+		modules_path = Path('/proc/modules')
+		modules: List[str] = []
+
+		with modules_path.open() as file:
+			for line in file:
+				module = line.split(maxsplit=1)[0]
+				modules.append(module)
+
+		return modules
+
 
 _sys_info = _SysInfo()
 
@@ -171,20 +186,9 @@ class SysInfo:
 		return False
 
 	@staticmethod
-	def _loaded_modules() -> List[str]:
-		"""
-		Returns loaded kernel modules
-		"""
-		modules_path = Path('/proc/modules')
-		modules: List[str] = []
-
-		with modules_path.open() as file:
-			for line in file:
-				module = line.split(maxsplit=1)[0]
-				modules.append(module)
-
-		return modules
+	def requires_sof_fw() -> bool:
+		return 'snd_sof' in _sys_info.loaded_modules
 
 	@staticmethod
-	def requires_sof() -> bool:
-		return 'snd_sof' in SysInfo._loaded_modules()
+	def requires_alsa_fw() -> bool:
+		return 'snd_emu10k1' in _sys_info.loaded_modules
