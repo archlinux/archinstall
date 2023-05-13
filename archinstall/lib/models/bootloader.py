@@ -12,6 +12,7 @@ class Bootloader(Enum):
 	Systemd = 'Systemd-boot'
 	Grub = 'Grub'
 	Efistub = 'Efistub'
+	Limine = 'Limine'
 
 	def json(self):
 		return self.value
