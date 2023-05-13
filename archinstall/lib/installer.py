@@ -858,14 +858,21 @@ class Installer:
 		self._pacstrap('limine')
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
+		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+		if not device:
+			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+
 		if SysInfo.has_uefi():
-			pass
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/BOOTX64.EFI' \
+					f' /boot/EFI/BOOT/'
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
 		else:
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
-
-			if not device:
-				raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
-
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
@@ -884,7 +891,7 @@ class Installer:
 				
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
-				raise DiskError(f"Failed to install Limine boot on {boot_partition.dev_path}: {err}")
+				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
 
 		# Limine does not ship with a default configuation file. We are going to
 		# create a basic one that is similar to the one GRUB generates.
