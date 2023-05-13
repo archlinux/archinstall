@@ -100,7 +100,7 @@ class SwissMainMenu(GlobalMenu):
 				]
 
 				if archinstall.arguments.get('advanced', False):
-					options_list.extend(['locale'])
+					options_list.extend(['locale_config'])
 
 				mandatory_list = ['disk_config', 'bootloader', 'hostname']
 			case ExecutionMode.Only_HD:
@@ -116,7 +116,7 @@ class SwissMainMenu(GlobalMenu):
 				mandatory_list = ['hostname']
 
 				if archinstall.arguments.get('advanced', False):
-					options_list += ['locale']
+					options_list += ['locale_config']
 			case ExecutionMode.Minimal:
 				pass
 			case _:
@@ -177,7 +177,7 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
-	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale']
+	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 
 	with Installer(
 		mountpoint,

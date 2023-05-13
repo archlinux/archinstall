@@ -25,7 +25,7 @@ def ask_user_questions():
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror-region')
 
-	global_menu.enable('locale')
+	global_menu.enable('locale_config')
 
 	global_menu.enable('disk_config', mandatory=True)
 
@@ -90,7 +90,7 @@ def perform_installation(mountpoint: Path):
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
-	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale']
+	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(

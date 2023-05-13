@@ -40,8 +40,8 @@ class LocaleConfiguration:
 	def parse_arg(cls, args: Dict[str, Any]) -> 'LocaleConfiguration':
 		default = cls.default()
 
-		if 'locale' in args:
-			default = cls._load_config(default, args['locale'])
+		if 'locale_config' in args:
+			default = cls._load_config(default, args['locale_config'])
 		else:
 			default = cls._load_config(default, args)
 

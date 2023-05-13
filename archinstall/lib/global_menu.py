@@ -46,9 +46,9 @@ class GlobalMenu(AbstractMenu):
 				lambda x: self._select_archinstall_language(x),
 				display_func=lambda x: x.display_name,
 				default=self.translation_handler.get_language_by_abbr('en'))
-		self._menu_options['locale'] = \
+		self._menu_options['locale_config'] = \
 			Selector(
-				_('Locale'),
+				_('Locales'),
 				lambda preset: self._locale_selection(preset),
 				preview_func=self._prev_locale,
 				display_func=lambda x: self._defined_text if x else '')
@@ -238,7 +238,7 @@ class GlobalMenu(AbstractMenu):
 		return locale_config
 
 	def _prev_locale(self) -> Optional[str]:
-		selector = self._menu_options['locale']
+		selector = self._menu_options['locale_config']
 		if selector.has_selection():
 			config: LocaleConfiguration = selector.current_selection  # type: ignore
 			output = '{}: {}\n'.format(str(_('Keyboard layout')), config.kb_layout)
