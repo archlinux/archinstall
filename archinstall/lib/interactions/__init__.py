@@ -1,4 +1,3 @@
-from .locale_conf import select_locale_lang, select_locale_enc
 from .manage_users_conf import UserList, ask_for_additional_users
 from .network_conf import ManualNetworkConfig, ask_to_configure_network
 from .utils import get_password
@@ -10,7 +9,7 @@ from .disk_conf import (
 )
 
 from .general_conf import (
-	ask_ntp, ask_hostname, ask_for_a_timezone, ask_for_audio_selection, select_language,
+	ask_ntp, ask_hostname, ask_for_a_timezone, ask_for_audio_selection,
 	select_mirror_regions, select_archinstall_language, ask_additional_packages_to_install,
 	add_number_of_parrallel_downloads, select_additional_repositories
 )

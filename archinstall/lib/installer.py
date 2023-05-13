@@ -12,7 +12,7 @@ from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout, LocaleConfiguration
 from .luks import Luks2
 from .mirrors import use_mirrors
 from .models.bootloader import Bootloader
@@ -454,37 +454,36 @@ class Installer:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
-	def set_locale(self, locale :str, encoding :str = 'UTF-8', *args :str, **kwargs :str) -> bool:
-		if not len(locale):
-			return True
-
+	def set_locale(self, locale_config: LocaleConfiguration):
 		modifier = ''
+		lang = locale_config.sys_lang
+		encoding = locale_config.sys_enc
 
 		# This is a temporary patch to fix #1200
-		if '.' in locale:
-			locale, potential_encoding = locale.split('.', 1)
+		if '.' in locale_config.sys_lang:
+			lang, potential_encoding = locale_config.sys_lang.split('.', 1)
 
 			# Override encoding if encoding is set to the default parameter
 			# and the "found" encoding differs.
-			if encoding == 'UTF-8' and encoding != potential_encoding:
+			if locale_config.sys_enc == 'UTF-8' and locale_config.sys_enc != potential_encoding:
 				encoding = potential_encoding
 
 		# Make sure we extract the modifier, that way we can put it in if needed.
-		if '@' in locale:
-			locale, modifier = locale.split('@', 1)
+		if '@' in locale_config.sys_lang:
+			lang, modifier = locale_config.sys_lang.split('@', 1)
 			modifier = f"@{modifier}"
 		# - End patch
 
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
+			fh.write(f'{lang}.{encoding}{modifier} {encoding}\n')
+
 		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
+			fh.write(f'LANG={lang}.{encoding}{modifier}\n')
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
-			return True
-		except SysCallError:
-			return False
+		except SysCallError as e:
+			error(f'Failed to run locale-gen on target: {e}')
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
@@ -617,7 +616,7 @@ class Installer:
 
 		return True
 
-	def mkinitcpio(self, *flags :str) -> bool:
+	def mkinitcpio(self, flags: List[str], locale_config: LocaleConfiguration) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
 				# Allow plugins to override the usage of mkinitcpio altogether.
@@ -627,7 +626,7 @@ class Installer:
 		# mkinitcpio will error out if there's no vconsole.
 		if (vconsole := Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
 			with vconsole.open('w') as fh:
-				fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
+				fh.write(f"KEYMAP={locale_config.kb_layout}\n")
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
 			mkinit.write(f"MODULES=({' '.join(self.modules)})\n")
@@ -655,7 +654,7 @@ class Installer:
 		testing: bool = False,
 		multilib: bool = False,
 		hostname: str = 'archinstall',
-		locales: List[str] = ['en_US.UTF-8 UTF-8']
+		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
@@ -731,12 +730,12 @@ class Installer:
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname(hostname)
-		self.set_locale(*locales[0].split())
+		self.set_locale(locale_config)
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		self.mkinitcpio('-P')
+		self.mkinitcpio(['-P'], locale_config)
 
 		self.helper_flags['base'] = True
 

@@ -1,8 +1,8 @@
 from typing import Iterator, List
 
-from .exceptions import ServiceException, SysCallError
-from .general import SysCommand
-from .output import error
+from ..exceptions import ServiceException, SysCallError
+from ..general import SysCommand
+from ..output import error
 
 
 def list_keyboard_languages() -> Iterator[str]:
@@ -47,7 +47,7 @@ def verify_x11_keyboard_layout(layout :str) -> bool:
 	return False
 
 
-def set_keyboard_language(locale :str) -> bool:
+def set_kb_layout(locale :str) -> bool:
 	if len(locale.strip()):
 		if not verify_keyboard_layout(locale):
 			error(f"Invalid keyboard locale specified: {locale}")

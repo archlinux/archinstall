@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING, Optional, List
 
-from ..output import info
+from ..output import info, FormattedOutput
 
 if TYPE_CHECKING:
 	_: Any
@@ -28,3 +28,23 @@ def is_subpath(first: Path, second: Path):
 		return True
 	except ValueError:
 		return False
+
+
+def format_cols(items: List[str], header: Optional[str]) -> str:
+	if header:
+		text = f'{header}:\n'
+	else:
+		text = ''
+
+	nr_items = len(items)
+	if nr_items <= 5:
+		col = 1
+	elif nr_items <= 10:
+		col = 2
+	elif nr_items <= 15:
+		col = 3
+	else:
+		col = 4
+
+	text += FormattedOutput.as_columns(items, col)
+	return text

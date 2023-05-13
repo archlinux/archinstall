@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-from ..locale import list_keyboard_languages, list_timezones
+from ..locale.locale import list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
 from ..output import warn
@@ -70,32 +70,6 @@ def ask_for_audio_selection(desktop: bool = True, preset: Optional[str] = None) 
 	return None
 
 
-def select_language(preset: Optional[str] = None) -> Optional[str]:
-	"""
-	Asks the user to select a language
-	Usually this is combined with :ref:`archinstall.list_keyboard_languages`.
-
-	:return: The language/dictionary key of the selected language
-	:rtype: str
-	"""
-	kb_lang = list_keyboard_languages()
-	# sort alphabetically and then by length
-	sorted_kb_lang = sorted(sorted(list(kb_lang)), key=len)
-
-	choice = Menu(
-		_('Select keyboard layout'),
-		sorted_kb_lang,
-		preset_values=preset,
-		sort=False
-	).run()
-
-	match choice.type_:
-		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.single_value
-
-	return None
-
-
 def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
 	"""
 	Asks the user to select a mirror or region
@@ -154,18 +128,18 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 	raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
+def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	def read_packages(already_defined: list = []) -> list:
-		display = ' '.join(already_defined)
+	def read_packages(p: List = []) -> list:
+		display = ' '.join(p)
 		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
 		return input_packages.split() if input_packages else []
 
-	pre_set_packages = pre_set_packages if pre_set_packages else []
-	packages = read_packages(pre_set_packages)
+	preset = preset if preset else []
+	packages = read_packages(preset)
 
 	if not storage['arguments']['offline'] and not storage['arguments']['no_pkg_lookups']:
 		while True:
