@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import List, Any, Optional, Dict, TYPE_CHECKING
 
-from ..locale.locale import list_timezones
+from ..locale import list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..mirrors import list_mirrors
 from ..output import warn

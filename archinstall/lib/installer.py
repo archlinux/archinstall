@@ -12,7 +12,8 @@ from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
 from .hardware import SysInfo
-from .locale import verify_keyboard_layout, verify_x11_keyboard_layout, LocaleConfiguration
+from .locale import LocaleConfiguration
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors
 from .models.bootloader import Bootloader

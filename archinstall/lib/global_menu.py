@@ -24,10 +24,10 @@ from .interactions import ask_to_configure_network
 from .interactions import get_password, ask_for_a_timezone
 from .interactions import select_additional_repositories
 from .interactions import select_kernel
+from .utils.util import format_cols
 from .interactions import select_mirror_regions
 from .interactions import ask_ntp
 from .interactions.disk_conf import select_disk_config
-from .utils.util import format_cols
 
 if TYPE_CHECKING:
 	_: Any

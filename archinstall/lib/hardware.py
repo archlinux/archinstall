@@ -1,11 +1,11 @@
 import os
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
+from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
-from .exceptions import SysCallError
 from .output import debug
 
 AVAILABLE_GFX_DRIVERS = {
@@ -85,6 +85,21 @@ class _SysInfo:
 
 	def mem_info_by_key(self, key: str) -> int:
 		return self.mem_info[key]
+
+	@cached_property
+	def loaded_modules(self) -> List[str]:
+		"""
+		Returns loaded kernel modules
+		"""
+		modules_path = Path('/proc/modules')
+		modules: List[str] = []
+
+		with modules_path.open() as file:
+			for line in file:
+				module = line.split(maxsplit=1)[0]
+				modules.append(module)
+
+		return modules
 
 
 _sys_info = _SysInfo()
@@ -169,3 +184,11 @@ class SysInfo:
 			debug(f"System is not running in a VM: {err}")
 
 		return False
+
+	@staticmethod
+	def requires_sof_fw() -> bool:
+		return 'snd_sof' in _sys_info.loaded_modules
+
+	@staticmethod
+	def requires_alsa_fw() -> bool:
+		return 'snd_emu10k1' in _sys_info.loaded_modules

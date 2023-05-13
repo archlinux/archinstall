@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, Optional, List
 
-from ..output import info, FormattedOutput
+from ..output import FormattedOutput
+from ..output import info
 
 if TYPE_CHECKING:
 	_: Any
