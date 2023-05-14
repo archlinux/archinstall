@@ -347,8 +347,7 @@ class GlobalMenu(AbstractMenu):
 		if bootloader == Bootloader.Limine and boot_partition.fs_type == disk.FilesystemType.Btrfs:
 			return "Limine bootloader does not support booting from BTRFS filesystem"
 
-		return True
-
+		return None
 
 	def _is_config_valid(self) -> bool:
 		"""
