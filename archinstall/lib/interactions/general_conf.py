@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import pathlib
-from typing import List, Any, Optional, Dict, TYPE_CHECKING
+from typing import List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_keyboard_languages, list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
-from ..mirrors import list_mirrors
 from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
@@ -94,40 +93,6 @@ def select_language(preset: Optional[str] = None) -> Optional[str]:
 		case MenuSelectionType.Selection: return choice.single_value
 
 	return None
-
-
-def select_mirror_regions(preset_values: Dict[str, Any] = {}) -> Dict[str, Any]:
-	"""
-	Asks the user to select a mirror or region
-	Usually this is combined with :ref:`archinstall.list_mirrors`.
-
-	:return: The dictionary information about a mirror/region.
-	:rtype: dict
-	"""
-	if preset_values is None:
-		preselected = None
-	else:
-		preselected = list(preset_values.keys())
-
-	mirrors = list_mirrors()
-
-	choice = Menu(
-		_('Select one of the regions to download packages from'),
-		list(mirrors.keys()),
-		preset_values=preselected,
-		multi=True,
-		allow_reset=True
-	).run()
-
-	match choice.type_:
-		case MenuSelectionType.Reset:
-			return {}
-		case MenuSelectionType.Skip:
-			return preset_values
-		case MenuSelectionType.Selection:
-			return {selected: mirrors[selected] for selected in choice.multi_value}
-
-	return {}
 
 
 def select_archinstall_language(languages: List[Language], preset: Language) -> Language:
