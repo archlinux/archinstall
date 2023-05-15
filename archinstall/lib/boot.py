@@ -1,10 +1,9 @@
-import logging
 import time
 from typing import Iterator, Optional
 from .exceptions import SysCallError
 from .general import SysCommand, SysCommandWorker, locate_binary
 from .installer import Installer
-from .output import log
+from .output import error
 from .storage import storage
 
 
@@ -48,16 +47,18 @@ class Boot:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
-			log(f"The error above occurred in a temporary boot-up of the installation {self.instance}", level=logging.ERROR, fg="red")
+			error(
+				args[1],
+				f"The error above occurred in a temporary boot-up of the installation {self.instance}"
+			)
 
 		shutdown = None
 		shutdown_exit_code: Optional[int] = -1
 
 		try:
 			shutdown = SysCommand(f'systemd-run --machine={self.container_name} --pty shutdown now')
-		except SysCallError as error:
-			shutdown_exit_code = error.exit_code
+		except SysCallError as err:
+			shutdown_exit_code = err.exit_code
 
 		if self.session:
 			while self.session.is_alive():

@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 from typing import Any, TYPE_CHECKING, Optional
 
-from ..locale_helpers import list_locales
+from ..locale import list_locales
 from ..menu import Menu, MenuSelectionType
 
 if TYPE_CHECKING:

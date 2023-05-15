@@ -1,5 +1,4 @@
 import glob
-import logging
 import os
 import re
 import shlex
@@ -7,22 +6,21 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable, Iterable
+from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
-from .hardware import has_uefi, is_vm, cpu_vendor
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .hardware import SysInfo
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import use_mirrors
+from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
 from .models.bootloader import Bootloader
 from .models.network_configuration import NetworkConfiguration
 from .models.users import User
-from .output import log
+from .output import log, error, info, warn, debug
 from .pacman import run_pacman
 from .plugins import plugins
-from .services import service_state
 from .storage import storage
 
 if TYPE_CHECKING:
@@ -41,28 +39,6 @@ def accessibility_tools_in_use() -> bool:
 
 
 class Installer:
-	"""
-	`Installer()` is the wrapper for most basic installation steps.
-	It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
-
-	:param partition: Requires a partition as the first argument, this is
-		so that the installer can mount to `mountpoint` and strap packages there.
-	:type partition: class:`archinstall.Partition`
-
-	:param boot_partition: There's two reasons for needing a boot partition argument,
-		The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
-		during the `pacstrap` or `linux` and the base packages for a minimal installation.
-		The second being when :py:func:`~archinstall.Installer.add_bootloader` is called,
-		A `boot_partition` must be known to the installer before this is called.
-	:type boot_partition: class:`archinstall.Partition`
-
-	:param profile: A profile to install, this is optional and can be called later manually.
-		This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
-	:type profile: str, optional
-
-	:param hostname: The given /etc/hostname for the machine.
-	:type hostname: str, optional
-	"""
 	def __init__(
 		self,
 		target: Path,
@@ -71,6 +47,10 @@ class Installer:
 		base_packages: List[str] = [],
 		kernels: Optional[List[str]] = None
 	):
+		"""
+		`Installer()` is the wrapper for most basic installation steps.
+		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
+		"""
 		if not base_packages:
 			base_packages = __packages__[:3]
 
@@ -126,7 +106,7 @@ class Installer:
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
 		if exc_type is not None:
-			log(exc_val, fg='red', level=logging.ERROR)
+			error(exc_val)
 
 			self.sync_log_to_install_medium()
 
@@ -137,27 +117,20 @@ class Installer:
 			raise exc_val
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
+			log('Installation completed without any errors. You may now reboot.', fg='green')
 			self.sync_log_to_install_medium()
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
+			warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
 			for step in missing_steps:
-				self.log(f' - {step}', fg='red', level=logging.WARNING)
+				warn(f' - {step}')
 
-			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
-			self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
+			warn(f"Detailed error logs can be found at: {storage['LOG_PATH']}")
+			warn("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues")
 
 			self.sync_log_to_install_medium()
 			return False
-
-	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
-		"""
-		installer.log() wraps output.log() mainly to set a default log-level for this install session.
-		Any manual override can be done per log() call.
-		"""
-		log(*args, level=level, **kwargs)
 
 	def _verify_service_stop(self):
 		"""
@@ -165,20 +138,20 @@ class Installer:
 		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		log('Waiting for time sync (systemd-timesyncd.service) to complete.', level=logging.INFO)
+		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
 		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
 			time.sleep(1)
 
-		log('Waiting for automatic mirror selection (reflector) to complete.', level=logging.INFO)
-		while service_state('reflector') not in ('dead', 'failed', 'exited'):
+		info('Waiting for automatic mirror selection (reflector) to complete.')
+		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
-		log('Waiting pacman-init.service to complete.', level=logging.INFO)
-		while service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		info('Waiting pacman-init.service to complete.')
+		while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
-		log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
-		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
+		info('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		while self._service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
@@ -204,7 +177,7 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
-		log('Mounting partitions in order', level=logging.INFO)
+		info('Mounting partitions in order')
 
 		for mod in self._disk_config.device_modifications:
 			# partitions have to mounted in the right order on btrfs the mountpoint will
@@ -275,7 +248,7 @@ class Installer:
 			)
 
 			if gen_enc_file and not part_mod.is_root():
-				log(f'Creating key-file: {part_mod.dev_path}', level=logging.INFO)
+				info(f'Creating key-file: {part_mod.dev_path}')
 				luks_handler.create_keyfile(self.target)
 
 			if part_mod.is_root() and not gen_enc_file:
@@ -384,25 +357,25 @@ class Installer:
 				if (result := plugin.on_pacstrap(packages)):
 					packages = result
 
-		self.log(f'Installing packages: {packages}', level=logging.INFO)
+		info(f'Installing packages: {packages}')
 
 		# TODO: We technically only need to run the -Syy once.
 		try:
 			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
-		except SysCallError as error:
-			self.log(f'Could not sync a new package database: {error}', level=logging.ERROR, fg="red")
+		except SysCallError as err:
+			error(f'Could not sync a new package database: {err}')
 
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
 					return self._pacstrap(packages)
 
-			raise RequirementError(f'Could not sync mirrors: {error}')
+			raise RequirementError(f'Could not sync mirrors: {err}')
 
 		try:
 			SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True)
 			return True
-		except SysCallError as error:
-			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
+		except SysCallError as err:
+			error(f'Could not strap in packages: {err}')
 
 			if storage['arguments'].get('silent', False) is False:
 				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
@@ -410,22 +383,25 @@ class Installer:
 
 			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
-	def set_mirrors(self, mirrors: Dict[str, Iterable[str]]):
+	def set_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
-				if result := plugin.on_mirrors(mirrors):
-					mirrors = result
+				if result := plugin.on_mirrors(mirror_config):
+					mirror_config = result
 
 		destination = f'{self.target}/etc/pacman.d/mirrorlist'
-		use_mirrors(mirrors, destination=destination)
+		if mirror_config.mirror_regions:
+			use_mirrors(mirror_config.mirror_regions, destination)
+		if mirror_config.custom_mirrors:
+			add_custom_mirrors(mirror_config.custom_mirrors)
 
 	def genfstab(self, flags :str = '-pU'):
-		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
+		info(f"Updating {self.target}/etc/fstab")
 
 		try:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
-		except SysCallError as error:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {error}')
+		except SysCallError as err:
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
 		if not gen_fstab:
 			raise RequirementError(f'Genrating fstab returned empty value')
@@ -530,24 +506,20 @@ class Installer:
 			return True
 
 		else:
-			self.log(
-				f"Time zone {zone} does not exist, continuing with system default.",
-				level=logging.WARNING,
-				fg='red'
-			)
+			warn(f'Time zone {zone} does not exist, continuing with system default')
 
 		return False
 
 	def activate_time_syncronization(self) -> None:
-		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
+		info('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers')
 		self.enable_service('systemd-timesyncd')
 
 	def enable_espeakup(self) -> None:
-		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		info('Enabling espeakup.service for speech synthesis (accessibility)')
 		self.enable_service('espeakup')
 
 	def enable_periodic_trim(self) -> None:
-		self.log("Enabling periodic TRIM")
+		info("Enabling periodic TRIM")
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
@@ -556,12 +528,12 @@ class Installer:
 			services = [services]
 
 		for service in services:
-			self.log(f'Enabling service {service}', level=logging.INFO)
+			info(f'Enabling service {service}')
 
 			try:
 				self.arch_chroot(f'systemctl enable {service}')
-			except SysCallError as error:
-				raise ServiceException(f"Unable to start service {service}: {error}")
+			except SysCallError as err:
+				raise ServiceException(f"Unable to start service {service}: {err}")
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -713,11 +685,11 @@ class Installer:
 						if 'encrypt' not in self._hooks:
 							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
-		if not is_vm():
-			vendor = cpu_vendor()
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
 			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
 				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
@@ -727,21 +699,21 @@ class Installer:
 				if (ucode := Path(f"{self.target}/boot/intel-ucode.img")).exists():
 					ucode.unlink()
 			else:
-				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
+				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode")
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
 		if multilib:
-			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
+			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
 			self.enable_multilib_repository()
 		else:
-			self.log("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
+			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
-			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
+			info("The testing flag is set. This system will be installed with testing repositories enabled.")
 			self.enable_testing_repositories(multilib)
 		else:
-			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
 		self._pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
@@ -773,7 +745,7 @@ class Installer:
 
 		# Run registered post-install hooks
 		for function in self.post_base_install:
-			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
+			info(f"Running post-installation hook: {function}")
 			function(self)
 
 		for plugin in plugins.values():
@@ -782,7 +754,7 @@ class Installer:
 
 	def setup_swap(self, kind :str = 'zram'):
 		if kind == 'zram':
-			self.log(f"Setting up swap on zram")
+			info(f"Setting up swap on zram")
 			self._pacstrap('zram-generator')
 
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
@@ -812,7 +784,7 @@ class Installer:
 	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
 		self._pacstrap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -862,16 +834,18 @@ class Installer:
 					entry.write(f'# Created on: {self.init_time}\n')
 					entry.write(f'title Arch Linux ({kernel}{variant})\n')
 					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not is_vm():
-						vendor = cpu_vendor()
+					if not SysInfo.is_vm():
+						vendor = SysInfo.cpu_vendor()
 						if vendor == "AuthenticAMD":
 							entry.write("initrd /amd-ucode.img\n")
 						elif vendor == "GenuineIntel":
 							entry.write("initrd /intel-ucode.img\n")
 						else:
-							self.log(
-								f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.",
-								level=logging.DEBUG)
+							debug(
+								f"Unknown CPU vendor '{vendor}' detected.",
+								"Archinstall won't add any ucode to systemd-boot config.",
+							)
+
 					entry.write(f"initrd /initramfs-{kernel}{variant}.img\n")
 					# blkid doesn't trigger on loopback devices really well,
 					# so we'll use the old manual method until we get that sorted out.
@@ -890,7 +864,7 @@ class Installer:
 					if root_partition.fs_type.is_crypto():
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-						log('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
+						debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
 
 						kernel_options = f"options"
 
@@ -905,7 +879,7 @@ class Installer:
 
 						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
 					else:
-						log(f'Identifying root partition by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
+						debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
 						entry.write(f'options root=PARTUUID={root_partition.partuuid} {options_entry}')
 
 		self.helper_flags['bootloader'] = 'systemd'
@@ -920,7 +894,7 @@ class Installer:
 		_file = "/etc/default/grub"
 
 		if root_partition.fs_type.is_crypto():
-			log(f"Using UUID {root_partition.uuid} as encrypted root identifier", level=logging.DEBUG)
+			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
 			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.fs_type.value}\"/'"
 			enable_cryptdisk = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
@@ -931,9 +905,9 @@ class Installer:
 
 		SysCommand(f"/usr/bin/arch-chroot {self.target} {cmd_line_linux} {_file}")
 
-		log(f"GRUB boot partition: {boot_partition.dev_path}", level=logging.INFO)
+		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-		if has_uefi():
+		if SysInfo.has_uefi():
 			self._pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
@@ -941,8 +915,8 @@ class Installer:
 			except SysCallError:
 				try:
 					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
-				except SysCallError as error:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
+				except SysCallError as err:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {err}")
 		else:
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 
@@ -958,13 +932,13 @@ class Installer:
 					f' --recheck {device.device_info.path}'
 
 				SysCommand(cmd, peek_output=True)
-			except SysCallError as error:
-				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {error}")
+			except SysCallError as err:
+				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-		except SysCallError as error:
-			raise DiskError(f"Could not configure GRUB: {error}")
+		except SysCallError as err:
+			raise DiskError(f"Could not configure GRUB: {err}")
 
 		self.helper_flags['bootloader'] = "grub"
 
@@ -975,7 +949,7 @@ class Installer:
 	):
 		self._pacstrap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -989,14 +963,14 @@ class Installer:
 
 			kernel_parameters = []
 
-			if not is_vm():
-				vendor = cpu_vendor()
+			if not SysInfo.is_vm():
+				vendor = SysInfo.cpu_vendor()
 				if vendor == "AuthenticAMD":
 					kernel_parameters.append("initrd=\\amd-ucode.img")
 				elif vendor == "GenuineIntel":
 					kernel_parameters.append("initrd=\\intel-ucode.img")
 				else:
-					self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.", level=logging.DEBUG)
+					debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
 
 			kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
 
@@ -1006,10 +980,10 @@ class Installer:
 			if root_partition.fs_type.is_crypto():
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				log(f'Identifying root partition by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
+				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.fs_type.value} {" ".join(self._kernel_params)}')
 			else:
-				log(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
+				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.fs_type.value} {" ".join(self._kernel_params)}')
 
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
@@ -1060,7 +1034,7 @@ class Installer:
 		if root_partition is None:
 			raise ValueError(f'Could not detect root at mountpoint {self.target}')
 
-		self.log(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}', level=logging.INFO)
+		info(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}')
 
 		match bootloader:
 			case Bootloader.Systemd:
@@ -1078,7 +1052,7 @@ class Installer:
 			self.arch_chroot(f'systemctl enable --user {service}', run_as=user.username)
 
 	def enable_sudo(self, entity: str, group :bool = False):
-		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
+		info(f'Enabling sudo permissions for {entity}')
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
 
@@ -1127,11 +1101,11 @@ class Installer:
 					handled_by_plugin = result
 
 		if not handled_by_plugin:
-			self.log(f'Creating user {user}', level=logging.INFO)
+			info(f'Creating user {user}')
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
-			except SysCallError as error:
-				raise SystemError(f"Could not create user inside installation: {error}")
+			except SysCallError as err:
+				raise SystemError(f"Could not create user inside installation: {err}")
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_created'):
@@ -1149,7 +1123,7 @@ class Installer:
 			self.helper_flags['user'] = True
 
 	def user_set_pw(self, user :str, password :str) -> bool:
-		self.log(f'Setting password for {user}', level=logging.INFO)
+		info(f'Setting password for {user}')
 
 		if user == 'root':
 			# This means the root account isn't locked/disabled with * in /etc/passwd
@@ -1166,7 +1140,7 @@ class Installer:
 			return False
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
-		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
+		info(f'Setting shell for {user} to {shell}')
 
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
@@ -1183,49 +1157,59 @@ class Installer:
 			return False
 
 	def set_keyboard_language(self, language: str) -> bool:
-		log(f"Setting keyboard language to {language}", level=logging.INFO)
+		info(f"Setting keyboard language to {language}")
+
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
-				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				error(f"Invalid keyboard language specified: {language}")
 				return False
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
 				try:
 					session.SysCommand(["localectl", "set-keymap", language])
-				except SysCallError as error:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {error}")
+				except SysCallError as err:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
 
-				self.log(f"Keyboard language for this installation is now set to: {language}")
+				info(f"Keyboard language for this installation is now set to: {language}")
 		else:
-			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			info('Keyboard language was not changed from default (no language specified)')
 
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
-		log(f"Setting x11 keyboard language to {language}", level=logging.INFO)
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.
 		"""
+		info(f"Setting x11 keyboard language to {language}")
+
 		if len(language.strip()):
 			if not verify_x11_keyboard_layout(language):
-				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				error(f"Invalid x11-keyboard language specified: {language}")
 				return False
 
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 
 				try:
 					session.SysCommand(["localectl", "set-x11-keymap", language])
-				except SysCallError as error:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {error}")
+				except SysCallError as err:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
 		else:
-			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			info(f'X11-Keyboard language was not changed from default (no language specified)')
 
 		return True
+
+	def _service_state(self, service_name: str) -> str:
+		if os.path.splitext(service_name)[1] != '.service':
+			service_name += '.service'  # Just to be safe
+
+		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
+
+		return state.strip().decode('UTF-8')

@@ -5,30 +5,30 @@ from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
 from . import disk
 from .general import secret
 from .menu import Selector, AbstractMenu
+from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration
 from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
 from .storage import storage
-from .user_interaction import add_number_of_parrallel_downloads
-from .user_interaction import ask_additional_packages_to_install
-from .user_interaction import ask_for_additional_users
-from .user_interaction import ask_for_audio_selection
-from .user_interaction import ask_for_bootloader
-from .user_interaction import ask_for_swap
-from .user_interaction import ask_hostname
-from .user_interaction import ask_ntp
-from .user_interaction import ask_to_configure_network
-from .user_interaction import get_password, ask_for_a_timezone
-from .user_interaction import select_additional_repositories
-from .user_interaction import select_kernel
-from .user_interaction import select_language
-from .user_interaction import select_locale_enc
-from .user_interaction import select_locale_lang
-from .user_interaction import select_mirror_regions
-from .user_interaction.disk_conf import select_disk_config
-from .user_interaction.save_conf import save_config
+from .configuration import save_config
+from .interactions import add_number_of_parrallel_downloads
+from .interactions import ask_additional_packages_to_install
+from .interactions import ask_for_additional_users
+from .interactions import ask_for_audio_selection
+from .interactions import ask_for_bootloader
+from .interactions import ask_for_swap
+from .interactions import ask_hostname
+from .interactions import ask_to_configure_network
+from .interactions import get_password, ask_for_a_timezone
+from .interactions import select_additional_repositories
+from .interactions import select_kernel
+from .interactions import select_language
+from .interactions import select_locale_enc
+from .interactions import select_locale_lang
+from .interactions import ask_ntp
+from .interactions.disk_conf import select_disk_config
 
 if TYPE_CHECKING:
 	_: Any
@@ -51,12 +51,13 @@ class GlobalMenu(AbstractMenu):
 				_('Keyboard layout'),
 				lambda preset: select_language(preset),
 				default='us')
-		self._menu_options['mirror-region'] = \
+		self._menu_options['mirror_config'] = \
 			Selector(
-				_('Mirror region'),
-				lambda preset: select_mirror_regions(preset),
-				display_func=lambda x: list(x.keys()) if x else '[]',
-				default={})
+				_('Mirrors'),
+				lambda preset: self._mirror_configuration(preset),
+				display_func=lambda x: str(_('Defined')) if x else '',
+				preview_func=self._prev_mirror_config
+			)
 		self._menu_options['sys-language'] = \
 			Selector(
 				_('Locale language'),
@@ -107,7 +108,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('User account'),
 				lambda x: self._create_user_account(x),
-				default={},
+				default=[],
 				display_func=lambda x: f'{len(x)} {_("User(s)")}' if len(x) > 0 else None,
 				preview_func=self._prev_users)
 		self._menu_options['profile_config'] = \
@@ -354,3 +355,24 @@ class GlobalMenu(AbstractMenu):
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)
 		return users
+
+	def _mirror_configuration(self, preset: Optional[MirrorConfiguration] = None) -> Optional[MirrorConfiguration]:
+		data_store: Dict[str, Any] = {}
+		mirror_configuration = MirrorMenu(data_store, preset=preset).run()
+		return mirror_configuration
+
+	def _prev_mirror_config(self) -> Optional[str]:
+		selector = self._menu_options['mirror_config']
+
+		if selector.has_selection():
+			mirror_config: MirrorConfiguration = selector.current_selection  # type: ignore
+			output = ''
+			if mirror_config.regions:
+				output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
+			if mirror_config.custom_mirrors:
+				table = FormattedOutput.as_table(mirror_config.custom_mirrors)
+				output += '{}\n{}'.format(str(_('Custom mirrors')), table)
+
+			return output.strip()
+
+		return None
