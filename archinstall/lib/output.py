@@ -238,34 +238,46 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
-def info(*msgs: str, **kwargs: dict):
-	if 'level' not in kwargs:
-		kwargs['level'] = logging.INFO
+def info(*msgs: str,
+	level: int = logging.INFO,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
 
-	log(*msgs, **kwargs)
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
-def debug(*msgs: str, **kwargs: dict):
-	if 'level' not in kwargs:
-		kwargs['level'] = logging.DEBUG
+def debug(*msgs: str,
+	level: int = logging.DEBUG,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
 
-	log(*msgs, **kwargs)
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
-def error(*msgs: str, **kwargs: dict):
-	if 'level' not in kwargs:
-		kwargs['level'] = logging.ERROR
-	if 'fg' not in kwargs:
-		kwargs['fg'] = 'red'
+def error(*msgs: str,
+	level: int = logging.ERROR,
+	fg: str = 'red',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
 
-	log(*msgs, **kwargs)
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
-def warn(*msgs: str, **kwargs: dict):
-	if 'level' not in kwargs:
-		kwargs['level'] = logging.ERROR
-	if 'fg' not in kwargs:
-		kwargs['fg'] = 'yellow'
+def warn(*msgs: str,
+	level: int = logging.WARN,
+	fg: str = 'yellow',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
 
-	log(*msgs, **kwargs)
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
 def log(
