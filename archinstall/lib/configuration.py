@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from .storage import storage
-from .general import JSON, UNSAFE_JSON, SysCommand
+from .general import JSON, UNSAFE_JSON
 from .output import debug, info, warn
 
 if TYPE_CHECKING:
