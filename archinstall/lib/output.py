@@ -238,20 +238,34 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
-def info(*msgs: str):
-	log(*msgs, level=logging.INFO)
+def info(*msgs: str, **kwargs: dict):
+	if 'level' not in kwargs:
+		kwargs['level'] = logging.INFO
+
+	log(*msgs, **kwargs)
+
+def debug(*msgs: str, **kwargs: dict):
+	if 'level' not in kwargs:
+		kwargs['level'] = logging.DEBUG
+
+	log(*msgs, **kwargs)
+
+def error(*msgs: str, **kwargs: dict):
+	if 'level' not in kwargs:
+		kwargs['level'] = logging.ERROR
+	if 'fg' not in kwargs:
+		kwargs['fg'] = 'red'
+
+	log(*msgs, **kwargs)
 
 
-def debug(*msgs: str):
-	log(*msgs, level=logging.DEBUG)
+def warn(*msgs: str, **kwargs: dict):
+	if 'level' not in kwargs:
+		kwargs['level'] = logging.ERROR
+	if 'fg' not in kwargs:
+		kwargs['fg'] = 'yellow'
 
-
-def error(*msgs: str):
-	log(*msgs, level=logging.ERROR, fg='red')
-
-
-def warn(*msgs: str):
-	log(*msgs, level=logging.WARNING, fg='yellow')
+	log(*msgs, **kwargs)
 
 
 def log(
