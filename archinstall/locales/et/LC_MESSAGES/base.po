@@ -54,7 +54,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Paigaldatakse ainult sellised paketid nagu base, base-devel, linux, linux-firmware, efibootmgr ja valikulised profiilipaketid."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Kui soovite veebibrauserit, näiteks firefox või chromium, saate selle määrata järgmises viipas"
+msgstr "Kui soovite veebibrauserit, näiteks firefox või chromium, saate selle määrata järgmises viipas."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Kirjutage paigaldatavad lisapaketid (tühikutega eraldatuna, jätke tühjaks, kui soovite vahele jätta): "
@@ -138,7 +138,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Valige, millist partitsiooni soovite vormindamiseks maskeerida."
+"Valige, millist partitsiooni soovite vormindamiseks maskeerida"
 
 msgid ""
 "{}\n"
@@ -148,7 +148,7 @@ msgstr ""
 "{}\n"
 "\n"
 "\n"
-"Valige, millist partitsiooni soovite krüpteerituks märkida."
+"Valige, millist partitsiooni soovite krüpteerituks märkida"
 
 msgid ""
 "{}\n"
@@ -183,10 +183,10 @@ msgid "Select what to do with each individual drive (followed by partition usage
 msgstr "Valige, mida teha iga üksiku kettaga (järgneb partitsiooni kasutamine)"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "Valige, mida soovite valitud plokkseadmetega teha."
+msgstr "Valige, mida soovite valitud plokkseadmetega teha"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "See on nimekiri eelprogrammeeritud profiilidest, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist."
+msgstr "See on nimekiri eelprogrammeeritud profiilidest, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist"
 
 msgid "Select keyboard layout"
 msgstr "Valige klaviatuuri paigutus"
@@ -218,7 +218,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Valige graafikadraiver või jätke tühjaks, et paigaldada kõik avatud lähtekoodiga draiverid."
+"Valige graafikadraiver või jätke tühjaks, et paigaldada kõik avatud lähtekoodiga draiverid"
 
 msgid "All open-source (default)"
 msgstr "Kõik avatud lähtekoodiga (vaikimisi)"
@@ -236,37 +236,37 @@ msgid "Select one of the values shown below: "
 msgstr "Valige üks allpool esitatud väärtustest: "
 
 msgid "Select one or more of the options below: "
-msgstr ""
+msgstr "Valige üks või mitu järgmistest võimalustest: "
 
 msgid "Adding partition...."
-msgstr ""
+msgstr "Partitsiooni lisamine...."
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr ""
+msgstr "Partitsiooni lisamine...."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr ""
+msgstr "Viga: URL-i \"{}\" profiilide loetlemine andis tulemuseks:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr ""
+msgstr "Viga: {}\" tulemust JSON-ina dekodeerida:"
 
 msgid "Keyboard layout"
-msgstr ""
+msgstr "Klaviatuuri paigutus"
 
 msgid "Mirror region"
-msgstr ""
+msgstr "Peegelregioon"
 
 msgid "Locale language"
-msgstr ""
+msgstr "Kohalik keel"
 
 msgid "Locale encoding"
-msgstr ""
+msgstr "Kohaliku keele kodeering"
 
 msgid "Drive(s)"
-msgstr ""
+msgstr "Draiv(id)"
 
 msgid "Disk layout"
-msgstr ""
+msgstr "Ketta paigutus"
 
 msgid "Encryption password"
 msgstr ""
