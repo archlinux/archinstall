@@ -1110,3 +1110,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Προσθήκη χρήστη"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Αποθήκευση διαμόρφωσης χρήστη"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Αποθήκευση διαμόρφωσης"

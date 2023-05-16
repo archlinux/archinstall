@@ -1111,3 +1111,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Selecione um ou mais discos rígidos para usar e configurar"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Adicionar usuário"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Digite um nome de usuário (deixe em branco para pular): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Digite um nome de usuário (deixe em branco para pular): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Selecione a opção de encriptação de disco"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Selecione a opção de encriptação de disco"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Região do mirror"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Região do mirror"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Salvar configuração de usuário"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Digite um diretório para as configurações serem salvas: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Salvar configuração"

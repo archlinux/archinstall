@@ -1135,6 +1135,66 @@ msgstr ""
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Selecteer één of meer in te stellen harde schijven"
 
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Gebruiker toevoegen"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Voer een gebruikersnaam in om een tweede account toe te voegen (laat leeg om over te slaan): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Voer een gebruikersnaam in om een tweede account toe te voegen (laat leeg om over te slaan): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Kies een schijfindeling"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Kies een schijfindeling"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Gebruikersconfiguratie vastleggen"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Voer de naam in van de map waarin de configuratie(s) moet(en) worden vastgelegd: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Configuratie vastleggen"
+
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"
 

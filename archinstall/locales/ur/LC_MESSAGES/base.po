@@ -1138,6 +1138,66 @@ msgstr ""
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
 
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "ایک صارف شامل کریں"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "متبادل علاقہ"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "متبادل علاقہ"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "ترتیب کو محفوظ کریں"
+
 #~ msgid "Add :"
 #~ msgstr "شامل:"
 

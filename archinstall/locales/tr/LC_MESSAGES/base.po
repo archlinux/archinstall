@@ -1117,3 +1117,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Kullanmak ve yapılandırmak için bir veya daha fazla sabit disk seçin"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Kullanıcı ekle"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Eklemek için arayüz seçin"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Eklemek için arayüz seçin"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "İndirme sunucusu bölgesi"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "İndirme sunucusu bölgesi"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Kullanıcı yapılandırmasını kaydet"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Yapılandırmayı kaydet"

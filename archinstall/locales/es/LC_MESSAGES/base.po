@@ -1110,6 +1110,66 @@ msgstr ""
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Seleccione uno o más discos duros para usar y configurar"
 
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Añadir un usuario"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Ingrese el nombre de usuario (déjelo en blanco para omitir): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Seleccione el diseño del disco"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Seleccione el diseño del disco"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Región del servidor"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Región del servidor"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Guardar configuración de usuario"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Introduzca un directorio para guardar la(s) configuración(es): "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Guardar configuración"
+
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
 

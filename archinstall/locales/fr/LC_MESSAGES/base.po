@@ -1111,6 +1111,66 @@ msgstr ""
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Sélectionner un ou plusieurs disques durs à utiliser et à configurer"
 
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Ajouter un utilisateur"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Sélectionner la disposition du disque"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Sélectionner la disposition du disque"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Région miroir"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Région miroir"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Enregistrer la configuration utilisateur"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Saisir un répertoire pour la ou les configuration(s) à enregistrer : "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Enregistrer la configuration"
+
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
 #~ msgstr "Modifier {origkey} :"
