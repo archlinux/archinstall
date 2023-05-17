@@ -331,7 +331,7 @@ class GlobalMenu(AbstractMenu):
 
 	def _validate_bootloader(self) -> Optional[str]:
 		"""
-		Checks the selected bootloader is valid for the selected filesystem 
+		Checks the selected bootloader is valid for the selected filesystem
 		type of the boot partition.
 
 		Returns [`None`] if the bootloader is valid, otherwise returns a

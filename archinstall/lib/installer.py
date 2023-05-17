@@ -883,7 +883,7 @@ class Installer:
 				
 				SysCommand(cmd, peek_output=True)
 
-				# `limine-deploy` deploys the stage 1 and 2 to the disk. 
+				# `limine-deploy` deploys the stage 1 and 2 to the disk.
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' limine-deploy' \
@@ -900,16 +900,16 @@ class Installer:
 TIMEOUT=5
 
 :Arch Linux
-    PROTOCOL=linux
-    KERNEL_PATH=boot:///vmlinuz-linux
-    CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
-    MODULE_PATH=boot:///initramfs-linux.img
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux.img
 
 :Arch Linux (fallback)
-    PROTOCOL=linux
-    KERNEL_PATH=boot:///vmlinuz-linux
-    CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
-    MODULE_PATH=boot:///initramfs-linux-fallback.img
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux-fallback.img
 			"""
 
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{config}' > /boot/limine.cfg\"")
