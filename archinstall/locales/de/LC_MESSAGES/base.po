@@ -654,7 +654,7 @@ msgid "Select your desired desktop environment"
 msgstr "Wählen Sie ihre gewünschte Desktopumgebung aus"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Eine sehr minimale Installation, welche es erlaubt Arch Linux selber nach eigenen anzupassen"
+msgstr "Eine sehr minimale Installation, welche es erlaubt Arch Linux selber nach eigenen Wünschen anzupassen."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
 msgstr "Auswahl von Serverpaketen welche installiert und aktiviert werden sollen, z.B. httpd, nginx, mariadb"
@@ -1123,7 +1123,7 @@ msgid "Saving {} configuration files to {}"
 msgstr "{} Konfigurationsdateien in {} speichern"
 
 msgid "Mirrors"
-msgstr "Spiegel"
+msgstr "Spiegelserver"
 
 msgid "Mirror regions"
 msgstr "Spiegelserverregionen"
