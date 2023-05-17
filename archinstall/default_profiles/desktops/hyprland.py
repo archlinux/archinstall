@@ -27,7 +27,7 @@ class HyprlandProfile(XorgProfile):
 
 	def post_install(self, install_session: 'Installer'):
 			# Fix seatd
-			install_session.arch_chroot("systemctl enable --now seatd")
+			install_session.arch_chroot("systemctl enable seatd")
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
