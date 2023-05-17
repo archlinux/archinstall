@@ -1109,3 +1109,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "பயன்படுத்த மற்றும் கட்டமைக்க ஒன்று அல்லது அதற்கு மேற்பட்ட ஹார்டு டிரைவ்களைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "ஒரு பயனரைச் சேர்க்கவும்"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "பயனர்பெயரை உள்ளிடவும் (தவிர்க்க காலியாக விடவும்): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "பயனர்பெயரை உள்ளிடவும் (தவிர்க்க காலியாக விடவும்): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "சேர்க்க இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "சேர்க்க இடைமுகத்தைத் தேர்ந்தெடுக்கவும்"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "பயனர் உள்ளமைவைச் சேமிக்கவும்"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "உள்ளமைவு(களை) சேமிக்க ஒரு கோப்பகத்தை உள்ளிடவும்: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "உள்ளமைவைச் சேமிக்கவும்"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "மிரர் பிராந்தியம்"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "மிரர் பிராந்தியம்"

@@ -1109,3 +1109,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Pilih satu atau lebih hard drive untuk digunakan dan dikonfigurasi"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Tambahkan pengguna"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Masukkan nama pengguna (kosongkan untuk melewati): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Pilih interface untuk ditambahkan"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Pilih interface untuk ditambahkan"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Simpan konfigurasi pengguna"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Masukkan direktori untuk konfigurasi yang akan disimpan: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Simpan konfigurasi"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Wilayah mirror"

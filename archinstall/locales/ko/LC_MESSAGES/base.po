@@ -1110,3 +1110,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "사용자 추가"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "추가할 인터페이스 선택"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "추가할 인터페이스 선택"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "사용자 구성 저장"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "저장할 구성의 디렉토리를 입력하세요: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "구성 저장"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "미러 위치"

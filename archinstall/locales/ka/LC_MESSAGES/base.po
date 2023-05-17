@@ -1108,3 +1108,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "აირჩიეთ ერთი ან მეტი მყარი დისკი და მოირგეთ"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "მომხმარებლის დამატება"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "შეიყვანეთ მომხმარებლი სახელი (გამოსატოვებლად ცარიელი დატოვეთ): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "აირჩიეთ დისკის დაშიფვრის პარამეტრი"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "მომხმარებლის კონფიგურაციის შენახვა"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "შეიყვანეთ საქაღალდე, სადაც კონფიგურაცი(ებ)-ი იქნება შენახული: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "კონფიგურაციი შენახვა"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "სარკის რეგიონი"

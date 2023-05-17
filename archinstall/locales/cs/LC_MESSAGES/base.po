@@ -1103,3 +1103,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Zvolte jeden nebo více pevných disků k použití a konfiguraci"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Přidat uživatele"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno (ponechte prázdné k přeskočení): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Zadejte uživatelské jméno (ponechte prázdné k přeskočení): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Zvolit rozhraní k přidání"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Zvolit rozhraní k přidání"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Uložit uživatelskou konfiguraci"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Zadejte adresář pro uložení konfigurace (konfigurací): "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Uložit konfiguraci"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Oblast zrcadla"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Oblast zrcadla"

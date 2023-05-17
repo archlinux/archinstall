@@ -1107,3 +1107,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Оберіть один або кілька жорстких дисків для використання та налаштування"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Додати користувача"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Введіть ім'я користувача (залиште порожнім, щоб пропустити): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Введіть ім'я користувача (залиште порожнім, щоб пропустити): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Оберіть параметр шифрування диска"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Оберіть параметр шифрування диска"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Зберегти конфігурацію користувача"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Введіть каталог для конфігурацій, які потрібно зберегти: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Зберегти конфігурацію"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Регіон дзеркала"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Регіон дзеркала"
