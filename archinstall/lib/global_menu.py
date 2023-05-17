@@ -340,10 +340,16 @@ class GlobalMenu(AbstractMenu):
 		bootloader = self._menu_options['bootloader'].current_selection
 		boot_partition: Optional[disk.PartitionModification] = None
 
-		for layout in self._menu_options['disk_config'].current_selection.device_modifications:
-			if boot_partition := layout.get_boot_partition():
-				break
-		
+		if disk_config := self._menu_options['disk_config'].current_selection:
+			for layout in disk_config.device_modifications:
+				if boot_partition := layout.get_boot_partition():
+					break
+		else:
+			return "No disk layout selected"
+
+		if boot_partition is None:
+			return "Boot partition not found"
+
 		if bootloader == Bootloader.Limine and boot_partition.fs_type == disk.FilesystemType.Btrfs:
 			return "Limine bootloader does not support booting from BTRFS filesystem"
 
