@@ -985,8 +985,8 @@ msgstr "Partitsiooni krüpteerimine"
 msgid " ! Formatting {} in "
 msgstr " ! Vormindamine {} "
 
-msgid " Back"
-msgstr " Tagasi"
+msgid "← Back"
+msgstr "Tagasi"
 
 msgid "Disk encryption"
 msgstr "Ketta krüpteerimine"
@@ -1014,6 +1014,9 @@ msgstr "Sway ei toeta Nvidia enda draiverit. Tõenäoliselt tekib teil probleeme
 
 msgid "Installed packages"
 msgstr "Installeeritud paketid"
+
+msgid "Add profile"
+msgstr "Lisa profiil"
 
 msgid "Edit profile"
 msgstr "Muuda profiili"
