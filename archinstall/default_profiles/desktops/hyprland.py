@@ -157,6 +157,45 @@ window#waybar {
 	color: #fdf6e3;
 }"""
 
+WLOGOUT_CONFIG = """# PRECONFIGURED BY ARCHINSTALL
+# INSPIRED BY SOLDOESTECH : https://github.com/SolDoesTech/HyprV2/blob/main/wlogout/layout
+{
+    "label" : "lock",
+    "action" : "swaylock",
+    "text" : "Lock"
+}
+
+{
+    "label" : "hibernate",
+    "action" : "systemctl hibernate",
+    "text" : "Hibernate"
+}
+
+{
+    "label" : "logout",
+    "action" : "hyprctl dispatch exit 0",
+    "text" : "Logout"
+}
+
+{
+    "label" : "shutdown",
+    "action" : "systemctl poweroff",
+    "text" : "Shutdown"
+}
+
+{
+    "label" : "suspend",
+    "action" : "systemctl suspend",
+    "text" : "Suspend"
+}
+
+{
+    "label" : "reboot",
+    "action" : "systemctl reboot",
+    "text" : "Reboot"
+}
+"""
+
 def get_hypr_conf(keyboard_layout, file_manager):
     return HYPRLAND_CONFIG.format(kb=keyboard_layout, fm=file_manager)
 def get_wallpaper_conf(wallpaper_path):
@@ -165,6 +204,12 @@ def get_waybar_conf():
     return WAYBAR_CONFIG
 def get_waybar_css():
     return WAYBAR_CSS
+def get_wlogout_config():
+    return WLOGOUT_CONFIG
+
+def write_config(path, content):
+	with open(path, "w") as f:
+		f.write(content)
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self):
@@ -185,27 +230,29 @@ class HyprlandProfile(XorgProfile):
 			"grim",
 			"slurp",
 			"hyprpaper",
+			"wlogout",
+			"swaylock"
 		]
   
 
 	def post_install(self, install_session: 'Installer'):
 		# Fix seatd
 		install_session.arch_chroot("systemctl enable seatd")
-		keyboard_layout = "us" #TODO: How to get selected keyboard layout for user ? 
+		keyboard_layout = "us" #TODO: How to get selected keyboard layout for user ?
+		dirs = "hypr/wallpapers", "waybar", "wlogout"
 		for user in self.selected_users:
 			chrooted_conf = f"/home/{user}/.config"
-			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr/wallpapers -p")
-			install_session.arch_chroot(f"mkdir {chrooted_conf}/waybar")
+			for dir in dirs:
+				install_session.arch_chroot(f"mkdir {chrooted_conf}/{dir} -p")
 			install_session.arch_chroot(f"wget --output {chrooted_conf}/hypr/wallpapers/default_arch.jpg https://images.hdqwalls.com/wallpapers/arch-liinux-4k-t0.jpg")
 			uconf = f"{install_session.target}{chrooted_conf}"
-			with open(f"{uconf}/hypr/hyprland.conf", "w") as f:
-				f.write(get_hypr_conf(keyboard_layout, self.file_manager.value))
-			with open(f"{uconf}/hypr/hyprpaper.conf", "w") as f:
-				f.write(get_wallpaper_conf(f"{uconf}/hypr/wallpapers/default_arch.jpg"))
-			with open(f"{uconf}/waybar/config", "w") as f:
-				f.write(get_waybar_conf())
-			with open(f"{uconf}/waybar/style.css", "w") as f:
-				f.write(get_waybar_css())
+
+			write_config(f"{uconf}/hypr/hyprland.conf",  get_hypr_conf(keyboard_layout, self.file_manager.value))
+			write_config(f"{uconf}/hypr/hyprpaper.conf", get_wallpaper_conf(f"{uconf}/hypr/wallpapers/default_arch.jpg"))
+			write_config(f"{uconf}/waybar/config",       get_waybar_conf())
+			write_config(f"{uconf}/waybar/style.css",    get_waybar_css())
+			write_config(f"{uconf}/wlogout/layout",      get_wlogout_config())
+
 		# For nvidia:
 			# install_session.arch_chroot("pacman -Sy nvidia-dkms")
 			# if install_session.bootloader == "systemd-boot":
