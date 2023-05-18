@@ -287,7 +287,7 @@ msgid "User account"
 msgstr "Kasutaja konto"
 
 msgid "Profile"
-msgstr "profiil"
+msgstr "Profiil"
 
 msgid "Audio"
 msgstr "Audio"
@@ -312,8 +312,11 @@ msgid ""
 "and will use whatever drive-setup is mounted at {} (experimental)\n"
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
-
 msgstr ""
+"Sa otsustasid kõvaketta valiku vahele jätta\n"
+"ja kasutad mis tahes draivi seadistust, mis on paigaldatud {} (eksperimentaalne)\n"
+"HOIATUS: Archinstall ei kontrolli selle seadistuse sobivust\n"
+"Kas soovite jätkata?"
 
 msgid "Re-using partition instance: {}"
 msgstr "Partitsiooni instantsi taaskasutamine: {}"
@@ -364,27 +367,32 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
+"Kasutage ESC vahelejätmiseks\n"
+"\n"
+"\n"
+"\n"
+"\n"
 
 msgid "Suggest partition layout"
 msgstr "Soovitage partitsiooni paigutust"
 
 msgid "Enter a password: "
-msgstr "Sisestage parool"
+msgstr "Sisestage parool: "
 
 msgid "Enter a encryption password for {}"
 msgstr "Sisestage {}'le krüpteerimis parool"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Sisestage ketta krüpteerimise parool (krüpteerimise puudumisel jätke see tühjaks)."
+msgstr "Sisestage ketta krüpteerimise parool (krüpteerimise puudumisel jätke see tühjaks): "
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "Looge nõutav sudo õigustega superkasutaja:"
+msgstr "Looge nõutav sudo õigustega superkasutaja: "
 
 msgid "Enter root password (leave blank to disable root): "
 msgstr "Sisestage juur parool (jätke tühjaks, et keelata root): "
 
 msgid "Password for user \"{}\": "
-msgstr "Kasutaja \"{}\" parool:"
+msgstr "Kasutaja \"{}\" parool: "
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
 msgstr "Täiendavate pakettide olemasolu kontrollimine (see võib võtta paar sekundit)"
@@ -396,17 +404,21 @@ msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
+"NTP toimimiseks võib olla vaja riistvara aega ja muid konfiguratsioonijärgseid samme.\n"
+"Lisateavet leiate Archi wikist"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
 msgstr "Sisestage kasutajanimi, et luua lisakasutaja (jätke tühjaks, et vahele jätta): "
 
 msgid "Use ESC to skip\n"
-msgstr "Kasutage ESC'i et vahele jätta"
+msgstr "Kasutage ESC'i et vahele jätta\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
+"\n"
+" Valige loetelust objekt ja valige selle täitmiseks üks olemasolevatest toimingutest"
 
 msgid "Cancel"
 msgstr "Tühista"
@@ -430,7 +442,7 @@ msgid "Select an action for '{}'"
 msgstr "Valige tegevus '{}' jaoks"
 
 msgid "Copy to new key:"
-msgstr "Kopeeri uude võtmesse "
+msgstr "Kopeeri uude võtmesse:"
 
 msgid "Unknown nic type: {}. Possible values are {}"
 msgstr "Tundmatu nic-tüüp: {}. Võimalikud väärtused on {}"
@@ -441,7 +453,6 @@ msgid ""
 msgstr ""
 "\n"
 "See on teie valitud konfiguratsioon:"
-
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
 msgstr "Pacman on juba käivitatud ja ootab maksimaalselt 10 minutit, kuni see lõpeb."
@@ -471,8 +482,6 @@ msgstr ""
 "\n"
 "Uue kasutaja määramine\n"
 
-
-
 msgid "User Name : "
 msgstr "Kasutajanimi : "
 
@@ -493,6 +502,9 @@ msgid ""
 "\n"
 "Select which partition to set subvolumes on"
 msgstr ""
+"{}\n"
+"\n"
+"Valige, millisele partitsioonile alamkogumid määrata"
 
 msgid "Manage btrfs subvolumes for current partition"
 msgstr "Hallake praeguse partitsiooni btrfs-i alamköiteid"
@@ -504,7 +516,7 @@ msgid "Save user configuration"
 msgstr "Salvesta kasutaja konfiguratsioon"
 
 msgid "Save user credentials"
-msgstr "Salvesta kasutaja volitused "
+msgstr "Salvesta kasutaja volitused"
 
 msgid "Save disk layout"
 msgstr "Salvesta ketta paigutus"
@@ -522,7 +534,7 @@ msgid "Not a valid directory: {}"
 msgstr "Ei ole sobiv kataloog: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Teie kasutatav salasõna näib olevat nõrk, "
+msgstr "Teie kasutatav salasõna näib olevat nõrk,"
 
 msgid "are you sure you want to use it?"
 msgstr "oled sa kindel et soovid seda kasutada?"
@@ -537,13 +549,13 @@ msgid "Missing configurations:\n"
 msgstr "Puuduvad konfiguratsioonid:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Tuleb määrata kas juur-parool või vähemalt 1 superkasutaja."
+msgstr "Tuleb määrata kas juur-parool või vähemalt 1 superkasutaja"
 
 msgid "Manage superuser accounts: "
-msgstr "Hallake superkasutaja kontosi"
+msgstr "Hallake superkasutaja kontosi "
 
 msgid "Manage ordinary user accounts: "
-msgstr "Hallake tavalisi kasutajaid
+msgstr "Hallake tavalisi kasutajaid: "
 
 msgid " Subvolume :{:16}"
 msgstr " Alamköide :{:16}"
@@ -574,10 +586,10 @@ msgid "Save"
 msgstr "Salvesta"
 
 msgid "Subvolume name :"
-msgstr "Alamhulga nimi"
+msgstr "Alamhulga nimi:"
 
 msgid "Select a mount point :"
-msgstr "Valige kinnitus punkt"
+msgstr "Valige kinnitus punkt :"
 
 msgid "Select the desired subvolume options "
 msgstr "Valige soovitud alamhulga valikud "
@@ -598,9 +610,7 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "Kas soovite luua eraldi partitsiooni /home jaoks?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Valitud ketastel ei ole automaatseks soovituseks vajalikku minimaalset mahtu\n
-
-"
+msgstr "Valitud ketastel ei ole automaatseks soovituseks vajalikku minimaalset mahtu\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
 msgstr "Minimaalne mahutavus /home partitsioonile: {}GB\n"
@@ -660,10 +670,10 @@ msgid "A very basic installation that allows you to customize Arch Linux as you 
 msgstr "Väga lihtne paigaldus, mis võimaldab teil Arch Linuxi kohandada vastavalt oma äranägemisele."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Annab valiku erinevate serveripakettide paigaldamiseks ja aktiveerimiseks, nt httpd, nginx, mariadb."
+msgstr "Annab valiku erinevate serveripakettide paigaldamiseks ja aktiveerimiseks, nt httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Valige, milliseid servereid paigaldada, kui ühtegi ei ole, siis tehakse minimaalne paigaldus."
+msgstr "Valige, milliseid servereid paigaldada, kui ühtegi ei ole, siis tehakse minimaalne paigaldus"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Installeerib minimaalse süsteemi ning xorgi ja graafikadraiverid."
@@ -713,7 +723,7 @@ msgstr ""
 "\n"
 
 msgid "Copy to: "
-msgstr "Kopeeri:"
+msgstr "Kopeeri: "
 
 msgid "Edit: "
 msgstr "Muuda: "
@@ -734,10 +744,10 @@ msgid "You can skip selecting a drive and partitioning and use whatever drive-se
 msgstr "Saad vahele jätta ketta valimise ja partitsioneerimise ning kasutada mis tahes draivi-komplekti, mis on paigaldatud /mnt (eksperimentaalne)."
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Valige üks ketastest või jätke vahele ja kasutage vaikimisi /mnt."
+msgstr "Valige üks ketastest või jätke vahele ja kasutage vaikimisi /mnt"
 
 msgid "Select which partitions to mark for formatting:"
-msgstr ""Valige, milliseid partitsioone soovite vormindamiseks märkida:""
+msgstr "Valige, milliseid partitsioone soovite vormindamiseks märkida:"
 
 msgid "Use HSM to unlock encrypted drive"
 msgstr "Kasutage HSM-i krüpteeritud draivi avamiseks"
@@ -755,7 +765,7 @@ msgid "Bus-type"
 msgstr "Bussi tüüp"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Tuleb määrata kas root-sõna või vähemalt 1 kasutaja, kellel on sudo õigused."
+msgstr "Tuleb määrata kas root-sõna või vähemalt 1 kasutaja, kellel on sudo õigused"
 
 msgid "Enter username (leave blank to skip): "
 msgstr "Sisestage kasutajanimi (jätke tühjaks, et vahele jätta): "
@@ -804,17 +814,16 @@ msgid ""
 msgstr ""
 "Sisestage lubatavate paralleelsete allalaadimiste arv.\n"
 " (Sisestage väärtus vahemikus 1 kuni {max_downloads})\n"
+"note:"
 
+msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksimaalne väärtus   : {max_downloads} ( Võimaldab {max_downloads} paralleelset allalaadimist, lubab {max_downloads+1} allalaadimist korraga )"
 
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
 
-msgid "- Maksimaalne väärtus : {max_downloads} ( Võimaldab {max_downloads} paralleelseid allalaadimisi, lubab {max_downloads+1} allalaadimist korraga )"
-msgstr ""
-
-msgid " - Minimaalne väärtus : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
-msgstr ""
-
-msgid "- Keelata/vaikimisi : 0 ( keelab paralleelse allalaadimise, võimaldab ainult 1 allalaadimist korraga )"
-msgstr ""
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Keela/Vaikimisi : 0 ( keelab paralleelse allalaadimise, võimaldab ainult 1 allalaadimist korraga )"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -875,7 +884,7 @@ msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr "Arch Linuxi partitsiooni minimaalne mahutavus: {}GiB"
 
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "See on nimekiri eelprogrammeeritud profiilidest_bck, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist."
+msgstr "See on nimekiri eelprogrammeeritud profiilidest_bck, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist"
 
 msgid "Current profile selection"
 msgstr "Praegune profiilivalik"
@@ -890,7 +899,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Märgistada/mittemärgistada vormindamiseks (kustutab andmed)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Märgistada/mittemärgistada käivitatavaks
+msgstr "Märgistada/mittemärgistada käivitatavak"
 
 msgid "Change filesystem"
 msgstr "Failisüsteemi muutmine"
@@ -911,7 +920,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "See partitsioon on praegu krüpteeritud, selle vormindamiseks tuleb määrata failisüsteem"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "partitsiooni kinnituspunktid on suhtelised installeerimise sees, näiteks boot oleks /boot."
+msgstr "Partitsiooni kinnituspunktid on suhtelised installeerimise sees, näiteks boot oleks /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Kui paigalduspunkt /boot on määratud, siis märgitakse partitsioon ka käivitatavaks."
@@ -974,7 +983,7 @@ msgid "Partition encryption"
 msgstr "Partitsiooni krüpteerimine"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Vormindamine {} "
 
 msgid " Back"
 msgstr " Tagasi"
@@ -1006,9 +1015,6 @@ msgstr "Sway ei toeta Nvidia enda draiverit. Tõenäoliselt tekib teil probleeme
 msgid "Installed packages"
 msgstr "Installeeritud paketid"
 
-msgid "Add profile"
-msgstr Lisa profiil
-
 msgid "Edit profile"
 msgstr "Muuda profiili"
 
@@ -1016,7 +1022,7 @@ msgid "Delete profile"
 msgstr "Kustuta profiil"
 
 msgid "Profile name: "
-msgstr "Profiili nimi:"
+msgstr "Profiili nimi: "
 
 msgid "The profile name you entered is already in use. Try again"
 msgstr "Sisestatud profiili nimi on juba kasutuses. Proovi uuesti"
@@ -1062,7 +1068,7 @@ msgid "Please chose which greeter to install"
 msgstr "Palun valige millist tervitajat installida"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr "See on eelnevalt programmeeritud vaikimisi_profiilide nimekiri."
+msgstr "See on eelnevalt programmeeritud vaikimisi_profiilide nimekiri"
 
 msgid "Disk configuration"
 msgstr "Ketta konfiguratsioon"
@@ -1089,7 +1095,7 @@ msgid "Enter name (leave blank to skip): "
 msgstr "Sisesta nimi (jätke tühjaks, et vahele jätta): "
 
 msgid "Enter url (leave blank to skip): "
-msgstr "Sisesta url (jätke tühjaks, et vahele jätta)"
+msgstr "Sisesta url (jätke tühjaks, et vahele jätta): "
 
 msgid "Select signature check option"
 msgstr "Valige allkirja kontrollimise võimalus"
