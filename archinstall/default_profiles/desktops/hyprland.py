@@ -13,55 +13,28 @@ class FileManager(Enum):
     dolphin = 'dolphin'
     thunar = 'thunar'
 
-
-class HyprlandProfile(XorgProfile):
-	def __init__(self):
-		super().__init__('Hyprland', ProfileType.WindowMgr, description='')
-		self.selected_users = []
-		self.file_manager = FileManager.dolphin
-
-	@property
-	def packages(self) -> List[str]:
-		return [
-			"hyprland",
-			"dunst",
-			"xdg-desktop-portal-hyprland",
-			"kitty",
-			"qt5-wayland",
-			"qt6-wayland"
-			"waybar-hyprland",
-			"grim",
-			"slurp",
-			"hyprpaper",
-		]
-  
-
-	def post_install(self, install_session: 'Installer'):
-		# Fix seatd
-		install_session.arch_chroot("systemctl enable seatd")
-		for user in self.selected_users:
-			chrooted_conf = f"/home/{user}/.config"
-			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr -p")
-			uconf = f"{install_session.target}{chrooted_conf}"
-   			with open(f"{uconf}/hypr/hyprland.conf", "w") as f:
-				f.write(
-"""# THIS IS PRECONFIGURED BY ARCHINSTALL
+HYPRLAND_CONFIG = """# THIS IS PRECONFIGURED BY ARCHINSTALL
 # The wiki for hyprland is here : https://wiki.hyprland.org/Getting-Started/Master-Tutorial
-# If you encounter any problems, bugs or crashes, go and follow the tutorial""")
-				f.write("monitor=,preferred,auto,auto")
-				f.write("exec-once = waybar & hyprpaper & kitty # Autostarting kitty if you have problems with keyboard shortcuts etc.")
-				f.write("env = XCURSOR_SIZE,24")
-				f.write("input {\n    kb_layout = {}".format(keyboard_layout))
-				f.write(
-"""    kb_variant =
+# If you encounter any problems, bugs or crashes, go and check the wiki
+# Have fun !
+
+monitor=,preferred,auto,auto
+
+exec-once = waybar & hyprpaper & kitty # Autostarting kitty if you have problems with keyboard shortcuts etc.")
+
+env = XCURSOR_SIZE,24
+
+input {
+    kb_layout = {kb}
+    kb_variant =
     kb_model =
     kb_options =
     kb_rules =
     follow_mouse = 1
     touchpad { natural_scroll = false }
     sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
-""")
-				f.write("""
+}
+            
 general {
     # See https://wiki.hyprland.org/Configuring/Variables/ for more
     gaps_in = 5
@@ -71,8 +44,8 @@ general {
     col.inactive_border = rgba(595959aa)
 
     layout = dwindle
-}""")
-				f.write("""
+}
+
 decoration {
     # See https://wiki.hyprland.org/Configuring/Variables/ for more
     rounding = 10
@@ -85,8 +58,8 @@ decoration {
     shadow_range = 4
     shadow_render_power = 3
     col.shadow = rgba(1a1a1aee)
-}""")
-				f.write("""
+}
+
 animations {
     enabled = true
     # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
@@ -98,8 +71,8 @@ animations {
     animation = borderangle, 1, 8, default
     animation = fade, 1, 7, default
     animation = workspaces, 1, 6, default
-}""")
-				f.write("""
+}
+
 dwindle {
     # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
     pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
@@ -114,14 +87,13 @@ master {
 gestures {
     # See https://wiki.hyprland.org/Configuring/Variables/ for more
     workspace_swipe = false
-}""")
-				f.write("""
+}
 $mainMod = SUPER
 
 bind = $mainMod, Q, exec, kitty
 bind = $mainMod, C, killactive,
 bind = $mainMod, M, exit,
-bind = $mainMod, E, exec, {}
+bind = $mainMod, E, exec, {fm}
 bind = $mainMod, V, togglefloating,
 bind = $mainMod, R, exec, wofi --show drun
 bind = $mainMod, P, pseudo, # dwindle
@@ -164,7 +136,50 @@ bind = $mainMod, mouse_up, workspace, e-1
 # Move/resize windows with mainMod + LMB/RMB and dragging
 bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
-""".format(self.file_manager))
+"""
+
+HYPRPAPER_CONFIG = """# PRECONFIGURED BY ARCHINSTALL
+# Before changing wallpaper, check how stuff works : https://github.com/hyprwm/hyprpaper#Usage
+preload = {path}
+wallpaper = ,{path}"""
+
+def get_hypr_conf(keyboard_layout, file_manager):
+    return HYPRLAND_CONFIG.format(kb=keyboard_layout, fm=file_manager)
+def get_wallpapaer_conf(wallpaper_path):
+    return HYPRPAPER_CONFIG.format(path=wallpaper_path)
+
+class HyprlandProfile(XorgProfile):
+	def __init__(self):
+		super().__init__('Hyprland', ProfileType.WindowMgr, description='')
+		self.selected_users = []
+		self.file_manager = FileManager.dolphin
+
+	@property
+	def packages(self) -> List[str]:
+		return [
+			"hyprland",
+			"dunst",
+			"xdg-desktop-portal-hyprland",
+			"kitty",
+			"qt5-wayland",
+			"qt6-wayland"
+			"waybar-hyprland",
+			"grim",
+			"slurp",
+			"hyprpaper",
+		]
+  
+
+	def post_install(self, install_session: 'Installer'):
+		# Fix seatd
+		install_session.arch_chroot("systemctl enable seatd")
+		keyboard_layout = "us" #TODO: How to get selected keyboard layout for user ? 
+		for user in self.selected_users:
+			chrooted_conf = f"/home/{user}/.config"
+			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr -p")
+			uconf = f"{install_session.target}{chrooted_conf}"
+			with open(f"{uconf}/hypr/hyprland.conf", "w") as f:
+				f.write(hyprland_config)
 		# For nvidia:
 			# install_session.arch_chroot("pacman -Sy nvidia-dkms")
 			# if install_session.bootloader == "systemd-boot":
