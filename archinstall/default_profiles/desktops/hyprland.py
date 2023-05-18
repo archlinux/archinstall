@@ -285,7 +285,7 @@ class HyprlandProfile(XorgProfile):
 		title = str(_("Configure Hyprland"))
 		options = []
 		options += str(_(f"Select users ({' '.join(self.selected_users)})"))
-		options += str(_(f"File manager ({' '.join(self.file_managers)})"))
+		options += str(_(f"File manager ({self.file_manager})"))
 		
 		#TODO: Configure seat access (seatd / polkit)
   
