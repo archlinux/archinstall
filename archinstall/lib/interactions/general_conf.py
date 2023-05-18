@@ -1,7 +1,8 @@
 from __future__ import annotations
+from enum import Enum
 
 import pathlib
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_keyboard_languages, list_timezones
 from ..menu import MenuSelectionType, Menu, TextInput
@@ -206,3 +207,49 @@ def select_additional_repositories(preset: List[str]) -> List[str]:
 		case MenuSelectionType.Selection: return choice.single_value
 
 	return []
+
+class Shells(Enum):
+    bash = 'bash'
+    zsh =  'zsh '
+    fish = 'fish'
+DEFAULT_SHELL = Shells.bash.value
+OMZ_PLUGINS = ['fzf', 'bat', 'fd', 'tmux', 'ripgrep', 'zsh-autosuggestions', 'exa', 'asdf', 'zsh-syntax-highlighting', 'z', 'autojump', 'ranger', 'navi', 'shellfirm', 'antigen', 'zplug', 'antibody', 'zgen']
+
+DEFAULT_SHELL_CONFIG = {
+	"shell": DEFAULT_SHELL,
+	"starship": False,
+	"oh-my-zsh":False,
+	"oh-my-posh":False,
+}
+
+
+def customize_shell(preset: Dict) -> Dict:
+	title = str(_("Customize your shell"))
+	options = []
+	for sh in Shells:
+		if sh == preset['shell']:
+			options.append(f"{sh.value} (Current)")
+		else:
+			options.append(sh.value)
+	shell =  Menu(title, options, False).run().value
+	if shell.endswith(" (Current)"):
+		shell = shell[:-10]
+	
+	sh_title = str(_("Configure your selected shell"))
+	sh_options = []
+	sh_options.append( str(_(f"Prompt ({preset['prompt']})")) )
+	if shell == Shells.zsh.value:
+		sh_title = str(_("Configure zsh"))
+		sh_options.append( str(_(f"Oh-my-zsh ({preset['oh-my-zsh']})")) )
+		# sh_options.append( str(_(f"Plugins ({' '.join(preset['zsh_plugins'])})")) )
+	#TODO: Make customizations for bash and fish
+	choice = Menu(sh_title, sh_options, False).run().value
+	if choice.startswith("Prompt "):
+		PROMPTS = ["starship",]
+		if shell == Shells.zsh.value and preset['oh-my-zsh'] == True:
+			PROMPTS.append("oh-my-posh")
+		preset['prompt'] = Menu("Select a prompt", PROMPTS, False).run().value
+	if shell == Shells.zsh.value and choice.startswith("Oh-my-zsh "):
+		omz_options = [str(_(f"Plugins ({' '.join(preset['oh-my-zsh plugins'])})"))]
+		if Menu("Configure oh-my-zsh", omz_options).run().value.startswith("Plugins"):
+			preset['oh-my-zsh plugins'] = Menu("Select the oh-my-zsh plugins you want", OMZ_PLUGINS, skip=False, multi=True, preset_values=preset["oh-my-zsh plugins"])
