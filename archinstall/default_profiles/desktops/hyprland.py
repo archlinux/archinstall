@@ -143,10 +143,28 @@ HYPRPAPER_CONFIG = """# PRECONFIGURED BY ARCHINSTALL
 preload = {path}
 wallpaper = ,{path}"""
 
+WAYBAR_CONFIG = """"""
+WAYBAR_CSS = """# PRECONFIGURED BY ARCHINSTALL
+# Configure as you need, and check some examples on the internet
+* {
+	font-size: 12px;
+	font-family: monospace;
+	font-weight: bold;
+}
+
+window#waybar {
+	background: #292b2e;
+	color: #fdf6e3;
+}"""
+
 def get_hypr_conf(keyboard_layout, file_manager):
     return HYPRLAND_CONFIG.format(kb=keyboard_layout, fm=file_manager)
-def get_wallpapaer_conf(wallpaper_path):
+def get_wallpaper_conf(wallpaper_path):
     return HYPRPAPER_CONFIG.format(path=wallpaper_path)
+def get_waybar_conf():
+    return WAYBAR_CONFIG
+def get_waybar_css():
+    return WAYBAR_CSS
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self):
@@ -176,10 +194,18 @@ class HyprlandProfile(XorgProfile):
 		keyboard_layout = "us" #TODO: How to get selected keyboard layout for user ? 
 		for user in self.selected_users:
 			chrooted_conf = f"/home/{user}/.config"
-			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr -p")
+			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr/wallpapers -p")
+			install_session.arch_chroot(f"mkdir {chrooted_conf}/waybar")
+			install_session.arch_chroot(f"wget --output {chrooted_conf}/hypr/wallpapers/default_arch.jpg https://images.hdqwalls.com/wallpapers/arch-liinux-4k-t0.jpg")
 			uconf = f"{install_session.target}{chrooted_conf}"
 			with open(f"{uconf}/hypr/hyprland.conf", "w") as f:
-				f.write(hyprland_config)
+				f.write(get_hypr_conf(keyboard_layout, self.file_manager.value))
+			with open(f"{uconf}/hypr/hyprpaper.conf", "w") as f:
+				f.write(get_wallpaper_conf(f"{uconf}/hypr/wallpapers/default_arch.jpg"))
+			with open(f"{uconf}/waybar/config", "w") as f:
+				f.write(get_waybar_conf())
+			with open(f"{uconf}/waybar/style.css", "w") as f:
+				f.write(get_waybar_css())
 		# For nvidia:
 			# install_session.arch_chroot("pacman -Sy nvidia-dkms")
 			# if install_session.bootloader == "systemd-boot":
