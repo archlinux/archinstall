@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType, GreeterType, SelectResult
@@ -8,10 +9,16 @@ if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
 	_: Any
 
+class FileManager(Enum):
+    dolphin = 'dolphin'
+    thunar = 'thunar'
+
 
 class HyprlandProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('Hyprland', ProfileType.WindowMgr, description='')
+		self.selected_users = []
+		self.file_manager = FileManager.dolphin
 
 	@property
 	def packages(self) -> List[str]:
@@ -32,6 +39,132 @@ class HyprlandProfile(XorgProfile):
 	def post_install(self, install_session: 'Installer'):
 		# Fix seatd
 		install_session.arch_chroot("systemctl enable seatd")
+		for user in self.selected_users:
+			chrooted_conf = f"/home/{user}/.config"
+			install_session.arch_chroot(f"mkdir {chrooted_conf}/hypr -p")
+			uconf = f"{install_session.target}{chrooted_conf}"
+   			with open(f"{uconf}/hypr/hyprland.conf", "w") as f:
+				f.write(
+"""# THIS IS PRECONFIGURED BY ARCHINSTALL
+# The wiki for hyprland is here : https://wiki.hyprland.org/Getting-Started/Master-Tutorial
+# If you encounter any problems, bugs or crashes, go and follow the tutorial""")
+				f.write("monitor=,preferred,auto,auto")
+				f.write("exec-once = waybar & hyprpaper & kitty # Autostarting kitty if you have problems with keyboard shortcuts etc.")
+				f.write("env = XCURSOR_SIZE,24")
+				f.write("input {\n    kb_layout = {}".format(keyboard_layout))
+				f.write(
+"""    kb_variant =
+    kb_model =
+    kb_options =
+    kb_rules =
+    follow_mouse = 1
+    touchpad { natural_scroll = false }
+    sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
+""")
+				f.write("""
+general {
+    # See https://wiki.hyprland.org/Configuring/Variables/ for more
+    gaps_in = 5
+    gaps_out = 20
+    border_size = 2
+    col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
+    col.inactive_border = rgba(595959aa)
+
+    layout = dwindle
+}""")
+				f.write("""
+decoration {
+    # See https://wiki.hyprland.org/Configuring/Variables/ for more
+    rounding = 10
+    blur = true
+    blur_size = 3
+    blur_passes = 1
+    blur_new_optimizations = true
+
+    drop_shadow = true
+    shadow_range = 4
+    shadow_render_power = 3
+    col.shadow = rgba(1a1a1aee)
+}""")
+				f.write("""
+animations {
+    enabled = true
+    # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
+    bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+
+    animation = windows, 1, 7, myBezier
+    animation = windowsOut, 1, 7, default, popin 80%
+    animation = border, 1, 10, default
+    animation = borderangle, 1, 8, default
+    animation = fade, 1, 7, default
+    animation = workspaces, 1, 6, default
+}""")
+				f.write("""
+dwindle {
+    # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
+    pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+    preserve_split = true # you probably want this
+}
+
+master {
+    # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
+    new_is_master = true
+}
+
+gestures {
+    # See https://wiki.hyprland.org/Configuring/Variables/ for more
+    workspace_swipe = false
+}""")
+				f.write("""
+$mainMod = SUPER
+
+bind = $mainMod, Q, exec, kitty
+bind = $mainMod, C, killactive,
+bind = $mainMod, M, exit,
+bind = $mainMod, E, exec, {}
+bind = $mainMod, V, togglefloating,
+bind = $mainMod, R, exec, wofi --show drun
+bind = $mainMod, P, pseudo, # dwindle
+bind = $mainMod, J, togglesplit, # dwindle
+
+# Move focus with mainMod + arrow keys
+bind = $mainMod, left, movefocus, l
+bind = $mainMod, right, movefocus, r
+bind = $mainMod, up, movefocus, u
+bind = $mainMod, down, movefocus, d
+
+# Switch workspaces with mainMod + [0-9]
+bind = $mainMod, 1, workspace, 1
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5
+bind = $mainMod, 6, workspace, 6
+bind = $mainMod, 7, workspace, 7
+bind = $mainMod, 8, workspace, 8
+bind = $mainMod, 9, workspace, 9
+bind = $mainMod, 0, workspace, 10
+
+# Move active window to a workspace with mainMod + SHIFT + [0-9]
+bind = $mainMod SHIFT, 1, movetoworkspace, 1
+bind = $mainMod SHIFT, 2, movetoworkspace, 2
+bind = $mainMod SHIFT, 3, movetoworkspace, 3
+bind = $mainMod SHIFT, 4, movetoworkspace, 4
+bind = $mainMod SHIFT, 5, movetoworkspace, 5
+bind = $mainMod SHIFT, 6, movetoworkspace, 6
+bind = $mainMod SHIFT, 7, movetoworkspace, 7
+bind = $mainMod SHIFT, 8, movetoworkspace, 8
+bind = $mainMod SHIFT, 9, movetoworkspace, 9
+bind = $mainMod SHIFT, 0, movetoworkspace, 10
+
+# Scroll through existing workspaces with mainMod + scroll
+bind = $mainMod, mouse_down, workspace, e+1
+bind = $mainMod, mouse_up, workspace, e-1
+
+# Move/resize windows with mainMod + LMB/RMB and dragging
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow
+""".format(self.file_manager))
 		# For nvidia:
 			# install_session.arch_chroot("pacman -Sy nvidia-dkms")
 			# if install_session.bootloader == "systemd-boot":
@@ -60,16 +193,23 @@ class HyprlandProfile(XorgProfile):
 			# 			"env = WLR_NO_HARDWARE_CURSORS,1"
 			# 		])
    
-	# def do_on_select(self):
-	# 	title = str(_("Configure Hyprland"))
-	# 	options = []
-	# 	options += str(_(f"Select users ({' '.join(self.selected_users)})"))
-	# 	#TODO: Configure seat access (seatd / polkit)
-	# 	chosen = Menu(title, options, skip=False).run()
-	# 	if chosen.value.startswith("Select users"):
-	# 		user_selected = Menu("Select User(s)", created_users, multi=True).run()
-	# 		self.selected_users = user_selected.multi_value
+	def do_on_select(self):
+		title = str(_("Configure Hyprland"))
+		options = []
+		options += str(_(f"Select users ({' '.join(self.selected_users)})"))
+		options += str(_(f"File manager ({' '.join(self.file_managers)})"))
+		
+		#TODO: Configure seat access (seatd / polkit)
   
+		chosen = Menu(title, options, skip=False).run()
+		if chosen.value.startswith("Select users"):
+			already_created_users = []
+			user_selected = Menu("Select User(s)", already_created_users, multi=True, preset_values=self.selected_users).run()
+			self.selected_users = user_selected.multi_value
+		elif chosen.value.startswith("File manager"):
+			self.file_manager = Menu("Select graphical file manager", [fm.value for fm in FileManager]).run().value
+
+
 
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
