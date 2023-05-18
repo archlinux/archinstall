@@ -6,6 +6,7 @@ from . import disk
 from .general import secret
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
+from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration
 from .models.bootloader import Bootloader
 from .models.users import User
@@ -25,7 +26,6 @@ from .interactions import get_password, ask_for_a_timezone
 from .interactions import select_additional_repositories
 from .interactions import select_kernel
 from .utils.util import format_cols
-from .interactions import select_mirror_regions
 from .interactions import ask_ntp
 from .interactions.disk_conf import select_disk_config
 
@@ -52,12 +52,13 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: self._locale_selection(preset),
 				preview_func=self._prev_locale,
 				display_func=lambda x: self._defined_text if x else '')
-		self._menu_options['mirror-region'] = \
+		self._menu_options['mirror_config'] = \
 			Selector(
-				_('Mirror region'),
-				lambda preset: select_mirror_regions(preset),
-				display_func=lambda x: list(x.keys()) if x else '',
-				default={})
+				_('Mirrors'),
+				lambda preset: self._mirror_configuration(preset),
+				display_func=lambda x: self._defined_text if x else '',
+				preview_func=self._prev_mirror_config
+			)
 		self._menu_options['disk_config'] = \
 			Selector(
 				_('Disk configuration'),
@@ -393,3 +394,24 @@ class GlobalMenu(AbstractMenu):
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)
 		return users
+
+	def _mirror_configuration(self, preset: Optional[MirrorConfiguration] = None) -> Optional[MirrorConfiguration]:
+		data_store: Dict[str, Any] = {}
+		mirror_configuration = MirrorMenu(data_store, preset=preset).run()
+		return mirror_configuration
+
+	def _prev_mirror_config(self) -> Optional[str]:
+		selector = self._menu_options['mirror_config']
+
+		if selector.has_selection():
+			mirror_config: MirrorConfiguration = selector.current_selection  # type: ignore
+			output = ''
+			if mirror_config.regions:
+				output += '{}: {}\n\n'.format(str(_('Mirror regions')), mirror_config.regions)
+			if mirror_config.custom_mirrors:
+				table = FormattedOutput.as_table(mirror_config.custom_mirrors)
+				output += '{}\n{}'.format(str(_('Custom mirrors')), table)
+
+			return output.strip()
+
+		return None

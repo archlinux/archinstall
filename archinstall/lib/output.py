@@ -238,20 +238,46 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
-def info(*msgs: str):
-	log(*msgs, level=logging.INFO)
+def info(
+	*msgs: str,
+	level: int = logging.INFO,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+def debug(
+	*msgs: str,
+	level: int = logging.DEBUG,
+	fg: str = 'white',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
+def error(
+	*msgs: str,
+	level: int = logging.ERROR,
+	fg: str = 'red',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
-def debug(*msgs: str):
-	log(*msgs, level=logging.DEBUG)
-
-
-def error(*msgs: str):
-	log(*msgs, level=logging.ERROR, fg='red')
-
-
-def warn(*msgs: str):
-	log(*msgs, level=logging.WARNING, fg='yellow')
+def warn(
+	*msgs: str,
+	level: int = logging.WARN,
+	fg: str = 'yellow',
+	bg: Optional[str] = None,
+	reset: bool = False,
+	font: List[Font] = []
+):
+	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
 
 def log(

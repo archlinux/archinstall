@@ -224,12 +224,8 @@ def load_config():
 	if profile_config := arguments.get('profile_config', None):
 		arguments['profile_config'] = profile.ProfileConfiguration.parse_arg(profile_config)
 
-	if arguments.get('mirror-region', None) is not None:
-		if type(arguments.get('mirror-region', None)) is dict:
-			arguments['mirror-region'] = arguments.get('mirror-region', None)
-		else:
-			selected_region = arguments.get('mirror-region', None)
-			arguments['mirror-region'] = {selected_region: mirrors.list_mirrors()[selected_region]}
+	if mirror_config := arguments.get('mirror_config', None):
+		arguments['mirror_config'] = mirrors.MirrorConfiguration.parse_args(mirror_config)
 
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)

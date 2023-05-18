@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable, Iterable
+from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
@@ -15,7 +15,7 @@ from .hardware import SysInfo
 from .locale import LocaleConfiguration
 from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import use_mirrors
+from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
 from .models.bootloader import Bootloader
 from .models.network_configuration import NetworkConfiguration
 from .models.users import User
@@ -384,14 +384,17 @@ class Installer:
 
 			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
-	def set_mirrors(self, mirrors: Dict[str, Iterable[str]]):
+	def set_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
-				if result := plugin.on_mirrors(mirrors):
-					mirrors = result
+				if result := plugin.on_mirrors(mirror_config):
+					mirror_config = result
 
 		destination = f'{self.target}/etc/pacman.d/mirrorlist'
-		use_mirrors(mirrors, destination=destination)
+		if mirror_config.mirror_regions:
+			use_mirrors(mirror_config.mirror_regions, destination)
+		if mirror_config.custom_mirrors:
+			add_custom_mirrors(mirror_config.custom_mirrors)
 
 	def genfstab(self, flags :str = '-pU'):
 		info(f"Updating {self.target}/etc/fstab")

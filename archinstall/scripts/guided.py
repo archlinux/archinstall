@@ -12,7 +12,7 @@ from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
-from archinstall.lib.mirrors import use_mirrors
+from archinstall.lib.mirrors import use_mirrors, add_custom_mirrors
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
 from archinstall.lib.networking import check_mirror_reachable
@@ -44,7 +44,7 @@ def ask_user_questions():
 	global_menu.enable('archinstall-language')
 
 	# Set which region to download packages from during the installation
-	global_menu.enable('mirror-region')
+	global_menu.enable('mirror_config')
 
 	global_menu.enable('locale_config')
 
@@ -132,8 +132,11 @@ def perform_installation(mountpoint: Path):
 				installation.generate_key_files()
 
 		# Set mirrors used by pacstrap (outside of installation)
-		if archinstall.arguments.get('mirror-region', None):
-			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+		if mirror_config := archinstall.arguments.get('mirror_config', None):
+			if mirror_config.mirror_regions:
+				use_mirrors(mirror_config.mirror_regions)
+			if mirror_config.custom_mirrors:
+				add_custom_mirrors(mirror_config.custom_mirrors)
 
 		installation.minimal_installation(
 			testing=enable_testing,
@@ -142,9 +145,8 @@ def perform_installation(mountpoint: Path):
 			locale_config=locale_config
 		)
 
-		if archinstall.arguments.get('mirror-region') is not None:
-			if archinstall.arguments.get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+		if mirror_config := archinstall.arguments.get('mirror_config', None):
+			installation.set_mirrors(mirror_config)  # Set the mirrors in the installation medium
 
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')

@@ -1,12 +1,13 @@
 import os
 import json
 import stat
+import readline
 from pathlib import Path
 from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
 from .storage import storage
-from .general import JSON, UNSAFE_JSON, SysCommand
+from .general import JSON, UNSAFE_JSON
 from .output import debug, info, warn
 
 if TYPE_CHECKING:
@@ -115,97 +116,81 @@ class ConfigurationOutput:
 
 def save_config(config: Dict):
 	def preview(selection: str):
-		if options['user_config'] == selection:
+		if options["user_config"] == selection:
 			serialized = config_output.user_config_to_json()
-			return f'{config_output.user_configuration_file}\n{serialized}'
-		elif options['user_creds'] == selection:
+			return f"{config_output.user_configuration_file}\n{serialized}"
+		elif options["user_creds"] == selection:
 			if maybe_serial := config_output.user_credentials_to_json():
-				return f'{config_output.user_credentials_file}\n{maybe_serial}'
+				return f"{config_output.user_credentials_file}\n{maybe_serial}"
 			else:
-				return str(_('No configuration'))
-		elif options['all'] == selection:
-			output = f'{config_output.user_configuration_file}\n'
+				return str(_("No configuration"))
+		elif options["all"] == selection:
+			output = f"{config_output.user_configuration_file}\n"
 			if config_output.user_credentials_to_json():
-				output += f'{config_output.user_credentials_file}\n'
+				output += f"{config_output.user_credentials_file}\n"
 			return output[:-1]
 		return None
 
-	config_output = ConfigurationOutput(config)
+	try:
+		config_output = ConfigurationOutput(config)
 
-	options = {
-		'user_config': str(_('Save user configuration')),
-		'user_creds': str(_('Save user credentials')),
-		'disk_layout': str(_('Save disk layout')),
-		'all': str(_('Save all'))
-	}
+		options = {
+			"user_config": str(_("Save user configuration (including disk layout)")),
+			"user_creds": str(_("Save user credentials")),
+			"all": str(_("Save all")),
+		}
 
-	choice = Menu(
-		_('Choose which configuration to save'),
-		list(options.values()),
-		sort=False,
-		skip=True,
-		preview_size=0.75,
-		preview_command=preview
-	).run()
+		save_choice = Menu(
+			_("Choose which configuration to save"),
+			list(options.values()),
+			sort=False,
+			skip=True,
+			preview_size=0.75,
+			preview_command=preview,
+		).run()
 
-	if choice.type_ == MenuSelectionType.Skip:
-		return
-
-	save_config_value = choice.single_value
-	saving_key = [k for k, v in options.items() if v == save_config_value][0]
-
-	dirs_to_exclude = [
-		'/bin',
-		'/dev',
-		'/lib',
-		'/lib64',
-		'/lost+found',
-		'/opt',
-		'/proc',
-		'/run',
-		'/sbin',
-		'/srv',
-		'/sys',
-		'/usr',
-		'/var',
-	]
-
-	debug('Ignore configuration option folders: ' + ','.join(dirs_to_exclude))
-	info(_('Finding possible directories to save configuration files ...'))
-
-	find_exclude = '-path ' + ' -prune -o -path '.join(dirs_to_exclude) + ' -prune '
-	file_picker_command = f'find / {find_exclude} -o -type d -print0'
-
-	directories = SysCommand(file_picker_command).decode()
-
-	if directories is None:
-		raise ValueError('Failed to retrieve possible configuration directories')
-
-	possible_save_dirs = list(filter(None, directories.split('\x00')))
-
-	selection = Menu(
-		_('Select directory (or directories) for saving configuration files'),
-		possible_save_dirs,
-		multi=True,
-		skip=True,
-		allow_reset=False,
-	).run()
-
-	match selection.type_:
-		case MenuSelectionType.Skip:
+		if save_choice.type_ == MenuSelectionType.Skip:
 			return
 
-	save_dirs = selection.multi_value
+		readline.set_completer_delims("\t\n=")
+		readline.parse_and_bind("tab: complete")
+		while True:
+			path = input(
+				_(
+					"Enter a directory for the configuration(s) to be saved (tab completion enabled)\nSave directory: "
+				)
+			).strip(" ")
+			dest_path = Path(path)
+			if dest_path.exists() and dest_path.is_dir():
+				break
+			info(_("Not a valid directory: {}").format(dest_path), fg="red")
 
-	debug(f'Saving {saving_key} configuration files to {save_dirs}')
+		if not path:
+			return
 
-	if save_dirs is not None:
-		for save_dir_str in save_dirs:
-			save_dir = Path(save_dir_str)
-			if options['user_config'] == save_config_value:
-				config_output.save_user_config(save_dir)
-			elif options['user_creds'] == save_config_value:
-				config_output.save_user_creds(save_dir)
-			elif options['all'] == save_config_value:
-				config_output.save_user_config(save_dir)
-				config_output.save_user_creds(save_dir)
+		prompt = _(
+			"Do you want to save {} configuration file(s) in the following location?\n\n{}"
+		).format(
+			list(options.keys())[list(options.values()).index(str(save_choice.value))],
+			dest_path.absolute(),
+		)
+		save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+		if save_confirmation == Menu.no():
+			return
+
+		debug(
+			_("Saving {} configuration files to {}").format(
+				list(options.keys())[list(options.values()).index(str(save_choice.value))],
+				dest_path.absolute(),
+			)
+		)
+
+		if options["user_config"] == save_choice.value:
+			config_output.save_user_config(dest_path)
+		elif options["user_creds"] == save_choice.value:
+			config_output.save_user_creds(dest_path)
+		elif options["all"] == save_choice.value:
+			config_output.save_user_config(dest_path)
+			config_output.save_user_creds(dest_path)
+	except KeyboardInterrupt:
+		return
