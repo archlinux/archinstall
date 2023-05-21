@@ -137,26 +137,28 @@ class Journald:
 
 def check_log_permissions():
 	filename = storage.get('LOG_FILE', None)
+	log_dir = storage.get('LOG_PATH', Path('./'))
 
 	if not filename:
-		return
+		raise ValueError('No log file name defined')
 
-	log_dir = storage.get('LOG_PATH', Path('./'))
-	absolute_logfile = log_dir / filename
+	log_file = log_dir / filename
 
 	try:
 		log_dir.mkdir(exist_ok=True, parents=True)
-		with absolute_logfile.open('a') as fp:
+		log_file.touch(exist_ok=True)
+
+		with log_file.open('a') as fp:
 			fp.write('')
 	except PermissionError:
 		# Fallback to creating the log file in the current folder
-		fallback_log_file = Path('./').absolute() / filename
-		absolute_logfile = fallback_log_file
-		absolute_logfile.mkdir(exist_ok=True, parents=True)
-		storage['LOG_PATH'] = Path('./').absolute()
+		fallback_dir = Path('./').absolute()
+		fallback_log_file = fallback_dir / filename
 
-		err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
-		warn(err_string)
+		fallback_log_file.touch(exist_ok=True)
+
+		storage['LOG_PATH'] = fallback_dir
+		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
 
 
 def _supports_color() -> bool:
@@ -248,6 +250,7 @@ def info(
 ):
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
+
 def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
@@ -257,6 +260,7 @@ def debug(
 	font: List[Font] = []
 ):
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
 
 def error(
 	*msgs: str,
@@ -295,14 +299,10 @@ def log(
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	# If a logfile is defined in storage,
-	# we use that one to output everything
-	if filename := storage.get('LOG_FILE', None):
-		log_dir = storage.get('LOG_PATH', Path('./'))
-		absolute_logfile = log_dir / filename
+	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
 
-		with open(absolute_logfile, 'a') as fp:
-			fp.write(f"{orig_string}\n")
+	with log_file.open('a') as fp:
+		fp.write(f"{orig_string}\n")
 
 	Journald.log(text, level=level)
 
