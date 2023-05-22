@@ -45,6 +45,9 @@ class DeviceHandler(object):
 		block_devices = {}
 
 		for device in getAllDevices():
+			if get_lsblk_info(device.path).type == 'rom':
+				continue
+
 			try:
 				disk = Disk(device)
 			except DiskLabelException as err:
