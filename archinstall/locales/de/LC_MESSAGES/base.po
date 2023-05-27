@@ -808,14 +808,13 @@ msgstr ""
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
@@ -1122,6 +1121,72 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Bitte wählen sie eine oder mehrere Laufwerke aus die konfiguriert werden sollen"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Benutzerkonto hinzufügen"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Laufwerke-layout auswählen"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Laufwerke-layout auswählen"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Benutzerkonfiguration speichern"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Konfiguration speichern"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Mirror-region"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Mirror-region"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"

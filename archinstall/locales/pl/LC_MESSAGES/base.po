@@ -794,18 +794,19 @@ msgstr "Skonfigurowano {} interfejsów"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Ta opcja pozwala określić maksymalną liczbę pobieranych plików podczas instalacji"
 
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Wprowadź maksymalną liczbę plików pobieranych jednocześnie.\n"
-" (Liczba z zakresu od 1 do {max_downloads})\n"
+" (Liczba z zakresu od 1 do {})\n"
 "Zauważ:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maksymalna wartość   : {max_downloads} ( Zwiększa liczbę zadań o {max_downloads}, co pozwala na pobieranie {max_downloads+1} plików jednocześnie )"
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Maksymalna wartość   : {} ( Zwiększa liczbę zadań o {}, co pozwala na pobieranie {} plików jednocześnie )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Minimalna wartość   : 1 ( Zwiększa liczbę zadań o 1, co pozwala na pobieranie 2 plików jednocześnie )"
@@ -815,7 +816,7 @@ msgstr " - Wyłącz/domyślnie : 0 ( Wyłącza pobieranie równoległe, więc ty
 
 #, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {max_downloads}, lub 0 aby wyłączyć."
+msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub 0 aby wyłączyć."
 
 msgid "Parallel Downloads"
 msgstr "Pobieranie równoległe"
@@ -1112,6 +1113,74 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Dodaj użytkownika"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Wprowadź nazwę użytkownika (pozostaw puste, aby pominąć): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Wprowadź nazwę użytkownika (pozostaw puste, aby pominąć): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Wybierz układ dysku"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Wybierz układ dysku"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Zapisz konfiguracje użytkownika"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Wprowadź katalog, w którym ma zostać zapisana konfiguracja: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Zapisz konfiguracje"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Region lustra"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Region lustra"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksymalna wartość   : {} ( Zwiększa liczbę zadań o {}, co pozwala na pobieranie {} plików jednocześnie )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub 0 aby wyłączyć."
 
 #~ msgid "Add :"
 #~ msgstr "Dodaj :"
