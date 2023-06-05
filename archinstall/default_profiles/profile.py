@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from typing import List, Optional, Any, Dict, TYPE_CHECKING, TypeVar
 
-from archinstall.lib.output import FormattedOutput
+from archinstall.lib.utils.util import format_cols
 
 if TYPE_CHECKING:
 	from archinstall.lib.installer import Installer
@@ -185,17 +185,6 @@ class Profile:
 		return None
 
 	def packages_text(self) -> str:
-		text = str(_('Installed packages')) + ':\n'
-
-		nr_packages = len(self.packages)
-		if nr_packages <= 5:
-			col = 1
-		elif nr_packages <= 10:
-			col = 2
-		elif nr_packages <= 15:
-			col = 3
-		else:
-			col = 4
-
-		text += FormattedOutput.as_columns(self.packages, col)
-		return text
+		header = str(_('Installed packages'))
+		output = format_cols(self.packages, header)
+		return output

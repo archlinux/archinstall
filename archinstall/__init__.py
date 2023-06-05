@@ -213,8 +213,7 @@ def load_config():
 	"""
 	from .lib.models import NetworkConfiguration
 
-	arguments.setdefault('sys-language', 'en_US')
-	arguments.setdefault('sys-encoding', 'utf-8')
+	arguments['locale_config'] = locale.LocaleConfiguration.parse_arg(arguments)
 
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
