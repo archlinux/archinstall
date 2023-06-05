@@ -181,6 +181,6 @@
  {"abbr": "yi", "lang": "Yiddish"},
  {"abbr": "yo", "lang": "Yoruba"},
  {"abbr": "za", "lang": "Zhuang"},
- {"abbr": "zh-TW", "lang": "Traditional Chinese"},
+ {"abbr": "zh-TW", "lang": "Traditional Chinese", "translated_lang": "繁體中文"},
  {"abbr": "zh-CN", "lang": "Simplified Chinese"},
  {"abbr": "zu", "lang": "Zulu"}]
