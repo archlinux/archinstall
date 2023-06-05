@@ -63,7 +63,7 @@ msgstr "დამატებითი პაკეტები დასაყ�
 msgid "Copy ISO network configuration to installation"
 msgstr "ISO-ის ქსელის კონფიგურაციის კოპირება დაყენების დროს"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"
 
 msgid "Select one network interface to configure"
