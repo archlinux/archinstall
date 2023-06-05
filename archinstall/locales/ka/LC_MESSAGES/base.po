@@ -794,18 +794,17 @@ msgstr "მორგებულია {} ინტერფეისი"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "ეს პარამეტრი დაყენებისას მითითებული რაოდენობის პარალელურ გადმოწერას დაუშვებს"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "შეიყვანეთ დასაშვები პარალელური გადმოწერების რაოდენობა.\n"
-" (შეიყვანეთ მნიშვნელობა 1-დან {max_downloads}-მდე)\n"
+" (შეიყვანეთ მნიშვნელობა 1-დან {}-მდე)\n"
 "დაიმახსოვრეთ:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - მინიმალური მნიშვნელობა   : {max_downloads} ( დაუშვებს {max_downloads} პარალელურ გადმოწერას, დაუშვებს {max_downloads+1} ერთდროულ გადმოწერას )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - მინიმალური მნიშვნელობა   : 1 ( დაუშვებს 1 პარალელურ გადმოწერას, დაუშვებს 2 ერთდროულ გადმოწერას )"
@@ -813,9 +812,9 @@ msgstr " - მინიმალური მნიშვნელობა   : 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - გამორთვა/ნაგულისხმები : 0 ( პარალელური გადმოწერების გათიშვა. დროის ერთ მომენტში მხოლოდ ერთი გადმოწერა მოხდება )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {max_downloads}-მდე, ან 0, გასათიშად]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
 
 msgid "Parallel Downloads"
 msgstr "პარალელური გადმოწერები"
@@ -1168,3 +1167,10 @@ msgstr "სარკის რეგიონი"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - მინიმალური მნიშვნელობა   : {} ( დაუშვებს {} პარალელურ გადმოწერას, დაუშვებს {} ერთდროულ გადმოწერას )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"

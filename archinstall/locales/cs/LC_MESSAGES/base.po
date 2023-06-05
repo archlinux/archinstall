@@ -786,18 +786,17 @@ msgstr "Nakonfigurováno {} rozhraní"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Tato možnost povolí specifikovaný počet paralelních stahování, která mohou nastat při instalaci"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Zadejte povolený počet paralelních stahování.\n"
-" (Zadejte hodnotu mezi 1 a {max_downloads})\n"
+" (Zadejte hodnotu mezi 1 a {})\n"
 "Poznámka:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maximální hodnota  : {max_downloads} (Povolí {max_downloads} paralelních stahování, povolí {max_downloads+1} stahování naráz )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povolí {} stahování naráz )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Minimální hodnota   : 1 (Povolí 1 paralelní stahování, povolí 2 stahování naráz)"
@@ -805,9 +804,9 @@ msgstr " - Minimální hodnota   : 1 (Povolí 1 paralelní stahování, povolí 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Zakázáno/Výchozí    : 0 (Zakáže paralelní stahování, povolí pouze 1 stahování naráz)"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {max_downloads}, nebo 0 pro vypnutí]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
 
 msgid "Parallel Downloads"
 msgstr "Paralelní stahování"
@@ -1163,3 +1162,10 @@ msgstr "Oblast zrcadla"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "Oblast zrcadla"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povolí {} stahování naráz )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"

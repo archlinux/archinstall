@@ -793,18 +793,17 @@ msgstr "Interface {} dikonfigurasi"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Opsi ini memungkinkan jumlah unduhan paralel yang dapat terjadi selama instalasi"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Masukkan jumlah unduhan paralel yang akan diaktifkan.\n"
-" (Masukkan nilai antara 1 hingga {max_downloads})\n"
+" (Masukkan nilai antara 1 hingga {})\n"
 "Catatan:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Nilai maksimum   : {max_downloads} ( Memungkinkan {max_downloads} unduhan paralel, memungkinkan {max_downloads+1} unduhan sekaligus)"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 unduhan sekaligus)"
@@ -812,9 +811,9 @@ msgstr " - Nilai minimum   : 1 (Mengizinkan 1 unduhan paralel, memungkinkan 2 un
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Nonaktifkan/Default: 0 (Menonaktifkan pengunduhan paralel, hanya mengizinkan 1 unduhan pada satu waktu)"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {max_downloads}, atau 0 untuk menonaktifkan]"
+msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"
 
 msgid "Parallel Downloads"
 msgstr "Unduhan Paralel"
@@ -1169,3 +1168,10 @@ msgstr "Wilayah mirror"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "Wilayah mirror"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Nilai maksimum   : {} ( Memungkinkan {} unduhan paralel, memungkinkan {} unduhan sekaligus)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Input tidak valid! Coba lagi dengan input yang valid [1 untuk {}, atau 0 untuk menonaktifkan]"

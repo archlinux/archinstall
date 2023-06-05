@@ -793,16 +793,15 @@ msgid ""
 "installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
 msgid ""
-" - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel "
-"downloads, allows {max_downloads+1} downloads at a time )"
+" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads "
+"at a time )"
 msgstr ""
 
 msgid ""
@@ -1145,4 +1144,12 @@ msgid "Mirrors"
 msgstr ""
 
 msgid "Mirror regions"
+msgstr ""
+
+msgid ""
+" - Maximum value   : {} ( Allows {} parallel downloads, allows "
+"{max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr ""

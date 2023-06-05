@@ -792,18 +792,17 @@ msgstr "已配置的 {} 接口"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "此选项启用安装期间可能发生的并行下载次数"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "输入要启用的并行下载数。\n"
-"  （输入一个介于 1 到 {max_downloads} 之间的值）\n"
+"  （输入一个介于 1 到 {} 之间的值）\n"
 "提示："
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 最大值：{max_downloads}（允许 {max_downloads} 次并行下载，一次允许 {max_downloads+1} 次下载）"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr "  - 最小值：1（允许 1 次并行下载，一次允许 2 次下载）"
@@ -811,9 +810,9 @@ msgstr "  - 最小值：1（允许 1 次并行下载，一次允许 2 次下载�
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr "  - 禁用/默认：0（禁用并行下载，一次只允许 1 个下载）"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "输入无效！ 使用有效输入重试 [1 到 {max_downloads}，或 0 到禁用]"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
 
 msgid "Parallel Downloads"
 msgstr "并行下载"
@@ -1168,3 +1167,10 @@ msgstr "镜像区域"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "镜像区域"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"

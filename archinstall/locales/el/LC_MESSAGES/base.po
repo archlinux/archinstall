@@ -793,18 +793,17 @@ msgstr "Διαμορφωμένες {} διεπαφές"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {max_downloads})\n"
+" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
 "Σημείωση:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Μέγιστη τιμή  : {max_downloads} ( Επιτρέπει {max_downloads} παράλληλες λήψεις, επιτρέπει {max_downloads+1} λήψεις σε μία στιγμή )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλληλη λήψη, επιτρέπει 2 λήψεις σε μία στιγμή )"
@@ -812,9 +811,9 @@ msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλλη�
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {max_downloads}, ή 0 για απενεργοποίηση]"
+msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
 
 msgid "Parallel Downloads"
 msgstr "Παράλληλες Λήψεις"
@@ -1170,3 +1169,10 @@ msgstr "Περιοχή mirror"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"

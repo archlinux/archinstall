@@ -793,18 +793,17 @@ msgstr "Налаштовані інтерфейси {}"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Цей параметр вмикає кількість паралельних завантажень, які можуть відбуватися під час встановлення"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Введіть кількість паралельних завантажень, які потрібно ввімкнути.\n"
-" (Введіть значення від 1 до {max_downloads})\n"
+" (Введіть значення від 1 до {})\n"
 "Примітка:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Максимальне значення   : {max_downloads} ( Дозволяє {max_downloads} паралельних завантажень, дозволяє {max_downloads+1} завантажень за раз )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Максимальне значення   : {} ( Дозволяє {} паралельних завантажень, дозволяє {} завантажень за раз )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Мінімальне значення   : 1 ( дозволяє 1 паралельне завантаження, дозволяє 2 завантаження одночасно )"
@@ -812,9 +811,9 @@ msgstr " - Мінімальне значення   : 1 ( дозволяє 1 па
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Вимкнути/Типово : 0 ( Вимикає паралельне завантаження, дозволяє лише 1 завантаження за раз )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {max_downloads} або 0 для вимкнення]"
+msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"
 
 msgid "Parallel Downloads"
 msgstr "Паралельні Завантаження"
@@ -1167,3 +1166,10 @@ msgstr "Регіон дзеркала"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "Регіон дзеркала"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Максимальне значення   : {} ( Дозволяє {} паралельних завантажень, дозволяє {} завантажень за раз )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Некоректне введення! Повторіть спробу з валідним введенням [від 1 до {} або 0 для вимкнення]"

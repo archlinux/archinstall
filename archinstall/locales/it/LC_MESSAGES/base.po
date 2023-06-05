@@ -793,18 +793,17 @@ msgstr "Configurate {} interfacce"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Questa opzione consente di impostare il numero di download paralleli che possono avvenire durante l'installazione"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Inserisci il numero di download paralleli da abilitare.\n"
-" (Inserisci un valore compreso tra 1 e {max_downloads})\n"
+" (Inserisci un valore compreso tra 1 e {})\n"
 "Nota:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valore massimo   : {max_downloads} ( Consente {max_downloads} download parallelo, consente {max_downloads+1} download alla volta )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Valore massimo   : {} ( Consente {} download parallelo, consente {} download alla volta )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Valore minimo   : 1 ( Consente 1 download parallelo, consente 2 download alla volta )"
@@ -812,9 +811,9 @@ msgstr " - Valore minimo   : 1 ( Consente 1 download parallelo, consente 2 downl
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Disabilita/Predefinito : 0 ( Disabilita il download parallelo, consente solo 1 download alla volta )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Input non valido! Riprova con un input valido [da 1 a {max_downloads}, o 0 per disabilitare]."
+msgstr "Input non valido! Riprova con un input valido [da 1 a {}, o 0 per disabilitare]."
 
 msgid "Parallel Downloads"
 msgstr "Download paralleli"
@@ -1169,3 +1168,10 @@ msgstr "Regione dei mirror"
 #, fuzzy
 msgid "Mirror regions"
 msgstr "Regione dei mirror"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Valore massimo   : {} ( Consente {} download parallelo, consente {} download alla volta )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Input non valido! Riprova con un input valido [da 1 a {}, o 0 per disabilitare]."
