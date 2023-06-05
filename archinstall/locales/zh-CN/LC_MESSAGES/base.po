@@ -62,7 +62,7 @@ msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
 msgid "Copy ISO network configuration to installation"
 msgstr "将 ISO 网络配置复制到安装"
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"
 
 msgid "Select one network interface to configure"

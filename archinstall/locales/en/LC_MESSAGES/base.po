@@ -62,7 +62,7 @@ msgstr ""
 msgid "Copy ISO network configuration to installation"
 msgstr ""
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr ""
 
 msgid "Select one network interface to configure"

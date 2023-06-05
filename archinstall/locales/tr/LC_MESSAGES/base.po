@@ -63,7 +63,7 @@ msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için b
 msgid "Copy ISO network configuration to installation"
 msgstr "Kuruluma ISO'dan ağ yapılandırmasını kopyala"
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
 
 msgid "Select one network interface to configure"

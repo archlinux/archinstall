@@ -62,7 +62,7 @@ msgstr "Ketik paket tambahan untuk diinstal (dipisahkan dengan spasi, biarkan ko
 msgid "Copy ISO network configuration to installation"
 msgstr "Salin konfigurasi jaringan ISO ke instalasi"
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Gunakan NetworkManager (diperlukan untuk mengkonfigurasi internet secara grafis di GNOME dan KDE)"
 
 msgid "Select one network interface to configure"
