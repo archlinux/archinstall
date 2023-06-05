@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import List, Any, Optional, TYPE_CHECKING
 
-from ..locale import list_keyboard_languages, list_timezones
+from ..locale import list_timezones, list_keyboard_languages
 from ..menu import MenuSelectionType, Menu, TextInput
 from ..output import warn
 from ..packages.packages import validate_package_list
@@ -119,18 +119,18 @@ def select_archinstall_language(languages: List[Language], preset: Language) -> 
 	raise ValueError('Language selection not handled')
 
 
-def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List[str]:
+def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 	# Additional packages (with some light weight error handling for invalid package names)
 	print(_('Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.'))
 	print(_('If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.'))
 
-	def read_packages(already_defined: list = []) -> list:
-		display = ' '.join(already_defined)
+	def read_packages(p: List = []) -> list:
+		display = ' '.join(p)
 		input_packages = TextInput(_('Write additional packages to install (space separated, leave blank to skip): '), display).run().strip()
 		return input_packages.split() if input_packages else []
 
-	pre_set_packages = pre_set_packages if pre_set_packages else []
-	packages = read_packages(pre_set_packages)
+	preset = preset if preset else []
+	packages = read_packages(preset)
 
 	if not storage['arguments']['offline'] and not storage['arguments']['no_pkg_lookups']:
 		while True:
@@ -151,10 +151,10 @@ def ask_additional_packages_to_install(pre_set_packages: List[str] = []) -> List
 def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	max_downloads = 5
 	print(_(f"This option enables the number of parallel downloads that can occur during installation"))
-	print(_(f"Enter the number of parallel downloads to be enabled.\n (Enter a value between 1 to {max_downloads})\nNote:"))
-	print(_(f" - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"))
-	print(_(f" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"))
-	print(_(f" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
+	print(str(_("Enter the number of parallel downloads to be enabled.\n (Enter a value between 1 to {})\nNote:")).format(max_downloads))
+	print(str(_(" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )")).format(max_downloads, max_downloads, max_downloads + 1))
+	print(_(" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"))
+	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
 
 	while True:
 		try:
@@ -165,7 +165,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 				input_number = max_downloads
 			break
 		except:
-			print(_(f"Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"))
+			print(str(_("Invalid input! Try again with a valid input [1 to {}, or 0 to disable]")).format(max_downloads))
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:

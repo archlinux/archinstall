@@ -29,14 +29,14 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		sort=True,
 		multi=True,
 		preset_values=preset,
-		allow_reset=True,
 		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.value  # type: ignore
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return []
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:

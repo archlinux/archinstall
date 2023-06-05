@@ -58,6 +58,7 @@ Arabic
 Brazilian Portuguese
 Czech
 Dutch
+Estonian
 French
 Georgian
 German
