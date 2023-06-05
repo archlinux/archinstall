@@ -10,6 +10,7 @@ from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall import disk
 from archinstall import menu
 from archinstall import models
+from archinstall import locale
 from archinstall import info, debug
 
 if TYPE_CHECKING:
@@ -21,14 +22,10 @@ def ask_user_questions():
 
 	global_menu.enable('archinstall-language')
 
-	global_menu.enable('keyboard-layout')
-
 	# Set which region to download packages from during the installation
 	global_menu.enable('mirror_config')
 
-	global_menu.enable('sys-language')
-
-	global_menu.enable('sys-encoding')
+	global_menu.enable('locale_config')
 
 	global_menu.enable('disk_config', mandatory=True)
 
@@ -55,7 +52,7 @@ def ask_user_questions():
 	global_menu.enable('audio')
 
 	# Ask for preferred kernel:
-	global_menu.enable('kernels')
+	global_menu.enable('kernels', mandatory=True)
 
 	global_menu.enable('packages')
 
@@ -93,9 +90,7 @@ def perform_installation(mountpoint: Path):
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
-
-	locale = f"{archinstall.arguments.get('sys-language', 'en_US')} {archinstall.arguments.get('sys-encoding', 'UTF-8').upper()}"
-
+	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
@@ -126,7 +121,7 @@ def perform_installation(mountpoint: Path):
 			testing=enable_testing,
 			multilib=enable_multilib,
 			hostname=archinstall.arguments.get('hostname', 'archlinux'),
-			locales=[locale]
+			locale_config=locale_config
 		)
 
 		if mirror_config := archinstall.arguments.get('mirror_config', None):
@@ -189,7 +184,7 @@ def perform_installation(mountpoint: Path):
 
 		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-		installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+		installation.set_keyboard_language(locale_config.kb_layout)
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile_config.profile.post_install(installation)

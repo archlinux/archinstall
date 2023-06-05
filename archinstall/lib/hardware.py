@@ -3,9 +3,9 @@ from functools import cached_property
 from pathlib import Path
 from typing import Optional, Dict, List
 
+from .exceptions import SysCallError
 from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
-from .exceptions import SysCallError
 from .output import debug
 
 AVAILABLE_GFX_DRIVERS = {
