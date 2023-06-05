@@ -1108,3 +1108,63 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "选择一个或多个硬盘驱动器来使用和配置"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "添加一个用户"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "输入用户名（留空跳过）： "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "输入用户名（留空跳过）： "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "选择要添加的接口"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "选择要添加的接口"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "保存用户配置"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "输入要保存配置的目录： "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "保存配置"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "镜像区域"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "镜像区域"
