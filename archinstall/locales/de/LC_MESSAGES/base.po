@@ -746,10 +746,10 @@ msgid "Size"
 msgstr "Größe"
 
 msgid "Free space"
-msgstr "Freier Speicherplatz"
+msgstr "Freier Speicherplatz:"
 
 msgid "Bus-type"
-msgstr "Bustyp"
+msgstr "Bus-Typ"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
 msgstr "Entweder root Passwort oder mindestens ein Superuser muss konfiguriert sein"
@@ -758,7 +758,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Benutzernamen eingeben (leer lassen um zu Überspringen): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "Der Benutzername, den Sie eingegeben haben, ist nicht gültig. Bitte erneut versuchen"
+msgstr "Der eingegebene Benutzername ist ungültig. Erneut versuchen"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Soll {} ein Superuser sein (sudo)?"
@@ -831,22 +831,22 @@ msgid "[Default value: 0] > "
 msgstr "[Standardwert: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "Um diese Übersetzung zu verwenden, installieren Sie bitte manuell eine Schrift, die diese Unterstüzt"
+msgstr "Um diese Übersetzung nutzen zu können, installieren Sie bitte manuell eine Schriftart, die diese Sprache unterstützt."
 
 msgid "The font should be stored as {}"
-msgstr "Die Schrift sollte als {} gespeichert werden"
+msgstr "Die Schriftart sollte als {} gespeichert werden"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall benötigt root Rechte um zu funktionieren. Verwenden Sie --help für mehr Informationen."
+msgstr "Archinstall benötigt Root-Rechte zum ausführen. Siehe --help für mehr."
 
 msgid "Select an execution mode"
 msgstr "Wählen Sie einen Ausführmodus"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr "Profil von der URL \"{}\" abrufen nicht möglich"
+msgstr "Konnte Profil nicht von der angegebenen URL fetchen: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "Profile benötigen einzigartige Namen, aber Profildefinitionen mit gleichen Namen gefunden: {}"
+msgstr "Profile müssen einen eindeutige Namen haben, aber Profildefinition mit gleichem Namen gefunden: {}"
 
 msgid "Select one or more devices to use and configure"
 msgstr "Bitte wählen Sie ein oder mehrere Geräte aus, die konfiguriert und verwendet werden sollen"
@@ -903,7 +903,7 @@ msgid "Partition"
 msgstr "Partition"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr "Diese Partition ist momentan verschlüsselt, um sie zu formatieren, muss ein Dateisystem angegeben werden"
+msgstr "Diese Partition ist aktuell verschlüsselt, zum formatieren muss ein Dateisystem angegeben werden"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr "Die Einhängeorte sind relativ zur Installation, zum Beispiel boot würde bei /boot eingehängt werden"
@@ -915,7 +915,7 @@ msgid "Mountpoint: "
 msgstr "Einhängepunkt: "
 
 msgid "Current free sectors on device {}:"
-msgstr "Momentan freie Sektoren auf Gerät {}:"
+msgstr "Aktuell freie Sektoren auf dem Gerät {}:"
 
 msgid "Total sectors: {}"
 msgstr "Sektoren insgesamt: {}"
@@ -927,13 +927,13 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Bitte geben Sie den Endsektor der Partition ein (Prozent oder Blocknummer, Standard: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr "Dies wird alle neu hinzugefügten Partitionen entfernen. Fortfahren?"
+msgstr "Dies wird alle neu hinzugefügten Partitionen entfernen, fortfahren?"
 
 msgid "Partition management: {}"
 msgstr "Partitionsverwaltung: {}"
 
 msgid "Total length: {}"
-msgstr "Länge insgesamt: {}"
+msgstr "Gesamtlänge: {}"
 
 msgid "Encryption type"
 msgstr "Verschlüsselungstyp"
@@ -942,7 +942,7 @@ msgid "Partitions"
 msgstr "Partitionen"
 
 msgid "No HSM devices available"
-msgstr "Keine HSM-Geräte verfügbar"
+msgstr "Kein HSM-Gerät verfügbar"
 
 msgid "Partitions to be encrypted"
 msgstr "Partitionen die verschlüsselt werden"
@@ -975,7 +975,7 @@ msgid "← Back"
 msgstr "← Zurück"
 
 msgid "Disk encryption"
-msgstr "Laufwerksverschlüsselung"
+msgstr "Festplattenverschlüsselung"
 
 msgid "Configuration"
 msgstr "Konfiguration"
@@ -996,7 +996,7 @@ msgid "Environment type: {}"
 msgstr "Umgebungstyp: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Der proprietäre Nvidiatreiber wird von Sway nicht unterstütz. Es ist wahrscheinlich, dass Probleme auftreten werden. Ist das Okay?"
+msgstr "Der proprietäre Nvidia Treiber wird von Sway nicht unterstptzt. Es ist wahrscheinlich, dass Fehler auftreten werden, trotzdem fortfahren?"
 
 msgid "Installed packages"
 msgstr "Installiere Pakete"
@@ -1014,7 +1014,7 @@ msgid "Profile name: "
 msgstr "Profilname: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Der eingegebende Profilname ist bereits in Verwendung. Erneut versuchen"
+msgstr "Der eingegebene Profilname wird bereits verwendet. Erneut versuchen"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
 msgstr "Zusätzliche Pakete die mit diesem Profil installiert werden sollen (Mit Leerzeichen trennen, leer lassen zum überspringen): "
@@ -1023,10 +1023,10 @@ msgid "Services to be enabled with this profile (space separated, leave blank to
 msgstr "Dienste die mit diesem Profil installiert werden sollen (Mit Leerzeichen trennen, leer lassen zum überspringen): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr "Soll diese Profil für die Installation verwendet werden?"
+msgstr "Soll dieses Profil für die Installation aktiviert werden?"
 
 msgid "Create your own"
-msgstr "Eigenes erstellen"
+msgstr "Erstelle ein eigenes"
 
 msgid ""
 "\n"
@@ -1058,7 +1058,7 @@ msgid "Please chose which greeter to install"
 msgstr "Bitte den zu installierenden Greeter (Begrüßer/Anmeldebildschirm) auswählen"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr "Dies ist eine Liste an vorgefertigten Standardprofilen"
+msgstr "Dies ist eine liste von vorprogrammierten Standardprofilen:"
 
 msgid "Disk configuration"
 msgstr "Laufwerkskonfiguration"
@@ -1067,7 +1067,7 @@ msgid "Profiles"
 msgstr "Profile"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr "Suche mögliche Ordner zum Konfigurationen speichern..."
+msgstr "Finde mögliche Pfade um Konfigurationsdateien zu speichern..."
 
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Ordner um Konfigurationsdateien zu erstellen auswählen"
