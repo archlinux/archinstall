@@ -62,7 +62,7 @@ msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (ال�
 msgid "Copy ISO network configuration to installation"
 msgstr "آئی ایس او نیٹ ورک کنفیگریشن کو انسٹالیشن میں کاپی کریں"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
 
 msgid "Select one network interface to configure"

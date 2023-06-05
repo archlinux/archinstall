@@ -65,7 +65,7 @@ msgstr "اكتب حزمًا إضافية لتثبيتها (تُفصَل بالم
 msgid "Copy ISO network configuration to installation"
 msgstr "انسخ إعداد شبكة الـISO للتثبيت"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "استخدم مُدير الشبكة (ضروري لإعداد الإنترنت باستخدام واجهة رسومية في جنوم و كيدي)"
 
 msgid "Select one network interface to configure"
