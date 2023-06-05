@@ -1168,14 +1168,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Spiegelserverregio"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Spiegelserverregio"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Gebruikersconfiguratie vastleggen"
 
@@ -1194,6 +1186,14 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Configuratie vastleggen"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Spiegelserverregio"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Spiegelserverregio"
 
 #~ msgid "Add :"
 #~ msgstr "Toevoegen:"

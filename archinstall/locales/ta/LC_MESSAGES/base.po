@@ -1143,14 +1143,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "மிரர் பிராந்தியம்"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "மிரர் பிராந்தியம்"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "பயனர் உள்ளமைவைச் சேமிக்கவும்"
 
@@ -1169,3 +1161,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "உள்ளமைவைச் சேமிக்கவும்"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "மிரர் பிராந்தியம்"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "மிரர் பிராந்தியம்"

@@ -1171,14 +1171,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "متبادل علاقہ"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "متبادل علاقہ"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "صارف کنفیگریشن کو محفوظ کریں"
 
@@ -1197,6 +1189,14 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "متبادل علاقہ"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "متبادل علاقہ"
 
 #~ msgid "Add :"
 #~ msgstr "شامل:"

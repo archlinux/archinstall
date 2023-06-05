@@ -1142,14 +1142,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "სარკის რეგიონი"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "სარკის რეგიონი"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "მომხმარებლის კონფიგურაციის შენახვა"
 
@@ -1168,3 +1160,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "კონფიგურაციი შენახვა"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "სარკის რეგიონი"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "სარკის რეგიონი"

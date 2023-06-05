@@ -1173,6 +1173,14 @@ msgstr ""
 msgid "Saving {} configuration files to {}"
 msgstr "Zapisz konfiguracje"
 
+#, fuzzy
+msgid "Mirrors"
+msgstr "Region lustra"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Region lustra"
+
 #~ msgid "Add :"
 #~ msgstr "Dodaj :"
 

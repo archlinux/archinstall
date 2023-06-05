@@ -1141,14 +1141,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Регіон дзеркала"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Регіон дзеркала"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Зберегти конфігурацію користувача"
 
@@ -1167,3 +1159,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Зберегти конфігурацію"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Регіон дзеркала"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Регіон дзеркала"

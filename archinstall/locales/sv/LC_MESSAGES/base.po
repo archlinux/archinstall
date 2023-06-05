@@ -1152,14 +1152,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Region för paketsynk"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Region för paketsynk"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Spara användarkonfigurering"
 
@@ -1178,3 +1170,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Spara konfigurationen"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Region för paketsynk"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Region för paketsynk"

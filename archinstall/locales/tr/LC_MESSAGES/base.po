@@ -1151,14 +1151,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "İndirme sunucusu bölgesi"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "İndirme sunucusu bölgesi"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Kullanıcı yapılandırmasını kaydet"
 
@@ -1177,3 +1169,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Yapılandırmayı kaydet"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "İndirme sunucusu bölgesi"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "İndirme sunucusu bölgesi"

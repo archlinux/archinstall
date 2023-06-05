@@ -1142,14 +1142,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "镜像区域"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "镜像区域"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "保存用户配置"
 
@@ -1168,3 +1160,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "保存配置"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "镜像区域"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "镜像区域"

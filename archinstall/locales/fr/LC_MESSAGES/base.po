@@ -1144,14 +1144,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Région miroir"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Région miroir"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Enregistrer la configuration utilisateur"
 
@@ -1170,6 +1162,14 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Enregistrer la configuration"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Région miroir"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Région miroir"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"

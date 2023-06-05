@@ -1144,14 +1144,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Αποθήκευση διαμόρφωσης χρήστη"
 
@@ -1170,3 +1162,11 @@ msgstr ""
 #, fuzzy
 msgid "Saving {} configuration files to {}"
 msgstr "Αποθήκευση διαμόρφωσης"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Περιοχή mirror"
