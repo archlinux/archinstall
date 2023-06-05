@@ -62,7 +62,7 @@ msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건�
 msgid "Copy ISO network configuration to installation"
 msgstr "ISO 네트워크 구성을 설치에 복사"
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
 
 msgid "Select one network interface to configure"

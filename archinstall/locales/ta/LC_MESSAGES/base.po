@@ -62,7 +62,7 @@ msgstr "நிறுவ கூடுதல் தொகுப்புகளை 
 msgid "Copy ISO network configuration to installation"
 msgstr "நிறுவலுக்கு ISO பிணைய கட்டமைப்பு நகலெடுக்கவும்"
 
-msgid "Use NetworkManager ( necessary for configuring internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "பயன்படுத்துங்கள் NetworkManager ஐப்(GNOME மற்றும் KDE இல் இணையத்தை வரைகலை முறையில் கட்டமைக்க அவசியம்)"
 
 msgid "Select one network interface to configure"
