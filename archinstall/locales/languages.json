@@ -36,7 +36,7 @@
  {"abbr": "el", "lang": "Modern Greek (1453-)", "translated_lang": "Ελληνικά"},
  {"abbr": "en", "lang": "English"},
  {"abbr": "eo", "lang": "Esperanto"},
- {"abbr": "et", "lang": "Estonian"},
+ {"abbr": "et", "lang": "Estonian", "translated_lang": "Eesti" },
  {"abbr": "eu", "lang": "Basque"},
  {"abbr": "ee", "lang": "Ewe"},
  {"abbr": "fo", "lang": "Faroese"},

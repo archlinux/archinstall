@@ -1128,6 +1128,66 @@ msgstr "Spiegelserver"
 msgid "Mirror regions"
 msgstr "Spiegelserverregionen"
 
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Benutzerkonto hinzufügen"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Laufwerke-layout auswählen"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Laufwerke-layout auswählen"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Mirror-region"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Mirror-region"
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Benutzerkonfiguration speichern"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Konfiguration speichern"
+
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"
 

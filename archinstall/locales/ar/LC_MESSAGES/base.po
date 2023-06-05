@@ -1056,6 +1056,12 @@ msgstr ""
 msgid "Defined"
 msgstr ""
 
+msgid "Mirrors"
+msgstr ""
+
+msgid "Mirror regions"
+msgstr ""
+
 msgid "Save user configuration (including disk layout)"
 msgstr ""
 
@@ -1071,10 +1077,4 @@ msgid ""
 msgstr ""
 
 msgid "Saving {} configuration files to {}"
-msgstr ""
-
-msgid "Mirrors"
-msgstr ""
-
-msgid "Mirror regions"
 msgstr ""
