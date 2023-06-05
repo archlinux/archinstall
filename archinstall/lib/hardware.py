@@ -191,4 +191,33 @@ class SysInfo:
 
 	@staticmethod
 	def requires_alsa_fw() -> bool:
-		return 'snd_emu10k1' in _sys_info.loaded_modules
+		modules = (
+			'snd_asihpi',
+			'snd_cs46xx',
+			'snd_darla20',
+			'snd_darla24',
+			'snd_echo3g',
+			'snd_emu10k1',
+			'snd_gina20',
+			'snd_gina24',
+			'snd_hda_codec_ca0132',
+			'snd_hdsp',
+			'snd_indigo',
+			'snd_indigodj',
+			'snd_indigodjx',
+			'snd_indigoio',
+			'snd_indigoiox',
+			'snd_layla20',
+			'snd_layla24',
+			'snd_mia',
+			'snd_mixart',
+			'snd_mona',
+			'snd_pcxhr',
+			'snd_vx_lib'
+		)
+
+		for loaded_module in _sys_info.loaded_modules:
+			if loaded_module in modules:
+				return True
+
+		return False
