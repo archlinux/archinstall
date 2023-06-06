@@ -194,14 +194,18 @@ class ProfileHandler:
 			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
 
 			if driver is not None:
-				if 'nvidia' in driver:
-					if "linux-zen" in install_session.base_packages or "linux-lts" in install_session.base_packages:
+				# Find the intersection between the set of known nvidia drivers
+				# and the selected driver packages. Since valid intesections can
+				# only have one element or none, we iterate and try to take the
+				# first element.
+				if driver_pkg := next(iter({'nvidia','nvidia-open'} & set(driver_pkgs)), None):
+					if any(kernel in install_session.base_packages for kernel in ("linux-lts", "linux-zen")):
 						for kernel in install_session.kernels:
 							# Fixes https://github.com/archlinux/archinstall/issues/585
 							install_session.add_additional_packages(f"{kernel}-headers")
 
 						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-						install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', 'nvidia-dkms'])
+						install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg}-dkms'])
 						return
 				elif 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
