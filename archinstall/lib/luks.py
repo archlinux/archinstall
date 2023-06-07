@@ -187,7 +187,7 @@ class Luks2:
 
 		# Once we store the key as ../xyzloop.key systemd-cryptsetup can
 		# automatically load this key if we name the device to "xyzloop"
-		kf_path = Path('/etc/cryptsetup-keys.d') / f'{self.mapper_name}.key'
+		kf_path = Path(f'/etc/cryptsetup-keys.d/{self.mapper_name}.key')
 		key_file = target_path / kf_path.relative_to(kf_path.root)
 		crypttab_path = target_path / 'etc/crypttab'
 
