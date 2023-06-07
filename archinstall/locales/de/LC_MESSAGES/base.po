@@ -1132,10 +1132,10 @@ msgid "Add a custom mirror"
 msgstr "Benutzerkonto hinzufügen"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Benutzerdefinierten Spiegelserver löschen"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1154,10 +1154,10 @@ msgid "Select signature option"
 msgstr "Laufwerke-layout auswählen"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Benutzerdefinierte Spiegelserver"
 
 msgid "Defined"
-msgstr ""
+msgstr "Definiert"
 
 #, fuzzy
 msgid "Mirrors"
@@ -1192,10 +1192,10 @@ msgid "Add a custom mirror"
 msgstr "Benutzerkonto hinzufügen"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1214,10 +1214,10 @@ msgid "Select signature option"
 msgstr "Laufwerke-layout auswählen"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Benutzerdefinierte Spiegel"
 
 msgid "Defined"
-msgstr ""
+msgstr "Definiert"
 
 #, fuzzy
 msgid "Save user configuration (including disk layout)"
@@ -1234,6 +1234,9 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
+"Sollen {} Konfigurationsdateie(n) an der folgenden Stelle gespeichert werden?"
+"\n"
+"{}"
 
 #, fuzzy
 msgid "Saving {} configuration files to {}"
@@ -1248,10 +1251,10 @@ msgid "Mirror regions"
 msgstr "Mirror-region"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr " - Maximalwert    : {} ( Erlaubt {} parallele Downloads, erlaubt {max_downloads+1} Downloads gleichzeitig)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr ""
+msgstr "Ungültige Eingabe! Erneut mit gültiger Eingabe versuchen [1 bis {}, oder 0 zum deaktivieren]"
 
 #~ msgid "Add :"
 #~ msgstr "Hinzufügen :"
