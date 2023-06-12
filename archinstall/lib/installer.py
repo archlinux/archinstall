@@ -1216,11 +1216,11 @@ class Installer:
 			service_name += '.service'  # Just to be safe
 
 		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
-		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').decode('UTF-8').strip()
+		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
 		if not last_execution_time:
 			return None
 
-		return last_execution_time
+		return last_execution_time.decode('UTF-8')
 
 	def _service_state(self, service_name: str) -> str:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
