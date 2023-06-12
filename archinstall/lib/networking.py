@@ -1,4 +1,3 @@
-import logging
 import os
 import socket
 import ssl
@@ -8,18 +7,16 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from .exceptions import HardwareIncompatibilityError, SysCallError
-from .general import SysCommand
-from .output import log
+from .exceptions import SysCallError
+from .output import error, info, debug
 from .pacman import run_pacman
-from .storage import storage
 
 
 def get_hw_addr(ifname :str) -> str:
 	import fcntl
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
-	return ':'.join('%02x' % b for b in info[18:24])
+	ret = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+	return ':'.join('%02x' % b for b in ret[18:24])
 
 
 def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
@@ -36,25 +33,26 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 
 
 def check_mirror_reachable() -> bool:
-	log("Testing connectivity to the Arch Linux mirrors ...", level=logging.INFO)
+	info("Testing connectivity to the Arch Linux mirrors...")
 	try:
-		if run_pacman("-Sy").exit_code == 0:
-			return True
-		elif os.geteuid() != 0:
-			log("check_mirror_reachable() uses 'pacman -Sy' which requires root.", level=logging.ERROR, fg="red")
+		run_pacman("-Sy")
+		return True
 	except SysCallError as err:
-		log(f'exit_code: {err.exit_code}, Error: {err.message}', level=logging.DEBUG)
+		if os.geteuid() != 0:
+			error("check_mirror_reachable() uses 'pacman -Sy' which requires root.")
+		debug(f'exit_code: {err.exit_code}, Error: {err.message}')
 
 	return False
 
 
 def update_keyring() -> bool:
-	log("Updating archlinux-keyring ...", level=logging.INFO)
-	if run_pacman("-Sy --noconfirm archlinux-keyring").exit_code == 0:
+	info("Updating archlinux-keyring ...")
+	try:
+		run_pacman("-Sy --noconfirm archlinux-keyring")
 		return True
-
-	elif os.geteuid() != 0:
-		log("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.", level=logging.ERROR, fg="red")
+	except SysCallError:
+		if os.geteuid() != 0:
+			error("update_keyring() uses 'pacman -Sy archlinux-keyring' which requires root.")
 
 	return False
 
@@ -77,36 +75,6 @@ def enrich_iface_types(interfaces: Union[Dict[str, Any], List[str]]) -> Dict[str
 			result[iface] = 'UNKNOWN'
 
 	return result
-
-
-def wireless_scan(interface :str) -> None:
-	interfaces = enrich_iface_types(list(list_interfaces().values()))
-	if interfaces[interface] != 'WIRELESS':
-		raise HardwareIncompatibilityError(f"Interface {interface} is not a wireless interface: {interfaces}")
-
-	if not (output := SysCommand(f"iwctl station {interface} scan")).exit_code == 0:
-		raise SystemError(f"Could not scan for wireless networks: {output}")
-
-	if '_WIFI' not in storage:
-		storage['_WIFI'] = {}
-	if interface not in storage['_WIFI']:
-		storage['_WIFI'][interface] = {}
-
-	storage['_WIFI'][interface]['scanning'] = True
-
-
-# TODO: Full WiFi experience might get evolved in the future, pausing for now 2021-01-25
-def get_wireless_networks(interface :str) -> None:
-	# TODO: Make this oneliner pritter to check if the interface is scanning or not.
-	# TODO: Rename this to list_wireless_networks() as it doesn't return anything
-	if '_WIFI' not in storage or interface not in storage['_WIFI'] or storage['_WIFI'][interface].get('scanning', False) is False:
-		import time
-
-		wireless_scan(interface)
-		time.sleep(5)
-
-	for line in SysCommand(f"iwctl station {interface} get-networks"):
-		print(line)
 
 
 def fetch_data_from_url(url: str, params: Optional[Dict] = None) -> str:

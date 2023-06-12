@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import ipaddress
-import logging
 from typing import Any, Optional, TYPE_CHECKING, List, Union, Dict
 
 from ..menu import MenuSelectionType, TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
 
 from ..networking import list_interfaces
-from ..output import log, FormattedOutput
+from ..output import FormattedOutput, warn
 from ..menu import ListManager, Menu
 
 if TYPE_CHECKING:
@@ -91,7 +90,7 @@ class ManualNetworkConfig(ListManager):
 					ipaddress.ip_interface(ip)
 					break
 				except ValueError:
-					log("You need to enter a valid IP in IP-config mode.", level=logging.WARNING, fg='red')
+					warn("You need to enter a valid IP in IP-config mode")
 
 			# Implemented new check for correct gateway IP address
 			gateway = None
@@ -106,7 +105,7 @@ class ManualNetworkConfig(ListManager):
 						ipaddress.ip_address(gateway)
 					break
 				except ValueError:
-					log("You need to enter a valid gateway (router) IP address.", level=logging.WARNING, fg='red')
+					warn("You need to enter a valid gateway (router) IP address")
 
 			if edit_iface.dns:
 				display_dns = ' '.join(edit_iface.dns)

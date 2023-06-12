@@ -62,8 +62,8 @@ msgstr "输入要安装的其他软件包（空格分隔，留空以跳过）：
 msgid "Copy ISO network configuration to installation"
 msgstr "将 ISO 中的网络配置复制到安装中"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置互联网必需）"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"
 
 msgid "Select one network interface to configure"
 msgstr "选择要配置的网络接口"
@@ -791,18 +791,17 @@ msgstr "已配置 {} 个接口"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "此选项启用安装期间可以发生的并行下载数"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "输入要启用的并行下载数。\n"
-"（输入 1 到 {max_downloads} 之间的值）\n"
-"注意："
+"  （输入一个介于 1 到 {} 之间的值）\n"
+"提示："
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 最大值：{max_downloads}（允许 {max_downloads} 个并行下载，同时允许 {max_downloads+1} 个下载）"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - 最小值：1（允许 1 个并行下载，同时允许 2 个下载）"
@@ -810,9 +809,9 @@ msgstr " - 最小值：1（允许 1 个并行下载，同时允许 2 个下载�
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下载）"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "无效输入！请尝试使用有效输入 [1 到 {max_downloads}，或 0 禁用] 重试"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
 
 msgid "Parallel Downloads"
 msgstr "并行下载"
@@ -1069,4 +1068,78 @@ msgid "Finding possible directories to save configuration files ..."
 msgstr "正在查找可能用于保存配置文件的目录 ..."
 
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "选择用于保存配置文件的目录（或多个目录）"
+msgstr "选择一个或多个硬盘驱动器来使用和配置"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "添加一个用户"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "输入用户名（留空跳过）： "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "输入用户名（留空跳过）： "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "选择要添加的接口"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "选择要添加的接口"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "保存用户配置"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "输入要保存配置的目录： "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "保存配置"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "镜像区域"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "镜像区域"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"

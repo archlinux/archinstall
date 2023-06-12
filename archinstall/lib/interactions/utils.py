@@ -4,7 +4,7 @@ import getpass
 from typing import Any, Optional, TYPE_CHECKING
 
 from ..models import PasswordStrength
-from ..output import log
+from ..output import log, error
 
 if TYPE_CHECKING:
 	_: Any
@@ -26,7 +26,7 @@ def get_password(prompt: str = '') -> Optional[str]:
 
 		passwd_verification = getpass.getpass(prompt=_('And one more time for verification: '))
 		if password != passwd_verification:
-			log(' * Passwords did not match * ', fg='red')
+			error(' * Passwords did not match * ')
 			continue
 
 		return password
