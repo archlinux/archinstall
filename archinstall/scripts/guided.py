@@ -1,19 +1,21 @@
-import logging
 import os
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 import archinstall
+from archinstall import info, debug
+from archinstall import SysInfo
+from archinstall.lib import locale
 from archinstall.lib import disk
 from archinstall.lib.global_menu import GlobalMenu
 from archinstall.default_profiles.applications.pipewire import PipewireProfile
 from archinstall.lib.configuration import ConfigurationOutput
 from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
-from archinstall.lib.mirrors import use_mirrors
+from archinstall.lib.mirrors import use_mirrors, add_custom_mirrors
 from archinstall.lib.models.bootloader import Bootloader
 from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
-from archinstall.lib.output import log
+from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
 
 if TYPE_CHECKING:
@@ -23,20 +25,6 @@ if TYPE_CHECKING:
 if archinstall.arguments.get('help'):
 	print("See `man archinstall` for help.")
 	exit(0)
-
-if os.getuid() != 0:
-	print(_("Archinstall requires root privileges to run. See --help for more."))
-	exit(1)
-
-# Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
-archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
-archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
-archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)
-archinstall.log(f"Graphics devices detected: {archinstall.graphics_devices().keys()}", level=logging.DEBUG)
-
-# For support reasons, we'll log the disk layout pre installation to match against post-installation layout
-archinstall.log(f"Disk states before installing: {disk.disk_layouts()}", level=logging.DEBUG)
 
 
 def ask_user_questions():
@@ -55,14 +43,10 @@ def ask_user_questions():
 
 	global_menu.enable('archinstall-language')
 
-	global_menu.enable('keyboard-layout')
-
 	# Set which region to download packages from during the installation
-	global_menu.enable('mirror-region')
+	global_menu.enable('mirror_config')
 
-	global_menu.enable('sys-language')
-
-	global_menu.enable('sys-encoding')
+	global_menu.enable('locale_config')
 
 	global_menu.enable('disk_config', mandatory=True)
 
@@ -89,7 +73,7 @@ def ask_user_questions():
 	global_menu.enable('audio')
 
 	# Ask for preferred kernel:
-	global_menu.enable('kernels')
+	global_menu.enable('kernels', mandatory=True)
 
 	global_menu.enable('packages')
 
@@ -121,15 +105,13 @@ def perform_installation(mountpoint: Path):
 	Only requirement is that the block devices are
 	formatted and setup prior to entering this function.
 	"""
-	log('Starting installation', level=logging.INFO)
+	info('Starting installation')
 	disk_config: disk.DiskLayoutConfiguration = archinstall.arguments['disk_config']
 
 	# Retrieve list of additional repositories and set boolean values appropriately
 	enable_testing = 'testing' in archinstall.arguments.get('additional-repositories', [])
 	enable_multilib = 'multilib' in archinstall.arguments.get('additional-repositories', [])
-
-	locale = f"{archinstall.arguments.get('sys-language', 'en_US')} {archinstall.arguments.get('sys-encoding', 'UTF-8').upper()}"
-
+	locale_config: locale.LocaleConfiguration = archinstall.arguments['locale_config']
 	disk_encryption: disk.DiskEncryption = archinstall.arguments.get('disk_encryption', None)
 
 	with Installer(
@@ -149,28 +131,27 @@ def perform_installation(mountpoint: Path):
 				# generate encryption key files for the mounted luks devices
 				installation.generate_key_files()
 
-		if archinstall.arguments.get('ntp', False):
-			installation.activate_ntp()
-
 		# Set mirrors used by pacstrap (outside of installation)
-		if archinstall.arguments.get('mirror-region', None):
-			use_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors for the live medium
+		if mirror_config := archinstall.arguments.get('mirror_config', None):
+			if mirror_config.mirror_regions:
+				use_mirrors(mirror_config.mirror_regions)
+			if mirror_config.custom_mirrors:
+				add_custom_mirrors(mirror_config.custom_mirrors)
 
 		installation.minimal_installation(
 			testing=enable_testing,
 			multilib=enable_multilib,
 			hostname=archinstall.arguments.get('hostname', 'archlinux'),
-			locales=[locale]
+			locale_config=locale_config
 		)
 
-		if archinstall.arguments.get('mirror-region') is not None:
-			if archinstall.arguments.get("mirrors", None) is not None:
-				installation.set_mirrors(archinstall.arguments['mirror-region'])  # Set the mirrors in the installation medium
+		if mirror_config := archinstall.arguments.get('mirror_config', None):
+			installation.set_mirrors(mirror_config)  # Set the mirrors in the installation medium
 
 		if archinstall.arguments.get('swap'):
 			installation.setup_swap('zram')
 
-		if archinstall.arguments.get("bootloader") == Bootloader.Grub and archinstall.has_uefi():
+		if archinstall.arguments.get("bootloader") == Bootloader.Grub and SysInfo.has_uefi():
 			installation.add_additional_packages("grub")
 
 		installation.add_bootloader(archinstall.arguments["bootloader"])
@@ -181,7 +162,10 @@ def perform_installation(mountpoint: Path):
 
 		if network_config:
 			handler = NetworkConfigurationHandler(network_config)
-			handler.config_installer(installation)
+			handler.config_installer(
+				installation,
+				archinstall.arguments.get('profile_config', None)
+			)
 
 		if archinstall.arguments.get('packages', None) and archinstall.arguments.get('packages', None)[0] != '':
 			installation.add_additional_packages(archinstall.arguments.get('packages', None))
@@ -190,13 +174,19 @@ def perform_installation(mountpoint: Path):
 			installation.create_users(users)
 
 		if audio := archinstall.arguments.get('audio', None):
-			log(f'Installing audio server: {audio}', level=logging.INFO)
+			info(f'Installing audio server: {audio}')
 			if audio == 'pipewire':
 				PipewireProfile().install(installation)
 			elif audio == 'pulseaudio':
 				installation.add_additional_packages("pulseaudio")
+
+			if SysInfo.requires_sof_fw():
+				installation.add_additional_packages('sof-firmware')
+
+			if SysInfo.requires_alsa_fw():
+				installation.add_additional_packages('alsa-firmware')
 		else:
-			installation.log("No audio server will be installed.", level=logging.INFO)
+			info("No audio server will be installed")
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile_handler.install_profile_config(installation, profile_config)
@@ -215,7 +205,7 @@ def perform_installation(mountpoint: Path):
 
 		# This step must be after profile installs to allow profiles_bck to install language pre-requisits.
 		# After which, this step will set the language both for console and x11 if x11 was installed for instance.
-		installation.set_keyboard_language(archinstall.arguments['keyboard-layout'])
+		installation.set_keyboard_language(locale_config.kb_layout)
 
 		if profile_config := archinstall.arguments.get('profile_config', None):
 			profile_config.profile.post_install(installation)
@@ -223,7 +213,7 @@ def perform_installation(mountpoint: Path):
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
 		if archinstall.arguments.get('services', None):
-			installation.enable_service(*archinstall.arguments['services'])
+			installation.enable_service(archinstall.arguments.get('services', []))
 
 		# If the user provided custom commands to be run post-installation, execute them now.
 		if archinstall.arguments.get('custom-commands', None):
@@ -231,7 +221,7 @@ def perform_installation(mountpoint: Path):
 
 		installation.genfstab()
 
-		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
+		info("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation")
 
 		if not archinstall.arguments.get('silent'):
 			prompt = str(_('Would you like to chroot into the newly created installation and perform post-installation configuration?'))
@@ -242,12 +232,12 @@ def perform_installation(mountpoint: Path):
 				except:
 					pass
 
-	archinstall.log(f"Disk states after installing: {disk.disk_layouts()}", level=logging.DEBUG)
+	debug(f"Disk states after installing: {disk.disk_layouts()}")
 
 
-if archinstall.arguments.get('skip-mirror-check', False) is False and archinstall.check_mirror_reachable() is False:
+if archinstall.arguments.get('skip-mirror-check', False) is False and check_mirror_reachable() is False:
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
-	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
+	info(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.")
 	exit(1)
 
 if not archinstall.arguments.get('silent'):

@@ -15,4 +15,4 @@ jobs:
             # one day this will be enabled
               # run: mypy --strict --module archinstall || exit 0
             - name: run mypy
-              run: mypy --config-file mypy.ini
+              run: mypy --config-file pyproject.toml

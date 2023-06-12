@@ -36,7 +36,10 @@ jobs:
       - name: Run archinstall
         run: |
           python -V
-          archinstall -v
+          archinstall --script guided -v
+          archinstall --script swiss -v
+          archinstall --script only_hd -v
+          archinstall --script minimal -v
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall

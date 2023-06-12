@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Any, Dict, TYPE_CHECKING, Optional
 
-from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
+from ..hardware import AVAILABLE_GFX_DRIVERS, SysInfo
 from ..menu import MenuSelectionType, Menu
 from ..models.bootloader import Bootloader
 
@@ -29,19 +29,19 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		sort=True,
 		multi=True,
 		preset_values=preset,
-		allow_reset=True,
 		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.value  # type: ignore
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return []
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	# when the system only supports grub
-	if not has_uefi():
+	if not SysInfo.has_uefi():
 		options = [Bootloader.Grub.value]
 		default = Bootloader.Grub.value
 	else:
@@ -81,11 +81,11 @@ def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = N
 
 	if drivers:
 		title = ''
-		if has_amd_graphics():
+		if SysInfo.has_amd_graphics():
 			title += str(_('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')) + '\n'
-		if has_intel_graphics():
+		if SysInfo.has_intel_graphics():
 			title += str(_('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'))
-		if has_nvidia_graphics():
+		if SysInfo.has_nvidia_graphics():
 			title += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
 		title += str(_('\nSelect a graphics driver or leave blank to install all open-source drivers'))

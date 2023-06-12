@@ -62,7 +62,7 @@ msgstr "Écrire des packages supplémentaires à installer (espaces séparés, l
 msgid "Copy ISO network configuration to installation"
 msgstr "Copier la configuration réseau ISO dans l'installation"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Utiliser NetworkManager (nécessaire pour configurer graphiquement Internet dans GNOME et KDE)"
 
 msgid "Select one network interface to configure"
@@ -793,18 +793,17 @@ msgstr "Interfaces {} configurées"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Cette option active le nombre de téléchargements parallèles qui peuvent se produire pendant l'installation"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Saisir le nombre de téléchargements parallèles à activer.\n"
-"  (Entrer une valeur comprise entre 1 et {max_downloads})\n"
+"  (Entrer une valeur comprise entre 1 et {})\n"
 "Note :"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valeur maximale : {max_downloads} (Autorise {max_downloads} téléchargements parallèles, autorise {max_downloads+1} téléchargements à la fois)"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Valeur maximale : {} (Autorise {} téléchargements parallèles, autorise {} téléchargements à la fois)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Valeur minimale : 1 (Autorise 1 téléchargement parallèle, autorise 2 téléchargements à la fois)"
@@ -812,9 +811,9 @@ msgstr " - Valeur minimale : 1 (Autorise 1 téléchargement parallèle, autorise
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Désactiver/Défaut : 0 (Désactive le téléchargement parallèle, n'autorise qu'un seul téléchargement à la fois)"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {max_downloads}, ou 0 pour désactiver]"
+msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
 
 msgid "Parallel Downloads"
 msgstr "Téléchargements parallèles"
@@ -1110,6 +1109,73 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Sélectionner un ou plusieurs disques durs à utiliser et à configurer"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Ajouter un utilisateur"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Entrer le nom d'utilisateur (laisser vide pour passer) : "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Sélectionner la disposition du disque"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Sélectionner la disposition du disque"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Enregistrer la configuration utilisateur"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Saisir un répertoire pour la ou les configuration(s) à enregistrer : "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Enregistrer la configuration"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Région miroir"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Région miroir"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Valeur maximale : {} (Autorise {} téléchargements parallèles, autorise {} téléchargements à la fois)"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
