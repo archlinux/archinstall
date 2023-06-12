@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
 "PO-Revision-Date: 2022-05-25 17:42+0300\n"
-"Last-Translator: Tuğşat Enes @tugsatenes <tugsatenes@proton.me>\n"
+"Last-Translator: Eren İnce @ernince <erenince@proton.me>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -804,26 +804,29 @@ msgid "Configured {} interfaces"
 msgstr "Yapılandırılmış {} arayüzler"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Bu seçenek, kurulum sırasında gerçekleşebilecek paralel indirme sayısını etkinleştirir"
+msgstr "Bu seçenek, yükleme sırasında meydana gelebilecek paralel indirme sayısını etkinleştirir"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
 " (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
+"Etkinleştirilecek paralel indirme sayısını girin.\n"
+" (1 ile {max_downloads} arasında bir değer girin)\n"
+"Not:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr ""
+msgstr "- Maksimum değer : {} ( {} paralel indirmeye izin verir, bir seferde {} indirmeye izin verir)"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr ""
+msgstr "- Minimum değer : 1 ( 1 paralel indirmeye izin verir, bir seferde 2 indirmeye izin verir )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr ""
+msgstr "- Devre Dışı Bırak/Varsayılan : 0 (Paralel indirmeyi devre dışı bırakır, aynı anda yalnızca 1 indirmeye izin verir)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr ""
+msgstr "Geçersiz Giriş! Geçerli bir girişle tekrar deneyin [1 - {max_downloads} veya 0 devre dışı bırakmak için]"
 
 msgid "Parallel Downloads"
 msgstr "Paralel İndirmeler"
@@ -833,32 +836,32 @@ msgid "ESC to skip"
 msgstr "Geçmek için ESC'ye basın"
 
 msgid "CTRL+C to reset"
-msgstr "Resetlemek için CTRL+C'ye basın"
+msgstr "Sıfırlamak için CTRL+C"
 
 msgid "TAB to select"
-msgstr "Seçmek için TAB'a basın"
+msgstr "Seçmek için TAB"
 
 msgid "[Default value: 0] > "
 msgstr ""
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "Bu çeviriyi kullanabilmek için lütfen bu dili destekleyen bir yazı tipini manuel olarak yükleyin."
+msgstr "Bu çeviriyi kullanabilmek için lütfen dili destekleyen bir yazı tipini manuel olarak yükleyin."
 
 msgid "The font should be stored as {}"
-msgstr "Yazı fontu {} olarak depolanmalıdır"
+msgstr "Yazı tipi {} olarak saklanmalıdır."
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr "Archinstall çalışmak için root (kök) ayrıcalıkları gerektirir. Daha fazlası için --help'e bakın."
+msgstr "Archinstall'ın çalışması için kök ayrıcalıkları gerekir. Daha fazla bilgi için --help'e bakın."
 
 #, fuzzy
 msgid "Select an execution mode"
 msgstr "'{}' için bir eylem seçin"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Belirtilen url'den profil getirilemiyor: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Profiller benzersiz ada sahip olmalıdır, ancak yinelenen ada sahip profil tanımları bulundu: {}"
 
 #, fuzzy
 msgid "Select one or more devices to use and configure"
@@ -909,7 +912,7 @@ msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (veriyi temizler)"
 
 msgid "Mark/Unmark as bootable"
-msgstr "Önyüklenebilir olarak işaretle/işareti kaldır"
+msgstr "Önyüklenebilir olarak İşaretle/İşareti kaldır"
 
 msgid "Change filesystem"
 msgstr "Dosya sistemini değiştir"
@@ -937,13 +940,13 @@ msgid "Partition mount-points are relative to inside the installation, the boot 
 msgstr " * Disk bölümü mount (monte) noktaları iç kurulumla ilişkilidir, örnek olarak boot, /boot olacaktır."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "mountpoint /boot ayarlanmışsa, bölüm de önyüklenebilir olarak işaretlenecektir."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Bağlama noktası: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "{} cihazındaki mevcut boş sektörler:"
 
 #, fuzzy
 msgid "Total sectors: {}"
@@ -958,13 +961,13 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Disk bölümünün bitiş kesimini girin (yüzde ya da blok numarası, ör: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr "Bu yeni eklenen tüm disk bölümlerini kaldıracaktır, devam ediyor musunuz?"
+msgstr "Bu işlem yeni eklenmiş tüm bölümleri kaldıracaktır, devam edilsin?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Bölüm yönetimi: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "Toplam uzunluk: {}"
 
 #, fuzzy
 msgid "Encryption type"
@@ -974,17 +977,17 @@ msgid "Partitions"
 msgstr "Disk bölümleri"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Kullanılabilir HSM cihazı yok"
 
 #, fuzzy
 msgid "Partitions to be encrypted"
 msgstr "Hangi disk bölümünün şifrelenmiş olarak işaretleneceğini seçin"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "Disk şifreleme seçeneğini seçin"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "HSM için kullanılacak bir FIDO2 cihazı seçin"
 
 #, fuzzy
 msgid "Use a best-effort default partition layout"
@@ -1005,7 +1008,7 @@ msgid "Partition encryption"
 msgstr "Disk bölümü şifrelemesi"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! {} biçimlendiriliyor "
 
 msgid "← Back"
 msgstr "← Geri"
@@ -1029,13 +1032,13 @@ msgid "Back"
 msgstr "Geri"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Lütfen seçilen profiller için hangi karşılayıcının kurulacağını seçin: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Ortam türü: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Patentli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sıkıntılarla karşılaşmanız olası, emin misiniz?"
+msgstr "Tescilli Nvidia sürücüsü Sway tarafından desteklenmiyor. Sorunlarla karşılaşmanız muhtemeldir, bu sizin için uygun mu?"
 
 #, fuzzy
 msgid "Installed packages"
@@ -1069,10 +1072,10 @@ msgid "Services to be enabled with this profile (space separated, leave blank to
 msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Bu profil kurulum için etkinleştirilmeli mi?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "Kendinizinkini oluşturun"
 
 #, fuzzy
 msgid ""
@@ -1091,18 +1094,21 @@ msgid ""
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Sway'in donanımınıza erişmesine izin vermek için bir seçenek belirleyin"
 
 msgid "Graphics driver"
 msgstr "Grafik sürücüsü"
 
 msgid "Greeter"
-msgstr ""
+msgstr "Karşılayıcı"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Lütfen hangi karşılayıcının kurulacağını seçin"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "Bu, önceden programlanmış default_profiles listesidir"
 
 #, fuzzy
 msgid "Disk configuration"
@@ -1113,7 +1119,7 @@ msgid "Profiles"
 msgstr "Profiller"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr "Yapılandırma dosyalarını kaydetmek için olası dizinler bulunuyor ..."
+msgstr "Yapılandırma dosyalarını kaydetmek için olası dizinler aranıyor..."
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
@@ -1184,3 +1190,10 @@ msgstr ""
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Geçersiz girdi! Geçerli bir girişle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager'ı kullan (GNOME ya da KDE'de interneti grafik olarak yapılandırmak için gerekli)"
