@@ -798,10 +798,10 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path=/boot install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		if not os.path.exists(f'{self.target}/boot/loader'):
