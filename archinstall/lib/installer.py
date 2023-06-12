@@ -147,11 +147,11 @@ class Installer:
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
-		info('Waiting pacman-init.service to complete.')
-		while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
-			time.sleep(1)
+		# info('Waiting for pacman-init.service to complete.')
+		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		# 	time.sleep(1)
 
-		info('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
 		# Wait for the timer to kick in
 		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
