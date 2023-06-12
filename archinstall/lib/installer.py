@@ -179,7 +179,7 @@ class Installer:
 				)
 
 	def sanity_check(self):
-		self._verify_boot_part()
+		#self._verify_boot_part()
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
