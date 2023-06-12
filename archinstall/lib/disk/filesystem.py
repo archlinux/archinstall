@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import signal
 import sys
 import time
@@ -8,8 +7,8 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from .device_model import DiskLayoutConfiguration, DiskLayoutType, PartitionTable, FilesystemType, DiskEncryption
 from .device_handler import device_handler
-from ..hardware import has_uefi
-from ..output import log
+from ..hardware import SysInfo
+from ..output import debug
 from ..menu import Menu
 
 if TYPE_CHECKING:
@@ -27,13 +26,13 @@ class FilesystemHandler:
 
 	def perform_filesystem_operations(self, show_countdown: bool = True):
 		if self._disk_config.config_type == DiskLayoutType.Pre_mount:
-			log('Disk layout configuration is set to pre-mount, not performing any operations', level=logging.DEBUG)
+			debug('Disk layout configuration is set to pre-mount, not performing any operations')
 			return
 
 		device_mods = list(filter(lambda x: len(x.partitions) > 0, self._disk_config.device_modifications))
 
 		if not device_mods:
-			log('No modifications required', level=logging.DEBUG)
+			debug('No modifications required')
 			return
 
 		device_paths = ', '.join([str(mod.device.device_info.path) for mod in device_mods])
@@ -48,7 +47,7 @@ class FilesystemHandler:
 		# Setup the blockdevice, filesystem (and optionally encryption).
 		# Once that's done, we'll hand over to perform_installation()
 		partition_table = PartitionTable.GPT
-		if has_uefi() is False:
+		if SysInfo.has_uefi() is False:
 			partition_table = PartitionTable.MBR
 
 		for mod in device_mods:

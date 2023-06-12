@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import shlex
 import time
 from dataclasses import dataclass
@@ -9,7 +8,7 @@ from typing import Optional, List
 
 from . import disk
 from .general import SysCommand, generate_password, SysCommandWorker
-from .output import log
+from .output import info, debug
 from .exceptions import SysCallError, DiskError
 from .storage import storage
 
@@ -61,7 +60,7 @@ class Luks2:
 		iter_time: int = 10000,
 		key_file: Optional[Path] = None
 	) -> Path:
-		log(f'Luks2 encrypting: {self.luks_dev_path}', level=logging.INFO)
+		info(f'Luks2 encrypting: {self.luks_dev_path}')
 
 		byte_password = self._password_bytes()
 
@@ -88,30 +87,28 @@ class Luks2:
 			'luksFormat', str(self.luks_dev_path),
 		])
 
-		try:
-			# Retry formatting the volume because archinstall can some times be too quick
-			# which generates a "Device /dev/sdX does not exist or access denied." between
-			# setting up partitions and us trying to encrypt it.
-			cmd_handle = None
-			for i in range(storage['DISK_RETRY_ATTEMPTS']):
-				if (cmd_handle := SysCommand(cryptsetup_args)).exit_code != 0:
-					time.sleep(storage['DISK_TIMEOUTS'])
-				else:
-					break
-
-			if cmd_handle is not None and cmd_handle.exit_code != 0:
-				output = str(b''.join(cmd_handle))
-				raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {output}')
-		except SysCallError as err:
-			if err.exit_code == 1:
-				log(f'luks2 partition currently in use: {self.luks_dev_path}')
-				log('Attempting to unmount, crypt-close and trying encryption again')
-
-				self.lock()
-				# Then try again to set up the crypt-device
+		# Retry formatting the volume because archinstall can some times be too quick
+		# which generates a "Device /dev/sdX does not exist or access denied." between
+		# setting up partitions and us trying to encrypt it.
+		for retry_attempt in range(storage['DISK_RETRY_ATTEMPTS']):
+			try:
 				SysCommand(cryptsetup_args)
-			else:
-				raise err
+				break
+			except SysCallError as err:
+				time.sleep(storage['DISK_TIMEOUTS'])
+
+				if retry_attempt != storage['DISK_RETRY_ATTEMPTS'] - 1:
+					continue
+
+				if err.exit_code == 1:
+					info(f'luks2 partition currently in use: {self.luks_dev_path}')
+					info('Attempting to unmount, crypt-close and trying encryption again')
+
+					self.lock()
+					# Then try again to set up the crypt-device
+					SysCommand(cryptsetup_args)
+				else:
+					raise DiskError(f'Could not encrypt volume "{self.luks_dev_path}": {err}')
 
 		return key_file
 
@@ -119,13 +116,9 @@ class Luks2:
 		command = f'/usr/bin/cryptsetup luksUUID {self.luks_dev_path}'
 
 		try:
-			result = SysCommand(command)
-			if result.exit_code != 0:
-				raise DiskError(f'Unable to get UUID for Luks device: {result.decode()}')
-
-			return result.decode()  # type: ignore
+			return SysCommand(command).decode().strip()  # type: ignore
 		except SysCallError as err:
-			log(f'Unable to get UUID for Luks device: {self.luks_dev_path}', level=logging.INFO)
+			info(f'Unable to get UUID for Luks device: {self.luks_dev_path}')
 			raise err
 
 	def is_unlocked(self) -> bool:
@@ -139,7 +132,7 @@ class Luks2:
 		:param key_file: An alternative key file
 		:type key_file: Path
 		"""
-		log(f'Unlocking luks2 device: {self.luks_dev_path}', level=logging.DEBUG)
+		debug(f'Unlocking luks2 device: {self.luks_dev_path}')
 
 		if not self.mapper_name:
 			raise ValueError('mapper name missing')
@@ -176,11 +169,11 @@ class Luks2:
 		for child in lsblk_info.children:
 			# Unmount the child location
 			for mountpoint in child.mountpoints:
-				log(f'Unmounting {mountpoint}', level=logging.DEBUG)
+				debug(f'Unmounting {mountpoint}')
 				disk.device_handler.umount(mountpoint, recursive=True)
 
 			# And close it if possible.
-			log(f"Closing crypt device {child.name}", level=logging.DEBUG)
+			debug(f"Closing crypt device {child.name}")
 			SysCommand(f"cryptsetup close {child.name}")
 
 		self._mapper_dev = None
@@ -194,29 +187,29 @@ class Luks2:
 
 		# Once we store the key as ../xyzloop.key systemd-cryptsetup can
 		# automatically load this key if we name the device to "xyzloop"
-		key_file_path = target_path / 'etc/cryptsetup-keys.d/' / self.mapper_name
-		key_file = key_file_path / '.key'
+		kf_path = Path(f'/etc/cryptsetup-keys.d/{self.mapper_name}.key')
+		key_file = target_path / kf_path.relative_to(kf_path.root)
 		crypttab_path = target_path / 'etc/crypttab'
 
 		if key_file.exists():
 			if not override:
-				log(f'Key file {key_file} already exists, keeping existing')
+				info(f'Key file {key_file} already exists, keeping existing')
 				return
 			else:
-				log(f'Key file {key_file} already exists, overriding')
+				info(f'Key file {key_file} already exists, overriding')
 
-		key_file_path.mkdir(parents=True, exist_ok=True)
+		key_file.parent.mkdir(parents=True, exist_ok=True)
 
 		with open(key_file, "w") as keyfile:
 			keyfile.write(generate_password(length=512))
 
-		key_file_path.chmod(0o400)
+		key_file.chmod(0o400)
 
 		self._add_key(key_file)
-		self._crypttab(crypttab_path, key_file, options=["luks", "key-slot=1"])
+		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
-		log(f'Adding additional key-file {key_file}', level=logging.INFO)
+		info(f'Adding additional key-file {key_file}')
 
 		command = f'/usr/bin/cryptsetup -q -v luksAddKey {self.luks_dev_path} {key_file}'
 		worker = SysCommandWorker(command, environment_vars={'LC_ALL': 'C'})
@@ -236,7 +229,7 @@ class Luks2:
 		key_file: Path,
 		options: List[str]
 	) -> None:
-		log(f'Adding crypttab entry for key {key_file}', level=logging.INFO)
+		info(f'Adding crypttab entry for key {key_file}')
 
 		with open(crypttab_path, 'a') as crypttab:
 			opt = ','.join(options)

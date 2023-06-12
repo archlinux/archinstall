@@ -1,7 +1,7 @@
 from typing import Any, TYPE_CHECKING, List, Optional, Dict
 
 from archinstall.lib import menu
-from archinstall.lib.output import log
+from archinstall.lib.output import info
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import Profile, ProfileType, SelectResult, GreeterType
 
@@ -79,7 +79,7 @@ class DesktopProfile(Profile):
 		install_session.add_additional_packages(self.packages)
 
 		for profile in self._current_selection:
-			log(f'Installing profile {profile.name}...')
+			info(f'Installing profile {profile.name}...')
 
 			install_session.add_additional_packages(profile.packages)
 			install_session.enable_service(profile.services)

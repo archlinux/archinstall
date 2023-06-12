@@ -6,7 +6,7 @@ from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
 from ..hardware import AVAILABLE_GFX_DRIVERS
 from ..menu import Menu, MenuSelectionType, AbstractSubMenu, Selector
-from ..user_interaction.system_conf import select_driver
+from ..interactions.system_conf import select_driver
 
 if TYPE_CHECKING:
 	_: Any

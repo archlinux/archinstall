@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import logging
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
-from ..locale_helpers import set_keyboard_language
-from ..output import log
+from ..output import error
 from ..translationhandler import TranslationHandler, Language
 
 if TYPE_CHECKING:
@@ -131,7 +129,7 @@ class Selector:
 		if current:
 			padding += 5
 			description = str(self._description).ljust(padding, ' ')
-			current = str(_('set: {}').format(current))
+			current = current
 		else:
 			description = self._description
 			current = ''
@@ -211,7 +209,7 @@ class AbstractMenu:
 		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
 		# TODO: skip processing when it comes from a planified exit
 		if len(args) >= 2 and args[1]:
-			log(args[1], level=logging.ERROR, fg='red')
+			error(args[1])
 			print("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues")
 			raise args[1]
 
@@ -243,31 +241,6 @@ class AbstractMenu:
 			self._menu_options[selector_name].set_current_selection(value)
 		elif selector is not None and selector.has_selection():
 			self._data_store[selector_name] = selector.current_selection
-
-	def _missing_configs(self) -> List[str]:
-		def check(s):
-			return self._menu_options.get(s).has_selection()
-
-		def has_superuser() -> bool:
-			sel = self._menu_options['!users']
-			if sel.current_selection:
-				return any([u.sudo for u in sel.current_selection])
-			return False
-
-		mandatory_fields = dict(filter(lambda x: x[1].is_mandatory(), self._menu_options.items()))
-		missing = set()
-
-		for key, selector in mandatory_fields.items():
-			if key in ['!root-password', '!users']:
-				if not check('!root-password') and not has_superuser():
-					missing.add(
-						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
-					)
-			elif key == 'disk_config':
-				if not check('disk_config'):
-					missing.add(self._menu_options['disk_config'].description)
-
-		return list(missing)
 
 	def setup_selection_menu_options(self):
 		""" Define the menu options.
@@ -329,9 +302,6 @@ class AbstractMenu:
 		cursor_pos = None
 
 		while True:
-			# Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# 	This will just help the user with the next following questions.
-			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 
 			padding = self._get_menu_text_padding(list(enabled_menus.values()))
@@ -426,13 +396,6 @@ class AbstractMenu:
 
 		return True
 
-	def _set_kb_language(self):
-		""" general for ArchInstall"""
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
-			set_keyboard_language(self._data_store['keyboard-layout'])
-
 	def _verify_selection_enabled(self, selection_name: str) -> bool:
 		""" general """
 		if selection := self._menu_options.get(selection_name, None):
@@ -482,9 +445,9 @@ class AbstractMenu:
 			if item in self._menus_to_enable():
 				yield item
 
-	def _select_archinstall_language(self, preset_value: Language) -> Language:
-		from ..user_interaction.general_conf import select_archinstall_language
-		language = select_archinstall_language(self.translation_handler.translated_languages, preset_value)
+	def _select_archinstall_language(self, preset: Language) -> Language:
+		from ..interactions.general_conf import select_archinstall_language
+		language = select_archinstall_language(self.translation_handler.translated_languages, preset)
 		self._translation_handler.activate(language)
 		return language
 

@@ -11,8 +11,8 @@ from pathlib import Path
 
 storage: Dict[str, Any] = {
 	'PROFILE': Path(__file__).parent.parent.joinpath('default_profiles'),
-	'LOG_PATH': '/var/log/archinstall',
-	'LOG_FILE': 'install.log',
+	'LOG_PATH': Path('/var/log/archinstall'),
+	'LOG_FILE': Path('install.log'),
 	'MOUNT_POINT': Path('/mnt/archinstall'),
 	'ENC_IDENTIFIER': 'ainst',
 	'DISK_TIMEOUTS' : 1, # seconds

@@ -62,7 +62,7 @@ msgstr "انسٹال کرنےکے لیے اضافی پیکجز لکھیں (ال�
 msgid "Copy ISO network configuration to installation"
 msgstr "آئی ایس او نیٹ ورک کنفیگریشن کو انسٹالیشن میں کاپی کریں"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "نیٹ ورک مینجر کا استعمال کریں (GNOME اور KDE میں انٹرنیٹ کو گرافیکلی ترتیب دینے کے لیے ضروری ہے)"
 
 msgid "Select one network interface to configure"
@@ -825,14 +825,13 @@ msgstr ""
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
@@ -1137,6 +1136,72 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "استعمال کرنے اور کنفیگر کے لیے ایک یا زیادہ ہارڈ ڈرائیوز منتخب کریں"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "ایک صارف شامل کریں"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "ایک اضافی صارف بنانے کے لیے صارف نام درج کریں (چھوڑنے کے لیے خالی چھوڑیں):"
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "ڈسک لے آؤٹ کو منتخب کریں"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "صارف کنفیگریشن کو محفوظ کریں"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "محفوظ کیے جانے والے کنفیگریشن کے لیے ایک ڈائرکٹری درج کریں:"
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "ترتیب کو محفوظ کریں"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "متبادل علاقہ"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "متبادل علاقہ"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
 
 #~ msgid "Add :"
 #~ msgstr "شامل:"
