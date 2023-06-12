@@ -147,12 +147,17 @@ class Installer:
 		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
-		info('Waiting pacman-init.service to complete.')
-		while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		# info('Waiting for pacman-init.service to complete.')
+		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		# 	time.sleep(1)
+
+		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		# Wait for the timer to kick in
+		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
 			time.sleep(1)
 
-		info('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
-		while self._service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
+		# Wait for the service to enter a finished state
+		while self._service_state('archlinux-keyring-wkd-sync.service') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
@@ -1206,8 +1211,19 @@ class Installer:
 
 		return True
 
+	def _service_started(self, service_name: str) -> str | None:
+		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+			service_name += '.service'  # Just to be safe
+
+		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
+		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
+		if not last_execution_time:
+			return None
+
+		return last_execution_time.decode('UTF-8')
+
 	def _service_state(self, service_name: str) -> str:
-		if os.path.splitext(service_name)[1] != '.service':
+		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
 		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
