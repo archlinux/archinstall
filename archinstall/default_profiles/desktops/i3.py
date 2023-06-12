@@ -21,7 +21,7 @@ class I3wmProfile(XorgProfile):
 			'xterm',
 			'lightdm-gtk-greeter',
 			'lightdm',
-			'dmenu',
+			'dmenu'
 		]
 
 	@property
