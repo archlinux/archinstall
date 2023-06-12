@@ -179,7 +179,7 @@ class Installer:
 				)
 
 	def sanity_check(self):
-		#self._verify_boot_part()
+		# self._verify_boot_part()
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
@@ -786,7 +786,11 @@ class Installer:
 				return root
 		return None
 
-	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
+	def _add_systemd_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
+	):
 		self._pacstrap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -798,10 +802,10 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path={boot_partition} install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path={boot_partition} install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		if not os.path.exists(f'{self.target}/boot/loader'):
@@ -916,12 +920,12 @@ class Installer:
 			self._pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {err}")
+					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition}: {err}")
 		else:
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 
@@ -941,7 +945,7 @@ class Installer:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition}/grub/grub.cfg')
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
@@ -1043,7 +1047,7 @@ class Installer:
 
 		match bootloader:
 			case Bootloader.Systemd:
-				self._add_systemd_bootloader(root_partition)
+				self._add_systemd_bootloader(boot_partition, root_partition)
 			case Bootloader.Grub:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
