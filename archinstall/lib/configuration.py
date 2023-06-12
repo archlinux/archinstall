@@ -1,28 +1,17 @@
 import os
 import json
 import stat
-import logging
-import pathlib
-from typing import Optional, Dict
+import readline
+from pathlib import Path
+from typing import Optional, Dict, Any, TYPE_CHECKING
 
-from .hsm.fido import Fido2
-from .models.disk_encryption import DiskEncryption
+from .menu import Menu, MenuSelectionType
 from .storage import storage
 from .general import JSON, UNSAFE_JSON
-from .output import log
-from .exceptions import RequirementError
+from .output import debug, info, warn
 
-
-def configuration_sanity_check():
-	disk_encryption: DiskEncryption = storage['arguments'].get('disk_encryption')
-	if disk_encryption is not None and disk_encryption.hsm_device:
-		if not Fido2.get_fido2_devices():
-			raise RequirementError(
-				f"In order to use HSM to pair with the disk encryption,"
-				+ f" one needs to be accessible through /dev/hidraw* and support"
-				+ f" the FIDO2 protocol. You can check this by running"
-				+ f" 'systemd-cryptenroll --fido2-device=list'."
-			)
+if TYPE_CHECKING:
+	_: Any
 
 
 class ConfigurationOutput:
@@ -35,15 +24,13 @@ class ConfigurationOutput:
 		:type config: Dict
 		"""
 		self._config = config
-		self._user_credentials = {}
-		self._disk_layout = None
-		self._user_config = {}
-		self._default_save_path = pathlib.Path(storage.get('LOG_PATH', '.'))
+		self._user_credentials: Dict[str, Any] = {}
+		self._user_config: Dict[str, Any] = {}
+		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
-		self._disk_layout_file = "user_disk_layout.json"
 
-		self._sensitive = ['!users']
+		self._sensitive = ['!users', '!root-password']
 		self._ignore = ['abort', 'install', 'config', 'creds', 'dry_run']
 
 		self._process_config()
@@ -56,23 +43,18 @@ class ConfigurationOutput:
 	def user_configuration_file(self):
 		return self._user_config_file
 
-	@property
-	def disk_layout_file(self):
-		return self._disk_layout_file
-
 	def _process_config(self):
 		for key in self._config:
 			if key in self._sensitive:
 				self._user_credentials[key] = self._config[key]
-			elif key == 'disk_layouts':
-				self._disk_layout = self._config[key]
 			elif key in self._ignore:
 				pass
 			else:
 				self._user_config[key] = self._config[key]
 
-				if key == 'disk_encryption' and self._config[key]:  # special handling for encryption password
-					self._user_credentials['encryption_password'] = self._config[key].encryption_password
+			# special handling for encryption password
+			if key == 'disk_encryption' and self._config[key] is not None:
+				self._user_credentials['encryption_password'] = self._config[key].encryption_password
 
 	def user_config_to_json(self) -> str:
 		return json.dumps({
@@ -81,11 +63,6 @@ class ConfigurationOutput:
 			'version': storage['__version__']
 		}, indent=4, sort_keys=True, cls=JSON)
 
-	def disk_layout_to_json(self) -> Optional[str]:
-		if self._disk_layout:
-			return json.dumps(self._disk_layout, indent=4, sort_keys=True, cls=JSON)
-		return None
-
 	def user_credentials_to_json(self) -> Optional[str]:
 		if self._user_credentials:
 			return json.dumps(self._user_credentials, indent=4, sort_keys=True, cls=UNSAFE_JSON)
@@ -93,27 +70,23 @@ class ConfigurationOutput:
 
 	def show(self):
 		print(_('\nThis is your chosen configuration:'))
-		log(" -- Chosen configuration --", level=logging.DEBUG)
+		debug(" -- Chosen configuration --")
 
 		user_conig = self.user_config_to_json()
-		disk_layout = self.disk_layout_to_json()
-		log(user_conig, level=logging.INFO)
-
-		if disk_layout:
-			log(disk_layout, level=logging.INFO)
+		info(user_conig)
 
 		print()
 
-	def _is_valid_path(self, dest_path :pathlib.Path) -> bool:
+	def _is_valid_path(self, dest_path: Path) -> bool:
 		if (not dest_path.exists()) or not (dest_path.is_dir()):
-			log(
-				'Destination directory {} does not exist or is not a directory,\n Configuration files can not be saved'.format(dest_path.resolve()),
-				fg="yellow"
+			warn(
+				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
+				'Configuration files can not be saved'
 			)
 			return False
 		return True
 
-	def save_user_config(self, dest_path :pathlib.Path = None):
+	def save_user_config(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_config_file
 
@@ -122,7 +95,7 @@ class ConfigurationOutput:
 
 			os.chmod(str(dest_path / self._user_config_file), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save_user_creds(self, dest_path :pathlib.Path = None):
+	def save_user_creds(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
@@ -132,21 +105,92 @@ class ConfigurationOutput:
 
 				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
-	def save_disk_layout(self, dest_path :pathlib.Path = None):
-		if self._is_valid_path(dest_path):
-			if disk_layout := self.disk_layout_to_json():
-				target = dest_path / self._disk_layout_file
-
-				with target.open('w') as config_file:
-					config_file.write(disk_layout)
-
-				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-
-	def save(self, dest_path :pathlib.Path = None):
+	def save(self, dest_path: Optional[Path] = None):
 		if not dest_path:
 			dest_path = self._default_save_path
 
 		if self._is_valid_path(dest_path):
 			self.save_user_config(dest_path)
 			self.save_user_creds(dest_path)
-			self.save_disk_layout(dest_path)
+
+
+def save_config(config: Dict):
+	def preview(selection: str):
+		if options["user_config"] == selection:
+			serialized = config_output.user_config_to_json()
+			return f"{config_output.user_configuration_file}\n{serialized}"
+		elif options["user_creds"] == selection:
+			if maybe_serial := config_output.user_credentials_to_json():
+				return f"{config_output.user_credentials_file}\n{maybe_serial}"
+			else:
+				return str(_("No configuration"))
+		elif options["all"] == selection:
+			output = f"{config_output.user_configuration_file}\n"
+			if config_output.user_credentials_to_json():
+				output += f"{config_output.user_credentials_file}\n"
+			return output[:-1]
+		return None
+
+	try:
+		config_output = ConfigurationOutput(config)
+
+		options = {
+			"user_config": str(_("Save user configuration (including disk layout)")),
+			"user_creds": str(_("Save user credentials")),
+			"all": str(_("Save all")),
+		}
+
+		save_choice = Menu(
+			_("Choose which configuration to save"),
+			list(options.values()),
+			sort=False,
+			skip=True,
+			preview_size=0.75,
+			preview_command=preview,
+		).run()
+
+		if save_choice.type_ == MenuSelectionType.Skip:
+			return
+
+		readline.set_completer_delims("\t\n=")
+		readline.parse_and_bind("tab: complete")
+		while True:
+			path = input(
+				_(
+					"Enter a directory for the configuration(s) to be saved (tab completion enabled)\nSave directory: "
+				)
+			).strip(" ")
+			dest_path = Path(path)
+			if dest_path.exists() and dest_path.is_dir():
+				break
+			info(_("Not a valid directory: {}").format(dest_path), fg="red")
+
+		if not path:
+			return
+
+		prompt = _(
+			"Do you want to save {} configuration file(s) in the following location?\n\n{}"
+		).format(
+			list(options.keys())[list(options.values()).index(str(save_choice.value))],
+			dest_path.absolute(),
+		)
+		save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
+		if save_confirmation == Menu.no():
+			return
+
+		debug(
+			_("Saving {} configuration files to {}").format(
+				list(options.keys())[list(options.values()).index(str(save_choice.value))],
+				dest_path.absolute(),
+			)
+		)
+
+		if options["user_config"] == save_choice.value:
+			config_output.save_user_config(dest_path)
+		elif options["user_creds"] == save_choice.value:
+			config_output.save_user_creds(dest_path)
+		elif options["all"] == save_choice.value:
+			config_output.save_user_config(dest_path)
+			config_output.save_user_creds(dest_path)
+	except KeyboardInterrupt:
+		return

@@ -4,7 +4,7 @@
 # Contributor: demostanis worlds <demostanis@protonmail.com>
 
 pkgname=archinstall
-pkgver=2.5.4
+pkgver=2.5.6
 pkgrel=1
 pkgdesc="Just another guided/automated Arch Linux installer with a twist"
 arch=(any)
@@ -13,6 +13,7 @@ license=(GPL3)
 depends=(
   'python'
   'systemd'
+  'python-pyparted'
 )
 makedepends=(
   'python-setuptools'
@@ -48,7 +49,6 @@ prepare() {
 
   # use real directories for examples and profiles, as symlinks do not work
   rm -fv $pkgname/{examples,profiles}
-  mv -v examples profiles $pkgname/
 }
 
 build() {

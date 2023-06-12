@@ -62,7 +62,7 @@ msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάστα
 msgid "Copy ISO network configuration to installation"
 msgstr "Αντιγραφή διαμόρφωση δικτύου ISO στην εγκατάσταση"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
 
 msgid "Select one network interface to configure"
@@ -793,18 +793,17 @@ msgstr "Διαμορφωμένες {} διεπαφές"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {max_downloads})\n"
+" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
 "Σημείωση:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Μέγιστη τιμή  : {max_downloads} ( Επιτρέπει {max_downloads} παράλληλες λήψεις, επιτρέπει {max_downloads+1} λήψεις σε μία στιγμή )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλληλη λήψη, επιτρέπει 2 λήψεις σε μία στιγμή )"
@@ -812,9 +811,9 @@ msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλλη�
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {max_downloads}, ή 0 για απενεργοποίηση]"
+msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
 
 msgid "Parallel Downloads"
 msgstr "Παράλληλες Λήψεις"
@@ -838,6 +837,125 @@ msgstr ""
 msgid "The font should be stored as {}"
 msgstr ""
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "Προσθέτωντας τη διαμέριση...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "Διαγραφή διαμέρισης"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "Τρέχουσα διάταξη διαμέρισης"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "Δημιουργία καινούργιας διαμέρισης"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "Διαγραφή υποόγκου"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "Διαγραφή διαμέρισης"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "Μη έγκυρος φάκελος: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
 #, fuzzy
 msgid "Encryption type"
 msgstr "Κωδικός κρυπτογράφησης"
@@ -859,24 +977,202 @@ msgid "Select a FIDO2 device to use for HSM"
 msgstr ""
 
 #, fuzzy
-msgid "All settings will be reset, are you sure?"
-msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
+msgid "Use a best-effort default partition layout"
+msgstr "Διαγραφή όλων των επιλεγμένων δίσκων και χρήση μίας προκαθορισμένης διάταξης βέλτιστης προσπάθειας"
 
-msgid "Back"
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "Χειροκίνητη διαμόρφωση"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "Καμία διαμόρφωση"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
 msgstr ""
 
 #, fuzzy
+msgid "Configuration"
+msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
 msgid "Password"
 msgstr "Κωδικός root"
 
-msgid "Partition encryption"
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
+
+msgid "Back"
 msgstr ""
 
-#~ msgid "Enter the start sector (percentage or block number, default: {}): "
-#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
 
-#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-#~ msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "Περαιτέρω πακέτα"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "Διαγραφή διεπαφής"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "Προφίλ"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Επιλέξτε έναν οδηγώ γραφικών ή αφήστε άδειο για να εγκατασταθούν όλοι οι οδηγοί ανοιχτής πηγής"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "Προφίλ"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "Προσθήκη χρήστη"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "Αποθήκευση διαμόρφωσης χρήστη"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "Αποθήκευση διαμόρφωσης"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "Περιοχή mirror"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"

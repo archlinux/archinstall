@@ -34,3 +34,4 @@ venv
 **/*.*~
 /*.sig
 /*.json
+requirements.txt
