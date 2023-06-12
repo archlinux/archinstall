@@ -802,10 +802,10 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path={boot_partition} install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path={boot_partition.mountpoint} install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path={boot_partition} install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path={boot_partition.mountpoint} install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		if not os.path.exists(f'{self.target}/boot/loader'):
@@ -920,12 +920,12 @@ class Installer:
 			self._pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition} --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition}: {err}")
+					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 
@@ -945,7 +945,7 @@ class Installer:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition}/grub/grub.cfg')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg')
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
