@@ -804,20 +804,22 @@ class Installer:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader'):
-			os.makedirs(f'{self.target}/boot/loader')
+		loader_dir = self.target / 'boot/loader'
+		loader_dir.mkdir(parents=True, exist_ok=True)
 
 		# Modify or create a loader.conf
-		if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
-			with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
+		loader_conf = loader_dir / 'loader.conf'
+
+		try:
+			with loader_conf.open() as loader:
 				loader_data = loader.read().split('\n')
-		else:
+		except FileNotFoundError:
 			loader_data = [
 				f"default {self.init_time}",
 				"timeout 15"
 			]
 
-		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
+		with loader_conf.open('w') as loader:
 			for line in loader_data:
 				if line[:8] == 'default ':
 					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
@@ -828,13 +830,13 @@ class Installer:
 					loader.write(f"{line}\n")
 
 		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader/entries'):
-			os.makedirs(f'{self.target}/boot/loader/entries')
+		entries_dir = loader_dir / 'entries'
+		entries_dir.mkdir(parents=True, exist_ok=True)
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
-				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
+				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
 					entry.write('# Created by: archinstall\n')
 					entry.write(f'# Created on: {self.init_time}\n')
 					entry.write(f'title Arch Linux ({kernel}{variant})\n')
