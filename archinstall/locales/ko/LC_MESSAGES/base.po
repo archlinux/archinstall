@@ -62,7 +62,7 @@ msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건�
 msgid "Copy ISO network configuration to installation"
 msgstr "ISO 네트워크 구성을 설치에 복사"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
 
 msgid "Select one network interface to configure"
@@ -794,18 +794,17 @@ msgstr "구성된 {} 인터페이스"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "이 옵션은 설치 중에 발생할 수 있는 병렬 다운로드 수를 활성화합니다"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "활성화할 병렬 다운로드 수를 입력하세요.\n"
-" (1 부터 {max_downloads} 까지의 숫자중 하나를 입력하세요)\n"
+" (1 부터 {} 까지의 숫자중 하나를 입력하세요)\n"
 "메모:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 최댓값   : {max_downloads} ( {max_downloads} 개의 병렬 다운로드 허용, 한 번에 {max_downloads+1} 개의 다운로드 허용 )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {} 개의 다운로드 허용 )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - 최솟값   : 1 ( 1 개의 병렬 다운로드 허용, 한 번에 2 개의 다운로드 허용 )"
@@ -813,9 +812,9 @@ msgstr " - 최솟값   : 1 ( 1 개의 병렬 다운로드 허용, 한 번에 2 �
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - 비활성화/기본 : - ( 병렬 다운로드 비활성화, 한 번에 1 개의 다운로드만 허용 )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {max_downloads} 까지, 비활성화 하려면 0]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"
 
 msgid "Parallel Downloads"
 msgstr "병렬 다운로드"
@@ -838,6 +837,125 @@ msgstr "이 번역을 사용하려면 해당 언어를 지원하는 글꼴을 �
 msgid "The font should be stored as {}"
 msgstr "글꼴은 {} (으)로 저장해야 합니다"
 
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr ""
+
+#, fuzzy
+msgid "Select an execution mode"
+msgstr "'{}' 에 대한 작업 선택"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr ""
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr ""
+
+#, fuzzy
+msgid "Select one or more devices to use and configure"
+msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"
+
+#, fuzzy
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "하드 드라이브 선택을 재설정하면 현재 디스크 레이아웃도 재설정됩니다. 정말 진행하시겠습니까?"
+
+#, fuzzy
+msgid "Existing Partitions"
+msgstr "파티션 추가 중...."
+
+#, fuzzy
+msgid "Select a partitioning option"
+msgstr "파티션 제거"
+
+#, fuzzy
+msgid "Enter the root directory of the mounted devices: "
+msgstr "저장할 구성의 디렉토리를 입력하세요: "
+
+#, fuzzy
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Arch Linux 파티션의 최대 용량: {}GB\n"
+
+#, fuzzy
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linux 파티션의 최소 용량: {}GB"
+
+#, fuzzy
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "이것은 사전 프로그래밍된 프로필 목록이며 데스크톱 환경과 같은 것을 더 쉽게 설치할 수 있습니다"
+
+#, fuzzy
+msgid "Current profile selection"
+msgstr "현재 파티션 레이아웃"
+
+#, fuzzy
+msgid "Remove all newly added partitions"
+msgstr "새 파티션 생성"
+
+#, fuzzy
+msgid "Assign mountpoint"
+msgstr "파티션에 대한 마운트 지점 할당"
+
+#, fuzzy
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "포맷할 파티션 표시/표시 해제 (데이터 삭제)"
+
+msgid "Mark/Unmark as bootable"
+msgstr ""
+
+msgid "Change filesystem"
+msgstr ""
+
+#, fuzzy
+msgid "Mark/Unmark as compressed"
+msgstr "파티션을 압축된 것으로 표시/표시 해제(btrfs만 해당)"
+
+#, fuzzy
+msgid "Set subvolumes"
+msgstr "하위 볼륨 제거"
+
+#, fuzzy
+msgid "Delete partition"
+msgstr "파티션 제거"
+
+msgid "Partition"
+msgstr ""
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr ""
+
+#, fuzzy
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * 파티션 마운트 포인트는 설치 내부를 기준으로 하며 예를 들어 부팅은 /boot 입니다."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr ""
+
+msgid "Mountpoint: "
+msgstr ""
+
+msgid "Current free sectors on device {}:"
+msgstr ""
+
+#, fuzzy
+msgid "Total sectors: {}"
+msgstr "올바른 디렉터리가 아닙니다: {}"
+
+#, fuzzy
+msgid "Enter the start sector (default: {}): "
+msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+
+#, fuzzy
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "파티션의 끝 섹터를 입력하세요 (백분율 또는 블록 번호, 예시: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr ""
+
+msgid "Partition management: {}"
+msgstr ""
+
+msgid "Total length: {}"
+msgstr ""
+
 #, fuzzy
 msgid "Encryption type"
 msgstr "비밀번호 암호화"
@@ -859,24 +977,202 @@ msgid "Select a FIDO2 device to use for HSM"
 msgstr ""
 
 #, fuzzy
-msgid "All settings will be reset, are you sure?"
-msgstr "{} 에 대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
+msgid "Use a best-effort default partition layout"
+msgstr "선택한 모든 드라이브를 지우고 최선의 기본 파티션 레이아웃 사용"
 
-msgid "Back"
+#, fuzzy
+msgid "Manual Partitioning"
+msgstr "수동 구성"
+
+#, fuzzy
+msgid "Pre-mounted configuration"
+msgstr "구성 없음"
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Partition encryption"
+msgstr ""
+
+msgid " ! Formatting {} in "
+msgstr ""
+
+msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
 msgstr ""
 
 #, fuzzy
+msgid "Configuration"
+msgstr "구성 없음"
+
+#, fuzzy
 msgid "Password"
 msgstr "루트 비밀번호"
 
-msgid "Partition encryption"
+#, fuzzy
+msgid "All settings will be reset, are you sure?"
+msgstr "{} 에 대기 중인 파티션이 포함되어 있습니다. 그러면 이러한 파티션이 제거됩니다. 정말 진행하시겠습니까?"
+
+msgid "Back"
 msgstr ""
 
-#~ msgid "Enter the start sector (percentage or block number, default: {}): "
-#~ msgstr "시작 섹터를 입력하세요 (백분율 또는 블록 번호, 기본값: {}): "
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr ""
 
-#~ msgid "Enter the end sector of the partition (percentage or block number, ex: {}): "
-#~ msgstr "파티션의 끝 섹터를 입력하세요 (백분율 또는 블록 번호, 예시: {}): "
+msgid "Environment type: {}"
+msgstr ""
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr ""
+
+#, fuzzy
+msgid "Installed packages"
+msgstr "추가 패키지"
+
+#, fuzzy
+msgid "Add profile"
+msgstr "프로필"
+
+#, fuzzy
+msgid "Edit profile"
+msgstr "프로필"
+
+#, fuzzy
+msgid "Delete profile"
+msgstr "인터페이스 제거"
+
+#, fuzzy
+msgid "Profile name: "
+msgstr "프로필"
+
+#, fuzzy
+msgid "The profile name you entered is already in use. Try again"
+msgstr "입력한 사용자 이름이 잘못되었습니다. 다시 시도하세요"
+
+#, fuzzy
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건너뛰려면 공백): "
+
+#, fuzzy
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건너뛰려면 공백): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr ""
+
+msgid "Create your own"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"모든 오픈 소스 드라이버를 설치하려면 그래픽 드라이버를 선택하거나 공백으로 두세요"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr ""
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+
+msgid "Graphics driver"
+msgstr ""
+
+msgid "Greeter"
+msgstr ""
+
+msgid "Please chose which greeter to install"
+msgstr ""
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr ""
+
+#, fuzzy
+msgid "Disk configuration"
+msgstr "구성 없음"
+
+#, fuzzy
+msgid "Profiles"
+msgstr "프로필"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr ""
+
+#, fuzzy
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "사용자 추가"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "추가할 인터페이스 선택"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "추가할 인터페이스 선택"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "사용자 구성 저장"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "저장할 구성의 디렉토리를 입력하세요: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "구성 저장"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {} 개의 다운로드 허용 )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"

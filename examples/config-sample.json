@@ -1,28 +1,132 @@
 {
-    "audio": null,
-    "bootloader": "systemd-bootctl",
-    "harddrives": [
-        "/dev/loop0"
-    ],
-    "hostname": "",
+    "config_version": "2.5.2",
+    "additional-repositories": [],
+    "archinstall-language": "English",
+    "audio": "pipewire",
+    "bootloader": "Systemd-boot",
+    "debug": false,
+    "disk_config": {
+        "config_type": "default_layout",
+        "device_modifications": [
+            {
+                "device": "/dev/sda",
+                "partitions": [
+                    {
+                        "btrfs": [],
+                        "flags": [
+                            "Boot"
+                        ],
+                        "fs_type": "fat32",
+                        "length": {
+                            "sector_size": null,
+                            "total_size": null,
+                            "unit": "MiB",
+                            "value": 512
+                        },
+                        "mount_options": [],
+                        "mountpoint": "/boot",
+                        "obj_id": "2c3fa2d5-2c79-4fab-86ec-22d0ea1543c0",
+                        "start": {
+                            "sector_size": null,
+                            "total_size": null,
+                            "unit": "MiB",
+                            "value": 1
+                        },
+                        "status": "create",
+                        "type": "primary"
+                    },
+                    {
+                        "btrfs": [],
+                        "flags": [],
+                        "fs_type": "ext4",
+                        "length": {
+                            "sector_size": null,
+                            "total_size": null,
+                            "unit": "GiB",
+                            "value": 20
+                        },
+                        "mount_options": [],
+                        "mountpoint": "/",
+                        "obj_id": "3e7018a0-363b-4d05-ab83-8e82d13db208",
+                        "start": {
+                            "sector_size": null,
+                            "total_size": null,
+                            "unit": "MiB",
+                            "value": 513
+                        },
+                        "status": "create",
+                        "type": "primary"
+                    },
+                    {
+                        "btrfs": [],
+                        "flags": [],
+                        "fs_type": "ext4",
+                        "length": {
+                            "sector_size": null,
+                            "total_size": {
+                                "sector_size": null,
+                                "total_size": null,
+                                "unit": "B",
+                                "value": 250148290560
+                            },
+                            "unit": "Percent",
+                            "value": 100
+                        },
+                        "mount_options": [],
+                        "mountpoint": "/home",
+                        "obj_id": "ce58b139-f041-4a06-94da-1f8bad775d3f",
+                        "start": {
+                            "sector_size": null,
+                            "total_size": null,
+                            "unit": "GiB",
+                            "value": 20
+                        },
+                        "status": "create",
+                        "type": "primary"
+                    }
+                ],
+                "wipe": true
+            }
+        ]
+    },
+    "hostname": "archlinux",
     "kernels": [
         "linux"
     ],
     "keyboard-layout": "us",
     "mirror-region": {
-        "Worldwide": {
-            "https://mirror.rackspace.com/archlinux/$repo/os/$arch": true
+        "Australia": {
+            "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch": true,
         }
     },
     "nic": {
-        "type": "NM"
+        "dhcp": true,
+        "dns": null,
+        "gateway": null,
+        "iface": null,
+        "ip": null,
+        "type": "nm"
     },
+    "no_pkg_lookups": false,
     "ntp": true,
+    "offline": false,
     "packages": [],
-    "profile": null,
+    "parallel downloads": 0,
+    "profile_config": {
+        "gfx_driver": "All open-source (default)",
+        "greeter": "sddm",
+        "profile": {
+            "details": [
+                "Kde"
+            ],
+            "main": "Desktop"
+        }
+    },
     "script": "guided",
+    "silent": false,
     "swap": true,
     "sys-encoding": "utf-8",
     "sys-language": "en_US",
-    "timezone": "UTC"
+    "timezone": "UTC",
+    "version": "2.5.2"
 }
