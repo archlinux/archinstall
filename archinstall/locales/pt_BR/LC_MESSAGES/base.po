@@ -101,10 +101,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Digite o tipo de sistema de arquivos desejado para a partição"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "Digite o local inicial (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "Digite o local final (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
@@ -810,7 +810,7 @@ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloa
 msgstr " - Valor máximo   : {} ( Permite {} downloads paralelos, permite {} downloads por vez )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Valor minimo   : 1 ( Permite 1 download paralelo, permite 2 downloads por vez )"
+msgstr " - Valor mínimo   : 1 ( Permite 1 download paralelo, permite 2 downloads por vez )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Desativar/Padrão : 0 ( Desativa os downloads paralelos, permite apenas 1 download por vez )"
@@ -967,7 +967,7 @@ msgid "Partitions"
 msgstr "Partições"
 
 msgid "No HSM devices available"
-msgstr "Nenhum dispositivo HSM disponivel"
+msgstr "Nenhum dispositivo HSM disponível"
 
 msgid "Partitions to be encrypted"
 msgstr "Partições a serem encriptadas"
@@ -995,6 +995,9 @@ msgstr "Desconhecido"
 
 msgid "Partition encryption"
 msgstr "Encriptação de partição"
+
+msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
 
 msgid " ! Formatting {} in "
 msgstr " ! Formatando {} em "
@@ -1109,7 +1112,7 @@ msgstr "Procurando possiveis diretórios para salvar os arquivos de configuraç�
 
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "Selecione um ou mais discos rígidos para usar e configurar"
+msgstr "Selecione um ou mais diretórios para salvar arquivos de configuração"
 
 #, fuzzy
 msgid "Add a custom mirror"
@@ -1158,10 +1161,12 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
+"Você deseja salvar arquivo(s) de configuração de {} nos locais a seguir?\n"
+"\n"
+"{}"
 
-#, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr "Salvar configuração"
+msgstr "Salvando arquivos de configuração de {} para {}"
 
 #, fuzzy
 msgid "Mirrors"
