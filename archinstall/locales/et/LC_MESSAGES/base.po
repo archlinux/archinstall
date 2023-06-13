@@ -806,18 +806,19 @@ msgstr "Konfigureeritud {} liidesed"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "See valik võimaldab installimise ajal valida paralleelsete allalaadimiste arvu"
 
-#, python-brace-format
+#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Sisestage lubatavate paralleelsete allalaadimiste arv.\n"
 " (Sisestage väärtus vahemikus 1 kuni {max_downloads})\n"
 "note:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Maksimaalne väärtus   : {max_downloads} ( Võimaldab {max_downloads} paralleelset allalaadimist, lubab {max_downloads+1} allalaadimist korraga )"
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
@@ -1112,12 +1113,6 @@ msgstr "Kohandatud peegel"
 msgid "Defined"
 msgstr "Defineeritud"
 
-msgid "Mirrors"
-msgstr "Peeglid"
-
-msgid "Mirror regions"
-msgstr "Peegel regioonid"
-
 msgid "Save user configuration (including disk layout)"
 msgstr "Salvesta kasutaja konfiguratsioon (kaasa arvatud plaadi paigutus)"
 
@@ -1139,3 +1134,24 @@ msgstr ""
 
 msgid "Saving {} configuration files to {}"
 msgstr "{} konfiguratsioonifailide salvestamine {}"
+
+msgid "Mirrors"
+msgstr "Peeglid"
+
+msgid "Mirror regions"
+msgstr "Peegel regioonid"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksimaalne väärtus   : {max_downloads} ( Võimaldab {max_downloads} paralleelset allalaadimist, lubab {max_downloads+1} allalaadimist korraga )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või 0 keelamiseks]."
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Kasutage NetworkManagerit (vajalik interneti graafiliseks konfigureerimiseks GNOME-s ja KDE-s)."

@@ -1169,3 +1169,10 @@ msgstr " - Maximální hodnota  : {} (Povolí {} paralelních stahování, povol
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Neplatný vstup! Zkuste to, prosím, znovu s platným vstupem [1 až {}, nebo 0 pro vypnutí]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Použít NetworkManager (potřebné pro grafickou konfiguraci v GNOME a KDE)"

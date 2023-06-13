@@ -63,8 +63,8 @@ msgid "Copy ISO network configuration to installation"
 msgstr ""
 
 msgid ""
-"Use NetworkManager (necessary for configuring internet graphically in GNOME and "
-"KDE)"
+"Use NetworkManager (necessary for configuring internet graphically in GNOME "
+"and KDE)"
 msgstr ""
 
 msgid "Select one network interface to configure"
@@ -1152,4 +1152,12 @@ msgid ""
 msgstr ""
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+msgid ""
+"Use NetworkManager (necessary to configure internet graphically in GNOME and "
+"KDE)"
 msgstr ""

@@ -1,0 +1,17 @@
+on:
+  [ push, pull_request ]:
+    paths:
+      - 'archinstall/locales/**'
+name: translation file checks
+jobs:
+    translation-check:
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+        steps:
+            - uses: actions/checkout@v3
+            - run: pacman --noconfirm -Syu python python-pip
+            - run: python -m pip install --upgrade pip
+            - run: cd archinstall/locales
+            - run: bash locales_generator.sh
+            - run: git diff --name-only
