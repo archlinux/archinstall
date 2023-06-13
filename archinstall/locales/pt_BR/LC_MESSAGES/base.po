@@ -996,9 +996,6 @@ msgstr "Desconhecido"
 msgid "Partition encryption"
 msgstr "Encriptação de partição"
 
-msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
-msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "
-
 msgid " ! Formatting {} in "
 msgstr " ! Formatando {} em "
 
@@ -1182,3 +1179,13 @@ msgstr " - Valor máximo   : {} ( Permite {} downloads paralelos, permite {} dow
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {}, ou 0 para desativar]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Usar NetworkManager (necessário para configurar internet graficamente no GNOME e KDE)"
+
+#~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+#~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

@@ -1175,3 +1175,10 @@ msgstr " - Valore massimo   : {} ( Consente {} download parallelo, consente {} d
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Input non valido! Riprova con un input valido [da 1 a {}, o 0 per disabilitare]."
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Usa NetworkManager (necessario per configurare graficamente Internet in GNOME e KDE)"

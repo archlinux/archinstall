@@ -1174,3 +1174,10 @@ msgstr " - მინიმალური მნიშვნელობა   : 
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "შეყვანილი რიცხვი არასწორია! თავიდან სცადეთ [1-დან {}-მდე, ან 0, გასათიშად]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager-ის გამოყენება (აუცილებელია ინტერნეტის GNOME/KDE-დან მოსარგებად)"

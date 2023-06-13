@@ -973,9 +973,6 @@ msgstr "Wybierz opcję szyfrowania dysku"
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Wybierz urządzenie FIDO2 do użycia z HSM"
 
-msgid "All settings will be reset, are you sure?"
-msgstr "Wszystkie ustawienia zostaną zresetowane. Czy na pewno chcesz to zrobić?"
-
 #, fuzzy
 msgid "Use a best-effort default partition layout"
 msgstr "Wymaż wszystkie wybrane dyski i użyj najlepszego domyślnego układu partycji"
@@ -992,7 +989,7 @@ msgid "Unknown"
 msgstr ""
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "Szyfrowanie partycji"
 
 msgid " ! Formatting {} in "
 msgstr ""
@@ -1011,30 +1008,12 @@ msgstr "Brak konfiguracji"
 msgid "Password"
 msgstr "Hasło"
 
-msgid "Partition encryption"
-msgstr "Szyfrowanie partycji"
+msgid "All settings will be reset, are you sure?"
+msgstr "Wszystkie ustawienia zostaną zresetowane. Czy na pewno chcesz to zrobić?"
 
-msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
-msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr "Znajdywanie możliwych katalogów do zapisywania plików konfiguracyjnych ..."
-
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Wybierz jeden lub więcej katalogów do zapisywania plików konfiguracyjnych"
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following locations?\n"
-"\n"
-"{}"
-
-msgstr ""
-"Czy chcesz zapisać {} plików konfiguracyjnych do następujących lokalizacji?\n"
-"\n"
-"{}"
-
-msgid "Saving {} configuration files to {}"
-msgstr "Zapisywanie {} plików konfiguracyjnych do {}"
+#, fuzzy
+msgid "Back"
+msgstr "← Wstecz"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
 msgstr ""
@@ -1122,11 +1101,10 @@ msgid "Profiles"
 msgstr "Profil"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Znajdywanie możliwych katalogów do zapisywania plików konfiguracyjnych ..."
 
-#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
-msgstr "Wybierz jeden lub więcej dysków twardych do użycia i skonfiguruj je"
+msgstr "Wybierz jeden lub więcej katalogów do zapisywania plików konfiguracyjnych"
 
 #, fuzzy
 msgid "Add a custom mirror"
@@ -1161,14 +1139,6 @@ msgid "Defined"
 msgstr ""
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "Region lustra"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Region lustra"
-
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
 msgstr "Zapisz konfiguracje użytkownika"
 
@@ -1184,9 +1154,8 @@ msgid ""
 "{}"
 msgstr ""
 
-#, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr "Zapisz konfiguracje"
+msgstr "Zapisywanie {} plików konfiguracyjnych do {}"
 
 #, fuzzy
 msgid "Mirrors"
@@ -1194,7 +1163,7 @@ msgstr "Region lustra"
 
 #, fuzzy
 msgid "Mirror regions"
-msgstr "Region lustra"
+msgstr "Region serwerów lustrzanych"
 
 #, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
@@ -1203,6 +1172,25 @@ msgstr " - Maksymalna wartość   : {} ( Zwiększa liczbę zadań o {}, co pozwa
 #, fuzzy
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Nieprawidłowa wartość! Spróbuj wprowadzić wartość od 1 do {}, lub 0 aby wyłączyć."
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Użyj programu NetworkManager (niezbędne do graficznej konfiguracji Internetu w środowiskach GNOME i KDE)"
+
+#~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+#~ msgstr "Podczas wybierania katalogu do zapisywania plików konfiguracyjnych, domyślnie ignorowane są następujące foldery: "
+
+#~ msgid ""
+#~ "Do you want to save {} configuration file(s) in the following locations?\n"
+#~ "\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Czy chcesz zapisać {} plików konfiguracyjnych do następujących lokalizacji?\n"
+#~ "\n"
+#~ "{}"
 
 #~ msgid "Add :"
 #~ msgstr "Dodaj :"
