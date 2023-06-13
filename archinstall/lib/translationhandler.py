@@ -66,8 +66,6 @@ class TranslationHandler:
 			translated_lang = mapping_entry.get('translated_lang', None)
 
 			try:
-				print(abbr)
-				print(lang)
 				# get a translation for a specific language
 				translation = gettext.translation('base', localedir=self._get_locales_dir(), languages=(abbr, lang))
 
