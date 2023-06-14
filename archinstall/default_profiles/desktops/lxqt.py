@@ -23,7 +23,7 @@ class LxqtProfile(XorgProfile):
 			"xdg-utils",
 			"ttf-freefont",
 			"leafpad",
-			"slock",
+			"slock"
 		]
 
 	@property
