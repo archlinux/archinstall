@@ -15,3 +15,4 @@ jobs:
             - run: cd archinstall/locales
             - run: bash locales_generator.sh
             - run: git diff --name-only
+            - run: ls
