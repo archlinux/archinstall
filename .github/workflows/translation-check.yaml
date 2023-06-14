@@ -1,7 +1,10 @@
 on:
-  [ push, pull_request ]:
-    paths:
-      - 'archinstall/locales/**'
+    push:
+        paths:
+        - 'archinstall/locales/**'
+    pull_request:
+        paths:
+        - 'archinstall/locales/**'
 name: translation file checks
 jobs:
     translation-check:
