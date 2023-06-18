@@ -667,28 +667,29 @@ class Installer:
 	):
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
-				if (pkg := part.fs_type.installation_pkg) is not None:
-					self.base_packages.append(pkg)
-				if (module := part.fs_type.installation_module) is not None:
-					self.modules.append(module)
-				if (binary := part.fs_type.installation_binary) is not None:
-					self._binaries.append(binary)
+				if part.fs_type is not None:
+					if (pkg := part.fs_type.installation_pkg) is not None:
+						self.base_packages.append(pkg)
+					if (module := part.fs_type.installation_module) is not None:
+						self.modules.append(module)
+					if (binary := part.fs_type.installation_binary) is not None:
+						self._binaries.append(binary)
 
-				# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-				if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
-					if 'fsck' in self._hooks:
-						self._hooks.remove('fsck')
+					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
+						if 'fsck' in self._hooks:
+							self._hooks.remove('fsck')
 
-				if part in self._disk_encryption.partitions:
-					if self._disk_encryption.hsm_device:
-						# Required bby mkinitcpio to add support for fido2-device options
-						self._pacstrap('libfido2')
+					if part in self._disk_encryption.partitions:
+						if self._disk_encryption.hsm_device:
+							# Required bby mkinitcpio to add support for fido2-device options
+							self._pacstrap('libfido2')
 
-						if 'sd-encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
-					else:
-						if 'encrypt' not in self._hooks:
-							self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
+							if 'sd-encrypt' not in self._hooks:
+								self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
+						else:
+							if 'encrypt' not in self._hooks:
+								self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
 		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
@@ -857,7 +858,7 @@ class Installer:
 					# blkid doesn't trigger on loopback devices really well,
 					# so we'll use the old manual method until we get that sorted out.
 
-					options_entry = f'rw rootfstype={root_partition.fs_type.fs_type_mount} {" ".join(self._kernel_params)}\n'
+					options_entry = f'rw rootfstype={root_partition.safe_fs_type.fs_type_mount} {" ".join(self._kernel_params)}\n'
 
 					for sub_vol in root_partition.btrfs_subvols:
 						if sub_vol.is_root():
@@ -868,7 +869,7 @@ class Installer:
 					if self._zram_enabled:
 						options_entry = "zswap.enabled=0 " + options_entry
 
-					if root_partition.fs_type.is_crypto():
+					if root_partition.safe_fs_type.is_crypto():
 						# TODO: We need to detect if the encrypted device is a whole disk encryption,
 						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 						debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
@@ -900,15 +901,15 @@ class Installer:
 
 		_file = "/etc/default/grub"
 
-		if root_partition.fs_type.is_crypto():
+		if root_partition.safe_fs_type.is_crypto():
 			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.fs_type.value}\"/'"
+			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.safe_fs_type.value}\"/'"
 			enable_cryptdisk = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_cryptdisk} {_file}")
 		else:
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.fs_type.value}\"/'"
+			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.safe_fs_type.value}\"/'"
 
 		SysCommand(f"/usr/bin/arch-chroot {self.target} {cmd_line_linux} {_file}")
 
@@ -984,14 +985,14 @@ class Installer:
 			# blkid doesn't trigger on loopback devices really well,
 			# so we'll use the old manual method until we get that sorted out.
 
-			if root_partition.fs_type.is_crypto():
+			if root_partition.safe_fs_type.is_crypto():
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.fs_type.value} {" ".join(self._kernel_params)}')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 			else:
 				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.fs_type.value} {" ".join(self._kernel_params)}')
+				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 

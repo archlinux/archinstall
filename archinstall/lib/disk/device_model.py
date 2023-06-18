@@ -270,7 +270,7 @@ class _PartitionInfo:
 	partition: Partition
 	name: str
 	type: PartitionType
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	path: Path
 	start: Size
 	length: Size
@@ -300,7 +300,7 @@ class _PartitionInfo:
 	def from_partition(
 		cls,
 		partition: Partition,
-		fs_type: FilesystemType,
+		fs_type: Optional[FilesystemType],
 		partuuid: str,
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
@@ -573,7 +573,7 @@ class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
@@ -592,6 +592,9 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
+		if self.fs_type is None and self.status == ModificationStatus.Modify:
+			raise ValueError('FS type must not be empty on modifications with status type modify')
+
 	def __hash__(self):
 		return hash(self._obj_id)
 
@@ -606,6 +609,12 @@ class PartitionModification:
 		if self.dev_path is None:
 			raise ValueError('Device path was not set')
 		return self.dev_path
+
+	@property
+	def safe_fs_type(self) -> FilesystemType:
+		if self.fs_type is None:
+			raise ValueError('File system type is not set')
+		return self.fs_type
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
@@ -693,7 +702,7 @@ class PartitionModification:
 			'type': self.type.value,
 			'start': self.start.__dump__(),
 			'length': self.length.__dump__(),
-			'fs_type': self.fs_type.value,
+			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
@@ -710,7 +719,7 @@ class PartitionModification:
 			'Type': self.type.value,
 			'Start': self.start.format_size(Unit.MiB),
 			'Length': self.length.format_size(Unit.MiB),
-			'FS type': self.fs_type.value,
+			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
 			'Flags': ', '.join([f.name for f in self.flags]),
