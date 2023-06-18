@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 21.05.2022\n"
 "PO-Revision-Date: 2022-05-25 17:42+0300\n"
-"Last-Translator: Eren İnce @ernince <erenince@proton.me>\n"
+"Last-Translator: Schwarze <schwarze@duck.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -460,10 +460,10 @@ msgid "Add a user"
 msgstr "Kullanıcı ekle"
 
 msgid "Change password"
-msgstr "Şifre değiştir"
+msgstr "Şifren değiştir"
 
 msgid "Promote/Demote user"
-msgstr "Kullanıcı terfi ettir/indirge"
+msgstr "Kullanıcı terfi et/indirge"
 
 msgid "Delete User"
 msgstr "Kullanıcı Sil"
@@ -479,7 +479,7 @@ msgid "User Name : "
 msgstr "Kullanıcı Adı : "
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "{} bir süper kullanıcı (sudoer) olmalı mı?"
+msgstr "{} bir süper kullanıcı (sudoer) mı olmalı?"
 
 msgid "Define users with sudo privilege: "
 msgstr "Sudo yetkilerine sahip kullanıcıları tanımlayın: "
@@ -530,19 +530,19 @@ msgid "The password you are using seems to be weak,"
 msgstr "Kullandığınız şifre zayıf gözüküyor,"
 
 msgid "are you sure you want to use it?"
-msgstr "kullanmak istediğinize emin misiniz?"
+msgstr "Kullanmak istediğinize emin misiniz?"
 
 msgid "Optional repositories"
-msgstr "Tercihi \"repository\"ler (depolar)"
+msgstr "Tercihi depolar"
 
 msgid "Save configuration"
-msgstr "Yapılandırmayı kaydet"
+msgstr "Konfigürasyonu kaydet"
 
 msgid "Missing configurations:\n"
-msgstr "Eksik yapılandırmalar:\n"
+msgstr "Eksik konfigürasyon:\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Root (kök) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
+msgstr "Kök (yönetici) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
 
 msgid "Manage superuser accounts: "
 msgstr "Süper-kullanıcı hesaplarını yönet: "
@@ -554,7 +554,7 @@ msgid " Subvolume :{:16}"
 msgstr " alt disk bölümü :{:16}"
 
 msgid " mounted at {:16}"
-msgstr "  {:16}'da mount (monte) edildi"
+msgstr "  {:16}'da monte edildi"
 
 msgid " with option {}"
 msgstr " {} seçeneğiyle"
@@ -570,7 +570,7 @@ msgid "Subvolume name "
 msgstr "Alt disk bölümü ismi "
 
 msgid "Subvolume mountpoint"
-msgstr "Alt disk bölümü mount (monte) noktası"
+msgstr "Alt disk bölümü monte noktası"
 
 msgid "Subvolume options"
 msgstr "Alt disk bölümü seçenekleri"
@@ -582,16 +582,16 @@ msgid "Subvolume name :"
 msgstr "Alt disk bölümü ismi :"
 
 msgid "Select a mount point :"
-msgstr "Bir mount (monte) noktası seçin :"
+msgstr "Bir monte noktası seçin :"
 
 msgid "Select the desired subvolume options "
 msgstr "İstenilen alt disk bölümü ayarlarını seçin "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "Sudo yetkilerine sahip kullanıcıları tanımlayın, kullanıcı adı ile: "
+msgstr "Süper-kullanıcı yetkilerine sahip kullanıcıları tanımlayın, kullanıcı adı ile: "
 
 msgid "[!] A log file has been created here: {}"
-msgstr "[!] Burada bir günlük (log) dosyası oluşturuldu: {}"
+msgstr "[!] Burada bir günlük dosyası oluşturuldu: {}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
 msgstr "BTRFS alt disk bölümlerini varsayılan yapıyla kullanmak ister misiniz?"
@@ -760,7 +760,7 @@ msgstr "Bus(veri yolu)-tipi"
 
 #, fuzzy
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
-msgstr "Root (kök) şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
+msgstr "RKök şifresi ya da en azından 1 adet süper-kullanıcı belirtilmek zorunda"
 
 #, fuzzy
 msgid "Enter username (leave blank to skip): "
@@ -842,7 +842,7 @@ msgid "TAB to select"
 msgstr "Seçmek için TAB"
 
 msgid "[Default value: 0] > "
-msgstr ""
+msgstr "[Varsayılan değer: 0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
 msgstr "Bu çeviriyi kullanabilmek için lütfen dili destekleyen bir yazı tipini manuel olarak yükleyin."
@@ -885,11 +885,11 @@ msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
 
 #, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "/home disk bölümü için minimum kapasite: {}GB\n"
+msgstr "/home disk bölümü için minimum kapasite: {}GiB\n"
 
 #, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Arch Linux disk bölümü için minimum kapasite: {}GB"
+msgstr "Arch Linux disk bölümü için minimum kapasite: {}GiB"
 
 #, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
@@ -905,11 +905,11 @@ msgstr "Yeni eklenen tüm disk bölümleri kaldırın"
 
 #, fuzzy
 msgid "Assign mountpoint"
-msgstr "Bir disk bölümü için mount (monte) noktası ata"
+msgstr "Bir disk bölümü için monte noktası ata"
 
 #, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (veriyi temizler)"
+msgstr "Bir disk bölümünü biçimlendirilmek üzere işaretle/işareti kaldır (verileri siler)"
 
 msgid "Mark/Unmark as bootable"
 msgstr "Önyüklenebilir olarak İşaretle/İşareti kaldır"
@@ -943,7 +943,7 @@ msgid "If mountpoint /boot is set, then the partition will also be marked as boo
 msgstr "mountpoint /boot ayarlanmışsa, bölüm de önyüklenebilir olarak işaretlenecektir."
 
 msgid "Mountpoint: "
-msgstr "Bağlama noktası: "
+msgstr "Monte etme noktası: "
 
 msgid "Current free sectors on device {}:"
 msgstr "{} cihazındaki mevcut boş sektörler:"
@@ -1018,15 +1018,15 @@ msgstr "Disk şifrelemesi"
 
 #, fuzzy
 msgid "Configuration"
-msgstr "Yapılandırma yok"
+msgstr "Konfigürasyon"
 
 #, fuzzy
 msgid "Password"
-msgstr "Root (kök) şifresi"
+msgstr "Şifre"
 
 #, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} işlem sırasında bekleyen disk bölümleri bulunduruyor, bu onları kaldıracak, emin misiniz?"
+msgstr "Bütün ayarlar sıfırlanacak, emin misiniz?"
 
 msgid "Back"
 msgstr "Geri"
@@ -1137,62 +1137,62 @@ msgstr "Özel indirme sunucusunu silin"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
-msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
+msgstr "İsim girin (geçmek için boş bırakın): "
 
 #, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr "Ek kullanıcı oluşturmak için bir kullanıcı adı girin (geçmek için boş bırakın): "
+msgstr "url girin (geçmek için boş bırakın): "
 
 #, fuzzy
 msgid "Select signature check option"
-msgstr "Eklemek için arayüz seçin"
+msgstr "İmzalama kontrol opsiyonu seçin"
 
 #, fuzzy
 msgid "Select signature option"
 msgstr "İmza seçeneğini seçin"
 
 msgid "Custom mirrors"
-msgstr "Özel indirme sunucusu bölgesi"
+msgstr "Kişisel depo aynası"
 
 msgid "Defined"
 msgstr "Tanımlı"
 
 #, fuzzy
 msgid "Save user configuration (including disk layout)"
-msgstr "Kullanıcı yapılandırmasını kaydet"
+msgstr "Kullanıcı konfigürasyonunu kaydet (Disk düzeni ile birlikte)"
 
 #, fuzzy
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
-msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin: "
+msgstr "Yapılandırma(lar)ın kaydedilmesi için bir dizin girin (tab ile tamamlama etkin)\n "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
-msgstr ""
+msgstr "{} konfigürasyon dosya(lar)ını gösterilen konuma kaydetmek ister miydiniz?"
 
 #, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr "Yapılandırmayı kaydet"
+msgstr "{} konfigürasyon dosyaları {} konumuna kaydediliyor"
 
 #, fuzzy
 msgid "Mirrors"
-msgstr "İndirme sunucusu bölgesi"
+msgstr "Depo sunucusu"
 
 #, fuzzy
 msgid "Mirror regions"
-msgstr "İndirme sunucusu bölgesi"
+msgstr "Deop sunucusu bölgesi"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr ""
+msgstr "Maximum değer : {} ( {} paralel indirmelerine izin verir, Tek seferde {max_download+1} indirmeye izin verir.)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "Geçersiz girdi! Geçerli bir girişle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
+msgstr "Geçersiz girdi! Geçerli bir girdiyle tekrar deneyin [1 ila {} veya devre dışı bırakmak için 0]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Yerel Ayarlar"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
