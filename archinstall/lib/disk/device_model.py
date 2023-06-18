@@ -139,7 +139,7 @@ class Unit(Enum):
 
 	@staticmethod
 	def get_all_units() -> List[str]:
-		return [u.name for u in Unit if u not in [Unit.sectors, Unit.Percent]]
+		return [u.name for u in Unit]
 
 
 @dataclass

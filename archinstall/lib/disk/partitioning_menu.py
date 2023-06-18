@@ -196,24 +196,32 @@ class PartitioningList(ListManager):
 	def _validate_value(
 		self,
 		sector_size: Size,
+		total_size: Size,
 		value: str
 	) -> Optional[Size]:
 		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', value, re.I)
 
 		if match:
 			value, unit = match.groups()
-			if unit and unit not in Unit.get_all_units():
-				return None
 
 			if unit == '%':
 				unit = Unit.Percent.name
 
+			if unit and unit not in Unit.get_all_units():
+				return None
+
 			unit = Unit[unit] if unit else Unit.sectors
-			return Size(int(value), unit, sector_size)
+			return Size(int(value), unit, sector_size, total_size)
 
 		return None
 
-	def _enter_size(self, sector_size: Size, prompt: str, default: Size) -> Size:
+	def _enter_size(
+		self,
+		sector_size: Size,
+		total_size: Size,
+		prompt: str,
+		default: Size
+	) -> Size:
 		while True:
 			value = TextInput(prompt).run().strip()
 
@@ -222,7 +230,7 @@ class PartitioningList(ListManager):
 			if not value:
 				size = default
 			else:
-				size = self._validate_value(sector_size, value)
+				size = self._validate_value(sector_size, total_size, value)
 
 			if size:
 				return size
@@ -249,7 +257,12 @@ class PartitioningList(ListManager):
 		# prompt until a valid start sector was entered
 		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
 		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
-		start_size = self._enter_size(device_info.sector_size, start_prompt, default_start)
+		start_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			start_prompt,
+			default_start
+		)
 
 		if start_size.value == largest_free_area.start:
 			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
@@ -258,7 +271,12 @@ class PartitioningList(ListManager):
 
 		# prompt until valid end sector was entered
 		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
-		end_size = self._enter_size(device_info.sector_size, end_prompt, end_size)
+		end_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			end_prompt,
+			end_size
+		)
 
 		return start_size, end_size
 
