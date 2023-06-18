@@ -2,12 +2,14 @@
 #  @Cain-dev (cain-dev.github.io)
 #  Rafael Fontenelle <rafaelff@gnome.org>
 #  Jefferson Michael <github.com/jeffersonjpr>
+#  Diogo Silva <github.com/Diogo-ss>
+
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Jefferson Michael <github.com/jeffersonjpr>\n"
+"Last-Translator: Diogo Silva <github.com/Diogo-ss>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -841,17 +843,17 @@ msgid "The font should be stored as {}"
 msgstr "A fonte deve ser armazenada como {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "O Archinstall requer privilégios de root para ser executado. Consulte --help para mais informações."
 
 #, fuzzy
 msgid "Select an execution mode"
 msgstr "Selecione uma ação para '{}'"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Não foi possível obter o perfil a partir da URL especificada: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Os perfis devem ter nomes únicos, mas foram encontradas definições de perfil com nomes duplicados: {}"
 
 #, fuzzy
 msgid "Select one or more devices to use and configure"
@@ -923,20 +925,20 @@ msgid "Partition"
 msgstr "Partição: "
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "Esta partição está criptografada. Para formatá-la, um sistema de arquivos deve ser especificado"
 
 #, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
 msgstr " * Os pontos de montagem das partições são relativos aos de dentro da instalação, boot por exemplo seria /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "Se o ponto de montagem /boot for definido, a partição também será marcada como inicializável."
 
 msgid "Mountpoint: "
 msgstr "Ponto de montagem: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Setores livres no dispositivo {}:"
 
 #, fuzzy
 msgid "Total sectors: {}"
@@ -951,10 +953,10 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex.: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Isso irá remover todas as partições recém-adicionadas, continuar?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Gerenciamento de partições: {}"
 
 msgid "Total length: {}"
 msgstr "Tamanho total: {}"
@@ -1020,13 +1022,13 @@ msgid "Back"
 msgstr "Voltar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Por favor, escolha qual greeter instalar para os perfis escolhidos: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Tipo de ambiente: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "O driver proprietário Nvidia não é suportado pelo Sway. É provável que você encontre problemas. Você está de acordo com isso?"
 
 #, fuzzy
 msgid "Installed packages"
@@ -1061,7 +1063,7 @@ msgid "Services to be enabled with this profile (space separated, leave blank to
 msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Este perfil deve ser ativado para instalação?"
 
 msgid "Create your own"
 msgstr "Crie o seu próprio"
@@ -1076,13 +1078,16 @@ msgstr ""
 "Selecione um driver de vídeo ou deixe em branco para instalar os drivers completamente open-source"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "O Sway precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse, etc)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Selecione uma opção para permitir o acesso do Sway ao seu hardware."
 
 msgid "Graphics driver"
 msgstr "Driver gráfico"
@@ -1091,10 +1096,10 @@ msgid "Greeter"
 msgstr ""
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Por favor, escolha qual greeter instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "Esta é uma lista de perfis pré-programados (default_profiles)"
 
 #, fuzzy
 msgid "Disk configuration"
@@ -1116,10 +1121,10 @@ msgid "Add a custom mirror"
 msgstr "Adicionar usuário"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "Alterar mirror personalizado"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "Excluir mirror personalizado"
 
 #, fuzzy
 msgid "Enter name (leave blank to skip): "
@@ -1138,10 +1143,10 @@ msgid "Select signature option"
 msgstr "Selecione a opção de encriptação de disco"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "Mirrors personalizados"
 
 msgid "Defined"
-msgstr ""
+msgstr "Definido"
 
 #, fuzzy
 msgid "Save user configuration (including disk layout)"
@@ -1181,7 +1186,7 @@ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {}, ou 0 para desativar]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Localidades"
 
 #, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
