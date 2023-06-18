@@ -39,7 +39,7 @@ class NetworkConfiguration:
 		else:
 			return 'Unknown type'
 
-	def as_json(self) -> Dict:
+	def table_data(self) -> Dict[str, Any]:
 		exclude_fields = ['type']
 		data = {}
 		for k, v in self.__dict__.items():
