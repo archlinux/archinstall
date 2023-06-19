@@ -756,13 +756,12 @@ class DeviceModification:
 
 class EncryptionType(Enum):
 	NoEncryption = "no_encryption"
-	Partition = "partition"
+	Luks = "luks"
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
 		return {
-			# str(_('Full disk encryption')): EncryptionType.FullDiskEncryption,
-			str(_('Partition encryption')): EncryptionType.Partition
+			str(_('Luks')): EncryptionType.Luks
 		}
 
 	@classmethod
@@ -779,7 +778,7 @@ class EncryptionType(Enum):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.Partition
+	encryption_type: EncryptionType = EncryptionType.Luks
 	encryption_password: str = ''
 	partitions: List[PartitionModification] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
