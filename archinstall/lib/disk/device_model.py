@@ -761,7 +761,7 @@ class EncryptionType(Enum):
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
 		return {
-			str(_('Luks')): EncryptionType.Luks
+			'Luks': EncryptionType.Luks
 		}
 
 	@classmethod
