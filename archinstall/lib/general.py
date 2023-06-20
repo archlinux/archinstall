@@ -71,8 +71,6 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 
 		copy = {}
 		for key, val in obj.items():
-			val = serialize_to_dict(val, safe)
-
 			# These are the only types supported by json.dumps function.
 			# Anything else, especially unhashable types must be avoided.
 			if not isinstance(key, (str, int, float, bool)):
@@ -80,10 +78,9 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 
 			if safe and isinstance(key, str) and key.startswith('!'):
 				continue
-			
 			# These above key datatypes are primitives,
 			# we do not need to serialize them.
-			copy[key] = val
+			copy[key] = serialize_to_dict(val, safe)
 		return copy
 	
 	if hasattr(obj, 'json'):
