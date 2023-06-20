@@ -57,47 +57,51 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	return data
 
 
-class JsonEncoder:
-	@staticmethod
-	def serialize(obj: Any, safe: bool = True) -> Any:
-		"""
-		This JSON encoder function will try it's best to convert
-		any archinstall data structures, instances or variables into
-		something that's understandable by the json.parse()/json.loads() lib.
+def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
+	"""
+	This function will try it's best to convert any archinstall data structures,
+	instances or variables into json.dumps() compatible nested dictionaries.
 
-		Setting safe to True will skip any dictionary key starting with
-		an exclamation mark (!)
-		"""
-		if isinstance(obj, dict):
-			# We'll need to iterate not just the value that default() usually gets passed
-			# But also iterate manually over each key: value pair in order to trap the keys.
+	Setting safe to True will skip any dictionary key starting with
+	an exclamation mark (!)
+	"""
+	if isinstance(obj, dict):
+		# We'll need to iterate not just the value that default() usually gets passed
+		# But also iterate manually over each key: value pair in order to trap the keys.
 
-			copy = {}
-			for key, val in obj.items():
-				val = JsonEncoder.serialize(val, safe)
+		copy = {}
+		for key, val in obj.items():
+			val = serialize_to_dict(val, safe)
 
-				if safe and isinstance(key, str) and key.startswith('!'):
-					continue
-				
-				copy[JsonEncoder.serialize(key, safe)] = val
-			return copy
-		
-		if hasattr(obj, 'json'):
-			# json() is a friendly name for json-helper, it should return
-			# a dictionary representation of the object so that it can be
-			# processed by the json library.
-			return JsonEncoder.serialize(obj.json(), safe)
-		if hasattr(obj, '__dump__'):
-			return obj.__dump__()
-		if isinstance(obj, (datetime, date)):
-			return obj.isoformat()
-		if isinstance(obj, (list, set, tuple)):
-			return [JsonEncoder.serialize(item, safe) for item in obj]
-		if isinstance(obj, pathlib.Path):
-			return str(obj)
-		if hasattr(obj, "__dict__"):
-			return vars(obj)
-		return obj
+			# These are the only types supported by json.dumps function.
+			# Anything else, especially unhashable types must be avoided.
+			if not isinstance(key, (str, int, float, bool)):
+				continue
+
+			if safe and isinstance(key, str) and key.startswith('!'):
+				continue
+			
+			# These above key datatypes are primitives,
+			# we do not need to serialize them.
+			copy[key] = val
+		return copy
+	
+	if hasattr(obj, 'json'):
+		# json() is a friendly name for json-helper, it should return
+		# a dictionary representation of the object so that it can be
+		# processed by the json library.
+		return serialize_to_dict(obj.json(), safe)
+	if hasattr(obj, '__dump__'):
+		return obj.__dump__()
+	if isinstance(obj, (datetime, date)):
+		return obj.isoformat()
+	if isinstance(obj, (list, set, tuple)):
+		return [serialize_to_dict(item, safe) for item in obj]
+	if isinstance(obj, pathlib.Path):
+		return str(obj)
+	if hasattr(obj, "__dict__"):
+		return vars(obj)
+	return obj
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
@@ -105,7 +109,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	def encode(self, obj: Any) -> str:
-		return super().encode(JsonEncoder.serialize(obj))
+		return super().encode(serialize_to_dict(obj))
 
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
@@ -114,7 +118,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	def encode(self, obj: Any) -> str:
-		return super().encode(JsonEncoder.serialize(obj, safe=False))
+		return super().encode(serialize_to_dict(obj, safe=False))
 
 
 class SysCommandWorker:
