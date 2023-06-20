@@ -59,29 +59,21 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 
 def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 	"""
-	This function will try it's best to convert any archinstall data structures,
-	instances or variables into json.dumps() compatible nested dictionaries.
+	Converts any archinstall data structures, instances or variables into
+	json.dumps() compatible nested dictionaries.
 
-	Setting safe to True will skip any dictionary key starting with
-	an exclamation mark (!)
+	Setting safe to True skips dictionary keys starting with a bang (!)
 	"""
+
+	compatible_types = str, int, float, bool
+
 	if isinstance(obj, dict):
-		# We'll need to iterate not just the value that default() usually gets passed
-		# But also iterate manually over each key: value pair in order to trap the keys.
-
-		copy = {}
-		for key, val in obj.items():
-			# These are the only types supported by json.dumps function.
-			# Anything else, especially unhashable types must be avoided.
-			if not isinstance(key, (str, int, float, bool)):
-				continue
-
-			if safe and isinstance(key, str) and key.startswith('!'):
-				continue
-			# These above key datatypes are primitives,
-			# we do not need to serialize them.
-			copy[key] = serialize_to_dict(val, safe)
-		return copy
+		return {
+			key: serialize_to_dict(value, safe)
+			for key, value in obj.items()
+			if isinstance(key, compatible_types)
+			and not (isinstance(key, str) and key.startswith("!") and safe)
+		}
 	
 	if hasattr(obj, 'json'):
 		# json() is a friendly name for json-helper, it should return
