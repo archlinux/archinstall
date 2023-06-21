@@ -11,7 +11,7 @@ from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import GfxDriver, GfxPackage
+from ..hardware import GfxDriver
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info, warn

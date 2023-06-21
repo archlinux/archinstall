@@ -26,7 +26,7 @@ class GfxPackage(Enum):
 	Xf86VideoNouveau = 'xf86-video-nouveau'
 	Xf86VideoVmware = 'xf86-video-vmware'
 
-	def into_dkms(self) -> GfxPackage:
+	def into_dkms(self) -> 'GfxPackage':
 		match self:
 			case GfxPackage.Nvidia:
 				return GfxPackage.NvidiaDkms
