@@ -11,14 +11,16 @@ from .storage import storage
 
 
 class FormattedOutput:
+
 	@classmethod
-	def values(
+	def _get_values(
 		cls,
 		o: Any,
 		class_formatter: Optional[Union[str, Callable]] = None,
 		filter_list: List[str] = []
 	) -> Dict[str, Any]:
-		""" the original values returned a dataclass as dict thru the call to some specific methods
+		"""
+		the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
 		Can transmit a filter list to the class_formatter,
 		"""
@@ -33,8 +35,8 @@ class FormattedOutput:
 				return func(filter_list)
 
 			raise ValueError('Unsupported formatting call')
-		elif hasattr(o, 'as_json'):
-			return o.as_json()
+		elif hasattr(o, 'table_data'):
+			return o.table_data()
 		elif hasattr(o, 'json'):
 			return o.json()
 		elif is_dataclass(o):
@@ -58,7 +60,7 @@ class FormattedOutput:
 		is for compatibility with a print statement
 		As_table_filter can be a drop in replacement for as_table
 		"""
-		raw_data = [cls.values(o, class_formatter, filter_list) for o in obj]
+		raw_data = [cls._get_values(o, class_formatter, filter_list) for o in obj]
 
 		# determine the maximum column size
 		column_width: Dict[str, int] = {}
@@ -92,18 +94,24 @@ class FormattedOutput:
 			for key in filter_list:
 				width = column_width.get(key, len(key))
 				value = record.get(key, '')
+
 				if '!' in key:
 					value = '*' * width
-				if isinstance(value,(int, float)) or (isinstance(value, str) and value.isnumeric()):
+
+				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(str(value).rjust(width))
 				else:
 					obj_data.append(str(value).ljust(width))
+
 			output += ' | '.join(obj_data) + '\n'
 
 		return output
 
 	@classmethod
 	def as_columns(cls, entries: List[str], cols: int) -> str:
+		"""
+		Will format a list into a given number of columns
+		"""
 		chunks = []
 		output = ''
 
