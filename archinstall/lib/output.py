@@ -135,7 +135,7 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def check_log_permissions():
+def _check_log_permissions():
 	filename = storage.get('LOG_FILE', None)
 	log_dir = storage.get('LOG_PATH', Path('./'))
 
@@ -292,6 +292,10 @@ def log(
 	reset: bool = False,
 	font: List[Font] = []
 ):
+	# leave this check here as we need to setup the logging
+	# right from the beginning when the modules are loaded
+	_check_log_permissions()
+
 	text = orig_string = ' '.join([str(x) for x in msgs])
 
 	# Attempt to colorize the output if supported

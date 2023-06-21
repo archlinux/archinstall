@@ -20,10 +20,7 @@ from . import default_profiles
 
 from .lib.hardware import SysInfo, AVAILABLE_GFX_DRIVERS
 from .lib.installer import Installer, accessibility_tools_in_use
-from .lib.output import (
-	FormattedOutput, log, error,
-	check_log_permissions, debug, warn, info
-)
+from .lib.output import FormattedOutput, log, error, debug, warn, info
 from .lib.storage import storage
 from .lib.global_menu import GlobalMenu
 from .lib.boot import Boot
@@ -49,8 +46,6 @@ storage['__version__'] = __version__
 # add the custome _ as a builtin, it can now be used anywhere in the
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
-
-check_log_permissions()
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
 debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
