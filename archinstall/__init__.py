@@ -18,7 +18,7 @@ from .lib import profile
 from .lib import interactions
 from . import default_profiles
 
-from .lib.hardware import SysInfo, AVAILABLE_GFX_DRIVERS
+from .lib.hardware import SysInfo, GfxDriver
 from .lib.installer import Installer, accessibility_tools_in_use
 from .lib.output import FormattedOutput, log, error, debug, warn, info
 from .lib.storage import storage
