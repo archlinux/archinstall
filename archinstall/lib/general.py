@@ -58,7 +58,7 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	return data
 
 
-def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
+def jsonify(obj: Any, safe: bool = True) -> Any:
 	"""
 	Converts objects into json.dumps() compatible nested dictionaries.
 	Setting safe to True skips dictionary keys starting with a bang (!)
@@ -67,7 +67,7 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 	compatible_types = str, int, float, bool
 	if isinstance(obj, dict):
 		return {
-			key: serialize_to_dict(value, safe)
+			key: jsonify(value, safe)
 			for key, value in obj.items()
 			if isinstance(key, compatible_types)
 			and not (isinstance(key, str) and key.startswith("!") and safe)
@@ -78,13 +78,13 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 		# json() is a friendly name for json-helper, it should return
 		# a dictionary representation of the object so that it can be
 		# processed by the json library.
-		return serialize_to_dict(obj.json(), safe)
+		return jsonify(obj.json(), safe)
 	if hasattr(obj, '__dump__'):
 		return obj.__dump__()
 	if isinstance(obj, (datetime, date)):
 		return obj.isoformat()
 	if isinstance(obj, (list, set, tuple)):
-		return [serialize_to_dict(item, safe) for item in obj]
+		return [jsonify(item, safe) for item in obj]
 	if isinstance(obj, pathlib.Path):
 		return str(obj)
 	if hasattr(obj, "__dict__"):
@@ -97,7 +97,7 @@ class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	def encode(self, obj: Any) -> str:
-		return super().encode(serialize_to_dict(obj))
+		return super().encode(jsonify(obj))
 
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
@@ -106,7 +106,7 @@ class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 
 	def encode(self, obj: Any) -> str:
-		return super().encode(serialize_to_dict(obj, safe=False))
+		return super().encode(jsonify(obj, safe=False))
 
 
 class SysCommandWorker:
