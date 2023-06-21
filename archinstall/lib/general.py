@@ -92,7 +92,7 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 		return str(obj)
 	if hasattr(obj, "__dict__"):
 		return vars(obj)
-	return obj
+	return str(obj)
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
