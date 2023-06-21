@@ -15,6 +15,7 @@ import urllib.request
 import urllib.error
 import pathlib
 from datetime import datetime, date
+from enum import Enum
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 
@@ -74,7 +75,8 @@ def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 			if isinstance(key, compatible_types)
 			and not (isinstance(key, str) and key.startswith("!") and safe)
 		}
-	
+	if isinstance(obj, Enum):
+		return obj.value
 	if hasattr(obj, 'json'):
 		# json() is a friendly name for json-helper, it should return
 		# a dictionary representation of the object so that it can be
