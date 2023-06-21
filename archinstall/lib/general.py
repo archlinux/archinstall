@@ -60,14 +60,11 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 
 def serialize_to_dict(obj: Any, safe: bool = True) -> Any:
 	"""
-	Converts any archinstall data structures, instances or variables into
-	json.dumps() compatible nested dictionaries.
-
+	Converts objects into json.dumps() compatible nested dictionaries.
 	Setting safe to True skips dictionary keys starting with a bang (!)
 	"""
 
 	compatible_types = str, int, float, bool
-
 	if isinstance(obj, dict):
 		return {
 			key: serialize_to_dict(value, safe)
