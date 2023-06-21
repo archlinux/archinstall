@@ -17,12 +17,23 @@ class GfxPackage(Enum):
 	Mesa = "mesa"
 	Nvidia = 'nvidia'
 	NvidiaOpen = 'nvidia-open'
+	NvidiaDkms = 'nvidia-dkms'
+	NvidiaOpenDkms = 'nvidia-open-dkms'
 	VulkanIntel = 'vulkan-intel'
 	VulkanRadeon = 'vulkan-radeon'
 	Xf86VideoAmdgpu = "xf86-video-amdgpu"
 	Xf86VideoAti = "xf86-video-ati"
 	Xf86VideoNouveau = 'xf86-video-nouveau'
 	Xf86VideoVmware = 'xf86-video-vmware'
+
+	def into_dkms(self) -> GfxPackage:
+		match self:
+			case GfxPackage.Nvidia:
+				return GfxPackage.NvidiaDkms
+			case GfxPackage.NvidiaOpen:
+				return GfxPackage.NvidiaOpenDkms
+			case _:
+				return self
 
 
 class GfxDriver(Enum):
@@ -88,6 +99,9 @@ class GfxDriver(Enum):
 					GfxPackage.Mesa,
 					GfxPackage.Xf86VideoVmware
 				]
+
+	def dkms_packages(self) -> List[GfxPackage]:
+		return [pkg.into_dkms() for pkg in self.packages()]
 
 
 class _SysInfo:
