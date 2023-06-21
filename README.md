@@ -229,3 +229,8 @@ This will create a *20 GB* `testimage.img` and create a loop device which we can
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
+
+
+# Contributing
+
+Please see [CONTRIBUTING.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)
