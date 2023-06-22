@@ -11,7 +11,7 @@ import sys
 import time
 import re
 import urllib.parse
-import urllib.request
+from urllib.request import Request, urlopen
 import urllib.error
 import pathlib
 from datetime import datetime, date
@@ -523,36 +523,32 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	+configuration_identifier is just a parameter to get meaningful, but not so long messages
 	"""
 
-	parsed_url = urllib.parse.urlparse(stream)
-
+	raw: Optional[str] = None
 	# Try using the stream as a URL that should be grabbed
-	if parsed_url.scheme:
+	if urllib.parse.urlparse(stream).scheme:
 		try:
-			with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
-				target.update(json.loads(response.read()))
-				return True
+			with urlopen(Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
+				raw = response.read()
 		except urllib.error.HTTPError as err:
-			error(f"Could not load {configuration_identifier} via {parsed_url} due to: {err}")
+			error(f"Could not fetch JSON from {stream} as {configuration_identifier}: {err}")
 			return False
-	
+
 	# Try using the stream as a filepath that should be read
-	if pathlib.Path(stream).exists():
+	if raw is None and (path := pathlib.Path(stream)).exists():
 		try:
-			with pathlib.Path(stream).open() as fh:
-				target.update(json.load(fh))
-				return True
+			raw = path.read_text()
 		except Exception as err:
-			error(f"{configuration_identifier} = {stream} does not contain a valid JSON format: {err}")
+			error(f"Could not read file {stream} as {configuration_identifier}: {err}")
 			return False
-	
-	# Try using the stream as raw JSON to be parsed
+
 	try:
-		structure = json.loads(stream)
-	except Exception as e:
-		error(f"{configuration_identifier} Contains an invalid JSON format: {e}")
+		# We use `or` to try the stream as raw JSON to be parsed
+		structure = json.loads(raw or stream)
+	except Exception as err:
+		error(f"{configuration_identifier} contains an invalid JSON format: {err}")
 		return False
 	if not isinstance(structure, dict):
-		error(f"{configuration_identifier} is neither a file nor a JSON encoded dictionary")
+		error(f"{stream} passed as {configuration_identifier} is not a JSON encoded dictionary")
 		return False
 	target.update(json.loads(structure))
 	return True
