@@ -505,14 +505,15 @@ def _pid_exists(pid: int) -> bool:
 
 def run_custom_user_commands(commands :List[str], installation :Installer) -> None:
 	for index, command in enumerate(commands):
+		script_path = f"/var/tmp/user-command.{index}.sh"
+		chroot_path = installation.target / script_path
 		info(f'Executing custom command "{command}" ...')
 
-		with open(f"{installation.target}/var/tmp/user-command.{index}.sh", "w") as temp_script:
+		with open(chroot_path, "w") as temp_script:
 			temp_script.write(command)
 
-		SysCommand(f"arch-chroot {installation.target} bash /var/tmp/user-command.{index}.sh")
-
-		os.unlink(f"{installation.target}/var/tmp/user-command.{index}.sh")
+		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
+		os.unlink(chroot_path)
 
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :
