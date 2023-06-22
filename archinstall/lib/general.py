@@ -541,18 +541,15 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 				error(f"{configuration_identifier} = {stream} does not contain a valid JSON format: {err}")
 				return False
 		else:
-			# NOTE: This is a rudimentary check if what we're trying parse is a dict structure.
-			# Which is the only structure we tolerate anyway.
-			if stream.strip().startswith('{') and stream.strip().endswith('}'):
-				try:
-					target.update(json.loads(stream))
-				except Exception as e:
-					error(f"{configuration_identifier} Contains an invalid JSON format: {e}")
-					return False
-			else:
-				error(f"{configuration_identifier} is neither a file nor is a JSON string")
+			try:
+				structure = json.loads(stream)
+			except Exception as e:
+				error(f"{configuration_identifier} Contains an invalid JSON format: {e}")
 				return False
-
+			if not isinstance(structure, dict):
+				error(f"{configuration_identifier} is neither a file nor a JSON encoded dictionary")
+				return False
+			target.update(json.loads(structure))
 	return True
 
 
