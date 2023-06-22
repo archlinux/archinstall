@@ -191,10 +191,9 @@ class Installer:
 			# '/' just for sorting
 			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint or Path('/'))
 
+			enc_partitions = []
 			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
-				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
-			else:
-				enc_partitions = []
+				enc_partitions = list(set(sorted_part_mods) & set(self._disk_encryption.partitions))
 
 			# attempt to decrypt all luks partitions
 			luks_handlers = self._prepare_luks_partitions(enc_partitions)
