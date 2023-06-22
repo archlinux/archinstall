@@ -189,7 +189,7 @@ class Installer:
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
 			# '/' just for sorting
-			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint if x.mountpoint else Path('/'))
+			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint or Path('/'))
 
 			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
 				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
