@@ -30,7 +30,7 @@ from .lib.configuration import ConfigurationOutput
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
-	JsonEncoder, JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
+	JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
 	run_custom_user_commands, json_stream_to_structure, secret
 )
 
