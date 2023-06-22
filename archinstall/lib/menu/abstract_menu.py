@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
+from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING, Union
 
 from .menu import Menu, MenuSelectionType
 from ..output import error
@@ -18,7 +18,7 @@ class Selector:
 		display_func: Optional[Callable] = None,
 		default: Optional[Any] = None,
 		enabled: bool = False,
-		dependencies: List = [],
+		dependencies: List[Union[str, Callable]] = [],
 		dependencies_not: List = [],
 		exec_func: Optional[Callable] = None,
 		preview_func: Optional[Callable] = None,
@@ -68,42 +68,23 @@ class Selector:
 		:param no_store: A boolean which determines that the field should or shouldn't be stored in the data storage
 		:type no_store: bool
 		"""
-		self._description = description
-		self.func = func
 		self._display_func = display_func
 		self._current_selection = default
-		self.enabled = enabled
-		self._dependencies = dependencies
-		self._dependencies_not = dependencies_not
-		self.exec_func = exec_func
-		self._preview_func = preview_func
-		self.mandatory = mandatory
 		self._no_store = no_store
-		self._default = default
 
-	@property
-	def default(self) -> Any:
-		return self._default
-
-	@property
-	def description(self) -> str:
-		return self._description
-
-	@property
-	def dependencies(self) -> List:
-		return self._dependencies
-
-	@property
-	def dependencies_not(self) -> List:
-		return self._dependencies_not
+		self.func = func
+		self.enabled = enabled
+		self.exec_func = exec_func
+		self.mandatory = mandatory
+		self.preview_func = preview_func
+		self.description = description
+		self.default = default
+		self.dependencies = dependencies
+		self.dependencies_not = dependencies_not
 
 	@property
 	def current_selection(self) -> Optional[Any]:
 		return self._current_selection
-
-	@property
-	def preview_func(self):
-		return self._preview_func
 
 	def do_store(self) -> bool:
 		return self._no_store is False
@@ -112,10 +93,10 @@ class Selector:
 		self.enabled = status
 
 	def update_description(self, description: str):
-		self._description = description
+		self.description = description
 
 	def menu_text(self, padding: int = 0) -> str:
-		if self._description == '':  # special menu option for __separator__
+		if self.description == '':  # special menu option for __separator__
 			return ''
 
 		current = ''
@@ -128,10 +109,10 @@ class Selector:
 
 		if current:
 			padding += 5
-			description = str(self._description).ljust(padding, ' ')
+			description = str(self.description).ljust(padding, ' ')
 			current = current
 		else:
-			description = self._description
+			description = self.description
 			current = ''
 
 		return f'{description} {current}'
@@ -397,15 +378,17 @@ class AbstractMenu:
 		return True
 
 	def _verify_selection_enabled(self, selection_name: str) -> bool:
-		""" general """
 		if selection := self._menu_options.get(selection_name, None):
 			if not selection.enabled:
 				return False
 
 			if len(selection.dependencies) > 0:
 				for d in selection.dependencies:
-					if not self._verify_selection_enabled(d) or self._menu_options[d].is_empty():
-						return False
+					if isinstance(d, str):
+						if not self._verify_selection_enabled(d) or self._menu_options[d].is_empty():
+							return False
+					else:  # callable dependency eval
+						return d()
 
 			if len(selection.dependencies_not) > 0:
 				for d in selection.dependencies_not:
@@ -414,6 +397,7 @@ class AbstractMenu:
 			return True
 
 		raise ValueError(f'No selection found: {selection_name}')
+
 
 	def _menus_to_enable(self) -> dict:
 		""" general """
