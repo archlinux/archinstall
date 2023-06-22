@@ -525,31 +525,36 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 
 	parsed_url = urllib.parse.urlparse(stream)
 
-	if parsed_url.scheme: # The stream is in fact a URL that should be grabbed
+	# Try using the stream as a URL that should be grabbed
+	if parsed_url.scheme:
 		try:
 			with urllib.request.urlopen(urllib.request.Request(stream, headers={'User-Agent': 'ArchInstall'})) as response:
 				target.update(json.loads(response.read()))
+				return True
 		except urllib.error.HTTPError as err:
 			error(f"Could not load {configuration_identifier} via {parsed_url} due to: {err}")
 			return False
-	else:
-		if pathlib.Path(stream).exists():
-			try:
-				with pathlib.Path(stream).open() as fh:
-					target.update(json.load(fh))
-			except Exception as err:
-				error(f"{configuration_identifier} = {stream} does not contain a valid JSON format: {err}")
-				return False
-		else:
-			try:
-				structure = json.loads(stream)
-			except Exception as e:
-				error(f"{configuration_identifier} Contains an invalid JSON format: {e}")
-				return False
-			if not isinstance(structure, dict):
-				error(f"{configuration_identifier} is neither a file nor a JSON encoded dictionary")
-				return False
-			target.update(json.loads(structure))
+	
+	# Try using the stream as a filepath that should be read
+	if pathlib.Path(stream).exists():
+		try:
+			with pathlib.Path(stream).open() as fh:
+				target.update(json.load(fh))
+				return True
+		except Exception as err:
+			error(f"{configuration_identifier} = {stream} does not contain a valid JSON format: {err}")
+			return False
+	
+	# Try using the stream as raw JSON to be parsed
+	try:
+		structure = json.loads(stream)
+	except Exception as e:
+		error(f"{configuration_identifier} Contains an invalid JSON format: {e}")
+		return False
+	if not isinstance(structure, dict):
+		error(f"{configuration_identifier} is neither a file nor a JSON encoded dictionary")
+		return False
+	target.update(json.loads(structure))
 	return True
 
 
