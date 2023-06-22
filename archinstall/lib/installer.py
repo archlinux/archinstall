@@ -205,18 +205,15 @@ class Installer:
 					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
 	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
-		luks_handlers = {}
-
-		for part_mod in partitions:
-			if part_mod.mapper_name and part_mod.dev_path:
-				luks_handler = disk.device_handler.unlock_luks2_dev(
-					part_mod.dev_path,
-					part_mod.mapper_name,
-					self._disk_encryption.encryption_password
-				)
-				luks_handlers[part_mod] = luks_handler
-
-		return luks_handlers
+		return {
+			part_mod: disk.device_handler.unlock_luks2_dev(
+				part_mod.dev_path,
+				part_mod.mapper_name,
+				self._disk_encryption.encryption_password
+			)
+			for part_mod in partitions
+			if part_mod.mapper_name and part_mod.dev_path
+		}
 
 	def _mount_partition(self, part_mod: disk.PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
