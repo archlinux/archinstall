@@ -45,16 +45,12 @@ def locate_binary(name :str) -> str:
 
 def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	# https://stackoverflow.com/a/43627833/929999
-	if type(data) == bytes:
-		byte_vt100_escape_regex = bytes(r'\x1B\[[?0-9;]*[a-zA-Z]', 'UTF-8')
-		data = re.sub(byte_vt100_escape_regex, b'', data)
-	elif type(data) == str:
-		vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
-		data = re.sub(vt100_escape_regex, '', data)
-	else:
-		raise ValueError(f'Unsupported data type: {type(data)}')
-
-	return data
+	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
+	if isinstance(data, bytes):
+		return re.sub(vt100_escape_regex.encode(), b'', data)
+	if type(data) == str:
+		return re.sub(vt100_escape_regex, '', data)
+	raise ValueError(f'Unsupported data type: {type(data)}')
 
 
 class JsonEncoder:
