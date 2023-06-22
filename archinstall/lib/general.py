@@ -517,9 +517,9 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 
 def json_stream_to_structure(configuration_identifier : str, stream :str, target :dict) -> bool :
 	"""
-	Function to load a stream (file (as name) or valid JSON string into an existing dictionary
-	Returns true if it could be done
-	Return  false if operation could not be executed
+	Load a JSON encoded dictionary from a stream and merge it into an existing dictionary.
+	A stream can be a filepath, a URL or a raw JSON string.
+	Returns True if the operation succeeded, False otherwise.
 	+configuration_identifier is just a parameter to get meaningful, but not so long messages
 	"""
 
