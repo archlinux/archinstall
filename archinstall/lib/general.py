@@ -507,12 +507,11 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 	for index, command in enumerate(commands):
 		script_path = f"/var/tmp/user-command.{index}.sh"
 		chroot_path = installation.target / script_path
+		
 		info(f'Executing custom command "{command}" ...')
-
-		with open(chroot_path, "w") as temp_script:
-			temp_script.write(command)
-
+		chroot_path.write_text(command)	
 		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
+		
 		os.unlink(chroot_path)
 
 
