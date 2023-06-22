@@ -24,90 +24,6 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class DiskLayoutType(Enum):
-	Default = 'default_layout'
-	Manual = 'manual_partitioning'
-	Pre_mount = 'pre_mounted_config'
-
-	def display_msg(self) -> str:
-		match self:
-			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
-			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
-			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
-
-
-@dataclass
-class DiskLayoutConfiguration:
-	config_type: DiskLayoutType
-	device_modifications: List[DeviceModification] = field(default_factory=list)
-	# used for pre-mounted config
-	relative_mountpoint: Optional[Path] = None
-
-	def __post_init__(self):
-		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
-			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
-
-	def __dump__(self) -> Dict[str, Any]:
-		return {
-			'config_type': self.config_type.value,
-			'device_modifications': [mod.__dump__() for mod in self.device_modifications]
-		}
-
-	@classmethod
-	def parse_arg(cls, disk_config: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
-		from .device_handler import device_handler
-
-		device_modifications: List[DeviceModification] = []
-		config_type = disk_config.get('config_type', None)
-
-		if not config_type:
-			raise ValueError('Missing disk layout configuration: config_type')
-
-		config = DiskLayoutConfiguration(
-			config_type=DiskLayoutType(config_type),
-			device_modifications=device_modifications
-		)
-
-		for entry in disk_config.get('device_modifications', []):
-			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
-
-			if not device_path:
-				continue
-
-			device = device_handler.get_device(device_path)
-
-			if not device:
-				continue
-
-			device_modification = DeviceModification(
-				wipe=entry.get('wipe', False),
-				device=device
-			)
-
-			device_partitions: List[PartitionModification] = []
-
-			for partition in entry.get('partitions', []):
-				device_partition = PartitionModification(
-					status=ModificationStatus(partition['status']),
-					fs_type=FilesystemType(partition['fs_type']),
-					start=Size.parse_args(partition['start']),
-					length=Size.parse_args(partition['length']),
-					mount_options=partition['mount_options'],
-					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
-					type=PartitionType(partition['type']),
-					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
-					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
-				)
-				# special 'invisible attr to internally identify the part mod
-				setattr(device_partition, '_obj_id', partition['obj_id'])
-				device_partitions.append(device_partition)
-
-			device_modification.partitions = device_partitions
-			device_modifications.append(device_modification)
-
-		return config
-
-
 class PartitionTable(Enum):
 	GPT = 'gpt'
 	MBR = 'msdos'
@@ -386,6 +302,92 @@ class _DeviceInfo:
 			read_only=device.readOnly,
 			dirty=device.dirty
 		)
+
+
+class DiskLayoutType(Enum):
+	Default = 'default_layout'
+	Manual = 'manual_partitioning'
+	Pre_mount = 'pre_mounted_config'
+
+	def display_msg(self) -> str:
+		match self:
+			case DiskLayoutType.Default: return str(_('Use a best-effort default partition layout'))
+			case DiskLayoutType.Manual: return str(_('Manual Partitioning'))
+			case DiskLayoutType.Pre_mount: return str(_('Pre-mounted configuration'))
+
+
+@dataclass
+class DiskLayoutConfiguration:
+	config_type: DiskLayoutType
+	device_modifications: List[DeviceModification] = field(default_factory=list)
+	lvm_config: Optional[LvmConfiguration] = None
+
+	# used for pre-mounted config
+	relative_mountpoint: Optional[Path] = None
+
+	def __post_init__(self):
+		if self.config_type == DiskLayoutType.Pre_mount and self.relative_mountpoint is None:
+			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'config_type': self.config_type.value,
+			'device_modifications': [mod.__dump__() for mod in self.device_modifications]
+		}
+
+	@classmethod
+	def parse_arg(cls, disk_config: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
+		from .device_handler import device_handler
+
+		device_modifications: List[DeviceModification] = []
+		config_type = disk_config.get('config_type', None)
+
+		if not config_type:
+			raise ValueError('Missing disk layout configuration: config_type')
+
+		config = DiskLayoutConfiguration(
+			config_type=DiskLayoutType(config_type),
+			device_modifications=device_modifications
+		)
+
+		for entry in disk_config.get('device_modifications', []):
+			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
+
+			if not device_path:
+				continue
+
+			device = device_handler.get_device(device_path)
+
+			if not device:
+				continue
+
+			device_modification = DeviceModification(
+				wipe=entry.get('wipe', False),
+				device=device
+			)
+
+			device_partitions: List[PartitionModification] = []
+
+			for partition in entry.get('partitions', []):
+				device_partition = PartitionModification(
+					status=ModificationStatus(partition['status']),
+					fs_type=FilesystemType(partition['fs_type']),
+					start=Size.parse_args(partition['start']),
+					length=Size.parse_args(partition['length']),
+					mount_options=partition['mount_options'],
+					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
+					type=PartitionType(partition['type']),
+					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
+					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
+				)
+				# special 'invisible attr to internally identify the part mod
+				setattr(device_partition, '_obj_id', partition['obj_id'])
+				device_partitions.append(device_partition)
+
+			device_modification.partitions = device_partitions
+			device_modifications.append(device_modification)
+
+		return config
 
 
 @dataclass
@@ -741,6 +743,11 @@ class PartitionModification:
 			part_mod['Btrfs vol.'] = f'{len(self.btrfs_subvols)} subvolumes'
 
 		return part_mod
+
+
+@dataclass
+class LvmConfiguration:
+	test: str
 
 
 @dataclass

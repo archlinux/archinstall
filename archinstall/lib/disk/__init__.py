@@ -38,3 +38,5 @@ from .encryption_menu import (
 	select_partitions_to_encrypt,
 	DiskEncryptionMenu,
 )
+
+from .disk_menu import 	DiskLayoutConfigurationMenu

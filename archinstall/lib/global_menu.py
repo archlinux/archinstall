@@ -12,7 +12,6 @@ from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
-from .storage import storage
 from .configuration import save_config
 from .interactions import add_number_of_parrallel_downloads
 from .interactions import ask_additional_packages_to_install
@@ -27,7 +26,6 @@ from .interactions import select_additional_repositories
 from .interactions import select_kernel
 from .utils.util import format_cols
 from .interactions import ask_ntp
-from .interactions.disk_conf import select_disk_config
 
 if TYPE_CHECKING:
 	_: Any
@@ -63,8 +61,8 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('Disk configuration'),
 				lambda preset: self._select_disk_config(preset),
-				preview_func=self._prev_disk_layouts,
-				display_func=lambda x: self._display_disk_layout(x),
+				preview_func=self._prev_disk_config,
+				display_func=lambda x: self._defined_text if x else '',
 			)
 		self._menu_options['disk_encryption'] = \
 			Selector(
@@ -263,38 +261,17 @@ class GlobalMenu(AbstractMenu):
 			return format_cols(packages, None)
 		return None
 
-	def _prev_disk_layouts(self) -> Optional[str]:
+	def _prev_disk_config(self) -> Optional[str]:
 		selector = self._menu_options['disk_config']
 		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = selector.current_selection
 
 		if disk_layout_conf:
-			device_mods: List[disk.DeviceModification] = \
-				list(filter(lambda x: len(x.partitions) > 0, disk_layout_conf.device_modifications))
-
-			if device_mods:
-				output_partition = '{}: {}\n'.format(str(_('Configuration')), disk_layout_conf.config_type.display_msg())
-				output_btrfs = ''
-
-				for mod in device_mods:
-					# create partition table
-					partition_table = FormattedOutput.as_table(mod.partitions)
-
-					output_partition += f'{mod.device_path}: {mod.device.device_info.model}\n'
-					output_partition += partition_table + '\n'
-
-					# create btrfs table
-					btrfs_partitions = list(
-						filter(lambda p: len(p.btrfs_subvols) > 0, mod.partitions)
-					)
-					for partition in btrfs_partitions:
-						output_btrfs += FormattedOutput.as_table(partition.btrfs_subvols) + '\n'
-
-				output = output_partition + output_btrfs
-				return output.rstrip()
+			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
+			return output
 
 		return None
 
-	def _display_disk_layout(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
+	def _display_disk_config(self, current_value: Optional[disk.DiskLayoutConfiguration] = None) -> str:
 		if current_value:
 			return current_value.config_type.display_msg()
 		return ''
@@ -367,14 +344,20 @@ class GlobalMenu(AbstractMenu):
 		self,
 		preset: Optional[disk.DiskLayoutConfiguration] = None
 	) -> Optional[disk.DiskLayoutConfiguration]:
-		disk_config = select_disk_config(
-			preset,
-			storage['arguments'].get('advanced', False)
-		)
 
-		if disk_config != preset:
-			self._menu_options['disk_encryption'].set_current_selection(None)
+		#
+		# disk_config = select_disk_config(
+		# 	preset,
+		# 	storage['arguments'].get('advanced', False)
+		# )
+		#
+		# if disk_config != preset:
+		# 	self._menu_options['disk_encryption'].set_current_selection(None)
+		#
+		# return disk_config
 
+		data_store: Dict[str, Any] = {}
+		disk_config = disk.DiskLayoutConfigurationMenu(preset, data_store).run()
 		return disk_config
 
 	def _select_profile(self, current_profile: Optional[ProfileConfiguration]):
