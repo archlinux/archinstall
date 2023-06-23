@@ -507,16 +507,13 @@ class Installer:
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
-				new_conf = plugin.on_configure_nic(
+				conf = plugin.on_configure_nic(
 					network_config.iface,
 					network_config.dhcp,
 					network_config.ip,
 					network_config.gateway,
 					network_config.dns
-				)
-
-				if new_conf:
-					conf = new_conf
+				) or conf
 
 		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
