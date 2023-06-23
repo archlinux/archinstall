@@ -1156,7 +1156,7 @@ class Installer:
 
 		return True
 
-	def _service_started(self, service_name: str) -> str | None:
+	def _service_started(self, service_name: str) -> Optional[str]:
 		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
 			service_name += '.service'  # Just to be safe
 
