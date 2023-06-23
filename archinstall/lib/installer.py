@@ -305,9 +305,6 @@ class Installer:
 		# Set up a regular expression pattern of a commented line containing 'multilib' within []
 		pattern = re.compile(r"^#\s*\[multilib\]$")
 
-		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
-		matched = False
-
 		# Read in the lines from the original file
 		lines = iter(self.pacman_conf.read_text().splitlines(keepends=True))
 
