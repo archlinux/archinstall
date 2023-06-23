@@ -418,7 +418,7 @@ class Installer:
 					continue
 
 
-				with fstab_file.open('r') as fp:
+				with fstab_path.open('r') as fp:
 					fstab = fp.readlines()
 
 				# Replace the {installation}/etc/fstab with entries
@@ -440,7 +440,7 @@ class Installer:
 							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 							break
 
-				with fstab_file.open('w') as fp:
+				with fstab_path.open('w') as fp:
 					fp.writelines(fstab)
 
 	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
