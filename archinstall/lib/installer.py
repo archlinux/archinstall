@@ -433,8 +433,7 @@ class Installer:
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
 			fh.write(f'{lang}.{encoding}{modifier} {encoding}\n')
 
-		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={lang}.{encoding}{modifier}\n')
+		(self.target / "etc" / "locale.conf").write_text(f'LANG={lang}.{encoding}{modifier}\n')
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
