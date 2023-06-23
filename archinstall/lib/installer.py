@@ -975,9 +975,6 @@ class Installer:
 				if plugin.on_add_bootloader(self):
 					return True
 
-		if type(self.target) == str:
-			self.target = Path(self.target)
-
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
 
