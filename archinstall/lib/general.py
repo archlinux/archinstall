@@ -517,7 +517,7 @@ def json_stream_to_structure(configuration_identifier : str, stream :str, target
 	if not isinstance(structure, dict):
 		error(f"{stream} passed as {configuration_identifier} is not a JSON encoded dictionary")
 		return False
-	target.update(json.loads(structure))
+	target.update(structure)
 	return True
 
 
