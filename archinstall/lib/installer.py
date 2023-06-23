@@ -675,9 +675,7 @@ class Installer:
 		self._pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		# This handles making sure that the repositories we enabled persist on the installed system
-		if multilib or testing:
-			shutil.copy2("/etc/pacman.conf", f"{self.target}/etc/pacman.conf")
+		pacman_conf.persist()
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst
 		# having no adverse effect on other devices. Most distributions enable
@@ -1193,15 +1191,17 @@ class PacmanRepo(Enum):
 
 class PacmanConf:
 	def __init__(self, target: Path):
-		self.path = target / "etc" / "pacman.conf"
-		self.lines = self.path.read_text().splitlines(keepends=True)
+		self.path = Path("/etc") / "pacman.conf"
+		self.chroot_path = target / "etc" / "pacman.conf"
 		self.patterns = []
 
 	def enable(self, repo: PacmanRepo):
 		self.patterns.append(re.compile(r"^#\s*\[{}\]$".format(repo.value)))
 
 	def apply(self):
-		lines = iter(self.lines)
+		if not self.patterns:
+			return
+		lines = iter(self.path.read_text().splitlines(keepends=True))
 		with open(self.path, 'w') as f:
 			for line in lines:
 				if any(pattern.match(line) for pattern in self.patterns):
@@ -1210,3 +1210,7 @@ class PacmanConf:
 					f.write(next(lines).lstrip('#'))
 				else:
 					f.write(line)
+	
+	def persist(self):
+		if self.patterns:
+			shutil.copy2(self.path, self.chroot_path)
