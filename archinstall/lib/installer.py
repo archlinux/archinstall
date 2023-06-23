@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
+from enum import Enum
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
@@ -300,40 +301,6 @@ class Installer:
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
-
-	def enable_multilib_repository(self):
-		# Set up a regular expression pattern of a commented line containing 'multilib' within []
-		pattern = re.compile(r"^#\s*\[multilib\]$")
-
-		# Read in the lines from the original file
-		lines = iter(self.pacman_conf.read_text().splitlines(keepends=True))
-
-		# Open the file again in write mode, to replace the contents
-		with open(self.pacman_conf, "w") as f:
-			for line in lines:
-				if pattern.match(line):
-					# If this is the [] block containing 'multilib', uncomment it and the next line.
-					f.write(line.lstrip('#'))
-					f.write(next(lines).lstrip('#'))
-				else:
-					f.write(line)
-
-	def enable_testing_repositories(self, enable_multilib_testing=False):
-		# Set up a regular expression pattern of a commented line containing 'testing' within []
-		pattern = re.compile("^#\\[.*testing.*\\]$")
-
-		# Read in the lines from the original file
-		lines = iter(self.pacman_conf.read_text().splitlines(keepends=True))
-
-		# Open the file again in write mode, to replace the contents
-		with open(self.pacman_conf, "w") as f:
-			for line in lines:
-				if pattern.match(line) and (enable_multilib_testing or 'multilib' not in line):
-					# If this is the [] block containing 'testing', uncomment it and the next line.
-					f.write(line.lstrip('#'))
-					f.write(next(lines).lstrip('#'))
-				else:
-					f.write(line)
 
 	def _pacstrap(self, packages: Union[str, List[str]]) -> bool:
 		if isinstance(packages, str):
@@ -689,17 +656,22 @@ class Installer:
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
+		pacman_conf = PacmanConf(self.target)
 		if multilib:
 			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
-			self.enable_multilib_repository()
+			pacman_conf.enable(PacmanRepo.Multilib)
 		else:
 			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			info("The testing flag is set. This system will be installed with testing repositories enabled.")
-			self.enable_testing_repositories(multilib)
+			pacman_conf.enable(PacmanRepo.Testing)
+			if multilib:
+				pacman_conf.enable(PacmanRepo.MultilibTesting)
 		else:
 			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
+
+		pacman_conf.apply()
 
 		self._pacstrap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
@@ -1212,3 +1184,30 @@ class Installer:
 		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
 
 		return state.strip().decode('UTF-8')
+
+
+class PacmanRepo(Enum):
+	Multilib = 'multilib'
+	Testing = 'testing'
+	MultilibTesting = 'multilib-testing'
+
+
+class PacmanConf:
+	def __init__(self, target: Path):
+		self.path = target / "etc" / "pacman.conf"
+		self.lines = self.path.read_text().splitlines(keepends=True)
+		self.patterns = []
+
+	def enable(self, repo: PacmanRepo):
+		self.patterns.append(re.compile(r"^#\s*\[{}\]$".format(repo.value)))
+
+	def apply(self):
+		lines = iter(self.lines)
+		with open(self.path, 'w') as f:
+			for line in lines:
+				if any(pattern.match(line) for pattern in self.patterns):
+					# Uncomment this line and the next.
+					f.write(line.lstrip('#'))
+					f.write(next(lines).lstrip('#'))
+				else:
+					f.write(line)
