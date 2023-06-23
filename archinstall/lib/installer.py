@@ -309,20 +309,15 @@ class Installer:
 		matched = False
 
 		# Read in the lines from the original file
-		lines = self.pacman_conf.read_text().splitlines(keepends=True)
+		lines = iter(self.pacman_conf.read_text().splitlines(keepends=True))
 
 		# Open the file again in write mode, to replace the contents
 		with open(self.pacman_conf, "w") as f:
 			for line in lines:
 				if pattern.match(line):
-					# If this is the [] block containing 'multilib', uncomment it and set the matched tracking boolean.
+					# If this is the [] block containing 'multilib', uncomment it and the next line.
 					f.write(line.lstrip('#'))
-					matched = True
-				elif matched:
-					# The previous line was a match for [.*multilib.*].
-					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					f.write(line.lstrip('#'))
-					matched = False # Reset the state of matched to False.
+					f.write(next(lines).lstrip('#'))
 				else:
 					f.write(line)
 
@@ -330,24 +325,16 @@ class Installer:
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
 		pattern = re.compile("^#\\[.*testing.*\\]$")
 
-		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
-		matched = False
-
 		# Read in the lines from the original file
-		lines = self.pacman_conf.read_text().splitlines(keepends=True)
+		lines = iter(self.pacman_conf.read_text().splitlines(keepends=True))
 
 		# Open the file again in write mode, to replace the contents
 		with open(self.pacman_conf, "w") as f:
 			for line in lines:
 				if pattern.match(line) and (enable_multilib_testing or 'multilib' not in line):
-					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
+					# If this is the [] block containing 'testing', uncomment it and the next line.
 					f.write(line.lstrip('#'))
-					matched = True
-				elif matched:
-					# The previous line was a match for [.*testing.*].
-					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					f.write(line.lstrip('#'))
-					matched = False # Reset the state of matched to False.
+					f.write(next(lines).lstrip('#'))
 				else:
 					f.write(line)
 
@@ -399,7 +386,8 @@ class Installer:
 			add_custom_mirrors(mirror_config.custom_mirrors)
 
 	def genfstab(self, flags :str = '-pU'):
-		info(f"Updating {self.target}/etc/fstab")
+		fstab_path = self.target / "etc" / "fstab"
+		info(f"Updating {fstab_path}")
 
 		try:
 			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
@@ -409,10 +397,10 @@ class Installer:
 		if not gen_fstab:
 			raise RequirementError(f'Genrating fstab returned empty value')
 
-		with open(f"{self.target}/etc/fstab", 'a') as fp:
+		with open(fstab_path, 'a') as fp:
 			fp.write(gen_fstab)
 
-		if not os.path.isfile(f'{self.target}/etc/fstab'):
+		if not fstab_path.is_file():
 			raise RequirementError(f'Could not create fstab file')
 
 		for plugin in plugins.values():
@@ -420,7 +408,7 @@ class Installer:
 				if plugin.on_genfstab(self) is True:
 					break
 
-		with open(f"{self.target}/etc/fstab", 'a') as fp:
+		with open(fstab_path, 'a') as fp:
 			for entry in self._fstab_entries:
 				fp.write(f'{entry}\n')
 
@@ -429,7 +417,6 @@ class Installer:
 				if part_mod.fs_type != disk.FilesystemType.Btrfs:
 					continue
 
-				fstab_file = Path(f'{self.target}/etc/fstab')
 
 				with fstab_file.open('r') as fp:
 					fstab = fp.readlines()
