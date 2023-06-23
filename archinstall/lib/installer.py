@@ -369,7 +369,7 @@ class Installer:
 			error(f'Could not sync a new package database: {err}')
 
 			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
+				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
 					return self._pacstrap(packages)
 
 			raise RequirementError(f'Could not sync mirrors: {err}')
@@ -381,7 +381,7 @@ class Installer:
 			error(f'Could not strap in packages: {err}')
 
 			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
+				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
 					return self._pacstrap(packages)
 
 			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
