@@ -102,7 +102,6 @@ class Installer:
 		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
-		self.pacman_conf = Path("/etc") / "pacman.conf"
 
 	def __enter__(self) -> 'Installer':
 		return self
