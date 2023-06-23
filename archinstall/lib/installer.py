@@ -199,10 +199,12 @@ class Installer:
 			luks_handlers = self._prepare_luks_partitions(enc_partitions)
 
 			for part_mod in sorted_part_mods:
-				if part_mod not in luks_handlers:  # partition is not encrypted
+				if luks_handler := luks_handlers.get(part_mod):
+					# mount encrypted partition
+					self._mount_luks_partiton(part_mod, luks_handler)
+				else:
+					# partition is not encrypted
 					self._mount_partition(part_mod)
-				else:  # mount encrypted partition
-					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
 	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
 		return {
