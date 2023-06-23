@@ -101,6 +101,7 @@ class Installer:
 		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
+		self.pacman_conf = Path("/etc") / "pacman.conf"
 
 	def __enter__(self) -> 'Installer':
 		return self
@@ -308,22 +309,22 @@ class Installer:
 		matched = False
 
 		# Read in the lines from the original file
-		lines = Path("/etc/pacman.conf").read_text().splitlines(keepends=True)
+		lines = self.pacman_conf.read_text().splitlines(keepends=True)
 
 		# Open the file again in write mode, to replace the contents
-		with open("/etc/pacman.conf", "w") as pacman_conf:
+		with open(self.pacman_conf, "w") as f:
 			for line in lines:
 				if pattern.match(line):
 					# If this is the [] block containing 'multilib', uncomment it and set the matched tracking boolean.
-					pacman_conf.write(line.lstrip('#'))
+					f.write(line.lstrip('#'))
 					matched = True
 				elif matched:
 					# The previous line was a match for [.*multilib.*].
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					pacman_conf.write(line.lstrip('#'))
+					f.write(line.lstrip('#'))
 					matched = False # Reset the state of matched to False.
 				else:
-					pacman_conf.write(line)
+					f.write(line)
 
 	def enable_testing_repositories(self, enable_multilib_testing=False):
 		# Set up a regular expression pattern of a commented line containing 'testing' within []
@@ -333,22 +334,22 @@ class Installer:
 		matched = False
 
 		# Read in the lines from the original file
-		lines = Path("/etc/pacman.conf").read_text().splitlines(keepends=True)
+		lines = self.pacman_conf.read_text().splitlines(keepends=True)
 
 		# Open the file again in write mode, to replace the contents
-		with open("/etc/pacman.conf", "w") as pacman_conf:
+		with open(self.pacman_conf, "w") as f:
 			for line in lines:
 				if pattern.match(line) and (enable_multilib_testing or 'multilib' not in line):
 					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
-					pacman_conf.write(line.lstrip('#'))
+					f.write(line.lstrip('#'))
 					matched = True
 				elif matched:
 					# The previous line was a match for [.*testing.*].
 					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					pacman_conf.write(line.lstrip('#'))
+					f.write(line.lstrip('#'))
 					matched = False # Reset the state of matched to False.
 				else:
-					pacman_conf.write(line)
+					f.write(line)
 
 	def _pacstrap(self, packages: Union[str, List[str]]) -> bool:
 		if isinstance(packages, str):
