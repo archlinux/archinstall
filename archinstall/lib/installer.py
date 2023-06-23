@@ -308,7 +308,7 @@ class Installer:
 		matched = False
 
 		# Read in the lines from the original file
-		lines = Path("/etc/pacman.conf").read_text().splitlines()
+		lines = Path("/etc/pacman.conf").read_text().splitlines(keepends=True)
 
 		# Open the file again in write mode, to replace the contents
 		with open("/etc/pacman.conf", "w") as pacman_conf:
@@ -333,7 +333,7 @@ class Installer:
 		matched = False
 
 		# Read in the lines from the original file
-		lines = Path("/etc/pacman.conf").read_text().splitlines()
+		lines = Path("/etc/pacman.conf").read_text().splitlines(keepends=True)
 
 		# Open the file again in write mode, to replace the contents
 		with open("/etc/pacman.conf", "w") as pacman_conf:
