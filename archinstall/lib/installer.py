@@ -102,7 +102,7 @@ class Installer:
 		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
-		self.pacman = Pacman(self.target)
+		self.pacman = Pacman(self.target, storage['arguments'].get('silent', False))
 
 	def __enter__(self) -> 'Installer':
 		return self
@@ -301,41 +301,6 @@ class Installer:
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
-
-	def _pacstrap(self, packages: Union[str, List[str]]) -> bool:
-		if isinstance(packages, str):
-			packages = [packages]
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_pacstrap'):
-				if (result := plugin.on_pacstrap(packages)):
-					packages = result
-
-		info(f'Installing packages: {packages}')
-
-		# TODO: We technically only need to run the -Syy once.
-		try:
-			pacman.run('-Syy', default_cmd='/usr/bin/pacman')
-		except SysCallError as err:
-			error(f'Could not sync a new package database: {err}')
-
-			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
-					return self._pacstrap(packages)
-
-			raise RequirementError(f'Could not sync mirrors: {err}')
-
-		try:
-			SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True)
-			return True
-		except SysCallError as err:
-			error(f'Could not strap in packages: {err}')
-
-			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
-					return self._pacstrap(packages)
-
-			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
 
 	def set_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
@@ -540,7 +505,7 @@ class Installer:
 					# Otherwise, we can go ahead and add the required package
 					# and enable it's service:
 					else:
-						self._pacstrap('iwd')
+						self.pacman.strap('iwd')
 						self.enable_service('iwd')
 
 				for psk in psk_files:
@@ -625,7 +590,7 @@ class Installer:
 				if part in self._disk_encryption.partitions:
 					if self._disk_encryption.hsm_device:
 						# Required bby mkinitcpio to add support for fido2-device options
-						self._pacstrap('libfido2')
+						self.pacman.strap('libfido2')
 
 						if 'sd-encrypt' not in self._hooks:
 							self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
@@ -668,7 +633,7 @@ class Installer:
 
 		pacman_conf.apply()
 
-		self._pacstrap(self.base_packages)
+		self.pacman.strap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
 		pacman_conf.persist()
@@ -706,7 +671,7 @@ class Installer:
 	def setup_swap(self, kind :str = 'zram'):
 		if kind == 'zram':
 			info(f"Setting up swap on zram")
-			self._pacstrap('zram-generator')
+			self.pacman.strap('zram-generator')
 
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
@@ -733,7 +698,7 @@ class Installer:
 		return None
 
 	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
-		self._pacstrap('efibootmgr')
+		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -842,7 +807,7 @@ class Installer:
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self._pacstrap('grub')  # no need?
+		self.pacman.strap('grub')  # no need?
 
 		_file = "/etc/default/grub"
 
@@ -861,7 +826,7 @@ class Installer:
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
 		if SysInfo.has_uefi():
-			self._pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
@@ -900,7 +865,7 @@ class Installer:
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self._pacstrap('efibootmgr')
+		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
@@ -995,7 +960,7 @@ class Installer:
 				self._add_efistub_bootloader(boot_partition, root_partition)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
-		return self._pacstrap(packages)
+		return self.pacman.strap(packages)
 
 	def _enable_users(self, service: str, users: List[User]):
 		for user in users:

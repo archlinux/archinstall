@@ -2,7 +2,7 @@
 
 set -e
 
-packages_file="/tmp/archlive/packages.x86_64"
+packages_file="../tmp/archlive/packages.x86_64"
 
 # Packages to add to the archiso profile packages
 packages=(
@@ -13,17 +13,19 @@ packages=(
 	python-setuptools
 	python-wheel
 	python-pyparted
+	gcc
+	pkg-config
 )
 
-mkdir -p /tmp/archlive/airootfs/root/archinstall-git
-cp -r . /tmp/archlive/airootfs/root/archinstall-git
+mkdir -p ../tmp/archlive/airootfs/root/archinstall-git
+cp -r . ../tmp/archlive/airootfs/root/archinstall-git
 
-cat <<- _EOF_ | tee /tmp/archlive/airootfs/root/.zprofile
+cat <<- _EOF_ | tee ../tmp/archlive/airootfs/root/.zprofile
 	cd archinstall-git
 	rm -rf dist
 
 	python -m build --wheel --no-isolation
-	pip install dist/archinstall*.whl
+	pip install dist/archinstall*.whl --break-system-packages
 
 	echo "This is an unofficial ISO for development and testing of archinstall. No support will be provided."
 	echo "This ISO was built from Git SHA $GITHUB_SHA"
@@ -32,7 +34,7 @@ _EOF_
 
 pacman --noconfirm -S git archiso
 
-cp -r /usr/share/archiso/configs/releng/* /tmp/archlive
+cp -r /usr/share/archiso/configs/releng/* ../tmp/archlive
 
 sed -i /archinstall/d $packages_file
 
@@ -41,7 +43,7 @@ for package in "${packages[@]}"; do
 	echo "$package" >> $packages_file
 done
 
-find /tmp/archlive
-cd /tmp/archlive
+find ../tmp/archlive
+cd ../tmp/archlive
 
 mkarchiso -v -w work/ -o out/ ./

@@ -1,12 +1,15 @@
 from pathlib import Path
 import time
 import re
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any, List, Callable, Union
 from shutil import copy2
 
-from .general import SysCommand
-from .output import warn, error
+from ..general import SysCommand
+from ..output import warn, error, info
 from .repo import Repo
+from .config import Config
+from ..exceptions import RequirementError
+from ..plugins import plugins
 
 if TYPE_CHECKING:
 	_: Any
@@ -14,10 +17,10 @@ if TYPE_CHECKING:
 
 class Pacman:
 
-	def __init__(self, target: Path):
-		self.path = Path("/etc") / "pacman.conf"
-		self.chroot_path = target / "etc" / "pacman.conf"
-		self.patterns: List[re.Pattern] = []
+	def __init__(self, target: Path, silent: bool = False):
+		self.synced = False
+		self.silent = silent
+		self.target = target
 
 	@staticmethod
 	def run(args :str, default_cmd :str = 'pacman') -> SysCommand:
@@ -41,22 +44,44 @@ class Pacman:
 
 		return SysCommand(f'{default_cmd} {args}')
 
-	def enable(self, repo: Repo):
-		self.patterns.append(re.compile(r"^#\s*\[{}\]$".format(repo.value)))
+	def ask(self, error_message: str, bail_message: str, func: Callable, *args, **kwargs):
+		while True:
+			try:
+				func(*args, **kwargs)
+			except Exception as err:
+				error(f'{error_message}: {err}')
+				if not self.silent and input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
+					continue
+				raise RequirementError(f'{bail_message}: {err}')
 
-	def apply(self):
-		if not self.patterns:
+	def sync(self):
+		if self.synced:
 			return
-		lines = iter(self.path.read_text().splitlines(keepends=True))
-		with open(self.path, 'w') as f:
-			for line in lines:
-				if any(pattern.match(line) for pattern in self.patterns):
-					# Uncomment this line and the next.
-					f.write(line.lstrip('#'))
-					f.write(next(lines).lstrip('#'))
-				else:
-					f.write(line)
-	
-	def persist(self):
-		if self.patterns:
-			copy2(self.path, self.chroot_path)
+		self.ask(
+			'Could not sync a new package database',
+			'Could not sync mirrors',
+			self.run,
+			'-Syy',
+			default_cmd='/usr/bin/pacman'
+		)
+		self.synced = True
+
+	def strap(self, packages: Union[str, List[str]]):
+		self.sync()
+		if isinstance(packages, str):
+			packages = [packages]
+
+		for plugin in plugins.values():
+			if hasattr(plugin, 'on_pacstrap'):
+				if (result := plugin.on_pacstrap(packages)):
+					packages = result
+
+		info(f'Installing packages: {packages}')
+
+		self.ask(
+			'Could not strap in packages',
+			'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
+			SysCommand,
+			f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm',
+			peek_output=True
+		)
