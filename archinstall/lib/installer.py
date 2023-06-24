@@ -380,7 +380,6 @@ class Installer:
 				if part_mod.fs_type != disk.FilesystemType.Btrfs:
 					continue
 
-
 				with fstab_path.open('r') as fp:
 					fstab = fp.readlines()
 

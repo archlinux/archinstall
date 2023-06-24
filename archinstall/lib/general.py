@@ -476,7 +476,7 @@ def run_custom_user_commands(commands :List[str], installation :Installer) -> No
 		chroot_path = installation.target / script_path
 		
 		info(f'Executing custom command "{command}" ...')
-		chroot_path.write_text(command)	
+		chroot_path.write_text(command)
 		SysCommand(f"arch-chroot {installation.target} bash {script_path}")
 		
 		os.unlink(chroot_path)
