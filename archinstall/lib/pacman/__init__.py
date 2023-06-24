@@ -48,6 +48,7 @@ class Pacman:
 		while True:
 			try:
 				func(*args, **kwargs)
+				break
 			except Exception as err:
 				error(f'{error_message}: {err}')
 				if not self.silent and input('Would you like to re-try this download? (Y/n): ').lower().strip() in 'y':
