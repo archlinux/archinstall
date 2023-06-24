@@ -1186,7 +1186,7 @@ class PacmanConf:
 	def __init__(self, target: Path):
 		self.path = Path("/etc") / "pacman.conf"
 		self.chroot_path = target / "etc" / "pacman.conf"
-		self.patterns = []
+		self.patterns: List[re.Pattern] = []
 
 	def enable(self, repo: PacmanRepo):
 		self.patterns.append(re.compile(r"^#\s*\[{}\]$".format(repo.value)))
