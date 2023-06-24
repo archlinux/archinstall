@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from enum import Enum
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
 from . import disk
@@ -21,7 +20,8 @@ from .models.bootloader import Bootloader
 from .models.network_configuration import NetworkConfiguration
 from .models.users import User
 from .output import log, error, info, warn, debug
-from .pacman import run_pacman
+from . import pacman
+from .pacman import Pacman
 from .plugins import plugins
 from .storage import storage
 
@@ -102,6 +102,7 @@ class Installer:
 		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
+		self.pacman = Pacman(self.target)
 
 	def __enter__(self) -> 'Installer':
 		return self
@@ -314,7 +315,7 @@ class Installer:
 
 		# TODO: We technically only need to run the -Syy once.
 		try:
-			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
+			pacman.run('-Syy', default_cmd='/usr/bin/pacman')
 		except SysCallError as err:
 			error(f'Could not sync a new package database: {err}')
 
@@ -650,18 +651,18 @@ class Installer:
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
-		pacman_conf = PacmanConf(self.target)
+		pacman_conf = pacman.Config(self.target)
 		if multilib:
 			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
-			pacman_conf.enable(PacmanRepo.Multilib)
+			pacman_conf.enable(pacman.Repo.Multilib)
 		else:
 			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
 			info("The testing flag is set. This system will be installed with testing repositories enabled.")
-			pacman_conf.enable(PacmanRepo.Testing)
+			pacman_conf.enable(pacman.Repo.Testing)
 			if multilib:
-				pacman_conf.enable(PacmanRepo.MultilibTesting)
+				pacman_conf.enable(pacman.Repo.MultilibTesting)
 		else:
 			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
@@ -1173,36 +1174,3 @@ class Installer:
 		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
 
 		return state.strip().decode('UTF-8')
-
-
-class PacmanRepo(Enum):
-	Multilib = 'multilib'
-	Testing = 'testing'
-	MultilibTesting = 'multilib-testing'
-
-
-class PacmanConf:
-	def __init__(self, target: Path):
-		self.path = Path("/etc") / "pacman.conf"
-		self.chroot_path = target / "etc" / "pacman.conf"
-		self.patterns: List[re.Pattern] = []
-
-	def enable(self, repo: PacmanRepo):
-		self.patterns.append(re.compile(r"^#\s*\[{}\]$".format(repo.value)))
-
-	def apply(self):
-		if not self.patterns:
-			return
-		lines = iter(self.path.read_text().splitlines(keepends=True))
-		with open(self.path, 'w') as f:
-			for line in lines:
-				if any(pattern.match(line) for pattern in self.patterns):
-					# Uncomment this line and the next.
-					f.write(line.lstrip('#'))
-					f.write(next(lines).lstrip('#'))
-				else:
-					f.write(line)
-	
-	def persist(self):
-		if self.patterns:
-			shutil.copy2(self.path, self.chroot_path)
