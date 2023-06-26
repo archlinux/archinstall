@@ -146,12 +146,15 @@ class SysCommandWorker:
 		Contains will also move the current buffert position forward.
 		This is to avoid re-checking the same data when looking for output.
 		"""
-		assert type(key) == bytes
+		assert isinstance(key, bytes)
 
-		if (contains := key in self._trace_log[self._trace_log_pos:]):
-			self._trace_log_pos += self._trace_log[self._trace_log_pos:].find(key) + len(key)
+		logs = self._trace_log[self._trace_log_pos:]
+		index = self._trace_log.find(key)
+		if index >= 0:
+			self._trace_log_pos += index + len(key)
+			return True
 
-		return contains
+		return False
 
 	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
 		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
