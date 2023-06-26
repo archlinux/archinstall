@@ -216,7 +216,7 @@ class ProfileHandler:
 						install_session.modules.remove('radeon')
 					install_session.modules.append('radeon')
 
-			install_session.add_additional_packages(pkg_names)
+				install_session.add_additional_packages(pkg_names)
 		except Exception as err:
 			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
 			# Prep didn't run, so there's no driver to install
