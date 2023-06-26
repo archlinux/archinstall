@@ -100,9 +100,16 @@ class ProfileHandler:
 		valid: List[Profile] = []
 
 		if details := profile_config.get('details', []):
-			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
-			valid = [p for p in resolved.values() if p is not None]
-			invalid = ', '.join([k for k, v in resolved.items() if v is None])
+			valid = []
+			invalid = []
+
+			for detail in filter(None, details):
+				if profile := self.get_profile_by_name(detail):
+					valid.append(profile)
+				else:
+					invalid.append(detail)
+
+			invalid = ', '.join(invalid)
 
 			if invalid:
 				info(f'No profile definition found: {invalid}')
@@ -123,14 +130,12 @@ class ProfileHandler:
 		"""
 		List of all available default_profiles
 		"""
-		if self._profiles is None:
-			self._profiles = self._find_available_profiles()
+		self._profiles = self._profiles or self._find_available_profiles()
 		return self._profiles
 
 	@cached_property
 	def _local_mac_addresses(self) -> List[str]:
-		ifaces = list_interfaces()
-		return list(ifaces.keys())
+		return list(list_interfaces())
 
 	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
@@ -190,25 +195,20 @@ class ProfileHandler:
 
 	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
 		try:
-			driver_pkgs = driver.packages() if driver else []
-			pkg_names = [p.value for p in driver_pkgs]
-			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + pkg_names)
 
 			if driver is not None:
-				# Find the intersection between the set of known nvidia drivers
-				# and the selected driver packages. Since valid intesections can
-				# only have one element or none, we iterate and try to take the
-				# first element.
-				if driver_pkg := next(iter({GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs)), None):
-					if any(kernel in install_session.base_packages for kernel in ("linux-lts", "linux-zen")):
-						for kernel in install_session.kernels:
-							# Fixes https://github.com/archlinux/archinstall/issues/585
-							install_session.add_additional_packages(f"{kernel}-headers")
+				driver_pkgs = driver.packages()
+				pkg_names = [p.value for p in driver_pkgs]
+				for driver_pkg in {GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs):
+					for kernel in {"linux-lts", "linux-zen"} & set(install_session.kernels):
+						# Fixes https://github.com/archlinux/archinstall/issues/585
+						install_session.add_additional_packages(f"{kernel}-headers")
 
 						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-						install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg}-dkms'])
-						return
-				elif 'amdgpu' in driver_pkgs:
+					install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg.value}-dkms'])
+					# Return after first driver match, since it is impossible to use both simultaneously.
+					return
+				if 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
 					if 'amdgpu' in install_session.modules:
 						install_session.modules.remove('amdgpu')
@@ -218,11 +218,10 @@ class ProfileHandler:
 						install_session.modules.remove('radeon')
 					install_session.modules.append('radeon')
 
-			install_session.add_additional_packages(additional_pkg)
 		except Exception as err:
 			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
 			# Prep didn't run, so there's no driver to install
-			install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
+		install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
@@ -312,8 +311,7 @@ class ProfileHandler:
 		debug(f'Importing profile: {file}')
 
 		try:
-			spec = importlib.util.spec_from_file_location(name, file)
-			if spec is not None:
+			if spec := importlib.util.spec_from_file_location(name, file):
 				imported = importlib.util.module_from_spec(spec)
 				if spec.loader is not None:
 					spec.loader.exec_module(imported)
