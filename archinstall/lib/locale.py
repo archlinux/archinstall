@@ -1,3 +1,4 @@
+from itertools import takewhile
 from typing import Iterator, List
 
 from .exceptions import ServiceException, SysCallError
@@ -12,18 +13,12 @@ def list_keyboard_languages() -> Iterator[str]:
 
 def list_locales() -> List[str]:
 	with open('/etc/locale.gen', 'r') as fp:
-		locales = []
 		# before the list of locales begins there's an empty line with a '#' in front
-		# so we'll collect the localels from bottom up and halt when we're donw
+		# so we'll collect the locales from bottom up and halt when we're done
 		entries = fp.readlines()
 		entries.reverse()
 
-		for entry in entries:
-			text = entry.replace('#', '').strip()
-			if text == '':
-				break
-			locales.append(text)
-
+		locales = list(takewhile(str, map(lambda entry: entry.replace('#', '').strip(), entries)))
 		locales.reverse()
 		return locales
 

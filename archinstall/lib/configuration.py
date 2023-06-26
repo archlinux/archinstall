@@ -133,7 +133,7 @@ def save_config(config: Dict):
 
 		save_choice = Menu(
 			_("Choose which configuration to save"),
-			list(options.keys()),
+			list(options),
 			sort=False,
 			skip=True,
 			preview_size=0.75,
