@@ -1,4 +1,5 @@
 from itertools import takewhile
+from pathlib import Path
 from typing import Iterator, List
 
 from .exceptions import ServiceException, SysCallError
@@ -12,15 +13,12 @@ def list_keyboard_languages() -> Iterator[str]:
 
 
 def list_locales() -> List[str]:
-	with open('/etc/locale.gen', 'r') as fp:
-		# before the list of locales begins there's an empty line with a '#' in front
-		# so we'll collect the locales from bottom up and halt when we're done
-		entries = fp.readlines()
-		entries.reverse()
-
-		locales = list(takewhile(str, map(lambda entry: entry.replace('#', '').strip(), entries)))
-		locales.reverse()
-		return locales
+	entries = Path('/etc/locale.gen').read_text().splitlines()
+	# Before the list of locales begins there's an empty line with a '#' in front
+	# so we'll collect the locales from bottom up and halt when we're done.
+	locales = list(takewhile(bool, map(lambda entry: entry.strip('\n\t #'), reversed(entries))))
+	locales.reverse()
+	return locales
 
 
 def list_x11_keyboard_languages() -> Iterator[str]:
