@@ -886,7 +886,8 @@ class Installer:
 				# `limine-deploy` deploys the stage 1 and 2 to the disk.
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
-					f' limine-deploy' \
+					f' limine' \
+					f' bios-install' \
 					f' {device.device_info.path}'
 				
 				SysCommand(cmd, peek_output=True)
