@@ -72,9 +72,7 @@ class ConfigurationOutput:
 		print(_('\nThis is your chosen configuration:'))
 		debug(" -- Chosen configuration --")
 
-		user_conig = self.user_config_to_json()
-		info(user_conig)
-
+		info(self.user_config_to_json())
 		print()
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
