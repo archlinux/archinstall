@@ -117,9 +117,7 @@ class SysCommandWorker:
 			cmd = shlex.split(cmd)
 
 		if cmd:
-			path = pathlib.Path(cmd[0])
-			distinct = path.is_absolute() or path.is_relative_to('.')
-			if not distinct:
+			if cmd[0][0] != '/' and cmd[0][:2] != './': # pathlib.Path does not work well
 				cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
