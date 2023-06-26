@@ -26,7 +26,7 @@ class ConfigurationOutput:
 		self._config = config
 		self._user_credentials: Dict[str, Any] = {}
 		self._user_config: Dict[str, Any] = {}
-		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
+		self._default_save_path = storage.get('LOG_PATH', Path('.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
 
@@ -44,17 +44,17 @@ class ConfigurationOutput:
 		return self._user_config_file
 
 	def _process_config(self):
-		for key in self._config:
+		for key, value in self._config.items():
 			if key in self._sensitive:
-				self._user_credentials[key] = self._config[key]
+				self._user_credentials[key] = value
 			elif key in self._ignore:
 				pass
 			else:
-				self._user_config[key] = self._config[key]
+				self._user_config[key] = value
 
 			# special handling for encryption password
-			if key == 'disk_encryption' and self._config[key] is not None:
-				self._user_credentials['encryption_password'] = self._config[key].encryption_password
+			if key == 'disk_encryption' and value:
+				self._user_credentials['encryption_password'] = value.encryption_password
 
 	def user_config_to_json(self) -> str:
 		return json.dumps({

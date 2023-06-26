@@ -423,7 +423,7 @@ class SysCommand:
 
 			self.session = session
 
-			while self.session.ended is None:
+			while not self.session.ended:
 				self.session.poll()
 
 		if self.peek_output:
