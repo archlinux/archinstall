@@ -168,6 +168,12 @@ class SysCommandWorker:
 		self.make_sure_we_are_executing()
 		return str(self._trace_log)
 
+	def __str__(self) -> str:
+		try:
+			return self._trace_log.decode('utf-8')
+		except UnicodeDecodeError:
+			return str(self._trace_log)
+
 	def __enter__(self) -> 'SysCommandWorker':
 		return self
 
@@ -192,7 +198,7 @@ class SysCommandWorker:
 
 		if self.exit_code != 0:
 			raise SysCallError(
-				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self._trace_log[-500:])}",
+				f"{self.cmd} exited with abnormal exit code [{self.exit_code}]: {str(self)[-500:]}",
 				self.exit_code,
 				worker=self
 			)
