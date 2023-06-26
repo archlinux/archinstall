@@ -385,8 +385,8 @@ class SysCommand:
 		if not self.session:
 			raise KeyError(f"SysCommand() does not have an active session.")
 		elif type(key) is slice:
-			start = key.start if key.start else 0
-			end = key.stop if key.stop else len(self.session._trace_log)
+			start = key.start or 0
+			end = key.stop or len(self.session._trace_log)
 
 			return self.session._trace_log[start:end]
 		else:
