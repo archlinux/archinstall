@@ -393,7 +393,7 @@ class SysCommand:
 			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
 	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
-			return self.decode('UTF-8', errors='backslashreplace') or ''
+		return self.decode('UTF-8', errors='backslashreplace') or ''
 
 	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
 		return {
