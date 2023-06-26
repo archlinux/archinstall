@@ -148,8 +148,7 @@ class SysCommandWorker:
 		"""
 		assert isinstance(key, bytes)
 
-		logs = self._trace_log[self._trace_log_pos:]
-		index = logs.find(key)
+		index = self._trace_log.find(key, self._trace_log_pos)
 		if index >= 0:
 			self._trace_log_pos += index + len(key)
 			return True
