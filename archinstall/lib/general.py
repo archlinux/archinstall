@@ -45,9 +45,7 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	vt100_escape_regex = r'\x1B\[[?0-9;]*[a-zA-Z]'
 	if isinstance(data, bytes):
 		return re.sub(vt100_escape_regex.encode(), b'', data)
-	if type(data) == str:
-		return re.sub(vt100_escape_regex, '', data)
-	raise ValueError(f'Unsupported data type: {type(data)}')
+	return re.sub(vt100_escape_regex, '', data)
 
 
 def jsonify(obj: Any, safe: bool = True) -> Any:
@@ -156,16 +154,15 @@ class SysCommandWorker:
 		return False
 
 	def __iter__(self, *args :str, **kwargs :Dict[str, Any]) -> Iterator[bytes]:
-		for line in self._trace_log[self._trace_log_pos:self._trace_log.rfind(b'\n')].split(b'\n'):
-			if line:
-				escaped_line: bytes = line
+		last_line = self._trace_log.rfind(b'\n')
+		lines = filter(None, self._trace_log[self._trace_log_pos:last_line].splitlines())
+		for line in lines:
+			if self.remove_vt100_escape_codes_from_lines:
+				line = clear_vt100_escape_codes(line)  # type: ignore
 
-				if self.remove_vt100_escape_codes_from_lines:
-					escaped_line = clear_vt100_escape_codes(line)  # type: ignore
+			yield line + b'\n'
 
-				yield escaped_line + b'\n'
-
-		self._trace_log_pos = self._trace_log.rfind(b'\n')
+		self._trace_log_pos = last_line
 
 	def __repr__(self) -> str:
 		self.make_sure_we_are_executing()
