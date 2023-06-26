@@ -98,8 +98,8 @@ class ProfileHandler:
 			profile = self.get_profile_by_name(main) if main else None
 
 		valid: List[Profile] = []
-
-		if details := profile_config.get('details', []):
+		details: List[str] = profile_config.get('details', [])
+		if details:
 			valid = []
 			invalid = []
 
@@ -109,10 +109,8 @@ class ProfileHandler:
 				else:
 					invalid.append(detail)
 
-			invalid = ', '.join(invalid)
-
 			if invalid:
-				info(f'No profile definition found: {invalid}')
+				info('No profile definition found: {}'.format(', '.join(invalid)))
 
 		custom_settings = profile_config.get('custom_settings', {})
 		for profile in valid:
@@ -227,14 +225,15 @@ class ProfileHandler:
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
 
-		if profile:
-			profile.install(install_session)
+		if not profile:
+			return
 
-		if profile and profile_config.gfx_driver:
-			if profile.is_xorg_type_profile() or profile.is_desktop_type_profile():
-				self.install_gfx_driver(install_session, profile_config.gfx_driver)
+		profile.install(install_session)
 
-		if profile and profile_config.greeter:
+		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_type_profile()):
+			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
 
 	def _import_profile_from_url(self, url: str):
