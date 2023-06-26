@@ -118,15 +118,14 @@ class SysCommandWorker:
 		if not environment_vars:
 			environment_vars = {}
 
-		if type(cmd) is str:
+		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
-		cmd = list(cmd) # This is to please mypy
-		if cmd[0][0] != '/' and cmd[0][:2] != './':
-			# "which" doesn't work as it's a builtin to bash.
-			# It used to work, but for whatever reason it doesn't anymore.
-			# We there for fall back on manual lookup in os.PATH
-			cmd[0] = locate_binary(cmd[0])
+		if cmd:
+			path = pathlib.Path(cmd[0])
+			distinct = path.is_absolute() or path.is_relative_to('.')
+			if not distinct:
+				cmd[0] = locate_binary(cmd[0])
 
 		self.cmd = cmd
 		self.callbacks = callbacks
