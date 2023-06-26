@@ -112,11 +112,8 @@ class SysCommandWorker:
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True
 	):
-		if not callbacks:
-			callbacks = {}
-
-		if not environment_vars:
-			environment_vars = {}
+		callbacks = callbacks or {}
+		environment_vars = environment_vars or {}
 
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
