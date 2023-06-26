@@ -393,9 +393,7 @@ class SysCommand:
 			raise ValueError("SysCommand() doesn't have key & value pairs, only slices, SysCommand('ls')[:10] as an example.")
 
 	def __repr__(self, *args :List[Any], **kwargs :Dict[str, Any]) -> str:
-		if self.session:
-			return self.session._trace_log.decode('UTF-8', errors='backslashreplace')
-		return ''
+			return self.decode('UTF-8', errors='backslashreplace') or ''
 
 	def __json__(self) -> Dict[str, Union[str, bool, List[str], Dict[str, Any], Optional[bool], Optional[Dict[str, Any]]]]:
 		return {
@@ -434,9 +432,9 @@ class SysCommand:
 
 		return True
 
-	def decode(self, fmt :str = 'UTF-8') -> Optional[str]:
+	def decode(self, *args, **kwargs) -> Optional[str]:
 		if self.session:
-			return self.session._trace_log.decode(fmt)
+			return self.session._trace_log.decode(*args, **kwargs)
 		return None
 
 	@property
