@@ -107,33 +107,33 @@ class ConfigurationOutput:
 
 def save_config(config: Dict):
 	def preview(selection: str):
-		if options["user_config"] == selection:
-			serialized = config_output.user_config_to_json()
-			return f"{config_output.user_configuration_file}\n{serialized}"
-		elif options["user_creds"] == selection:
-			if maybe_serial := config_output.user_credentials_to_json():
-				return f"{config_output.user_credentials_file}\n{maybe_serial}"
-			else:
+		match options[selection]:
+			case "user_config":
+				serialized = config_output.user_config_to_json()
+				return f"{config_output.user_configuration_file}\n{serialized}"
+			case "user_creds":
+				if maybe_serial := config_output.user_credentials_to_json():
+					return f"{config_output.user_credentials_file}\n{maybe_serial}"
 				return str(_("No configuration"))
-		elif options["all"] == selection:
-			output = f"{config_output.user_configuration_file}\n"
-			if config_output.user_credentials_to_json():
-				output += f"{config_output.user_credentials_file}\n"
-			return output[:-1]
+			case "all":
+				output = [config_output.user_configuration_file]
+				if config_output.user_credentials_to_json():
+					output.append(config_output.user_credentials_file)
+				return '\n'.join(output)
 		return None
 
 	try:
 		config_output = ConfigurationOutput(config)
 
 		options = {
-			"user_config": str(_("Save user configuration (including disk layout)")),
-			"user_creds": str(_("Save user credentials")),
-			"all": str(_("Save all")),
+			str(_("Save user configuration (including disk layout)")): "user_config",
+			str(_("Save user credentials")): "user_creds",
+			str(_("Save all")): "all",
 		}
 
 		save_choice = Menu(
 			_("Choose which configuration to save"),
-			list(options.values()),
+			list(options.keys()),
 			sort=False,
 			skip=True,
 			preview_size=0.75,
@@ -161,26 +161,23 @@ def save_config(config: Dict):
 
 		prompt = _(
 			"Do you want to save {} configuration file(s) in the following location?\n\n{}"
-		).format(
-			list(options.keys())[list(options.values()).index(str(save_choice.value))],
-			dest_path.absolute(),
-		)
+		).format(options[str(save_choice.value)], dest_path.absolute())
+
 		save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 		if save_confirmation == Menu.no():
 			return
 
 		debug(
-			_("Saving {} configuration files to {}").format(
-				list(options.keys())[list(options.values()).index(str(save_choice.value))],
-				dest_path.absolute(),
-			)
+			_("Saving {} configuration files to {}").format(options[str(save_choice.value)], dest_path.absolute())
 		)
 
-		if options["user_config"] == save_choice.value:
-			config_output.save_user_config(dest_path)
-		elif options["user_creds"] == save_choice.value:
-			config_output.save_user_creds(dest_path)
-		elif options["all"] == save_choice.value:
-			config_output.save(dest_path)
+		match options[str(save_choice.value)]:
+			case "user_config":
+				config_output.save_user_config(dest_path)
+			case "user_creds":
+				config_output.save_user_creds(dest_path)
+			case "all":
+				config_output.save(dest_path)
+
 	except KeyboardInterrupt:
 		return
