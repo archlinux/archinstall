@@ -237,7 +237,7 @@ class SysCommandWorker:
 
 	def peak(self, output: Union[str, bytes]) -> bool:
 		if self.peek_output:
-			if type(output) == bytes:
+			if isinstance(output, bytes):
 				try:
 					output = output.decode('UTF-8')
 				except UnicodeDecodeError:
@@ -275,7 +275,7 @@ class SysCommandWorker:
 					self.ended = time.time()
 					break
 
-			if self.ended or (got_output is False and _pid_exists(self.pid) is False):
+			if self.ended or (not got_output and not _pid_exists(self.pid)):
 				self.ended = time.time()
 				try:
 					wait_status = os.waitpid(self.pid, 0)[1]
@@ -314,10 +314,8 @@ class SysCommandWorker:
 
 					if change_perm:
 						os.chmod(str(history_logfile), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
-				except PermissionError:
-					pass
+				except (PermissionError, FileNotFoundError):
 					# If history_logfile does not exist, ignore the error
-				except FileNotFoundError:
 					pass
 				except Exception as e:
 					exception_type = type(e).__name__
@@ -348,22 +346,18 @@ class SysCommandWorker:
 class SysCommand:
 	def __init__(self,
 		cmd :Union[str, List[str]],
-		callbacks :Optional[Dict[str, Callable[[Any], Any]]] = None,
+		callbacks :Dict[str, Callable[[Any], Any]] = {},
 		start_callback :Optional[Callable[[Any], Any]] = None,
 		peek_output :Optional[bool] = False,
 		environment_vars :Optional[Dict[str, Any]] = None,
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
 
-		_callbacks = {}
-		if callbacks:
-			for hook, func in callbacks.items():
-				_callbacks[hook] = func
 		if start_callback:
-			_callbacks['on_start'] = start_callback
+			callbacks['on_start'] = start_callback
 
 		self.cmd = cmd
-		self._callbacks = _callbacks
+		self._callbacks = callbacks
 		self.peek_output = peek_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
