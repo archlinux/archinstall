@@ -353,11 +353,11 @@ class SysCommand:
 		working_directory :Optional[str] = './',
 		remove_vt100_escape_codes_from_lines :bool = True):
 
+		self._callbacks = callbacks.copy()
 		if start_callback:
-			callbacks['on_start'] = start_callback
+			self._callbacks['on_start'] = start_callback
 
 		self.cmd = cmd
-		self._callbacks = callbacks
 		self.peek_output = peek_output
 		self.environment_vars = environment_vars
 		self.working_directory = working_directory
