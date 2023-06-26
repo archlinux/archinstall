@@ -401,7 +401,7 @@ class SysCommand:
 			'callbacks': self._callbacks,
 			'peak': self.peek_output,
 			'environment_vars': self.environment_vars,
-			'session': True if self.session else False
+			'session': self.session is not None
 		}
 
 	def create_session(self) -> bool:
