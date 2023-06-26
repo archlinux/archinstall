@@ -862,6 +862,11 @@ class Installer:
 		if not device:
 			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
 
+		def create_pacman_hook(contents: str):
+			HOOK_DIR = "/etc/pacman.d/hooks"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
+
 		if SysInfo.has_uefi():
 			try:
 				# The `limine.sys` file, contains stage 3 code.
@@ -872,27 +877,56 @@ class Installer:
 					f' /boot/EFI/BOOT/'
 			except SysCallError as err:
 				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
+
+			# Create the EFI limine pacman hook.
+			create_pacman_hook("""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
+			""")
 		else:
 			try:
 				# The `limine.sys` file, contains stage 3 code.
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' cp' \
-					f' /usr/share/limine/limine.sys' \
-					f' /boot/limine.sys'
-				
+					f' /usr/share/limine/limine-bios.sys' \
+					f' /boot/limine-bios.sys'
+
 				SysCommand(cmd, peek_output=True)
 
-				# `limine-deploy` deploys the stage 1 and 2 to the disk.
+				# `limine bios-install` deploys the stage 1 and 2 to the disk.
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' limine' \
 					f' bios-install' \
 					f' {device.device_info.path}'
-				
+
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
+
+			create_pacman_hook(f"""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+# XXX: Kernel name descriptors cannot be used since they are not persistent and
+#      can change after each boot.
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_partition.uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+			""")
 
 		# Limine does not ship with a default configuation file. We are going to
 		# create a basic one that is similar to the one GRUB generates.

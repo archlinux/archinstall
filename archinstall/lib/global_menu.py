@@ -355,14 +355,6 @@ class GlobalMenu(AbstractMenu):
 
 		return None
 
-	def _is_config_valid(self) -> bool:
-		"""
-		Checks the validity of the current configuration.
-		"""
-		if len(self._missing_configs()) != 0:
-			return False
-		return self._validate_bootloader() is None
-
 	def _prev_install_invalid_config(self) -> Optional[str]:
 		if missing := self._missing_configs():
 			text = str(_('Missing configurations:\n'))
