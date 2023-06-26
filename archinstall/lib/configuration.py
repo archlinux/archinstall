@@ -91,14 +91,14 @@ class ConfigurationOutput:
 			os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save_user_creds(self, dest_path: Path):
-		if self._is_valid_path(dest_path) and user_creds := self.user_credentials_to_json():
-			target = dest_path / self._user_creds_file
-			target.write_text(user_creds)
-			os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+		if self._is_valid_path(dest_path):
+			if user_creds := self.user_credentials_to_json():
+				target = dest_path / self._user_creds_file
+				target.write_text(user_creds)
+				os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save(self, dest_path: Optional[Path] = None):
-		if not dest_path:
-			dest_path = self._default_save_path
+		dest_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(dest_path):
 			self.save_user_config(dest_path)
