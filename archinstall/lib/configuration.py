@@ -181,7 +181,6 @@ def save_config(config: Dict):
 		elif options["user_creds"] == save_choice.value:
 			config_output.save_user_creds(dest_path)
 		elif options["all"] == save_choice.value:
-			config_output.save_user_config(dest_path)
-			config_output.save_user_creds(dest_path)
+			config_output.save(dest_path)
 	except KeyboardInterrupt:
 		return
