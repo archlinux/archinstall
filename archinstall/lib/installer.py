@@ -53,27 +53,16 @@ class Installer:
 		`Installer()` is the wrapper for most basic installation steps.
 		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
 		"""
-		if not base_packages:
-			base_packages = __packages__[:3]
-
-		if kernels is None:
-			self.kernels = ['linux']
-		else:
-			self.kernels = kernels
-
+		self.base_packages = base_packages or __packages__[:3]
+		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
 
-		if disk_encryption is None:
-			self._disk_encryption = disk.DiskEncryption(disk.EncryptionType.NoEncryption)
-		else:
-			self._disk_encryption = disk_encryption
-
+		self._disk_encryption = disk_encryption or disk.DiskEncryption(disk.EncryptionType.NoEncryption)
 		self.target: Path = target
 
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
 		self.helper_flags: Dict[str, Any] = {'base': False, 'bootloader': None}
-		self.base_packages = base_packages
 
 		for kernel in self.kernels:
 			self.base_packages.append(kernel)
