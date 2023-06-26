@@ -76,13 +76,13 @@ class ConfigurationOutput:
 		print()
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
-		if (not dest_path.exists()) or not (dest_path.is_dir()):
+		dest_path_ok = dest_path.exists() and dest_path.is_dir()
+		if not dest_path_ok:
 			warn(
 				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
 				'Configuration files can not be saved'
 			)
-			return False
-		return True
+		return dest_path_ok
 
 	def save_user_config(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
