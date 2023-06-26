@@ -15,9 +15,10 @@ from urllib.request import Request, urlopen
 import urllib.error
 import pathlib
 from datetime import datetime, date
-from enum import Enum
+# from enum import Enum
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
+from shutil import which
 
 from .exceptions import RequirementError, SysCallError
 from .output import debug, error, info
@@ -34,13 +35,8 @@ def generate_password(length :int = 64) -> str:
 
 
 def locate_binary(name :str) -> str:
-	for PATH in os.environ['PATH'].split(':'):
-		for root, folders, files in os.walk(PATH):
-			for file in files:
-				if file == name:
-					return os.path.join(root, file)
-			break # Don't recurse
-
+	if path := which(name):
+		return path
 	raise RequirementError(f"Binary {name} does not exist.")
 
 
