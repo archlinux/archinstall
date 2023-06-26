@@ -421,7 +421,7 @@ class SysCommand:
 			remove_vt100_escape_codes_from_lines=self.remove_vt100_escape_codes_from_lines,
 			working_directory=self.working_directory) as session:
 
-			self.session = self.session or session
+			self.session = session
 
 			while self.session.ended is None:
 				self.session.poll()
