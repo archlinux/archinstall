@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, List, Optional
 
 from .device_handler import device_handler
-from .device_model import PartitionModification, LvmConfiguration, DeviceModification
+from .device_model import PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus
 from ..menu import ListManager, TableMenu, MenuSelectionType
 
 if TYPE_CHECKING:
@@ -29,27 +29,50 @@ class LvmList(ListManager):
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
 
 
-def _determine_pv_selection() -> List[PartitionModification]:
-	devices = device_handler.devices
-	options = [d.device_info for d in devices]
+def _determine_pv_selection(
+	device_mods: List[DeviceModification] = []
+) -> List[PartitionModification]:
+	"""
+	We'll be determining which partitions to display for the PV
+	selection; to make the configuration as flexible as possible
+	we'll use all existing partitions and then apply the
+	configuration partition configurations on top
+	"""
+	options: List[PartitionModification] = []
 
-	from .device_model import _PartitionInfo
-	all_existing_partitions: List[PartitionModification] = []
-
+	# add all existing partitions known to the world
 	for device in device_handler.devices:
 		dev = device_handler.get_device(device.device_info.path)
 		if dev and dev.partition_infos:
 			for partition in dev.partition_infos:
 				part_mod = PartitionModification.from_existing_partition(partition)
-				all_existing_partitions.append(part_mod)
+				options.append(part_mod)
 
-	return all_existing_partitions
+	for dev_mod in device_mods:
+		# remove all partitions that would be wiped
+		if dev_mod.wipe:
+			options = list(filter(lambda x: x.part_info not in dev_mod.device.partition_infos, options))
+
+		for part_mod in dev_mod.partitions:
+			match part_mod.status:
+				case ModificationStatus.Exist:
+					# should already be in the list
+					pass
+				case ModificationStatus.Create:
+					options.append(part_mod)
+				case ModificationStatus.Delete:
+					options = list(filter(lambda x: x != part_mod.part_info, options))
+				case ModificationStatus.Modify:
+					options = list(filter(lambda x: x != part_mod.part_info, options))
+					options.append(part_mod)
+
+	return options
 
 
 def select_lvm_pv(
 	preset: List[PartitionModification] = [],
 	device_mods: List[DeviceModification] = []
-) -> Optional[List[DeviceModification]]:
+) -> Optional[List[PartitionModification]]:
 	title = str(_('Select the devices to use as physical volumes (PV)'))
 	warning = str(_('If you reset the device selection then the entire LVM configuration will be reset. Are you sure?'))
 
@@ -57,7 +80,7 @@ def select_lvm_pv(
 	# for d in device_mods:
 	# 	options += d.partitions
 
-	options = _determine_pv_selection()
+	options = _determine_pv_selection(device_mods)
 
 	choice = TableMenu(
 		title,
@@ -86,11 +109,3 @@ def manual_lvm(
 		return None
 
 	return None
-
-
-
-
-
-
-
-
