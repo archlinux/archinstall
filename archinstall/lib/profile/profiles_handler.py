@@ -11,7 +11,7 @@ from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import AVAILABLE_GFX_DRIVERS
+from ..hardware import GfxDriver, GfxPackage
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info, warn
@@ -188,17 +188,18 @@ class ProfileHandler:
 		if service:
 			install_session.enable_service(service)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: str):
+	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
 		try:
-			driver_pkgs = AVAILABLE_GFX_DRIVERS[driver] if driver else []
-			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
+			driver_pkgs = driver.packages() if driver else []
+			pkg_names = [p.value for p in driver_pkgs]
+			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + pkg_names)
 
 			if driver is not None:
 				# Find the intersection between the set of known nvidia drivers
 				# and the selected driver packages. Since valid intesections can
 				# only have one element or none, we iterate and try to take the
 				# first element.
-				if driver_pkg := next(iter({'nvidia','nvidia-open'} & set(driver_pkgs)), None):
+				if driver_pkg := next(iter({GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs)), None):
 					if any(kernel in install_session.base_packages for kernel in ("linux-lts", "linux-zen")):
 						for kernel in install_session.kernels:
 							# Fixes https://github.com/archlinux/archinstall/issues/585

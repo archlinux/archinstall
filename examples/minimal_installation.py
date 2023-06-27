@@ -66,7 +66,7 @@ def parse_disk_encryption():
 			partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
 		archinstall.arguments['disk_encryption'] = disk.DiskEncryption(
-			encryption_type=disk.EncryptionType.Partition,
+			encryption_type=disk.EncryptionType.Luks,
 			encryption_password=enc_password,
 			partitions=partitions
 		)

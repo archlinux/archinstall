@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, TYPE_CHECKING, Optional
+from typing import List, Any, TYPE_CHECKING, Optional
 
-from ..hardware import AVAILABLE_GFX_DRIVERS, SysInfo
+from ..hardware import SysInfo, GfxDriver
 from ..menu import MenuSelectionType, Menu
 from ..models.bootloader import Bootloader
 
@@ -65,7 +65,7 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	return preset
 
 
-def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = None) -> Optional[str]:
+def select_driver(options: List[GfxDriver] = [], current_value: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -73,11 +73,10 @@ def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = N
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-
 	if not options:
-		options = AVAILABLE_GFX_DRIVERS
+		options = [driver for driver in GfxDriver]
 
-	drivers = sorted(list(options.keys()))
+	drivers = sorted([o.value for o in options])
 
 	if drivers:
 		title = ''
@@ -90,13 +89,18 @@ def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = N
 
 		title += str(_('\nSelect a graphics driver or leave blank to install all open-source drivers'))
 
-		preset = current_value if current_value else None
-		choice = Menu(title, drivers, preset_values=preset).run()
+		preset = current_value.value if current_value else None
+		choice = Menu(
+			title,
+			drivers,
+			preset_values=preset,
+			default_option=GfxDriver.AllOpenSource.value
+		).run()
 
 		if choice.type_ != MenuSelectionType.Selection:
-			return None
+			return current_value
 
-		return choice.value  # type: ignore
+		return GfxDriver(choice.single_value)
 
 	return current_value
 

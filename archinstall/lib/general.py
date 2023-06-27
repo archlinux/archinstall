@@ -15,6 +15,7 @@ import urllib.request
 import urllib.error
 import pathlib
 from datetime import datetime, date
+from enum import Enum
 from typing import Callable, Optional, Dict, Any, List, Union, Iterator, TYPE_CHECKING
 from select import epoll, EPOLLIN, EPOLLHUP
 
@@ -57,89 +58,55 @@ def clear_vt100_escape_codes(data :Union[bytes, str]) -> Union[bytes, str]:
 	return data
 
 
-class JsonEncoder:
-	@staticmethod
-	def _encode(obj :Any) -> Any:
-		"""
-		This JSON encoder function will try it's best to convert
-		any archinstall data structures, instances or variables into
-		something that's understandable by the json.parse()/json.loads() lib.
+def jsonify(obj: Any, safe: bool = True) -> Any:
+	"""
+	Converts objects into json.dumps() compatible nested dictionaries.
+	Setting safe to True skips dictionary keys starting with a bang (!)
+	"""
 
-		_encode() will skip any dictionary key starting with an exclamation mark (!)
-		"""
-		if isinstance(obj, dict):
-			# We'll need to iterate not just the value that default() usually gets passed
-			# But also iterate manually over each key: value pair in order to trap the keys.
-
-			copy = {}
-			for key, val in list(obj.items()):
-				if isinstance(val, dict):
-					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
-					val = json.loads(json.dumps(val, cls=JSON))
-				else:
-					val = JsonEncoder._encode(val)
-
-				if type(key) == str and key[0] == '!':
-					pass
-				else:
-					copy[JsonEncoder._encode(key)] = val
-			return copy
-		elif hasattr(obj, 'json'):
-			# json() is a friendly name for json-helper, it should return
-			# a dictionary representation of the object so that it can be
-			# processed by the json library.
-			return json.loads(json.dumps(obj.json(), cls=JSON))
-		elif hasattr(obj, '__dump__'):
-			return obj.__dump__()
-		elif isinstance(obj, (datetime, date)):
-			return obj.isoformat()
-		elif isinstance(obj, (list, set, tuple)):
-			return [json.loads(json.dumps(item, cls=JSON)) for item in obj]
-		elif isinstance(obj, pathlib.Path):
-			return str(obj)
-		else:
-			return obj
-
-	@staticmethod
-	def _unsafe_encode(obj :Any) -> Any:
-		"""
-		Same as _encode() but it keeps dictionary keys starting with !
-		"""
-		if isinstance(obj, dict):
-			copy = {}
-			for key, val in list(obj.items()):
-				if isinstance(val, dict):
-					# This, is a EXTREMELY ugly hack.. but it's the only quick way I can think of to trigger a encoding of sub-dictionaries.
-					val = json.loads(json.dumps(val, cls=UNSAFE_JSON))
-				else:
-					val = JsonEncoder._unsafe_encode(val)
-
-				copy[JsonEncoder._unsafe_encode(key)] = val
-			return copy
-		else:
-			return JsonEncoder._encode(obj)
-
+	compatible_types = str, int, float, bool
+	if isinstance(obj, dict):
+		return {
+			key: jsonify(value, safe)
+			for key, value in obj.items()
+			if isinstance(key, compatible_types)
+			and not (isinstance(key, str) and key.startswith("!") and safe)
+		}
+	if isinstance(obj, Enum):
+		return obj.value
+	if hasattr(obj, 'json'):
+		# json() is a friendly name for json-helper, it should return
+		# a dictionary representation of the object so that it can be
+		# processed by the json library.
+		return jsonify(obj.json(), safe)
+	if hasattr(obj, '__dump__'):
+		return obj.__dump__()
+	if isinstance(obj, (datetime, date)):
+		return obj.isoformat()
+	if isinstance(obj, (list, set, tuple)):
+		return [jsonify(item, safe) for item in obj]
+	if isinstance(obj, pathlib.Path):
+		return str(obj)
+	if hasattr(obj, "__dict__"):
+		return vars(obj)
+	return str(obj)
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	A safe JSON encoder that will omit private information in dicts (starting with !)
 	"""
-	def _encode(self, obj :Any) -> Any:
-		return JsonEncoder._encode(obj)
 
-	def encode(self, obj :Any) -> Any:
-		return super(JSON, self).encode(self._encode(obj))
+	def encode(self, obj: Any) -> str:
+		return super().encode(jsonify(obj))
 
 
 class UNSAFE_JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
 	UNSAFE_JSON will call/encode and keep private information in dicts (starting with !)
 	"""
-	def _encode(self, obj :Any) -> Any:
-		return JsonEncoder._unsafe_encode(obj)
 
-	def encode(self, obj :Any) -> Any:
-		return super(UNSAFE_JSON, self).encode(self._encode(obj))
+	def encode(self, obj: Any) -> str:
+		return super().encode(jsonify(obj, safe=False))
 
 
 class SysCommandWorker:
