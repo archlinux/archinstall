@@ -11,6 +11,8 @@ from .device_model import (
 	BDevice,
 	DiskLayoutType,
 	DiskLayoutConfiguration,
+	LvmLayoutType,
+	LvmConfiguration,
 	PartitionTable,
 	Unit,
 	Size,
@@ -40,3 +42,7 @@ from .encryption_menu import (
 )
 
 from .disk_menu import 	DiskLayoutConfigurationMenu
+
+from .lvm_menu import (
+	manual_lvm
+)

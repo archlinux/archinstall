@@ -6,6 +6,7 @@ from ..disk import (
 	DeviceModification
 )
 from ..interactions import select_disk_config
+from ..interactions.disk_conf import select_lvm_config
 from ..menu import (
 	Selector,
 	AbstractSubMenu
@@ -45,7 +46,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 				# display_func=lambda x: self._display_disk_layout(x),
 				# preview_func=self._prev_disk_layouts,
 				default=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
-				dependencies=[lambda x: self._check_dep_lvm()],
+				dependencies=[self._check_dep_lvm],
 				enabled=True
 			)
 
@@ -55,14 +56,20 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		disk_layout_config: Optional[DiskLayoutConfiguration] = self._data_store.get('disk_config', None)
 
 		if disk_layout_config:
+			disk_layout_config.lvm_config = self._data_store.get('lvm_config', None)
 			return disk_layout_config
+
 		return None
 
 	def _check_dep_lvm(self) -> bool:
 		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
-		if disk_layout_conf:
-			if disk_layout_conf.config_type != DiskLayoutType.Pre_mount:
-				return True
+
+		if not disk_layout_conf:
+			return True
+
+		if disk_layout_conf.config_type != DiskLayoutType.Pre_mount:
+			return True
+
 		return False
 
 	def _select_disk_layout_config(self) -> Optional[DiskLayoutConfiguration]:
@@ -70,7 +77,9 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return select_disk_config(disk_config, advanced_option=self._advanced)
 
 	def _select_lvm_config(self) -> Optional[LvmConfiguration]:
-		return None
+		disk_config = self._menu_options['disk_config'].current_selection
+		lvm_config = self._menu_options['lvm_config'].current_selection
+		return select_lvm_config(disk_config, preset=lvm_config)
 
 	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:

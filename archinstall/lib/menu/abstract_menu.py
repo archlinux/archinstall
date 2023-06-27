@@ -383,21 +383,22 @@ class AbstractMenu:
 				return False
 
 			if len(selection.dependencies) > 0:
-				for d in selection.dependencies:
-					if isinstance(d, str):
-						if not self._verify_selection_enabled(d) or self._menu_options[d].is_empty():
+				for dep in selection.dependencies:
+					if isinstance(dep, str):
+						if not self._verify_selection_enabled(dep) or self._menu_options[dep].is_empty():
 							return False
-					else:  # callable dependency eval
-						return d()
+					elif callable(dep):  # callable dependency eval
+						return dep()
+					else:
+						raise ValueError(f'Unsupported dependency: {selection_name}')
 
 			if len(selection.dependencies_not) > 0:
-				for d in selection.dependencies_not:
-					if not self._menu_options[d].is_empty():
+				for dep in selection.dependencies_not:
+					if not self._menu_options[dep].is_empty():
 						return False
 			return True
 
 		raise ValueError(f'No selection found: {selection_name}')
-
 
 	def _menus_to_enable(self) -> dict:
 		""" general """

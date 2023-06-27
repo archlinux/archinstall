@@ -56,7 +56,7 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 		case MenuSelectionType.Reset: return []
 		case MenuSelectionType.Skip: return preset
 		case MenuSelectionType.Selection:
-			selected_device_info: List[disk._DeviceInfo] = choice.value  # type: ignore
+			selected_device_info: List[disk._DeviceInfo] = choice.single_value
 			selected_devices = []
 
 			for device in devices:
@@ -168,6 +168,40 @@ def select_disk_config(
 					)
 
 	return None
+
+
+def select_lvm_config(
+	disk_config: disk.DiskLayoutConfiguration,
+	preset: Optional[disk.LvmConfiguration] = None,
+) -> Optional[disk.LvmConfiguration]:
+	manual_mode = disk.LvmLayoutType.Manual.display_msg()
+
+	options = [manual_mode]
+	# preset_value = preset.config_type.display_msg() if preset else None
+	warning = str(_('Are you sure you want to reset this setting?'))
+
+	choice = Menu(
+		_('Select a LVM option'),
+		options,
+		allow_reset=True,
+		allow_reset_warning_msg=warning,
+		sort=False,
+		preview_size=0.2
+		# preset_values=preset_value
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Selection:
+			if choice.value == manual_mode:
+				modifications = disk.manual_lvm(preset, disk_config.device_modifications)
+
+				if modifications:
+					return disk.LvmConfiguration(
+						config_type=disk.LvmLayoutType.Manual
+					)
+	return preset
 
 
 def _boot_partition() -> disk.PartitionModification:

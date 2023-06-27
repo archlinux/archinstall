@@ -745,9 +745,17 @@ class PartitionModification:
 		return part_mod
 
 
+class LvmLayoutType(Enum):
+	Manual = 'manual_partitioning'
+
+	def display_msg(self) -> str:
+		match self:
+			case LvmLayoutType.Manual: return str(_('Manual configuration'))
+
+
 @dataclass
 class LvmConfiguration:
-	test: str
+	config_type: LvmLayoutType
 
 
 @dataclass
