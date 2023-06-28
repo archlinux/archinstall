@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       - name: Prepare arch
@@ -23,7 +22,6 @@ jobs:
           pacman --noconfirm -Sy python-pyparted pkgconfig gcc
       - name: Install build dependencies
         run: |
-          ln -s /usr/bin/python3.11 /usr/bin/python
           python -m pip install --upgrade pip
           pip install --upgrade build twine wheel setuptools installer
           pip uninstall archinstall -y
