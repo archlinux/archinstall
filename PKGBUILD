@@ -14,6 +14,7 @@ depends=(
   'python'
   'systemd'
   'python-pyparted'
+  'python-simple-term-menu'
 )
 makedepends=(
   'python-setuptools'
