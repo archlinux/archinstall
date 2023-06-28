@@ -26,7 +26,7 @@ class ConfigurationOutput:
 		self._config = config
 		self._user_credentials: Dict[str, Any] = {}
 		self._user_config: Dict[str, Any] = {}
-		self._default_save_path = Path(storage.get('LOG_PATH', '.'))
+		self._default_save_path = storage.get('LOG_PATH', Path('.'))
 		self._user_config_file = 'user_configuration.json'
 		self._user_creds_file = "user_credentials.json"
 
@@ -44,17 +44,17 @@ class ConfigurationOutput:
 		return self._user_config_file
 
 	def _process_config(self):
-		for key in self._config:
+		for key, value in self._config.items():
 			if key in self._sensitive:
-				self._user_credentials[key] = self._config[key]
+				self._user_credentials[key] = value
 			elif key in self._ignore:
 				pass
 			else:
-				self._user_config[key] = self._config[key]
+				self._user_config[key] = value
 
 			# special handling for encryption password
-			if key == 'disk_encryption' and self._config[key] is not None:
-				self._user_credentials['encryption_password'] = self._config[key].encryption_password
+			if key == 'disk_encryption' and value:
+				self._user_credentials['encryption_password'] = value.encryption_password
 
 	def user_config_to_json(self) -> str:
 		return json.dumps({
@@ -72,42 +72,33 @@ class ConfigurationOutput:
 		print(_('\nThis is your chosen configuration:'))
 		debug(" -- Chosen configuration --")
 
-		user_conig = self.user_config_to_json()
-		info(user_conig)
-
+		info(self.user_config_to_json())
 		print()
 
 	def _is_valid_path(self, dest_path: Path) -> bool:
-		if (not dest_path.exists()) or not (dest_path.is_dir()):
+		dest_path_ok = dest_path.exists() and dest_path.is_dir()
+		if not dest_path_ok:
 			warn(
 				f'Destination directory {dest_path.resolve()} does not exist or is not a directory\n.',
 				'Configuration files can not be saved'
 			)
-			return False
-		return True
+		return dest_path_ok
 
 	def save_user_config(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			target = dest_path / self._user_config_file
-
-			with open(target, 'w') as config_file:
-				config_file.write(self.user_config_to_json())
-
-			os.chmod(str(dest_path / self._user_config_file), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+			target.write_text(self.user_config_to_json())
+			os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save_user_creds(self, dest_path: Path):
 		if self._is_valid_path(dest_path):
 			if user_creds := self.user_credentials_to_json():
 				target = dest_path / self._user_creds_file
-
-				with open(target, 'w') as config_file:
-					config_file.write(user_creds)
-
-				os.chmod(str(target), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
+				target.write_text(user_creds)
+				os.chmod(target, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP)
 
 	def save(self, dest_path: Optional[Path] = None):
-		if not dest_path:
-			dest_path = self._default_save_path
+		dest_path = dest_path or self._default_save_path
 
 		if self._is_valid_path(dest_path):
 			self.save_user_config(dest_path)
@@ -116,33 +107,33 @@ class ConfigurationOutput:
 
 def save_config(config: Dict):
 	def preview(selection: str):
-		if options["user_config"] == selection:
-			serialized = config_output.user_config_to_json()
-			return f"{config_output.user_configuration_file}\n{serialized}"
-		elif options["user_creds"] == selection:
-			if maybe_serial := config_output.user_credentials_to_json():
-				return f"{config_output.user_credentials_file}\n{maybe_serial}"
-			else:
+		match options[selection]:
+			case "user_config":
+				serialized = config_output.user_config_to_json()
+				return f"{config_output.user_configuration_file}\n{serialized}"
+			case "user_creds":
+				if maybe_serial := config_output.user_credentials_to_json():
+					return f"{config_output.user_credentials_file}\n{maybe_serial}"
 				return str(_("No configuration"))
-		elif options["all"] == selection:
-			output = f"{config_output.user_configuration_file}\n"
-			if config_output.user_credentials_to_json():
-				output += f"{config_output.user_credentials_file}\n"
-			return output[:-1]
+			case "all":
+				output = [config_output.user_configuration_file]
+				if config_output.user_credentials_to_json():
+					output.append(config_output.user_credentials_file)
+				return '\n'.join(output)
 		return None
 
 	try:
 		config_output = ConfigurationOutput(config)
 
 		options = {
-			"user_config": str(_("Save user configuration (including disk layout)")),
-			"user_creds": str(_("Save user credentials")),
-			"all": str(_("Save all")),
+			str(_("Save user configuration (including disk layout)")): "user_config",
+			str(_("Save user credentials")): "user_creds",
+			str(_("Save all")): "all",
 		}
 
 		save_choice = Menu(
 			_("Choose which configuration to save"),
-			list(options.values()),
+			list(options),
 			sort=False,
 			skip=True,
 			preview_size=0.75,
@@ -170,27 +161,21 @@ def save_config(config: Dict):
 
 		prompt = _(
 			"Do you want to save {} configuration file(s) in the following location?\n\n{}"
-		).format(
-			list(options.keys())[list(options.values()).index(str(save_choice.value))],
-			dest_path.absolute(),
-		)
+		).format(options[str(save_choice.value)], dest_path.absolute())
+
 		save_confirmation = Menu(prompt, Menu.yes_no(), default_option=Menu.yes()).run()
 		if save_confirmation == Menu.no():
 			return
 
-		debug(
-			_("Saving {} configuration files to {}").format(
-				list(options.keys())[list(options.values()).index(str(save_choice.value))],
-				dest_path.absolute(),
-			)
-		)
+		debug("Saving {} configuration files to {}".format(options[str(save_choice.value)], dest_path.absolute()))
 
-		if options["user_config"] == save_choice.value:
-			config_output.save_user_config(dest_path)
-		elif options["user_creds"] == save_choice.value:
-			config_output.save_user_creds(dest_path)
-		elif options["all"] == save_choice.value:
-			config_output.save_user_config(dest_path)
-			config_output.save_user_creds(dest_path)
+		match options[str(save_choice.value)]:
+			case "user_config":
+				config_output.save_user_config(dest_path)
+			case "user_creds":
+				config_output.save_user_creds(dest_path)
+			case "all":
+				config_output.save(dest_path)
+
 	except KeyboardInterrupt:
 		return

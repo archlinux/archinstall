@@ -1176,3 +1176,10 @@ msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλλη�
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"

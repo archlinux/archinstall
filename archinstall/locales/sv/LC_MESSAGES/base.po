@@ -1183,3 +1183,10 @@ msgstr ""
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Använd NetworkManager (nödvändig för konfigurera internet i grafiska miljöerna GNOME och KDE)"

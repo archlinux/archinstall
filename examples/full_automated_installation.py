@@ -63,7 +63,7 @@ disk_config = disk.DiskLayoutConfiguration(
 # disk encryption configuration (Optional)
 disk_encryption = disk.DiskEncryption(
 	encryption_password="enc_password",
-	encryption_type=disk.EncryptionType.Partition,
+	encryption_type=disk.EncryptionType.Luks,
 	partitions=[home_partition],
 	hsm_device=None
 )

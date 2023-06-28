@@ -791,18 +791,19 @@ msgstr "已配置的 {} 接口"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "此選項啟用安裝期間可能發生的並行下載數"
 
-#, python-brace-format
+#, fuzzy
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "輸入要啟用的並行下載數。\n"
 "  （輸入一個 1 到 {max_downloads} 之間的值）\n"
 "提示："
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 最大值：{max_downloads}（允許 {max_downloads} 个並行下載，同時允許 {max_downloads+1} 个下載）"
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr "  - 最小值：1（允許 1 个並行下載，同時允許 2 个下載）"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr "  - 最小值：1（允許 1 个並行下載，同時允許 2 个下載）"
@@ -1072,40 +1073,6 @@ msgid "Select directory (or directories) for saving configuration files"
 msgstr "選擇用於保存配置文件的目錄（或多個目錄）"
 
 #, fuzzy
-msgid "Mirrors"
-msgstr "鏡像區域"
-
-msgid "Defined"
-msgstr ""
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "鏡像區域"
-
-msgid "Custom mirrors"
-msgstr ""
-
-#, fuzzy
-msgid "Save user configuration (including disk layout)"
-msgstr "保存使用者配置"
-
-#, fuzzy
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr "輸入要保存配置的目錄："
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-
-#, fuzzy
-msgid "Saving {} configuration files to {}"
-msgstr "保存配置"
-
-#, fuzzy
 msgid "Add a custom mirror"
 msgstr "新增一個使用者"
 
@@ -1130,3 +1097,52 @@ msgstr "選擇硬盤加密選項"
 #, fuzzy
 msgid "Select signature option"
 msgstr "選擇硬盤加密選項"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "保存使用者配置"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "輸入要保存配置的目錄："
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "保存配置"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "鏡像區域"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "鏡像區域"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 最大值：{max_downloads}（允許 {max_downloads} 个並行下載，同時允許 {max_downloads+1} 个下載）"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "輸入無效！ 請嘗試使用有效輸入重試 [1 到 {max_downloads}，或 0 到禁用]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 透過圖形界面設置網際網路連線所需）"

@@ -1072,29 +1072,33 @@ msgstr "Finde mögliche Pfade um Konfigurationsdateien zu speichern..."
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Ordner um Konfigurationsdateien zu erstellen auswählen"
 
+#, fuzzy
 msgid "Add a custom mirror"
-msgstr "Eigenen Spiegelserver hinzufügen"
+msgstr "Benutzerkonto hinzufügen"
 
 msgid "Change custom mirror"
-msgstr "Eigenen Spiegelserver ändern"
+msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
 
 msgid "Delete custom mirror"
-msgstr "Eigenen Spiegelserver löschen"
+msgstr "Benutzerdefinierten Spiegelserver löschen"
 
+#, fuzzy
 msgid "Enter name (leave blank to skip): "
-msgstr "Namen eingeben (leer lassen zum überspringen): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
 
+#, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr "URL eingeben (leer lassen zum überspringen): "
+msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
 
+#, fuzzy
 msgid "Select signature check option"
-msgstr "Signatursüberprüfungsoptions auswählen"
+msgstr "Laufwerke-layout auswählen"
 
 msgid "Select signature option"
 msgstr "Signatursoption auswählen"
 
 msgid "Custom mirrors"
-msgstr "Eigener Spiegelserver"
+msgstr "Benutzerdefinierte Spiegelserver"
 
 msgid "Defined"
 msgstr "Definiert"
@@ -1127,137 +1131,15 @@ msgstr "Spiegelserver"
 msgid "Mirror regions"
 msgstr "Spiegelserverregionen"
 
-#, fuzzy
-msgid "Add a custom mirror"
-msgstr "Benutzerkonto hinzufügen"
-
-msgid "Change custom mirror"
-msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
-
-msgid "Delete custom mirror"
-msgstr "Benutzerdefinierten Spiegelserver löschen"
-
-#, fuzzy
-msgid "Enter name (leave blank to skip): "
-msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
-
-#, fuzzy
-msgid "Enter url (leave blank to skip): "
-msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
-
-#, fuzzy
-msgid "Select signature check option"
-msgstr "Laufwerke-layout auswählen"
-
-#, fuzzy
-msgid "Select signature option"
-msgstr "Laufwerke-layout auswählen"
-
-msgid "Custom mirrors"
-msgstr "Benutzerdefinierte Spiegelserver"
-
-msgid "Defined"
-msgstr "Definiert"
-
-#, fuzzy
-msgid "Mirrors"
-msgstr "Mirror-region"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Mirror-region"
-
-#, fuzzy
-msgid "Save user configuration (including disk layout)"
-msgstr "Benutzerkonfiguration speichern"
-
-#, fuzzy
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-
-#, fuzzy
-msgid "Saving {} configuration files to {}"
-msgstr "Konfiguration speichern"
-
-#, fuzzy
-msgid "Add a custom mirror"
-msgstr "Benutzerkonto hinzufügen"
-
-msgid "Change custom mirror"
-msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
-
-msgid "Delete custom mirror"
-msgstr "Benutzerdefinierte Spiegelserver bearbeiten"
-
-#, fuzzy
-msgid "Enter name (leave blank to skip): "
-msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
-
-#, fuzzy
-msgid "Enter url (leave blank to skip): "
-msgstr "Geben sie einen weiteren Benutzernamen an der angelegt werden soll (leer lassen um zu Überspringen): "
-
-#, fuzzy
-msgid "Select signature check option"
-msgstr "Laufwerke-layout auswählen"
-
-#, fuzzy
-msgid "Select signature option"
-msgstr "Laufwerke-layout auswählen"
-
-msgid "Custom mirrors"
-msgstr "Benutzerdefinierte Spiegel"
-
-msgid "Defined"
-msgstr "Definiert"
-
-#, fuzzy
-msgid "Save user configuration (including disk layout)"
-msgstr "Benutzerkonfiguration speichern"
-
-#, fuzzy
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr "Geben sie eine Ordner an wo die Konfigurationen gespeichert werden sollen: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-"Sollen {} Konfigurationsdateie(n) an der folgenden Stelle gespeichert werden?"
-"\n"
-"{}"
-
-#, fuzzy
-msgid "Saving {} configuration files to {}"
-msgstr "Konfiguration speichern"
-
-#, fuzzy
-msgid "Mirrors"
-msgstr "Mirror-region"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Mirror-region"
-
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - Maximalwert    : {} ( Erlaubt {} parallele Downloads, erlaubt {max_downloads+1} Downloads gleichzeitig)"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Ungültige Eingabe! Erneut mit gültiger Eingabe versuchen [1 bis {}, oder 0 zum deaktivieren]"
 
-#~ msgid "Add :"
-#~ msgstr "Hinzufügen :"
+msgid "Locales"
+msgstr ""
 
-#~ msgid "Value :"
-#~ msgstr "Wert :"
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager benutzen (notwendig um Internet auf grafische Weise in GNOME und KDE einzustellen)"

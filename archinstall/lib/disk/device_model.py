@@ -137,6 +137,10 @@ class Unit(Enum):
 
 	Percent = '%' 	# size in percentile
 
+	@staticmethod
+	def get_all_units() -> List[str]:
+		return [u.name for u in Unit]
+
 
 @dataclass
 class Size:
@@ -214,16 +218,25 @@ class Size:
 				value = int(self._normalize() / target_unit.value)  # type: ignore
 				return Size(value, target_unit)
 
+	def as_text(self) -> str:
+		return self.format_size(
+			self.unit,
+			self.sector_size
+		)
+
 	def format_size(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None
+		sector_size: Optional[Size] = None,
+		include_unit: bool = True
 	) -> str:
 		if self.unit == Unit.Percent:
 			return f'{self.value}%'
 		else:
 			target_size = self.convert(target_unit, sector_size)
-			return f'{target_size.value} {target_unit.name}'
+			if include_unit:
+				return f'{target_size.value} {target_unit.name}'
+			return f'{target_size.value}'
 
 	def _normalize(self) -> int:
 		"""
@@ -270,7 +283,7 @@ class _PartitionInfo:
 	partition: Partition
 	name: str
 	type: PartitionType
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	path: Path
 	start: Size
 	length: Size
@@ -280,7 +293,7 @@ class _PartitionInfo:
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		part_info = {
 			'Name': self.name,
 			'Type': self.type.value,
@@ -300,7 +313,7 @@ class _PartitionInfo:
 	def from_partition(
 		cls,
 		partition: Partition,
-		fs_type: FilesystemType,
+		fs_type: Optional[FilesystemType],
 		partuuid: str,
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
@@ -343,7 +356,7 @@ class _DeviceInfo:
 	read_only: bool
 	dirty: bool
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
 		return {
 			'Model': self.model,
@@ -440,7 +453,7 @@ class SubvolumeModification:
 			'nodatacow': self.nodatacow
 		}
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		return {
 			'name': str(self.name),
 			'mountpoint': str(self.mountpoint),
@@ -465,12 +478,20 @@ class DeviceGeometry:
 	def get_length(self, unit: Unit = Unit.sectors) -> int:
 		return self._geometry.getLength(unit.name)
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
+		start = Size(self._geometry.start, Unit.sectors, self._sector_size)
+		end = Size(self._geometry.end, Unit.sectors, self._sector_size)
+		length = Size(self._geometry.getLength(), Unit.sectors, self._sector_size)
+
+		start_str = f'{self._geometry.start} / {start.format_size(Unit.B, include_unit=False)}'
+		end_str = f'{self._geometry.end} / {end.format_size(Unit.B, include_unit=False)}'
+		length_str = f'{self._geometry.getLength()} / {length.format_size(Unit.B, include_unit=False)}'
+
 		return {
 			'Sector size': self._sector_size.value,
-			'Start sector': self._geometry.start,
-			'End sector': self._geometry.end,
-			'Length': self._geometry.getLength()
+			'Start (sector/B)': start_str,
+			'End (sector/B)': end_str,
+			'Length (sectors/B)': length_str
 		}
 
 
@@ -573,7 +594,7 @@ class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
@@ -592,6 +613,9 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
+		if self.fs_type is None and self.status == ModificationStatus.Modify:
+			raise ValueError('FS type must not be empty on modifications with status type modify')
+
 	def __hash__(self):
 		return hash(self._obj_id)
 
@@ -606,6 +630,12 @@ class PartitionModification:
 		if self.dev_path is None:
 			raise ValueError('Device path was not set')
 		return self.dev_path
+
+	@property
+	def safe_fs_type(self) -> FilesystemType:
+		if self.fs_type is None:
+			raise ValueError('File system type is not set')
+		return self.fs_type
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
@@ -693,14 +723,14 @@ class PartitionModification:
 			'type': self.type.value,
 			'start': self.start.__dump__(),
 			'length': self.length.__dump__(),
-			'fs_type': self.fs_type.value,
+			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
 			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		"""
 		Called for displaying data in table format
 		"""
@@ -710,7 +740,7 @@ class PartitionModification:
 			'Type': self.type.value,
 			'Start': self.start.format_size(Unit.MiB),
 			'Length': self.length.format_size(Unit.MiB),
-			'FS type': self.fs_type.value,
+			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
 			'Flags': ', '.join([f.name for f in self.flags]),
@@ -756,13 +786,12 @@ class DeviceModification:
 
 class EncryptionType(Enum):
 	NoEncryption = "no_encryption"
-	Partition = "partition"
+	Luks = "luks"
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
 		return {
-			# str(_('Full disk encryption')): EncryptionType.FullDiskEncryption,
-			str(_('Partition encryption')): EncryptionType.Partition
+			'Luks': EncryptionType.Luks
 		}
 
 	@classmethod
@@ -779,7 +808,7 @@ class EncryptionType(Enum):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.Partition
+	encryption_type: EncryptionType = EncryptionType.Luks
 	encryption_password: str = ''
 	partitions: List[PartitionModification] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
