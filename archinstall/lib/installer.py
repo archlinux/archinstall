@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
+from ..lib.disk.device_model import get_lsblk_info
+
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -858,6 +860,10 @@ class Installer:
 		self._pacstrap('limine')
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
+		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
+		#      partition before the format.
+		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
+
 		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 		if not device:
 			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
@@ -925,7 +931,7 @@ Description = Deploying Limine after upgrade...
 When = PostTransaction
 # XXX: Kernel name descriptors cannot be used since they are not persistent and
 #      can change after each boot.
-Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_partition.uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
 			""")
 
 		# Limine does not ship with a default configuation file. We are going to
@@ -937,13 +943,13 @@ TIMEOUT=5
 :Arch Linux
 	PROTOCOL=linux
 	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
 	MODULE_PATH=boot:///initramfs-linux.img
 
 :Arch Linux (fallback)
 	PROTOCOL=linux
 	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_partition.uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
 	MODULE_PATH=boot:///initramfs-linux-fallback.img
 			"""
 
