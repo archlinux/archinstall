@@ -11,19 +11,19 @@ arch=(any)
 url="https://github.com/archlinux/archinstall"
 license=(GPL3)
 depends=(
-  'python'
-  'systemd'
-  'procps-ng'
-  'pciutils'
   'arch-install-scripts'
-  'e2fsprogs'
-  'util-linux'
+  'btrfs-progs'
   'coreutils'
   'cryptsetup'
+  'e2fsprogs'
   'kbd'
-  'btrfs-progs'
+  'pciutils'
+  'procps-ng'
+  'python'
   'python-pyparted'
   'python-simple-term-menu'
+  'systemd'
+  'util-linux'
 )
 makedepends=(
   'python-setuptools'
