@@ -17,14 +17,19 @@ The installer also doubles as a python library to install Arch Linux and manage 
 
     $ sudo pacman -S archinstall
 
-Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
-Or use `pip install --upgrade archinstall` to use as a library.
+Alternative ways to install are `git clone` the repository or `pip install --upgrade archinstall`.
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
-Assuming you are on an Arch Linux live-ISO:
+Assuming you are on an Arch Linux live-ISO or installed via `pip`:
 
     # archinstall
+
+## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
+
+    # cd archinstall-git
+    # cp archinstall/scripts/guided.py
+    # python guided.py
 
 #### Advanced
 Some additional options that are not needed by most users are hidden behind the `--advanced` flag.

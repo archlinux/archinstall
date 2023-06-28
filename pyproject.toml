@@ -11,12 +11,12 @@ authors = [
 ]
 license = {text = "GPL-3.0-only"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
@@ -60,7 +60,7 @@ packages = ["archinstall"]
 # where = ["archinstall"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 files = "archinstall/"
 exclude = "tests"
 #check_untyped_defs=true
