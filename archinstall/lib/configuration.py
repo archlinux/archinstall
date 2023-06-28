@@ -167,9 +167,7 @@ def save_config(config: Dict):
 		if save_confirmation == Menu.no():
 			return
 
-		debug(
-			_("Saving {} configuration files to {}").format(options[str(save_choice.value)], dest_path.absolute())
-		)
+		debug("Saving {} configuration files to {}".format(options[str(save_choice.value)], dest_path.absolute()))
 
 		match options[str(save_choice.value)]:
 			case "user_config":
