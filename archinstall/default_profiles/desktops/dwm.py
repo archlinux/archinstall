@@ -19,11 +19,11 @@ class BspwmProfile(XorgProfile):
 			'dmenu',
 			'picom',
 			'xorg-xsetroot',
-      'xorg-xset',
-      'pywal',
-      'xdo',
-      'dunst',
-      'slock'
+			'xorg-xset',
+			'pywal',
+			'xdo',
+			'dunst',
+			'slock'
 		]
 
 	@property
