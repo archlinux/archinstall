@@ -13,6 +13,15 @@ license=(GPL3)
 depends=(
   'python'
   'systemd'
+  'procps-ng'
+  'pciutils'
+  'arch-install-scripts'
+  'e2fsprogs'
+  'util-linux'
+  'coreutils'
+  'cryptsetup'
+  'kbd'
+  'btrfs-progs'
   'python-pyparted'
   'python-simple-term-menu'
 )
