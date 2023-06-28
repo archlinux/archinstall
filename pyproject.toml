@@ -14,8 +14,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 keywords = ["linux", "arch", "archinstall", "installer"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.11",
     "Operating System :: POSIX :: Linux",
 ]
