@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, TYPE_CHECKING
+from typing import List, Any, TYPE_CHECKING
 
 from archinstall.default_profiles.profile import ProfileType
 from archinstall.default_profiles.xorg import XorgProfile
@@ -15,10 +15,6 @@ class AwesomeProfile(XorgProfile):
 	@property
 	def packages(self) -> List[str]:
 		return ['alacritty']
-
-	def preview_text(self) -> Optional[str]:
-		text = str(_('Environment type: {}')).format(self.profile_type.value)
-		return text + '\n' + self.packages_text()
 
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)
