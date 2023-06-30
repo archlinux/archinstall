@@ -1027,7 +1027,7 @@ TIMEOUT=5
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
-		* limine
+		* limine (beta)
 		* efistub (beta)
 
 		:param bootloader: Type of bootloader to be added
