@@ -55,7 +55,7 @@ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr
 msgstr "Sadece base, base-devel, linux, linux-firmware, efibootmgr ve tercihi profil paketleri kuruldu."
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Firefox ya da chromium gibi bir web tarayıcısı isterseniz, sıradaki ekranda belirtebilirsiniz."
+msgstr "Firefox ya da Chromium gibi bir web tarayıcısı isterseniz, sıradaki ekranda belirtebilirsiniz."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
 msgstr "Kurulacak ek paketleri yazınız (boşlukla ayrılmış, geçmek için boş bırakın): "
