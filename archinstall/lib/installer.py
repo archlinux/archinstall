@@ -755,19 +755,7 @@ class Installer:
 					"Archinstall won't add any ucode to systemd-boot config.",
 				)
 
-		# blkid doesn't trigger on loopback devices really well,
-		# so we'll use the old manual method until we get that sorted out.
-
-		options_entry = f'rw rootfstype={root_partition.safe_fs_type.fs_type_mount} {" ".join(self._kernel_params)}'
-
-		for sub_vol in root_partition.btrfs_subvols:
-			if sub_vol.is_root():
-				options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
-
-		# Zswap should be disabled when using zram.
-		# https://github.com/archlinux/archinstall/issues/881
-		if self._zram_enabled:
-			options_entry = "zswap.enabled=0 " + options_entry
+		options_entry = []
 
 		if root_partition.safe_fs_type.is_crypto():
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
@@ -776,17 +764,32 @@ class Installer:
 
 			if self._disk_encryption and self._disk_encryption.hsm_device:
 				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-				kernel_options = f'rd.luks.name={root_partition.uuid}=luksdev'
+				options_entry.append(f'rd.luks.name={root_partition.uuid}=luksdev')
 				# Note: tpm2-device and fido2-device don't play along very well:
 				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-				kernel_options += ' rd.luks.options=fido2-device=auto,password-echo=no'
+				options_entry.append('rd.luks.options=fido2-device=auto,password-echo=no')
 			else:
-				kernel_options = f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev'
+				options_entry.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev')
 
-			cmdline = f'{kernel_options} root=/dev/mapper/luksdev {options_entry}'
+			options_entry.append('root=/dev/mapper/luksdev')
 		else:
 			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-			cmdline = f'root=PARTUUID={root_partition.partuuid} {options_entry}'
+			options_entry.append(f'root=PARTUUID={root_partition.partuuid}')
+
+		# Zswap should be disabled when using zram.
+		# https://github.com/archlinux/archinstall/issues/881
+		if self._zram_enabled:
+			options_entry.append('zswap.enabled=0')
+
+		for sub_vol in root_partition.btrfs_subvols:
+			if sub_vol.is_root():
+				options_entry.append(f'rootflags=subvol={sub_vol.name}')
+
+		options_entry.append('rw')
+		options_entry.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
+		options_entry.extend(self._kernel_params)
+
+		options = 'options ' + ' '.join(options_entry) + '\n'
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
@@ -799,7 +802,7 @@ class Installer:
 					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
 					entry_lines.extend(microcode)
 					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
-					entry_lines.append(f'options {cmdline}\n')
+					entry_lines.append(options)
 
 					entry.writelines(entry_lines)
 
