@@ -784,6 +784,7 @@ class Installer:
 		for sub_vol in root_partition.btrfs_subvols:
 			if sub_vol.is_root():
 				options_entry.append(f'rootflags=subvol={sub_vol.name}')
+				break
 
 		options_entry.append('rw')
 		options_entry.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
