@@ -336,6 +336,9 @@ class GlobalMenu(AbstractMenu):
 
 		Returns [`None`] if the bootloader is valid, otherwise returns a
 		string with the error message.
+
+		XXX: The caller is responsible for wrapping the string with the translation
+			shim if necessary.
 		"""
 		bootloader = self._menu_options['bootloader'].current_selection
 		boot_partition: Optional[disk.PartitionModification] = None
@@ -363,7 +366,7 @@ class GlobalMenu(AbstractMenu):
 			return text[:-1]  # remove last new line
 
 		if error := self._validate_bootloader():
-			return f"Invalid configuration: {error}"
+			return str(_(f"Invalid configuration: {error}"))
 
 		return None
 
