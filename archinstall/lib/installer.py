@@ -857,7 +857,7 @@ class Installer:
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self._pacstrap('limine')
+		self.pacman.strap('limine')
 		info(f"Limine boot partition: {boot_partition.dev_path}")
 
 		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
@@ -943,13 +943,13 @@ TIMEOUT=5
 :Arch Linux
 	PROTOCOL=linux
 	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
 	MODULE_PATH=boot:///initramfs-linux.img
 
 :Arch Linux (fallback)
 	PROTOCOL=linux
 	KERNEL_PATH=boot:///vmlinuz-linux
-	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.fs_type.value} loglevel=3
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
 	MODULE_PATH=boot:///initramfs-linux-fallback.img
 			"""
 
