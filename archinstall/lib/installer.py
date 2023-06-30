@@ -736,61 +736,72 @@ class Installer:
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
+		comments = (
+			'# Created by: archinstall\n',
+			f'# Created on: {self.init_time}\n'
+		)
+
+		microcode = []
+
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
+			if vendor == "AuthenticAMD":
+				microcode.append('initrd  /amd-ucode.img\n')
+			elif vendor == "GenuineIntel":
+				microcode.append('initrd  /intel-ucode.img\n')
+			else:
+				debug(
+					f"Unknown CPU vendor '{vendor}' detected.",
+					"Archinstall won't add any ucode to systemd-boot config.",
+				)
+
+		# blkid doesn't trigger on loopback devices really well,
+		# so we'll use the old manual method until we get that sorted out.
+
+		options_entry = f'rw rootfstype={root_partition.safe_fs_type.fs_type_mount} {" ".join(self._kernel_params)}'
+
+		for sub_vol in root_partition.btrfs_subvols:
+			if sub_vol.is_root():
+				options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
+
+		# Zswap should be disabled when using zram.
+		# https://github.com/archlinux/archinstall/issues/881
+		if self._zram_enabled:
+			options_entry = "zswap.enabled=0 " + options_entry
+
+		if root_partition.safe_fs_type.is_crypto():
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
+
+			if self._disk_encryption and self._disk_encryption.hsm_device:
+				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+				kernel_options = f'rd.luks.name={root_partition.uuid}=luksdev'
+				# Note: tpm2-device and fido2-device don't play along very well:
+				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+				kernel_options += ' rd.luks.options=fido2-device=auto,password-echo=no'
+			else:
+				kernel_options = f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev'
+
+			cmdline = f'{kernel_options} root=/dev/mapper/luksdev {options_entry}'
+		else:
+			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+			cmdline = f'root=PARTUUID={root_partition.partuuid} {options_entry}'
+
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
 				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry.write('# Created by: archinstall\n')
-					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write(f'title Arch Linux ({kernel}{variant})\n')
-					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not SysInfo.is_vm():
-						vendor = SysInfo.cpu_vendor()
-						if vendor == "AuthenticAMD":
-							entry.write("initrd /amd-ucode.img\n")
-						elif vendor == "GenuineIntel":
-							entry.write("initrd /intel-ucode.img\n")
-						else:
-							debug(
-								f"Unknown CPU vendor '{vendor}' detected.",
-								"Archinstall won't add any ucode to systemd-boot config.",
-							)
+					entry_lines: List[str] = []
 
-					entry.write(f"initrd /initramfs-{kernel}{variant}.img\n")
-					# blkid doesn't trigger on loopback devices really well,
-					# so we'll use the old manual method until we get that sorted out.
+					entry_lines.extend(comments)
+					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
+					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
+					entry_lines.extend(microcode)
+					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
+					entry_lines.append(f'options {cmdline}\n')
 
-					options_entry = f'rw rootfstype={root_partition.safe_fs_type.fs_type_mount} {" ".join(self._kernel_params)}\n'
-
-					for sub_vol in root_partition.btrfs_subvols:
-						if sub_vol.is_root():
-							options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
-
-					# Zswap should be disabled when using zram.
-					# https://github.com/archlinux/archinstall/issues/881
-					if self._zram_enabled:
-						options_entry = "zswap.enabled=0 " + options_entry
-
-					if root_partition.safe_fs_type.is_crypto():
-						# TODO: We need to detect if the encrypted device is a whole disk encryption,
-						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-						debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
-
-						kernel_options = f"options"
-
-						if self._disk_encryption and self._disk_encryption.hsm_device:
-							# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-							kernel_options += f' rd.luks.name={root_partition.uuid}=luksdev'
-							# Note: tpm2-device and fido2-device don't play along very well:
-							# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-							kernel_options += f' rd.luks.options=fido2-device=auto,password-echo=no'
-						else:
-							kernel_options += f' cryptdevice=PARTUUID={root_partition.partuuid}:luksdev'
-
-						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-					else:
-						debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-						entry.write(f'options root=PARTUUID={root_partition.partuuid} {options_entry}')
+					entry.writelines(entry_lines)
 
 		self.helper_flags['bootloader'] = 'systemd'
 
