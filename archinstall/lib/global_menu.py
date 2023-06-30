@@ -363,7 +363,7 @@ class GlobalMenu(AbstractMenu):
 			return text[:-1]  # remove last new line
 
 		if error := self._validate_bootloader():
-			return f"Invalid configuration: {error}"
+			return str(_(f"Invalid configuration: {error}"))
 
 		return None
 
