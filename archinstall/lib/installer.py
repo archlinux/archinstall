@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
+from ..lib.disk.device_model import get_lsblk_info
+
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -850,6 +852,113 @@ class Installer:
 
 		self.helper_flags['bootloader'] = "grub"
 
+	def _add_limine_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
+	):
+		self.pacman.strap('limine')
+		info(f"Limine boot partition: {boot_partition.dev_path}")
+
+		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
+		#      partition before the format.
+		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
+
+		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+		if not device:
+			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+
+		def create_pacman_hook(contents: str):
+			HOOK_DIR = "/etc/pacman.d/hooks"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
+
+		if SysInfo.has_uefi():
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/BOOTX64.EFI' \
+					f' /boot/EFI/BOOT/'
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
+
+			# Create the EFI limine pacman hook.
+			create_pacman_hook("""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
+			""")
+		else:
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/limine-bios.sys' \
+					f' /boot/limine-bios.sys'
+
+				SysCommand(cmd, peek_output=True)
+
+				# `limine bios-install` deploys the stage 1 and 2 to the disk.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' limine' \
+					f' bios-install' \
+					f' {device.device_info.path}'
+
+				SysCommand(cmd, peek_output=True)
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
+
+			create_pacman_hook(f"""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+# XXX: Kernel name descriptors cannot be used since they are not persistent and
+#      can change after each boot.
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+			""")
+
+		# Limine does not ship with a default configuation file. We are going to
+		# create a basic one that is similar to the one GRUB generates.
+		try:
+			config = f"""
+TIMEOUT=5
+
+:Arch Linux
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux.img
+
+:Arch Linux (fallback)
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux-fallback.img
+			"""
+
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{config}' > /boot/limine.cfg\"")
+		except SysCallError as err:
+			raise DiskError(f"Could not configure Limine: {err}")
+
+		self.helper_flags['bootloader'] = "limine"
+
 	def _add_efistub_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
@@ -918,6 +1027,7 @@ class Installer:
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
+		* limine (beta)
 		* efistub (beta)
 
 		:param bootloader: Type of bootloader to be added
@@ -948,6 +1058,8 @@ class Installer:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition)
+			case Bootloader.Limine:
+				self._add_limine_bootloader(boot_partition, root_partition)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)
