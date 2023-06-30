@@ -2,11 +2,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, List
 
 import archinstall
-from archinstall.lib import disk
-from archinstall import Installer, ProfileConfiguration, profile_handler
+from archinstall import disk
+from archinstall import Installer
+from archinstall import profile
+from archinstall import models
+from archinstall import interactions
 from archinstall.default_profiles.minimal import MinimalProfile
-from archinstall.lib.models import Bootloader, User
-from archinstall.lib.user_interaction.disk_conf import select_devices, suggest_single_disk_layout
 
 if TYPE_CHECKING:
 	_: Any
@@ -26,7 +27,7 @@ def perform_installation(mountpoint: Path):
 		# some other minor details as specified by this profile and user.
 		if installation.minimal_installation():
 			installation.set_hostname('minimal-arch')
-			installation.add_bootloader(Bootloader.Systemd)
+			installation.add_bootloader(models.Bootloader.Systemd)
 
 			# Optionally enable networking:
 			if archinstall.arguments.get('network', None):
@@ -34,10 +35,10 @@ def perform_installation(mountpoint: Path):
 
 			installation.add_additional_packages(['nano', 'wget', 'git'])
 
-			profile_config = ProfileConfiguration(MinimalProfile())
-			profile_handler.install_profile_config(installation, profile_config)
+			profile_config = profile.ProfileConfiguration(MinimalProfile())
+			profile.profile_handler.install_profile_config(installation, profile_config)
 
-			user = User('devel', 'devel', False)
+			user = models.User('devel', 'devel', False)
 			installation.create_users(user)
 
 
@@ -46,8 +47,8 @@ def prompt_disk_layout():
 	if filesystem := archinstall.arguments.get('filesystem', None):
 		fs_type = disk.FilesystemType(filesystem)
 
-	devices = select_devices()
-	modifications = suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
+	devices = interactions.select_devices()
+	modifications = interactions.suggest_single_disk_layout(devices[0], filesystem_type=fs_type)
 
 	archinstall.arguments['disk_config'] = disk.DiskLayoutConfiguration(
 		config_type=disk.DiskLayoutType.Default,
@@ -65,7 +66,7 @@ def parse_disk_encryption():
 			partitions += list(filter(lambda x: x.mountpoint != Path('/boot'), mod.partitions))
 
 		archinstall.arguments['disk_encryption'] = disk.DiskEncryption(
-			encryption_type=disk.EncryptionType.Partition,
+			encryption_type=disk.EncryptionType.Luks,
 			encryption_password=enc_password,
 			partitions=partitions
 		)

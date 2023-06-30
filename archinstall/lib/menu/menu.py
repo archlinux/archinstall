@@ -3,14 +3,11 @@ from enum import Enum, auto
 from os import system
 from typing import Dict, List, Union, Any, TYPE_CHECKING, Optional, Callable
 
-from simple_term_menu import TerminalMenu
+from simple_term_menu import TerminalMenu  # type: ignore
 
 from ..exceptions import RequirementError
-from ..output import log
+from ..output import debug
 
-from collections.abc import Iterable
-import sys
-import logging
 
 if TYPE_CHECKING:
 	_: Any
@@ -29,11 +26,11 @@ class MenuSelection:
 
 	@property
 	def single_value(self) -> Any:
-		return self.value
+		return self.value  # type: ignore
 
 	@property
 	def multi_value(self) -> List[Any]:
-		return self.value
+		return self.value  # type: ignore
 
 
 class Menu(TerminalMenu):
@@ -67,7 +64,7 @@ class Menu(TerminalMenu):
 		preview_command: Optional[Callable] = None,
 		preview_size: float = 0.0,
 		preview_title: str = 'Info',
-		header: Union[List[str],str] = None,
+		header: Union[List[str], str] = [],
 		allow_reset: bool = False,
 		allow_reset_warning_msg: Optional[str] = None,
 		clear_screen: bool = True,
@@ -127,35 +124,15 @@ class Menu(TerminalMenu):
 		:param extra_bottom_space: Add an extra empty line at the end of the menu
 		:type extra_bottom_space: bool
 		"""
-		# we guarantee the inmutability of the options outside the class.
-		# an unknown number of iterables (.keys(),.values(),generator,...) can't be directly copied, in this case
-		# we recourse to make them lists before, but thru an exceptions
-		# this is the old code, which is not maintenable with more types
-		# options = copy(list(p_options) if isinstance(p_options,(type({}.keys()),type({}.values()))) else p_options)
-		# We check that the options are iterable. If not we abort. Else we copy them to lists
-		# it options is a dictionary we use the values as entries of the list
-		# if options is a string object, each character becomes an entry
-		# if options is a list, we implictily build a copy to maintain immutability
-		if not isinstance(p_options,Iterable):
-			log(f"Objects of type {type(p_options)} is not iterable, and are not supported at Menu",fg="red")
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
-			raise RequirementError("Menu() requires an iterable as option.")
-
-		self._default_str = str(_('(default)'))
-
-		if isinstance(p_options,dict):
+		if isinstance(p_options, Dict):
 			options = list(p_options.keys())
 		else:
 			options = list(p_options)
 
 		if not options:
-			log(" * Menu didn't find any options to choose from * ", fg='red')
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires at least one option to proceed.')
 
 		if any([o for o in options if not isinstance(o, str)]):
-			log(" * Menu options must be of type string * ", fg='red')
-			log(f"invalid parameter at Menu() call was at <{sys._getframe(1).f_code.co_name}>",level=logging.WARNING)
 			raise RequirementError('Menu.__init__() requires the options to be of type string')
 
 		if sort:
@@ -193,8 +170,7 @@ class Menu(TerminalMenu):
 		if default_option:
 			# if a default value was specified we move that one
 			# to the top of the list and mark it as default as well
-			default = f'{default_option} {self._default_str}'
-			self._menu_options = [default] + [o for o in self._menu_options if default_option != o]
+			self._menu_options = [self._default_menu_value] + [o for o in self._menu_options if default_option != o]
 
 		if display_back_option and not multi and skip:
 			skip_empty_entries = True
@@ -204,7 +180,18 @@ class Menu(TerminalMenu):
 			skip_empty_entries = True
 			self._menu_options += ['']
 
-		self._preselection(preset_values,cursor_index)
+		preset_list: Optional[List[str]] = None
+
+		if preset_values and isinstance(preset_values, str):
+			preset_list = [preset_values]
+
+		calc_cursor_idx = self._determine_cursor_pos(preset_list, cursor_index)
+
+		# when we're not in multi selection mode we don't care about
+		# passing the pre-selection list to the menu as the position
+		# of the cursor is the one determining the pre-selection
+		if not self._multi:
+			preset_values = None
 
 		cursor = "> "
 		main_menu_cursor_style = ("fg_cyan", "bold")
@@ -217,8 +204,8 @@ class Menu(TerminalMenu):
 			menu_cursor_style=main_menu_cursor_style,
 			menu_highlight_style=main_menu_style,
 			multi_select=multi,
-			preselected_entries=self.preset_values,
-			cursor_index=self.cursor_index,
+			preselected_entries=preset_values,
+			cursor_index=calc_cursor_idx,
 			preview_command=lambda x: self._show_preview(preview_command, x),
 			preview_size=preview_size,
 			preview_title=preview_title,
@@ -231,12 +218,17 @@ class Menu(TerminalMenu):
 			skip_empty_entries=skip_empty_entries
 		)
 
+	@property
+	def _default_menu_value(self) -> str:
+		default_str = str(_('(default)'))
+		return f'{self._default_option} {default_str}'
+
 	def _show_preview(self, preview_command: Optional[Callable], selection: str) -> Optional[str]:
 		if selection == self.back():
 			return None
 
 		if preview_command:
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' == selection:
+			if self._default_option is not None and self._default_menu_value == selection:
 				selection = self._default_option
 			return preview_command(selection)
 
@@ -249,7 +241,7 @@ class Menu(TerminalMenu):
 			return MenuSelection(type_=MenuSelectionType.Reset)
 
 		def check_default(elem):
-			if self._default_option is not None and f'{self._default_option} {self._default_str}' in elem:
+			if self._default_option is not None and self._default_menu_value in elem:
 				return self._default_option
 			else:
 				return elem
@@ -297,31 +289,47 @@ class Menu(TerminalMenu):
 		pos = self._menu_entries.index(value)
 		self.set_cursor_pos(pos)
 
-	def _preselection(self,preset_values :Union[str, List[str]] = [], cursor_index : Optional[int] = None):
-		def from_preset_to_cursor():
-			if preset_values:
-				# if the value is not extant return 0 as cursor index
+	def _determine_cursor_pos(
+		self,
+		preset: Optional[List[str]] = None,
+		cursor_index: Optional[int] = None
+	) -> Optional[int]:
+		"""
+			The priority order to determine the cursor position is:
+			1. A static cursor position was provided
+			2. Preset values have been provided so the cursor will be
+				positioned on those
+			3. A default value for a selection is given so the cursor
+				will be placed on such
+		"""
+		if cursor_index:
+			return cursor_index
+
+		if preset:
+			indexes = []
+
+			for p in preset:
 				try:
-					if isinstance(preset_values,str):
-						self.cursor_index = self._menu_options.index(self.preset_values)
-					else:  # should return an error, but this is smoother
-						self.cursor_index = self._menu_options.index(self.preset_values[0])
-				except ValueError:
-					self.cursor_index = 0
+					# the options of the table selection menu
+					# are already escaped so we have to escape
+					# the preset values as well for the comparison
+					if '|' in p:
+						p = p.replace('|', '\\|')
 
-		self.cursor_index = cursor_index
-		if not preset_values:
-			self.preset_values = None
-			return
+					if p in self._menu_options:
+						idx = self._menu_options.index(p)
+					else:
+						idx = self._menu_options.index(self._default_menu_value)
+					indexes.append(idx)
+				except (IndexError, ValueError):
+					debug(f'Error finding index of {p}: {self._menu_options}')
 
-		self.preset_values = preset_values
+			if len(indexes) == 0:
+				indexes.append(0)
+
+			return indexes[0]
+
 		if self._default_option:
-			if isinstance(preset_values,str) and self._default_option == preset_values:
-				self.preset_values = f"{preset_values} {self._default_str}"
-			elif isinstance(preset_values,(list,tuple)) and self._default_option in preset_values:
-				idx = preset_values.index(self._default_option)
-				self.preset_values[idx] = f"{preset_values[idx]} {self._default_str}"
-		if cursor_index is None or not self._multi:
-			from_preset_to_cursor()
-		if not self._multi: # Not supported by the infraestructure
-			self.preset_values = None
+			return self._menu_options.index(self._default_menu_value)
+
+		return None

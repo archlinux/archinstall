@@ -18,7 +18,7 @@ class BudgieProfile(XorgProfile):
 			"budgie",
 			"mate-terminal",
 			"nemo",
-			"papirus-icon-theme",
+			"papirus-icon-theme"
 		]
 
 	@property

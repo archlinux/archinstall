@@ -13,7 +13,7 @@ from ..menu import (
 	MenuSelectionType,
 	TableMenu
 )
-from ..user_interaction.utils import get_password
+from ..interactions.utils import get_password
 from ..menu import Menu
 from ..general import secret
 from .fido import Fido2Device, Fido2
@@ -110,7 +110,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 def select_encryption_type(preset: EncryptionType) -> Optional[EncryptionType]:
 	title = str(_('Select disk encryption option'))
 	options = [
-		EncryptionType.type_to_text(EncryptionType.Partition)
+		EncryptionType.type_to_text(EncryptionType.Luks)
 	]
 
 	preset_value = EncryptionType.type_to_text(preset)

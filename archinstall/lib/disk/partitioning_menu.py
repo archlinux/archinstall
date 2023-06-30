@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import logging
+import re
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
-	ModificationStatus
+	ModificationStatus, DeviceGeometry
 from ..menu import Menu, ListManager, MenuSelection, TextInput
-from ..output import FormattedOutput, log
+from ..output import FormattedOutput, warn
 from .subvolume_menu import SubvolumeMenu
 
 if TYPE_CHECKING:
@@ -193,22 +193,51 @@ class PartitioningList(ListManager):
 		choice = Menu(prompt, options, sort=False, skip=False).run()
 		return options[choice.single_value]
 
-	def _validate_sector(self, start_sector: str, end_sector: Optional[str] = None) -> bool:
-		if not start_sector.isdigit():
-			return False
+	def _validate_value(
+		self,
+		sector_size: Size,
+		total_size: Size,
+		value: str
+	) -> Optional[Size]:
+		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', value, re.I)
 
-		if end_sector:
-			if end_sector.endswith('%'):
-				if not end_sector[:-1].isdigit():
-					return False
-			elif not end_sector.isdigit():
-				return False
-			elif int(start_sector) > int(end_sector):
-				return False
+		if match:
+			value, unit = match.groups()
 
-		return True
+			if unit == '%':
+				unit = Unit.Percent.name
 
-	def _prompt_sectors(self) -> Tuple[Size, Size]:
+			if unit and unit not in Unit.get_all_units():
+				return None
+
+			unit = Unit[unit] if unit else Unit.sectors
+			return Size(int(value), unit, sector_size, total_size)
+
+		return None
+
+	def _enter_size(
+		self,
+		sector_size: Size,
+		total_size: Size,
+		prompt: str,
+		default: Size
+	) -> Size:
+		while True:
+			value = TextInput(prompt).run().strip()
+
+			size: Optional[Size] = None
+
+			if not value:
+				size = default
+			else:
+				size = self._validate_value(sector_size, total_size, value)
+
+			if size:
+				return size
+
+			warn(f'Invalid value: {value}')
+
+	def _prompt_size(self) -> Tuple[Size, Size]:
 		device_info = self._device.device_info
 
 		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'
@@ -216,54 +245,45 @@ class PartitioningList(ListManager):
 		prompt = text + free_space_table + '\n'
 
 		total_sectors = device_info.total_size.format_size(Unit.sectors, device_info.sector_size)
-		prompt += str(_('Total sectors: {}')).format(total_sectors) + '\n'
+		total_bytes = device_info.total_size.format_size(Unit.B)
+
+		prompt += str(_('Total: {} / {}')).format(total_sectors, total_bytes) + '\n\n'
+		prompt += str(_('All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB...')) + '\n'
+		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
 		print(prompt)
 
-		largest_free_area = max(device_info.free_space_regions, key=lambda r: r.get_length())
+		largest_free_area: DeviceGeometry = max(device_info.free_space_regions, key=lambda r: r.get_length())
 
 		# prompt until a valid start sector was entered
-		while True:
-			start_prompt = str(_('Enter the start sector (default: {}): ')).format(largest_free_area.start)
-			start_sector = TextInput(start_prompt).run().strip()
+		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
+		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
+		start_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			start_prompt,
+			default_start
+		)
 
-			if not start_sector or self._validate_sector(start_sector):
-				break
-
-			log(f'Invalid start sector entered: {start_sector}', fg='red', level=logging.INFO)
-
-		if not start_sector:
-			start_sector = str(largest_free_area.start)
-			end_sector = str(largest_free_area.end)
+		if start_size.value == largest_free_area.start:
+			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
 		else:
-			end_sector = '100%'
+			end_size = Size(100, Unit.Percent, total_size=device_info.total_size)
 
 		# prompt until valid end sector was entered
-		while True:
-			end_prompt = str(_('Enter the end sector of the partition (percentage or block number, default: {}): ')).format(end_sector)
-			end_value = TextInput(end_prompt).run().strip()
-
-			if not end_value or self._validate_sector(start_sector, end_value):
-				break
-
-			log(f'Invalid end sector entered: {start_sector}', fg='red', level=logging.INFO)
-
-		# override the default value with the user value
-		if end_value:
-			end_sector = end_value
-
-		start_size = Size(int(start_sector), Unit.sectors, device_info.sector_size)
-
-		if end_sector.endswith('%'):
-			end_size = Size(int(end_sector[:-1]), Unit.Percent, device_info.sector_size, device_info.total_size)
-		else:
-			end_size = Size(int(end_sector), Unit.sectors, device_info.sector_size)
+		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
+		end_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			end_prompt,
+			end_size
+		)
 
 		return start_size, end_size
 
 	def _create_new_partition(self) -> PartitionModification:
 		fs_type = self._prompt_partition_fs_type()
 
-		start_size, end_size = self._prompt_sectors()
+		start_size, end_size = self._prompt_size()
 		length = end_size - start_size
 
 		# new line for the next prompt
@@ -300,7 +320,7 @@ class PartitioningList(ListManager):
 			if choice.value == Menu.no():
 				return []
 
-		from ..user_interaction.disk_conf import suggest_single_disk_layout
+		from ..interactions.disk_conf import suggest_single_disk_layout
 
 		device_modification = suggest_single_disk_layout(self._device)
 		return device_modification.partitions

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-import logging
 import sys
 from enum import Enum
 from typing import List
 
-from ..hardware import has_uefi
-from ..output import log
+from ..hardware import SysInfo
+from ..output import warn
 
 
 class Bootloader(Enum):
 	Systemd = 'Systemd-boot'
 	Grub = 'Grub'
 	Efistub = 'Efistub'
+	Limine = 'Limine'
 
 	def json(self):
 		return self.value
@@ -23,7 +23,7 @@ class Bootloader(Enum):
 
 	@classmethod
 	def get_default(cls) -> Bootloader:
-		if has_uefi():
+		if SysInfo.has_uefi():
 			return Bootloader.Systemd
 		else:
 			return Bootloader.Grub
@@ -35,6 +35,6 @@ class Bootloader(Enum):
 
 		if bootloader not in cls.values():
 			values = ', '.join(cls.values())
-			log(f'Invalid bootloader value "{bootloader}". Allowed values: {values}', level=logging.WARN)
+			warn(f'Invalid bootloader value "{bootloader}". Allowed values: {values}')
 			sys.exit(1)
 		return Bootloader(bootloader)

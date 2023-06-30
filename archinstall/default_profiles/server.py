@@ -1,7 +1,6 @@
-import logging
 from typing import Any, TYPE_CHECKING, List
 
-from archinstall.lib.output import log
+from archinstall.lib.output import info
 from archinstall.lib.menu import MenuSelectionType
 from archinstall.lib.profile.profiles_handler import profile_handler
 from archinstall.default_profiles.profile import ProfileType, Profile, SelectResult, TProfile
@@ -46,12 +45,12 @@ class ServerProfile(Profile):
 	def install(self, install_session: 'Installer'):
 		server_info = self.current_selection_names()
 		details = ', '.join(server_info)
-		log(f'Now installing the selected servers: {details}', level=logging.INFO)
+		info(f'Now installing the selected servers: {details}')
 
 		for server in self._current_selection:
-			log(f'Installing {server.name}...', level=logging.INFO)
+			info(f'Installing {server.name}...')
 			install_session.add_additional_packages(server.packages)
 			install_session.enable_service(server.services)
 			server.install(install_session)
 
-		log('If your selections included multiple servers with the same port, you may have to reconfigure them.', fg="yellow", level=logging.INFO)
+		info('If your selections included multiple servers with the same port, you may have to reconfigure them.')

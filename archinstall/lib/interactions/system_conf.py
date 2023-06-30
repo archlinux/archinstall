@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List, Any, Dict, TYPE_CHECKING, Optional
+from typing import List, Any, TYPE_CHECKING, Optional
 
-from ..hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
+from ..hardware import SysInfo, GfxDriver
 from ..menu import MenuSelectionType, Menu
 from ..models.bootloader import Bootloader
 
@@ -29,20 +29,20 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 		sort=True,
 		multi=True,
 		preset_values=preset,
-		allow_reset=True,
 		allow_reset_warning_msg=warning
 	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Reset: return []
-		case MenuSelectionType.Selection: return choice.value  # type: ignore
+		case MenuSelectionType.Selection: return choice.single_value
+
+	return []
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:
-	# when the system only supports grub
-	if not has_uefi():
-		options = [Bootloader.Grub.value]
+	# Systemd is UEFI only
+	if not SysInfo.has_uefi():
+		options = [Bootloader.Grub.value, Bootloader.Limine.value]
 		default = Bootloader.Grub.value
 	else:
 		options = Bootloader.values()
@@ -65,7 +65,7 @@ def ask_for_bootloader(preset: Bootloader) -> Bootloader:
 	return preset
 
 
-def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = None) -> Optional[str]:
+def select_driver(options: List[GfxDriver] = [], current_value: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
 	"""
 	Some what convoluted function, whose job is simple.
 	Select a graphics driver from a pre-defined set of popular options.
@@ -73,30 +73,34 @@ def select_driver(options: Dict[str, Any] = {}, current_value: Optional[str] = N
 	(The template xorg is for beginner users, not advanced, and should
 	there for appeal to the general public first and edge cases later)
 	"""
-
 	if not options:
-		options = AVAILABLE_GFX_DRIVERS
+		options = [driver for driver in GfxDriver]
 
-	drivers = sorted(list(options.keys()))
+	drivers = sorted([o.value for o in options])
 
 	if drivers:
 		title = ''
-		if has_amd_graphics():
+		if SysInfo.has_amd_graphics():
 			title += str(_('For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options.')) + '\n'
-		if has_intel_graphics():
+		if SysInfo.has_intel_graphics():
 			title += str(_('For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n'))
-		if has_nvidia_graphics():
+		if SysInfo.has_nvidia_graphics():
 			title += str(_('For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n'))
 
 		title += str(_('\nSelect a graphics driver or leave blank to install all open-source drivers'))
 
-		preset = current_value if current_value else None
-		choice = Menu(title, drivers, preset_values=preset).run()
+		preset = current_value.value if current_value else None
+		choice = Menu(
+			title,
+			drivers,
+			preset_values=preset,
+			default_option=GfxDriver.AllOpenSource.value
+		).run()
 
 		if choice.type_ != MenuSelectionType.Selection:
-			return None
+			return current_value
 
-		return choice.value  # type: ignore
+		return GfxDriver(choice.single_value)
 
 	return current_value
 

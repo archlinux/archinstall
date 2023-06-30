@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.util
-import logging
 import sys
 from collections import Counter
 from functools import cached_property
@@ -12,10 +11,10 @@ from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import AVAILABLE_GFX_DRIVERS
+from ..hardware import GfxDriver, GfxPackage
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
-from ..output import log
+from ..output import error, debug, info, warn
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -43,6 +42,7 @@ class ProfileHandler:
 			data = {
 				'main': profile.name,
 				'details': [profile.name for profile in profile.current_selection],
+				'custom_settings': {profile.name: profile.custom_settings for profile in profile.current_selection}
 			}
 
 		if self._url_path is not None:
@@ -71,40 +71,52 @@ class ProfileHandler:
 			else:
 				self._import_profile_from_url(url_path)
 
-		if custom := profile_config.get('custom', None):
-			from archinstall.default_profiles.custom import CustomTypeProfile
-			custom_types = []
-
-			for entry in custom:
-				custom_types.append(
-					CustomTypeProfile(
-						entry['name'],
-						entry['enabled'],
-						entry.get('packages', []),
-						entry.get('services', [])
-					)
-				)
-
-			self.remove_custom_profiles(custom_types)
-			self.add_custom_profiles(custom_types)
-
-			# this doesn't mean it's actual going to be set as a selection
-			# but we are simply populating the custom profile with all
-			# possible custom definitions
-			if custom_profile := self.get_profile_by_name('Custom'):
-				custom_profile.set_current_selection(custom_types)
+		# if custom := profile_config.get('custom', None):
+		# 	from archinstall.default_profiles.custom import CustomTypeProfile
+		# 	custom_types = []
+		#
+		# 	for entry in custom:
+		# 		custom_types.append(
+		# 			CustomTypeProfile(
+		# 				entry['name'],
+		# 				entry['enabled'],
+		# 				entry.get('packages', []),
+		# 				entry.get('services', [])
+		# 			)
+		# 		)
+		#
+		# 	self.remove_custom_profiles(custom_types)
+		# 	self.add_custom_profiles(custom_types)
+		#
+		# 	# this doesn't mean it's actual going to be set as a selection
+		# 	# but we are simply populating the custom profile with all
+		# 	# possible custom definitions
+		# 	if custom_profile := self.get_profile_by_name('Custom'):
+		# 		custom_profile.set_current_selection(custom_types)
 
 		if main := profile_config.get('main', None):
 			profile = self.get_profile_by_name(main) if main else None
 
 		valid: List[Profile] = []
-		if details := profile_config.get('details', []):
-			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
-			valid = [p for p in resolved.values() if p is not None]
-			invalid = ', '.join([k for k, v in resolved.items() if v is None])
+		details: List[str] = profile_config.get('details', [])
+		if details:
+			valid = []
+			invalid = []
+
+			for detail in filter(None, details):
+				if profile := self.get_profile_by_name(detail):
+					valid.append(profile)
+				else:
+					invalid.append(detail)
 
 			if invalid:
-				log(f'No profile definition found: {invalid}')
+				info('No profile definition found: {}'.format(', '.join(invalid)))
+
+		custom_settings = profile_config.get('custom_settings', {})
+		for profile in valid:
+			profile.set_custom_settings(
+				custom_settings.get(profile.name, {})
+			)
 
 		if profile is not None:
 			profile.set_current_selection(valid)
@@ -116,14 +128,12 @@ class ProfileHandler:
 		"""
 		List of all available default_profiles
 		"""
-		if self._profiles is None:
-			self._profiles = self._find_available_profiles()
+		self._profiles = self._profiles or self._find_available_profiles()
 		return self._profiles
 
 	@cached_property
 	def _local_mac_addresses(self) -> List[str]:
-		ifaces = list_interfaces()
-		return list(ifaces.keys())
+		return list(list_interfaces())
 
 	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
@@ -181,48 +191,49 @@ class ProfileHandler:
 		if service:
 			install_session.enable_service(service)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: str):
+	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
 		try:
-			driver_pkgs = AVAILABLE_GFX_DRIVERS[driver] if driver else []
-			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
 
 			if driver is not None:
-				if 'nvidia' in driver:
-					if "linux-zen" in install_session.base_packages or "linux-lts" in install_session.base_packages:
-						for kernel in install_session.kernels:
-							# Fixes https://github.com/archlinux/archinstall/issues/585
-							install_session.add_additional_packages(f"{kernel}-headers")
+				driver_pkgs = driver.packages()
+				pkg_names = [p.value for p in driver_pkgs]
+				for driver_pkg in {GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs):
+					for kernel in {"linux-lts", "linux-zen"} & set(install_session.kernels):
+						# Fixes https://github.com/archlinux/archinstall/issues/585
+						install_session.add_additional_packages(f"{kernel}-headers")
 
 						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-						install_session.add_additional_packages("dkms xorg-server xorg-xinit nvidia-dkms")
-						return
-				elif 'amdgpu' in driver_pkgs:
+					install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg.value}-dkms'])
+					# Return after first driver match, since it is impossible to use both simultaneously.
+					return
+				if 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
-					if 'amdgpu' in install_session.MODULES:
-						install_session.MODULES.remove('amdgpu')
-					install_session.MODULES.append('amdgpu')
+					if 'amdgpu' in install_session.modules:
+						install_session.modules.remove('amdgpu')
+					install_session.modules.append('amdgpu')
 
-					if 'radeon' in install_session.MODULES:
-						install_session.MODULES.remove('radeon')
-					install_session.MODULES.append('radeon')
+					if 'radeon' in install_session.modules:
+						install_session.modules.remove('radeon')
+					install_session.modules.append('radeon')
 
-			install_session.add_additional_packages(additional_pkg)
+				install_session.add_additional_packages(pkg_names)
 		except Exception as err:
-			log(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}", level=logging.WARNING, fg="yellow")
+			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
 			# Prep didn't run, so there's no driver to install
-			install_session.add_additional_packages("xorg-server xorg-xinit")
+		install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
 
-		if profile:
-			profile.install(install_session)
+		if not profile:
+			return
 
-		if profile and profile_config.gfx_driver:
-			if profile.is_xorg_type_profile() or profile.is_desktop_type_profile():
-				self.install_gfx_driver(install_session, profile_config.gfx_driver)
+		profile.install(install_session)
 
-		if profile and profile_config.greeter:
+		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_type_profile()):
+			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
 
 	def _import_profile_from_url(self, url: str):
@@ -242,7 +253,7 @@ class ProfileHandler:
 			self.add_custom_profiles(profiles)
 		except ValueError:
 			err = str(_('Unable to fetch profile from specified url: {}')).format(url)
-			log(err, level=logging.ERROR, fg="red")
+			error(err)
 
 	def _load_profile_class(self, module: ModuleType) -> List[Profile]:
 		"""
@@ -256,7 +267,7 @@ class ProfileHandler:
 					if isinstance(cls_, Profile):
 						profiles.append(cls_)
 				except Exception:
-					log(f'Cannot import {module}, it does not appear to be a Profile class', level=logging.DEBUG)
+					debug(f'Cannot import {module}, it does not appear to be a Profile class')
 
 		return profiles
 
@@ -270,7 +281,7 @@ class ProfileHandler:
 
 		if len(duplicates) > 0:
 			err = str(_('Profiles must have unique name, but profile definitions with duplicate name found: {}')).format(duplicates[0][0])
-			log(err, level=logging.ERROR, fg="red")
+			error(err)
 			sys.exit(1)
 
 	def _is_legacy(self, file: Path) -> bool:
@@ -289,25 +300,24 @@ class ProfileHandler:
 		Process a file for profile definitions
 		"""
 		if self._is_legacy(file):
-			log(f'Cannot import {file} because it is no longer supported, please use the new profile format')
+			info(f'Cannot import {file} because it is no longer supported, please use the new profile format')
 			return []
 
 		if not file.is_file():
-			log(f'Cannot find profile file {file}')
+			info(f'Cannot find profile file {file}')
 			return []
 
 		name = file.name.removesuffix(file.suffix)
-		log(f'Importing profile: {file}', level=logging.DEBUG)
+		debug(f'Importing profile: {file}')
 
 		try:
-			spec = importlib.util.spec_from_file_location(name, file)
-			if spec is not None:
+			if spec := importlib.util.spec_from_file_location(name, file):
 				imported = importlib.util.module_from_spec(spec)
 				if spec.loader is not None:
 					spec.loader.exec_module(imported)
 					return self._load_profile_class(imported)
 		except Exception as e:
-			log(f'Unable to parse file {file}: {e}', level=logging.ERROR)
+			error(f'Unable to parse file {file}: {e}')
 
 		return []
 

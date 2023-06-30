@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import json
-import logging
 import math
 import time
 import uuid
@@ -18,7 +17,7 @@ from parted import Disk, Geometry, Partition
 
 from ..exceptions import DiskError, SysCallError
 from ..general import SysCommand
-from ..output import log
+from ..output import debug, error
 from ..storage import storage
 
 if TYPE_CHECKING:
@@ -138,6 +137,10 @@ class Unit(Enum):
 
 	Percent = '%' 	# size in percentile
 
+	@staticmethod
+	def get_all_units() -> List[str]:
+		return [u.name for u in Unit]
+
 
 @dataclass
 class Size:
@@ -215,16 +218,25 @@ class Size:
 				value = int(self._normalize() / target_unit.value)  # type: ignore
 				return Size(value, target_unit)
 
+	def as_text(self) -> str:
+		return self.format_size(
+			self.unit,
+			self.sector_size
+		)
+
 	def format_size(
 		self,
 		target_unit: Unit,
-		sector_size: Optional[Size] = None
+		sector_size: Optional[Size] = None,
+		include_unit: bool = True
 	) -> str:
 		if self.unit == Unit.Percent:
 			return f'{self.value}%'
 		else:
 			target_size = self.convert(target_unit, sector_size)
-			return f'{target_size.value} {target_unit.name}'
+			if include_unit:
+				return f'{target_size.value} {target_unit.name}'
+			return f'{target_size.value}'
 
 	def _normalize(self) -> int:
 		"""
@@ -271,7 +283,7 @@ class _PartitionInfo:
 	partition: Partition
 	name: str
 	type: PartitionType
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	path: Path
 	start: Size
 	length: Size
@@ -281,8 +293,8 @@ class _PartitionInfo:
 	mountpoints: List[Path]
 	btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = field(default_factory=list)
 
-	def as_json(self) -> Dict[str, Any]:
-		info = {
+	def table_data(self) -> Dict[str, Any]:
+		part_info = {
 			'Name': self.name,
 			'Type': self.type.value,
 			'Filesystem': self.fs_type.value if self.fs_type else str(_('Unknown')),
@@ -293,15 +305,15 @@ class _PartitionInfo:
 		}
 
 		if self.btrfs_subvol_infos:
-			info['Btrfs vol.'] = f'{len(self.btrfs_subvol_infos)} subvolumes'
+			part_info['Btrfs vol.'] = f'{len(self.btrfs_subvol_infos)} subvolumes'
 
-		return info
+		return part_info
 
 	@classmethod
 	def from_partition(
 		cls,
 		partition: Partition,
-		fs_type: FilesystemType,
+		fs_type: Optional[FilesystemType],
 		partuuid: str,
 		mountpoints: List[Path],
 		btrfs_subvol_infos: List[_BtrfsSubvolumeInfo] = []
@@ -344,7 +356,7 @@ class _DeviceInfo:
 	read_only: bool
 	dirty: bool
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		total_free_space = sum([region.get_length(unit=Unit.MiB) for region in self.free_space_regions])
 		return {
 			'Model': self.model,
@@ -392,7 +404,7 @@ class SubvolumeModification:
 		mods = []
 		for entry in subvol_args:
 			if not entry.get('name', None) or not entry.get('mountpoint', None):
-				log(f'Subvolume arg is missing name: {entry}', level=logging.DEBUG)
+				debug(f'Subvolume arg is missing name: {entry}')
 				continue
 
 			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
@@ -441,7 +453,7 @@ class SubvolumeModification:
 			'nodatacow': self.nodatacow
 		}
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		return {
 			'name': str(self.name),
 			'mountpoint': str(self.mountpoint),
@@ -466,12 +478,20 @@ class DeviceGeometry:
 	def get_length(self, unit: Unit = Unit.sectors) -> int:
 		return self._geometry.getLength(unit.name)
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
+		start = Size(self._geometry.start, Unit.sectors, self._sector_size)
+		end = Size(self._geometry.end, Unit.sectors, self._sector_size)
+		length = Size(self._geometry.getLength(), Unit.sectors, self._sector_size)
+
+		start_str = f'{self._geometry.start} / {start.format_size(Unit.B, include_unit=False)}'
+		end_str = f'{self._geometry.end} / {end.format_size(Unit.B, include_unit=False)}'
+		length_str = f'{self._geometry.getLength()} / {length.format_size(Unit.B, include_unit=False)}'
+
 		return {
 			'Sector size': self._sector_size.value,
-			'Start sector': self._geometry.start,
-			'End sector': self._geometry.end,
-			'Length': self._geometry.getLength()
+			'Start (sector/B)': start_str,
+			'End (sector/B)': end_str,
+			'Length (sectors/B)': length_str
 		}
 
 
@@ -574,7 +594,7 @@ class PartitionModification:
 	type: PartitionType
 	start: Size
 	length: Size
-	fs_type: FilesystemType
+	fs_type: Optional[FilesystemType]
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
 	flags: List[PartitionFlag] = field(default_factory=list)
@@ -593,6 +613,9 @@ class PartitionModification:
 		if self.is_exists_or_modify() and not self.dev_path:
 			raise ValueError('If partition marked as existing a path must be set')
 
+		if self.fs_type is None and self.status == ModificationStatus.Modify:
+			raise ValueError('FS type must not be empty on modifications with status type modify')
+
 	def __hash__(self):
 		return hash(self._obj_id)
 
@@ -603,10 +626,16 @@ class PartitionModification:
 		return ''
 
 	@property
-	def real_dev_path(self) -> Path:
+	def safe_dev_path(self) -> Path:
 		if self.dev_path is None:
 			raise ValueError('Device path was not set')
 		return self.dev_path
+
+	@property
+	def safe_fs_type(self) -> FilesystemType:
+		if self.fs_type is None:
+			raise ValueError('File system type is not set')
+		return self.fs_type
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
@@ -694,33 +723,33 @@ class PartitionModification:
 			'type': self.type.value,
 			'start': self.start.__dump__(),
 			'length': self.length.__dump__(),
-			'fs_type': self.fs_type.value,
+			'fs_type': self.fs_type.value if self.fs_type else '',
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
 			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
-	def as_json(self) -> Dict[str, Any]:
+	def table_data(self) -> Dict[str, Any]:
 		"""
 		Called for displaying data in table format
 		"""
-		info = {
+		part_mod = {
 			'Status': self.status.value,
 			'Device': str(self.dev_path) if self.dev_path else '',
 			'Type': self.type.value,
 			'Start': self.start.format_size(Unit.MiB),
 			'Length': self.length.format_size(Unit.MiB),
-			'FS type': self.fs_type.value,
+			'FS type': self.fs_type.value if self.fs_type else 'Unknown',
 			'Mountpoint': self.mountpoint if self.mountpoint else '',
 			'Mount options': ', '.join(self.mount_options),
 			'Flags': ', '.join([f.name for f in self.flags]),
 		}
 
 		if self.btrfs_subvols:
-			info['Btrfs vol.'] = f'{len(self.btrfs_subvols)} subvolumes'
+			part_mod['Btrfs vol.'] = f'{len(self.btrfs_subvols)} subvolumes'
 
-		return info
+		return part_mod
 
 
 @dataclass
@@ -757,13 +786,12 @@ class DeviceModification:
 
 class EncryptionType(Enum):
 	NoEncryption = "no_encryption"
-	Partition = "partition"
+	Luks = "luks"
 
 	@classmethod
 	def _encryption_type_mapper(cls) -> Dict[str, 'EncryptionType']:
 		return {
-			# str(_('Full disk encryption')): EncryptionType.FullDiskEncryption,
-			str(_('Partition encryption')): EncryptionType.Partition
+			'Luks': EncryptionType.Luks
 		}
 
 	@classmethod
@@ -780,7 +808,7 @@ class EncryptionType(Enum):
 
 @dataclass
 class DiskEncryption:
-	encryption_type: EncryptionType = EncryptionType.Partition
+	encryption_type: EncryptionType = EncryptionType.Luks
 	encryption_password: str = ''
 	partitions: List[PartitionModification] = field(default_factory=list)
 	hsm_device: Optional[Fido2Device] = None
@@ -851,7 +879,7 @@ class LsblkInfo:
 	name: str = ''
 	path: Path = Path()
 	pkname: str = ''
-	size: Size = Size(0, Unit.B)
+	size: Size = field(default_factory=lambda: Size(0, Unit.B))
 	log_sec: int = 0
 	pttype: str = ''
 	ptuuid: str = ''
@@ -916,36 +944,36 @@ class LsblkInfo:
 
 	@classmethod
 	def from_json(cls, blockdevice: Dict[str, Any]) -> LsblkInfo:
-		info = cls()
+		lsblk_info = cls()
 
 		for f in cls.fields():
 			lsblk_field = _clean_field(f, CleanType.Blockdevice)
 			data_field = _clean_field(f, CleanType.Dataclass)
 
 			val: Any = None
-			if isinstance(getattr(info, data_field), Path):
+			if isinstance(getattr(lsblk_info, data_field), Path):
 				val = Path(blockdevice[lsblk_field])
-			elif isinstance(getattr(info, data_field), Size):
+			elif isinstance(getattr(lsblk_info, data_field), Size):
 				val = Size(blockdevice[lsblk_field], Unit.B)
 			else:
 				val = blockdevice[lsblk_field]
 
-			setattr(info, data_field, val)
+			setattr(lsblk_info, data_field, val)
 
-		info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
+		lsblk_info.children = [LsblkInfo.from_json(child) for child in blockdevice.get('children', [])]
 
 		# sometimes lsblk returns 'mountpoints': [null]
-		info.mountpoints = [Path(mnt) for mnt in info.mountpoints if mnt]
+		lsblk_info.mountpoints = [Path(mnt) for mnt in lsblk_info.mountpoints if mnt]
 
 		fs_roots = []
-		for r in info.fsroots:
+		for r in lsblk_info.fsroots:
 			if r:
 				path = Path(r)
 				# store the fsroot entries without the leading /
 				fs_roots.append(path.relative_to(path.anchor))
-		info.fsroots = fs_roots
+		lsblk_info.fsroots = fs_roots
 
-		return info
+		return lsblk_info
 
 
 class CleanType(Enum):
@@ -974,29 +1002,31 @@ def _fetch_lsblk_info(dev_path: Optional[Union[Path, str]] = None, retry: int = 
 	if retry == 0:
 		retry = 1
 
-	result = None
-
-	for i in range(retry):
+	for retry_attempt in range(retry):
 		try:
 			result = SysCommand(f'lsblk --json -b -o+{lsblk_fields} {dev_path}')
-		except SysCallError as error:
+			break
+		except SysCallError as err:
 			# Get the output minus the message/info from lsblk if it returns a non-zero exit code.
-			if error.worker:
-				err = error.worker.decode('UTF-8')
-				log(f'Error calling lsblk: {err}', level=logging.DEBUG)
-				time.sleep(1)
+			if err.worker:
+				err_str = err.worker.decode('UTF-8')
+				debug(f'Error calling lsblk: {err_str}')
 			else:
-				raise error
+				raise err
 
-	if result and result.exit_code == 0:
-		try:
-			if decoded := result.decode('utf-8'):
-				block_devices = json.loads(decoded)
-				blockdevices = block_devices['blockdevices']
-				return [LsblkInfo.from_json(device) for device in blockdevices]
-		except json.decoder.JSONDecodeError as err:
-			log(f"Could not decode lsblk JSON: {result}", fg="red", level=logging.ERROR)
-			raise err
+			if retry_attempt == retry - 1:
+				raise err
+
+			time.sleep(1)
+
+	try:
+		if decoded := result.decode('utf-8'):
+			block_devices = json.loads(decoded)
+			blockdevices = block_devices['blockdevices']
+			return [LsblkInfo.from_json(device) for device in blockdevices]
+	except json.decoder.JSONDecodeError as err:
+		error(f"Could not decode lsblk JSON: {result}")
+		raise err
 
 	raise DiskError(f'Failed to read disk "{dev_path}" with lsblk')
 

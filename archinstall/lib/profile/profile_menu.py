@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING, Any, Optional, Dict
 
 from archinstall.default_profiles.profile import Profile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import AVAILABLE_GFX_DRIVERS
 from ..menu import Menu, MenuSelectionType, AbstractSubMenu, Selector
-from ..user_interaction.system_conf import select_driver
+from ..interactions.system_conf import select_driver
+from ..hardware import GfxDriver
 
 if TYPE_CHECKING:
 	_: Any
@@ -38,7 +38,7 @@ class ProfileMenu(AbstractSubMenu):
 		self._menu_options['gfx_driver'] = Selector(
 			_('Graphics driver'),
 			lambda preset: self._select_gfx_driver(preset),
-			display_func=lambda x: x if x else None,
+			display_func=lambda x: x.value if x else None,
 			dependencies=['profile'],
 			default=self._preset.gfx_driver if self._preset.profile and self._preset.profile.is_graphic_driver_supported() else None,
 			enabled=self._preset.profile.is_graphic_driver_supported() if self._preset.profile else False
@@ -73,7 +73,7 @@ class ProfileMenu(AbstractSubMenu):
 				self._menu_options['gfx_driver'].set_current_selection(None)
 			else:
 				self._menu_options['gfx_driver'].set_enabled(True)
-				self._menu_options['gfx_driver'].set_current_selection('All open-source (default)')
+				self._menu_options['gfx_driver'].set_current_selection(GfxDriver.AllOpenSource)
 
 			if not profile.is_greeter_supported():
 				self._menu_options['greeter'].set_enabled(False)
@@ -87,7 +87,7 @@ class ProfileMenu(AbstractSubMenu):
 
 		return profile
 
-	def _select_gfx_driver(self, preset: Optional[str] = None) -> Optional[str]:
+	def _select_gfx_driver(self, preset: Optional[GfxDriver] = None) -> Optional[GfxDriver]:
 		driver = preset
 		profile: Optional[Profile] = self._menu_options['profile'].current_selection
 
@@ -96,11 +96,8 @@ class ProfileMenu(AbstractSubMenu):
 				driver = select_driver(current_value=preset)
 
 			if driver and 'Sway' in profile.current_selection_names():
-				packages = AVAILABLE_GFX_DRIVERS[driver]
-
-				if packages and "nvidia" in packages:
-					prompt = str(
-						_('The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'))
+				if driver.is_nvidia():
+					prompt = str(_('The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?'))
 					choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
 
 					if choice.value == Menu.no():

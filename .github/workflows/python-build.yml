@@ -12,23 +12,16 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
       - name: Prepare arch
         run: |
           pacman-key --init
           pacman --noconfirm -Sy archlinux-keyring
-          pacman --noconfirm -Sy python-pyparted pkgconfig gcc
+          pacman --noconfirm -Sy python-pip python-pyparted python-simple-term-menu pkgconfig gcc
       - name: Install build dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade build twine wheel setuptools installer
-          pip uninstall archinstall -y
-      - name: Install package dependencies
-        run: |
-          pip install --upgrade simple-term-menu pyparted
+          python -m pip install --break-system-packages --upgrade pip
+          pip install --break-system-packages --upgrade build twine wheel setuptools installer
+          pip uninstall archinstall -y --break-system-packages
       - name: Build archinstall
         run: python -m build --wheel --no-isolation
       - name: Install archinstall
@@ -36,7 +29,10 @@ jobs:
       - name: Run archinstall
         run: |
           python -V
-          archinstall -v
+          archinstall --script guided -v
+          archinstall --script swiss -v
+          archinstall --script only_hd -v
+          archinstall --script minimal -v
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall

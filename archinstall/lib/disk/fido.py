@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import getpass
-import logging
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 
 from .device_model import PartitionModification, Fido2Device
 from ..general import SysCommand, SysCommandWorker, clear_vt100_escape_codes
-from ..output import log
+from ..output import error, info
 
 
 class Fido2:
@@ -36,12 +36,16 @@ class Fido2:
 		# to prevent continous reloading which will slow
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
-			ret = SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+			ret: Optional[str] = None
+			try:
+				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+			except:
+				error('fido2 support is most likely not installed')
 			if not ret:
-				log('Unable to retrieve fido2 devices', level=logging.ERROR)
+				error('Unable to retrieve fido2 devices')
 				return []
 
-			fido_devices = clear_vt100_escape_codes(ret)
+			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
 
 			manufacturer_pos = 0
 			product_pos = 0
@@ -58,7 +62,7 @@ class Fido2:
 				product = line[product_pos:]
 
 				devices.append(
-					Fido2Device(path, manufacturer, product)
+					Fido2Device(Path(path), manufacturer, product)
 				)
 
 			cls._loaded = True
@@ -87,8 +91,4 @@ class Fido2:
 					worker.write(bytes(getpass.getpass(" "), 'UTF-8'))
 					pin_inputted = True
 
-				log(
-					f"You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds.",
-					level=logging.INFO,
-					fg="yellow"
-				)
+				info('You might need to touch the FIDO2 device to unlock it if no prompt comes up after 3 seconds')

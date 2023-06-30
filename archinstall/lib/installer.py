@@ -1,5 +1,4 @@
 import glob
-import logging
 import os
 import re
 import shlex
@@ -7,22 +6,25 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Iterator, List, Mapping, Optional, TYPE_CHECKING, Union, Dict
+from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
+
+from ..lib.disk.device_model import get_lsblk_info
 
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
-from .hardware import has_uefi, is_vm, cpu_vendor
-from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
+from .hardware import SysInfo
+from .locale import LocaleConfiguration
+from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
-from .mirrors import use_mirrors
+from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
 from .models.bootloader import Bootloader
 from .models.network_configuration import NetworkConfiguration
 from .models.users import User
-from .output import log
-from .pacman import run_pacman
+from .output import log, error, info, warn, debug
+from . import pacman
+from .pacman import Pacman
 from .plugins import plugins
-from .services import service_state
 from .storage import storage
 
 if TYPE_CHECKING:
@@ -36,59 +38,11 @@ __packages__ = ["base", "base-devel", "linux-firmware", "linux", "linux-lts", "l
 __accessibility_packages__ = ["brltty", "espeakup", "alsa-utils"]
 
 
-class InstallationFile:
-	def __init__(self, installation :'Installer', filename :str, owner :str, mode :str = "w"):
-		self.installation = installation
-		self.filename = filename
-		self.owner = owner
-		self.mode = mode
-		self.fh = None
-
-	def __enter__(self) -> 'InstallationFile':
-		self.fh = open(self.filename, self.mode)
-		return self
-
-	def __exit__(self, *args :str) -> None:
-		self.fh.close()
-		self.installation.chown(self.owner, self.filename)
-
-	def write(self, data: Union[str, bytes]) -> int:
-		return self.fh.write(data)
-
-	def read(self, *args) -> Union[str, bytes]:
-		return self.fh.read(*args)
-
-# 	def poll(self, *args) -> bool:
-# 		return self.fh.poll(*args)
-
-
 def accessibility_tools_in_use() -> bool:
 	return os.system('systemctl is-active --quiet espeakup.service') == 0
 
 
 class Installer:
-	"""
-	`Installer()` is the wrapper for most basic installation steps.
-	It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
-
-	:param partition: Requires a partition as the first argument, this is
-		so that the installer can mount to `mountpoint` and strap packages there.
-	:type partition: class:`archinstall.Partition`
-
-	:param boot_partition: There's two reasons for needing a boot partition argument,
-		The first being so that `mkinitcpio` can place the `vmlinuz` kernel at the right place
-		during the `pacstrap` or `linux` and the base packages for a minimal installation.
-		The second being when :py:func:`~archinstall.Installer.add_bootloader` is called,
-		A `boot_partition` must be known to the installer before this is called.
-	:type boot_partition: class:`archinstall.Partition`
-
-	:param profile: A profile to install, this is optional and can be called later manually.
-		This just simplifies the process by not having to call :py:func:`~archinstall.Installer.install_profile` later on.
-	:type profile: str, optional
-
-	:param hostname: The given /etc/hostname for the machine.
-	:type hostname: str, optional
-	"""
 	def __init__(
 		self,
 		target: Path,
@@ -97,25 +51,20 @@ class Installer:
 		base_packages: List[str] = [],
 		kernels: Optional[List[str]] = None
 	):
-		if not base_packages:
-			base_packages = __packages__[:3]
-
-		if kernels is None:
-			self.kernels = ['linux']
-		else:
-			self.kernels = kernels
-
+		"""
+		`Installer()` is the wrapper for most basic installation steps.
+		It also wraps :py:func:`~archinstall.Installer.pacstrap` among other things.
+		"""
+		self.base_packages = base_packages or __packages__[:3]
+		self.kernels = kernels or ['linux']
 		self._disk_config = disk_config
-		self._disk_encryption = disk_encryption
 
-		if self._disk_encryption is None:
-			self._disk_encryption = disk.DiskEncryption(disk.EncryptionType.NoEncryption)
+		self._disk_encryption = disk_encryption or disk.DiskEncryption(disk.EncryptionType.NoEncryption)
+		self.target: Path = target
 
-		self.target = target
 		self.init_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 		self.milliseconds = int(str(time.time()).split('.')[1])
-		self.helper_flags = {'base': False, 'bootloader': False}
-		self.base_packages = base_packages
+		self.helper_flags: Dict[str, Any] = {'base': False, 'bootloader': None}
 
 		for kernel in self.kernels:
 			self.base_packages.append(kernel)
@@ -124,31 +73,34 @@ class Installer:
 		if accessibility_tools_in_use():
 			self.base_packages.extend(__accessibility_packages__)
 
-		self.post_base_install = []
+		self.post_base_install: List[Callable] = []
 
 		# TODO: Figure out which one of these two we'll use.. But currently we're mixing them..
 		storage['session'] = self
 		storage['installation_session'] = self
 
-		self.MODULES = []
-		self.BINARIES = []
-		self.FILES = []
+		self.modules: List[str] = []
+		self._binaries: List[str] = []
+		self._files: List[str] = []
+
 		# systemd, sd-vconsole and sd-encrypt will be replaced by udev, keymap and encrypt
 		# if HSM is not used to encrypt the root volume. Check mkinitcpio() function for that override.
-		self.HOOKS = ["base", "systemd", "autodetect", "keyboard", "sd-vconsole", "modconf", "block", "filesystems", "fsck"]
-		self.KERNEL_PARAMS = []
-		self.FSTAB_ENTRIES = []
+		self._hooks: List[str] = [
+			"base", "systemd", "autodetect", "keyboard",
+			"sd-vconsole", "modconf", "block", "filesystems", "fsck"
+		]
+		self._kernel_params: List[str] = []
+		self._fstab_entries: List[str] = []
 
 		self._zram_enabled = False
+		self.pacman = Pacman(self.target, storage['arguments'].get('silent', False))
 
-	def __enter__(self, *args: str, **kwargs: str) -> 'Installer':
+	def __enter__(self) -> 'Installer':
 		return self
 
-	def __exit__(self, *args :str, **kwargs :str) -> bool:
-		# TODO: https://stackoverflow.com/questions/28157929/how-to-safely-handle-an-exception-inside-a-context-manager
-
-		if len(args) >= 2 and args[1]:
-			self.log(args[1], level=logging.ERROR, fg='red')
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		if exc_type is not None:
+			error(exc_val)
 
 			self.sync_log_to_install_medium()
 
@@ -156,46 +108,49 @@ class Installer:
 			# and then reboot, and a identical log file will be found in the ISO medium anyway.
 			print(_("[!] A log file has been created here: {}").format(os.path.join(storage['LOG_PATH'], storage['LOG_FILE'])))
 			print(_("    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"))
-			raise args[1]
+			raise exc_val
 
 		if not (missing_steps := self.post_install_check()):
-			self.log('Installation completed without any errors. You may now reboot.', fg='green', level=logging.INFO)
+			log('Installation completed without any errors. You may now reboot.', fg='green')
 			self.sync_log_to_install_medium()
 			return True
 		else:
-			self.log('Some required steps were not successfully installed/configured before leaving the installer:', fg='red', level=logging.WARNING)
-			for step in missing_steps:
-				self.log(f' - {step}', fg='red', level=logging.WARNING)
+			warn('Some required steps were not successfully installed/configured before leaving the installer:')
 
-			self.log(f"Detailed error logs can be found at: {storage['LOG_PATH']}", level=logging.WARNING)
-			self.log("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues", level=logging.WARNING)
+			for step in missing_steps:
+				warn(f' - {step}')
+
+			warn(f"Detailed error logs can be found at: {storage['LOG_PATH']}")
+			warn("Submit this zip file as an issue to https://github.com/archlinux/archinstall/issues")
 
 			self.sync_log_to_install_medium()
 			return False
 
-	def log(self, *args :str, level :int = logging.DEBUG, **kwargs :str):
-		"""
-		installer.log() wraps output.log() mainly to set a default log-level for this install session.
-		Any manual override can be done per log() call.
-		"""
-		log(*args, level=level, **kwargs)
-
 	def _verify_service_stop(self):
 		"""
 		Certain services might be running that affects the system during installation.
-		Currently, only one such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
+		One such service is "reflector.service" which updates /etc/pacman.d/mirrorlist
 		We need to wait for it before we continue since we opted in to use a custom mirror/region.
 		"""
-		log('Waiting for automatic mirror selection (reflector) to complete...', level=logging.INFO)
-		while service_state('reflector') not in ('dead', 'failed', 'exited'):
+		info('Waiting for time sync (systemd-timesyncd.service) to complete.')
+		while SysCommand('timedatectl show --property=NTPSynchronized --value').decode().rstrip() != 'yes':
 			time.sleep(1)
 
-		log('Waiting pacman-init.service to complete.', level=logging.INFO)
-		while service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		info('Waiting for automatic mirror selection (reflector) to complete.')
+		while self._service_state('reflector') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
-		log('Waiting Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.', level=logging.INFO)
-		while service_state('archlinux-keyring-wkd-sync') not in ('dead', 'failed', 'exited'):
+		# info('Waiting for pacman-init.service to complete.')
+		# while self._service_state('pacman-init') not in ('dead', 'failed', 'exited'):
+		# 	time.sleep(1)
+
+		info('Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete.')
+		# Wait for the timer to kick in
+		while self._service_started('archlinux-keyring-wkd-sync.timer') is None:
+			time.sleep(1)
+
+		# Wait for the service to enter a finished state
+		while self._service_state('archlinux-keyring-wkd-sync.service') not in ('dead', 'failed', 'exited'):
 			time.sleep(1)
 
 	def _verify_boot_part(self):
@@ -221,57 +176,56 @@ class Installer:
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
-		log('Mounting partitions in order', level=logging.INFO)
+		info('Mounting partitions in order')
 
 		for mod in self._disk_config.device_modifications:
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
 			# '/' just for sorting
-			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint if x.mountpoint else Path('/'))
+			sorted_part_mods = sorted(mod.partitions, key=lambda x: x.mountpoint or Path('/'))
 
+			enc_partitions = []
 			if self._disk_encryption.encryption_type is not disk.EncryptionType.NoEncryption:
-				enc_partitions = list(filter(lambda x: x in self._disk_encryption.partitions, sorted_part_mods))
-			else:
-				enc_partitions = []
+				enc_partitions = list(set(sorted_part_mods) & set(self._disk_encryption.partitions))
 
 			# attempt to decrypt all luks partitions
 			luks_handlers = self._prepare_luks_partitions(enc_partitions)
 
 			for part_mod in sorted_part_mods:
-				if part_mod not in luks_handlers:  # partition is not encrypted
+				if luks_handler := luks_handlers.get(part_mod):
+					# mount encrypted partition
+					self._mount_luks_partiton(part_mod, luks_handler)
+				else:
+					# partition is not encrypted
 					self._mount_partition(part_mod)
-				else:  # mount encrypted partition
-					self._mount_luks_partiton(part_mod, luks_handlers[part_mod])
 
 	def _prepare_luks_partitions(self, partitions: List[disk.PartitionModification]) -> Dict[disk.PartitionModification, Luks2]:
-		luks_handlers = {}
-
-		for part_mod in partitions:
-			luks_handler = disk.device_handler.unlock_luks2_dev(
+		return {
+			part_mod: disk.device_handler.unlock_luks2_dev(
 				part_mod.dev_path,
 				part_mod.mapper_name,
 				self._disk_encryption.encryption_password
 			)
-			luks_handlers[part_mod] = luks_handler
-
-		return luks_handlers
+			for part_mod in partitions
+			if part_mod.mapper_name and part_mod.dev_path
+		}
 
 	def _mount_partition(self, part_mod: disk.PartitionModification):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
-		if part_mod.mountpoint is not None:
+		if part_mod.mountpoint and part_mod.dev_path:
 			target = self.target / part_mod.relative_mountpoint
 			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
 
-		if part_mod.fs_type == disk.FilesystemType.Btrfs:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
 
 	def _mount_luks_partiton(self, part_mod: disk.PartitionModification, luks_handler: Luks2):
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
-		if part_mod.mountpoint is not None:
+		if part_mod.mountpoint and luks_handler.mapper_dev:
 			target = self.target / part_mod.relative_mountpoint
 			disk.device_handler.mount(luks_handler.mapper_dev, target, options=part_mod.mount_options)
 
-		if part_mod.fs_type == disk.FilesystemType.Btrfs:
+		if part_mod.fs_type == disk.FilesystemType.Btrfs and luks_handler.mapper_dev:
 			self._mount_btrfs_subvol(luks_handler.mapper_dev, part_mod.btrfs_subvols)
 
 	def _mount_btrfs_subvol(self, dev_path: Path, subvolumes: List[disk.SubvolumeModification]):
@@ -291,7 +245,7 @@ class Installer:
 			)
 
 			if gen_enc_file and not part_mod.is_root():
-				log(f'Creating key-file: {part_mod.dev_path}', level=logging.INFO)
+				info(f'Creating key-file: {part_mod.dev_path}')
 				luks_handler.create_keyfile(self.target)
 
 			if part_mod.is_root() and not gen_enc_file:
@@ -301,26 +255,6 @@ class Installer:
 						part_mod,
 						self._disk_encryption.encryption_password
 					)
-
-	def activate_ntp(self):
-		"""
-		If NTP is activated, confirm activiation in the ISO and at least one time-sync finishes
-		"""
-		SysCommand('timedatectl set-ntp true')
-
-		logged = False
-		while service_state('dbus-org.freedesktop.timesync1.service') not in ['running']:
-			if not logged:
-				log(f"Waiting for dbus-org.freedesktop.timesync1.service to enter running state", level=logging.INFO)
-				logged = True
-			time.sleep(1)
-
-		logged = False
-		while 'Server: n/a' in SysCommand('timedatectl timesync-status --no-pager --property=Server --value'):
-			if not logged:
-				log(f"Waiting for timedatectl timesync-status to report a timesync against a server", level=logging.INFO)
-				logged = True
-			time.sleep(1)
 
 	def sync_log_to_install_medium(self) -> bool:
 		# Copy over the install log (if there is one) to the install medium if
@@ -346,145 +280,64 @@ class Installer:
 		SysCommand(f'chmod 0600 {self.target}{file}')
 		SysCommand(f'mkswap {self.target}{file}')
 
-		self.FSTAB_ENTRIES.append(f'{file} none swap defaults 0 0')
+		self._fstab_entries.append(f'{file} none swap defaults 0 0')
 
 		if enable_resume:
 			resume_uuid = SysCommand(f'findmnt -no UUID -T {self.target}{file}').decode('UTF-8').strip()
 			resume_offset = SysCommand(f'/usr/bin/filefrag -v {self.target}{file}').decode('UTF-8').split('0:', 1)[1].split(":", 1)[1].split("..", 1)[0].strip()
 
-			self.HOOKS.append('resume')
-			self.KERNEL_PARAMS.append(f'resume=UUID={resume_uuid}')
-			self.KERNEL_PARAMS.append(f'resume_offset={resume_offset}')
+			self._hooks.append('resume')
+			self._kernel_params.append(f'resume=UUID={resume_uuid}')
+			self._kernel_params.append(f'resume_offset={resume_offset}')
 
 	def post_install_check(self, *args :str, **kwargs :str) -> List[str]:
 		return [step for step, flag in self.helper_flags.items() if flag is False]
 
-	def enable_multilib_repository(self):
-		# Set up a regular expression pattern of a commented line containing 'multilib' within []
-		pattern = re.compile(r"^#\s*\[multilib\]$")
-
-		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
-		matched = False
-
-		# Read in the lines from the original file
-		with open("/etc/pacman.conf", "r") as pacman_conf:
-			lines = pacman_conf.readlines()
-
-		# Open the file again in write mode, to replace the contents
-		with open("/etc/pacman.conf", "w") as pacman_conf:
-			for line in lines:
-				if pattern.match(line):
-					# If this is the [] block containing 'multilib', uncomment it and set the matched tracking boolean.
-					pacman_conf.write(line.lstrip('#'))
-					matched = True
-				elif matched:
-					# The previous line was a match for [.*multilib.*].
-					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					pacman_conf.write(line.lstrip('#'))
-					matched = False # Reset the state of matched to False.
-				else:
-					pacman_conf.write(line)
-
-	def enable_testing_repositories(self, enable_multilib_testing=False):
-		# Set up a regular expression pattern of a commented line containing 'testing' within []
-		pattern = re.compile("^#\\[.*testing.*\\]$")
-
-		# This is used to track if the previous line is a match, so we end up uncommenting the line after the block.
-		matched = False
-
-		# Read in the lines from the original file
-		with open("/etc/pacman.conf", "r") as pacman_conf:
-			lines = pacman_conf.readlines()
-
-		# Open the file again in write mode, to replace the contents
-		with open("/etc/pacman.conf", "w") as pacman_conf:
-			for line in lines:
-				if pattern.match(line) and (enable_multilib_testing or 'multilib' not in line):
-					# If this is the [] block containing 'testing', uncomment it and set the matched tracking boolean.
-					pacman_conf.write(line.lstrip('#'))
-					matched = True
-				elif matched:
-					# The previous line was a match for [.*testing.*].
-					# This means we're on a line that looks like '#Include = /etc/pacman.d/mirrorlist'
-					pacman_conf.write(line.lstrip('#'))
-					matched = False # Reset the state of matched to False.
-				else:
-					pacman_conf.write(line)
-
-	def pacstrap(self, *packages: Union[str, List[str]], **kwargs :str) -> bool:
-		if type(packages[0]) in (list, tuple):
-			packages = packages[0]
-
-		for plugin in plugins.values():
-			if hasattr(plugin, 'on_pacstrap'):
-				if (result := plugin.on_pacstrap(packages)):
-					packages = result
-
-		self.log(f'Installing packages: {packages}', level=logging.INFO)
-
-		# TODO: We technically only need to run the -Syy once.
-		try:
-			run_pacman('-Syy', default_cmd='/usr/bin/pacman')
-		except SysCallError as error:
-			self.log(f'Could not sync a new package database: {error}', level=logging.ERROR, fg="red")
-
-			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
-					return self.pacstrap(*packages, **kwargs)
-
-			raise RequirementError(f'Could not sync mirrors: {error}', level=logging.ERROR, fg="red")
-
-		try:
-			SysCommand(f'/usr/bin/pacstrap -C /etc/pacman.conf -K {self.target} {" ".join(packages)} --noconfirm', peek_output=True)
-			return True
-		except SysCallError as error:
-			self.log(f'Could not strap in packages: {error}', level=logging.ERROR, fg="red")
-
-			if storage['arguments'].get('silent', False) is False:
-				if input('Would you like to re-try this download? (Y/n): ').lower().strip() in ('', 'y'):
-					return self.pacstrap(*packages, **kwargs)
-
-			raise RequirementError("Pacstrap failed. See /var/log/archinstall/install.log or above message for error details.")
-
-	def set_mirrors(self, mirrors :Mapping[str, Iterator[str]]) -> None:
+	def set_mirrors(self, mirror_config: MirrorConfiguration):
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mirrors'):
-				if result := plugin.on_mirrors(mirrors):
-					mirrors = result
+				if result := plugin.on_mirrors(mirror_config):
+					mirror_config = result
 
-		return use_mirrors(mirrors, destination=f'{self.target}/etc/pacman.d/mirrorlist')
+		destination = f'{self.target}/etc/pacman.d/mirrorlist'
+		if mirror_config.mirror_regions:
+			use_mirrors(mirror_config.mirror_regions, destination)
+		if mirror_config.custom_mirrors:
+			add_custom_mirrors(mirror_config.custom_mirrors)
 
 	def genfstab(self, flags :str = '-pU'):
-		self.log(f"Updating {self.target}/etc/fstab", level=logging.INFO)
+		fstab_path = self.target / "etc" / "fstab"
+		info(f"Updating {fstab_path}")
 
 		try:
-			fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}')
-		except SysCallError as error:
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {error}')
+			gen_fstab = SysCommand(f'/usr/bin/genfstab {flags} {self.target}').decode()
+		except SysCallError as err:
+			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {err}')
 
-		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
-			fstab_fh.write(fstab.decode())
+		if not gen_fstab:
+			raise RequirementError(f'Genrating fstab returned empty value')
 
-		if not os.path.isfile(f'{self.target}/etc/fstab'):
-			raise RequirementError(f'Could not generate fstab, strapping in packages most likely failed (disk out of space?)\n Error: {fstab}')
+		with open(fstab_path, 'a') as fp:
+			fp.write(gen_fstab)
+
+		if not fstab_path.is_file():
+			raise RequirementError(f'Could not create fstab file')
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_genfstab'):
 				if plugin.on_genfstab(self) is True:
 					break
 
-		with open(f"{self.target}/etc/fstab", 'a') as fstab_fh:
-			for entry in self.FSTAB_ENTRIES:
-				fstab_fh.write(f'{entry}\n')
+		with open(fstab_path, 'a') as fp:
+			for entry in self._fstab_entries:
+				fp.write(f'{entry}\n')
 
 		for mod in self._disk_config.device_modifications:
 			for part_mod in mod.partitions:
 				if part_mod.fs_type != disk.FilesystemType.Btrfs:
 					continue
 
-				fstab_file = Path(f'{self.target}/etc/fstab')
-
-				with fstab_file.open('r') as fp:
+				with fstab_path.open('r') as fp:
 					fstab = fp.readlines()
 
 				# Replace the {installation}/etc/fstab with entries
@@ -506,44 +359,42 @@ class Installer:
 							fstab[index] = line.replace(subvoldef[0], f',compress=zstd{subvoldef[0]}')
 							break
 
-				with fstab_file.open('w') as fp:
+				with fstab_path.open('w') as fp:
 					fp.writelines(fstab)
 
 	def set_hostname(self, hostname: str, *args :str, **kwargs :str) -> None:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
-	def set_locale(self, locale :str, encoding :str = 'UTF-8', *args :str, **kwargs :str) -> bool:
-		if not len(locale):
-			return True
-
+	def set_locale(self, locale_config: LocaleConfiguration):
 		modifier = ''
+		lang = locale_config.sys_lang
+		encoding = locale_config.sys_enc
 
 		# This is a temporary patch to fix #1200
-		if '.' in locale:
-			locale, potential_encoding = locale.split('.', 1)
+		if '.' in locale_config.sys_lang:
+			lang, potential_encoding = locale_config.sys_lang.split('.', 1)
 
 			# Override encoding if encoding is set to the default parameter
 			# and the "found" encoding differs.
-			if encoding == 'UTF-8' and encoding != potential_encoding:
+			if locale_config.sys_enc == 'UTF-8' and locale_config.sys_enc != potential_encoding:
 				encoding = potential_encoding
 
 		# Make sure we extract the modifier, that way we can put it in if needed.
-		if '@' in locale:
-			locale, modifier = locale.split('@', 1)
+		if '@' in locale_config.sys_lang:
+			lang, modifier = locale_config.sys_lang.split('@', 1)
 			modifier = f"@{modifier}"
 		# - End patch
 
 		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{locale}.{encoding}{modifier} {encoding}\n')
-		with open(f'{self.target}/etc/locale.conf', 'w') as fh:
-			fh.write(f'LANG={locale}.{encoding}{modifier}\n')
+			fh.write(f'{lang}.{encoding}{modifier} {encoding}\n')
+
+		(self.target / "etc" / "locale.conf").write_text(f'LANG={lang}.{encoding}{modifier}\n')
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
-			return True
-		except SysCallError:
-			return False
+		except SysCallError as e:
+			error(f'Failed to run locale-gen on target: {e}')
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
@@ -562,37 +413,34 @@ class Installer:
 			return True
 
 		else:
-			self.log(
-				f"Time zone {zone} does not exist, continuing with system default.",
-				level=logging.WARNING,
-				fg='red'
-			)
+			warn(f'Time zone {zone} does not exist, continuing with system default')
 
 		return False
 
 	def activate_time_syncronization(self) -> None:
-		self.log('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers.', level=logging.INFO)
+		info('Activating systemd-timesyncd for time synchronization using Arch Linux and ntp.org NTP servers')
 		self.enable_service('systemd-timesyncd')
 
 	def enable_espeakup(self) -> None:
-		self.log('Enabling espeakup.service for speech synthesis (accessibility).', level=logging.INFO)
+		info('Enabling espeakup.service for speech synthesis (accessibility)')
 		self.enable_service('espeakup')
 
 	def enable_periodic_trim(self) -> None:
-		self.log("Enabling periodic TRIM")
+		info("Enabling periodic TRIM")
 		# fstrim is owned by util-linux, a dependency of both base and systemd.
 		self.enable_service("fstrim.timer")
 
-	def enable_service(self, *services: Union[str, List[str]]) -> None:
-		if type(services[0]) in (list, tuple):
-			services = services[0]
+	def enable_service(self, services: Union[str, List[str]]) -> None:
+		if isinstance(services, str):
+			services = [services]
 
 		for service in services:
-			self.log(f'Enabling service {service}', level=logging.INFO)
+			info(f'Enabling service {service}')
+
 			try:
 				self.arch_chroot(f'systemctl enable {service}')
-			except SysCallError as error:
-				raise ServiceException(f"Unable to start service {service}: {error}")
+			except SysCallError as err:
+				raise ServiceException(f"Unable to start service {service}: {err}")
 
 			for plugin in plugins.values():
 				if hasattr(plugin, 'on_service'):
@@ -611,32 +459,17 @@ class Installer:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
 	def configure_nic(self, network_config: NetworkConfiguration) -> None:
-		from .systemd import Networkd
-
-		if network_config.dhcp:
-			conf = Networkd(Match={"Name": network_config.iface}, Network={"DHCP": "yes"})
-		else:
-			network = {"Address": network_config.ip}
-			if network_config.gateway:
-				network["Gateway"] = network_config.gateway
-			if network_config.dns:
-				dns = network_config.dns
-				network["DNS"] = dns if isinstance(dns, list) else [dns]
-
-			conf = Networkd(Match={"Name": network_config.iface}, Network=network)
+		conf = network_config.as_systemd_config()
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
-				new_conf = plugin.on_configure_nic(
+				conf = plugin.on_configure_nic(
 					network_config.iface,
 					network_config.dhcp,
 					network_config.ip,
 					network_config.gateway,
 					network_config.dns
-				)
-
-				if new_conf:
-					conf = new_conf
+				) or conf
 
 		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
@@ -663,7 +496,7 @@ class Installer:
 					# Otherwise, we can go ahead and add the required package
 					# and enable it's service:
 					else:
-						self.pacstrap('iwd')
+						self.pacman.strap('iwd')
 						self.enable_service('iwd')
 
 				for psk in psk_files:
@@ -682,16 +515,16 @@ class Installer:
 				if self.helper_flags.get('base', False) is False:
 
 					def post_install_enable_networkd_resolved(*args :str, **kwargs :str):
-						self.enable_service('systemd-networkd', 'systemd-resolved')
+						self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 					self.post_base_install.append(post_install_enable_networkd_resolved)
 				# Otherwise, we can go ahead and enable the services
 				else:
-					self.enable_service('systemd-networkd', 'systemd-resolved')
+					self.enable_service(['systemd-networkd', 'systemd-resolved'])
 
 		return True
 
-	def mkinitcpio(self, *flags :str) -> bool:
+	def mkinitcpio(self, flags: List[str], locale_config: LocaleConfiguration) -> bool:
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_mkinitcpio'):
 				# Allow plugins to override the usage of mkinitcpio altogether.
@@ -701,12 +534,12 @@ class Installer:
 		# mkinitcpio will error out if there's no vconsole.
 		if (vconsole := Path(f"{self.target}/etc/vconsole.conf")).exists() is False:
 			with vconsole.open('w') as fh:
-				fh.write(f"KEYMAP={storage['arguments']['keyboard-layout']}\n")
+				fh.write(f"KEYMAP={locale_config.kb_layout}\n")
 
 		with open(f'{self.target}/etc/mkinitcpio.conf', 'w') as mkinit:
-			mkinit.write(f"MODULES=({' '.join(self.MODULES)})\n")
-			mkinit.write(f"BINARIES=({' '.join(self.BINARIES)})\n")
-			mkinit.write(f"FILES=({' '.join(self.FILES)})\n")
+			mkinit.write(f"MODULES=({' '.join(self.modules)})\n")
+			mkinit.write(f"BINARIES=({' '.join(self._binaries)})\n")
+			mkinit.write(f"FILES=({' '.join(self._files)})\n")
 
 			if not self._disk_encryption.hsm_device:
 				# For now, if we don't use HSM we revert to the old
@@ -714,9 +547,9 @@ class Installer:
 				# This is purely for stability reasons, we're going away from this.
 				# * systemd -> udev
 				# * sd-vconsole -> keymap
-				self.HOOKS = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap') for hook in self.HOOKS]
+				self._hooks = [hook.replace('systemd', 'udev').replace('sd-vconsole', 'keymap') for hook in self._hooks]
 
-			mkinit.write(f"HOOKS=({' '.join(self.HOOKS)})\n")
+			mkinit.write(f"HOOKS=({' '.join(self._hooks)})\n")
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
@@ -729,38 +562,39 @@ class Installer:
 		testing: bool = False,
 		multilib: bool = False,
 		hostname: str = 'archinstall',
-		locales: List[str] = ['en_US.UTF-8 UTF-8']
+		locale_config: LocaleConfiguration = LocaleConfiguration.default()
 	):
 		for mod in self._disk_config.device_modifications:
 			for part in mod.partitions:
-				if (pkg := part.fs_type.installation_pkg) is not None:
-					self.base_packages.append(pkg)
-				if (module := part.fs_type.installation_module) is not None:
-					self.MODULES.append(module)
-				if (binary := part.fs_type.installation_binary) is not None:
-					self.BINARIES.append(binary)
+				if part.fs_type is not None:
+					if (pkg := part.fs_type.installation_pkg) is not None:
+						self.base_packages.append(pkg)
+					if (module := part.fs_type.installation_module) is not None:
+						self.modules.append(module)
+					if (binary := part.fs_type.installation_binary) is not None:
+						self._binaries.append(binary)
 
-				# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
-				if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
-					if 'fsck' in self.HOOKS:
-						self.HOOKS.remove('fsck')
+					# There is not yet an fsck tool for NTFS. If it's being used for the root filesystem, the hook should be removed.
+					if part.fs_type.fs_type_mount == 'ntfs3' and part.mountpoint == self.target:
+						if 'fsck' in self._hooks:
+							self._hooks.remove('fsck')
 
-				if part in self._disk_encryption.partitions:
-					if self._disk_encryption.hsm_device:
-						# Required bby mkinitcpio to add support for fido2-device options
-						self.pacstrap('libfido2')
+					if part in self._disk_encryption.partitions:
+						if self._disk_encryption.hsm_device:
+							# Required bby mkinitcpio to add support for fido2-device options
+							self.pacman.strap('libfido2')
 
-						if 'sd-encrypt' not in self.HOOKS:
-							self.HOOKS.insert(self.HOOKS.index('filesystems'), 'sd-encrypt')
-					else:
-						if 'encrypt' not in self.HOOKS:
-							self.HOOKS.insert(self.HOOKS.index('filesystems'), 'encrypt')
+							if 'sd-encrypt' not in self._hooks:
+								self._hooks.insert(self._hooks.index('filesystems'), 'sd-encrypt')
+						else:
+							if 'encrypt' not in self._hooks:
+								self._hooks.insert(self._hooks.index('filesystems'), 'encrypt')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			self.base_packages.append('grub')
 
-		if not is_vm():
-			vendor = cpu_vendor()
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
 			if vendor == "AuthenticAMD":
 				self.base_packages.append("amd-ucode")
 				if (ucode := Path(f"{self.target}/boot/amd-ucode.img")).exists():
@@ -770,28 +604,31 @@ class Installer:
 				if (ucode := Path(f"{self.target}/boot/intel-ucode.img")).exists():
 					ucode.unlink()
 			else:
-				self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode.", level=logging.DEBUG)
+				debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't install any ucode")
 
 		# Determine whether to enable multilib/testing repositories before running pacstrap if testing flag is set.
 		# This action takes place on the host system as pacstrap copies over package repository lists.
+		pacman_conf = pacman.Config(self.target)
 		if multilib:
-			self.log("The multilib flag is set. This system will be installed with the multilib repository enabled.")
-			self.enable_multilib_repository()
+			info("The multilib flag is set. This system will be installed with the multilib repository enabled.")
+			pacman_conf.enable(pacman.Repo.Multilib)
 		else:
-			self.log("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
+			info("The multilib flag is not set. This system will be installed without multilib repositories enabled.")
 
 		if testing:
-			self.log("The testing flag is set. This system will be installed with testing repositories enabled.")
-			self.enable_testing_repositories(multilib)
+			info("The testing flag is set. This system will be installed with testing repositories enabled.")
+			pacman_conf.enable(pacman.Repo.Testing)
+			if multilib:
+				pacman_conf.enable(pacman.Repo.MultilibTesting)
 		else:
-			self.log("The testing flag is not set. This system will be installed without testing repositories enabled.")
+			info("The testing flag is not set. This system will be installed without testing repositories enabled.")
 
-		self.pacstrap(self.base_packages)
+		pacman_conf.apply()
+
+		self.pacman.strap(self.base_packages)
 		self.helper_flags['base-strapped'] = True
 
-		# This handles making sure that the repositories we enabled persist on the installed system
-		if multilib or testing:
-			shutil.copy2("/etc/pacman.conf", f"{self.target}/etc/pacman.conf")
+		pacman_conf.persist()
 
 		# Periodic TRIM may improve the performance and longevity of SSDs whilst
 		# having no adverse effect on other devices. Most distributions enable
@@ -805,18 +642,18 @@ class Installer:
 		# sys_command(f'/usr/bin/arch-chroot {self.target} ln -s /usr/share/zoneinfo/{localtime} /etc/localtime')
 		# sys_command('/usr/bin/arch-chroot /mnt hwclock --hctosys --localtime')
 		self.set_hostname(hostname)
-		self.set_locale(*locales[0].split())
+		self.set_locale(locale_config)
 
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		self.mkinitcpio('-P')
+		self.mkinitcpio(['-P'], locale_config)
 
 		self.helper_flags['base'] = True
 
 		# Run registered post-install hooks
 		for function in self.post_base_install:
-			self.log(f"Running post-installation hook: {function}", level=logging.INFO)
+			info(f"Running post-installation hook: {function}")
 			function(self)
 
 		for plugin in plugins.values():
@@ -825,8 +662,8 @@ class Installer:
 
 	def setup_swap(self, kind :str = 'zram'):
 		if kind == 'zram':
-			self.log(f"Setting up swap on zram")
-			self.pacstrap('zram-generator')
+			info(f"Setting up swap on zram")
+			self.pacman.strap('zram-generator')
 
 			# We could use the default example below, but maybe not the best idea: https://github.com/archlinux/archinstall/pull/678#issuecomment-962124813
 			# zram_example_location = '/usr/share/doc/zram-generator/zram-generator.conf.example'
@@ -853,9 +690,9 @@ class Installer:
 		return None
 
 	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
-		self.pacstrap('efibootmgr')
+		self.pacman.strap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -864,26 +701,28 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path=/boot install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --path=/boot install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader'):
-			os.makedirs(f'{self.target}/boot/loader')
+		loader_dir = self.target / 'boot/loader'
+		loader_dir.mkdir(parents=True, exist_ok=True)
 
 		# Modify or create a loader.conf
-		if os.path.isfile(f'{self.target}/boot/loader/loader.conf'):
-			with open(f'{self.target}/boot/loader/loader.conf', 'r') as loader:
+		loader_conf = loader_dir / 'loader.conf'
+
+		try:
+			with loader_conf.open() as loader:
 				loader_data = loader.read().split('\n')
-		else:
+		except FileNotFoundError:
 			loader_data = [
 				f"default {self.init_time}",
 				"timeout 15"
 			]
 
-		with open(f'{self.target}/boot/loader/loader.conf', 'w') as loader:
+		with loader_conf.open('w') as loader:
 			for line in loader_data:
 				if line[:8] == 'default ':
 					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
@@ -894,62 +733,79 @@ class Installer:
 					loader.write(f"{line}\n")
 
 		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
-		if not os.path.exists(f'{self.target}/boot/loader/entries'):
-			os.makedirs(f'{self.target}/boot/loader/entries')
+		entries_dir = loader_dir / 'entries'
+		entries_dir.mkdir(parents=True, exist_ok=True)
+
+		comments = (
+			'# Created by: archinstall\n',
+			f'# Created on: {self.init_time}\n'
+		)
+
+		microcode = []
+
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
+			if vendor == "AuthenticAMD":
+				microcode.append('initrd  /amd-ucode.img\n')
+			elif vendor == "GenuineIntel":
+				microcode.append('initrd  /intel-ucode.img\n')
+			else:
+				debug(
+					f"Unknown CPU vendor '{vendor}' detected.",
+					"Archinstall won't add any ucode to systemd-boot config.",
+				)
+
+		options_entry = []
+
+		if root_partition.safe_fs_type.is_crypto():
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
+
+			if self._disk_encryption and self._disk_encryption.hsm_device:
+				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+				options_entry.append(f'rd.luks.name={root_partition.uuid}=luksdev')
+				# Note: tpm2-device and fido2-device don't play along very well:
+				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+				options_entry.append('rd.luks.options=fido2-device=auto,password-echo=no')
+			else:
+				options_entry.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev')
+
+			options_entry.append('root=/dev/mapper/luksdev')
+		else:
+			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+			options_entry.append(f'root=PARTUUID={root_partition.partuuid}')
+
+		# Zswap should be disabled when using zram.
+		# https://github.com/archlinux/archinstall/issues/881
+		if self._zram_enabled:
+			options_entry.append('zswap.enabled=0')
+
+		for sub_vol in root_partition.btrfs_subvols:
+			if sub_vol.is_root():
+				options_entry.append(f'rootflags=subvol={sub_vol.name}')
+				break
+
+		options_entry.append('rw')
+		options_entry.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
+		options_entry.extend(self._kernel_params)
+
+		options = 'options ' + ' '.join(options_entry) + '\n'
 
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
-				with open(f'{self.target}/boot/loader/entries/{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry.write('# Created by: archinstall\n')
-					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write(f'title Arch Linux ({kernel}{variant})\n')
-					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not is_vm():
-						vendor = cpu_vendor()
-						if vendor == "AuthenticAMD":
-							entry.write("initrd /amd-ucode.img\n")
-						elif vendor == "GenuineIntel":
-							entry.write("initrd /intel-ucode.img\n")
-						else:
-							self.log(
-								f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to systemd-boot config.",
-								level=logging.DEBUG)
-					entry.write(f"initrd /initramfs-{kernel}{variant}.img\n")
-					# blkid doesn't trigger on loopback devices really well,
-					# so we'll use the old manual method until we get that sorted out.
+				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
+					entry_lines: List[str] = []
 
-					options_entry = f'rw rootfstype={root_partition.fs_type.fs_type_mount} {" ".join(self.KERNEL_PARAMS)}\n'
+					entry_lines.extend(comments)
+					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
+					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
+					entry_lines.extend(microcode)
+					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
+					entry_lines.append(options)
 
-					for sub_vol in root_partition.btrfs_subvols:
-						if sub_vol.is_root():
-							options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
-
-					# Zswap should be disabled when using zram.
-					# https://github.com/archlinux/archinstall/issues/881
-					if self._zram_enabled:
-						options_entry = "zswap.enabled=0 " + options_entry
-
-					if root_partition.fs_type.is_crypto():
-						# TODO: We need to detect if the encrypted device is a whole disk encryption,
-						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-						log('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
-
-						kernel_options = f"options"
-
-						if self._disk_encryption and self._disk_encryption.hsm_device:
-							# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-							kernel_options += f' rd.luks.name={root_partition.uuid}=luksdev'
-							# Note: tpm2-device and fido2-device don't play along very well:
-							# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-							kernel_options += f' rd.luks.options=fido2-device=auto,password-echo=no'
-						else:
-							kernel_options += f' cryptdevice=PARTUUID={root_partition.partuuid}:luksdev'
-
-						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-					else:
-						log(f'Identifying root partition by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
-						entry.write(f'options root=PARTUUID={root_partition.partuuid} {options_entry}')
+					entry.writelines(entry_lines)
 
 		self.helper_flags['bootloader'] = 'systemd'
 
@@ -958,55 +814,174 @@ class Installer:
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self.pacstrap('grub')  # no need?
+		self.pacman.strap('grub')  # no need?
 
 		_file = "/etc/default/grub"
 
-		if root_partition.fs_type.is_crypto():
-			log(f"Using UUID {root_partition.uuid} as encrypted root identifier", level=logging.DEBUG)
+		if root_partition.safe_fs_type.is_crypto():
+			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.fs_type.value}\"/'"
+			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.safe_fs_type.value}\"/'"
 			enable_cryptdisk = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
 
 			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_cryptdisk} {_file}")
 		else:
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.fs_type.value}\"/'"
+			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.safe_fs_type.value}\"/'"
 
 		SysCommand(f"/usr/bin/arch-chroot {self.target} {cmd_line_linux} {_file}")
 
-		log(f"GRUB boot partition: {boot_partition.dev_path}", level=logging.INFO)
+		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
-		if has_uefi():
-			self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
+		if SysInfo.has_uefi():
+			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
 					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
-				except SysCallError as error:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {error}")
+				except SysCallError as err:
+					raise DiskError(f"Could not install GRUB to {self.target}/boot: {err}")
 		else:
+			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+
+			if not device:
+				raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=i386-pc --recheck {boot_partition.parent}', peek_output=True)
-			except SysCallError as error:
-				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {error}")
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' grub-install' \
+					f' --debug' \
+					f' --target=i386-pc' \
+					f' --recheck {device.device_info.path}'
+
+				SysCommand(cmd, peek_output=True)
+			except SysCallError as err:
+				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
-		except SysCallError as error:
-			raise DiskError(f"Could not configure GRUB: {error}")
+		except SysCallError as err:
+			raise DiskError(f"Could not configure GRUB: {err}")
 
 		self.helper_flags['bootloader'] = "grub"
+
+	def _add_limine_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
+	):
+		self.pacman.strap('limine')
+		info(f"Limine boot partition: {boot_partition.dev_path}")
+
+		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
+		#      partition before the format.
+		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
+
+		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+		if not device:
+			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+
+		def create_pacman_hook(contents: str):
+			HOOK_DIR = "/etc/pacman.d/hooks"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
+
+		if SysInfo.has_uefi():
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/BOOTX64.EFI' \
+					f' /boot/EFI/BOOT/'
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
+
+			# Create the EFI limine pacman hook.
+			create_pacman_hook("""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
+			""")
+		else:
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/limine-bios.sys' \
+					f' /boot/limine-bios.sys'
+
+				SysCommand(cmd, peek_output=True)
+
+				# `limine bios-install` deploys the stage 1 and 2 to the disk.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' limine' \
+					f' bios-install' \
+					f' {device.device_info.path}'
+
+				SysCommand(cmd, peek_output=True)
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
+
+			create_pacman_hook(f"""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+# XXX: Kernel name descriptors cannot be used since they are not persistent and
+#      can change after each boot.
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+			""")
+
+		# Limine does not ship with a default configuation file. We are going to
+		# create a basic one that is similar to the one GRUB generates.
+		try:
+			config = f"""
+TIMEOUT=5
+
+:Arch Linux
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux.img
+
+:Arch Linux (fallback)
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux-fallback.img
+			"""
+
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{config}' > /boot/limine.cfg\"")
+		except SysCallError as err:
+			raise DiskError(f"Could not configure Limine: {err}")
+
+		self.helper_flags['bootloader'] = "limine"
 
 	def _add_efistub_bootloader(
 		self,
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self.pacstrap('efibootmgr')
+		self.pacman.strap('efibootmgr')
 
-		if not has_uefi():
+		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
 
 		# TODO: Ideally we would want to check if another config
@@ -1020,44 +995,57 @@ class Installer:
 
 			kernel_parameters = []
 
-			if not is_vm():
-				vendor = cpu_vendor()
+			if not SysInfo.is_vm():
+				vendor = SysInfo.cpu_vendor()
 				if vendor == "AuthenticAMD":
 					kernel_parameters.append("initrd=\\amd-ucode.img")
 				elif vendor == "GenuineIntel":
 					kernel_parameters.append("initrd=\\intel-ucode.img")
 				else:
-					self.log(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.", level=logging.DEBUG)
+					debug(f"Unknown CPU vendor '{vendor}' detected. Archinstall won't add any ucode to firmware boot entry.")
 
 			kernel_parameters.append(f"initrd=\\initramfs-{kernel}.img")
 
 			# blkid doesn't trigger on loopback devices really well,
 			# so we'll use the old manual method until we get that sorted out.
 
-			if root_partition.fs_type.is_crypto():
+			if root_partition.safe_fs_type.is_crypto():
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				log(f'Identifying root partition by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.fs_type.value} {" ".join(self.KERNEL_PARAMS)}')
+				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 			else:
-				log(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}', level=logging.DEBUG)
-				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.fs_type.value} {" ".join(self.KERNEL_PARAMS)}')
+				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
+				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
-			device = disk.device_handler.get_device_by_partition_path(boot_partition.dev_path)
-			SysCommand(f'efibootmgr --disk {device.path} --part {device.path} --create --label "{label}" --loader {loader} --unicode \'{" ".join(kernel_parameters)}\' --verbose')
+			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+
+			if not device:
+				raise ValueError(f'Unable to find block device: {boot_partition.safe_dev_path}')
+
+			cmd = f'efibootmgr ' \
+				f'--disk {device.device_info.path} ' \
+				f'--part {boot_partition.safe_dev_path} ' \
+				f'--create ' \
+				f'--label "{label}" ' \
+				f'--loader {loader} ' \
+				f'--unicode \'{" ".join(kernel_parameters)}\' ' \
+				f'--verbose'
+
+			SysCommand(cmd)
 
 		self.helper_flags['bootloader'] = "efistub"
 
-	def add_bootloader(self, bootloader: Bootloader) -> bool:
+	def add_bootloader(self, bootloader: Bootloader):
 		"""
 		Adds a bootloader to the installation instance.
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
+		* limine (beta)
 		* efistub (beta)
 
-		:param bootloader: Can be one of the three strings
-			'systemd-bootctl', 'grub' or 'efistub' (beta)
+		:param bootloader: Type of bootloader to be added
 		"""
 
 		for plugin in plugins.values():
@@ -1066,9 +1054,6 @@ class Installer:
 				# This allows for bot configuring and installing bootloaders.
 				if plugin.on_add_bootloader(self):
 					return True
-
-		if type(self.target) == str:
-			self.target = Path(self.target)
 
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
@@ -1079,7 +1064,7 @@ class Installer:
 		if root_partition is None:
 			raise ValueError(f'Could not detect root at mountpoint {self.target}')
 
-		self.log(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}', level=logging.INFO)
+		info(f'Adding bootloader {bootloader.value} to {boot_partition.dev_path}')
 
 		match bootloader:
 			case Bootloader.Systemd:
@@ -1088,16 +1073,18 @@ class Installer:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition)
+			case Bootloader.Limine:
+				self._add_limine_bootloader(boot_partition, root_partition)
 
-	def add_additional_packages(self, *packages: Union[str, List[str]]) -> bool:
-		return self.pacstrap(*packages)
+	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
+		return self.pacman.strap(packages)
 
 	def _enable_users(self, service: str, users: List[User]):
 		for user in users:
 			self.arch_chroot(f'systemctl enable --user {service}', run_as=user.username)
 
 	def enable_sudo(self, entity: str, group :bool = False):
-		self.log(f'Enabling sudo permissions for {entity}.', level=logging.INFO)
+		info(f'Enabling sudo permissions for {entity}')
 
 		sudoers_dir = f"{self.target}/etc/sudoers.d"
 
@@ -1146,11 +1133,11 @@ class Installer:
 					handled_by_plugin = result
 
 		if not handled_by_plugin:
-			self.log(f'Creating user {user}', level=logging.INFO)
+			info(f'Creating user {user}')
 			try:
 				SysCommand(f'/usr/bin/arch-chroot {self.target} useradd -m -G wheel {user}')
-			except SysCallError as error:
-				raise SystemError(f"Could not create user inside installation: {error}")
+			except SysCallError as err:
+				raise SystemError(f"Could not create user inside installation: {err}")
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_user_created'):
@@ -1168,7 +1155,7 @@ class Installer:
 			self.helper_flags['user'] = True
 
 	def user_set_pw(self, user :str, password :str) -> bool:
-		self.log(f'Setting password for {user}', level=logging.INFO)
+		info(f'Setting password for {user}')
 
 		if user == 'root':
 			# This means the root account isn't locked/disabled with * in /etc/passwd
@@ -1185,7 +1172,7 @@ class Installer:
 			return False
 
 	def user_set_shell(self, user :str, shell :str) -> bool:
-		self.log(f'Setting shell for {user} to {shell}', level=logging.INFO)
+		info(f'Setting shell for {user} to {shell}')
 
 		try:
 			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"chsh -s {shell} {user}\"")
@@ -1201,53 +1188,71 @@ class Installer:
 		except SysCallError:
 			return False
 
-	def create_file(self, filename :str, owner :Optional[str] = None) -> InstallationFile:
-		return InstallationFile(self, filename, owner)
-
 	def set_keyboard_language(self, language: str) -> bool:
-		log(f"Setting keyboard language to {language}", level=logging.INFO)
+		info(f"Setting keyboard language to {language}")
+
 		if len(language.strip()):
 			if not verify_keyboard_layout(language):
-				self.log(f"Invalid keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				error(f"Invalid keyboard language specified: {language}")
 				return False
 
 			# In accordance with https://github.com/archlinux/archinstall/issues/107#issuecomment-841701968
 			# Setting an empty keymap first, allows the subsequent call to set layout for both console and x11.
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				os.system('/usr/bin/systemd-run --machine=archinstall --pty localectl set-keymap ""')
 
 				try:
 					session.SysCommand(["localectl", "set-keymap", language])
-				except SysCallError as error:
-					raise ServiceException(f"Unable to set locale '{language}' for console: {error}")
+				except SysCallError as err:
+					raise ServiceException(f"Unable to set locale '{language}' for console: {err}")
 
-				self.log(f"Keyboard language for this installation is now set to: {language}")
+				info(f"Keyboard language for this installation is now set to: {language}")
 		else:
-			self.log('Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			info('Keyboard language was not changed from default (no language specified)')
 
 		return True
 
 	def set_x11_keyboard_language(self, language: str) -> bool:
-		log(f"Setting x11 keyboard language to {language}", level=logging.INFO)
 		"""
 		A fallback function to set x11 layout specifically and separately from console layout.
 		This isn't strictly necessary since .set_keyboard_language() does this as well.
 		"""
+		info(f"Setting x11 keyboard language to {language}")
+
 		if len(language.strip()):
 			if not verify_x11_keyboard_layout(language):
-				self.log(f"Invalid x11-keyboard language specified: {language}", fg="red", level=logging.ERROR)
+				error(f"Invalid x11-keyboard language specified: {language}")
 				return False
 
-			from .systemd import Boot
+			from .boot import Boot
 			with Boot(self) as session:
 				session.SysCommand(["localectl", "set-x11-keymap", '""'])
 
 				try:
 					session.SysCommand(["localectl", "set-x11-keymap", language])
-				except SysCallError as error:
-					raise ServiceException(f"Unable to set locale '{language}' for X11: {error}")
+				except SysCallError as err:
+					raise ServiceException(f"Unable to set locale '{language}' for X11: {err}")
 		else:
-			self.log(f'X11-Keyboard language was not changed from default (no language specified).', fg="yellow", level=logging.INFO)
+			info(f'X11-Keyboard language was not changed from default (no language specified)')
 
 		return True
+
+	def _service_started(self, service_name: str) -> Optional[str]:
+		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+			service_name += '.service'  # Just to be safe
+
+		last_execution_time = b''.join(SysCommand(f"systemctl show --property=ActiveEnterTimestamp --no-pager {service_name}", environment_vars={'SYSTEMD_COLORS': '0'}))
+		last_execution_time = last_execution_time.lstrip(b'ActiveEnterTimestamp=').strip()
+		if not last_execution_time:
+			return None
+
+		return last_execution_time.decode('UTF-8')
+
+	def _service_state(self, service_name: str) -> str:
+		if os.path.splitext(service_name)[1] not in ('.service', '.target', '.timer'):
+			service_name += '.service'  # Just to be safe
+
+		state = b''.join(SysCommand(f'systemctl show --no-pager -p SubState --value {service_name}', environment_vars={'SYSTEMD_COLORS': '0'}))
+
+		return state.strip().decode('UTF-8')
