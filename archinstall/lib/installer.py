@@ -713,24 +713,26 @@ class Installer:
 		# Modify or create a loader.conf
 		loader_conf = loader_dir / 'loader.conf'
 
+		default = f'default {self.init_time}_{self.kernels[0]}.conf\n'
+
 		try:
 			with loader_conf.open() as loader:
-				loader_data = loader.read().split('\n')
+				loader_data = loader.readlines()
 		except FileNotFoundError:
 			loader_data = [
-				f"default {self.init_time}",
-				"timeout 15"
+				default,
+				'timeout 15\n'
 			]
+		else:
+			for index, line in enumerate(loader_data):
+				if line.startswith('default'):
+					loader_data[index] = default
+				elif line.startswith('#timeout'):
+					# We add in the default timeout to support dual-boot
+					loader_data[index] = line.removeprefix('#')
 
 		with loader_conf.open('w') as loader:
-			for line in loader_data:
-				if line[:8] == 'default ':
-					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-				elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
-					# We add in the default timeout to support dual-boot
-					loader.write(f"{line[1:]}\n")
-				else:
-					loader.write(f"{line}\n")
+			loader.writelines(loader_data)
 
 		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
 		entries_dir = loader_dir / 'entries'
