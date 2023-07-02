@@ -99,21 +99,6 @@ class CustomMirrorList(ListManager):
 		]
 		super().__init__(prompt, custom_mirrors, [self._actions[0]], self._actions[1:])
 
-	def reformat(self, data: List[CustomMirror]) -> Dict[str, Any]:
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
-
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[CustomMirror]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-		for row, user in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
-			display_data[row] = user
-
-		return display_data
-
 	def selected_action_display(self, mirror: CustomMirror) -> str:
 		return mirror.name
 

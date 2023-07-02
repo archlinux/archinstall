@@ -1,32 +1,408 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, List, Optional
+import re
+from pathlib import Path
+from typing import Any, TYPE_CHECKING, List, Optional, Dict, Tuple
 
+from .subvolume_menu import SubvolumeMenu
 from .device_handler import device_handler
-from .device_model import PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus
-from ..menu import ListManager, TableMenu, MenuSelectionType
+from .device_model import (
+	PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus, \
+	LvmLayoutType, LvmVolumeGroup, LvmVolume, FilesystemType, LvmVolumeStatus, Size, \
+	Unit, DeviceGeometry
+)
+from ..menu import (
+	TableMenu, MenuSelectionType, TextInput, AbstractSubMenu, Selector, ListManager, \
+	Menu, MenuSelection
+)
+from ..output import FormattedOutput, warn
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class LvmList(ListManager):
+class LvmVolumeList(ListManager):
 
-	def __init__(
-		self,
-		prompt: str,
-		device_modifications: List[DeviceModification],
-		lvm_config: Optional[LvmConfiguration] = None
-	):
-		self._lvm_config = lvm_config
-		self._device_modifications = device_modifications
-
+	def __init__(self, prompt: str, lvm_volumes: List[LvmVolume]):
 		self._actions = {
-			'create_volume_group': str(_('Create a new volume group'))
+			'create_new_volume': str(_('Create a new volume')),
+			# 'suggest_partition_layout': str(_('Suggest partition layout')),
+			'remove_added_volumes': str(_('Remove all newly added volumes')),
+			'assign_mountpoint': str(_('Assign mountpoint')),
+			'mark_formatting': str(_('Mark/Unmark to be formatted (wipes data)')),
+			'set_filesystem': str(_('Change filesystem')),
+			'btrfs_mark_compressed': str(_('Mark/Unmark as compressed')),  # btrfs only
+			'btrfs_set_subvolumes': str(_('Set subvolumes')),  # btrfs only
+			'delete_partition': str(_('Delete volume'))
 		}
 
 		display_actions = list(self._actions.values())
-		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
+		super().__init__(prompt, lvm_volumes, display_actions[:2], display_actions[3:])
+
+	def selected_action_display(self, partition: LvmVolume) -> str:
+		return str(_('Partition'))
+
+	def filter_options(self, selection: LvmVolume, options: List[str]) -> List[str]:
+		not_filter = []
+
+		# only display formatting if the volume exists already
+		if not selection.exists():
+			not_filter += [self._actions['mark_formatting']]
+		else:
+			# only allow these options if the existing volume
+			# was marked as formatting, otherwise we run into issues where
+			# 1. select a new fs -> potentially mark as wipe now
+			# 2. Switch back to old filesystem -> should unmark wipe now, but
+			#     how do we know it was the original one?
+			not_filter += [
+				self._actions['set_filesystem'],
+				self._actions['assign_mountpoint'],
+				self._actions['btrfs_mark_compressed'],
+				self._actions['btrfs_set_subvolumes']
+			]
+
+		# non btrfs volume shouldn't get btrfs options
+		if selection.fs_type != FilesystemType.Btrfs:
+			not_filter += [self._actions['btrfs_mark_compressed'], self._actions['btrfs_set_subvolumes']]
+		else:
+			not_filter += [self._actions['assign_mountpoint']]
+
+		return [o for o in options if o not in not_filter]
+
+	def handle_action(
+		self,
+		action: str,
+		entry: Optional[LvmVolume],
+		data: List[LvmVolume]
+	) -> List[LvmVolume]:
+		action_key = [k for k, v in self._actions.items() if v == action][0]
+
+		match action_key:
+			case 'create_new_volume':
+				new_volume = self._create_new_volume()
+				data += [new_volume]
+			# case 'suggest_partition_layout':
+			# 	new_partitions = self._suggest_partition_layout(data)
+			# 	if len(new_partitions) > 0:
+			# 		data = new_partitions
+			case 'remove_added_volumes':
+				choice = self._reset_confirmation()
+				if choice.value == Menu.yes():
+					data = [part for part in data if part.is_exists_or_modify()]
+			case 'assign_mountpoint' if entry:
+				entry.mountpoint = self._prompt_mountpoint()
+			case 'mark_formatting' if entry:
+				self._prompt_formatting(entry)
+			case 'set_filesystem' if entry:
+				fs_type = self._prompt_volume_fs_type()
+				if fs_type:
+					entry.fs_type = fs_type
+					# btrfs subvolumes will define mountpoints
+					if fs_type == FilesystemType.Btrfs:
+						entry.mountpoint = None
+			case 'btrfs_mark_compressed' if entry:
+				self._set_compressed(entry)
+			case 'btrfs_set_subvolumes' if entry:
+				self._set_btrfs_subvolumes(entry)
+			case 'delete_partition' if entry:
+				data = self._delete_partition(entry, data)
+
+		return data
+
+	def _delete_partition(
+		self,
+		entry: LvmVolume,
+		data: List[LvmVolume]
+	) -> List[LvmVolume]:
+		if entry.is_exists_or_modify():
+			entry.status = LvmVolumeStatus.Delete
+			return data
+		else:
+			return [d for d in data if d != entry]
+
+	def _set_compressed(self, volume: LvmVolume):
+		compression = 'compress=zstd'
+
+		if compression in volume.mount_options:
+			volume.mount_options = [o for o in volume.mount_options if o != compression]
+		else:
+			volume.mount_options.append(compression)
+
+	def _set_btrfs_subvolumes(self, volume: LvmVolume):
+		volume.btrfs_subvols = SubvolumeMenu(
+			_("Manage btrfs subvolumes for current volume"),
+			volume.btrfs_subvols
+		).run()
+
+	def _prompt_formatting(self, volume: LvmVolume):
+		# an existing volume can toggle between Exist or Modify
+		if volume.is_modify():
+			volume.status = LvmVolumeStatus.Exist
+			return
+		elif volume.exists():
+			volume.status = LvmVolumeStatus.Modify
+
+	def _prompt_mountpoint(self) -> Path:
+		header = '{}\n'.format(
+			str(_('Volume mount-points are relative to inside the installation, the root would be / as an example.'))
+		)
+		prompt = str(_('Mountpoint: '))
+
+		print(header)
+
+		while True:
+			value = TextInput(prompt).run().strip()
+
+			if value:
+				mountpoint = Path(value)
+				break
+
+		return mountpoint
+
+	def _prompt_volume_fs_type(self, prompt: str = '') -> FilesystemType:
+		options = {fs.value: fs for fs in FilesystemType if fs != FilesystemType.Crypto_luks}
+
+		prompt = '{}\n{}'.format(prompt, str(_('Enter a desired filesystem type for the volume')))
+		choice = Menu(prompt, options, sort=False, skip=False).run()
+		return options[choice.single_value]
+
+	def _validate_value(
+		self,
+		sector_size: Size,
+		total_size: Size,
+		value: str
+	) -> Optional[Size]:
+		match = re.match(r'([0-9]+)([a-zA-Z|%]*)', value, re.I)
+
+		if match:
+			value, unit = match.groups()
+
+			if unit == '%':
+				unit = Unit.Percent.name
+
+			if unit and unit not in Unit.get_all_units():
+				return None
+
+			unit = Unit[unit] if unit else Unit.sectors
+			return Size(int(value), unit, sector_size, total_size)
+
+		return None
+
+	def _enter_size(
+		self,
+		sector_size: Size,
+		total_size: Size,
+		prompt: str,
+		default: Size
+	) -> Size:
+		while True:
+			value = TextInput(prompt).run().strip()
+
+			size: Optional[Size] = None
+
+			if not value:
+				size = default
+			else:
+				size = self._validate_value(sector_size, total_size, value)
+
+			if size:
+				return size
+
+			warn(f'Invalid value: {value}')
+
+	def _prompt_size(self) -> Tuple[Size, Size]:
+		device_info = self._device.device_info
+
+		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'
+		free_space_table = FormattedOutput.as_table(device_info.free_space_regions)
+		prompt = text + free_space_table + '\n'
+
+		total_sectors = device_info.total_size.format_size(Unit.sectors, device_info.sector_size)
+		total_bytes = device_info.total_size.format_size(Unit.B)
+
+		prompt += str(_('Total: {} / {}')).format(total_sectors, total_bytes) + '\n\n'
+		prompt += str(_('All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB...')) + '\n'
+		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
+		print(prompt)
+
+		largest_free_area: DeviceGeometry = max(device_info.free_space_regions, key=lambda r: r.get_length())
+
+		# prompt until a valid start sector was entered
+		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
+		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
+		start_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			start_prompt,
+			default_start
+		)
+
+		if start_size.value == largest_free_area.start:
+			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
+		else:
+			end_size = Size(100, Unit.Percent, total_size=device_info.total_size)
+
+		# prompt until valid end sector was entered
+		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
+		end_size = self._enter_size(
+			device_info.sector_size,
+			device_info.total_size,
+			end_prompt,
+			end_size
+		)
+
+		return start_size, end_size
+
+	def _create_new_volume(self) -> LvmVolume:
+		title = '{}: '.format(str(_('Volume name')))
+		vol_name = TextInput(title).run()
+
+		fs_type = self._prompt_volume_fs_type()
+
+		start_size, end_size = self._prompt_size()
+		length = end_size - start_size
+
+		# new line for the next prompt
+		print()
+
+		mountpoint = None
+		if fs_type != FilesystemType.Btrfs:
+			mountpoint = self._prompt_mountpoint()
+
+		volume = LvmVolume(
+			status=LvmVolumeStatus.Create,
+			name=vol_name,
+			fs_type=fs_type,
+			start=start_size,
+			length=length,
+			mountpoint=mountpoint
+		)
+
+		return volume
+
+	def _reset_confirmation(self) -> MenuSelection:
+		prompt = str(_('This will remove all newly added volumes, continue?'))
+		choice = Menu(prompt, Menu.yes_no(), default_option=Menu.no(), skip=False).run()
+		return choice
+
+	# def _suggest_partition_layout(self, data: List[PartitionModification]) -> List[PartitionModification]:
+	# 	# if modifications have been done already, inform the user
+	# 	# that this operation will erase those modifications
+	# 	if any([not entry.exists() for entry in data]):
+	# 		choice = self._reset_confirmation()
+	# 		if choice.value == Menu.no():
+	# 			return []
+	#
+	# 	from ..interactions.disk_conf import suggest_single_disk_layout
+	#
+	# 	device_modification = suggest_single_disk_layout(self._device)
+	# 	return device_modification.partitions
+
+
+class LvmConfigurationMenu(AbstractSubMenu):
+	def __init__(
+		self,
+		lvm_config: Optional[LvmConfiguration],
+		data_store: Dict[str, Any],
+		device_mods: List[DeviceModification] = []
+	):
+		self._lvm_config = lvm_config
+		self._device_mods = device_mods
+
+		super().__init__(data_store=data_store)
+
+	def setup_selection_menu_options(self):
+		self._menu_options['lvm_pvs'] = \
+			Selector(
+				_('Physical volumes'),
+				lambda x: self._select_lvm_pvs(x),
+				display_func=lambda x: self.defined_text if x else '',
+				preview_func=self._prev_lvm_pv,
+				default=self._lvm_config.lvm_pvs if self._lvm_config else [],
+				enabled=True
+			)
+		self._menu_options['lvm_vol_group'] = \
+			Selector(
+				_('Volume group'),
+				lambda x: self._select_lvm_vol_group(x),
+				display_func=lambda x: x.name if x else None,
+				preview_func=self._prev_lvm_vol_group,
+				default=self._lvm_config.vol_group if self._lvm_config else [],
+				dependencies=['lvm_pvs'],
+				enabled=True
+			)
+		self._menu_options['lvm_volumes'] = \
+			Selector(
+				_('Volumes'),
+				lambda x: self._select_lvm_volumes(x),
+				display_func=lambda x: self.defined_text if x else '',
+				preview_func=self._prev_lvm_volumes,
+				default=self._lvm_config.volumes if self._lvm_config else [],
+				dependencies=['lvm_vol_group'],
+				enabled=True
+			)
+
+	def run(self, allow_reset: bool = True) -> Optional[LvmConfiguration]:
+		super().run(allow_reset=allow_reset)
+
+		lvm_pvs: Optional[List[PartitionModification]] = self._data_store.get('lvm_pvs', None)
+		lvm_vol_group: Optional[LvmVolumeGroup] = self._data_store.get('lvm_vol_group', None)
+
+		if lvm_pvs and lvm_vol_group:
+			return LvmConfiguration(
+				config_type=LvmLayoutType.Manual,
+				lvm_pvs=lvm_pvs,
+				vol_group=lvm_vol_group
+			)
+
+		return None
+
+	def _select_lvm_pvs(
+		self,
+		preset: Optional[List[PartitionModification]],
+	) -> Optional[List[PartitionModification]]:
+		lvm_pvs = select_lvm_pvs(preset, self._device_mods)
+
+		if lvm_pvs != preset:
+			self._menu_options['lvm_vol_group'].set_current_selection(None)
+
+		return lvm_pvs
+
+	def _select_lvm_vol_group(self, preset: Optional[LvmVolumeGroup]) -> Optional[LvmVolumeGroup]:
+		lvm_pvs: List[PartitionModification] = self._menu_options['lvm_pvs'].current_selection
+		return select_lvm_vol_group(preset, lvm_pvs)
+
+	def _select_lvm_volumes(self, preset: Optional[LvmVolume]):
+		lvm_volumes: List[LvmVolume] = self._menu_options['lvm_volumes'].current_selection
+
+		lvm_volumes = LvmVolumeList('', lvm_volumes).run()
+		return lvm_volumes
+
+	def _prev_lvm_pv(self) -> Optional[str]:
+		lvm_pvs: Optional[List[PartitionModification]] = self._menu_options['lvm_pvs'].current_selection
+
+		if lvm_pvs:
+			return FormattedOutput.as_table(lvm_pvs)
+
+		return None
+
+	def _prev_lvm_vol_group(self) -> Optional[str]:
+		lvm_vol_group: Optional[LvmVolumeGroup] = self._menu_options['lvm_vol_group'].current_selection
+
+		if lvm_vol_group:
+			output = '{}: {}\n'.format(str(_('Volume group')), lvm_vol_group.name)
+			output += FormattedOutput.as_table(lvm_vol_group.lvm_pvs)
+			return output
+
+		return None
+
+	def _prev_lvm_volumes(self) -> Optional[str]:
+		lvm_volumes: Optional[LvmVolume] = self._menu_options['lvm_volumes'].current_selection
+
+		if lvm_volumes:
+			return ''
+
+		return None
 
 
 def _determine_pv_selection(
@@ -69,16 +445,12 @@ def _determine_pv_selection(
 	return options
 
 
-def select_lvm_pv(
+def select_lvm_pvs(
 	preset: List[PartitionModification] = [],
 	device_mods: List[DeviceModification] = []
 ) -> Optional[List[PartitionModification]]:
 	title = str(_('Select the devices to use as physical volumes (PV)'))
 	warning = str(_('If you reset the device selection then the entire LVM configuration will be reset. Are you sure?'))
-
-	# options = []
-	# for d in device_mods:
-	# 	options += d.partitions
 
 	options = _determine_pv_selection(device_mods)
 
@@ -99,13 +471,33 @@ def select_lvm_pv(
 	return preset
 
 
-def manual_lvm(
-	preset: Optional[LvmConfiguration] = None,
-	device_mods: List[DeviceModification] = []
-) -> Optional[LvmConfiguration]:
-	pv = select_lvm_pv(device_mods=device_mods)
+def select_lvm_vol_group(
+	preset: Optional[LvmVolumeGroup],
+	options: List[PartitionModification]
+) -> Optional[LvmVolumeGroup]:
+	prompt = str(_('Enter a volume group name')) + ': '
+	preset_val = preset.name if preset else ''
+	group_name = TextInput(prompt, prefilled_text=preset_val).run()
 
-	if not pv:
-		return None
+	title = '{}: {}'.format(str(_('Select the devices to be associated with the volume group')), group_name)
+	# preset_choices = preset.lvm_pvs if preset else None
 
-	return None
+	choice = TableMenu(
+		title,
+		data=options,
+		multi=True,
+		# preset=preset_choices,
+		allow_reset=True,
+		skip=False
+	).run()
+
+	match choice.type_:
+		case MenuSelectionType.Reset: return None
+		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Selection:
+			return LvmVolumeGroup(
+				group_name,
+				choice.multi_value
+			)
+
+	return preset

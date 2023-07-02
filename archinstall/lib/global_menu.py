@@ -33,7 +33,6 @@ if TYPE_CHECKING:
 
 class GlobalMenu(AbstractMenu):
 	def __init__(self, data_store: Dict[str, Any]):
-		self._defined_text = str(_('Defined'))
 		super().__init__(data_store=data_store, auto_cursor=True, preview_size=0.3)
 
 	def setup_selection_menu_options(self):
@@ -49,12 +48,12 @@ class GlobalMenu(AbstractMenu):
 				_('Locales'),
 				lambda preset: self._locale_selection(preset),
 				preview_func=self._prev_locale,
-				display_func=lambda x: self._defined_text if x else '')
+				display_func=lambda x: self.defined_text if x else '')
 		self._menu_options['mirror_config'] = \
 			Selector(
 				_('Mirrors'),
 				lambda preset: self._mirror_configuration(preset),
-				display_func=lambda x: self._defined_text if x else '',
+				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_mirror_config
 			)
 		self._menu_options['disk_config'] = \
@@ -62,7 +61,7 @@ class GlobalMenu(AbstractMenu):
 				_('Disk configuration'),
 				lambda preset: self._select_disk_config(preset),
 				preview_func=self._prev_disk_config,
-				display_func=lambda x: self._defined_text if x else '',
+				display_func=lambda x: self.defined_text if x else '',
 			)
 		self._menu_options['disk_encryption'] = \
 			Selector(
@@ -131,7 +130,7 @@ class GlobalMenu(AbstractMenu):
 			Selector(
 				_('Additional packages'),
 				lambda preset: ask_additional_packages_to_install(preset),
-				display_func=lambda x: self._defined_text if x else '',
+				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_additional_pkgs,
 				default=[])
 		self._menu_options['additional-repositories'] = \

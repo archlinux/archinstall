@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Dict, TYPE_CHECKING, List, Optional, Tuple
+from typing import Any, TYPE_CHECKING, List, Optional, Tuple
 
 from .device_model import PartitionModification, FilesystemType, BDevice, Size, Unit, PartitionType, PartitionFlag, \
 	ModificationStatus, DeviceGeometry
@@ -35,21 +35,6 @@ class PartitioningList(ListManager):
 
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, device_partitions, display_actions[:2], display_actions[3:])
-
-	def reformat(self, data: List[PartitionModification]) -> Dict[str, Optional[PartitionModification]]:
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
-
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[PartitionModification]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-		for row, user in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
-			display_data[row] = user
-
-		return display_data
 
 	def selected_action_display(self, partition: PartitionModification) -> str:
 		return str(_('Partition'))

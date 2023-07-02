@@ -44,5 +44,5 @@ from .encryption_menu import (
 from .disk_menu import 	DiskLayoutConfigurationMenu
 
 from .lvm_menu import (
-	manual_lvm
+	LvmConfigurationMenu
 )

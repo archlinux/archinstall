@@ -33,7 +33,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		self._menu_options['disk_config'] = \
 			Selector(
 				_('Partitioning'),
-				lambda x: self._select_disk_layout_config(),
+				lambda x: self._select_disk_layout_config(x),
 				display_func=lambda x: self._display_disk_layout(x),
 				preview_func=self._prev_disk_layouts,
 				default=self._disk_layout_config,
@@ -42,9 +42,9 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		self._menu_options['lvm_config'] = \
 			Selector(
 				_('Logical Volume Management (LVM)'),
-				lambda x: self._select_lvm_config(),
-				# display_func=lambda x: self._display_disk_layout(x),
-				# preview_func=self._prev_disk_layouts,
+				lambda x: self._select_lvm_config(x),
+				display_func=lambda x: self.defined_text if x else '',
+				preview_func=self._prev_lvm_config,
 				default=self._disk_layout_config.lvm_config if self._disk_layout_config else None,
 				dependencies=[self._check_dep_lvm],
 				enabled=True
@@ -72,14 +72,20 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		return False
 
-	def _select_disk_layout_config(self) -> Optional[DiskLayoutConfiguration]:
-		disk_config = self._menu_options['disk_config'].current_selection
-		return select_disk_config(disk_config, advanced_option=self._advanced)
+	def _select_disk_layout_config(
+		self,
+		preset: Optional[DiskLayoutConfiguration]
+	) -> Optional[DiskLayoutConfiguration]:
+		disk_config = select_disk_config(preset, advanced_option=self._advanced)
 
-	def _select_lvm_config(self) -> Optional[LvmConfiguration]:
+		if disk_config != preset:
+			self._menu_options['lvm_config'].set_current_selection(None)
+
+		return disk_config
+
+	def _select_lvm_config(self, preset: Optional[LvmConfiguration]) -> Optional[LvmConfiguration]:
 		disk_config = self._menu_options['disk_config'].current_selection
-		lvm_config = self._menu_options['lvm_config'].current_selection
-		return select_lvm_config(disk_config, preset=lvm_config)
+		return select_lvm_config(disk_config, preset=preset)
 
 	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:
@@ -113,5 +119,24 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 				output = output_partition + output_btrfs
 				return output.rstrip()
+
+		return None
+
+	def _prev_lvm_config(self) -> Optional[str]:
+		lvm_config: Optional[LvmConfiguration] = self._menu_options['lvm_config'].current_selection
+
+		if lvm_config:
+			from ..output import debug
+			debug(lvm_config)
+			debug(lvm_config.vol_group)
+			debug(lvm_config.vol_group.name)
+
+			output = '{}: {}\n'.format(str(_('Configuration')), lvm_config.config_type.display_msg())
+			output += '{}: {}\n'.format(str(_('Volume group')), lvm_config.vol_group.name)
+
+			pv_table = FormattedOutput.as_table(lvm_config.lvm_pvs)
+			output += '{}\n{}'.format(str(_('Physical volumes')), pv_table)
+
+			return output
 
 		return None

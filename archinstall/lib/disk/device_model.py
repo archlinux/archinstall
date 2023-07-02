@@ -759,8 +759,44 @@ class LvmLayoutType(Enum):
 
 
 @dataclass
+class LvmVolumeGroup:
+	name: str
+	lvm_pvs: List[PartitionModification]
+
+
+class LvmVolumeStatus(Enum):
+	Exist = 'existing'
+	Modify = 'modify'
+	Delete = 'delete'
+	Create = 'create'
+
+
+@dataclass
+class LvmVolume:
+	status: LvmVolumeStatus
+	name: str
+	fs_type: FilesystemType
+	start: Size
+	length: Size
+	mountpoint: Optional[Path] = None
+	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+
+	def is_modify(self) -> bool:
+		return self.status == LvmVolumeStatus.Modify
+
+	def exists(self) -> bool:
+		return self.status == LvmVolumeStatus.Exist
+
+	def is_exists_or_modify(self) -> bool:
+		return self.status in [LvmVolumeStatus.Exist, LvmVolumeStatus.Modify]
+
+
+@dataclass
 class LvmConfiguration:
 	config_type: LvmLayoutType
+	lvm_pvs: List[PartitionModification]
+	vol_group: LvmVolumeGroup
+	volumes: List[LvmVolume]
 
 
 @dataclass

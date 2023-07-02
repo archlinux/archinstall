@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, Optional, TYPE_CHECKING, List, Union, Dict
+from typing import Any, Optional, TYPE_CHECKING, List, Union
 
 from ..menu import MenuSelectionType, TextInput
 from ..models.network_configuration import NetworkConfiguration, NicType
 
 from ..networking import list_interfaces
-from ..output import FormattedOutput, warn
+from ..output import warn
 from ..menu import ListManager, Menu
 
 if TYPE_CHECKING:
@@ -27,21 +27,6 @@ class ManualNetworkConfig(ListManager):
 		]
 
 		super().__init__(prompt, ifaces, [self._actions[0]], self._actions[1:])
-
-	def reformat(self, data: List[NetworkConfiguration]) -> Dict[str, Optional[NetworkConfiguration]]:
-		table = FormattedOutput.as_table(data)
-		rows = table.split('\n')
-
-		# these are the header rows of the table and do not map to any User obviously
-		# we're adding 2 spaces as prefix because the menu selector '> ' will be put before
-		# the selectable rows so the header has to be aligned
-		display_data: Dict[str, Optional[NetworkConfiguration]] = {f'  {rows[0]}': None, f'  {rows[1]}': None}
-
-		for row, iface in zip(rows[2:], data):
-			row = row.replace('|', '\\|')
-			display_data[row] = iface
-
-		return display_data
 
 	def selected_action_display(self, iface: NetworkConfiguration) -> str:
 		return iface.iface if iface.iface else ''

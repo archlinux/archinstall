@@ -178,6 +178,8 @@ class AbstractMenu:
 		self._sync_all()
 		self._populate_default_values()
 
+		self.defined_text = str(_('Defined'))
+
 	@property
 	def last_choice(self):
 		return self._last_choice

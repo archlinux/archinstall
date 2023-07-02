@@ -5,6 +5,7 @@ from typing import Any, TYPE_CHECKING
 from typing import Optional, List, Tuple
 
 from .. import disk
+from ..disk.lvm_menu import LvmConfigurationMenu
 from ..hardware import SysInfo
 from ..menu import Menu
 from ..menu import TableMenu
@@ -170,6 +171,8 @@ def select_disk_config(
 	return None
 
 
+xxx disk_config is NONE :(
+
 def select_lvm_config(
 	disk_config: disk.DiskLayoutConfiguration,
 	preset: Optional[disk.LvmConfiguration] = None,
@@ -177,7 +180,7 @@ def select_lvm_config(
 	manual_mode = disk.LvmLayoutType.Manual.display_msg()
 
 	options = [manual_mode]
-	# preset_value = preset.config_type.display_msg() if preset else None
+	preset_value = preset.config_type.display_msg() if preset else None
 	warning = str(_('Are you sure you want to reset this setting?'))
 
 	choice = Menu(
@@ -186,8 +189,8 @@ def select_lvm_config(
 		allow_reset=True,
 		allow_reset_warning_msg=warning,
 		sort=False,
-		preview_size=0.2
-		# preset_values=preset_value
+		preview_size=0.2,
+		preset_values=preset_value
 	).run()
 
 	match choice.type_:
@@ -195,12 +198,8 @@ def select_lvm_config(
 		case MenuSelectionType.Reset: return None
 		case MenuSelectionType.Selection:
 			if choice.value == manual_mode:
-				modifications = disk.manual_lvm(preset, disk_config.device_modifications)
-
-				if modifications:
-					return disk.LvmConfiguration(
-						config_type=disk.LvmLayoutType.Manual
-					)
+				lvm_config = LvmConfigurationMenu(preset, {}, disk_config.device_modifications).run()
+				return lvm_config
 	return preset
 
 
