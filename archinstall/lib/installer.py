@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from typing import Any, List, Optional, TYPE_CHECKING, Union, Dict, Callable
 
+from ..lib.disk.device_model import get_lsblk_info
+
 from . import disk
 from .exceptions import DiskError, ServiceException, RequirementError, HardwareIncompatibilityError, SysCallError
 from .general import SysCommand
@@ -734,61 +736,76 @@ class Installer:
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
+		comments = (
+			'# Created by: archinstall\n',
+			f'# Created on: {self.init_time}\n'
+		)
+
+		microcode = []
+
+		if not SysInfo.is_vm():
+			vendor = SysInfo.cpu_vendor()
+			if vendor == "AuthenticAMD":
+				microcode.append('initrd  /amd-ucode.img\n')
+			elif vendor == "GenuineIntel":
+				microcode.append('initrd  /intel-ucode.img\n')
+			else:
+				debug(
+					f"Unknown CPU vendor '{vendor}' detected.",
+					"Archinstall won't add any ucode to systemd-boot config.",
+				)
+
+		options_entry = []
+
+		if root_partition.safe_fs_type.is_crypto():
+			# TODO: We need to detect if the encrypted device is a whole disk encryption,
+			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
+
+			if self._disk_encryption and self._disk_encryption.hsm_device:
+				# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
+				options_entry.append(f'rd.luks.name={root_partition.uuid}=luksdev')
+				# Note: tpm2-device and fido2-device don't play along very well:
+				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
+				options_entry.append('rd.luks.options=fido2-device=auto,password-echo=no')
+			else:
+				options_entry.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev')
+
+			options_entry.append('root=/dev/mapper/luksdev')
+		else:
+			debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+			options_entry.append(f'root=PARTUUID={root_partition.partuuid}')
+
+		# Zswap should be disabled when using zram.
+		# https://github.com/archlinux/archinstall/issues/881
+		if self._zram_enabled:
+			options_entry.append('zswap.enabled=0')
+
+		for sub_vol in root_partition.btrfs_subvols:
+			if sub_vol.is_root():
+				options_entry.append(f'rootflags=subvol={sub_vol.name}')
+				break
+
+		options_entry.append('rw')
+		options_entry.append(f'rootfstype={root_partition.safe_fs_type.fs_type_mount}')
+		options_entry.extend(self._kernel_params)
+
+		options = 'options ' + ' '.join(options_entry) + '\n'
+
 		for kernel in self.kernels:
 			for variant in ("", "-fallback"):
 				# Setup the loader entry
 				with open(entries_dir / f'{self.init_time}_{kernel}{variant}.conf', 'w') as entry:
-					entry.write('# Created by: archinstall\n')
-					entry.write(f'# Created on: {self.init_time}\n')
-					entry.write(f'title Arch Linux ({kernel}{variant})\n')
-					entry.write(f"linux /vmlinuz-{kernel}\n")
-					if not SysInfo.is_vm():
-						vendor = SysInfo.cpu_vendor()
-						if vendor == "AuthenticAMD":
-							entry.write("initrd /amd-ucode.img\n")
-						elif vendor == "GenuineIntel":
-							entry.write("initrd /intel-ucode.img\n")
-						else:
-							debug(
-								f"Unknown CPU vendor '{vendor}' detected.",
-								"Archinstall won't add any ucode to systemd-boot config.",
-							)
+					entry_lines: List[str] = []
 
-					entry.write(f"initrd /initramfs-{kernel}{variant}.img\n")
-					# blkid doesn't trigger on loopback devices really well,
-					# so we'll use the old manual method until we get that sorted out.
+					entry_lines.extend(comments)
+					entry_lines.append(f'title   Arch Linux ({kernel}{variant})\n')
+					entry_lines.append(f'linux   /vmlinuz-{kernel}\n')
+					entry_lines.extend(microcode)
+					entry_lines.append(f'initrd  /initramfs-{kernel}{variant}.img\n')
+					entry_lines.append(options)
 
-					options_entry = f'rw rootfstype={root_partition.safe_fs_type.fs_type_mount} {" ".join(self._kernel_params)}\n'
-
-					for sub_vol in root_partition.btrfs_subvols:
-						if sub_vol.is_root():
-							options_entry = f"rootflags=subvol={sub_vol.name} " + options_entry
-
-					# Zswap should be disabled when using zram.
-					# https://github.com/archlinux/archinstall/issues/881
-					if self._zram_enabled:
-						options_entry = "zswap.enabled=0 " + options_entry
-
-					if root_partition.safe_fs_type.is_crypto():
-						# TODO: We need to detect if the encrypted device is a whole disk encryption,
-						#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-						debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
-
-						kernel_options = f"options"
-
-						if self._disk_encryption and self._disk_encryption.hsm_device:
-							# Note: lsblk UUID must be used, not PARTUUID for sd-encrypt to work
-							kernel_options += f' rd.luks.name={root_partition.uuid}=luksdev'
-							# Note: tpm2-device and fido2-device don't play along very well:
-							# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
-							kernel_options += f' rd.luks.options=fido2-device=auto,password-echo=no'
-						else:
-							kernel_options += f' cryptdevice=PARTUUID={root_partition.partuuid}:luksdev'
-
-						entry.write(f'{kernel_options} root=/dev/mapper/luksdev {options_entry}')
-					else:
-						debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
-						entry.write(f'options root=PARTUUID={root_partition.partuuid} {options_entry}')
+					entry.writelines(entry_lines)
 
 		self.helper_flags['bootloader'] = 'systemd'
 
@@ -849,6 +866,113 @@ class Installer:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
 		self.helper_flags['bootloader'] = "grub"
+
+	def _add_limine_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification
+	):
+		self.pacman.strap('limine')
+		info(f"Limine boot partition: {boot_partition.dev_path}")
+
+		# XXX: We cannot use `root_partition.uuid` since corresponds to the UUID of the root
+		#      partition before the format.
+		root_uuid = get_lsblk_info(root_partition.safe_dev_path).uuid
+
+		device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
+		if not device:
+			raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
+
+		def create_pacman_hook(contents: str):
+			HOOK_DIR = "/etc/pacman.d/hooks"
+			SysCommand(f"/usr/bin/arch-chroot {self.target} mkdir -p {HOOK_DIR}")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{contents}' > {HOOK_DIR}/liminedeploy.hook\"")
+
+		if SysInfo.has_uefi():
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/BOOTX64.EFI' \
+					f' /boot/EFI/BOOT/'
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine BOOTX64.EFI on {boot_partition.dev_path}: {err}")
+
+			# Create the EFI limine pacman hook.
+			create_pacman_hook("""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/
+			""")
+		else:
+			try:
+				# The `limine.sys` file, contains stage 3 code.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' cp' \
+					f' /usr/share/limine/limine-bios.sys' \
+					f' /boot/limine-bios.sys'
+
+				SysCommand(cmd, peek_output=True)
+
+				# `limine bios-install` deploys the stage 1 and 2 to the disk.
+				cmd = f'/usr/bin/arch-chroot' \
+					f' {self.target}' \
+					f' limine' \
+					f' bios-install' \
+					f' {device.device_info.path}'
+
+				SysCommand(cmd, peek_output=True)
+			except SysCallError as err:
+				raise DiskError(f"Failed to install Limine on {boot_partition.dev_path}: {err}")
+
+			create_pacman_hook(f"""
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+# XXX: Kernel name descriptors cannot be used since they are not persistent and
+#      can change after each boot.
+Exec = /bin/sh -c \\"/usr/bin/limine bios-install /dev/disk/by-uuid/{root_uuid} && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/\\"
+			""")
+
+		# Limine does not ship with a default configuation file. We are going to
+		# create a basic one that is similar to the one GRUB generates.
+		try:
+			config = f"""
+TIMEOUT=5
+
+:Arch Linux
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux.img
+
+:Arch Linux (fallback)
+	PROTOCOL=linux
+	KERNEL_PATH=boot:///vmlinuz-linux
+	CMDLINE=root=UUID={root_uuid} rw rootfstype={root_partition.safe_fs_type.value} loglevel=3
+	MODULE_PATH=boot:///initramfs-linux-fallback.img
+			"""
+
+			SysCommand(f"/usr/bin/arch-chroot {self.target} sh -c \"echo '{config}' > /boot/limine.cfg\"")
+		except SysCallError as err:
+			raise DiskError(f"Could not configure Limine: {err}")
+
+		self.helper_flags['bootloader'] = "limine"
 
 	def _add_efistub_bootloader(
 		self,
@@ -918,6 +1042,7 @@ class Installer:
 		Archinstall supports one of three types:
 		* systemd-bootctl
 		* grub
+		* limine (beta)
 		* efistub (beta)
 
 		:param bootloader: Type of bootloader to be added
@@ -948,6 +1073,8 @@ class Installer:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
 				self._add_efistub_bootloader(boot_partition, root_partition)
+			case Bootloader.Limine:
+				self._add_limine_bootloader(boot_partition, root_partition)
 
 	def add_additional_packages(self, packages: Union[str, List[str]]) -> bool:
 		return self.pacman.strap(packages)

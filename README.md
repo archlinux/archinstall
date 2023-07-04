@@ -206,7 +206,7 @@ If you want to test a commit, branch or bleeding edge release from the repositor
 you can replace the version of archinstall with a new version and run that with the steps described below:
 
 1. You need a working network connection
-2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
+2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
