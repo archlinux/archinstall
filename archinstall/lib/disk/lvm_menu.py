@@ -9,7 +9,7 @@ from .device_handler import device_handler
 from .device_model import (
 	PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus, \
 	LvmLayoutType, LvmVolumeGroup, LvmVolume, FilesystemType, LvmVolumeStatus, Size, \
-	Unit, DeviceGeometry
+	Unit
 )
 from ..menu import (
 	TableMenu, MenuSelectionType, TextInput, AbstractSubMenu, Selector, ListManager, \
@@ -23,7 +23,13 @@ if TYPE_CHECKING:
 
 class LvmVolumeList(ListManager):
 
-	def __init__(self, prompt: str, lvm_volumes: List[LvmVolume]):
+	def __init__(
+		self,
+		prompt: str,
+		device_mods: List[DeviceModification],
+		lvm_vol_group: LvmVolumeGroup,
+		lvm_volumes: Optional[List[LvmVolume]]
+	):
 		self._actions = {
 			'create_new_volume': str(_('Create a new volume')),
 			# 'suggest_partition_layout': str(_('Suggest partition layout')),
@@ -35,6 +41,9 @@ class LvmVolumeList(ListManager):
 			'btrfs_set_subvolumes': str(_('Set subvolumes')),  # btrfs only
 			'delete_partition': str(_('Delete volume'))
 		}
+
+		self._device_mods = device_mods
+		self._lvm_vol_group = lvm_vol_group
 
 		display_actions = list(self._actions.values())
 		super().__init__(prompt, lvm_volumes, display_actions[:2], display_actions[3:])
@@ -192,69 +201,57 @@ class LvmVolumeList(ListManager):
 		self,
 		sector_size: Size,
 		total_size: Size,
-		prompt: str,
-		default: Size
+		prompt: str
 	) -> Size:
 		while True:
 			value = TextInput(prompt).run().strip()
 
-			size: Optional[Size] = None
-
 			if not value:
-				size = default
-			else:
-				size = self._validate_value(sector_size, total_size, value)
+				continue
 
-			if size:
+			if size := self._validate_value(sector_size, total_size, value):
 				return size
 
 			warn(f'Invalid value: {value}')
 
 	def _prompt_size(self) -> Tuple[Size, Size]:
-		device_info = self._device.device_info
+		lvm_pvs = self._lvm_vol_group.lvm_pvs
+		lvm_pvs_table = FormattedOutput.as_table(lvm_pvs)
 
-		text = str(_('Current free sectors on device {}:')).format(device_info.path) + '\n\n'
-		free_space_table = FormattedOutput.as_table(device_info.free_space_regions)
-		prompt = text + free_space_table + '\n'
+		sector_size = self._device_mods[0].device.device_info.sector_size
 
-		total_sectors = device_info.total_size.format_size(Unit.sectors, device_info.sector_size)
-		total_bytes = device_info.total_size.format_size(Unit.B)
+		total_size = sum([pv.length for pv in lvm_pvs], Size(0, Unit.B))
+		total_sectors = total_size.format_size(Unit.sectors, sector_size)
+		total_bytes = total_size.format_size(Unit.B)
 
-		prompt += str(_('Total: {} / {}')).format(total_sectors, total_bytes) + '\n\n'
-		prompt += str(_('All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB...')) + '\n'
-		prompt += str(_('If no unit is provided, the value is interpreted as sectors')) + '\n'
-		print(prompt)
-
-		largest_free_area: DeviceGeometry = max(device_info.free_space_regions, key=lambda r: r.get_length())
-
-		# prompt until a valid start sector was entered
-		default_start = Size(largest_free_area.start, Unit.sectors, device_info.sector_size)
-		start_prompt = str(_('Enter start (default: sector {}): ')).format(largest_free_area.start)
-		start_size = self._enter_size(
-			device_info.sector_size,
-			device_info.total_size,
-			start_prompt,
-			default_start
+		prompt = '{}\n\n{}\n{}\n\n{}\n{}\n'.format(
+			str(_('Currently associated PVs in the VG')),
+			lvm_pvs_table,
+			str(_('Total: {} / {}')).format(total_sectors, total_bytes),
+			str(_('All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB...')),
+			str(_('If no unit is provided, the value is interpreted as sectors'))
 		)
 
-		if start_size.value == largest_free_area.start:
-			end_size = Size(largest_free_area.end, Unit.sectors, device_info.sector_size)
-		else:
-			end_size = Size(100, Unit.Percent, total_size=device_info.total_size)
+		print(prompt)
+
+		# prompt until a valid start sector was entered
+		start_size = self._enter_size(
+			sector_size,
+			total_size,
+			str(_('Enter start: '))
+		)
 
 		# prompt until valid end sector was entered
-		end_prompt = str(_('Enter end (default: {}): ')).format(end_size.as_text())
 		end_size = self._enter_size(
-			device_info.sector_size,
-			device_info.total_size,
-			end_prompt,
-			end_size
+			sector_size,
+			total_size,
+			str(_('Enter end: '))
 		)
 
 		return start_size, end_size
 
 	def _create_new_volume(self) -> LvmVolume:
-		title = '{}: '.format(str(_('Volume name')))
+		title = '\n{}: '.format(str(_('Volume name')))
 		vol_name = TextInput(title).run()
 
 		fs_type = self._prompt_volume_fs_type()
@@ -372,10 +369,9 @@ class LvmConfigurationMenu(AbstractSubMenu):
 		lvm_pvs: List[PartitionModification] = self._menu_options['lvm_pvs'].current_selection
 		return select_lvm_vol_group(preset, lvm_pvs)
 
-	def _select_lvm_volumes(self, preset: Optional[LvmVolume]):
-		lvm_volumes: List[LvmVolume] = self._menu_options['lvm_volumes'].current_selection
-
-		lvm_volumes = LvmVolumeList('', lvm_volumes).run()
+	def _select_lvm_volumes(self, preset: Optional[List[LvmVolume]]):
+		lvm_vol_group: LvmVolumeGroup = self._menu_options['lvm_vol_group'].current_selection
+		lvm_volumes = LvmVolumeList('', self._device_mods , lvm_vol_group, preset).run()
 		return lvm_volumes
 
 	def _prev_lvm_pv(self) -> Optional[str]:

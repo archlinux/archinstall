@@ -171,8 +171,6 @@ def select_disk_config(
 	return None
 
 
-xxx disk_config is NONE :(
-
 def select_lvm_config(
 	disk_config: disk.DiskLayoutConfiguration,
 	preset: Optional[disk.LvmConfiguration] = None,

@@ -164,6 +164,11 @@ class Size:
 			return self.value * self.sector_size._normalize()
 		return int(self.value * self.unit.value)  # type: ignore
 
+	def __add__(self, other: Size) -> Size:
+		src_norm = self._normalize()
+		dest_norm = other._normalize()
+		return Size(abs(src_norm + dest_norm), Unit.B)
+
 	def __sub__(self, other: Size) -> Size:
 		src_norm = self._normalize()
 		dest_norm = other._normalize()
