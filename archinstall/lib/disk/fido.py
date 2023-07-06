@@ -36,12 +36,13 @@ class Fido2:
 		# to prevent continous reloading which will slow
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
-			ret: Optional[str] = None
 			try:
-				raise ValueError('????')
-				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+				ret: Optional[str] = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
 			except Exception:
 				error('fido2 support is most likely not installed')
+				raise ValueError('HSM devices can not be detected, is libfido2 installed?')
+
+			if not ret:
 				return []
 
 			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
