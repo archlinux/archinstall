@@ -30,7 +30,7 @@ from .lib.configuration import ConfigurationOutput
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
-	JsonEncoder, JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
+	JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
 	run_custom_user_commands, json_stream_to_structure, secret
 )
 
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.5.6"
+__version__ = "2.6.0rc1"
 storage['__version__'] = __version__
 
 

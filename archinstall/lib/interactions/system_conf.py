@@ -40,9 +40,9 @@ def select_kernel(preset: List[str] = []) -> List[str]:
 
 
 def ask_for_bootloader(preset: Bootloader) -> Bootloader:
-	# when the system only supports grub
+	# Systemd is UEFI only
 	if not SysInfo.has_uefi():
-		options = [Bootloader.Grub.value]
+		options = [Bootloader.Grub.value, Bootloader.Limine.value]
 		default = Bootloader.Grub.value
 	else:
 		options = Bootloader.values()

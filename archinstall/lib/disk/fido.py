@@ -36,7 +36,11 @@ class Fido2:
 		# to prevent continous reloading which will slow
 		# down moving the cursor in the menu
 		if not cls._loaded or reload:
-			ret: Optional[str] = SysCommand(f"systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+			ret: Optional[str] = None
+			try:
+				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
+			except:
+				error('fido2 support is most likely not installed')
 			if not ret:
 				error('Unable to retrieve fido2 devices')
 				return []

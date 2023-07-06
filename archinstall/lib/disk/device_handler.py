@@ -45,6 +45,9 @@ class DeviceHandler(object):
 		block_devices = {}
 
 		for device in getAllDevices():
+			if get_lsblk_info(device.path).type == 'rom':
+				continue
+
 			try:
 				disk = Disk(device)
 			except DiskLabelException as err:
@@ -238,41 +241,46 @@ class DeviceHandler(object):
 		info(f'luks2 locking device: {dev_path}')
 		luks_handler.lock()
 
+	def _validate(self, device_mod: DeviceModification):
+		checks = {
+			# verify that all partitions have a path set (which implies that they have been created)
+			lambda x: x.dev_path is None: ValueError('When formatting, all partitions must have a path set'),
+			# crypto luks is not a valid file system type
+			lambda x: x.fs_type is FilesystemType.Crypto_luks: ValueError('Crypto luks cannot be set as a filesystem type'),
+			# file system type must be set
+			lambda x: x.fs_type is None: ValueError('File system type must be set for modification')
+		}
+
+		for check, exc in checks.items():
+			found = next(filter(check, device_mod.partitions), None)
+			if found is not None:
+				raise exc
+
 	def format(
 		self,
-		modification: DeviceModification,
+		device_mod: DeviceModification,
 		enc_conf: Optional['DiskEncryption'] = None
 	):
 		"""
 		Format can be given an overriding path, for instance /dev/null to test
 		the formatting functionality and in essence the support for the given filesystem.
 		"""
-
-		# verify that all partitions have a path set (which implies that they have been created)
-		missing_path = next(filter(lambda x: x.dev_path is None, modification.partitions), None)
-		if missing_path is not None:
-			raise ValueError('When formatting, all partitions must have a path set')
-
-		# crypto luks is not known to parted and can therefore not
-		# be used as a filesystem type in that sense;
-		invalid_fs_type = next(filter(lambda x: x.fs_type is FilesystemType.Crypto_luks, modification.partitions), None)
-		if invalid_fs_type is not None:
-			raise ValueError('Crypto luks cannot be set as a filesystem type')
+		self._validate(device_mod)
 
 		# make sure all devices are unmounted
-		self._umount_all_existing(modification)
+		self._umount_all_existing(device_mod)
 
-		for part_mod in modification.partitions:
+		for part_mod in device_mod.partitions:
 			# partition will be encrypted
 			if enc_conf is not None and part_mod in enc_conf.partitions:
 				self._perform_enc_formatting(
 					part_mod.safe_dev_path,
 					part_mod.mapper_name,
-					part_mod.fs_type,
+					part_mod.safe_fs_type,
 					enc_conf
 				)
 			else:
-				self._perform_formatting(part_mod.fs_type, part_mod.safe_dev_path)
+				self._perform_formatting(part_mod.safe_fs_type, part_mod.safe_dev_path)
 
 	def _perform_partitioning(
 		self,
@@ -312,7 +320,7 @@ class DeviceHandler(object):
 			length=length_sector.value
 		)
 
-		filesystem = FileSystem(type=part_mod.fs_type.value, geometry=geometry)
+		filesystem = FileSystem(type=part_mod.safe_fs_type.value, geometry=geometry)
 
 		partition = Partition(
 			disk=disk,
@@ -325,7 +333,7 @@ class DeviceHandler(object):
 			partition.setFlag(flag.value)
 
 		debug(f'\tType: {part_mod.type.value}')
-		debug(f'\tFilesystem: {part_mod.fs_type.value}')
+		debug(f'\tFilesystem: {part_mod.safe_fs_type.value}')
 		debug(f'\tGeometry: {start_sector.value} start sector, {length_sector.value} length')
 
 		try:
