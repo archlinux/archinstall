@@ -38,11 +38,10 @@ class Fido2:
 		if not cls._loaded or reload:
 			ret: Optional[str] = None
 			try:
+				raise ValueError('????')
 				ret = SysCommand("systemd-cryptenroll --fido2-device=list").decode('UTF-8')
-			except:
+			except Exception:
 				error('fido2 support is most likely not installed')
-			if not ret:
-				error('Unable to retrieve fido2 devices')
 				return []
 
 			fido_devices: str = clear_vt100_escape_codes(ret)  # type: ignore
