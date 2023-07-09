@@ -19,7 +19,7 @@ class Selector:
 		default: Optional[Any] = None,
 		enabled: bool = False,
 		dependencies: List[Union[str, Callable]] = [],
-		dependencies_not: List = [],
+		dependencies_not: List[str] = [],
 		exec_func: Optional[Callable] = None,
 		preview_func: Optional[Callable] = None,
 		mandatory: bool = False,
@@ -440,8 +440,12 @@ class AbstractMenu:
 
 
 class AbstractSubMenu(AbstractMenu):
-	def __init__(self, data_store: Dict[str, Any] = {}):
-		super().__init__(data_store=data_store)
+	def __init__(
+		self,
+		data_store: Dict[str, Any] = {},
+		preview_size: float = 0.2
+	):
+		super().__init__(data_store=data_store, preview_size=preview_size)
 
 		self._menu_options['__separator__'] = Selector('')
 		self._menu_options['back'] = \

@@ -210,6 +210,7 @@ class PartitioningList(ListManager):
 		while True:
 			value = TextInput(prompt).run().strip()
 
+			size: Optional[Size] = None
 			if not value:
 				size = default
 			else:

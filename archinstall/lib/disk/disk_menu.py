@@ -27,7 +27,7 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		self._disk_layout_config = disk_layout_config
 		self._advanced = advanced
 
-		super().__init__(data_store=data_store)
+		super().__init__(data_store=data_store, preview_size=0.5)
 
 	def setup_selection_menu_options(self):
 		self._menu_options['disk_config'] = \
@@ -57,9 +57,8 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 
 		if disk_layout_config:
 			disk_layout_config.lvm_config = self._data_store.get('lvm_config', None)
-			return disk_layout_config
 
-		return None
+		return disk_layout_config
 
 	def _check_dep_lvm(self) -> bool:
 		disk_layout_conf: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
@@ -81,8 +80,10 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		return disk_config
 
 	def _select_lvm_config(self, preset: Optional[LvmConfiguration]) -> Optional[LvmConfiguration]:
-		disk_config = self._menu_options['disk_config'].current_selection
-		return select_lvm_config(disk_config, preset=preset)
+		disk_config: Optional[DiskLayoutConfiguration] = self._menu_options['disk_config'].current_selection
+		if disk_config:
+			return select_lvm_config(disk_config, preset=preset)
+		return preset
 
 	def _display_disk_layout(self, current_value: Optional[DiskLayoutConfiguration] = None) -> str:
 		if current_value:
@@ -123,16 +124,14 @@ class DiskLayoutConfigurationMenu(AbstractSubMenu):
 		lvm_config: Optional[LvmConfiguration] = self._menu_options['lvm_config'].current_selection
 
 		if lvm_config:
-			from ..output import debug
-			debug(lvm_config)
-			debug(lvm_config.vol_group)
-			debug(lvm_config.vol_group.name)
-
 			output = '{}: {}\n'.format(str(_('Configuration')), lvm_config.config_type.display_msg())
 			output += '{}: {}\n'.format(str(_('Volume group')), lvm_config.vol_group.name)
 
 			pv_table = FormattedOutput.as_table(lvm_config.lvm_pvs)
-			output += '{}\n{}'.format(str(_('Physical volumes')), pv_table)
+			output += '{}:\n{}'.format(str(_('Physical volumes')), pv_table)
+
+			lvm_volumes = FormattedOutput.as_table(lvm_config.volumes)
+			output += '\n{}:\n{}'.format(str(_('Volumes')), lvm_volumes)
 
 			return output
 

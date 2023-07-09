@@ -272,8 +272,14 @@ class GlobalMenu(AbstractMenu):
 		selector = self._menu_options['disk_config']
 		disk_layout_conf: Optional[disk.DiskLayoutConfiguration] = selector.current_selection
 
+		output = ''
 		if disk_layout_conf:
-			output = str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
+			output += str(_('Configuration type: {}')).format(disk_layout_conf.config_type.display_msg())
+
+			if disk_layout_conf.lvm_config:
+				output += '\n{}: {}'.format(str(_('LVM configuration type')), disk_layout_conf.lvm_config.config_type.display_msg())
+
+		if output:
 			return output
 
 		return None

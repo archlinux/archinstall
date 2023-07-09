@@ -335,17 +335,22 @@ class DiskLayoutConfiguration:
 			raise ValueError('Must set a relative mountpoint when layout type is pre-mount"')
 
 	def __dump__(self) -> Dict[str, Any]:
-		return {
+		config: Dict[str, Any] = {
 			'config_type': self.config_type.value,
-			'device_modifications': [mod.__dump__() for mod in self.device_modifications]
+			'device_modifications': [mod.__dump__() for mod in self.device_modifications],
 		}
 
+		if self.lvm_config:
+			config['lvm_config'] = self.lvm_config.__dump__()
+
+		return config
+
 	@classmethod
-	def parse_arg(cls, disk_config: Dict[str, List[Dict[str, Any]]]) -> Optional[DiskLayoutConfiguration]:
+	def parse_arg(cls, arg: Dict[str, Any]) -> Optional[DiskLayoutConfiguration]:
 		from .device_handler import device_handler
 
 		device_modifications: List[DeviceModification] = []
-		config_type = disk_config.get('config_type', None)
+		config_type = arg.get('config_type', None)
 
 		if not config_type:
 			raise ValueError('Missing disk layout configuration: config_type')
@@ -355,7 +360,7 @@ class DiskLayoutConfiguration:
 			device_modifications=device_modifications
 		)
 
-		for entry in disk_config.get('device_modifications', []):
+		for entry in arg.get('device_modifications', []):
 			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
 
 			if not device_path:
@@ -391,6 +396,10 @@ class DiskLayoutConfiguration:
 
 			device_modification.partitions = device_partitions
 			device_modifications.append(device_modification)
+
+		# Parse LVM configuration from settings
+		if lvm_arg := arg.get('lvm_config', None):
+			config.lvm_config = LvmConfiguration.parse_arg(lvm_arg, config)
 
 		return config
 
@@ -765,17 +774,35 @@ class PartitionModification:
 
 
 class LvmLayoutType(Enum):
-	Manual = 'manual_partitioning'
+	Manual = 'manual_lvm'
 
 	def display_msg(self) -> str:
 		match self:
 			case LvmLayoutType.Manual: return str(_('Manual configuration'))
+
+		raise ValueError(f'Unknown type: {self}')
 
 
 @dataclass
 class LvmVolumeGroup:
 	name: str
 	lvm_pvs: List[PartitionModification]
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'name': self.name,
+			'lvm_pvs': [p.obj_id for p in self.lvm_pvs]
+		}
+
+	@staticmethod
+	def parse_arg(arg: Dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmVolumeGroup:
+		lvm_pvs = []
+		for mod in disk_config.device_modifications:
+			for part in mod.partitions:
+				if part.obj_id in arg.get('lvm_pvs', []):
+					lvm_pvs.append(part)
+
+		return LvmVolumeGroup(arg['name'], lvm_pvs)
 
 
 class LvmVolumeStatus(Enum):
@@ -792,8 +819,46 @@ class LvmVolume:
 	fs_type: FilesystemType
 	start: Size
 	length: Size
-	mountpoint: Optional[Path] = None
+	mountpoint: Optional[Path]
+	mount_options: List[str] = field(default_factory=list)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
+
+	@staticmethod
+	def parse_arg(arg: Dict[str, Any]) -> LvmVolume:
+		return LvmVolume(
+			status=LvmVolumeStatus(arg['status']),
+			name=arg['name'],
+			fs_type=FilesystemType(arg['fs_type']),
+			start=Size.parse_args(arg['start']),
+			length=Size.parse_args(arg['length']),
+			mountpoint=Path(arg['mountpoint']) if arg['mountpoint'] else None,
+			mount_options=arg['mount_options'],
+			btrfs_subvols=SubvolumeModification.parse_args(arg.get('btrfs', []))
+		)
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'status': self.status.value,
+			'name': self.name,
+			'fs_type': self.fs_type.value,
+			'start': self.start.__dump__(),
+			'length': self.length.__dump__(),
+			'mountpoint': str(self.mountpoint) if self.mount_options else None,
+			'mount_options': self.mount_options,
+			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
+		}
+
+	def table_data(self) -> Dict[str, Any]:
+		part_mod = {
+			'Type': self.status.value,
+			'Name': self.name,
+			'Start': self.start.format_size(Unit.MiB),
+			'Length': self.length.format_size(Unit.MiB),
+			'FS type': self.fs_type.value,
+			'Mountpoint': str(self.mountpoint) if self.mount_options else None,
+			'Mount options': ', '.join(self.mount_options)
+		}
+		return part_mod
 
 	def is_modify(self) -> bool:
 		return self.status == LvmVolumeStatus.Modify
@@ -811,6 +876,29 @@ class LvmConfiguration:
 	lvm_pvs: List[PartitionModification]
 	vol_group: LvmVolumeGroup
 	volumes: List[LvmVolume]
+
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'config_type': self.config_type.value,
+			'lvm_pvs': [p.obj_id for p in self.lvm_pvs],
+			'vol_group': self.vol_group.__dump__(),
+			'volumes': [v.__dump__() for v in self.volumes]
+		}
+
+	@staticmethod
+	def parse_arg(arg: Dict[str, Any], disk_config: DiskLayoutConfiguration) -> LvmConfiguration:
+		lvm_pvs = []
+		for mod in disk_config.device_modifications:
+			for part in mod.partitions:
+				if part.obj_id in arg.get('lvm_pvs', []):
+					lvm_pvs.append(part)
+
+		return LvmConfiguration(
+			config_type=LvmLayoutType(arg['config_type']),
+			lvm_pvs=lvm_pvs,
+			vol_group=LvmVolumeGroup.parse_arg(arg['vol_group'], disk_config),
+			volumes=[LvmVolume.parse_arg(v) for v in arg.get('volumes', [])]
+		)
 
 
 @dataclass

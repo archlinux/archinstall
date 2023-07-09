@@ -7,12 +7,12 @@ from typing import Any, TYPE_CHECKING, List, Optional, Dict, Tuple
 from .subvolume_menu import SubvolumeMenu
 from .device_handler import device_handler
 from .device_model import (
-	PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus, \
-	LvmLayoutType, LvmVolumeGroup, LvmVolume, FilesystemType, LvmVolumeStatus, Size, \
+	PartitionModification, LvmConfiguration, DeviceModification, ModificationStatus,
+	LvmLayoutType, LvmVolumeGroup, LvmVolume, FilesystemType, LvmVolumeStatus, Size,
 	Unit
 )
 from ..menu import (
-	TableMenu, MenuSelectionType, TextInput, AbstractSubMenu, Selector, ListManager, \
+	TableMenu, MenuSelectionType, TextInput, AbstractSubMenu, Selector, ListManager,
 	Menu, MenuSelection
 )
 from ..output import FormattedOutput, warn
@@ -46,6 +46,7 @@ class LvmVolumeList(ListManager):
 		self._lvm_vol_group = lvm_vol_group
 
 		display_actions = list(self._actions.values())
+		lvm_volumes = lvm_volumes if lvm_volumes else []
 		super().__init__(prompt, lvm_volumes, display_actions[:2], display_actions[3:])
 
 	def selected_action_display(self, partition: LvmVolume) -> str:
@@ -322,7 +323,7 @@ class LvmConfigurationMenu(AbstractSubMenu):
 			Selector(
 				_('Volume group'),
 				lambda x: self._select_lvm_vol_group(x),
-				display_func=lambda x: x.name if x else None,
+				display_func=lambda x: self.defined_text if x else '',
 				preview_func=self._prev_lvm_vol_group,
 				default=self._lvm_config.vol_group if self._lvm_config else [],
 				dependencies=['lvm_pvs'],
@@ -344,12 +345,14 @@ class LvmConfigurationMenu(AbstractSubMenu):
 
 		lvm_pvs: Optional[List[PartitionModification]] = self._data_store.get('lvm_pvs', None)
 		lvm_vol_group: Optional[LvmVolumeGroup] = self._data_store.get('lvm_vol_group', None)
+		lvm_volumes: Optional[List[LvmVolume]] = self._data_store.get('lvm_volumes', None)
 
-		if lvm_pvs and lvm_vol_group:
+		if lvm_pvs and lvm_vol_group and lvm_volumes:
 			return LvmConfiguration(
 				config_type=LvmLayoutType.Manual,
 				lvm_pvs=lvm_pvs,
-				vol_group=lvm_vol_group
+				vol_group=lvm_vol_group,
+				volumes=lvm_volumes
 			)
 
 		return None
@@ -362,17 +365,23 @@ class LvmConfigurationMenu(AbstractSubMenu):
 
 		if lvm_pvs != preset:
 			self._menu_options['lvm_vol_group'].set_current_selection(None)
+			self._menu_options['lvm_volumes'].set_current_selection(None)
 
 		return lvm_pvs
 
 	def _select_lvm_vol_group(self, preset: Optional[LvmVolumeGroup]) -> Optional[LvmVolumeGroup]:
-		lvm_pvs: List[PartitionModification] = self._menu_options['lvm_pvs'].current_selection
-		return select_lvm_vol_group(preset, lvm_pvs)
+		lvm_pvs: Optional[List[PartitionModification]] = self._menu_options['lvm_pvs'].current_selection
+		if lvm_pvs:
+			return select_lvm_vol_group(preset, lvm_pvs)
+		return preset
 
 	def _select_lvm_volumes(self, preset: Optional[List[LvmVolume]]):
-		lvm_vol_group: LvmVolumeGroup = self._menu_options['lvm_vol_group'].current_selection
-		lvm_volumes = LvmVolumeList('', self._device_mods , lvm_vol_group, preset).run()
-		return lvm_volumes
+		lvm_vol_group: Optional[LvmVolumeGroup] = self._menu_options['lvm_vol_group'].current_selection
+		if lvm_vol_group:
+			lvm_volumes = LvmVolumeList('', self._device_mods, lvm_vol_group, preset).run()
+			return lvm_volumes
+
+		return preset
 
 	def _prev_lvm_pv(self) -> Optional[str]:
 		lvm_pvs: Optional[List[PartitionModification]] = self._menu_options['lvm_pvs'].current_selection
@@ -386,17 +395,18 @@ class LvmConfigurationMenu(AbstractSubMenu):
 		lvm_vol_group: Optional[LvmVolumeGroup] = self._menu_options['lvm_vol_group'].current_selection
 
 		if lvm_vol_group:
-			output = '{}: {}\n'.format(str(_('Volume group')), lvm_vol_group.name)
+			output = '{}: {}\n\n'.format(str(_('Volume group')), lvm_vol_group.name)
 			output += FormattedOutput.as_table(lvm_vol_group.lvm_pvs)
 			return output
 
 		return None
 
 	def _prev_lvm_volumes(self) -> Optional[str]:
-		lvm_volumes: Optional[LvmVolume] = self._menu_options['lvm_volumes'].current_selection
+		lvm_volumes: Optional[List[LvmVolume]] = self._menu_options['lvm_volumes'].current_selection
 
 		if lvm_volumes:
-			return ''
+			output = FormattedOutput.as_table(lvm_volumes)
+			return output
 
 		return None
 
@@ -442,7 +452,7 @@ def _determine_pv_selection(
 
 
 def select_lvm_pvs(
-	preset: List[PartitionModification] = [],
+	preset: Optional[List[PartitionModification]] = [],
 	device_mods: List[DeviceModification] = []
 ) -> Optional[List[PartitionModification]]:
 	title = str(_('Select the devices to use as physical volumes (PV)'))
@@ -450,11 +460,13 @@ def select_lvm_pvs(
 
 	options = _determine_pv_selection(device_mods)
 
+	preset_values = preset if preset else []
+
 	choice = TableMenu(
 		title,
 		data=options,
 		multi=True,
-		preset=preset,
+		preset=preset_values,
 		allow_reset=True,
 		allow_reset_warning_msg=warning
 	).run()
@@ -475,14 +487,17 @@ def select_lvm_vol_group(
 	preset_val = preset.name if preset else ''
 	group_name = TextInput(prompt, prefilled_text=preset_val).run()
 
+	if not group_name:
+		return preset
+
 	title = '{}: {}'.format(str(_('Select the devices to be associated with the volume group')), group_name)
-	# preset_choices = preset.lvm_pvs if preset else None
+	preset_choices = preset.lvm_pvs if preset else []
 
 	choice = TableMenu(
 		title,
 		data=options,
 		multi=True,
-		# preset=preset_choices,
+		preset=preset_choices,
 		allow_reset=True,
 		skip=False
 	).run()
