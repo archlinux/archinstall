@@ -832,7 +832,7 @@ class LvmVolume:
 			start=Size.parse_args(arg['start']),
 			length=Size.parse_args(arg['length']),
 			mountpoint=Path(arg['mountpoint']) if arg['mountpoint'] else None,
-			mount_options=arg['mount_options'],
+			mount_options=arg.get('mount_options', []),
 			btrfs_subvols=SubvolumeModification.parse_args(arg.get('btrfs', []))
 		)
 
@@ -855,8 +855,9 @@ class LvmVolume:
 			'Start': self.start.format_size(Unit.MiB),
 			'Length': self.length.format_size(Unit.MiB),
 			'FS type': self.fs_type.value,
-			'Mountpoint': str(self.mountpoint) if self.mount_options else None,
-			'Mount options': ', '.join(self.mount_options)
+			'Mountpoint': str(self.mountpoint) if self.mount_options else '',
+			'Mount options': ', '.join(self.mount_options),
+			'Btrfs': '{} {}'.format(str(len(self.btrfs_subvols)), 'vol')
 		}
 		return part_mod
 
