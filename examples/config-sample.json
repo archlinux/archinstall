@@ -99,13 +99,19 @@
             "http://archlinux.mirror.digitalpacific.com.au/$repo/os/$arch": true,
         }
     },
-    "nic": {
-        "dhcp": true,
-        "dns": null,
-        "gateway": null,
-        "iface": null,
-        "ip": null,
-        "type": "nm"
+    "network_config": {
+        "nics": [
+            {
+                "dhcp": false,
+                "dns": [
+                    "3.3.3.3"
+                ],
+                "gateway": "2.2.2.2",
+                "iface": "enp0s31f6",
+                "ip": "1.1.1.1"
+            }
+        ],
+        "type": "manual"
     },
     "no_pkg_lookups": false,
     "ntp": true,

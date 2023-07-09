@@ -12,8 +12,8 @@
     ],
     "keyboard-layout": "us",
     "mirror-region": "Worldwide",
-    "nic": {
-    	"type": "NM"
+    "network_config": {
+    	"type": "nm"
     },
     "ntp": true,
     "packages": ["docker", "git", "wget", "zsh"],
