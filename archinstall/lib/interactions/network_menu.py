@@ -153,6 +153,7 @@ def ask_to_configure_network(preset: Optional[NetworkConfiguration]) -> Optional
 				case NicType.MANUAL:
 					preset_nics = preset.nics if preset else []
 					nics = ManualNetworkConfig('Configure interfaces', preset_nics).run()
-					return NetworkConfiguration(NicType.MANUAL, nics)
+					if nics:
+						return NetworkConfiguration(NicType.MANUAL, nics)
 
 	return preset

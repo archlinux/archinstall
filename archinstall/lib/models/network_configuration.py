@@ -1,11 +1,8 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Dict, Any, TYPE_CHECKING, Tuple
 
 from ..profile import ProfileConfiguration
-from ... import Installer
 
 if TYPE_CHECKING:
 	_: Any
@@ -16,7 +13,7 @@ class NicType(Enum):
 	NM = "nm"
 	MANUAL = "manual"
 
-	def display_msg(self, short: bool = False) -> str:
+	def display_msg(self) -> str:
 		match self:
 			case NicType.ISO:
 				return str(_('Copy ISO network configuration to installation'))
@@ -123,7 +120,7 @@ class NetworkConfiguration:
 
 	def install_network_config(
 		self,
-		installation: Installer,
+		installation: Any,
 		profile_config: Optional[ProfileConfiguration] = None
 	):
 		match self.type:
