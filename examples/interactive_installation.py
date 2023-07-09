@@ -61,7 +61,7 @@ def ask_user_questions():
 		global_menu.enable('parallel downloads')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
-	global_menu.enable('nic')
+	global_menu.enable('network_config')
 
 	global_menu.enable('timezone')
 
@@ -137,11 +137,10 @@ def perform_installation(mountpoint: Path):
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config = archinstall.arguments.get('nic', None)
+		network_config = archinstall.arguments.get('network_config', None)
 
 		if network_config:
-			handler = models.NetworkConfigurationHandler(network_config)
-			handler.config_installer(
+			network_config.install_network_config(
 				installation,
 				archinstall.arguments.get('profile_config', None)
 			)

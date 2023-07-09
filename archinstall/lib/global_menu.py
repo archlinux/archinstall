@@ -7,7 +7,7 @@ from .general import secret
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
-from .models import NetworkConfiguration
+from .models import NetworkConfiguration, NicType
 from .models.bootloader import Bootloader
 from .models.users import User
 from .output import FormattedOutput
@@ -142,7 +142,7 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: select_additional_repositories(preset),
 				display_func=lambda x: ', '.join(x) if x else None,
 				default=[])
-		self._menu_options['nic'] = \
+		self._menu_options['network_config'] = \
 			Selector(
 				_('Network configuration'),
 				lambda preset: ask_to_configure_network(preset),
@@ -221,14 +221,11 @@ class GlobalMenu(AbstractMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return _('Install')
 
-	def _display_network_conf(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
-		if not cur_value:
-			return _('Not configured, unavailable unless setup manually')
-		else:
-			if isinstance(cur_value, list):
-				return str(_('Configured {} interfaces')).format(len(cur_value))
-			else:
-				return str(cur_value)
+	def _display_network_conf(self, config: Optional[NetworkConfiguration]) -> str:
+		if not config:
+			return str(_('Not configured, unavailable unless setup manually'))
+
+		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
 		mods: Optional[List[disk.DeviceModification]] = self._menu_options['disk_config'].current_selection
@@ -257,11 +254,11 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_network_config(self) -> Optional[str]:
-		selector = self._menu_options['nic']
-		if selector.has_selection():
-			ifaces = selector.current_selection
-			if isinstance(ifaces, list):
-				return FormattedOutput.as_table(ifaces)
+		selector: Optional[NetworkConfiguration] = self._menu_options['network_config'].current_selection
+		if selector:
+			if selector.type == NicType.MANUAL:
+				output = FormattedOutput.as_table(selector.nics)
+				return output
 		return None
 
 	def _prev_additional_pkgs(self):
