@@ -694,7 +694,7 @@ class Installer:
 		boot_partition: disk.PartitionModification,
 		root_partition: disk.PartitionModification
 	):
-		self._pacstrap('efibootmgr')
+		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
 			raise HardwareIncompatibilityError
