@@ -782,7 +782,7 @@ class DeviceModification:
 		Returns the first EFI partition marked for boot.
 		Perhaps we could mark it more clearly in the PartitionModification() model instead.
 		"""
-		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and str(x.mountpoint) == '/boot/efi', self.partitions)
+		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and str(x.mountpoint) == '/boot/EFI', self.partitions)
 		return next(liltered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
