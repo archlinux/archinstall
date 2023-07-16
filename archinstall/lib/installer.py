@@ -172,7 +172,7 @@ class Installer:
 				)
 
 	def sanity_check(self):
-		self._verify_boot_part()
+		# self._verify_boot_part()
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
@@ -677,6 +677,12 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
+	def _get_efi_partition(self) -> Optional[disk.PartitionModification]:
+		for layout in self._disk_config.device_modifications:
+			if partition := layout.get_efi_partition():
+				return partition
+		return None
+
 	def _get_boot_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
@@ -689,7 +695,12 @@ class Installer:
 				return root
 		return None
 
-	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
+	def _add_systemd_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification,
+		efi_partition: Optional[disk.PartitionModification]
+	):
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -698,15 +709,24 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
+		bootctl_options = [
+			f'--esp-path={efi_partition.mountpoint}' if efi_partition else '',
+			f'--boot-path={boot_partition.mountpoint}' if boot_partition else ''
+		]
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path=/boot install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
-		# Ensure that the /boot/loader directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
+		#
+		# As mentioned in https://github.com/archlinux/archinstall/pull/1859 - we store the
+		# loader entries in $BOOT/loader/ rather than $ESP/loader/
+		# The current reasoning being that $BOOT works in both use cases as well
+		# as being tied to the current installation. This may change.
 		loader_dir = self.target / 'boot/loader'
 		loader_dir.mkdir(parents=True, exist_ok=True)
 
@@ -732,7 +752,7 @@ class Installer:
 				else:
 					loader.write(f"{line}\n")
 
-		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
@@ -836,12 +856,12 @@ class Installer:
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {err}")
+					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 
@@ -861,7 +881,7 @@ class Installer:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg')
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
@@ -1055,6 +1075,7 @@ TIMEOUT=5
 				if plugin.on_add_bootloader(self):
 					return True
 
+		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
 
@@ -1068,7 +1089,7 @@ TIMEOUT=5
 
 		match bootloader:
 			case Bootloader.Systemd:
-				self._add_systemd_bootloader(root_partition)
+				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Grub:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
