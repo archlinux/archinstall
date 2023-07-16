@@ -537,6 +537,10 @@ class PartitionFlag(Enum):
 	ESP = _ped.PARTITION_ESP
 
 
+class PartitionType(Enum):
+	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
+
+
 class FilesystemType(Enum):
 	Btrfs = 'btrfs'
 	Ext2 = 'ext2'
@@ -779,12 +783,11 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
-	def get_efi_partition(self) -> Optional[PartitionModification]:
+	def get_xbootldr_partition(self) -> Optional[PartitionModification]:
 		"""
-		Returns the first EFI partition marked for boot.
-		Perhaps we could mark it more clearly in the PartitionModification() model instead.
+		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...).
 		"""
-		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and str(x.mountpoint) == '/boot/EFI', self.partitions)
+		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and x.parttype == PartitionType.XBOOTLDR, self.partitions)
 		return next(liltered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
@@ -908,6 +911,7 @@ class LsblkInfo:
 	rota: bool = False
 	tran: Optional[str] = None
 	partuuid: Optional[str] = None
+	parttype :Optional[str] = None
 	uuid: Optional[str] = None
 	fstype: Optional[str] = None
 	fsver: Optional[str] = None
@@ -931,6 +935,7 @@ class LsblkInfo:
 			'rota': self.rota,
 			'tran': self.tran,
 			'partuuid': self.partuuid,
+			'parttype' : self.parttype,
 			'uuid': self.uuid,
 			'fstype': self.fstype,
 			'fsver': self.fsver,
