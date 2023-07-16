@@ -774,7 +774,7 @@ class DeviceModification:
 		return next(liltered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
-		liltered = filter(lambda x: x.is_boot() and x.mountpoint == '/boot', self.partitions)
+		liltered = filter(lambda x: x.is_boot() and str(x.mountpoint) == '/boot', self.partitions)
 		return next(liltered, None)
 
 	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
