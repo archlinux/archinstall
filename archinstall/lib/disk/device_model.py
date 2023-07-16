@@ -765,6 +765,14 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
+	def get_efi_partition(self)  -> Optional[PartitionModification]:
+		"""
+		Returns the first EFI partition marked for boot.
+		Perhaps we could mark it more clearly in the PartitionModification() model instead.
+		"""
+		liltered = filter(lambda x: x.fs_type is 'fat32' and x.is_boot(), self.partitions)
+		return next(liltered, None)
+
 	def get_boot_partition(self) -> Optional[PartitionModification]:
 		liltered = filter(lambda x: x.is_boot(), self.partitions)
 		return next(liltered, None)

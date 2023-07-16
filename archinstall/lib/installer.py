@@ -677,6 +677,12 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
+	def _get_efi_partition(self) ->  Optional[disk.PartitionModification]:
+		for layout in self._disk_config.device_modifications:
+			if boot := layout.get_efi_partition():
+				return boot
+		return None
+
 	def _get_boot_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
@@ -691,8 +697,9 @@ class Installer:
 
 	def _add_systemd_bootloader(
 		self,
+		root_partition: disk.PartitionModification,
 		boot_partition: disk.PartitionModification,
-		root_partition: disk.PartitionModification
+		efi_partition: disk.PartitionModification
 	):
 		self.pacman.strap('efibootmgr')
 
@@ -702,13 +709,17 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
+		options = [
+			f'--esp-path={efi_partition.mountpoint}' if efi_partition else '',
+			f'--boot-path={boot_partition.mountpoint}' if boot_partition else ''
+		]
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path={boot_partition.mountpoint} install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl {' '.join(options)} install')
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path={boot_partition.mountpoint} install')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(options)} install')
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		loader_dir = self.target / 'boot/loader'
@@ -1059,6 +1070,7 @@ TIMEOUT=5
 				if plugin.on_add_bootloader(self):
 					return True
 
+		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
 
@@ -1072,7 +1084,7 @@ TIMEOUT=5
 
 		match bootloader:
 			case Bootloader.Systemd:
-				self._add_systemd_bootloader(boot_partition, root_partition)
+				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Grub:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:
