@@ -526,6 +526,7 @@ class PartitionType(Enum):
 
 class PartitionFlag(Enum):
 	Boot = 1
+	XBOOTLDR = 2 # Note: parted calls this bls_boot
 
 
 class FilesystemType(Enum):
@@ -605,6 +606,8 @@ class PartitionModification:
 	partuuid: Optional[str] = None
 	uuid: Optional[str] = None
 
+	_boot_indicator_flags = [PartitionFlag.Boot, PartitionFlag.XBOOTLDR]
+
 	def __post_init__(self):
 		# needed to use the object as a dictionary key due to hash func
 		if not hasattr(self, '_obj_id'):
@@ -674,7 +677,10 @@ class PartitionModification:
 		raise ValueError('Mountpoint is not specified')
 
 	def is_boot(self) -> bool:
-		return PartitionFlag.Boot in self.flags
+		"""
+		Returns True if any of the boot indicator flags are found in self.flags
+		"""
+		return any(set(self.flags) & set(self._boot_indicator_flags))
 
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
 		if relative_mountpoint is not None and self.mountpoint is not None:
