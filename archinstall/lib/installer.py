@@ -721,7 +721,12 @@ class Installer:
 			# Fallback, try creating the boot loader without touching the EFI variables
 			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
-		# Ensure that the /boot/loader directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
+		#
+		# As mentioned in https://github.com/archlinux/archinstall/pull/1859 - we store the
+		# loader entries in $BOOT/loader/ rather than $ESP/loader/
+		# The current reasoning being that $BOOT works in both use cases as well
+		# as being tied to the current installation. This may change.
 		loader_dir = self.target / 'boot/loader'
 		loader_dir.mkdir(parents=True, exist_ok=True)
 
@@ -747,7 +752,7 @@ class Installer:
 				else:
 					loader.write(f"{line}\n")
 
-		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
