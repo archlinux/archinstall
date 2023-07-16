@@ -536,11 +536,11 @@ class PartitionFlag(Enum):
 	ESP = _ped.PARTITION_ESP
 
 
-class PartitionGUIDs(Enum):
-	"""
-	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
-	"""
-	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
+# class PartitionGUIDs(Enum):
+# 	"""
+# 	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+# 	"""
+# 	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
 
 
 class FilesystemType(Enum):
@@ -789,7 +789,7 @@ class DeviceModification:
 		"""
 		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...).
 		"""
-		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and x.parttype == PartitionGUIDs.XBOOTLDR, self.partitions)
+		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and PartitionFlag.XBOOTLDR in x.flags, self.partitions)
 		return next(liltered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
