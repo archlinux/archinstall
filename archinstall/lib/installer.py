@@ -716,10 +716,10 @@ class Installer:
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl {' '.join(options)} install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(options)} install")
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(options)} install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(options)} install")
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		loader_dir = self.target / 'boot/loader'
