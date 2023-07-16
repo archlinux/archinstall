@@ -1176,3 +1176,10 @@ msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"

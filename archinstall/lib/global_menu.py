@@ -169,8 +169,8 @@ class GlobalMenu(AbstractMenu):
 		self._menu_options['install'] = \
 			Selector(
 				self._install_text(),
-				exec_func=lambda n, v: True if len(self._missing_configs()) == 0 else False,
-				preview_func=self._prev_install_missing_config,
+				exec_func=lambda n, v: self._is_config_valid(),
+				preview_func=self._prev_install_invalid_config,
 				no_store=True)
 
 		self._menu_options['abort'] = Selector(_('Abort'), exec_func=lambda n,v:exit(1))
@@ -199,6 +199,14 @@ class GlobalMenu(AbstractMenu):
 					missing.add(self._menu_options['disk_config'].description)
 
 		return list(missing)
+
+	def _is_config_valid(self) -> bool:
+		"""
+		Checks the validity of the current configuration.
+		"""
+		if len(self._missing_configs()) != 0:
+			return False
+		return self._validate_bootloader() is None
 
 	def _update_install_text(self, name: str, value: str):
 		text = self._install_text()
@@ -321,12 +329,45 @@ class GlobalMenu(AbstractMenu):
 			return disk.EncryptionType.type_to_text(current_value.encryption_type)
 		return ''
 
-	def _prev_install_missing_config(self) -> Optional[str]:
+	def _validate_bootloader(self) -> Optional[str]:
+		"""
+		Checks the selected bootloader is valid for the selected filesystem
+		type of the boot partition.
+
+		Returns [`None`] if the bootloader is valid, otherwise returns a
+		string with the error message.
+
+		XXX: The caller is responsible for wrapping the string with the translation
+			shim if necessary.
+		"""
+		bootloader = self._menu_options['bootloader'].current_selection
+		boot_partition: Optional[disk.PartitionModification] = None
+
+		if disk_config := self._menu_options['disk_config'].current_selection:
+			for layout in disk_config.device_modifications:
+				if boot_partition := layout.get_boot_partition():
+					break
+		else:
+			return "No disk layout selected"
+
+		if boot_partition is None:
+			return "Boot partition not found"
+
+		if bootloader == Bootloader.Limine and boot_partition.fs_type == disk.FilesystemType.Btrfs:
+			return "Limine bootloader does not support booting from BTRFS filesystem"
+
+		return None
+
+	def _prev_install_invalid_config(self) -> Optional[str]:
 		if missing := self._missing_configs():
 			text = str(_('Missing configurations:\n'))
 			for m in missing:
 				text += f'- {m}\n'
 			return text[:-1]  # remove last new line
+
+		if error := self._validate_bootloader():
+			return str(_(f"Invalid configuration: {error}"))
+
 		return None
 
 	def _prev_users(self) -> Optional[str]:
@@ -349,7 +390,7 @@ class GlobalMenu(AbstractMenu):
 				output += profile_config.profile.name + '\n'
 
 			if profile_config.gfx_driver:
-				output += str(_('Graphics driver')) + ': ' + profile_config.gfx_driver + '\n'
+				output += str(_('Graphics driver')) + ': ' + profile_config.gfx_driver.value + '\n'
 
 			if profile_config.greeter:
 				output += str(_('Greeter')) + ': ' + profile_config.greeter.value + '\n'

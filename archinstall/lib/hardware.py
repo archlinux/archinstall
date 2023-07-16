@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 from functools import cached_property
 from pathlib import Path
 from typing import Optional, Dict, List
@@ -8,43 +9,85 @@ from .general import SysCommand
 from .networking import list_interfaces, enrich_iface_types
 from .output import debug
 
-AVAILABLE_GFX_DRIVERS = {
-	# Sub-dicts are layer-2 options to be selected
-	# and lists are a list of packages to be installed
-	"All open-source (default)": [
-		"mesa",
-		"xf86-video-amdgpu",
-		"xf86-video-ati",
-		"xf86-video-nouveau",
-		"xf86-video-vmware",
-		"libva-mesa-driver",
-		"libva-intel-driver",
-		"intel-media-driver",
-		"vulkan-radeon",
-		"vulkan-intel",
-	],
-	"AMD / ATI (open-source)": [
-		"mesa",
-		"xf86-video-amdgpu",
-		"xf86-video-ati",
-		"libva-mesa-driver",
-		"vulkan-radeon",
-	],
-	"Intel (open-source)": [
-		"mesa",
-		"libva-intel-driver",
-		"intel-media-driver",
-		"vulkan-intel",
-	],
-	"Nvidia (open kernel module for newer GPUs, Turing+)": ["nvidia-open"],
-	"Nvidia (open-source nouveau driver)": [
-		"mesa",
-		"xf86-video-nouveau",
-		"libva-mesa-driver"
-	],
-	"Nvidia (proprietary)": ["nvidia"],
-	"VMware / VirtualBox (open-source)": ["mesa", "xf86-video-vmware"],
-}
+
+class GfxPackage(Enum):
+	IntelMediaDriver = 'intel-media-driver'
+	LibvaIntelDriver = 'libva-intel-driver'
+	LibvaMesaDriver = 'libva-mesa-driver'
+	Mesa = "mesa"
+	Nvidia = 'nvidia'
+	NvidiaOpen = 'nvidia-open'
+	VulkanIntel = 'vulkan-intel'
+	VulkanRadeon = 'vulkan-radeon'
+	Xf86VideoAmdgpu = "xf86-video-amdgpu"
+	Xf86VideoAti = "xf86-video-ati"
+	Xf86VideoNouveau = 'xf86-video-nouveau'
+	Xf86VideoVmware = 'xf86-video-vmware'
+
+
+class GfxDriver(Enum):
+	AllOpenSource = 'All open-source'
+	AmdOpenSource = 'AMD / ATI (open-source)'
+	IntelOpenSource = 'Intel (open-source)'
+	NvidiaOpenKernel = 'Nvidia (open kernel module for newer GPUs, Turing+)'
+	NvidiaOpenSource = 'Nvidia (open-source nouveau driver)'
+	NvidiaProprietary = 'Nvidia (proprietary)'
+	VMOpenSource = 'VMware / VirtualBox (open-source)'
+
+	def is_nvidia(self) -> bool:
+		match self:
+			case GfxDriver.NvidiaProprietary | \
+				GfxDriver.NvidiaOpenSource | \
+				GfxDriver.NvidiaOpenKernel:
+				return True
+			case _:
+				return False
+
+	def packages(self) -> List[GfxPackage]:
+		match self:
+			case GfxDriver.AllOpenSource:
+				return [
+					GfxPackage.Mesa,
+					GfxPackage.Xf86VideoAmdgpu,
+					GfxPackage.Xf86VideoAti,
+					GfxPackage.Xf86VideoNouveau,
+					GfxPackage.Xf86VideoVmware,
+					GfxPackage.LibvaMesaDriver,
+					GfxPackage.LibvaIntelDriver,
+					GfxPackage.IntelMediaDriver,
+					GfxPackage.VulkanRadeon,
+					GfxPackage.VulkanIntel
+				]
+			case GfxDriver.AmdOpenSource:
+				return [
+					GfxPackage.Mesa,
+					GfxPackage.Xf86VideoAmdgpu,
+					GfxPackage.Xf86VideoAti,
+					GfxPackage.LibvaMesaDriver,
+					GfxPackage.VulkanRadeon
+				]
+			case GfxDriver.IntelOpenSource:
+				return [
+					GfxPackage.Mesa,
+					GfxPackage.LibvaIntelDriver,
+					GfxPackage.IntelMediaDriver,
+					GfxPackage.VulkanIntel
+				]
+			case GfxDriver.NvidiaOpenKernel:
+				return [GfxPackage.NvidiaOpen]
+			case GfxDriver.NvidiaOpenSource:
+				return [
+					GfxPackage.Mesa,
+					GfxPackage.Xf86VideoNouveau,
+					GfxPackage.LibvaMesaDriver
+				]
+			case GfxDriver.NvidiaProprietary:
+				return [GfxPackage.Nvidia]
+			case GfxDriver.VMOpenSource:
+				return [
+					GfxPackage.Mesa,
+					GfxPackage.Xf86VideoVmware
+				]
 
 
 class _SysInfo:

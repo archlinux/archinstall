@@ -1,7 +1,7 @@
 default_stages: ['commit']
 repos:
   - repo: https://github.com/pycqa/autoflake
-    rev: v2.0.2
+    rev: v2.1.1
     hooks:
       - id: autoflake
         args: [

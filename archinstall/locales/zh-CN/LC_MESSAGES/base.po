@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Xiaotian Wu <yetist@gmail.com>\n"
+"Last-Translator: wc7086 <190022474@qq.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -12,31 +12,31 @@ msgstr ""
 "X-Generator: Poedit 3.1.1\n"
 
 msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] 已在此处创建日志文件：{} {}"
+msgstr "[!] 日志文件已在此处创建：{} {}"
 
 msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
 msgstr "    请将此问题（和文件）提交到 https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "你真的想中止吗？"
+msgstr "您真的要中止吗？"
 
 msgid "And one more time for verification: "
-msgstr "还有一次验证： "
+msgstr "再输入一次以进行验证："
 
 msgid "Would you like to use swap on zram?"
-msgstr "你想在 zram 上使用交换吗？"
+msgstr "您想在 zram 上使用交换分区（swap）吗？"
 
 msgid "Desired hostname for the installation: "
-msgstr "安装所需的主机名： "
+msgstr "请输入安装后期望使用的主机名（hostname）："
 
 msgid "Username for required superuser with sudo privileges: "
-msgstr "具有 sudo 权限的所需超级用户的用户名： "
+msgstr "请输入需要超级用户的用户名（sudo 权限）："
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "要新建的任何其他用户（留空表示没有用户）： "
+msgstr "请输入要安装的其他用户（留空表示不安装其他用户）："
 
 msgid "Should this user be a superuser (sudoer)?"
-msgstr "这个用户应该是超级用户（sudoer）吗？"
+msgstr "这个用户应该成为超级用户（sudoer）吗？"
 
 msgid "Select a timezone"
 msgstr "选择时区"
@@ -48,62 +48,62 @@ msgid "Choose a bootloader"
 msgstr "选择引导加载程序"
 
 msgid "Choose an audio server"
-msgstr "选择音频服务器"
+msgstr "请选择一个音频服务器（audio server）"
 
 msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "仅安装 base、base-devel、linux、linux-firmware、efibootmgr 和可​​选配置文件包等软件包。"
+msgstr "仅安装基本软件包（base），基本开发软件包（base-devel），Linux 内核（linux），Linux 固件（linux-firmware），efibootmgr 和可选的配置文件软件包（profile packages）。"
 
 msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "如果你想要一个 web 浏览器，例如 firefox 或 chromium，你可以在下面的提示中指定它。"
+msgstr "如果您需要一个网络浏览器，例如 firefox 或 chromium，你可以在下面的提示中指定它。"
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
+msgstr "输入要安装的其他软件包（空格分隔，留空以跳过）："
 
 msgid "Copy ISO network configuration to installation"
-msgstr "将 ISO 网络配置复制到安装"
+msgstr "将 ISO 中的网络配置复制到安装中"
 
 msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"
 
 msgid "Select one network interface to configure"
-msgstr "选择一个网络接口进行配置"
+msgstr "选择要配置的网络接口"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "选择要为“{}”配置的模式或跳过以使用默认模式“{}”"
+msgstr "选择要为 \"{}\" 配置的模式或跳过以使用默认模式 \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "输入 {} 的 IP 和子网（例如：192.168.0.5/24）： "
+msgstr "输入 {} 的 IP 和子网（例如：192.168.0.5/24）："
 
 msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "输入您的网关（路由器）IP 地址或留空为无： "
+msgstr "请输入您的网关（路由器）IP地址，如果没有请留空："
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "输入您的 DNS 服务器（空格分隔，空白表示无）： "
+msgstr "请输入您的 DNS 服务器地址（以空格分隔，如果没有请留空）："
 
 msgid "Select which filesystem your main partition should use"
-msgstr "选择你的主分区应该使用哪个文件系统"
+msgstr "选择您的主分区应使用的文件系统"
 
 msgid "Current partition layout"
-msgstr "当前分区布局"
+msgstr "当前的分区布局"
 
 msgid ""
 "Select what to do with\n"
 "{}"
 msgstr ""
-"选择要做什么\n"
+"选择要执行的操作\n"
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
 msgstr "为分区输入所需的文件系统类型"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "输入起始位置（单位：s，GB，% 等；默认值：{}）："
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "输入结束位置（单位：s，GB，% 等；例如：{}）："
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} 包含排队分区，这将删除这些分区，您确定吗？"
+msgstr "{} 包含了已排队的分区，这将会删除这些分区，您确定吗？"
 
 msgid ""
 "{}\n"
@@ -124,10 +124,10 @@ msgstr ""
 "按索引选择要挂载的分区"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * 分区挂载点是相对于安装内部的，例如 boot 应该为 /boot。"
+msgstr " * 分区挂载点是相对于安装目录内部的，例如引导分区（boot）的挂载点为 /boot。"
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "选择挂载分区的位置（留空以删除挂载点）： "
+msgstr "选择要挂载分区的位置（留空表示移除挂载点）："
 
 msgid ""
 "{}\n"
@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"选择要标记的分区以进行格式化"
+"选择要格式化的分区"
 
 msgid ""
 "{}\n"
@@ -145,7 +145,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"选择要标记为加密的分区"
+"选择要加密的分区"
 
 msgid ""
 "{}\n"
@@ -163,40 +163,40 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"选择要在哪个分区上设置文件系统"
+"选择要设置文件系统的分区"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "为分区输入所需的文件系统类型： "
+msgstr "为分区选择所需的文件系统类型："
 
 msgid "Archinstall language"
-msgstr "Archinstall 界面语言"
+msgstr "Archinstall 语言"
 
 msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "擦除所有选定的驱动器并使用最优的默认分区布局"
+msgstr "擦除所有选定的驱动器并使用最佳的默认分区布局"
 
 msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "选择如何处理每个单独的驱动器（其次是分区使用情况）"
+msgstr "选择对每个单独的驱动器执行的操作（后跟分区使用情况）"
 
 msgid "Select what you wish to do with the selected block devices"
-msgstr "选择您希望对所选块设备执行的操作"
+msgstr "选择要对所选硬盘驱动器执行的操作"
 
 msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "这是预编程配置文件的列表，它们可能使安装桌面环境之类的东西变得更容易"
+msgstr "这是预先编写的配置文件列表，它们可能会使安装桌面环境等内容变得更加容易"
 
 msgid "Select keyboard layout"
 msgstr "选择键盘布局"
 
 msgid "Select one of the regions to download packages from"
-msgstr "选择要从中下载软件包的区域之一"
+msgstr "选择要从中下载软件包的区域（可多选）"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "选择一个或多个硬盘驱动器来使用和配置"
+msgstr "选择要使用和配置的硬盘驱动器（可多选）"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "为了与您的 AMD 硬件实现最佳兼容性，您可能需要使用所有开源或 AMD / ATI 选项。"
+msgstr "为了与您的 AMD 硬件实现最佳兼容性，您可能需要使用所有开源显卡驱动程序或 AMD / ATI 选项。"
 
 msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "为了与您的 Intel 硬件实现最佳兼容性，您可能需要使用所有开源或 Intel 选项。\n"
+msgstr "为了与您的 Intel 硬件实现最佳兼容性，您可能需要使用所有开源显卡驱动程序或 Intel 选项。\n"
 
 msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
 msgstr "为了与您的 Nvidia 硬件实现最佳兼容性，您可能需要使用 Nvidia 专有驱动程序。\n"
@@ -208,13 +208,13 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"选择图形驱动程序或留空以安装所有开源驱动程序"
+"选择一个显卡驱动程序，或留空以安装所有开源驱动程序"
 
 msgid "All open-source (default)"
-msgstr "全部开源（默认）"
+msgstr "所有开源显卡驱动程序（默认）"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "选择要使用的内核或将默认“{}”留空"
+msgstr "选择要使用的内核或留空以使用默认值“{}”"
 
 msgid "Choose which locale language to use"
 msgstr "选择要使用的语言环境"
@@ -223,19 +223,19 @@ msgid "Choose which locale encoding to use"
 msgstr "选择要使用的语言环境编码"
 
 msgid "Select one of the values shown below: "
-msgstr "选择如下所示的值之一： "
+msgstr "选择以下值之一："
 
 msgid "Select one or more of the options below: "
-msgstr "选择以下一个或多个选项： "
+msgstr "选择以下选项之一或多个选项："
 
 msgid "Adding partition...."
-msgstr "添加分区...."
+msgstr "正在添加分区……"
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "您需要输入有效的文件系统类型才能继续。有关有效的文件系统类型，请参阅 `man parted`。"
+msgstr "您需要输入有效的文件系统类型才能继续。请参阅 `man parted` 以获取有效的文件系统类型。"
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "错误：在 URL“{}”上列出配置文件导致："
+msgstr "错误：在 URL “{}” 上列出配置文件时出错："
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
 msgstr "错误：无法将“{}”结果解码为 JSON："
@@ -247,10 +247,10 @@ msgid "Mirror region"
 msgstr "镜像区域"
 
 msgid "Locale language"
-msgstr "本地语言"
+msgstr "语言环境"
 
 msgid "Locale encoding"
-msgstr "本地编码"
+msgstr "语言环境编码"
 
 msgid "Drive(s)"
 msgstr "驱动器"
@@ -286,16 +286,16 @@ msgid "Kernels"
 msgstr "内核"
 
 msgid "Additional packages"
-msgstr "附加包"
+msgstr "附加软件包"
 
 msgid "Network configuration"
 msgstr "网络配置"
 
 msgid "Automatic time sync (NTP)"
-msgstr "自动时间同步 (NTP)"
+msgstr "自动时间同步（NTP）"
 
 msgid "Install ({} config(s) missing)"
-msgstr "安装（缺少 {} 个配置）"
+msgstr "安装（{} 个配置缺失）"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -303,16 +303,16 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"你决定跳过硬盘选择\n"
-"并将使用安装在 {} 上的任何驱动器设置（实验性）\n"
+"您决定跳过硬盘驱动器选择\n"
+"并将使用挂载在 {}（实验性）上的任何驱动器设置\n"
 "警告：Archinstall 不会检查此设置的适用性\n"
-"你想继续吗？"
+"您是否要继续？"
 
 msgid "Re-using partition instance: {}"
-msgstr "重用分区实例：{}"
+msgstr "正在重新使用分区实例：{}"
 
 msgid "Create a new partition"
-msgstr "创建新分区"
+msgstr "创建一个新分区"
 
 msgid "Delete a partition"
 msgstr "删除一个分区"
@@ -324,13 +324,13 @@ msgid "Assign mount-point for a partition"
 msgstr "为分区分配挂载点"
 
 msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "标记/取消标记要格式化的分区（擦除数据）"
+msgstr "将分区标记/取消标记为格式化（擦除数据）"
 
 msgid "Mark/Unmark a partition as encrypted"
 msgstr "将分区标记/取消标记为加密"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "将分区标记/取消标记为可引导（自动为 /boot）"
+msgstr "将分区标记/取消标记为可引导（/boot 自动引导）"
 
 msgid "Set desired filesystem for a partition"
 msgstr "为分区设置所需的文件系统"
@@ -348,7 +348,7 @@ msgid "Timezone"
 msgstr "时区"
 
 msgid "Set/Modify the below options"
-msgstr "请设置/修改以下选项"
+msgstr "设置/修改以下选项"
 
 msgid "Install"
 msgstr "安装"
@@ -357,55 +357,55 @@ msgid ""
 "Use ESC to skip\n"
 "\n"
 msgstr ""
-"按 ESC 键跳过\n"
+"按 ESC 跳过\n"
 "\n"
 
 msgid "Suggest partition layout"
-msgstr "建议分区布局"
+msgstr "建议的分区布局"
 
 msgid "Enter a password: "
-msgstr "输入密码： "
+msgstr "输入密码："
 
 msgid "Enter a encryption password for {}"
-msgstr "输入 {} 的加密密码"
+msgstr "为 {} 输入一个加密密码"
 
 msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "输入磁盘加密密码（留空表示不加密）： "
+msgstr "输入磁盘加密密码（留空则不加密）："
 
 msgid "Create a required super-user with sudo privileges: "
-msgstr "创建具有 sudo 权限的必需超级用户： "
+msgstr "创建具有 sudo 权限的必需超级用户："
 
 msgid "Enter root password (leave blank to disable root): "
-msgstr "输入 root 密码（留空以禁用 root）： "
+msgstr "输入 root 密码（留空以禁用 root）："
 
 msgid "Password for user \"{}\": "
-msgstr "用户“{}”的密码： "
+msgstr "用户“{}”的密码："
 
 msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "验证是否存在其他软件包（这可能需要几秒钟）"
+msgstr "正在验证附加软件包是否存在（这可能需要几秒钟）"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
-msgstr "是否要对默认时间服务器使用自动时间同步 (NTP)？\n"
+msgstr "您是否希望使用默认时间服务器进行自动时间同步（NTP）？\n"
 
 msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
-"为了使 NTP 工作，可能需要硬件时间和其他配置后步骤。\n"
-"更多信息，请查看 Arch wiki"
+"可能需要硬件时间和其他后配置步骤才能使 NTP 正常工作。\n"
+"有关更多信息，请查看 Arch wiki"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "输入用户名以创建其他用户（留空以跳过）： "
+msgstr "输入用户名以创建其他用户（留空以跳过）："
 
 msgid "Use ESC to skip\n"
-msgstr "按 ESC 键跳过\n"
+msgstr "按 ESC 跳过\n"
 
 msgid ""
 "\n"
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-"从列表中选择一个对象，然后为其选择一个可用的操作"
+" 从列表中选择一个对象，并选择要执行的操作"
 
 msgid "Cancel"
 msgstr "取消"
@@ -432,7 +432,7 @@ msgid "Copy to new key:"
 msgstr "复制到新密钥："
 
 msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "未知网卡类型：{}。 可能的值为 {}"
+msgstr "未知的网卡类型：{}。可能的值为 {}"
 
 msgid ""
 "\n"
@@ -442,13 +442,13 @@ msgstr ""
 "这是您选择的配置："
 
 msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Pacman 已经在运行，最多等待 10 分钟以使其终止。"
+msgstr "Pacman 已经在运行，最多等待 10 分钟或直到它终止。"
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "预先存在的 pacman 锁从未退出。 请在使用 archinstall 之前清理所有现有的 pacman 会话。"
+msgstr "预先存在的 pacman 锁从未退出。请在使用 archinstall 之前清理任何现有的 pacman 会话。"
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "选择要启用的可选附加仓库"
+msgstr "选择要启用的可选附加存储库"
 
 msgid "Add a user"
 msgstr "添加一个用户"
@@ -467,16 +467,16 @@ msgid ""
 "Define a new user\n"
 msgstr ""
 "\n"
-"定义新用户\n"
+"定义一个新用户\n"
 
 msgid "User Name : "
-msgstr "用户名： "
+msgstr "用户名："
 
 msgid "Should {} be a superuser (sudoer)?"
-msgstr "{} 应该是超级用户 (sudoer) 吗？"
+msgstr "是否将{}设置为超级用户（sudoer）？"
 
 msgid "Define users with sudo privilege: "
-msgstr "定义具有 sudo 权限的用户： "
+msgstr "定义具有 sudo 权限的用户："
 
 msgid "No network configuration"
 msgstr "无网络配置"
@@ -491,7 +491,7 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"选择要在哪个分区上设置子卷"
+"选择要设置子卷的分区"
 
 msgid "Manage btrfs subvolumes for current partition"
 msgstr "管理当前分区的 btrfs 子卷"
@@ -515,53 +515,53 @@ msgid "Choose which configuration to save"
 msgstr "选择要保存的配置"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "输入要保存配置的目录： "
+msgstr "输入要保存配置的目录："
 
 msgid "Not a valid directory: {}"
 msgstr "不是有效的目录：{}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "您使用的密码似乎很弱,"
+msgstr "您正在使用的密码似乎很弱，"
 
 msgid "are you sure you want to use it?"
-msgstr "你确定要使用它吗？"
+msgstr "您确定要使用它吗？"
 
 msgid "Optional repositories"
-msgstr "可选仓库"
+msgstr "可选存储库"
 
 msgid "Save configuration"
 msgstr "保存配置"
 
 msgid "Missing configurations:\n"
-msgstr "缺少配置:\n"
+msgstr "缺少配置：\n"
 
 msgid "Either root-password or at least 1 superuser must be specified"
 msgstr "必须指定 root 密码或至少 1 个超级用户"
 
 msgid "Manage superuser accounts: "
-msgstr "管理超级用户帐户： "
+msgstr "管理超级用户账户："
 
 msgid "Manage ordinary user accounts: "
-msgstr "管理普通用户账户： "
+msgstr "管理普通用户账户："
 
 msgid " Subvolume :{:16}"
-msgstr " 子卷 :{:16}"
+msgstr " 子卷：{:16}"
 
 msgid " mounted at {:16}"
-msgstr " 安装在 {:16}"
+msgstr " 挂载在 {:16}"
 
 msgid " with option {}"
-msgstr " 带选项 {}"
+msgstr " 与选项 {}"
 
 msgid ""
 "\n"
 " Fill the desired values for a new subvolume \n"
 msgstr ""
 "\n"
-" 为新的子卷填充所需的值\n"
+" 填写新子卷所需的值 \n"
 
 msgid "Subvolume name "
-msgstr "子卷名 "
+msgstr "子卷名称 "
 
 msgid "Subvolume mountpoint"
 msgstr "子卷挂载点"
@@ -576,19 +576,19 @@ msgid "Subvolume name :"
 msgstr "子卷名称："
 
 msgid "Select a mount point :"
-msgstr "选择挂载点："
+msgstr "选择一个挂载点："
 
 msgid "Select the desired subvolume options "
 msgstr "选择所需的子卷选项 "
 
 msgid "Define users with sudo privilege, by username: "
-msgstr "通过用户名定义具有 sudo 权限的用户： "
+msgstr "通过用户名定义具有 sudo 权限的用户："
 
 msgid "[!] A log file has been created here: {}"
 msgstr "[!] 已在此处创建日志文件：{}"
 
 msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "您想使用具有默认结构的 BTRFS 子卷吗？"
+msgstr "您想使用带有默认结构的 BTRFS 子卷吗？"
 
 msgid "Would you like to use BTRFS compression?"
 msgstr "您想使用 BTRFS 压缩吗？"
@@ -618,13 +618,13 @@ msgid "set: {}"
 msgstr "设置：{}"
 
 msgid "Manual configuration setting must be a list"
-msgstr "手动配置设置必须是列表"
+msgstr "手动配置设置必须是一个列表"
 
 msgid "No iface specified for manual configuration"
-msgstr "没有为手动配置指定 iface"
+msgstr "没有为手动配置指定网卡接口"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "没有自动 DHCP 的手动 nic 配置需要 IP 地址"
+msgstr "没有自动 DHCP 的手动网卡配置需要 IP 地址"
 
 msgid "Add interface"
 msgstr "添加接口"
@@ -645,43 +645,43 @@ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "将分区标记/取消标记为压缩（仅限 btrfs）"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "您使用的密码似乎很弱，您确定要使用吗？"
+msgstr "您正在使用的密码似乎很弱，您确定要使用它吗？"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "提供一系列桌面环境和平铺窗口管理器，例如 gnome, kde, sway"
+msgstr "提供一系列桌面环境和平铺窗口管理器的选择，例如 gnome、kde、sway"
 
 msgid "Select your desired desktop environment"
-msgstr "选择您想要的桌面环境"
+msgstr "选择您所需的桌面环境"
 
 msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
 msgstr "一个非常基本的安装，允许您根据需要自定义 Arch Linux。"
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "提供一系列可供安装和启用的服务器包，例如 httpd、nginx、mariadb"
+msgstr "提供一系列可安装和启用的各种服务器软件包的选择，例如 httpd、nginx、mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "选择要安装的服务器，如果没有，则进行最小安装"
+msgstr "选择要安装的服务器，如果没有，则将执行最小安装"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "安装最小系统以及 xorg 和图形驱动程序。"
+msgstr "安装一个最小系统以及 xorg 和显卡驱动程序。"
 
 msgid "Press Enter to continue."
-msgstr "按回车键继续。"
+msgstr "按 Enter 继续。"
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "您想 chroot 进入新创建的安装并执行安装后配置吗？"
+msgstr "您是否想要 chroot 到新创建的系统内以进行安装后的配置？"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "您确定要重置此设置吗？"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "选择一个或多个硬盘驱动器来使用和配置\n"
+msgstr "选择要使用和配置的硬盘驱动器（可多选）\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "对现有设置的任何修改都将重置磁盘布局！"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "如果您重置硬盘驱动器选择，这也将重置当前磁盘布局。 你确定吗？"
+msgstr "如果重置硬盘驱动器选择，则当前磁盘布局也将重置。你确定吗？"
 
 msgid "Save and exit"
 msgstr "保存并退出"
@@ -691,7 +691,7 @@ msgid ""
 "contains queued partitions, this will remove those, are you sure?"
 msgstr ""
 "{}\n"
-"包含排队的分区，这将删除那些，你确定吗？"
+"包含排队的分区，这将删除这些分区，您确定吗？"
 
 msgid "No audio server"
 msgstr "没有音频服务器"
@@ -700,7 +700,7 @@ msgid "(default)"
 msgstr "（默认）"
 
 msgid "Use ESC to skip"
-msgstr "按 ESC 键跳过"
+msgstr "按 ESC 跳过"
 
 msgid ""
 "Use CTRL+C to reset current selection\n"
@@ -708,28 +708,28 @@ msgid ""
 msgstr "使用 CTRL+C 可重置当前选项\n"
 
 msgid "Copy to: "
-msgstr "复制到： "
+msgstr "复制到："
 
 msgid "Edit: "
-msgstr "编辑： "
+msgstr "编辑："
 
 msgid "Key: "
-msgstr "键： "
+msgstr "密钥："
 
 msgid "Edit {}: "
-msgstr "编辑 {}: "
+msgstr "编辑 {}："
 
 msgid "Add: "
-msgstr "添加: "
+msgstr "添加："
 
 msgid "Value: "
-msgstr "值: "
+msgstr "值："
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "您可以跳过选择驱动器和分区并使用安装在 /mnt 的任何驱动器设置（实验性）"
+msgstr "您可以跳过选择驱动器和分区，并使用任何挂载在 /mnt 上的驱动器设置（实验性）"
 
 msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "选择其中一个磁盘或跳过并使用 /mnt 作为默认值"
+msgstr "选择一个磁盘或跳过并使用 /mnt 作为默认值"
 
 msgid "Select which partitions to mark for formatting:"
 msgstr "选择要标记为格式化的分区："
@@ -738,7 +738,7 @@ msgid "Use HSM to unlock encrypted drive"
 msgstr "使用 HSM 解锁加密驱动器"
 
 msgid "Device"
-msgstr "设备"
+msgstr "驱动器"
 
 msgid "Size"
 msgstr "大小"
@@ -753,17 +753,16 @@ msgid "Either root-password or at least 1 user with sudo privileges must be spec
 msgstr "必须指定 root 密码或至少 1 个具有 sudo 权限的用户"
 
 msgid "Enter username (leave blank to skip): "
-msgstr "输入用户名（留空跳过）： "
+msgstr "输入用户名（留空跳过）："
 
 msgid "The username you entered is invalid. Try again"
-msgstr "您输入的用户名无效。 再试一次"
+msgstr "您输入的用户名无效。请重试"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "将 \"{}\" 设置为超级用户(sudo)吗？"
+msgstr "是否将“{}”设置为超级用户（sudo）？"
 
-#, fuzzy
 msgid "Select which partitions to encrypt"
-msgstr "选择要加密的分区："
+msgstr "选择要加密的分区"
 
 msgid "very weak"
 msgstr "非常弱"
@@ -787,10 +786,10 @@ msgid "Delete subvolume"
 msgstr "删除子卷"
 
 msgid "Configured {} interfaces"
-msgstr "已配置的 {} 接口"
+msgstr "已配置 {} 个接口"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "此选项启用安装期间可能发生的并行下载次数"
+msgstr "此选项启用安装期间可以发生的并行下载数"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
@@ -805,10 +804,10 @@ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloa
 msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr "  - 最小值：1（允许 1 次并行下载，一次允许 2 次下载）"
+msgstr " - 最小值：1（允许 1 个并行下载，同时允许 2 个下载）"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr "  - 禁用/默认：0（禁用并行下载，一次只允许 1 个下载）"
+msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下载）"
 
 #, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -818,7 +817,7 @@ msgid "Parallel Downloads"
 msgstr "并行下载"
 
 msgid "ESC to skip"
-msgstr "按 ESC 键跳过"
+msgstr "按 ESC 跳过"
 
 msgid "CTRL+C to reset"
 msgstr "按 CTRL+C 重置"
@@ -827,284 +826,247 @@ msgid "TAB to select"
 msgstr "按 TAB 选择"
 
 msgid "[Default value: 0] > "
-msgstr "[默认值: 0] > "
+msgstr "[默认值：0] > "
 
 msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "为了能够使用此翻译，请手动安装支持该语言的字体。"
+msgstr "要使用此翻译，请手动安装支持该语言的字体。"
 
 msgid "The font should be stored as {}"
 msgstr "字体应存储为 {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "Archinstall 需要 root 权限才能运行。有关更多信息，请参阅 --help。"
 
-#, fuzzy
 msgid "Select an execution mode"
-msgstr "为“{}”选择一个操作"
+msgstr "选择执行模式"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "无法从指定的 URL 获取配置文件：{}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "配置文件必须具有唯一的名称，但找到具有重复名称的配置文件定义：{}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr "选择一个或多个硬盘驱动器来使用和配置"
+msgstr "选择要使用和配置的驱动器（可多选）"
 
-#, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "如果您重置硬盘驱动器选择，这也将重置当前磁盘布局。 你确定吗？"
+msgstr "如果重置硬盘驱动器选择，则当前磁盘布局也将重置。你确定吗？"
 
-#, fuzzy
 msgid "Existing Partitions"
-msgstr "添加分区...."
+msgstr "现有分区"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "删除一个分区"
+msgstr "选择分区选项"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "输入要保存配置的目录： "
+msgstr "输入已挂载设备的根目录："
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "/home 分区的最小容量：{}GB\n"
+msgstr "/home 分区的最小容量为：{}GB\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Arch Linux 分区的最小容量：{}GB"
+msgstr "Arch Linux 分区的最小容量为：{}GB"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "这是预编程配置文件的列表，它们可能使安装桌面环境之类的东西变得更容易"
+msgstr "这是预先编写的配置文件列表，它们可能会使安装桌面环境等内容更容易"
 
-#, fuzzy
 msgid "Current profile selection"
-msgstr "当前分区布局"
+msgstr "当前配置文件选择"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "创建新分区"
+msgstr "删除所有新添加的分区"
 
-#, fuzzy
 msgid "Assign mountpoint"
-msgstr "为分区分配挂载点"
+msgstr "分配挂载点"
 
-#, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "标记/取消标记要格式化的分区（擦除数据）"
+msgstr "将分区标记/取消标记为格式化（清除数据）"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "将分区标记/取消标记为可引导"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "更改文件系统"
 
-#, fuzzy
 msgid "Mark/Unmark as compressed"
-msgstr "将分区标记/取消标记为压缩（仅限 btrfs）"
+msgstr "将分区标记/取消标记为压缩"
 
-#, fuzzy
 msgid "Set subvolumes"
-msgstr "删除子卷"
+msgstr "设置子卷"
 
-#, fuzzy
 msgid "Delete partition"
-msgstr "删除一个分区"
+msgstr "删除分区"
 
 msgid "Partition"
-msgstr ""
+msgstr "分区"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "此分区当前已加密，要格式化它必须指定文件系统"
 
-#, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * 分区挂载点是相对于安装内部的，例如 boot 应该为 /boot。"
+msgstr " * 分区挂载点是相对于安装目录内部的，例如引导分区（boot）的挂载点为 /boot。"
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "如果设置了挂载点 /boot，则该分区也将被标记为可引导。"
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "挂载点："
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "驱动器 {} 上当前可用的扇区："
 
-#, fuzzy
 msgid "Total sectors: {}"
-msgstr "不是有效的目录：{}"
+msgstr "总扇区数：{}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
 msgstr "输入起始扇区（百分比或块号，默认：{}）： "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "输入分区的结束扇区（百分比或块号，例如：{}）： "
+msgstr "输入分区的结束扇区（百分比或块号，默认：{}）："
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "这将删除所有新添加的分区，是否继续？"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "分区管理：{}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "总长度：{}"
 
-#, fuzzy
 msgid "Encryption type"
-msgstr "加密密码"
+msgstr "加密类型"
 
 msgid "Partitions"
-msgstr ""
+msgstr "分区"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "没有可用的 HSM 设备"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr "选择要加密的分区："
+msgstr "要加密的分区"
 
 msgid "Select disk encryption option"
-msgstr ""
+msgstr "选择磁盘加密选项"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "选择要用于 HSM 的 FIDO2 设备"
 
-#, fuzzy
 msgid "Use a best-effort default partition layout"
-msgstr "擦除所有选定的驱动器并使用最优的默认分区布局"
+msgstr "使用最佳的默认分区布局"
 
-#, fuzzy
 msgid "Manual Partitioning"
-msgstr "手动配置"
+msgstr "手动分区"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "无配置"
+msgstr "预挂载配置"
 
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 msgid "Partition encryption"
-msgstr ""
+msgstr "分区加密"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! 正在格式化 {} 为 "
 
 msgid "← Back"
-msgstr ""
+msgstr "← 返回"
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "磁盘加密"
 
-#, fuzzy
 msgid "Configuration"
-msgstr "无配置"
+msgstr "配置"
 
-#, fuzzy
 msgid "Password"
-msgstr "Root 密码"
+msgstr "密码"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} 包含排队分区，这将删除这些分区，您确定吗？"
+msgstr "所有设置将被重置，你确定吗？"
 
 msgid "Back"
-msgstr ""
+msgstr "返回"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "请选择要为所选配置文件安装的登录管理器：{}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "环境类型：{}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "Sway 不支持 Nvidia 的专有驱动。 您可能会遇到问题，您确定要继续吗？"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "附加包"
+msgstr "已安装的软件包"
 
-#, fuzzy
 msgid "Add profile"
-msgstr "配置文件"
+msgstr "添加配置文件"
 
-#, fuzzy
 msgid "Edit profile"
-msgstr "配置文件"
+msgstr "编辑配置文件"
 
-#, fuzzy
 msgid "Delete profile"
-msgstr "删除接口"
+msgstr "删除配置文件"
 
-#, fuzzy
 msgid "Profile name: "
-msgstr "配置文件"
+msgstr "配置文件名称："
 
-#, fuzzy
 msgid "The profile name you entered is already in use. Try again"
-msgstr "您输入的用户名无效。 再试一次"
+msgstr "您输入的配置文件名称已被使用。 请重试"
 
-#, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
+msgstr "编写要安装的附加软件包（空格分隔，留空跳过）："
 
-#, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "编写要安装的附加软件包（空格分隔，留空跳过）： "
+msgstr "编写要启用的附加服务（空格分隔，留空跳过）："
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "是否启用此配置文件进行安装？"
 
 msgid "Create your own"
-msgstr ""
+msgstr "创建自己的"
 
-#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
 "\n"
-"选择图形驱动程序或留空以安装所有开源驱动程序"
+"选择一个显卡驱动程序，或留空以安装所有开源驱动程序"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "Sway 需要访问您的用户环境（硬件设备的集合，例如键盘，鼠标等）"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"选择一个选项来给 Sway 提供对您硬件的访问权限"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "显卡驱动程序"
 
 msgid "Greeter"
-msgstr ""
+msgstr "登录管理器"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "请选择要安装的登录管理器"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "这是预设的默认配置文件列表"
 
-#, fuzzy
 msgid "Disk configuration"
-msgstr "无配置"
+msgstr "磁盘配置"
 
-#, fuzzy
 msgid "Profiles"
 msgstr "配置文件"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "正在查找可能用于保存配置文件的目录 ..."
 
-#, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "选择一个或多个硬盘驱动器来使用和配置"
 
@@ -1174,3 +1136,10 @@ msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下�
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"

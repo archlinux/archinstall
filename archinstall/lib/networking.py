@@ -9,7 +9,7 @@ from urllib.request import urlopen
 
 from .exceptions import SysCallError
 from .output import error, info, debug
-from .pacman import run_pacman
+from .pacman import Pacman
 
 
 def get_hw_addr(ifname :str) -> str:
@@ -35,7 +35,7 @@ def list_interfaces(skip_loopback :bool = True) -> Dict[str, str]:
 def check_mirror_reachable() -> bool:
 	info("Testing connectivity to the Arch Linux mirrors...")
 	try:
-		run_pacman("-Sy")
+		Pacman.run("-Sy")
 		return True
 	except SysCallError as err:
 		if os.geteuid() != 0:
@@ -48,7 +48,7 @@ def check_mirror_reachable() -> bool:
 def update_keyring() -> bool:
 	info("Updating archlinux-keyring ...")
 	try:
-		run_pacman("-Sy --noconfirm archlinux-keyring")
+		Pacman.run("-Sy --noconfirm archlinux-keyring")
 		return True
 	except SysCallError:
 		if os.geteuid() != 0:

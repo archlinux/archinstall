@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: Roxfr <roxfr@outlook.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -69,7 +69,7 @@ msgid "Select one network interface to configure"
 msgstr "Sélectionner une interface réseau à configurer"
 
 msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr ""
+msgstr "Sélectionner le mode à configurer pour \"{}\" ou ignorer pour utiliser le mode par défaut \"{}\""
 
 msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
 msgstr "Entrer l'IP et le sous-réseau pour {} (exemple : 192.168.0.5/24) : "
@@ -97,10 +97,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Entrer un type de système de fichiers souhaité pour la partition"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "Entrer l'emplacement de départ (en unités séparées : s, Go, %, etc. ; par défaut : {}) : "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "Entrer l'emplacement de fin (en unités séparées : s, Go, %, etc. ; ex : {}) : "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contient des partitions en file d'attente, cela les supprimera, êtes-vous sûr ?"
@@ -214,7 +214,7 @@ msgid "All open-source (default)"
 msgstr "Tout open-source (par défaut)"
 
 msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr ""
+msgstr "Choisir les noyaux à utiliser ou laisser vide pour \"{}\" par défaut"
 
 msgid "Choose which locale language to use"
 msgstr "Choisir la langue locale à utiliser"
@@ -957,24 +957,22 @@ msgstr ""
 
 #, fuzzy
 msgid "Encryption type"
-msgstr "Mot de passe de chiffrement"
+msgstr "Type de chiffrement"
 
 msgid "Partitions"
-msgstr ""
+msgstr "Partitions"
 
 msgid "No HSM devices available"
-msgstr ""
+msgstr "Aucun appareil HSM disponible"
 
-#, fuzzy
 msgid "Partitions to be encrypted"
-msgstr "Sélectionner les partitions à chiffrer"
+msgstr "Partitions à chiffrer"
 
-#, fuzzy
 msgid "Select disk encryption option"
-msgstr "Sélectionner la disposition du disque"
+msgstr "Sélectionner l'option de chiffrement du disque"
 
 msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
+msgstr "Sélectionner un appareil FIDO2 à utiliser pour HSM"
 
 #, fuzzy
 msgid "Use a best-effort default partition layout"
@@ -1001,7 +999,7 @@ msgid "← Back"
 msgstr ""
 
 msgid "Disk encryption"
-msgstr ""
+msgstr "Cryptage du disque"
 
 #, fuzzy
 msgid "Configuration"
@@ -1009,7 +1007,7 @@ msgstr "Aucune configuration"
 
 #, fuzzy
 msgid "Password"
-msgstr "Mot de passe root"
+msgstr "Mot de passe"
 
 #, fuzzy
 msgid "All settings will be reset, are you sure?"
@@ -1176,6 +1174,13 @@ msgstr " - Valeur maximale : {} (Autorise {} téléchargements parallèles, auto
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Entrée invalide ! Réessayer avec une entrée valide [1 pour {}, ou 0 pour désactiver]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Utiliser NetworkManager (nécessaire pour configurer graphiquement Internet dans GNOME et KDE)"
 
 #, python-brace-format
 #~ msgid "Edit {origkey} :"
