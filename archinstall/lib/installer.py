@@ -699,7 +699,7 @@ class Installer:
 		self,
 		root_partition: disk.PartitionModification,
 		boot_partition: disk.PartitionModification,
-		efi_partition: disk.PartitionModification
+		efi_partition: Optional[disk.PartitionModification]
 	):
 		self.pacman.strap('efibootmgr')
 
@@ -709,17 +709,17 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
-		options = [
+		bootctl_options = [
 			f'--esp-path={efi_partition.mountpoint}' if efi_partition else '',
 			f'--boot-path={boot_partition.mountpoint}' if boot_partition else ''
 		]
 
 		# Install the boot loader
 		try:
-			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(options)} install")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(options)} install")
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
 		# Ensure that the /boot/loader directory exists before we try to create files in it
 		loader_dir = self.target / 'boot/loader'
