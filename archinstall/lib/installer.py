@@ -697,8 +697,8 @@ class Installer:
 
 	def _add_systemd_bootloader(
 		self,
-		root_partition: disk.PartitionModification,
 		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification,
 		efi_partition: Optional[disk.PartitionModification]
 	):
 		self.pacman.strap('efibootmgr')
