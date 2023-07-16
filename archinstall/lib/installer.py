@@ -1073,10 +1073,6 @@ TIMEOUT=5
 		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
-		print(f"EFI Partition: {efi_partition}")
-		print(f"Boot Partition: {boot_partition}")
-		print(f"Root Partition: {root_partition}")
-		time.sleep(10)
 
 		if boot_partition is None:
 			raise ValueError(f'Could not detect boot at mountpoint {self.target}')
