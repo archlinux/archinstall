@@ -533,6 +533,7 @@ class PartitionFlag(Enum):
 	"""
 	Boot = _ped.PARTITION_BOOT
 	XBOOTLDR = _ped.PARTITION_BLS_BOOT # Note: parted calls this bls_boot
+	ESP = _ped.PARTITION_ESP
 
 
 class FilesystemType(Enum):
