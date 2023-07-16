@@ -530,14 +530,16 @@ class PartitionFlag(Enum):
 	Flags are taken from _ped because pyparted uses this to look
 	up their flag definitions: https://github.com/dcantrell/pyparted/blob/c4e0186dad45c8efbe67c52b02c8c4319df8aa9b/src/parted/__init__.py#L200-L202
 	Which is the way libparted checks for its flags: https://git.savannah.gnu.org/gitweb/?p=parted.git;a=blob;f=libparted/labels/gpt.c;hb=4a0e468ed63fff85a1f9b923189f20945b32f4f1#l183
-	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 	"""
 	Boot = _ped.PARTITION_BOOT
 	XBOOTLDR = _ped.PARTITION_BLS_BOOT # Note: parted calls this bls_boot
 	ESP = _ped.PARTITION_ESP
 
 
-class PartitionType(Enum):
+class PartitionGUIDs(Enum):
+	"""
+	A list of Partition type GUIDs (lsblk -o+PARTTYPE) can be found here: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+	"""
 	XBOOTLDR = 'bc13c2ff-59e6-4262-a352-b275fd6f7172'
 
 
@@ -787,7 +789,7 @@ class DeviceModification:
 		"""
 		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...).
 		"""
-		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and x.parttype == PartitionType.XBOOTLDR, self.partitions)
+		liltered = filter(lambda x: x.fs_type == FilesystemType.Fat32 and x.is_boot() and x.parttype == PartitionGUIDs.XBOOTLDR, self.partitions)
 		return next(liltered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
