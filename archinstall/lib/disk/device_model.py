@@ -777,7 +777,7 @@ class DeviceModification:
 	def add_partition(self, partition: PartitionModification):
 		self.partitions.append(partition)
 
-	def get_efi_partition(self)  -> Optional[PartitionModification]:
+	def get_efi_partition(self) -> Optional[PartitionModification]:
 		"""
 		Returns the first EFI partition marked for boot.
 		Perhaps we could mark it more clearly in the PartitionModification() model instead.

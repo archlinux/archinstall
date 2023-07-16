@@ -677,7 +677,7 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
-	def _get_efi_partition(self) ->  Optional[disk.PartitionModification]:
+	def _get_efi_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_efi_partition():
 				return boot
