@@ -13,9 +13,10 @@ jobs:
             image: archlinux:latest
         steps:
             - uses: actions/checkout@v3
-            - run: pacman --noconfirm -Syu python python-pip
-            - run: pip install --break-system-packages --upgrade pip
+            - run: pacman --noconfirm -Syu python
             - run: cd archinstall/locales
+            - run: pwd
+            - run: ls -l
             - run: bash locales_generator.sh
             - run: git diff --name-only
             - run: ls
