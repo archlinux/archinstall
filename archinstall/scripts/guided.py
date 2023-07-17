@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Optional
 
 import archinstall
 from archinstall import info, debug
@@ -14,7 +14,7 @@ from archinstall.lib.installer import Installer
 from archinstall.lib.menu import Menu
 from archinstall.lib.mirrors import use_mirrors, add_custom_mirrors
 from archinstall.lib.models.bootloader import Bootloader
-from archinstall.lib.models.network_configuration import NetworkConfigurationHandler
+from archinstall.lib.models.network_configuration import NetworkConfiguration
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profile.profiles_handler import profile_handler
 
@@ -82,7 +82,7 @@ def ask_user_questions():
 		global_menu.enable('parallel downloads')
 
 	# Ask or Call the helper function that asks the user to optionally configure a network.
-	global_menu.enable('nic')
+	global_menu.enable('network_config')
 
 	global_menu.enable('timezone')
 
@@ -158,11 +158,10 @@ def perform_installation(mountpoint: Path):
 
 		# If user selected to copy the current ISO network configuration
 		# Perform a copy of the config
-		network_config = archinstall.arguments.get('nic', None)
+		network_config: Optional[NetworkConfiguration] = archinstall.arguments.get('network_config', None)
 
 		if network_config:
-			handler = NetworkConfigurationHandler(network_config)
-			handler.config_installer(
+			network_config.install_network_config(
 				installation,
 				archinstall.arguments.get('profile_config', None)
 			)

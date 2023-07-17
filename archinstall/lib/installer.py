@@ -19,7 +19,7 @@ from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
 from .models.bootloader import Bootloader
-from .models.network_configuration import NetworkConfiguration
+from .models.network_configuration import Nic
 from .models.users import User
 from .output import log, error, info, warn, debug
 from . import pacman
@@ -458,20 +458,20 @@ class Installer:
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
-	def configure_nic(self, network_config: NetworkConfiguration) -> None:
-		conf = network_config.as_systemd_config()
+	def configure_nic(self, nic: Nic):
+		conf = nic.as_systemd_config()
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
 				conf = plugin.on_configure_nic(
-					network_config.iface,
-					network_config.dhcp,
-					network_config.ip,
-					network_config.gateway,
-					network_config.dns
+					nic.iface,
+					nic.dhcp,
+					nic.ip,
+					nic.gateway,
+					nic.dns
 				) or conf
 
-		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
+		with open(f"{self.target}/etc/systemd/network/10-{nic.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
 	def copy_iso_network_config(self, enable_services :bool = False) -> bool:

@@ -29,7 +29,7 @@ To start the installer, run the following in the latest Arch Linux ISO:
 .. code-block:: sh
 
     archinstall --script guided
-    
+
 | The ``--script guided`` argument is optional as it's the default behavior.
 | But this will use our most guided installation and if you skip all the option steps it will install a minimal Arch Linux experience.
 
@@ -49,7 +49,7 @@ There are three different configuration files, all of which are optional.
 .. note::
     You can always get the latest options with ``archinstall --dry-run``, but edit the following json according to your needs.
     Save the configuration as a ``.json`` file. Archinstall can source it via a local or remote path (URL)
-    
+
 .. code-block:: json
 
     {
@@ -72,8 +72,8 @@ There are three different configuration files, all of which are optional.
         ],
         "keyboard-language": "us",
         "mirror-region": "Worldwide",
-        "nic": {
-            "type": "NM"
+        "network_config": {
+            "type": "nm"
         },
         "ntp": true,
         "packages": ["docker", "git", "wget", "zsh"],

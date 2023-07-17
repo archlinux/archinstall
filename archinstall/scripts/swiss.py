@@ -95,7 +95,7 @@ class SwissMainMenu(GlobalMenu):
 				options_list = [
 					'mirror_config', 'disk_config',
 					'disk_encryption', 'swap', 'bootloader', 'hostname', '!root-password',
-					'!users', 'profile_config', 'audio', 'kernels', 'packages', 'additional-repositories', 'nic',
+					'!users', 'profile_config', 'audio', 'kernels', 'packages', 'additional-repositories', 'network_config',
 					'timezone', 'ntp'
 				]
 
@@ -110,7 +110,7 @@ class SwissMainMenu(GlobalMenu):
 				options_list = [
 					'mirror_config','bootloader', 'hostname',
 					'!root-password', '!users', 'profile_config', 'audio', 'kernels',
-					'packages', 'additional-repositories', 'nic', 'timezone', 'ntp'
+					'packages', 'additional-repositories', 'network_config', 'timezone', 'ntp'
 				]
 
 				mandatory_list = ['hostname']
@@ -222,11 +222,10 @@ def perform_installation(mountpoint: Path, exec_mode: ExecutionMode):
 
 			# If user selected to copy the current ISO network configuration
 			# Perform a copy of the config
-			network_config = archinstall.arguments.get('nic', None)
+			network_config = archinstall.arguments.get('network_config', None)
 
 			if network_config:
-				handler = models.NetworkConfigurationHandler(network_config)
-				handler.config_installer(
+				network_config.install_network_config(
 					installation,
 					archinstall.arguments.get('profile_config', None)
 				)

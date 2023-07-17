@@ -225,10 +225,9 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 
-	if arguments.get('nic', None) is not None:
-		handler = models.NetworkConfigurationHandler()
-		handler.parse_arguments(arguments.get('nic'))
-		arguments['nic'] = handler.configuration
+	if arguments.get('network_config', None) is not None:
+		config = NetworkConfiguration.parse_arg(arguments.get('network_config'))
+		arguments['network_config'] = config
 
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
