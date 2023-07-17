@@ -79,7 +79,8 @@ def jsonify(obj: Any, safe: bool = True) -> Any:
 		return str(obj)
 	if hasattr(obj, "__dict__"):
 		return vars(obj)
-	return str(obj)
+
+	return obj
 
 class JSON(json.JSONEncoder, json.JSONDecoder):
 	"""
