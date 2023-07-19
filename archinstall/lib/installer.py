@@ -366,7 +366,7 @@ class Installer:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
-	def set_locale(self, locale_config: LocaleConfiguration):
+	def set_locale(self, locale_config: LocaleConfiguration) -> bool:
 		modifier = ''
 		lang = locale_config.sys_lang
 		encoding = locale_config.sys_enc
@@ -386,15 +386,32 @@ class Installer:
 			modifier = f"@{modifier}"
 		# - End patch
 
-		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{lang}.{encoding}{modifier} {encoding}\n')
+		locale_gen = self.target / 'etc/locale.gen'
+		locale_gen_lines = locale_gen.read_text().splitlines(True)
 
-		(self.target / "etc" / "locale.conf").write_text(f'LANG={lang}.{encoding}{modifier}\n')
+		# A locale entry in /etc/locale.gen may or may not contain the encoding
+		# in the first column of the entry; check for both cases.
+		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
+
+		for index, line in enumerate(locale_gen_lines):
+			if entry_re.match(line):
+				uncommented_line = line.removeprefix('#')
+				locale_gen_lines[index] = uncommented_line
+				locale_gen.write_text(''.join(locale_gen_lines))
+				lang_value = uncommented_line.split()[0]
+				break
+		else:
+			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
+			return False
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
 		except SysCallError as e:
 			error(f'Failed to run locale-gen on target: {e}')
+			return False
+
+		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
+		return True
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
