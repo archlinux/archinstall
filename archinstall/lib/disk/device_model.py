@@ -799,10 +799,12 @@ class DeviceModification:
 		"""
 		if efi_partition := self.get_efi_partition():
 			fliltered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
+			if boot_partition := next(fliltered, None):
+				return boot_partition
+			return efi_partition
 		else:
 			fliltered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
-
-		return next(fliltered, None)
+			return next(fliltered, None)
 
 	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
 		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)

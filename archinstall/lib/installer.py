@@ -726,10 +726,11 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
-		bootctl_options = [
-			f'--esp-path={efi_partition.mountpoint}' if efi_partition else '',
-			f'--boot-path={boot_partition.mountpoint}' if boot_partition else ''
-		]
+		bootctl_options = []
+
+		if efi_partition and boot_partition != efi_partition:
+			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
+			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
 		# Install the boot loader
 		try:
