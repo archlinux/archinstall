@@ -1,4 +1,5 @@
 from __future__ import annotations
+import unicodedata
 
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
@@ -9,6 +10,22 @@ from ..translationhandler import TranslationHandler, Language
 if TYPE_CHECKING:
 	_: Any
 
+def count_cjk_chars(string):
+	"Count the total number of CJK characters contained in a string"
+	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
+def cjkljust(string, width, fillbyte=' '):
+	"""Support left alignment of Chinese, Japanese, Korean text
+	>>> cjkljust('Hello', 15, '*')
+	'Hello**********'
+	>>> cjkljust('你好', 15, '*')
+	'你好***********'
+	>>> cjkljust('안녕하세요', 15, '*')
+	'안녕하세요*****'
+	>>> cjkljust('こんにちは', 15, '*')
+	'こんにちは*****'
+	"""
+	return string.ljust(width - count_cjk_chars(string), fillbyte)
 
 class Selector:
 	def __init__(
@@ -128,7 +145,7 @@ class Selector:
 
 		if current:
 			padding += 5
-			description = str(self._description).ljust(padding, ' ')
+			description = cjkljust(str(self._description), padding, ' ')
 			current = current
 		else:
 			description = self._description
