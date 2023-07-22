@@ -168,7 +168,7 @@ class TranslationHandler:
 
 		translation_files = []
 		for filename in filenames:
-			if len(filename) == 2 or filename == 'pt_BR':
+			if len(filename) == 2 or filename in ['pt_BR', 'zh-CN', 'zh-TW']:
 				translation_files.append(filename)
 
 		return translation_files
