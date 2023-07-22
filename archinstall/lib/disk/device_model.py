@@ -789,8 +789,8 @@ class DeviceModification:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
 		"""
-		fliltered = filter(lambda x: x.is_boot() and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
-		return next(fliltered, None)
+		filtered = filter(lambda x: x.is_boot() and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		return next(filtered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
 		"""
@@ -798,13 +798,13 @@ class DeviceModification:
 		Only returns XBOOTLDR if separate EFI is detected using self.get_efi_partition()
 		"""
 		if efi_partition := self.get_efi_partition():
-			fliltered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
-			if boot_partition := next(fliltered, None):
+			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
+			if boot_partition := next(filtered, None):
 				return boot_partition
 			return efi_partition
 		else:
-			fliltered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
-			return next(fliltered, None)
+			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
+			return next(filtered, None)
 
 	def get_root_partition(self, relative_path: Optional[Path]) -> Optional[PartitionModification]:
 		filtered = filter(lambda x: x.is_root(relative_path), self.partitions)
