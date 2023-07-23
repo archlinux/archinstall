@@ -53,7 +53,7 @@ There are three different configuration files, all of which are optional.
 .. code-block:: json
 
     {
-        "audio": "pipewire",
+        "audio_config": {"audio": "pipewire"},
         "bootloader": "systemd-bootctl",
         "custom-commands": [
             "cd /home/devel; git clone https://aur.archlinux.org/paru.git",

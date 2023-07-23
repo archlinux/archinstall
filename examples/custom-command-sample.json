@@ -1,6 +1,5 @@
 {
     "dry_run": true,
-    "audio": "none",
     "bootloader": "systemd-bootctl",
     "debug": false,
     "harddrives": [
