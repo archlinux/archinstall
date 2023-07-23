@@ -5,6 +5,7 @@ from typing import List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_timezones, list_keyboard_languages
 from ..menu import MenuSelectionType, Menu, TextInput
+from ..models.audio_configuration import Audio, AudioConfiguration
 from ..output import warn
 from ..packages.packages import validate_package_list
 from ..storage import storage
@@ -55,16 +56,31 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 	return None
 
 
-def ask_for_audio_selection(desktop: bool = True, preset: Optional[str] = None) -> Optional[str]:
-	no_audio = str(_('No audio server'))
-	choices = ['pipewire', 'pulseaudio'] if desktop else ['pipewire', 'pulseaudio', no_audio]
-	default = 'pipewire' if desktop else no_audio
+def ask_for_audio_selection(
+	preset: Optional[AudioConfiguration] = None
+) -> Optional[AudioConfiguration]:
+	choices = [
+		Audio.Pipewire.name,
+		Audio.Pulseaudio.name,
+		Audio.no_audio_text()
+	]
 
-	choice = Menu(_('Choose an audio server'), choices, preset_values=preset, default_option=default).run()
+	preset = preset.audio.value if preset else None
+
+	choice = Menu(
+		_('Choose an audio server'),
+		choices,
+		preset_values=preset
+	).run()
 
 	match choice.type_:
 		case MenuSelectionType.Skip: return preset
-		case MenuSelectionType.Selection: return choice.single_value
+		case MenuSelectionType.Selection:
+			value = choice.single_value
+			if value == Audio.no_audio_text():
+				return None
+			else:
+				return AudioConfiguration(Audio[value])
 
 	return None
 

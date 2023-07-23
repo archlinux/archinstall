@@ -237,6 +237,9 @@ def load_config():
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
 
+	if arguments.get('audio_config', None) is not None:
+		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
+
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')
 		arguments['disk_encryption'] = disk.DiskEncryption.parse_arg(
