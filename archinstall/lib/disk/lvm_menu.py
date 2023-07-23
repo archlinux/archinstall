@@ -169,10 +169,10 @@ class LvmVolumeList(ListManager):
 
 		return mountpoint
 
-	def _prompt_volume_fs_type(self, prompt: str = '') -> FilesystemType:
+	def _prompt_volume_fs_type(self) -> FilesystemType:
 		options = {fs.value: fs for fs in FilesystemType if fs != FilesystemType.Crypto_luks}
 
-		prompt = '{}\n{}'.format(prompt, str(_('Enter a desired filesystem type for the volume')))
+		prompt = '{}'.format(str(_('Enter a desired filesystem type for the volume')))
 		choice = Menu(prompt, options, sort=False, skip=False).run()
 		return options[choice.single_value]
 
