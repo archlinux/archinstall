@@ -57,7 +57,7 @@ def ask_for_a_timezone(preset: Optional[str] = None) -> Optional[str]:
 
 
 def ask_for_audio_selection(
-	preset: Optional[AudioConfiguration] = None
+	current: Optional[AudioConfiguration] = None
 ) -> Optional[AudioConfiguration]:
 	choices = [
 		Audio.Pipewire.name,
@@ -65,7 +65,7 @@ def ask_for_audio_selection(
 		Audio.no_audio_text()
 	]
 
-	preset = preset.audio.value if preset else None
+	preset = current.audio.name if current else None
 
 	choice = Menu(
 		_('Choose an audio server'),
@@ -74,7 +74,7 @@ def ask_for_audio_selection(
 	).run()
 
 	match choice.type_:
-		case MenuSelectionType.Skip: return preset
+		case MenuSelectionType.Skip: return current
 		case MenuSelectionType.Selection:
 			value = choice.single_value
 			if value == Audio.no_audio_text():
