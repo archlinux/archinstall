@@ -12,14 +12,19 @@
                 "testing"
             ]
         },
-        "audio": {
+        "audio_config": {
             "description": "Audio server to be installed",
-            "type": "string",
-            "enum": [
-                "pipewire",
-                "pulseaudio",
-                "none"
-            ]
+            "type": "object",
+            "properties": {
+                "audio": {
+                    "description": "Audio server to be installed",
+                    "type": "string",
+                    "enum": [
+                        "pipewire",
+                        "pulseaudio"
+                    ]
+                }
+            },
         },
         "bootloader": {
             "description": "Bootloader  to be installed",

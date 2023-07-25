@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
+from typing import Any, List, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
@@ -9,6 +9,7 @@ from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
 from .models import NetworkConfiguration, NicType
 from .models.bootloader import Bootloader
+from .models.audio_configuration import Audio, AudioConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
@@ -109,12 +110,11 @@ class GlobalMenu(AbstractMenu):
 				display_func=lambda x: x.profile.name if x else '',
 				preview_func=self._prev_profile
 			)
-		self._menu_options['audio'] = \
+		self._menu_options['audio_config'] = \
 			Selector(
 				_('Audio'),
 				lambda preset: self._select_audio(preset),
-				display_func=lambda x: x if x else '',
-				default=None
+				display_func=lambda x: self._display_audio(x)
 			)
 		self._menu_options['parallel downloads'] = \
 			Selector(
@@ -421,13 +421,18 @@ class GlobalMenu(AbstractMenu):
 		profile_config = ProfileMenu(store, preset=current_profile).run()
 		return profile_config
 
-	def _select_audio(self, current: Union[str, None]) -> Optional[str]:
-		profile_config: Optional[ProfileConfiguration] = self._menu_options['profile_config'].current_selection
-		if profile_config and profile_config.profile:
-			is_desktop = profile_config.profile.is_desktop_profile() if profile_config else False
-			selection = ask_for_audio_selection(is_desktop, current)
-			return selection
-		return None
+	def _select_audio(
+		self,
+		current: Optional[AudioConfiguration] = None
+	) -> Optional[AudioConfiguration]:
+		selection = ask_for_audio_selection(current)
+		return selection
+
+	def _display_audio(self, current: Optional[AudioConfiguration]) -> str:
+		if not current:
+			return Audio.no_audio_text()
+		else:
+			return current.audio.name
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)
