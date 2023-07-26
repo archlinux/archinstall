@@ -797,7 +797,7 @@ class Installer:
 
 		options_entry = []
 
-		if root_partition.safe_fs_type.is_crypto():
+		if root_partition in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
@@ -858,7 +858,7 @@ class Installer:
 
 		_file = "/etc/default/grub"
 
-		if root_partition.safe_fs_type.is_crypto():
+		if root_partition in self._disk_encryption.partitions:
 			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
 			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.safe_fs_type.value}\"/'"
@@ -1049,7 +1049,7 @@ TIMEOUT=5
 			# blkid doesn't trigger on loopback devices really well,
 			# so we'll use the old manual method until we get that sorted out.
 
-			if root_partition.safe_fs_type.is_crypto():
+			if root_partition in self._disk_encryption.partitions:
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
