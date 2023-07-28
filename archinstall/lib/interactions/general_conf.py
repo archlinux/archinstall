@@ -167,9 +167,9 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
 	max_recommended = 5
 	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
-	print(_("Enter the number of parallel downloads to be enabled.\n (Enter a value)\nNote:"))
-	print(str(_(" - Maximum recommended value   : {} ( Allows {} parallel downloads at a time )")).format(max_recommended, max_recommended))
-	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
+	print(_("Enter the number of parallel downloads to be enabled.\nNote:\n\n"))
+	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended, max_recommended))
+	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n\n"))
 
 	while True:
 		try:
