@@ -19,3 +19,9 @@ class XorgProfile(Profile):
 			description=description,
 			support_gfx_driver=True
 		)
+
+	@property
+	def packages(self) -> List[str]:
+		return [
+			'xorg-xserver'
+		]

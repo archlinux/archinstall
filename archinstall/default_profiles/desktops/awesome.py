@@ -16,7 +16,16 @@ class AwesomeProfile(XorgProfile):
 	def packages(self) -> List[str]:
 		return [
 			'awesome',
-			'alacritty'
+			'alacritty',
+			'xorg-xinit',
+			'xorg-xrandr',
+			'xterm',
+			'feh',
+			'slock',
+			'terminus-font',
+			'gnu-free-fonts',
+			'ttf-liberation',
+			'xsel',
 		]
 
 	def preview_text(self) -> Optional[str]:
