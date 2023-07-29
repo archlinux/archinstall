@@ -14,7 +14,10 @@ class AwesomeProfile(XorgProfile):
 
 	@property
 	def packages(self) -> List[str]:
-		return ['alacritty']
+		return [
+			'awesome',
+			'alacritty'
+		]
 
 	def preview_text(self) -> Optional[str]:
 		text = str(_('Environment type: {}')).format(self.profile_type.value)
