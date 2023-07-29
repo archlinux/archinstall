@@ -23,5 +23,5 @@ class XorgProfile(Profile):
 	@property
 	def packages(self) -> List[str]:
 		return [
-			'xorg-xserver'
+			'xorg-server'
 		]
