@@ -211,7 +211,7 @@ class SysCommandWorker:
 		return False
 
 	def write(self, data: bytes, line_ending :bool = True) -> int:
-		assert type(data) == bytes  # TODO: Maybe we can support str as well and encode it
+		assert isinstance(data, bytes):  # TODO: Maybe we can support str as well and encode it
 
 		self.make_sure_we_are_executing()
 

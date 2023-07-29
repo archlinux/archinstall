@@ -145,12 +145,12 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
 	"""
-	if type(args) == Namespace:
+	if type(args) is Namespace:
 		args = vars(args)
 
 	clean_args = {}
 	for key, val in args.items():
-		if type(val) == dict:
+		if isinstance(val, dict):
 			val = cleanup_empty_args(val)
 
 		if val is not None:
