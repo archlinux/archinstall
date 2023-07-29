@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, List
 
 from archinstall.default_profiles.profile import Profile, ProfileType
 
@@ -19,3 +19,9 @@ class XorgProfile(Profile):
 			description=description,
 			support_gfx_driver=True
 		)
+
+	@property
+	def packages(self) -> List[str]:
+		return [
+			'xorg-server'
+		]
