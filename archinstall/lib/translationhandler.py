@@ -24,7 +24,10 @@ class Language:
 
 	@property
 	def display_name(self) -> str:
-		name = self.name_en
+		if self.translated_lang:
+			name = self.translated_lang
+		else:
+			name = self.name_en
 		return f'{name} ({self.translation_percent}%)'
 
 	def is_match(self, lang_or_translated_lang: str) -> bool:
