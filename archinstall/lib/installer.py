@@ -856,19 +856,20 @@ class Installer:
 	):
 		self.pacman.strap('grub')  # no need?
 
-		_file = "/etc/default/grub"
+		grub_default = self.target / 'etc/default/grub'
+		config = grub_default.read_text()
+
+		cmdline_linux = []
 
 		if root_partition in self._disk_encryption.partitions:
 			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.safe_fs_type.value}\"/'"
-			enable_cryptdisk = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
+			cmdline_linux.append(f'cryptdevice=UUID={root_partition.uuid}:cryptlvm')
+			config = re.sub(r'#(GRUB_ENABLE_CRYPTODISK=y\n)', r'\1', config, 1)
 
-			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_cryptdisk} {_file}")
-		else:
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.safe_fs_type.value}\"/'"
-
-		SysCommand(f"/usr/bin/arch-chroot {self.target} {cmd_line_linux} {_file}")
+		cmdline_linux.append(f'rootfstype={root_partition.safe_fs_type.value}')
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{" ".join(cmdline_linux)}\2', config, 1)
+		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
