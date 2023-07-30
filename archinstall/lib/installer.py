@@ -572,7 +572,8 @@ class Installer:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
 		except SysCallError as error:
-			log(error.worker._trace_log.decode())
+			if error.worker:
+				log(error.worker._trace_log.decode())
 			return False
 
 	def minimal_installation(
