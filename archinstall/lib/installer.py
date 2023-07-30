@@ -569,7 +569,7 @@ class Installer:
 			mkinit.write(f"HOOKS=({' '.join(self._hooks)})\n")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
 		except SysCallError:
 			return False
