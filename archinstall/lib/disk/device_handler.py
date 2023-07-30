@@ -24,7 +24,7 @@ from .device_model import (
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
-from ..output import debug, error, info, warn
+from ..output import debug, error, info, warn, log
 from ..utils.util import is_subpath
 
 if TYPE_CHECKING:
