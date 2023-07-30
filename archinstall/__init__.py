@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.6.0rc1"
+__version__ = "2.6.0"
 storage['__version__'] = __version__
 
 
