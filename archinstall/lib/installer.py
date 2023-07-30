@@ -571,7 +571,8 @@ class Installer:
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
-		except SysCallError:
+		except SysCallError as error:
+			log(error.worker._trace_log.decode())
 			return False
 
 	def minimal_installation(
@@ -664,7 +665,8 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		self.mkinitcpio(['-P'], locale_config)
+		if not self.mkinitcpio(['-P'], locale_config):
+			error(f"Error generating initramfs (continuing anyway)")
 
 		self.helper_flags['base'] = True
 
