@@ -3,20 +3,16 @@
 Guided installation
 ===================
 
-| This is the default script the Arch Linux `Archinstall package <https://archlinux.org/packages/extra/any/archinstall/>`_.
-| It will guide you through a very basic installation of Arch Linux.
+Archinstall ships with a pre-programmed `Guided Installer <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py>`_ guiding you through the mandatory steps as well as some optional configurations that can be done.
 
 .. note::
-    There are other scripts and they can be invoked by executing `archinstall <script>` *(without .py)*. To see a complete list of scripts, see the source code directory `examples/ <https://github.com/archlinux/archinstall/tree/master/examples>`_
 
-The installer has three pre-requisites:
- * The latest version of `Arch Linux ISO <https://archlinux.org/download/>`_
- * A physical or virtual machine to install on
- * A `working internet connection <https://wiki.archlinux.org/title/installation_guide#Connect_to_the_internet>`_ prior to running archinstall
+   Other pre-programmed scripts can be invoked by executing :code:`archinstall <script>` *(without .py)*. To see a complete list of scripts, see the source code directory `archinstall/scripts/ <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/>`_
 
-.. note::
-    A basic understanding of machines, ISO-files and command line arguments are needed.
-    Please read the official `Arch Linux Wiki <https://wiki.archlinux.org/>`_ to learn more about your future operating system.
+.. warning::
+
+   The installer requires the latest version of `Arch Linux ISO <https://archlinux.org/download/>`_ as well as basic understanding of how ISO's and computers work. Please read the official `Arch Linux Wiki <https://wiki.archlinux.org/>`_ to learn more about your future operating system.
+
 
 .. warning::
     The installer will not configure WiFi before the installation begins. You need to read up on `Arch Linux networking <https://wiki.archlinux.org/index.php/Network_configuration>`_ before you continue.
@@ -28,125 +24,205 @@ To start the installer, run the following in the latest Arch Linux ISO:
 
 .. code-block:: sh
 
-    archinstall --script guided
+    archinstall
 
-| The ``--script guided`` argument is optional as it's the default behavior.
-| But this will use our most guided installation and if you skip all the option steps it will install a minimal Arch Linux experience.
+Since the guided installer is the default script, this is the equvilant of running :code:`archinstall guided`
 
-Installing directly from a configuration file
----------------------------------------------
 
-| The guided installation also supports installing with pre-configured answers to all the guided steps.
-| This can be a quick and convenient way to re-run one or several installations.
-|
-| After each successful installation a pre-configured configuration will be found at ``/var/log/archinstall`` both on the live media and the installed system.
+The guided installation also supports installing with pre-configured answers to all the guided steps. This can be a quick and convenient way to re-run one or several installations.
 
-There are three different configuration files, all of which are optional.
- * ``--config`` that deals with the general configuration of language and which profiles to use.
- * ``--creds`` which takes any ``superuser``, ``user`` or ``root`` account data.
- * ``--disk_layouts`` for defining the desired partition strategy on the selected ``"harddrives"`` in ``--config``.
+There are two configuration files, both are optional.
+
+``--config``
+------------
+
+This parameter takes a local or remote :code:`.json` file as argument and contains the overall configuration and menu answers for the guided installer.
 
 .. note::
-    You can always get the latest options with ``archinstall --dry-run``, but edit the following json according to your needs.
-    Save the configuration as a ``.json`` file. Archinstall can source it via a local or remote path (URL)
 
-.. code-block:: json
+   You can always get the latest options for this file with ``archinstall --dry-run``, this executes the guided installer in a safe mode where no permanent actions will be taken on your system but simulate a run and save the configuration to disk.
 
-    {
-        "audio_config": {"audio": "pipewire"},
-        "bootloader": "systemd-bootctl",
-        "custom-commands": [
-            "cd /home/devel; git clone https://aur.archlinux.org/paru.git",
-            "chown -R devel:devel /home/devel/paru",
-            "usermod -aG docker devel"
-        ],
-        "filesystem": "btrfs",
-        "gfx_driver": "VMware / VirtualBox (open-source)",
-        "harddrives": [
-            "/dev/nvme0n1"
-        ],
-        "swap": true,
-        "hostname": "development-box",
-        "kernels": [
-            "linux"
-        ],
-        "keyboard-language": "us",
-        "mirror-region": "Worldwide",
-        "network_config": {
-            "type": "nm"
-        },
-        "ntp": true,
-        "packages": ["docker", "git", "wget", "zsh"],
-        "profile": "gnome",
-        "services": ["docker"],
-        "sys-encoding": "utf-8",
-        "sys-language": "en_US",
-        "timezone": "US/Eastern",
-    }
-
-To use it, assuming you put it on ``https://domain.lan/config.json``:
+Example usage
+^^^^^^^^^^^^^
 
 .. code-block:: sh
 
     archinstall --config https://domain.lan/config.json
 
-Options for ``--config``
-------------------------
+The contents of :code:`https://domain.lan/config.json`:
 
-*(To see which keys are required, scroll to the right in the above table.)*
+.. code-block:: json
 
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-|         Key          |                 Values                                 |                                     Description                                             |                   Required                    |
-|                      |                                                        |                                                                                             |                                               |
-+======================+========================================================+=============================================================================================+===============================================+
-| audio                | pipewire/pulseaudio                                    | Audioserver to be installed                                                                 | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| bootloader           | systemd-bootctl/grub-install                           | Bootloader to be installed *(grub being mandatory on BIOS machines)*                        | Yes                                           |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| custom-commands      | [ <command1>, <command2>, ...]                         | Custom commands to be run post install                                                      | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| gfx_driver           | - "VMware / VirtualBox (open-source)"                  | Graphics Drivers to install                                                                 | No                                            |
-|                      | - "Nvidia"                                             |                                                                                             |                                               |
-|                      | - "Intel (open-source)"                                |                                                                                             |                                               |
-|                      | - "AMD / ATI (open-source)"                            |                                                                                             |                                               |
-|                      | - "All open-source (default)"                          |                                                                                             |                                               |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| harddrives           | [ <path of device>, <path of second device>, ... }     | Multiple paths to block devices to be formatted                                             | No[1]                                         |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| hostname             | any                                                    | Hostname of machine after installation. Default will be ``archinstall``                     | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| kernels              | [ "kernel1", "kernel2"]                                | List of kernels to install eg: linux, linux-lts, linux-zen  etc                             | At least 1                                    |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| keyboard-layout      | Any valid layout given by ``localectl list-keymaps``   | eg: ``us``, ``de`` or ``de-latin1`` etc. Defaults to ``us``                                 | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| mirror-region        | | {"<Region Name>": { "Mirror URL": True/False}, ..}   | | Defaults to automatic selection.                                                          | No                                            |
-|                      | | "Worldwide" or "Sweden"                              | | Either takes a dictionary structure of region and a given set of mirrors.                 |                                               |
-|                      |                                                        | | Or just a region and archinstall will source any mirrors for that region automatically    |                                               |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| nic                  | | { type: <ISO|NM|MANUAL> }                            | | Type must be one of ISO, NM, MANUAL. ISO will copy the configuration on the image,        | No                                            |
-|                      | |                                                      | | NM configures NetworkManager and MANUAL allows to specify custom configuration            |                                               |
-|                      | | { "iface": "eth0"}                                   | | Only MANUAL: name of the interface                                                        |                                               |
-|                      | | { "dhcp": <boolean>}                                 | | Only MANUAL: If set to true DHCP auto will be setup and all further configs ignored       |                                               |
-|                      | | { "ip": <ip>}                                        | | Only MANUAL: Ip address to set, is MANDATORY                                              |                                               |
-|                      | | { "gateway": <ip>}                                   | | Only MANUAL: Optional gateway                                                             |                                               |
-|                      | | { "dns": [<ip>]}                                     | | Only MANUAL: Optional DNS servers                                                         |                                               |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| ntp                  | <boolean>                                              | Set to true to set-up ntp post install                                                      | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| packages             | [ "package1", "package2", ..]                          | List of packages to install post-installation                                               | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| profile              | Name of the profile to install                         | Profiles are present in                                                                     | No                                            |
-|                      |                                                        | `profiles/ <https://github.com/archlinux/archinstall/tree/master/profiles>`_,               |                                               |
-|                      |                                                        | use the name of a profile to install it without the ``.py`` extension.                      |                                               |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| services             | [ "service1", "service2", ..]                          | Services to enable post-installation                                                        | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| sys-encoding         | "utf-8"                                                | Set to change system encoding post-install, ignored if --advanced flag is not passed        | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| sys-language         | "en_US"                                                | Set to change system language post-install, ignored if --advanced flag is not passed        | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
-| timezone             | Timezone to configure in installation                  | Timezone eg: UTC, Asia/Kolkata etc. Defaults to UTC                                         | No                                            |
-+----------------------+--------------------------------------------------------+---------------------------------------------------------------------------------------------+-----------------------------------------------+
+   {
+       "__separator__": null,
+       "additional-repositories": [],
+       "archinstall-language": "English",
+       "audio_config": null,
+       "bootloader": "Systemd-boot",
+       "config_version": "2.6.0",
+       "debug": false,
+       "disk_config": {
+           "config_type": "manual_partitioning",
+           "device_modifications": [
+               {
+                   "device": "/dev/sda",
+                   "partitions": [
+                       {
+                           "btrfs": [],
+                           "flags": [
+                               "Boot"
+                           ],
+                           "fs_type": "fat32",
+                           "length": {
+                               "sector_size": null,
+                               "total_size": null,
+                               "unit": "B",
+                               "value": 99982592
+                           },
+                           "mount_options": [],
+                           "mountpoint": "/boot",
+                           "obj_id": "369f31a8-2781-4d6b-96e7-75680552b7c9",
+                           "start": {
+                               "sector_size": {
+                                   "sector_size": null,
+                                   "total_size": null,
+                                   "unit": "B",
+                                   "value": 512
+                               },
+                               "total_size": null,
+                               "unit": "sectors",
+                               "value": 34
+                           },
+                           "status": "create",
+                           "type": "primary"
+                       },
+                       {
+                           "btrfs": [],
+                           "flags": [],
+                           "fs_type": "fat32",
+                           "length": {
+                               "sector_size": null,
+                               "total_size": null,
+                               "unit": "B",
+                               "value": 100000000
+                           },
+                           "mount_options": [],
+                           "mountpoint": "/efi",
+                           "obj_id": "13cf2c96-8b0f-4ade-abaa-c530be589aad",
+                           "start": {
+                               "sector_size": {
+                                   "sector_size": null,
+                                   "total_size": null,
+                                   "unit": "B",
+                                   "value": 512
+                               },
+                               "total_size": {
+                                   "sector_size": null,
+                                   "total_size": null,
+                                   "unit": "B",
+                                   "value": 16106127360
+                               },
+                               "unit": "MB",
+                               "value": 100
+                           },
+                           "status": "create",
+                           "type": "primary"
+                       },
+                       {
+                           "btrfs": [],
+                           "flags": [],
+                           "fs_type": "ext4",
+                           "length": {
+                               "sector_size": null,
+                               "total_size": null,
+                               "unit": "B",
+                               "value": 15805127360
+                           },
+                           "mount_options": [],
+                           "mountpoint": "/",
+                           "obj_id": "3e75d045-21a4-429d-897e-8ec19a006e8b",
+                           "start": {
+                               "sector_size": {
+                                   "sector_size": null,
+                                   "total_size": null,
+                                   "unit": "B",
+                                   "value": 512
+                               },
+                               "total_size": {
+                                   "sector_size": null,
+                                   "total_size": null,
+                                   "unit": "B",
+                                   "value": 16106127360
+                               },
+                               "unit": "MB",
+                               "value": 301
+                           },
+                           "status": "create",
+                           "type": "primary"
+                       }
+                   ],
+                   "wipe": false
+               }
+           ]
+       },
+       "disk_encryption": {
+           "encryption_type": "luks",
+           "partitions": [
+               "3e75d045-21a4-429d-897e-8ec19a006e8b"
+           ]
+       },
+       "hostname": "archlinux",
+       "kernels": [
+           "linux"
+       ],
+       "locale_config": {
+           "kb_layout": "us",
+           "sys_enc": "UTF-8",
+           "sys_lang": "en_US"
+       },
+       "mirror_config": {
+           "custom_mirrors": [],
+           "mirror_regions": {
+               "Sweden": [
+                   "https://mirror.osbeck.com/archlinux/$repo/os/$arch",
+                   "https://mirror.bahnhof.net/pub/archlinux/$repo/os/$arch",
+                   "https://ftp.myrveln.se/pub/linux/archlinux/$repo/os/$arch",
+                   "https://ftp.lysator.liu.se/pub/archlinux/$repo/os/$arch",
+                   "https://ftp.ludd.ltu.se/mirrors/archlinux/$repo/os/$arch",
+                   "https://ftp.acc.umu.se/mirror/archlinux/$repo/os/$arch",
+                   "http://mirror.bahnhof.net/pub/archlinux/$repo/os/$arch",
+                   "http://ftpmirror.infania.net/mirror/archlinux/$repo/os/$arch",
+                   "http://ftp.myrveln.se/pub/linux/archlinux/$repo/os/$arch",
+                   "http://ftp.lysator.liu.se/pub/archlinux/$repo/os/$arch",
+                   "http://ftp.acc.umu.se/mirror/archlinux/$repo/os/$arch"
+               ]
+           }
+       },
+       "network_config": {},
+       "no_pkg_lookups": false,
+       "ntp": true,
+       "offline": false,
+       "packages": [],
+       "parallel downloads": 0,
+       "profile_config": null,
+       "save_config": null,
+       "script": "guided",
+       "silent": false,
+       "swap": true,
+       "timezone": "UTC",
+       "version": "2.6.0"
+   }
+
+``--config`` options
+^^^^^^^^^^^^^^^^^^^^
+
+*(Scroll to the right in the table to see required options.)*
+
+.. csv-table:: JSON options
+   :file: config_options.csv
+   :widths: 15, 40, 40, 5
+   :escape: !
+   :header-rows: 1
 
 .. note::
     [1] If no entries are found in ``harddrives``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall``.
