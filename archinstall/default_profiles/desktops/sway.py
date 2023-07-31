@@ -73,9 +73,5 @@ class SwayProfile(XorgProfile):
 	def do_on_select(self):
 		self._ask_seat_access()
 
-	def preview_text(self) -> Optional[str]:
-		text = str(_('Environment type: {}')).format(self.profile_type.value)
-		return text + '\n' + self.packages_text()
-
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)

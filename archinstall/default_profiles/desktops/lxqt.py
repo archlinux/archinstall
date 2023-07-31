@@ -29,7 +29,3 @@ class LxqtProfile(XorgProfile):
 	@property
 	def default_greeter_type(self) -> Optional[GreeterType]:
 		return GreeterType.Sddm
-
-	def preview_text(self) -> Optional[str]:
-		text = str(_('Environment type: {}')).format(self.profile_type.value)
-		return text + '\n' + self.packages_text()
