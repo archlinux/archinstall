@@ -165,23 +165,20 @@ def ask_additional_packages_to_install(preset: List[str] = []) -> List[str]:
 
 
 def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Optional[int]:
-	max_downloads = 5
-	print(_(f"This option enables the number of parallel downloads that can occur during installation"))
-	print(str(_("Enter the number of parallel downloads to be enabled.\n (Enter a value between 1 to {})\nNote:")).format(max_downloads))
-	print(str(_(" - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )")).format(max_downloads, max_downloads, max_downloads + 1))
-	print(_(" - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"))
-	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"))
+	max_recommended = 5
+	print(_(f"This option enables the number of parallel downloads that can occur during package downloads"))
+	print(_("Enter the number of parallel downloads to be enabled.\n\nNote:\n"))
+	print(str(_(" - Maximum recommended value : {} ( Allows {} parallel downloads at a time )")).format(max_recommended, max_recommended))
+	print(_(" - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"))
 
 	while True:
 		try:
 			input_number = int(TextInput(_("[Default value: 0] > ")).run().strip() or 0)
 			if input_number <= 0:
 				input_number = 0
-			elif input_number > max_downloads:
-				input_number = max_downloads
 			break
 		except:
-			print(str(_("Invalid input! Try again with a valid input [1 to {}, or 0 to disable]")).format(max_downloads))
+			print(str(_("Invalid input! Try again with a valid input [or 0 to disable]")).format(max_recommended))
 
 	pacman_conf_path = pathlib.Path("/etc/pacman.conf")
 	with pacman_conf_path.open() as f:
@@ -190,7 +187,7 @@ def add_number_of_parrallel_downloads(input_number :Optional[int] = None) -> Opt
 	with pacman_conf_path.open("w") as fwrite:
 		for line in pacman_conf:
 			if "ParallelDownloads" in line:
-				fwrite.write(f"ParallelDownloads = {input_number+1}\n") if not input_number == 0 else fwrite.write("#ParallelDownloads = 0\n")
+				fwrite.write(f"ParallelDownloads = {input_number}\n") if not input_number == 0 else fwrite.write("#ParallelDownloads = 0\n")
 			else:
 				fwrite.write(f"{line}\n")
 
