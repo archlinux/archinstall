@@ -876,14 +876,30 @@ class Installer:
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
+		command = [
+			'/usr/bin/arch-chroot',
+			str(self.target),
+			'grub-install',
+			'--debug'
+		]
+
 		if SysInfo.has_uefi():
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
+			add_options = [
+				'--target=x86_64-efi',
+				f'--efi-directory={boot_partition.mountpoint}',
+				'--bootloader-id=GRUB',
+				' --removable'
+			]
+
+			command.extend(add_options)
+
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(command, peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(command, peek_output=True)
 				except SysCallError as err:
 					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
@@ -892,15 +908,14 @@ class Installer:
 			if not device:
 				raise ValueError(f'Can not find block device: {boot_partition.safe_dev_path}')
 
-			try:
-				cmd = f'/usr/bin/arch-chroot' \
-					f' {self.target}' \
-					f' grub-install' \
-					f' --debug' \
-					f' --target=i386-pc' \
-					f' --recheck {device.device_info.path}'
+			add_options = [
+				'--target=i386-pc',
+				'--recheck',
+				str(device.device_info.path)
+			]
 
-				SysCommand(cmd, peek_output=True)
+			try:
+				SysCommand(command + add_options, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
