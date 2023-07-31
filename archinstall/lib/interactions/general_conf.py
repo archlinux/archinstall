@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Dict, List, Any, Optional, TYPE_CHECKING
+from typing import List, Any, Optional, TYPE_CHECKING
 
 from ..locale import list_timezones, list_keyboard_languages
 from ..menu import MenuSelectionType, Menu, TextInput
