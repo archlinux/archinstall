@@ -1225,10 +1225,10 @@ msgid "Total: {} / {}"
 msgstr ""
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
+msgstr "Todos los valores ingresados pueden tener una unidad como sufijo: B, KB, KiB, MB, MiB ..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr ""
+msgstr "Si no se proporciona ninguna unidad, el valor se interpreta como sectores"
 
 #, fuzzy
 msgid "Enter start (default: sector {}): "
@@ -1245,10 +1245,10 @@ msgid "Path"
 msgstr ""
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricante"
 
 msgid "Product"
-msgstr ""
+msgstr "Producto"
 
 #~ msgid "Add :"
 #~ msgstr "Añadir :"
