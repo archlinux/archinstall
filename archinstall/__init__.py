@@ -1,6 +1,7 @@
 """Arch Linux installer - guided, templates etc."""
 import importlib
 import os
+import sys
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Union
@@ -58,7 +59,7 @@ debug(f"Graphics devices detected: {SysInfo._graphics_devices().keys()}")
 debug(f"Disk states before installing: {disk.disk_layouts()}")
 
 
-if os.getuid() != 0:
+if 'sphinx' not in sys.modules and os.getuid() != 0:
 	print(_("Archinstall requires root privileges to run. See --help for more."))
 	exit(1)
 

@@ -12,3 +12,13 @@ custom-commands,[ <command1>!, <command2>!, ...],Custom commands that will be ru
 locale_config,{kb_layout: `lang <https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration>`_!, sys_enc: `Character encoding <https://wiki.archlinux.org/title/Locale>`_!, sys_lang: `locale <https://wiki.archlinux.org/title/Locale>`_},Defines the keyboard key map!, system encoding and system locale,No
 mirror_config,{custom_mirrors: [ https://... ]!, mirror_regions: { "Worldwide": [ "https://geo.mirror.pkgbuild.com/$repo/os/$arch" ] } },Sets various mirrors *(defaults to ISO's ``/etc/pacman.d/mirrors`` if not defined)*,No
 network_config,*`see options under Network Configuration`*,Sets which type of *(if any)* network configuration should be used,No
+no_pkg_lookups,``true``!,``false``,Disabled package checking against https://archlinux.org/packages/,No
+ntp,``true``!,``false``,enables or disables `NTP <https://wiki.archlinux.org/title/Network_Time_Protocol_daemon>`_ during installation,No
+offline,``true``!,``false``,enables or disables certain online checks such as mirror reachability etc,No
+packages,[ <package1>!, <package2>!, ... ],A list of packages to install during installation,No
+parallel downloads,0-∞,sets a given number of paralell downloads to be used by `pacman <https://wiki.archlinux.org/title/Pacman#Enabling_parallel_downloads>`_,No
+profile_config,*`read more under the profiles section`*,Installs a given profile if defined,No
+script,`guided <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py>`_! *(default)*, `minimal <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/minimal.py>`_!, `only_hdd <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/only_hdd.py>`_!, `swiss <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/swiss.py>`_!, `unattended <https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/unattended.py>`_,When used to autorun an installation!, this sets which script to autorun with,No
+silent,``true``!,``false``,disables or enables user questions using the TUI,No
+swap,``true``!,``false``,enables or disables swap,No
+timezone,`timezone <https://wiki.archlinux.org/title/System_time#Time_zone>`_,sets a timezone for the installed system,No
