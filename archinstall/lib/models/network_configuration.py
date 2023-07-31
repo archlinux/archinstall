@@ -2,56 +2,64 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional, Dict, Union, Any, TYPE_CHECKING, Tuple
+from typing import List, Optional, Dict, Any, TYPE_CHECKING, Tuple
 
-from ..output import debug
 from ..profile import ProfileConfiguration
 
 if TYPE_CHECKING:
 	_: Any
 
 
-class NicType(str, Enum):
+class NicType(Enum):
 	ISO = "iso"
 	NM = "nm"
 	MANUAL = "manual"
 
+	def display_msg(self) -> str:
+		match self:
+			case NicType.ISO:
+				return str(_('Copy ISO network configuration to installation'))
+			case NicType.NM:
+				return str(_('Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)'))
+			case NicType.MANUAL:
+				return str(_('Manual configuration'))
+
 
 @dataclass
-class NetworkConfiguration:
-	type: NicType
+class Nic:
 	iface: Optional[str] = None
 	ip: Optional[str] = None
 	dhcp: bool = True
 	gateway: Optional[str] = None
 	dns: List[str] = field(default_factory=list)
 
-	def __str__(self):
-		if self.is_iso():
-			return "Copy ISO configuration"
-		elif self.is_network_manager():
-			return "Use NetworkManager"
-		elif self.is_manual():
-			if self.dhcp:
-				return f'iface={self.iface}, dhcp=auto'
-			else:
-				return f'iface={self.iface}, ip={self.ip}, dhcp=staticIp, gateway={self.gateway}, dns={self.dns}'
-		else:
-			return 'Unknown type'
+	def table_data(self) -> Dict[str, Any]:
+		return {
+			'iface': self.iface if self.iface else '',
+			'ip': self.ip if self.ip else '',
+			'dhcp': self.dhcp,
+			'gateway': self.gateway if self.gateway else '',
+			'dns': self.dns
+		}
 
-	def as_json(self) -> Dict:
-		exclude_fields = ['type']
-		data = {}
-		for k, v in self.__dict__.items():
-			if k not in exclude_fields:
-				if isinstance(v, list) and len(v) == 0:
-					v = ''
-				elif v is None:
-					v = ''
+	def __dump__(self) -> Dict[str, Any]:
+		return {
+			'iface': self.iface,
+			'ip': self.ip,
+			'dhcp': self.dhcp,
+			'gateway': self.gateway,
+			'dns': self.dns
+		}
 
-				data[k] = v
-
-		return data
+	@staticmethod
+	def parse_arg(arg: Dict[str, Any]) -> Nic:
+		return Nic(
+			iface=arg.get('iface', None),
+			ip=arg.get('ip', None),
+			dhcp=arg.get('dhcp', True),
+			gateway=arg.get('gateway', None),
+			dns=arg.get('dns', []),
+		)
 
 	def as_systemd_config(self) -> str:
 		match: List[Tuple[str, str]] = []
@@ -80,107 +88,57 @@ class NetworkConfiguration:
 
 		return config_str
 
-	def json(self) -> Dict:
-		# for json serialization when calling json.dumps(...) on this class
-		return self.__dict__
 
-	def is_iso(self) -> bool:
-		return self.type == NicType.ISO
+@dataclass
+class NetworkConfiguration:
+	type: NicType
+	nics: List[Nic] = field(default_factory=list)
 
-	def is_network_manager(self) -> bool:
-		return self.type == NicType.NM
+	def __dump__(self) -> Dict[str, Any]:
+		config: Dict[str, Any] = {'type': self.type.value}
+		if self.nics:
+			config['nics'] = [n.__dump__() for n in self.nics]
 
-	def is_manual(self) -> bool:
-		return self.type == NicType.MANUAL
+		return config
 
+	@staticmethod
+	def parse_arg(config: Dict[str, Any]) -> Optional[NetworkConfiguration]:
+		nic_type = config.get('type', None)
+		if not nic_type:
+			return None
 
-class NetworkConfigurationHandler:
-	def __init__(self, config: Union[None, NetworkConfiguration, List[NetworkConfiguration]] = None):
-		self._configuration = config
+		match NicType(nic_type):
+			case NicType.ISO:
+				return NetworkConfiguration(NicType.ISO)
+			case NicType.NM:
+				return NetworkConfiguration(NicType.NM)
+			case NicType.MANUAL:
+				nics_arg = config.get('nics', [])
+				if nics_arg:
+					nics = [Nic.parse_arg(n) for n in nics_arg]
+					return NetworkConfiguration(NicType.MANUAL, nics)
 
-	@property
-	def configuration(self):
-		return self._configuration
+		return None
 
-	def config_installer(
+	def install_network_config(
 		self,
 		installation: Any,
 		profile_config: Optional[ProfileConfiguration] = None
 	):
-		if self._configuration is None:
-			return
-
-		if isinstance(self._configuration, list):
-			for config in self._configuration:
-				installation.configure_nic(config)
-
-			installation.enable_service('systemd-networkd')
-			installation.enable_service('systemd-resolved')
-		else:
-			# If user selected to copy the current ISO network configuration
-			# Perform a copy of the config
-			if self._configuration.is_iso():
+		match self.type:
+			case NicType.ISO:
 				installation.copy_iso_network_config(
-					enable_services=True # Sources the ISO network configuration to the install medium.
+					enable_services=True  # Sources the ISO network configuration to the install medium.
 				)
-			elif self._configuration.is_network_manager():
+			case NicType.NM:
 				installation.add_additional_packages(["networkmanager"])
 				if profile_config and profile_config.profile:
 					if profile_config.profile.is_desktop_type_profile():
 						installation.add_additional_packages(["network-manager-applet"])
 				installation.enable_service('NetworkManager.service')
+			case NicType.MANUAL:
+				for nic in self.nics:
+					installation.configure_nic(nic)
 
-	def _parse_manual_config(self, configs: List[Dict[str, Any]]) -> Optional[List[NetworkConfiguration]]:
-		configurations = []
-
-		for manual_config in configs:
-			iface = manual_config.get('iface', None)
-
-			if iface is None:
-				raise ValueError('No iface specified for manual configuration')
-
-			if manual_config.get('dhcp', False) or not any([manual_config.get(v, '') for v in ['ip', 'gateway', 'dns']]):
-				configurations.append(
-					NetworkConfiguration(NicType.MANUAL, iface=iface)
-				)
-			else:
-				ip = manual_config.get('ip', '')
-				if not ip:
-					raise ValueError('Manual nic configuration with no auto DHCP requires an IP address')
-
-				dns = manual_config.get('dns', [])
-				if not isinstance(dns, list):
-					dns = [dns]
-
-				configurations.append(
-					NetworkConfiguration(
-						NicType.MANUAL,
-						iface=iface,
-						ip=ip,
-						gateway=manual_config.get('gateway', ''),
-						dns=dns,
-						dhcp=False
-					)
-				)
-
-		return configurations
-
-	def _parse_nic_type(self, nic_type: str) -> NicType:
-		try:
-			return NicType(nic_type)
-		except ValueError:
-			options = [e.value for e in NicType]
-			raise ValueError(f'Unknown nic type: {nic_type}. Possible values are {options}')
-
-	def parse_arguments(self, config: Any):
-		if isinstance(config, list):  # new data format
-			self._configuration = self._parse_manual_config(config)
-		elif nic_type := config.get('type', None):  # new data format
-			type_ = self._parse_nic_type(nic_type)
-
-			if type_ != NicType.MANUAL:
-				self._configuration = NetworkConfiguration(type_)
-			else:  # manual configuration settings
-				self._configuration = self._parse_manual_config([config])
-		else:
-			debug(f'Unable to parse network configuration: {config}')
+				installation.enable_service('systemd-networkd')
+				installation.enable_service('systemd-resolved')

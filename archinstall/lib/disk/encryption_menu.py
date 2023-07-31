@@ -71,6 +71,7 @@ class DiskEncryptionMenu(AbstractSubMenu):
 				description=_('Use HSM to unlock encrypted drive'),
 				func=lambda preset: select_hsm(preset),
 				display_func=lambda x: self._display_hsm(x),
+				preview_func=self._prev_hsm,
 				dependencies=['encryption_password'],
 				default=self._preset.hsm_device,
 				enabled=True
@@ -93,8 +94,6 @@ class DiskEncryptionMenu(AbstractSubMenu):
 		if device:
 			return device.manufacturer
 
-		if not Fido2.get_fido2_devices():
-			return str(_('No HSM devices available'))
 		return None
 
 	def _prev_disk_layouts(self) -> Optional[str]:
@@ -106,11 +105,27 @@ class DiskEncryptionMenu(AbstractSubMenu):
 
 		return None
 
+	def _prev_hsm(self) -> Optional[str]:
+		try:
+			Fido2.get_fido2_devices()
+		except ValueError:
+			return str(_('Unable to determine fido2 devices. Is libfido2 installed?'))
+
+		fido_device: Optional[Fido2Device] = self._menu_options['HSM'].current_selection
+
+		if fido_device:
+			output = '{}: {}'.format(str(_('Path')), fido_device.path)
+			output += '{}: {}'.format(str(_('Manufacturer')), fido_device.manufacturer)
+			output += '{}: {}'.format(str(_('Product')), fido_device.product)
+			return output
+
+		return None
+
 
 def select_encryption_type(preset: EncryptionType) -> Optional[EncryptionType]:
 	title = str(_('Select disk encryption option'))
 	options = [
-		EncryptionType.type_to_text(EncryptionType.Partition)
+		EncryptionType.type_to_text(EncryptionType.Luks)
 	]
 
 	preset_value = EncryptionType.type_to_text(preset)
@@ -130,7 +145,11 @@ def select_encrypted_password() -> Optional[str]:
 
 def select_hsm(preset: Optional[Fido2Device] = None) -> Optional[Fido2Device]:
 	title = _('Select a FIDO2 device to use for HSM')
-	fido_devices = Fido2.get_fido2_devices()
+
+	try:
+		fido_devices = Fido2.get_fido2_devices()
+	except ValueError:
+		return None
 
 	if fido_devices:
 		choice = TableMenu(title, data=fido_devices).run()

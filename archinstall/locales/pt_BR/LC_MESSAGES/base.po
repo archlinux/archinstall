@@ -2,18 +2,19 @@
 #  @Cain-dev (cain-dev.github.io)
 #  Rafael Fontenelle <rafaelff@gnome.org>
 #  Jefferson Michael <github.com/jeffersonjpr>
+#  Diogo Silva <github.com/Diogo-ss>
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Jefferson Michael <github.com/jeffersonjpr>\n"
+"Last-Translator: Mário Victor Ribeiro Silva <github.com/ComicShrimp>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Um arquivo de log foi criado aqui: {} {}"
@@ -66,7 +67,7 @@ msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em
 msgid "Copy ISO network configuration to installation"
 msgstr "Copiar a configuração de rede da ISO para a instalação"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "Usar NetworkManager (necessário para configurar internet graficamente no GNOME e KDE)"
 
 msgid "Select one network interface to configure"
@@ -101,10 +102,10 @@ msgid "Enter a desired filesystem type for the partition"
 msgstr "Digite o tipo de sistema de arquivos desejado para a partição"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
+msgstr "Digite o local inicial (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
+msgstr "Digite o local final (em unidades do parted: s, GB, %, etc. ; padrão: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
@@ -625,7 +626,7 @@ msgid "Manual configuration setting must be a list"
 msgstr "O ajuste de configuração manual deve ser em lista"
 
 msgid "No iface specified for manual configuration"
-msgstr "iface não especificada para configuração manual"
+msgstr "Nenhum iface especificado para configuração manual"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "A configuração manual de NIC sem DHCP automático requer um endereço IP"
@@ -797,21 +798,20 @@ msgstr "{} interfaces configuradas"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "Esta opção habilita o número de downloads paralelos que podem ocorrer durante a instalação"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "Insira o número de downloads paralelos para serem habilitados.\n"
-" (Insira um valor entre 1 e {max_downloads})\n"
+" (Insira um valor entre 1 e {})\n"
 "Observação:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Valor máximo   : {max_downloads} ( Permite {max_donwloads} downloads paralelos, permite {max_donwloads+1} downloads por vez )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Valor máximo   : {} ( Permite {} downloads paralelos, permite {} downloads por vez )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Valor minimo   : 1 ( Permite 1 download paralelo, permite 2 downloads por vez )"
+msgstr " - Valor mínimo   : 1 ( Permite 1 download paralelo, permite 2 downloads por vez )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - Desativar/Padrão : 0 ( Desativa os downloads paralelos, permite apenas 1 download por vez )"
@@ -842,125 +842,107 @@ msgid "The font should be stored as {}"
 msgstr "A fonte deve ser armazenada como {}"
 
 msgid "Archinstall requires root privileges to run. See --help for more."
-msgstr ""
+msgstr "O Archinstall requer privilégios de root para ser executado. Consulte --help para mais informações."
 
-#, fuzzy
 msgid "Select an execution mode"
-msgstr "Selecione uma ação para '{}'"
+msgstr "Selecione um modo de execução"
 
 msgid "Unable to fetch profile from specified url: {}"
-msgstr ""
+msgstr "Não foi possível obter o perfil a partir da URL especificada: {}"
 
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr ""
+msgstr "Os perfis devem ter nomes únicos, mas foram encontradas definições de perfil com nomes duplicados: {}"
 
-#, fuzzy
 msgid "Select one or more devices to use and configure"
-msgstr "Selecione um ou mais discos rígidos para usar e configurar"
+msgstr "Selecione um ou mais dispositivos para usar e configurar"
 
 #, fuzzy
 msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
 msgstr "Se você redefinir a seleção de unidades isso também redefinirá o layout da unidade atual. Tem certeza?"
 
-#, fuzzy
 msgid "Existing Partitions"
-msgstr "Adicionando partição...."
+msgstr "Partições existentes"
 
-#, fuzzy
 msgid "Select a partitioning option"
-msgstr "Deletar uma partição"
+msgstr "Selecione uma opção de particionamento"
 
-#, fuzzy
 msgid "Enter the root directory of the mounted devices: "
-msgstr "Digite um diretório para as configurações serem salvas: "
+msgstr "Digite o diretório raiz dos dispositivos montados: "
 
-#, fuzzy
 msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "Capacidade mínima para partição /home : {}GB\n"
+msgstr "Capacidade mínima para partição /home : {}GiB\n"
 
-#, fuzzy
 msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Capacidade mínima para a partição do Arch Linux: {}GB"
+msgstr "Capacidade mínima para a partição do Arch Linux: {}GiB"
 
-#, fuzzy
 msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
 msgstr "Esta é uma lista de perfis pré-programados, que podem por exemplo facilitar a instalação de ambientes gráficos"
 
-#, fuzzy
 msgid "Current profile selection"
-msgstr "Layout de partições atual"
+msgstr "Seleção de perfil atual"
 
-#, fuzzy
 msgid "Remove all newly added partitions"
-msgstr "Criar uma nova partição"
+msgstr "Remova todas as partições recém-adicionadas"
 
-#, fuzzy
 msgid "Assign mountpoint"
-msgstr "Atribuir um ponto de montagem para uma partição"
+msgstr "Atribuir um ponto de montagem"
 
 #, fuzzy
 msgid "Mark/Unmark to be formatted (wipes data)"
 msgstr "Marcar/Desmarcar uma partição para ser formatada (apaga os dados)"
 
 msgid "Mark/Unmark as bootable"
-msgstr ""
+msgstr "Marcar/desmarcar como inicializável"
 
 msgid "Change filesystem"
-msgstr ""
+msgstr "Mudar arquivo do sistema"
 
 #, fuzzy
 msgid "Mark/Unmark as compressed"
 msgstr "Marcar/desmarcar a partição como comprimida (apenas btrfs)"
 
-#, fuzzy
 msgid "Set subvolumes"
-msgstr "Deletar subvolume"
+msgstr "Definir subvolumes"
 
-#, fuzzy
 msgid "Delete partition"
-msgstr "Deletar uma partição"
+msgstr "Deletar partição"
 
 msgid "Partition"
-msgstr ""
+msgstr "Partição"
 
 msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr ""
+msgstr "Esta partição está criptografada. Para formatá-la, um sistema de arquivos deve ser especificado"
 
-#, fuzzy
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Os pontos de montagem das partições são relativos aos de dentro da instalação, boot por exemplo seria /boot."
+msgstr "Os pontos de montagem das partições são relativos aos de dentro da instalação, boot por exemplo seria /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
+msgstr "Se o ponto de montagem /boot for definido, a partição também será marcada como inicializável."
 
 msgid "Mountpoint: "
-msgstr ""
+msgstr "Ponto de montagem: "
 
 msgid "Current free sectors on device {}:"
-msgstr ""
+msgstr "Setores livres no dispositivo {}:"
 
-#, fuzzy
 msgid "Total sectors: {}"
-msgstr "Não é um diretório válido: {}"
+msgstr "Total de setores: {}"
 
-#, fuzzy
 msgid "Enter the start sector (default: {}): "
-msgstr "Digite o setor de início (porcentagem ou número do bloco, padrão: {}): "
+msgstr "Digite o setor de início (padrão: {}): "
 
-#, fuzzy
 msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Digite o setor final da partição (porcentagem ou número de bloco, ex.: {}): "
+msgstr "Digite o setor final da partição (porcentagem ou número de bloco, padrão: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr ""
+msgstr "Isso irá remover todas as partições recém-adicionadas, continuar?"
 
 msgid "Partition management: {}"
-msgstr ""
+msgstr "Gerenciamento de partições: {}"
 
 msgid "Total length: {}"
-msgstr ""
+msgstr "Tamanho total: {}"
 
-#, fuzzy
 msgid "Encryption type"
 msgstr "Tipo de encriptação"
 
@@ -968,7 +950,7 @@ msgid "Partitions"
 msgstr "Partições"
 
 msgid "No HSM devices available"
-msgstr "Nenhum dispositivo HSM disponivel"
+msgstr "Nenhum dispositivo HSM disponível"
 
 msgid "Partitions to be encrypted"
 msgstr "Partições a serem encriptadas"
@@ -983,131 +965,191 @@ msgstr "Selecione um dispositivo FIDO2 para usar como HSM"
 msgid "Use a best-effort default partition layout"
 msgstr "Apagar todos os discos selecionados e usar um esquema de partições padrão de melhor desempenho"
 
-#, fuzzy
 msgid "Manual Partitioning"
-msgstr "Configuração manual"
+msgstr "Particionamento manual"
 
-#, fuzzy
 msgid "Pre-mounted configuration"
-msgstr "Nenhuma configuração"
+msgstr "Configuração pré-montada"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 msgid "Partition encryption"
 msgstr "Encriptação de partição"
 
 msgid " ! Formatting {} in "
-msgstr ""
+msgstr " ! Formatando {} em "
 
 msgid "← Back"
-msgstr ""
+msgstr "← Voltar"
 
 msgid "Disk encryption"
 msgstr "Encriptação de disco"
 
-#, fuzzy
 msgid "Configuration"
-msgstr "Nenhuma configuração"
+msgstr "Configuração"
 
 msgid "Password"
 msgstr "Senha"
 
-#, fuzzy
 msgid "All settings will be reset, are you sure?"
-msgstr "{} contém partições em fila, isto irá removê-las, tem certeza?"
+msgstr "Todas as configurações serão redefinidas, tem certeza?"
 
 msgid "Back"
-msgstr ""
+msgstr "Voltar"
 
 msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
+msgstr "Por favor, escolha qual greeter instalar para os perfis escolhidos: {}"
 
 msgid "Environment type: {}"
-msgstr ""
+msgstr "Tipo de ambiente: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
+msgstr "O driver proprietário Nvidia não é suportado pelo Sway. É provável que você encontre problemas. Você está de acordo com isso?"
 
-#, fuzzy
 msgid "Installed packages"
-msgstr "Pacotes adicionais"
+msgstr "Pacotes instalados"
 
-#, fuzzy
 msgid "Add profile"
-msgstr "Perfil"
+msgstr "Adicionar perfil"
 
-#, fuzzy
 msgid "Edit profile"
-msgstr "Perfil"
+msgstr "Editar perfil"
 
-#, fuzzy
 msgid "Delete profile"
-msgstr "Deletar interface"
+msgstr "Deletar perfil"
 
-#, fuzzy
 msgid "Profile name: "
-msgstr "Perfil"
+msgstr "Nome do perfil: "
 
-#, fuzzy
 msgid "The profile name you entered is already in use. Try again"
-msgstr "O nome de usuário que você digitou é inválido. Tente novamente"
+msgstr "O nome do perfil que você digitou já esta em uso. Tente novamente"
 
-#, fuzzy
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
+msgstr "Pacotes a serem instalados com este perfil (separados por espaço, deixe em branco para pular): "
 
-#, fuzzy
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Digite pacotes adicionais para instalar (separados por espaço, deixe em branco para pular): "
+msgstr "Serviços a serem ativados com este perfil (separados por espaço, deixe em branco para pular): "
 
 msgid "Should this profile be enabled for installation?"
-msgstr ""
+msgstr "Este perfil deve ser ativado para instalação?"
 
 msgid "Create your own"
-msgstr ""
+msgstr "Crie o seu próprio"
 
-#, fuzzy
 msgid ""
 "\n"
 "Select a graphics driver or leave blank to install all open-source drivers"
 msgstr ""
 "\n"
 "\n"
-"Selecione um driver de vídeo ou deixe em branco para instalar os drivers completamente open-source"
+"Selecione um driver gráfico ou deixe em branco para instalar todos os drivers de código aberto"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgstr "O Sway precisa de acesso ao seu seat (conjunto de dispositivos de hardware, como teclado, mouse, etc)"
 
 msgid ""
 "\n"
 "\n"
 "Choose an option to give Sway access to your hardware"
 msgstr ""
+"\n"
+"\n"
+"Selecione uma opção para permitir o acesso do Sway ao seu hardware"
 
 msgid "Graphics driver"
-msgstr ""
+msgstr "Driver gráfico"
 
+#, fuzzy
 msgid "Greeter"
-msgstr ""
+msgstr "Recepcionista"
 
 msgid "Please chose which greeter to install"
-msgstr ""
+msgstr "Por favor, escolha qual greeter instalar"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
+msgstr "Esta é uma lista de perfis pré-programados (default_profiles)"
 
-#, fuzzy
 msgid "Disk configuration"
-msgstr "Nenhuma configuração"
+msgstr "Configuração do disco"
 
-#, fuzzy
 msgid "Profiles"
-msgstr "Perfil"
+msgstr "Perfis"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr ""
+msgstr "Procurando possiveis diretórios para salvar os arquivos de configuração ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Selecione um ou mais diretórios para salvar arquivos de configuração"
+
+msgid "Add a custom mirror"
+msgstr "Adicionar mirror personalizado"
+
+msgid "Change custom mirror"
+msgstr "Alterar mirror personalizado"
+
+msgid "Delete custom mirror"
+msgstr "Excluir mirror personalizado"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Digite o nome (deixe em branco para pular): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Digite a url (deixe em branco para pular): "
 
 #, fuzzy
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Selecione um ou mais discos rígidos para usar e configurar"
+msgid "Select signature check option"
+msgstr "Selecione uma opção de verificação de assinatura"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "Selecione uma opção de assinatura"
+
+msgid "Custom mirrors"
+msgstr "Mirrors personalizados"
+
+msgid "Defined"
+msgstr "Definido"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Salvar configuração de usuário (incluindo layout do disco)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Digite um diretório para as configurações serem salvas (completamento de tab ativado): \n"
+"Salvar diretório: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Você deseja salvar arquivo(s) de configuração de {} nos locais a seguir?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "Salvando arquivos de configuração de {} para {}"
+
+msgid "Mirrors"
+msgstr "Mirrors"
+
+msgid "Mirror regions"
+msgstr "Regiões dos mirrors"
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Valor máximo   : {} ( Permite {} downloads paralelos, permite {max_downloads+1} downloads por vez )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Entrada inválida! Tente novamente com uma entrada válida [1 para {}, ou 0 para desativar]"
+
+msgid "Locales"
+msgstr "Localidades"
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Usar NetworkManager (necessário para configurar internet graficamente no GNOME e KDE)"
+
+#~ msgid "When picking a directory to save configuration files to, by default we will ignore the following folders: "
+#~ msgstr "Ao selecionar um diretório para salvar arquivos de configuração, por padrão nós ignoramos as seguintes pastas: "

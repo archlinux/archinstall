@@ -1,0 +1,1157 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: et\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3\n"
+
+msgid "[!] A log file has been created here: {} {}"
+msgstr "[!] Siia on loodud logifail: {} {}"
+
+msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "    Esitage see probleem (ja fail) aadressil https://github.com/archlinux/archinstall/issues"
+
+msgid "Do you really want to abort?"
+msgstr "Kas sa tahad katkestada?"
+
+msgid "And one more time for verification: "
+msgstr "Ja veel kord kinnitamiseks: "
+
+msgid "Would you like to use swap on zram?"
+msgstr "Kas soovite zramis kasutada swapi?"
+
+msgid "Desired hostname for the installation: "
+msgstr "Installimiseks soovitud hostinimi: "
+
+msgid "Username for required superuser with sudo privileges: "
+msgstr "Kasutajanimi nõutud superkasutajale sudo õigustega: "
+
+msgid "Any additional users to install (leave blank for no users): "
+msgstr "Lisa kasutajate lisamine(jäta tühjaks kui ei soovi lisa kasutajaid): "
+
+msgid "Should this user be a superuser (sudoer)?"
+msgstr "Kas see kasutaja peaks olema superkasutaja (sudo õigustega)"
+
+msgid "Select a timezone"
+msgstr "Vali ajatsoon"
+
+msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+msgstr "Kas soovite systemd-booti asemel kasutada GRUBi buudilaadijana?"
+
+msgid "Choose a bootloader"
+msgstr "Vali buudilaadija"
+
+msgid "Choose an audio server"
+msgstr "Vali audio server"
+
+msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Paigaldatakse ainult sellised paketid nagu base, base-devel, linux, linux-firmware, efibootmgr ja valikulised profiilipaketid."
+
+msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+msgstr "Kui soovite veebibrauserit, näiteks firefox või chromium, saate selle määrata järgmises viipas."
+
+msgid "Write additional packages to install (space separated, leave blank to skip): "
+msgstr "Kirjutage paigaldatavad lisapaketid (tühikutega eraldatuna, jätke tühjaks, kui soovite vahele jätta): "
+
+msgid "Copy ISO network configuration to installation"
+msgstr "ISO-võrgu konfiguratsiooni kopeerimine paigaldusse"
+
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+msgstr "Kasutage NetworkManagerit (vajalik interneti graafiliseks konfigureerimiseks GNOME-s ja KDE-s)."
+
+msgid "Select one network interface to configure"
+msgstr "Valige üks võrguliides konfigureerimiseks"
+
+msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+msgstr "Valige, millist režiimi soovite konfigureerida \"{}\" või jätke vahele, kasutada vaikimisi režiimi \"{}\""
+
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Sisestage IP ja alamvõrk {} (näide: 192.168.0.5/24): "
+
+msgid "Enter your gateway (router) IP address or leave blank for none: "
+msgstr "Sisestage oma võrguvärava (ruuteri) IP-aadress või jätke tühjaks, kui see puudub: "
+
+msgid "Enter your DNS servers (space separated, blank for none): "
+msgstr "Sisestage oma DNS-serverid (tühikuga eraldatud, jätke tühjaks, kui neid ei ole): "
+
+msgid "Select which filesystem your main partition should use"
+msgstr "Valige, millist failisüsteemi teie peamine partitsioon peaks kasutama"
+
+msgid "Current partition layout"
+msgstr "Praegune partitsiooni paigutus"
+
+msgid ""
+"Select what to do with\n"
+"{}"
+msgstr ""
+"Valige, mida teha\n"
+"{}"
+
+msgid "Enter a desired filesystem type for the partition"
+msgstr "Sisestage partitsiooni jaoks soovitud failisüsteemi tüüp"
+
+msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
+msgstr "Sisestage alguskoht (parted ühikutes: s, GB, % jne; vaikimisi: {}): "
+
+msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
+msgstr "Sisestage lõpu asukoht (parted ühikutes: s, GB, % jne; näiteks: {}): "
+
+msgid "{} contains queued partitions, this will remove those, are you sure?"
+msgstr "{} sisaldab järjekorras olevaid partitsioone, see eemaldab need, kas olete kindel?"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partitions to delete"
+msgstr ""
+"{}\n"
+"\n"
+"\n"
+"Valige indeksi järgi, milliseid partitsioone kustutada"
+
+msgid ""
+"{}\n"
+"\n"
+"Select by index which partition to mount where"
+msgstr ""
+"{}\n"
+"\n"
+"\n"
+"Valige indeksi järgi, millise partitsiooni kuhu paigaldada"
+
+msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr " * Partitsioonide kinnituspunktid on suhtelised installeerimise sees, näiteks boot oleks /boot."
+
+msgid "Select where to mount partition (leave blank to remove mountpoint): "
+msgstr "Valige, kuhu partitsiooni paigaldada (jätke tühjaks, et eemaldada paigalduspunkt): "
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mask for formatting"
+msgstr ""
+"{}\n"
+"\n"
+"Valige, millist partitsiooni soovite vormindamiseks maskeerida"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as encrypted"
+msgstr ""
+"{}\n"
+"\n"
+"\n"
+"Valige, millist partitsiooni soovite krüpteerituks märkida"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to mark as bootable"
+msgstr ""
+"{}\n"
+"\n"
+"\n"
+"Valige, millist partitsiooni soovite märkida käivitatavaks"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set a filesystem on"
+msgstr ""
+"{}\n"
+"\n"
+"\n"
+"Valige, millisele partitsioonile failisüsteemi määrata"
+
+msgid "Enter a desired filesystem type for the partition: "
+msgstr "Sisestage partitsiooni jaoks soovitud failisüsteemi tüüp: "
+
+msgid "Archinstall language"
+msgstr "Archinstalli keel"
+
+msgid "Wipe all selected drives and use a best-effort default partition layout"
+msgstr "Pühkige kõik valitud kettad ja kasutage parimat võimalikku vaikimisi partitsiooni paigutust"
+
+msgid "Select what to do with each individual drive (followed by partition usage)"
+msgstr "Valige, mida teha iga üksiku kettaga (järgneb partitsiooni kasutamine)"
+
+msgid "Select what you wish to do with the selected block devices"
+msgstr "Valige, mida soovite valitud plokkseadmetega teha"
+
+msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+msgstr "See on nimekiri eelprogrammeeritud profiilidest, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist"
+
+msgid "Select keyboard layout"
+msgstr "Valige klaviatuuri paigutus"
+
+msgid "Select one of the regions to download packages from"
+msgstr "Valige üks piirkondadest, kust pakette alla laadida"
+
+msgid "Select one or more hard drives to use and configure"
+msgstr "Valige üks või mitu kõvaketast kasutamiseks ja konfigureerimiseks"
+
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Parima ühilduvuse saavutamiseks oma AMD riistvaraga võiksite kasutada kas kõiki avatud lähtekoodiga või AMD/ATI valikuid."
+
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr ""
+"Parima ühilduvuse saavutamiseks oma Inteli riistvaraga võiksite kasutada kas kõiki avatud lähtekoodiga või Inteli valikuid.\n"
+"\n"
+
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr ""
+"Parima ühilduvuse saavutamiseks oma Nvidia riistvaraga peaksite kasutama Nvidia enda toodetud draiverit.\n"
+"\n"
+"\n"
+
+msgid ""
+"\n"
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"\n"
+"Valige graafikadraiver või jätke tühjaks, et paigaldada kõik avatud lähtekoodiga draiverid"
+
+msgid "All open-source (default)"
+msgstr "Kõik avatud lähtekoodiga (vaikimisi)"
+
+msgid "Choose which kernels to use or leave blank for default \"{}\""
+msgstr "Valige, milliseid tuumasid soovite kasutada või jätke vaikimisi tühjaks \"{}\""
+
+msgid "Choose which locale language to use"
+msgstr "Valige, millist asukoha keelt kasutada"
+
+msgid "Choose which locale encoding to use"
+msgstr "Valige, millist asukoha kodeeringut kasutada"
+
+msgid "Select one of the values shown below: "
+msgstr "Valige üks allpool esitatud väärtustest: "
+
+msgid "Select one or more of the options below: "
+msgstr "Valige üks või mitu järgmistest võimalustest: "
+
+msgid "Adding partition...."
+msgstr "Partitsiooni lisamine...."
+
+msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+msgstr "Partitsiooni lisamine...."
+
+msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+msgstr "Viga: URL-i \"{}\" profiilide loetlemine andis tulemuseks:"
+
+msgid "Error: Could not decode \"{}\" result as JSON:"
+msgstr "Viga: {}\" tulemust JSON-ina dekodeerida:"
+
+msgid "Keyboard layout"
+msgstr "Klaviatuuri paigutus"
+
+msgid "Mirror region"
+msgstr "Peegelregioon"
+
+msgid "Locale language"
+msgstr "Kohalik keel"
+
+msgid "Locale encoding"
+msgstr "Kohaliku keele kodeering"
+
+msgid "Drive(s)"
+msgstr "Draiv(id)"
+
+msgid "Disk layout"
+msgstr "Ketta paigutus"
+
+msgid "Encryption password"
+msgstr "Krüpteerimise parool"
+
+msgid "Swap"
+msgstr "Swap"
+
+msgid "Bootloader"
+msgstr "Buudilaadija"
+
+msgid "Root password"
+msgstr "Juur parool"
+
+msgid "Superuser account"
+msgstr "Superkasutaja konto"
+
+msgid "User account"
+msgstr "Kasutaja konto"
+
+msgid "Profile"
+msgstr "Profiil"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Kernels"
+msgstr "Kernelid"
+
+msgid "Additional packages"
+msgstr "Täiendavad paketid"
+
+msgid "Network configuration"
+msgstr "Võrgu konfiguratsioon"
+
+msgid "Automatic time sync (NTP)"
+msgstr "Automaatne ajasünkroonimine"
+
+msgid "Install ({} config(s) missing)"
+msgstr "Install ({} config(id) puudu(vad)"
+
+msgid ""
+"You decided to skip harddrive selection\n"
+"and will use whatever drive-setup is mounted at {} (experimental)\n"
+"WARNING: Archinstall won't check the suitability of this setup\n"
+"Do you wish to continue?"
+msgstr ""
+"Sa otsustasid kõvaketta valiku vahele jätta\n"
+"ja kasutad mis tahes draivi seadistust, mis on paigaldatud {} (eksperimentaalne)\n"
+"HOIATUS: Archinstall ei kontrolli selle seadistuse sobivust\n"
+"Kas soovite jätkata?"
+
+msgid "Re-using partition instance: {}"
+msgstr "Partitsiooni instantsi taaskasutamine: {}"
+
+msgid "Create a new partition"
+msgstr "Uue partitsiooni loomine"
+
+msgid "Delete a partition"
+msgstr "Kustuta paritsioon"
+
+msgid "Clear/Delete all partitions"
+msgstr "Puhasta/Kustuta kõik partitsioonid"
+
+msgid "Assign mount-point for a partition"
+msgstr "Määrake partitsioonile kinnituspunkt"
+
+msgid "Mark/Unmark a partition to be formatted (wipes data)"
+msgstr "Märgistage/mittemärgistage vormindatav partitsioon (kustutab andmed)"
+
+msgid "Mark/Unmark a partition as encrypted"
+msgstr "Märgistage/mittemärgistage partitsiooni krüpteerituks"
+
+msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+msgstr "Märgistage/mittemärgistage partitsiooni käivitatavaks (automaatne /boot jaoks)"
+
+msgid "Set desired filesystem for a partition"
+msgstr "Soovitud failisüsteemi määramine partitsiooni jaoks"
+
+msgid "Abort"
+msgstr "Katkesta"
+
+msgid "Hostname"
+msgstr "Hostinimi"
+
+msgid "Not configured, unavailable unless setup manually"
+msgstr "Ei ole konfigureeritud, ei ole saadaval, kui seda ei ole käsitsi seadistatud"
+
+msgid "Timezone"
+msgstr "Ajatsoon"
+
+msgid "Set/Modify the below options"
+msgstr "Määrake/muutke järgmisi valikuid"
+
+msgid "Install"
+msgstr "Install"
+
+msgid ""
+"Use ESC to skip\n"
+"\n"
+msgstr ""
+"Kasutage ESC vahelejätmiseks\n"
+"\n"
+"\n"
+"\n"
+"\n"
+
+msgid "Suggest partition layout"
+msgstr "Soovitage partitsiooni paigutust"
+
+msgid "Enter a password: "
+msgstr "Sisestage parool: "
+
+msgid "Enter a encryption password for {}"
+msgstr "Sisestage {}'le krüpteerimis parool"
+
+msgid "Enter disk encryption password (leave blank for no encryption): "
+msgstr "Sisestage ketta krüpteerimise parool (krüpteerimise puudumisel jätke see tühjaks): "
+
+msgid "Create a required super-user with sudo privileges: "
+msgstr "Looge nõutav sudo õigustega superkasutaja: "
+
+msgid "Enter root password (leave blank to disable root): "
+msgstr "Sisestage juur parool (jätke tühjaks, et keelata root): "
+
+msgid "Password for user \"{}\": "
+msgstr "Kasutaja \"{}\" parool: "
+
+msgid "Verifying that additional packages exist (this might take a few seconds)"
+msgstr "Täiendavate pakettide olemasolu kontrollimine (see võib võtta paar sekundit)"
+
+msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
+msgstr "Kas soovite kasutada automaatset ajasünkroniseerimist (NTP) vaikimisi ajaserveritega?\n"
+
+msgid ""
+"Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
+"For more information, please check the Arch wiki"
+msgstr ""
+"NTP toimimiseks võib olla vaja riistvara aega ja muid konfiguratsioonijärgseid samme.\n"
+"Lisateavet leiate Archi wikist"
+
+msgid "Enter a username to create an additional user (leave blank to skip): "
+msgstr "Sisestage kasutajanimi, et luua lisakasutaja (jätke tühjaks, et vahele jätta): "
+
+msgid "Use ESC to skip\n"
+msgstr "Kasutage ESC'i et vahele jätta\n"
+
+msgid ""
+"\n"
+" Choose an object from the list, and select one of the available actions for it to execute"
+msgstr ""
+"\n"
+" Valige loetelust objekt ja valige selle täitmiseks üks olemasolevatest toimingutest"
+
+msgid "Cancel"
+msgstr "Tühista"
+
+msgid "Confirm and exit"
+msgstr "Kinnita ja lahku"
+
+msgid "Add"
+msgstr "Lisa"
+
+msgid "Copy"
+msgstr "Kopeeri"
+
+msgid "Edit"
+msgstr "Muuda"
+
+msgid "Delete"
+msgstr "Kustuta"
+
+msgid "Select an action for '{}'"
+msgstr "Valige tegevus '{}' jaoks"
+
+msgid "Copy to new key:"
+msgstr "Kopeeri uude võtmesse:"
+
+msgid "Unknown nic type: {}. Possible values are {}"
+msgstr "Tundmatu nic-tüüp: {}. Võimalikud väärtused on {}"
+
+msgid ""
+"\n"
+"This is your chosen configuration:"
+msgstr ""
+"\n"
+"See on teie valitud konfiguratsioon:"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Pacman on juba käivitatud ja ootab maksimaalselt 10 minutit, kuni see lõpeb."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Eelnev pacmani lukk ei ole kunagi väljunud. Enne archinstall'i kasutamist puhastage olemasolevad pacmani sessioonid."
+
+msgid "Choose which optional additional repositories to enable"
+msgstr "Valige, milliseid valikulisi lisa repositooriumeid soovite lubada"
+
+msgid "Add a user"
+msgstr "Lisa kasutaja"
+
+msgid "Change password"
+msgstr "Muuda parool"
+
+msgid "Promote/Demote user"
+msgstr "Edenda/alanda kasutajat"
+
+msgid "Delete User"
+msgstr "Kustuta kasutaja"
+
+msgid ""
+"\n"
+"Define a new user\n"
+msgstr ""
+"\n"
+"Uue kasutaja määramine\n"
+
+msgid "User Name : "
+msgstr "Kasutajanimi : "
+
+msgid "Should {} be a superuser (sudoer)?"
+msgstr "Kas {} peaks olema superkasutaja (sudoer)?"
+
+msgid "Define users with sudo privilege: "
+msgstr "Määrake sudo privileegiga kasutajad: "
+
+msgid "No network configuration"
+msgstr "Puudub võrgu konfiguratsioon"
+
+msgid "Set desired subvolumes on a btrfs partition"
+msgstr "Määrake soovitud alamköited btrfs-i partitsioonile"
+
+msgid ""
+"{}\n"
+"\n"
+"Select which partition to set subvolumes on"
+msgstr ""
+"{}\n"
+"\n"
+"Valige, millisele partitsioonile alamkogumid määrata"
+
+msgid "Manage btrfs subvolumes for current partition"
+msgstr "Hallake praeguse partitsiooni btrfs-i alamköiteid"
+
+msgid "No configuration"
+msgstr "Puudub konfiguratsioon"
+
+msgid "Save user configuration"
+msgstr "Salvesta kasutaja konfiguratsioon"
+
+msgid "Save user credentials"
+msgstr "Salvesta kasutaja volitused"
+
+msgid "Save disk layout"
+msgstr "Salvesta ketta paigutus"
+
+msgid "Save all"
+msgstr "Salvesta kõik"
+
+msgid "Choose which configuration to save"
+msgstr "Valige milline konfiguratsioon salvestada"
+
+msgid "Enter a directory for the configuration(s) to be saved: "
+msgstr "Sisestage salvestatava(te) konfiguratsiooni(de) kataloog: "
+
+msgid "Not a valid directory: {}"
+msgstr "Ei ole sobiv kataloog: {}"
+
+msgid "The password you are using seems to be weak,"
+msgstr "Teie kasutatav salasõna näib olevat nõrk,"
+
+msgid "are you sure you want to use it?"
+msgstr "oled sa kindel et soovid seda kasutada?"
+
+msgid "Optional repositories"
+msgstr "Valikulised repositooriumid"
+
+msgid "Save configuration"
+msgstr "Salvesta konfiguratsioon"
+
+msgid "Missing configurations:\n"
+msgstr "Puuduvad konfiguratsioonid:\n"
+
+msgid "Either root-password or at least 1 superuser must be specified"
+msgstr "Tuleb määrata kas juur-parool või vähemalt 1 superkasutaja"
+
+msgid "Manage superuser accounts: "
+msgstr "Hallake superkasutaja kontosi "
+
+msgid "Manage ordinary user accounts: "
+msgstr "Hallake tavalisi kasutajaid: "
+
+msgid " Subvolume :{:16}"
+msgstr " Alamköide :{:16}"
+
+msgid " mounted at {:16}"
+msgstr " paigaldatud {:16}"
+
+msgid " with option {}"
+msgstr " koos valikuga {}"
+
+msgid ""
+"\n"
+" Fill the desired values for a new subvolume \n"
+msgstr ""
+"\n"
+" Täida uue alamhulga soovitud väärtused \n"
+
+msgid "Subvolume name "
+msgstr "Alamhulga nimi "
+
+msgid "Subvolume mountpoint"
+msgstr "Alamhulga kinnituspunkt"
+
+msgid "Subvolume options"
+msgstr "Alamhulga valikud"
+
+msgid "Save"
+msgstr "Salvesta"
+
+msgid "Subvolume name :"
+msgstr "Alamhulga nimi:"
+
+msgid "Select a mount point :"
+msgstr "Valige kinnitus punkt :"
+
+msgid "Select the desired subvolume options "
+msgstr "Valige soovitud alamhulga valikud "
+
+msgid "Define users with sudo privilege, by username: "
+msgstr "Määrake sudo õigustega kasutajad kasutajanime järgi: "
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Siin on loodud logifail: {}"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Kas soovite kasutada BTRFS-i alamkogusid vaikimisi struktuuriga?"
+
+msgid "Would you like to use BTRFS compression?"
+msgstr "Kas soovite kasutada BTRFS-i tihendamist?"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Kas soovite luua eraldi partitsiooni /home jaoks?"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Valitud ketastel ei ole automaatseks soovituseks vajalikku minimaalset mahtu\n"
+
+msgid "Minimum capacity for /home partition: {}GB\n"
+msgstr "Minimaalne mahutavus /home partitsioonile: {}GB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GB"
+msgstr "Arch Linuxi partitsiooni minimaalne mahutavus: {}GB"
+
+msgid "Continue"
+msgstr "Jätka"
+
+msgid "yes"
+msgstr "jah"
+
+msgid "no"
+msgstr "ei"
+
+msgid "set: {}"
+msgstr "seadista: {}"
+
+msgid "Manual configuration setting must be a list"
+msgstr "Käsitsi konfiguratsiooniseade peab olema loend"
+
+msgid "No iface specified for manual configuration"
+msgstr "Käsitsi seadistamiseks pole iface'i määratud"
+
+msgid "Manual nic configuration with no auto DHCP requires an IP address"
+msgstr "Manuaalne nici konfigureerimine ilma automaatse DHCPta nõuab IP-aadressi"
+
+msgid "Add interface"
+msgstr "Lisa liides"
+
+msgid "Edit interface"
+msgstr "Muuda liidest"
+
+msgid "Delete interface"
+msgstr "Kustutage liides"
+
+msgid "Select interface to add"
+msgstr "Valige millist liidest lisada"
+
+msgid "Manual configuration"
+msgstr "Manuaalne konfiguratsioon"
+
+msgid "Mark/Unmark a partition as compressed (btrfs only)"
+msgstr "Märgistada/mittemärgistada partitsiooni kompressiooniks (ainult btrfs)"
+
+msgid "The password you are using seems to be weak, are you sure you want to use it?"
+msgstr "Teie kasutatav salasõna tundub olevat nõrk, kas olete kindel, et soovite seda kasutada?"
+
+msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+msgstr "Pakub valikut töölauakeskkondi ja plaadistatavaid aknahaldureid, nt gnome, kde, sway"
+
+msgid "Select your desired desktop environment"
+msgstr "Valige soovitud töölauakeskkonda"
+
+msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+msgstr "Väga lihtne paigaldus, mis võimaldab teil Arch Linuxi kohandada vastavalt oma äranägemisele."
+
+msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+msgstr "Annab valiku erinevate serveripakettide paigaldamiseks ja aktiveerimiseks, nt httpd, nginx, mariadb"
+
+msgid "Choose which servers to install, if none then a minimal installation will be done"
+msgstr "Valige, milliseid servereid paigaldada, kui ühtegi ei ole, siis tehakse minimaalne paigaldus"
+
+msgid "Installs a minimal system as well as xorg and graphics drivers."
+msgstr "Installeerib minimaalse süsteemi ning xorgi ja graafikadraiverid."
+
+msgid "Press Enter to continue."
+msgstr "Jätkamiseks vajutage Enter."
+
+msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+msgstr "Kas soovite chrootida äsja loodud installatsiooni ja teostada installeerimisjärgset konfigureerimist?"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Kas olete kindel, et soovite seda seadistust lähtestada?"
+
+msgid "Select one or more hard drives to use and configure\n"
+msgstr "Valige üks või mitu kasutatavat kõvaketast ja konfigureerige\n"
+
+msgid "Any modifications to the existing setting will reset the disk layout!"
+msgstr "Olemasoleva seadistuse muutmine lähtestab ketta paigutuse!"
+
+msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+msgstr "Kui lähtestate kõvaketta valiku, lähtestab see ka praeguse kettapaigutuse. Oled sa kindel?"
+
+msgid "Save and exit"
+msgstr "Salvesta ja lahku"
+
+msgid ""
+"{}\n"
+"contains queued partitions, this will remove those, are you sure?"
+msgstr ""
+"{}\n"
+"sisaldab järjekorras olevaid partitsioone, see eemaldab need, oled sa kindel?"
+
+msgid "No audio server"
+msgstr "Puudub audio server"
+
+msgid "(default)"
+msgstr "(vaikimisi)"
+
+msgid "Use ESC to skip"
+msgstr "Kasutage ESC vahelejätmiseks"
+
+msgid ""
+"Use CTRL+C to reset current selection\n"
+"\n"
+msgstr ""
+"Kasuta CTRL+C praeguse valiku lähtestamiseks\n"
+"\n"
+
+msgid "Copy to: "
+msgstr "Kopeeri: "
+
+msgid "Edit: "
+msgstr "Muuda: "
+
+msgid "Key: "
+msgstr "Võti: "
+
+msgid "Edit {}: "
+msgstr "Muuda {}: "
+
+msgid "Add: "
+msgstr "Lisa: "
+
+msgid "Value: "
+msgstr "Väärtus: "
+
+msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+msgstr "Saad vahele jätta ketta valimise ja partitsioneerimise ning kasutada mis tahes draivi-komplekti, mis on paigaldatud /mnt (eksperimentaalne)."
+
+msgid "Select one of the disks or skip and use /mnt as default"
+msgstr "Valige üks ketastest või jätke vahele ja kasutage vaikimisi /mnt"
+
+msgid "Select which partitions to mark for formatting:"
+msgstr "Valige, milliseid partitsioone soovite vormindamiseks märkida:"
+
+msgid "Use HSM to unlock encrypted drive"
+msgstr "Kasutage HSM-i krüpteeritud draivi avamiseks"
+
+msgid "Device"
+msgstr "Seade"
+
+msgid "Size"
+msgstr "Suurus"
+
+msgid "Free space"
+msgstr "Vaba mälu"
+
+msgid "Bus-type"
+msgstr "Bussi tüüp"
+
+msgid "Either root-password or at least 1 user with sudo privileges must be specified"
+msgstr "Tuleb määrata kas root-sõna või vähemalt 1 kasutaja, kellel on sudo õigused"
+
+msgid "Enter username (leave blank to skip): "
+msgstr "Sisestage kasutajanimi (jätke tühjaks, et vahele jätta): "
+
+msgid "The username you entered is invalid. Try again"
+msgstr "Teie sisestatud kasutajanimi ei sobi. Proovige uuesti"
+
+msgid "Should \"{}\" be a superuser (sudo)?"
+msgstr "Kas \"{}\" peaks olema superkasutaja (sudo)?"
+
+msgid "Select which partitions to encrypt"
+msgstr "Valige, milliseid partitsioone krüpteerida"
+
+msgid "very weak"
+msgstr "väga nõrk"
+
+msgid "weak"
+msgstr "nõrk"
+
+msgid "moderate"
+msgstr "keskmine"
+
+msgid "strong"
+msgstr "tugev"
+
+msgid "Add subvolume"
+msgstr "Lisage alamhulk"
+
+msgid "Edit subvolume"
+msgstr "Osahulga redigeerimine"
+
+msgid "Delete subvolume"
+msgstr "Kustuta osahulk"
+
+msgid "Configured {} interfaces"
+msgstr "Konfigureeritud {} liidesed"
+
+msgid "This option enables the number of parallel downloads that can occur during installation"
+msgstr "See valik võimaldab installimise ajal valida paralleelsete allalaadimiste arvu"
+
+#, fuzzy
+msgid ""
+"Enter the number of parallel downloads to be enabled.\n"
+" (Enter a value between 1 to {})\n"
+"Note:"
+msgstr ""
+"Sisestage lubatavate paralleelsete allalaadimiste arv.\n"
+" (Sisestage väärtus vahemikus 1 kuni {max_downloads})\n"
+"note:"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
+
+msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+msgstr " - Minimaalne väärtus   : 1 ( Võimaldab 1 paralleelset allalaadimist, võimaldab 2 allalaadimist korraga )"
+
+msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+msgstr " - Keela/Vaikimisi : 0 ( keelab paralleelse allalaadimise, võimaldab ainult 1 allalaadimist korraga )"
+
+#, python-brace-format
+msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või 0 keelamiseks]."
+
+msgid "Parallel Downloads"
+msgstr "Paralleelsed allalaadimised"
+
+msgid "ESC to skip"
+msgstr "ESC vahelejätmiseks"
+
+msgid "CTRL+C to reset"
+msgstr "CTRL+C lähtestamiseks"
+
+msgid "TAB to select"
+msgstr "TAB valimiseks"
+
+msgid "[Default value: 0] > "
+msgstr "[Vaikimisi väärtus: 0] > "
+
+msgid "To be able to use this translation, please install a font manually that supports the language."
+msgstr "Selleks, et seda tõlget kasutada, paigaldage käsitsi fondi, mis toetab seda keelt."
+
+msgid "The font should be stored as {}"
+msgstr "Font tuleks salvestada kujul {}"
+
+msgid "Archinstall requires root privileges to run. See --help for more."
+msgstr "Archinstall vajab käivitamiseks juurkasutaja õigusi. Vaata --help."
+
+msgid "Select an execution mode"
+msgstr "Valige täitmisrežiim"
+
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Ei õnnestu profiili hankida määratud url'ist: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Profiilidel peab olema unikaalne nimi, kuid leiti topeltnimega profiilide määratlusi: {}"
+
+msgid "Select one or more devices to use and configure"
+msgstr "Valige üks või mitu seadet mida kasutada ja konfigureerida"
+
+msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+msgstr "Kui lähtestate seadme valiku, siis lähtestate sellega ka praeguse draivi paigutuse. Kas olete kindel?"
+
+msgid "Existing Partitions"
+msgstr "Olemasolevad Jaotused"
+
+msgid "Select a partitioning option"
+msgstr "Valige jaotuste valik"
+
+msgid "Enter the root directory of the mounted devices: "
+msgstr "Sisestage paigaldatud seadmete juurkataloog: "
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Minimaalne mahutavus /home partitsioonile: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Arch Linuxi partitsiooni minimaalne mahutavus: {}GiB"
+
+msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+msgstr "See on nimekiri eelprogrammeeritud profiilidest_bck, need võivad lihtsustada selliste asjade nagu töölauakeskkondade paigaldamist"
+
+msgid "Current profile selection"
+msgstr "Praegune profiilivalik"
+
+msgid "Remove all newly added partitions"
+msgstr "Eemaldage kõik äsja lisatud partitsioonid"
+
+msgid "Assign mountpoint"
+msgstr "Määra paigaldamis punkt"
+
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Märgistada/mittemärgistada vormindamiseks (kustutab andmed)"
+
+msgid "Mark/Unmark as bootable"
+msgstr "Märgistada/mittemärgistada käivitatavak"
+
+msgid "Change filesystem"
+msgstr "Failisüsteemi muutmine"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Märgistada/mittemärgistada kui tihendatud"
+
+msgid "Set subvolumes"
+msgstr "Alamköite määramine"
+
+msgid "Delete partition"
+msgstr "Kustuta partitsioon"
+
+msgid "Partition"
+msgstr "Partitsioon"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "See partitsioon on praegu krüpteeritud, selle vormindamiseks tuleb määrata failisüsteem"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Partitsiooni kinnituspunktid on suhtelised installeerimise sees, näiteks boot oleks /boot."
+
+msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
+msgstr "Kui paigalduspunkt /boot on määratud, siis märgitakse partitsioon ka käivitatavaks."
+
+msgid "Mountpoint: "
+msgstr "Paigalduspunkt: "
+
+msgid "Current free sectors on device {}:"
+msgstr "Praegused vabad sektorid seadmes {}:"
+
+msgid "Total sectors: {}"
+msgstr "Sektorid kokku: {}"
+
+msgid "Enter the start sector (default: {}): "
+msgstr "Sisestage algussektor (vaikimisi: {}): "
+
+msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+msgstr "Sisestage partitsiooni lõppsektor (protsent või plokkide number, vaikimisi: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "See eemaldab kõik äsja lisatud partitsioonid, jätka?"
+
+msgid "Partition management: {}"
+msgstr "Partitsiooni haldamine:{}"
+
+msgid "Total length: {}"
+msgstr "Kogupikkus: {}"
+
+msgid "Encryption type"
+msgstr "Krüpteerimise tüüp"
+
+msgid "Partitions"
+msgstr "Partitsioonid"
+
+msgid "No HSM devices available"
+msgstr "Puuduvad HSM seadmed"
+
+msgid "Partitions to be encrypted"
+msgstr "Krüpteeritavad partitsioonid"
+
+msgid "Select disk encryption option"
+msgstr "Valige ketta krüpteerimise valik"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Valige HSM-i jaoks kasutatav FIDO2-seade"
+
+msgid "Use a best-effort default partition layout"
+msgstr "Kasutage parimat võimalikku vaikimisi partitsiooni paigutust"
+
+msgid "Manual Partitioning"
+msgstr "Käsitsi partitsioneerimine"
+
+msgid "Pre-mounted configuration"
+msgstr "Eelnevalt paigaldatud konfiguratsioon"
+
+msgid "Unknown"
+msgstr "Tundmatu"
+
+msgid "Partition encryption"
+msgstr "Partitsiooni krüpteerimine"
+
+msgid " ! Formatting {} in "
+msgstr " ! Vormindamine {} "
+
+msgid "← Back"
+msgstr "Tagasi"
+
+msgid "Disk encryption"
+msgstr "Ketta krüpteerimine"
+
+msgid "Configuration"
+msgstr "Konfiguratsioon"
+
+msgid "Password"
+msgstr "Parool"
+
+msgid "All settings will be reset, are you sure?"
+msgstr "Kõik seaded lähtestatakse, kas sa oled kindel?"
+
+msgid "Back"
+msgstr "Tagasi"
+
+msgid "Please chose which greeter to install for the chosen profiles: {}"
+msgstr "Palun valige millist tervitajat installida valitud profiilidele"
+
+msgid "Environment type: {}"
+msgstr "Keskkonna tüüp: {}"
+
+msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
+msgstr "Sway ei toeta Nvidia enda draiverit. Tõenäoliselt tekib teil probleeme, kas teile sobib see?"
+
+msgid "Installed packages"
+msgstr "Installeeritud paketid"
+
+msgid "Add profile"
+msgstr "Lisa profiil"
+
+msgid "Edit profile"
+msgstr "Muuda profiili"
+
+msgid "Delete profile"
+msgstr "Kustuta profiil"
+
+msgid "Profile name: "
+msgstr "Profiili nimi: "
+
+msgid "The profile name you entered is already in use. Try again"
+msgstr "Sisestatud profiili nimi on juba kasutuses. Proovi uuesti"
+
+msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+msgstr "Selle profiiliga paigaldatavad paketid (tühikuga eraldatud, jäta tühjaks, et jätta vahele): "
+
+msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+msgstr "Selle profiiliga lubatavad teenused (tühikuga eraldatud, jäta tühjaks, kui soovid vahele jätta): "
+
+msgid "Should this profile be enabled for installation?"
+msgstr "Kas see profiil peaks olema paigaldamiseks lubatud?"
+
+msgid "Create your own"
+msgstr "Loo oma"
+
+msgid ""
+"\n"
+"Select a graphics driver or leave blank to install all open-source drivers"
+msgstr ""
+"\n"
+"Vali graafikadraiver või jäta tühjaks, et paigaldada kõik avatud lähtekoodiga draiverid"
+
+msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
+msgstr "Sway vajab juurdepääsu teie seatile (riistvaraseadmete kogum, st klaviatuur, hiir jne."
+
+msgid ""
+"\n"
+"\n"
+"Choose an option to give Sway access to your hardware"
+msgstr ""
+"\n"
+"\n"
+"Valige valik, et anda Sway'le juurdepääs teie riistvarale"
+
+msgid "Graphics driver"
+msgstr "Graafika draiver"
+
+msgid "Greeter"
+msgstr "Tervitaja"
+
+msgid "Please chose which greeter to install"
+msgstr "Palun valige millist tervitajat installida"
+
+msgid "This is a list of pre-programmed default_profiles"
+msgstr "See on eelnevalt programmeeritud vaikimisi_profiilide nimekiri"
+
+msgid "Disk configuration"
+msgstr "Ketta konfiguratsioon"
+
+msgid "Profiles"
+msgstr "Profiilid"
+
+msgid "Finding possible directories to save configuration files ..."
+msgstr "Võimalike kataloogide leidmine konfiguratsioonifailide salvestamiseks ..."
+
+msgid "Select directory (or directories) for saving configuration files"
+msgstr "Konfigureerimisfailide salvestamise kataloogi (või kataloogide) valimine"
+
+msgid "Add a custom mirror"
+msgstr "Lisa kohandatud peegel"
+
+msgid "Change custom mirror"
+msgstr "Muuda kohandatud peeglit"
+
+msgid "Delete custom mirror"
+msgstr "Kustuta kohandadtud peeglit"
+
+msgid "Enter name (leave blank to skip): "
+msgstr "Sisesta nimi (jätke tühjaks, et vahele jätta): "
+
+msgid "Enter url (leave blank to skip): "
+msgstr "Sisesta url (jätke tühjaks, et vahele jätta): "
+
+msgid "Select signature check option"
+msgstr "Valige allkirja kontrollimise võimalus"
+
+msgid "Select signature option"
+msgstr "Valige allkirja valik"
+
+msgid "Custom mirrors"
+msgstr "Kohandatud peegel"
+
+msgid "Defined"
+msgstr "Defineeritud"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Salvesta kasutaja konfiguratsioon (kaasa arvatud plaadi paigutus)"
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+"Sisestage salvestatava(te) konfiguratsiooni(de) kataloog (vahekaartide täitmine lubatud)\n"
+"Salvesta kataloog: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+"Kas soovite salvestada {} konfiguratsioonifaili(d) järgmisesse asukohta?\n"
+"\n"
+"{}"
+
+msgid "Saving {} configuration files to {}"
+msgstr "{} konfiguratsioonifailide salvestamine {}"
+
+msgid "Mirrors"
+msgstr "Peeglid"
+
+msgid "Mirror regions"
+msgstr "Peegel regioonid"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - Maksimaalne väärtus   : {max_downloads} ( Võimaldab {max_downloads} paralleelset allalaadimist, lubab {max_downloads+1} allalaadimist korraga )"
+
+#, fuzzy
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "Vale sisestus! Proovige uuesti kehtiva sisendiga [1 {max_downloads} või 0 keelamiseks]."
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "Kasutage NetworkManagerit (vajalik interneti graafiliseks konfigureerimiseks GNOME-s ja KDE-s)."

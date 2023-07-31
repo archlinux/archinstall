@@ -18,12 +18,9 @@ from .lib import profile
 from .lib import interactions
 from . import default_profiles
 
-from .lib.hardware import SysInfo, AVAILABLE_GFX_DRIVERS
+from .lib.hardware import SysInfo, GfxDriver
 from .lib.installer import Installer, accessibility_tools_in_use
-from .lib.output import (
-	FormattedOutput, log, error,
-	check_log_permissions, debug, warn, info
-)
+from .lib.output import FormattedOutput, log, error, debug, warn, info
 from .lib.storage import storage
 from .lib.global_menu import GlobalMenu
 from .lib.boot import Boot
@@ -33,7 +30,7 @@ from .lib.configuration import ConfigurationOutput
 
 from .lib.general import (
 	generate_password, locate_binary, clear_vt100_escape_codes,
-	JsonEncoder, JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
+	JSON, UNSAFE_JSON, SysCommandWorker, SysCommand,
 	run_custom_user_commands, json_stream_to_structure, secret
 )
 
@@ -42,15 +39,13 @@ if TYPE_CHECKING:
 	_: Any
 
 
-__version__ = "2.5.6"
+__version__ = "2.6.0"
 storage['__version__'] = __version__
 
 
 # add the custome _ as a builtin, it can now be used anywhere in the
 # project to mark strings as translatable with _('translate me')
 DeferredTranslation.install()
-
-check_log_permissions()
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
 debug(f"Hardware model detected: {SysInfo.sys_vendor()} {SysInfo.product_name()}; UEFI mode: {SysInfo.has_uefi()}")
@@ -150,12 +145,12 @@ def cleanup_empty_args(args: Union[Namespace, Dict]) -> Dict:
 	Takes arguments (dictionary or argparse Namespace) and removes any
 	None values. This ensures clean mergers during dict.update(args)
 	"""
-	if type(args) == Namespace:
+	if type(args) is Namespace:
 		args = vars(args)
 
 	clean_args = {}
 	for key, val in args.items():
-		if type(val) == dict:
+		if isinstance(val, dict):
 			val = cleanup_empty_args(val)
 
 		if val is not None:
@@ -213,8 +208,7 @@ def load_config():
 	"""
 	from .lib.models import NetworkConfiguration
 
-	arguments.setdefault('sys-language', 'en_US')
-	arguments.setdefault('sys-encoding', 'utf-8')
+	arguments['locale_config'] = locale.LocaleConfiguration.parse_arg(arguments)
 
 	if (archinstall_lang := arguments.get('archinstall-language', None)) is not None:
 		arguments['archinstall-language'] = TranslationHandler().get_language_by_name(archinstall_lang)
@@ -231,10 +225,9 @@ def load_config():
 	if arguments.get('servers', None) is not None:
 		storage['_selected_servers'] = arguments.get('servers', None)
 
-	if arguments.get('nic', None) is not None:
-		handler = models.NetworkConfigurationHandler()
-		handler.parse_arguments(arguments.get('nic'))
-		arguments['nic'] = handler.configuration
+	if arguments.get('network_config', None) is not None:
+		config = NetworkConfiguration.parse_arg(arguments.get('network_config'))
+		arguments['network_config'] = config
 
 	if arguments.get('!users', None) is not None or arguments.get('!superusers', None) is not None:
 		users = arguments.get('!users', None)
@@ -243,6 +236,9 @@ def load_config():
 
 	if arguments.get('bootloader', None) is not None:
 		arguments['bootloader'] = models.Bootloader.from_arg(arguments['bootloader'])
+
+	if arguments.get('audio_config', None) is not None:
+		arguments['audio_config'] = models.AudioConfiguration.parse_arg(arguments['audio_config'])
 
 	if arguments.get('disk_encryption', None) is not None and disk_config is not None:
 		password = arguments.get('encryption_password', '')

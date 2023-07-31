@@ -53,7 +53,7 @@ class SwayProfile(XorgProfile):
 	@property
 	def services(self) -> List[str]:
 		if pref := self.custom_settings.get('seat_access', None):
-			return [pref.value]
+			return [pref]
 		return []
 
 	def _ask_seat_access(self):
@@ -72,10 +72,6 @@ class SwayProfile(XorgProfile):
 
 	def do_on_select(self):
 		self._ask_seat_access()
-
-	def preview_text(self) -> Optional[str]:
-		text = str(_('Environment type: {}')).format(self.profile_type.value)
-		return text + '\n' + self.packages_text()
 
 	def install(self, install_session: 'Installer'):
 		super().install(install_session)

@@ -187,8 +187,8 @@ class Luks2:
 
 		# Once we store the key as ../xyzloop.key systemd-cryptsetup can
 		# automatically load this key if we name the device to "xyzloop"
-		key_file_path = target_path / 'etc/cryptsetup-keys.d/' / self.mapper_name
-		key_file = key_file_path / '.key'
+		kf_path = Path(f'/etc/cryptsetup-keys.d/{self.mapper_name}.key')
+		key_file = target_path / kf_path.relative_to(kf_path.root)
 		crypttab_path = target_path / 'etc/crypttab'
 
 		if key_file.exists():
@@ -198,15 +198,15 @@ class Luks2:
 			else:
 				info(f'Key file {key_file} already exists, overriding')
 
-		key_file_path.mkdir(parents=True, exist_ok=True)
+		key_file.parent.mkdir(parents=True, exist_ok=True)
 
 		with open(key_file, "w") as keyfile:
 			keyfile.write(generate_password(length=512))
 
-		key_file_path.chmod(0o400)
+		key_file.chmod(0o400)
 
 		self._add_key(key_file)
-		self._crypttab(crypttab_path, key_file, options=["luks", "key-slot=1"])
+		self._crypttab(crypttab_path, kf_path, options=["luks", "key-slot=1"])
 
 	def _add_key(self, key_file: Path):
 		info(f'Adding additional key-file {key_file}')

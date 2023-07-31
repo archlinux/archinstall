@@ -1,15 +1,31 @@
 from __future__ import annotations
+import unicodedata
 
 from typing import Callable, Any, List, Iterator, Tuple, Optional, Dict, TYPE_CHECKING
 
 from .menu import Menu, MenuSelectionType
-from ..locale import set_keyboard_language
 from ..output import error
 from ..translationhandler import TranslationHandler, Language
 
 if TYPE_CHECKING:
 	_: Any
 
+def count_cjk_chars(string):
+	"Count the total number of CJK characters contained in a string"
+	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
+def cjkljust(string, width, fillbyte=' '):
+	"""Support left alignment of Chinese, Japanese, Korean text
+	>>> cjkljust('Hello', 15, '*')
+	'Hello**********'
+	>>> cjkljust('你好', 15, '*')
+	'你好***********'
+	>>> cjkljust('안녕하세요', 15, '*')
+	'안녕하세요*****'
+	>>> cjkljust('こんにちは', 15, '*')
+	'こんにちは*****'
+	"""
+	return string.ljust(width - count_cjk_chars(string), fillbyte)
 
 class Selector:
 	def __init__(
@@ -129,8 +145,8 @@ class Selector:
 
 		if current:
 			padding += 5
-			description = str(self._description).ljust(padding, ' ')
-			current = str(_('set: {}').format(current))
+			description = cjkljust(str(self._description), padding, ' ')
+			current = current
 		else:
 			description = self._description
 			current = ''
@@ -243,31 +259,6 @@ class AbstractMenu:
 		elif selector is not None and selector.has_selection():
 			self._data_store[selector_name] = selector.current_selection
 
-	def _missing_configs(self) -> List[str]:
-		def check(s):
-			return self._menu_options.get(s).has_selection()
-
-		def has_superuser() -> bool:
-			sel = self._menu_options['!users']
-			if sel.current_selection:
-				return any([u.sudo for u in sel.current_selection])
-			return False
-
-		mandatory_fields = dict(filter(lambda x: x[1].is_mandatory(), self._menu_options.items()))
-		missing = set()
-
-		for key, selector in mandatory_fields.items():
-			if key in ['!root-password', '!users']:
-				if not check('!root-password') and not has_superuser():
-					missing.add(
-						str(_('Either root-password or at least 1 user with sudo privileges must be specified'))
-					)
-			elif key == 'disk_config':
-				if not check('disk_config'):
-					missing.add(self._menu_options['disk_config'].description)
-
-		return list(missing)
-
 	def setup_selection_menu_options(self):
 		""" Define the menu options.
 			Menu options can be defined here in a subclass or done per program calling self.set_option()
@@ -328,9 +319,6 @@ class AbstractMenu:
 		cursor_pos = None
 
 		while True:
-			# Before continuing, set the preferred keyboard layout/language in the current terminal.
-			# 	This will just help the user with the next following questions.
-			self._set_kb_language()
 			enabled_menus = self._menus_to_enable()
 
 			padding = self._get_menu_text_padding(list(enabled_menus.values()))
@@ -424,13 +412,6 @@ class AbstractMenu:
 			return False
 
 		return True
-
-	def _set_kb_language(self):
-		""" general for ArchInstall"""
-		# Before continuing, set the preferred keyboard layout/language in the current terminal.
-		# This will just help the user with the next following questions.
-		if self._data_store.get('keyboard-layout', None) and len(self._data_store['keyboard-layout']):
-			set_keyboard_language(self._data_store['keyboard-layout'])
 
 	def _verify_selection_enabled(self, selection_name: str) -> bool:
 		""" general """

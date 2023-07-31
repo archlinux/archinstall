@@ -30,7 +30,7 @@ class CustomMirror:
 	sign_check: SignCheck
 	sign_option: SignOption
 
-	def as_json(self) -> Dict[str, str]:
+	def table_data(self) -> Dict[str, str]:
 		return {
 			'Name': self.name,
 			'Url': self.url,

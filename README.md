@@ -17,14 +17,19 @@ The installer also doubles as a python library to install Arch Linux and manage 
 
     $ sudo pacman -S archinstall
 
-Or simply `git clone` the repo as it has no external dependencies *(but there are optional ones)*.<br>
-Or use `pip install --upgrade archinstall` to use as a library.
+Alternative ways to install are `git clone` the repository or `pip install --upgrade archinstall`.
 
 ## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer
 
-Assuming you are on an Arch Linux live-ISO:
+Assuming you are on an Arch Linux live-ISO or installed via `pip`:
 
     # archinstall
+
+## Running the [guided](https://github.com/archlinux/archinstall/blob/master/archinstall/scripts/guided.py) installer using `git`
+
+    # cd archinstall-git
+    # cp archinstall/scripts/guided.py
+    # python guided.py
 
 #### Advanced
 Some additional options that are not needed by most users are hidden behind the `--advanced` flag.
@@ -58,6 +63,7 @@ Arabic
 Brazilian Portuguese
 Czech
 Dutch
+Estonian
 French
 Georgian
 German
@@ -200,13 +206,13 @@ If you want to test a commit, branch or bleeding edge release from the repositor
 you can replace the version of archinstall with a new version and run that with the steps described below:
 
 1. You need a working network connection
-2. Install the build requirements with `pacman -Sy; pacman -S git python-pip`
+2. Install the build requirements with `pacman -Sy; pacman -S git python-pip gcc pkgconf`
    *(note that this may or may not work depending on your RAM and current state of the squashfs maximum filesystem free space)*
 3. Uninstall the previous version of archinstall with `pip uninstall archinstall`
 4. Now clone the latest repository with `git clone https://github.com/archlinux/archinstall`
 5. Enter the repository with `cd archinstall`
    *At this stage, you can choose to check out a feature branch for instance with `git checkout v2.3.1-rc1`*
-6. Build the project and install it using `pip install`
+6. Build the project and install it using `pip install --break-operating-system .`
 
 After this, running archinstall with `python -m archinstall` will run against whatever branch you chose in step 5.
 
@@ -228,3 +234,8 @@ This will create a *20 GB* `testimage.img` and create a loop device which we can
 
 There's also a [Building and Testing](https://github.com/archlinux/archinstall/wiki/Building-and-Testing) guide.<br>
 It will go through everything from packaging, building and running *(with qemu)* the installer against a dev branch.
+
+
+# Contributing
+
+Please see [CONTRIBUTING.md](https://github.com/archlinux/archinstall/blob/master/CONTRIBUTING.md)

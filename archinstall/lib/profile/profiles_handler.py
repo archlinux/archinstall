@@ -11,7 +11,7 @@ from typing import List, TYPE_CHECKING, Any, Optional, Dict, Union
 
 from archinstall.default_profiles.profile import Profile, TProfile, GreeterType
 from .profile_model import ProfileConfiguration
-from ..hardware import AVAILABLE_GFX_DRIVERS
+from ..hardware import GfxDriver, GfxPackage
 from ..menu import MenuSelectionType, Menu, MenuSelection
 from ..networking import list_interfaces, fetch_data_from_url
 from ..output import error, debug, info, warn
@@ -98,14 +98,19 @@ class ProfileHandler:
 			profile = self.get_profile_by_name(main) if main else None
 
 		valid: List[Profile] = []
+		details: List[str] = profile_config.get('details', [])
+		if details:
+			valid = []
+			invalid = []
 
-		if details := profile_config.get('details', []):
-			resolved = {detail: self.get_profile_by_name(detail) for detail in details if detail}
-			valid = [p for p in resolved.values() if p is not None]
-			invalid = ', '.join([k for k, v in resolved.items() if v is None])
+			for detail in filter(None, details):
+				if profile := self.get_profile_by_name(detail):
+					valid.append(profile)
+				else:
+					invalid.append(detail)
 
 			if invalid:
-				info(f'No profile definition found: {invalid}')
+				info('No profile definition found: {}'.format(', '.join(invalid)))
 
 		custom_settings = profile_config.get('custom_settings', {})
 		for profile in valid:
@@ -123,14 +128,12 @@ class ProfileHandler:
 		"""
 		List of all available default_profiles
 		"""
-		if self._profiles is None:
-			self._profiles = self._find_available_profiles()
+		self._profiles = self._profiles or self._find_available_profiles()
 		return self._profiles
 
 	@cached_property
 	def _local_mac_addresses(self) -> List[str]:
-		ifaces = list_interfaces()
-		return list(ifaces.keys())
+		return list(list_interfaces())
 
 	def add_custom_profiles(self, profiles: Union[TProfile, List[TProfile]]):
 		if not isinstance(profiles, list):
@@ -188,22 +191,22 @@ class ProfileHandler:
 		if service:
 			install_session.enable_service(service)
 
-	def install_gfx_driver(self, install_session: 'Installer', driver: str):
+	def install_gfx_driver(self, install_session: 'Installer', driver: Optional[GfxDriver]):
 		try:
-			driver_pkgs = AVAILABLE_GFX_DRIVERS[driver] if driver else []
-			additional_pkg = ' '.join(['xorg-server', 'xorg-xinit'] + driver_pkgs)
 
 			if driver is not None:
-				if 'nvidia' in driver:
-					if "linux-zen" in install_session.base_packages or "linux-lts" in install_session.base_packages:
-						for kernel in install_session.kernels:
-							# Fixes https://github.com/archlinux/archinstall/issues/585
-							install_session.add_additional_packages(f"{kernel}-headers")
+				driver_pkgs = driver.packages()
+				pkg_names = [p.value for p in driver_pkgs]
+				for driver_pkg in {GfxPackage.Nvidia, GfxPackage.NvidiaOpen} & set(driver_pkgs):
+					for kernel in {"linux-lts", "linux-zen"} & set(install_session.kernels):
+						# Fixes https://github.com/archlinux/archinstall/issues/585
+						install_session.add_additional_packages(f"{kernel}-headers")
 
 						# I've had kernel regen fail if it wasn't installed before nvidia-dkms
-						install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', 'nvidia-dkms'])
-						return
-				elif 'amdgpu' in driver_pkgs:
+					install_session.add_additional_packages(['dkms', 'xorg-server', 'xorg-xinit', f'{driver_pkg.value}-dkms'])
+					# Return after first driver match, since it is impossible to use both simultaneously.
+					return
+				if 'amdgpu' in driver_pkgs:
 					# The order of these two are important if amdgpu is installed #808
 					if 'amdgpu' in install_session.modules:
 						install_session.modules.remove('amdgpu')
@@ -213,23 +216,24 @@ class ProfileHandler:
 						install_session.modules.remove('radeon')
 					install_session.modules.append('radeon')
 
-			install_session.add_additional_packages(additional_pkg)
+				install_session.add_additional_packages(pkg_names)
 		except Exception as err:
 			warn(f"Could not handle nvidia and linuz-zen specific situations during xorg installation: {err}")
 			# Prep didn't run, so there's no driver to install
-			install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
+		install_session.add_additional_packages(['xorg-server', 'xorg-xinit'])
 
 	def install_profile_config(self, install_session: 'Installer', profile_config: ProfileConfiguration):
 		profile = profile_config.profile
 
-		if profile:
-			profile.install(install_session)
+		if not profile:
+			return
 
-		if profile and profile_config.gfx_driver:
-			if profile.is_xorg_type_profile() or profile.is_desktop_type_profile():
-				self.install_gfx_driver(install_session, profile_config.gfx_driver)
+		profile.install(install_session)
 
-		if profile and profile_config.greeter:
+		if profile_config.gfx_driver and (profile.is_xorg_type_profile() or profile.is_desktop_type_profile()):
+			self.install_gfx_driver(install_session, profile_config.gfx_driver)
+
+		if profile_config.greeter:
 			self.install_greeter(install_session, profile_config.greeter)
 
 	def _import_profile_from_url(self, url: str):
@@ -307,8 +311,7 @@ class ProfileHandler:
 		debug(f'Importing profile: {file}')
 
 		try:
-			spec = importlib.util.spec_from_file_location(name, file)
-			if spec is not None:
+			if spec := importlib.util.spec_from_file_location(name, file):
 				imported = importlib.util.module_from_spec(spec)
 				if spec.loader is not None:
 					spec.loader.exec_module(imported)

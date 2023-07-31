@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Copy ISO network configuration to installation"
 msgstr ""
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr ""
 
 msgid "Select one network interface to configure"
@@ -747,14 +747,13 @@ msgstr ""
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr ""
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
 msgstr ""
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
@@ -1016,4 +1015,66 @@ msgid "Finding possible directories to save configuration files ..."
 msgstr ""
 
 msgid "Select directory (or directories) for saving configuration files"
+msgstr ""
+
+msgid "Add a custom mirror"
+msgstr ""
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+msgid "Enter name (leave blank to skip): "
+msgstr ""
+
+msgid "Enter url (leave blank to skip): "
+msgstr ""
+
+msgid "Select signature check option"
+msgstr ""
+
+msgid "Select signature option"
+msgstr ""
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+msgid "Save user configuration (including disk layout)"
+msgstr ""
+
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr ""
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+msgid "Saving {} configuration files to {}"
+msgstr ""
+
+msgid "Mirrors"
+msgstr ""
+
+msgid "Mirror regions"
+msgstr ""
+
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr ""
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr ""
+
+msgid "Locales"
+msgstr ""
+
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr ""

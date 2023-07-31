@@ -11,14 +11,16 @@ from .storage import storage
 
 
 class FormattedOutput:
+
 	@classmethod
-	def values(
+	def _get_values(
 		cls,
 		o: Any,
 		class_formatter: Optional[Union[str, Callable]] = None,
 		filter_list: List[str] = []
 	) -> Dict[str, Any]:
-		""" the original values returned a dataclass as dict thru the call to some specific methods
+		"""
+		the original values returned a dataclass as dict thru the call to some specific methods
 		this version allows thru the parameter class_formatter to call a dynamicly selected formatting method.
 		Can transmit a filter list to the class_formatter,
 		"""
@@ -33,8 +35,8 @@ class FormattedOutput:
 				return func(filter_list)
 
 			raise ValueError('Unsupported formatting call')
-		elif hasattr(o, 'as_json'):
-			return o.as_json()
+		elif hasattr(o, 'table_data'):
+			return o.table_data()
 		elif hasattr(o, 'json'):
 			return o.json()
 		elif is_dataclass(o):
@@ -58,7 +60,7 @@ class FormattedOutput:
 		is for compatibility with a print statement
 		As_table_filter can be a drop in replacement for as_table
 		"""
-		raw_data = [cls.values(o, class_formatter, filter_list) for o in obj]
+		raw_data = [cls._get_values(o, class_formatter, filter_list) for o in obj]
 
 		# determine the maximum column size
 		column_width: Dict[str, int] = {}
@@ -92,18 +94,24 @@ class FormattedOutput:
 			for key in filter_list:
 				width = column_width.get(key, len(key))
 				value = record.get(key, '')
+
 				if '!' in key:
 					value = '*' * width
-				if isinstance(value,(int, float)) or (isinstance(value, str) and value.isnumeric()):
+
+				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
 					obj_data.append(str(value).rjust(width))
 				else:
 					obj_data.append(str(value).ljust(width))
+
 			output += ' | '.join(obj_data) + '\n'
 
 		return output
 
 	@classmethod
 	def as_columns(cls, entries: List[str], cols: int) -> str:
+		"""
+		Will format a list into a given number of columns
+		"""
 		chunks = []
 		output = ''
 
@@ -135,28 +143,30 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def check_log_permissions():
+def _check_log_permissions():
 	filename = storage.get('LOG_FILE', None)
+	log_dir = storage.get('LOG_PATH', Path('./'))
 
 	if not filename:
-		return
+		raise ValueError('No log file name defined')
 
-	log_dir = storage.get('LOG_PATH', Path('./'))
-	absolute_logfile = log_dir / filename
+	log_file = log_dir / filename
 
 	try:
 		log_dir.mkdir(exist_ok=True, parents=True)
-		with absolute_logfile.open('a') as fp:
+		log_file.touch(exist_ok=True)
+
+		with log_file.open('a') as fp:
 			fp.write('')
 	except PermissionError:
 		# Fallback to creating the log file in the current folder
-		fallback_log_file = Path('./').absolute() / filename
-		absolute_logfile = fallback_log_file
-		absolute_logfile.mkdir(exist_ok=True, parents=True)
-		storage['LOG_PATH'] = Path('./').absolute()
+		fallback_dir = Path('./').absolute()
+		fallback_log_file = fallback_dir / filename
 
-		err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
-		warn(err_string)
+		fallback_log_file.touch(exist_ok=True)
+
+		storage['LOG_PATH'] = fallback_dir
+		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
 
 
 def _supports_color() -> bool:
@@ -248,6 +258,7 @@ def info(
 ):
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
 
+
 def debug(
 	*msgs: str,
 	level: int = logging.DEBUG,
@@ -257,6 +268,7 @@ def debug(
 	font: List[Font] = []
 ):
 	log(*msgs, level=level, fg=fg, bg=bg, reset=reset, font=font)
+
 
 def error(
 	*msgs: str,
@@ -288,6 +300,10 @@ def log(
 	reset: bool = False,
 	font: List[Font] = []
 ):
+	# leave this check here as we need to setup the logging
+	# right from the beginning when the modules are loaded
+	_check_log_permissions()
+
 	text = orig_string = ' '.join([str(x) for x in msgs])
 
 	# Attempt to colorize the output if supported
@@ -295,20 +311,18 @@ def log(
 	if _supports_color():
 		text = _stylize_output(text, fg, bg, reset, font)
 
-	# If a logfile is defined in storage,
-	# we use that one to output everything
-	if filename := storage.get('LOG_FILE', None):
-		log_dir = storage.get('LOG_PATH', Path('./'))
-		absolute_logfile = log_dir / filename
+	log_file: Path = storage['LOG_PATH'] / storage['LOG_FILE']
 
-		with open(absolute_logfile, 'a') as fp:
-			fp.write(f"{orig_string}\n")
+	with log_file.open('a') as fp:
+		fp.write(f"{orig_string}\n")
 
 	Journald.log(text, level=level)
 
-	# Finally, print the log unless we skipped it based on level.
-	# We use sys.stdout.write()+flush() instead of print() to try and
-	# fix issue #94
-	if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
-		sys.stdout.write(f"{text}\n")
-		sys.stdout.flush()
+	from .menu import Menu
+	if not Menu.is_menu_active():
+		# Finally, print the log unless we skipped it based on level.
+		# We use sys.stdout.write()+flush() instead of print() to try and
+		# fix issue #94
+		if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
+			sys.stdout.write(f"{text}\n")
+			sys.stdout.flush()

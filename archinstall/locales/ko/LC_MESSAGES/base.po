@@ -62,7 +62,7 @@ msgstr "설치할 추가 패키지 작성하세요 (띄어쓰기로 구분, 건�
 msgid "Copy ISO network configuration to installation"
 msgstr "ISO 네트워크 구성을 설치에 복사"
 
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
 msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
 
 msgid "Select one network interface to configure"
@@ -794,18 +794,17 @@ msgstr "구성된 {} 인터페이스"
 msgid "This option enables the number of parallel downloads that can occur during installation"
 msgstr "이 옵션은 설치 중에 발생할 수 있는 병렬 다운로드 수를 활성화합니다"
 
-#, python-brace-format
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {max_downloads})\n"
+" (Enter a value between 1 to {})\n"
 "Note:"
 msgstr ""
 "활성화할 병렬 다운로드 수를 입력하세요.\n"
-" (1 부터 {max_downloads} 까지의 숫자중 하나를 입력하세요)\n"
+" (1 부터 {} 까지의 숫자중 하나를 입력하세요)\n"
 "메모:"
 
-msgid " - Maximum value   : {max_downloads} ( Allows {max_downloads} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 최댓값   : {max_downloads} ( {max_downloads} 개의 병렬 다운로드 허용, 한 번에 {max_downloads+1} 개의 다운로드 허용 )"
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {} 개의 다운로드 허용 )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
 msgstr " - 최솟값   : 1 ( 1 개의 병렬 다운로드 허용, 한 번에 2 개의 다운로드 허용 )"
@@ -813,9 +812,9 @@ msgstr " - 최솟값   : 1 ( 1 개의 병렬 다운로드 허용, 한 번에 2 �
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - 비활성화/기본 : - ( 병렬 다운로드 비활성화, 한 번에 1 개의 다운로드만 허용 )"
 
-#, python-brace-format
+#, fuzzy, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {max_downloads} 까지, 비활성화 하려면 0]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"
 
 msgid "Parallel Downloads"
 msgstr "병렬 다운로드"
@@ -1110,3 +1109,77 @@ msgstr ""
 #, fuzzy
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "사용하고 구성할 하드 드라이브를 하나 이상 선택하세요"
+
+#, fuzzy
+msgid "Add a custom mirror"
+msgstr "사용자 추가"
+
+msgid "Change custom mirror"
+msgstr ""
+
+msgid "Delete custom mirror"
+msgstr ""
+
+#, fuzzy
+msgid "Enter name (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Enter url (leave blank to skip): "
+msgstr "사용자명 입력 (공백일 경우 스킵): "
+
+#, fuzzy
+msgid "Select signature check option"
+msgstr "추가할 인터페이스 선택"
+
+#, fuzzy
+msgid "Select signature option"
+msgstr "추가할 인터페이스 선택"
+
+msgid "Custom mirrors"
+msgstr ""
+
+msgid "Defined"
+msgstr ""
+
+#, fuzzy
+msgid "Save user configuration (including disk layout)"
+msgstr "사용자 구성 저장"
+
+#, fuzzy
+msgid ""
+"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+"Save directory: "
+msgstr "저장할 구성의 디렉토리를 입력하세요: "
+
+msgid ""
+"Do you want to save {} configuration file(s) in the following location?\n"
+"\n"
+"{}"
+msgstr ""
+
+#, fuzzy
+msgid "Saving {} configuration files to {}"
+msgstr "구성 저장"
+
+#, fuzzy
+msgid "Mirrors"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid "Mirror regions"
+msgstr "미러 위치"
+
+#, fuzzy
+msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+msgstr " - 최댓값   : {} ( {} 개의 병렬 다운로드 허용, 한 번에 {} 개의 다운로드 허용 )"
+
+msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+msgstr "잘못된 값입니다! 유효한 값으로 다시 시도해주세요 [1 부터 {} 까지, 비활성화 하려면 0]"
+
+msgid "Locales"
+msgstr ""
+
+#, fuzzy
+msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+msgstr "NetworkManager 사용 (GNOME 이나 KDE 에서 그래픽으로 인터넷을 구성하는 데 필요)"
