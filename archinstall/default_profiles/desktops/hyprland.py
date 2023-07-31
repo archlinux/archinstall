@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 class SeatAccess(Enum):
 	seatd = 'seatd'
-	logind = 'systemd-logind'
 
 
 class HyperlandProfile(XorgProfile):
@@ -41,18 +40,33 @@ class HyperlandProfile(XorgProfile):
 		return []
 
 	def _ask_seat_access(self):
-		# need to activate seat service and add to seat group
-		title = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
-		title += str(_('\n\nChoose an option to give Hyprland access to your hardware'))
+		"""need to activate seat service and add to seat group"""
 
-		options = [e.value for e in SeatAccess]
-		default = None
+		# title = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		# title += str(_('\n\nChoose an option to give Hyprland access to your hardware'))
 
-		if seat := self.custom_settings.get('seat_access', None):
-			default = seat
+		# options = [e.value for e in SeatAccess]
+		# default = None
 
-		choice = Menu(title, options, skip=False, preset_values=default).run()
-		self.custom_settings['seat_access'] = choice.single_value
+		# if seat := self.custom_settings.get('seat_access', None):
+		# 	default = seat
+
+		# choice = Menu(title, options, skip=False, preset_values=default).run()
+		# self.custom_settings['seat_access'] = choice.single_value
+		# self.custom_settings['seat_access'] = SeatAccess.seatd# need to activate seat service and add to seat group
+		# title = str(_('Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)'))
+		# title += str(_('\n\nChoose an option to give Hyprland access to your hardware'))
+
+		# options = [e.value for e in SeatAccess]
+		# default = None
+
+		# if seat := self.custom_settings.get('seat_access', None):
+		# 	default = seat
+
+		# choice = Menu(title, options, skip=False, preset_values=default).run()
+		# self.custom_settings['seat_access'] = choice.single_value
+
+		self.custom_settings['seat_access'] = SeatAccess.seatd
 
 	def do_on_select(self):
 		self._ask_seat_access()
