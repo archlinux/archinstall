@@ -34,6 +34,11 @@ class MenuSelection:
 
 
 class Menu(TerminalMenu):
+	_menu_is_active: bool = False
+
+	@staticmethod
+	def is_menu_active() -> bool:
+		return Menu._menu_is_active
 
 	@classmethod
 	def back(cls) -> str:
@@ -260,6 +265,8 @@ class Menu(TerminalMenu):
 			return MenuSelection(type_=MenuSelectionType.Skip)
 
 	def run(self) -> MenuSelection:
+		Menu._menu_is_active = True
+
 		selection = self._show()
 
 		if selection.type_ == MenuSelectionType.Reset:
@@ -276,6 +283,8 @@ class Menu(TerminalMenu):
 			if selection.value == self.back():
 				selection.type_ = MenuSelectionType.Skip
 				selection.value = None
+
+		Menu._menu_is_active = False
 
 		return selection
 

@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: wc7086 <190022474@qq.com>\n"
+"Last-Translator: yetist <yetist@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] 日志文件已在此处创建：{} {}"
@@ -809,9 +809,9 @@ msgstr " - 最小值：1（允许 1 个并行下载，同时允许 2 个下载�
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
 msgstr " - 禁用/默认值：0（禁用并行下载，同时只允许 1 个下载）"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
+msgstr "输入无效！ 使用有效输入重试 [1 到 {max_downloads}，或 0 禁用]"
 
 msgid "Parallel Downloads"
 msgstr "并行下载"
@@ -904,7 +904,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "此分区当前已加密，要格式化它必须指定文件系统"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * 分区挂载点是相对于安装目录内部的，例如引导分区（boot）的挂载点为 /boot。"
+msgstr "分区挂载点是相对于安装目录内部的，例如引导分区（boot）的挂载点为 /boot。"
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "如果设置了挂载点 /boot，则该分区也将被标记为可引导。"
@@ -1070,76 +1070,69 @@ msgstr "正在查找可能用于保存配置文件的目录 ..."
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "选择一个或多个硬盘驱动器来使用和配置"
 
-#, fuzzy
 msgid "Add a custom mirror"
-msgstr "添加一个用户"
+msgstr "添加自定义镜像"
 
 msgid "Change custom mirror"
-msgstr ""
+msgstr "更改自定义镜像"
 
 msgid "Delete custom mirror"
-msgstr ""
+msgstr "删除自定义镜像"
 
-#, fuzzy
 msgid "Enter name (leave blank to skip): "
 msgstr "输入用户名（留空跳过）： "
 
-#, fuzzy
 msgid "Enter url (leave blank to skip): "
-msgstr "输入用户名（留空跳过）： "
+msgstr "输入网址（留空跳过）： "
 
-#, fuzzy
 msgid "Select signature check option"
-msgstr "选择要添加的接口"
+msgstr "选择签名检查选项"
 
-#, fuzzy
 msgid "Select signature option"
-msgstr "选择要添加的接口"
+msgstr "选择签名选项"
 
 msgid "Custom mirrors"
-msgstr ""
+msgstr "自定义镜像"
 
 msgid "Defined"
-msgstr ""
+msgstr "已定义"
 
-#, fuzzy
 msgid "Save user configuration (including disk layout)"
-msgstr "保存用户配置"
+msgstr "保存用户配置（包括磁盘布局）"
 
-#, fuzzy
 msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
-msgstr "输入要保存配置的目录： "
+msgstr ""
+"输入要保存配置的目录（制表符可补全）\n"
+"保存目录： "
 
 msgid ""
 "Do you want to save {} configuration file(s) in the following location?\n"
 "\n"
 "{}"
 msgstr ""
+"您想将 {} 个配置文件保存在以下位置吗？\n"
+"\n"
+"{}"
 
-#, fuzzy
 msgid "Saving {} configuration files to {}"
-msgstr "保存配置"
+msgstr "将 {} 配置文件保存到 {}"
 
-#, fuzzy
 msgid "Mirrors"
-msgstr "镜像区域"
+msgstr "镜像"
 
-#, fuzzy
 msgid "Mirror regions"
 msgstr "镜像区域"
 
-#, fuzzy
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - 最大值：{}（允许 {} 次并行下载，一次允许 {} 次下载）"
+msgstr " - 最大值：{}（允许 {} 个并行下载，每次允许 {max_downloads+1} 个下载）"
 
 msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "输入无效！ 使用有效输入重试 [1 到 {}，或 0 到禁用]"
 
 msgid "Locales"
-msgstr ""
+msgstr "区域设置"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置 Internet 所必需的）"
+msgstr "使用 NetworkManager（在 GNOME 和 KDE 中以图形方式配置互联网所必需）"

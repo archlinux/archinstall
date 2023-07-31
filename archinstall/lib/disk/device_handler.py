@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import time
+import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
@@ -23,7 +24,7 @@ from .device_model import (
 from ..exceptions import DiskError, UnknownFilesystemFormat
 from ..general import SysCommand, SysCallError, JSON
 from ..luks import Luks2
-from ..output import debug, error, info, warn
+from ..output import debug, error, info, warn, log
 from ..utils.util import is_subpath
 
 if TYPE_CHECKING:
@@ -584,7 +585,10 @@ class DeviceHandler(object):
 			debug(f'Calling partprobe: {command}')
 			SysCommand(command)
 		except SysCallError as err:
-			error(f'"{command}" failed to run: {err}')
+			if 'have been written, but we have been unable to inform the kernel of the change' in str(err):
+				log(f"Partprobe was not able to inform the kernel of the new disk state (ignoring error): {err}", fg="gray", level=logging.INFO)
+			else:
+				error(f'"{command}" failed to run (continuing anyway): {err}')
 
 	def _wipe(self, dev_path: Path):
 		"""

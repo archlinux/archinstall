@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Union, Dict, TYPE_CHECKING
+from typing import Any, List, Optional, Dict, TYPE_CHECKING
 
 from . import disk
 from .general import secret
 from .locale.locale_menu import LocaleConfiguration, LocaleMenu
 from .menu import Selector, AbstractMenu
 from .mirrors import MirrorConfiguration, MirrorMenu
-from .models import NetworkConfiguration
+from .models import NetworkConfiguration, NicType
 from .models.bootloader import Bootloader
+from .models.audio_configuration import Audio, AudioConfiguration
 from .models.users import User
 from .output import FormattedOutput
 from .profile.profile_menu import ProfileConfiguration
@@ -109,12 +110,11 @@ class GlobalMenu(AbstractMenu):
 				display_func=lambda x: x.profile.name if x else '',
 				preview_func=self._prev_profile
 			)
-		self._menu_options['audio'] = \
+		self._menu_options['audio_config'] = \
 			Selector(
 				_('Audio'),
 				lambda preset: self._select_audio(preset),
-				display_func=lambda x: x if x else '',
-				default=None
+				display_func=lambda x: self._display_audio(x)
 			)
 		self._menu_options['parallel downloads'] = \
 			Selector(
@@ -142,7 +142,7 @@ class GlobalMenu(AbstractMenu):
 				lambda preset: select_additional_repositories(preset),
 				display_func=lambda x: ', '.join(x) if x else None,
 				default=[])
-		self._menu_options['nic'] = \
+		self._menu_options['network_config'] = \
 			Selector(
 				_('Network configuration'),
 				lambda preset: ask_to_configure_network(preset),
@@ -221,14 +221,11 @@ class GlobalMenu(AbstractMenu):
 			return _('Install ({} config(s) missing)').format(missing)
 		return _('Install')
 
-	def _display_network_conf(self, cur_value: Union[NetworkConfiguration, List[NetworkConfiguration]]) -> str:
-		if not cur_value:
-			return _('Not configured, unavailable unless setup manually')
-		else:
-			if isinstance(cur_value, list):
-				return str(_('Configured {} interfaces')).format(len(cur_value))
-			else:
-				return str(cur_value)
+	def _display_network_conf(self, config: Optional[NetworkConfiguration]) -> str:
+		if not config:
+			return str(_('Not configured, unavailable unless setup manually'))
+
+		return config.type.display_msg()
 
 	def _disk_encryption(self, preset: Optional[disk.DiskEncryption]) -> Optional[disk.DiskEncryption]:
 		mods: Optional[List[disk.DeviceModification]] = self._menu_options['disk_config'].current_selection
@@ -257,11 +254,11 @@ class GlobalMenu(AbstractMenu):
 		return None
 
 	def _prev_network_config(self) -> Optional[str]:
-		selector = self._menu_options['nic']
-		if selector.has_selection():
-			ifaces = selector.current_selection
-			if isinstance(ifaces, list):
-				return FormattedOutput.as_table(ifaces)
+		selector: Optional[NetworkConfiguration] = self._menu_options['network_config'].current_selection
+		if selector:
+			if selector.type == NicType.MANUAL:
+				output = FormattedOutput.as_table(selector.nics)
+				return output
 		return None
 
 	def _prev_additional_pkgs(self):
@@ -424,13 +421,18 @@ class GlobalMenu(AbstractMenu):
 		profile_config = ProfileMenu(store, preset=current_profile).run()
 		return profile_config
 
-	def _select_audio(self, current: Union[str, None]) -> Optional[str]:
-		profile_config: Optional[ProfileConfiguration] = self._menu_options['profile_config'].current_selection
-		if profile_config and profile_config.profile:
-			is_desktop = profile_config.profile.is_desktop_profile() if profile_config else False
-			selection = ask_for_audio_selection(is_desktop, current)
-			return selection
-		return None
+	def _select_audio(
+		self,
+		current: Optional[AudioConfiguration] = None
+	) -> Optional[AudioConfiguration]:
+		selection = ask_for_audio_selection(current)
+		return selection
+
+	def _display_audio(self, current: Optional[AudioConfiguration]) -> str:
+		if not current:
+			return Audio.no_audio_text()
+		else:
+			return current.audio.name
 
 	def _create_user_account(self, defined_users: List[User]) -> List[User]:
 		users = ask_for_additional_users(defined_users=defined_users)

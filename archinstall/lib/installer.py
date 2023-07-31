@@ -19,7 +19,7 @@ from .locale import verify_keyboard_layout, verify_x11_keyboard_layout
 from .luks import Luks2
 from .mirrors import use_mirrors, MirrorConfiguration, add_custom_mirrors
 from .models.bootloader import Bootloader
-from .models.network_configuration import NetworkConfiguration
+from .models.network_configuration import Nic
 from .models.users import User
 from .output import log, error, info, warn, debug
 from . import pacman
@@ -172,7 +172,7 @@ class Installer:
 				)
 
 	def sanity_check(self):
-		self._verify_boot_part()
+		# self._verify_boot_part()
 		self._verify_service_stop()
 
 	def mount_ordered_layout(self):
@@ -366,7 +366,7 @@ class Installer:
 		with open(f'{self.target}/etc/hostname', 'w') as fh:
 			fh.write(hostname + '\n')
 
-	def set_locale(self, locale_config: LocaleConfiguration):
+	def set_locale(self, locale_config: LocaleConfiguration) -> bool:
 		modifier = ''
 		lang = locale_config.sys_lang
 		encoding = locale_config.sys_enc
@@ -386,15 +386,32 @@ class Installer:
 			modifier = f"@{modifier}"
 		# - End patch
 
-		with open(f'{self.target}/etc/locale.gen', 'a') as fh:
-			fh.write(f'{lang}.{encoding}{modifier} {encoding}\n')
+		locale_gen = self.target / 'etc/locale.gen'
+		locale_gen_lines = locale_gen.read_text().splitlines(True)
 
-		(self.target / "etc" / "locale.conf").write_text(f'LANG={lang}.{encoding}{modifier}\n')
+		# A locale entry in /etc/locale.gen may or may not contain the encoding
+		# in the first column of the entry; check for both cases.
+		entry_re = re.compile(rf'#{lang}(\.{encoding})?{modifier} {encoding}')
+
+		for index, line in enumerate(locale_gen_lines):
+			if entry_re.match(line):
+				uncommented_line = line.removeprefix('#')
+				locale_gen_lines[index] = uncommented_line
+				locale_gen.write_text(''.join(locale_gen_lines))
+				lang_value = uncommented_line.split()[0]
+				break
+		else:
+			error(f"Invalid locale: language '{locale_config.sys_lang}', encoding '{locale_config.sys_enc}'")
+			return False
 
 		try:
 			SysCommand(f'/usr/bin/arch-chroot {self.target} locale-gen')
 		except SysCallError as e:
 			error(f'Failed to run locale-gen on target: {e}')
+			return False
+
+		(self.target / 'etc/locale.conf').write_text(f'LANG={lang_value}\n')
+		return True
 
 	def set_timezone(self, zone :str, *args :str, **kwargs :str) -> bool:
 		if not zone:
@@ -458,20 +475,20 @@ class Installer:
 	def drop_to_shell(self) -> None:
 		subprocess.check_call(f"/usr/bin/arch-chroot {self.target}", shell=True)
 
-	def configure_nic(self, network_config: NetworkConfiguration) -> None:
-		conf = network_config.as_systemd_config()
+	def configure_nic(self, nic: Nic):
+		conf = nic.as_systemd_config()
 
 		for plugin in plugins.values():
 			if hasattr(plugin, 'on_configure_nic'):
 				conf = plugin.on_configure_nic(
-					network_config.iface,
-					network_config.dhcp,
-					network_config.ip,
-					network_config.gateway,
-					network_config.dns
+					nic.iface,
+					nic.dhcp,
+					nic.ip,
+					nic.gateway,
+					nic.dns
 				) or conf
 
-		with open(f"{self.target}/etc/systemd/network/10-{network_config.iface}.network", "a") as netconf:
+		with open(f"{self.target}/etc/systemd/network/10-{nic.iface}.network", "a") as netconf:
 			netconf.write(str(conf))
 
 	def copy_iso_network_config(self, enable_services :bool = False) -> bool:
@@ -552,9 +569,11 @@ class Installer:
 			mkinit.write(f"HOOKS=({' '.join(self._hooks)})\n")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} mkinitcpio {" ".join(flags)}', peek_output=True)
 			return True
-		except SysCallError:
+		except SysCallError as error:
+			if error.worker:
+				log(error.worker._trace_log.decode())
 			return False
 
 	def minimal_installation(
@@ -647,7 +666,8 @@ class Installer:
 		# TODO: Use python functions for this
 		SysCommand(f'/usr/bin/arch-chroot {self.target} chmod 700 /root')
 
-		self.mkinitcpio(['-P'], locale_config)
+		if not self.mkinitcpio(['-P'], locale_config):
+			error(f"Error generating initramfs (continuing anyway)")
 
 		self.helper_flags['base'] = True
 
@@ -677,6 +697,12 @@ class Installer:
 		else:
 			raise ValueError(f"Archinstall currently only supports setting up swap on zram")
 
+	def _get_efi_partition(self) -> Optional[disk.PartitionModification]:
+		for layout in self._disk_config.device_modifications:
+			if partition := layout.get_efi_partition():
+				return partition
+		return None
+
 	def _get_boot_partition(self) -> Optional[disk.PartitionModification]:
 		for layout in self._disk_config.device_modifications:
 			if boot := layout.get_boot_partition():
@@ -689,7 +715,12 @@ class Installer:
 				return root
 		return None
 
-	def _add_systemd_bootloader(self, root_partition: disk.PartitionModification):
+	def _add_systemd_bootloader(
+		self,
+		boot_partition: disk.PartitionModification,
+		root_partition: disk.PartitionModification,
+		efi_partition: Optional[disk.PartitionModification]
+	):
 		self.pacman.strap('efibootmgr')
 
 		if not SysInfo.has_uefi():
@@ -698,41 +729,53 @@ class Installer:
 		# TODO: Ideally we would want to check if another config
 		# points towards the same disk and/or partition.
 		# And in which case we should do some clean up.
+		bootctl_options = []
+
+		if efi_partition and boot_partition != efi_partition:
+			bootctl_options.append(f'--esp-path={efi_partition.mountpoint}')
+			bootctl_options.append(f'--boot-path={boot_partition.mountpoint}')
 
 		# Install the boot loader
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --esp-path=/boot install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl {' '.join(bootctl_options)} install")
 		except SysCallError:
 			# Fallback, try creating the boot loader without touching the EFI variables
-			SysCommand(f'/usr/bin/arch-chroot {self.target} bootctl --no-variables --esp-path=/boot install')
+			SysCommand(f"/usr/bin/arch-chroot {self.target} bootctl --no-variables {' '.join(bootctl_options)} install")
 
-		# Ensure that the /boot/loader directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/ directory exists before we try to create files in it.
+		#
+		# As mentioned in https://github.com/archlinux/archinstall/pull/1859 - we store the
+		# loader entries in $BOOT/loader/ rather than $ESP/loader/
+		# The current reasoning being that $BOOT works in both use cases as well
+		# as being tied to the current installation. This may change.
 		loader_dir = self.target / 'boot/loader'
 		loader_dir.mkdir(parents=True, exist_ok=True)
 
 		# Modify or create a loader.conf
 		loader_conf = loader_dir / 'loader.conf'
 
+		default = f'default {self.init_time}_{self.kernels[0]}.conf\n'
+
 		try:
 			with loader_conf.open() as loader:
-				loader_data = loader.read().split('\n')
+				loader_data = loader.readlines()
 		except FileNotFoundError:
 			loader_data = [
-				f"default {self.init_time}",
-				"timeout 15"
+				default,
+				'timeout 15\n'
 			]
+		else:
+			for index, line in enumerate(loader_data):
+				if line.startswith('default'):
+					loader_data[index] = default
+				elif line.startswith('#timeout'):
+					# We add in the default timeout to support dual-boot
+					loader_data[index] = line.removeprefix('#')
 
 		with loader_conf.open('w') as loader:
-			for line in loader_data:
-				if line[:8] == 'default ':
-					loader.write(f'default {self.init_time}_{self.kernels[0]}\n')
-				elif line[:8] == '#timeout' and 'timeout 15' not in loader_data:
-					# We add in the default timeout to support dual-boot
-					loader.write(f"{line[1:]}\n")
-				else:
-					loader.write(f"{line}\n")
+			loader.writelines(loader_data)
 
-		# Ensure that the /boot/loader/entries directory exists before we try to create files in it
+		# Ensure that the $BOOT/loader/entries/ directory exists before we try to create files in it
 		entries_dir = loader_dir / 'entries'
 		entries_dir.mkdir(parents=True, exist_ok=True)
 
@@ -757,7 +800,7 @@ class Installer:
 
 		options_entry = []
 
-		if root_partition.safe_fs_type.is_crypto():
+		if root_partition in self._disk_encryption.partitions:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 			debug('Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
@@ -816,19 +859,20 @@ class Installer:
 	):
 		self.pacman.strap('grub')  # no need?
 
-		_file = "/etc/default/grub"
+		grub_default = self.target / 'etc/default/grub'
+		config = grub_default.read_text()
 
-		if root_partition.safe_fs_type.is_crypto():
+		cmdline_linux = []
+
+		if root_partition in self._disk_encryption.partitions:
 			debug(f"Using UUID {root_partition.uuid} as encrypted root identifier")
 
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_partition.uuid}:cryptlvm rootfstype={root_partition.safe_fs_type.value}\"/'"
-			enable_cryptdisk = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
+			cmdline_linux.append(f'cryptdevice=UUID={root_partition.uuid}:cryptlvm')
+			config = re.sub(r'#(GRUB_ENABLE_CRYPTODISK=y\n)', r'\1', config, 1)
 
-			SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_cryptdisk} {_file}")
-		else:
-			cmd_line_linux = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"rootfstype={root_partition.safe_fs_type.value}\"/'"
-
-		SysCommand(f"/usr/bin/arch-chroot {self.target} {cmd_line_linux} {_file}")
+		cmdline_linux.append(f'rootfstype={root_partition.safe_fs_type.value}')
+		config = re.sub(r'(GRUB_CMDLINE_LINUX=")("\n)', rf'\1{" ".join(cmdline_linux)}\2', config, 1)
+		grub_default.write_text(config)
 
 		info(f"GRUB boot partition: {boot_partition.dev_path}")
 
@@ -836,12 +880,12 @@ class Installer:
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
 				except SysCallError as err:
-					raise DiskError(f"Could not install GRUB to {self.target}/boot: {err}")
+					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
 
@@ -861,7 +905,7 @@ class Installer:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o /boot/grub/grub.cfg')
+			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg')
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
@@ -1009,7 +1053,7 @@ TIMEOUT=5
 			# blkid doesn't trigger on loopback devices really well,
 			# so we'll use the old manual method until we get that sorted out.
 
-			if root_partition.safe_fs_type.is_crypto():
+			if root_partition in self._disk_encryption.partitions:
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
 				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
@@ -1055,6 +1099,7 @@ TIMEOUT=5
 				if plugin.on_add_bootloader(self):
 					return True
 
+		efi_partition = self._get_efi_partition()
 		boot_partition = self._get_boot_partition()
 		root_partition = self._get_root_partition()
 
@@ -1068,7 +1113,7 @@ TIMEOUT=5
 
 		match bootloader:
 			case Bootloader.Systemd:
-				self._add_systemd_bootloader(root_partition)
+				self._add_systemd_bootloader(boot_partition, root_partition, efi_partition)
 			case Bootloader.Grub:
 				self._add_grub_bootloader(boot_partition, root_partition)
 			case Bootloader.Efistub:

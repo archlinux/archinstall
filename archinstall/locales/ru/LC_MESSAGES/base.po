@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 msgid "[!] A log file has been created here: {} {}"
 msgstr "[!] Здесь был создан файл журнала: {} {}"
@@ -1134,15 +1134,8 @@ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
 msgstr "Неверный ввод! Повторите попытку с правильным вводом [1 - {}, или 0 - отключить]"
 
 msgid "Locales"
-msgstr ""
+msgstr "Локализации"
 
-#, fuzzy
 msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
 msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE)"
 
-#, python-brace-format
-#~ msgid "Edit {origkey} :"
-#~ msgstr "Редактировать {origkey}:"
-
-#~ msgid " ! Formatting {archinstall.arguments['harddrives']} in "
-#~ msgstr " ! Форматирование {archinstall.arguments['harddrives']} в "
