@@ -225,7 +225,8 @@ The contents of :code:`https://domain.lan/config.json`:
    :header-rows: 1
 
 .. note::
-    [1] If no entries are found in ``harddrives``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall``.
+
+   If no entries are found in ``disk_config``, archinstall guided installation will use whatever is mounted currently under ``/mnt/archinstall`` without performing any disk operations.
 
 Options for ``--creds``
 -----------------------
