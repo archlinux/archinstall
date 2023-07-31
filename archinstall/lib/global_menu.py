@@ -159,11 +159,6 @@ class GlobalMenu(AbstractMenu):
 				_('Automatic time sync (NTP)'),
 				lambda preset: ask_ntp(preset),
 				default=True)
-		self._menu_options['shell_custom'] = \
-			Selector(
-				_('Shell customization'),
-				lambda preset: customize_shell(preset),
-    			default=DEFAULT_SHELL)
 		self._menu_options['__separator__'] = \
 			Selector('')
 		self._menu_options['save_config'] = \
