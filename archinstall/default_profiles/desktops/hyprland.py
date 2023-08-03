@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 	_: Any
 
 
-class HyperlandProfile(XorgProfile):
+class HyprlandProfile(XorgProfile):
 	def __init__(self):
 		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
 
