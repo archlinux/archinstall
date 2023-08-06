@@ -1056,10 +1056,10 @@ TIMEOUT=5
 			if root_partition in self._disk_encryption.partitions:
 				# TODO: We need to detect if the encrypted device is a whole disk encryption,
 				#       or simply a partition encryption. Right now we assume it's a partition (and we always have)
-				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
+				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:luksdev root=/dev/mapper/luksdev rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 			else:
-				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
+				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
 			device = disk.device_handler.get_device_by_partition_path(boot_partition.safe_dev_path)
