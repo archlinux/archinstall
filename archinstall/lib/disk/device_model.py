@@ -1076,7 +1076,7 @@ def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[L
 		devices = []
 		for entry in infos:
 			if as_prefix:
-				matches = [m for m in entry.mountpoints if str(m).startswith(str(mountpoint))]
+				matches = [m for m in entry.mountpoints if m.is_relative_to(mountpoint)]
 				if matches:
 					devices += [entry]
 			elif mountpoint in entry.mountpoints:
