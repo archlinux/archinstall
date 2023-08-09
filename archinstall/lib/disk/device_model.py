@@ -1075,16 +1075,13 @@ def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[L
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:
 		devices = []
 		for entry in infos:
-			if as_prefix:
-				matches = [m for m in entry.mountpoints if m.is_relative_to(mountpoint)]
-				if matches:
-					devices += [entry]
-			elif mountpoint in entry.mountpoints:
-				devices += [entry]
+			for m in entry.mountpoints:
+				if m == mountpoint or (as_prefix and m.is_relative_to(mountpoint)):
+					devices.append(entry)
+					break
 
 			if len(entry.children) > 0:
-				if len(match := _check(entry.children)) > 0:
-					devices += match
+				devices += _check(entry.children)
 
 		return devices
 
