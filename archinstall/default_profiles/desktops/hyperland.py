@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class HyperlandProfile(XorgProfile):
 	def __init__(self):
-		super().__init__('Hyperland', ProfileType.DesktopEnv, description='')
+		super().__init__('Hyprland', ProfileType.DesktopEnv, description='')
 
 	@property
 	def packages(self) -> List[str]:
