@@ -404,16 +404,20 @@ class SubvolumeModification:
 	def parse_args(cls, subvol_args: List[Dict[str, Any]]) -> List[SubvolumeModification]:
 		mods = []
 		for entry in subvol_args:
-			if not entry.get('name', None) or not entry.get('mountpoint', None):
+			name = entry.get('name'),
+			mountpoint = entry.get('mountpoint')
+			if not name:
 				debug(f'Subvolume arg is missing name: {entry}')
 				continue
 
-			mountpoint = Path(entry['mountpoint']) if entry['mountpoint'] else None
+			if not mountpoint:
+				debug(f'Subvolume arg is missing mountpoint: {entry}')
+				continue
 
 			mods.append(
 				SubvolumeModification(
 					entry['name'],
-					mountpoint,
+					Path(mountpoint),
 					entry.get('compress', False),
 					entry.get('nodatacow', False)
 				)
