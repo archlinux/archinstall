@@ -459,12 +459,7 @@ class SubvolumeModification:
 		}
 
 	def table_data(self) -> Dict[str, Any]:
-		return {
-			'name': str(self.name),
-			'mountpoint': str(self.mountpoint),
-			'compress': self.compress,
-			'nodatacow': self.nodatacow
-		}
+		return self.__dump__()
 
 
 class DeviceGeometry:
@@ -660,16 +655,11 @@ class PartitionModification:
 
 	@classmethod
 	def from_existing_partition(cls, partition_info: _PartitionInfo) -> PartitionModification:
-		if partition_info.btrfs_subvol_infos:
-			mountpoint = None
-			subvol_mods = []
-			for info in partition_info.btrfs_subvol_infos:
-				subvol_mods.append(
-					SubvolumeModification.from_existing_subvol_info(info)
-				)
-		else:
-			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
-			subvol_mods = []
+		subvol_mods = [
+			SubvolumeModification.from_existing_subvol_info(info)
+			for info in partition_info.btrfs_subvol_infos
+		]
+		mountpoint = partition_info.mountpoints[0] if not subvol_mods and partition_info.mountpoints else None
 
 		return PartitionModification(
 			status=ModificationStatus.Exist,
