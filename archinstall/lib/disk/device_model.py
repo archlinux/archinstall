@@ -416,7 +416,7 @@ class SubvolumeModification:
 
 			mods.append(
 				SubvolumeModification(
-					entry['name'],
+					name,
 					Path(mountpoint),
 					entry.get('compress', False),
 					entry.get('nodatacow', False)
