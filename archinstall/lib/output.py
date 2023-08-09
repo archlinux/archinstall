@@ -35,6 +35,8 @@ class FormattedOutput:
 				return func(filter_list)
 
 			raise ValueError('Unsupported formatting call')
+		elif hasattr(o, '__dump__'):
+			return o.__dump__()
 		elif hasattr(o, 'table_data'):
 			return o.table_data()
 		elif hasattr(o, 'json'):

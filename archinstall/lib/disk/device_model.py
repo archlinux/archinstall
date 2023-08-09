@@ -458,14 +458,6 @@ class SubvolumeModification:
 			'nodatacow': self.nodatacow
 		}
 
-	def table_data(self) -> Dict[str, Any]:
-		return {
-			'name': str(self.name),
-			'mountpoint': str(self.mountpoint),
-			'compress': self.compress,
-			'nodatacow': self.nodatacow
-		}
-
 
 class DeviceGeometry:
 	def __init__(self, geometry: Geometry, sector_size: Size):
