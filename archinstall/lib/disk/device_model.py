@@ -709,7 +709,7 @@ class PartitionModification:
 		return self.status == ModificationStatus.Exist
 
 	def is_exists_or_modify(self) -> bool:
-		return self.status in [ModificationStatus.Exist, ModificationStatus.Modify]
+		return self.status in (ModificationStatus.Exist, ModificationStatus.Modify)
 
 	@property
 	def mapper_name(self) -> Optional[str]:
