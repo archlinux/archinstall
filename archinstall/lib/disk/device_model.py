@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from enum import auto
 from pathlib import Path
-from typing import Optional, List, Dict, TYPE_CHECKING, Any
+from typing import Optional, List, Dict, TYPE_CHECKING, Any, Set
 from typing import Union
 
 import parted  # type: ignore
@@ -611,7 +611,7 @@ class PartitionModification:
 	fs_type: Optional[FilesystemType]
 	mountpoint: Optional[Path] = None
 	mount_options: List[str] = field(default_factory=list)
-	flags: List[PartitionFlag] = field(default_factory=list)
+	flags: Set[PartitionFlag] = field(default_factory=set)
 	btrfs_subvols: List[SubvolumeModification] = field(default_factory=list)
 
 	# only set if the device was created or exists
@@ -668,7 +668,7 @@ class PartitionModification:
 			length=partition_info.length,
 			fs_type=partition_info.fs_type,
 			dev_path=partition_info.path,
-			flags=partition_info.flags,
+			flags=set(partition_info.flags),
 			mountpoint=mountpoint,
 			btrfs_subvols=subvol_mods
 		)
@@ -688,7 +688,7 @@ class PartitionModification:
 		"""
 		Returns True if any of the boot indicator flags are found in self.flags
 		"""
-		return any(set(self.flags) & set(self._boot_indicator_flags))
+		return any(self.flags & set(self._boot_indicator_flags))
 
 	def is_root(self, relative_mountpoint: Optional[Path] = None) -> bool:
 		if relative_mountpoint is not None and self.mountpoint is not None:
@@ -718,14 +718,10 @@ class PartitionModification:
 		return None
 
 	def set_flag(self, flag: PartitionFlag):
-		if flag not in self.flags:
-			self.flags.append(flag)
+		self.flags.add(flag)
 
 	def invert_flag(self, flag: PartitionFlag):
-		if flag in self.flags:
-			self.flags = [f for f in self.flags if f != flag]
-		else:
-			self.set_flag(flag)
+		self.flags ^= {flag}
 
 	def json(self) -> Dict[str, Any]:
 		"""
