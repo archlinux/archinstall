@@ -34,6 +34,7 @@ class GreeterType(Enum):
 	Lightdm = 'lightdm'
 	Sddm = 'sddm'
 	Gdm = 'gdm'
+	Ly = 'ly'
 
 
 class SelectResult(Enum):
