@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 def generate_password(length :int = 64) -> str:
 	haystack = string.printable # digits, ascii_letters, punctiation (!"#$[] etc) and whitespace
-	return ''.join(secrets.choice(haystack) for i in range(length))
+	return ''.join(secrets.choice(haystack) for _ in range(length))
 
 
 def locate_binary(name :str) -> str:
@@ -117,9 +117,9 @@ class SysCommandWorker:
 		if isinstance(cmd, str):
 			cmd = shlex.split(cmd)
 
-		if cmd:
-			if cmd[0][0] != '/' and cmd[0][:2] != './': # pathlib.Path does not work well
-				cmd[0] = locate_binary(cmd[0])
+		# when the path is neither absolute nor explicitly relative to '.'
+		if cmd and (binary := cmd[0]) and Path(binary).name == binary:
+			cmd[0] = locate_binary(binary)
 
 		self.cmd = cmd
 		self.callbacks = callbacks
