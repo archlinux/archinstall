@@ -118,7 +118,7 @@ class SysCommandWorker:
 			cmd = shlex.split(cmd)
 
 		# when the path is neither absolute nor explicitly relative to '.'
-		if cmd and (binary := cmd[0]) and Path(binary).name == binary:
+		if cmd and (binary := cmd[0]) and pathlib.Path(binary).name == binary:
 			cmd[0] = locate_binary(binary)
 
 		self.cmd = cmd
