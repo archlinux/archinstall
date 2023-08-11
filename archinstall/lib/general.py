@@ -440,8 +440,7 @@ class SysCommand:
 	def exit_code(self) -> Optional[int]:
 		if self.session:
 			return self.session.exit_code
-		else:
-			return None
+		return None
 
 	@property
 	def trace_log(self) -> Optional[bytes]:
