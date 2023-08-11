@@ -318,7 +318,7 @@ def suggest_multi_disk_layout(
 	min_home_partition_size = disk.Size(40, disk.Unit.GiB)
 	# rough estimate taking in to account user desktops etc. TODO: Catch user packages to detect size?
 	desired_root_partition_size = disk.Size(20, disk.Unit.GiB)
-	compression = False
+	mount_options = []
 
 	if not filesystem_type:
 		filesystem_type = select_main_filesystem_format(advanced_options)
@@ -347,7 +347,8 @@ def suggest_multi_disk_layout(
 	if filesystem_type == disk.FilesystemType.Btrfs:
 		prompt = str(_('Would you like to use BTRFS compression?'))
 		choice = Menu(prompt, Menu.yes_no(), skip=False, default_option=Menu.yes()).run()
-		compression = choice.value == Menu.yes()
+		if choice.value == Menu.yes():
+			mount_options.append('compress=zstd')
 
 	device_paths = ', '.join([str(d.device_info.path) for d in devices])
 
@@ -369,7 +370,7 @@ def suggest_multi_disk_layout(
 		start=disk.Size(513, disk.Unit.MiB) if SysInfo.has_uefi() else disk.Size(206, disk.Unit.MiB),
 		length=disk.Size(100, disk.Unit.Percent, total_size=root_device.device_info.total_size),
 		mountpoint=Path('/'),
-		mount_options=['compress=zstd'] if compression else [],
+		mount_options=mount_options,
 		fs_type=filesystem_type
 	)
 	root_device_modification.add_partition(root_partition)
@@ -381,7 +382,7 @@ def suggest_multi_disk_layout(
 		start=disk.Size(1, disk.Unit.MiB),
 		length=disk.Size(100, disk.Unit.Percent, total_size=home_device.device_info.total_size),
 		mountpoint=Path('/home'),
-		mount_options=['compress=zstd'] if compression else [],
+		mount_options=mount_options,
 		fs_type=filesystem_type,
 	)
 	home_device_modification.add_partition(home_partition)
