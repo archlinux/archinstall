@@ -350,7 +350,7 @@ def suggest_multi_disk_layout(
 		if choice.value == Menu.yes():
 			mount_options.append('compress=zstd')
 
-	device_paths = ', '.join([str(d.device_info.path) for d in devices])
+	device_paths = ', '.join(str(d.device_info.path) for d in devices)
 
 	debug(f"Suggesting multi-disk-layout for devices: {device_paths}")
 	debug(f"/root: {root_device.device_info.path}")
