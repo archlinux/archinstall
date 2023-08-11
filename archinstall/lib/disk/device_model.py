@@ -70,7 +70,8 @@ class DiskLayoutConfiguration:
 		)
 
 		for entry in disk_config.get('device_modifications', []):
-			device_path = Path(entry.get('device', None)) if entry.get('device', None) else None
+			device_path_str = entry.get('device', None)
+			device_path = Path(device_path_str) if device_path_str else None
 
 			if not device_path:
 				continue
