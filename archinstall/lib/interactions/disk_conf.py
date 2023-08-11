@@ -93,9 +93,7 @@ def _manual_partitioning(
 ) -> List[disk.DeviceModification]:
 	modifications = []
 	for device in devices:
-		mod = next(filter(lambda x: x.device == device, preset), None)
-		if not mod:
-			mod = disk.DeviceModification(device, wipe=False)
+		mod = next(filter(lambda x: x.device == device, preset), None) or disk.DeviceModification(device, wipe=False)
 
 		if partitions := disk.manual_partitioning(device, preset=mod.partitions):
 			mod.partitions = partitions
