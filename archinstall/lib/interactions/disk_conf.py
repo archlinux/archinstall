@@ -30,9 +30,6 @@ def select_devices(preset: List[disk.BDevice] = []) -> List[disk.BDevice]:
 			return FormattedOutput.as_table(dev.partition_infos)
 		return None
 
-	if preset is None:
-		preset = []
-
 	title = str(_('Select one or more devices to use and configure'))
 	warning = str(_('If you reset the device selection this will also reset the current disk layout. Are you sure?'))
 
@@ -141,29 +138,30 @@ def select_disk_config(
 					device_modifications=mods
 				)
 
-			preset_devices = [mod.device for mod in preset.device_modifications] if preset else []
-
+			if not preset:
+				return None
+			
+			preset_devices = [mod.device for device in preset.device_modifications]
 			devices = select_devices(preset_devices)
 
 			if not devices:
 				return None
 
-			if choice.value == default_layout:
-				modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
-				if modifications:
-					return disk.DiskLayoutConfiguration(
-						config_type=disk.DiskLayoutType.Default,
-						device_modifications=modifications
-					)
-			elif choice.value == manual_mode:
-				preset_mods = preset.device_modifications if preset else []
-				modifications = _manual_partitioning(preset_mods, devices)
-
-				if modifications:
-					return disk.DiskLayoutConfiguration(
-						config_type=disk.DiskLayoutType.Manual,
-						device_modifications=modifications
-					)
+			match choice.value:
+				case default_layout:
+					modifications = get_default_partition_layout(devices, advanced_option=advanced_option)
+					if modifications:
+						return disk.DiskLayoutConfiguration(
+							config_type=disk.DiskLayoutType.Default,
+							device_modifications=modifications
+						)
+				case manual_mode:
+					modifications = _manual_partitioning(preset.device_modifications, devices)
+					if modifications:
+						return disk.DiskLayoutConfiguration(
+							config_type=disk.DiskLayoutType.Manual,
+							device_modifications=modifications
+						)
 
 	return None
 
