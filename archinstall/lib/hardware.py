@@ -115,7 +115,8 @@ class _SysInfo:
 		"""
 		Returns system memory information
 		"""
-		stripped = map(str.strip, Path("/proc/meminfo").read_text())
+		lines = Path("/proc/meminfo").read_text().splitlines()
+		stripped = map(str.strip, lines)
 		split = map(lambda x: x.split(':'), stripped)
 		return {k: int(v.split()[0]) for k, v in split}
 
@@ -128,7 +129,8 @@ class _SysInfo:
 		Returns loaded kernel modules
 		"""
 
-		return [line.split(maxsplit=1)[0] for line in Path('/proc/modules').read_text().splitlines()]
+		lines = Path('/proc/modules').read_text().splitlines()
+		return [line.split(maxsplit=1)[0] for line in lines]
 
 _sys_info = _SysInfo()
 
