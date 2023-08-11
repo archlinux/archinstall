@@ -115,16 +115,9 @@ class _SysInfo:
 		"""
 		Returns system memory information
 		"""
-		mem_info_path = Path("/proc/meminfo")
-		mem_info: Dict[str, int] = {}
-
-		with mem_info_path.open() as file:
-			for line in file:
-				key, value = line.strip().split(':')
-				num = value.split()[0]
-				mem_info[key] = int(num)
-
-		return mem_info
+		stripped = map(str.strip, Path("/proc/meminfo").read_text())
+		split = map(lambda x: x.split(':'), stripped)
+		return {k: int(v.split()[0]) for k, v in split}
 
 	def mem_info_by_key(self, key: str) -> int:
 		return self.mem_info[key]
