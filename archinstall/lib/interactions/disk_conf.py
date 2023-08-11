@@ -186,7 +186,7 @@ def _boot_partition() -> disk.PartitionModification:
 		length=size,
 		mountpoint=Path('/boot'),
 		fs_type=disk.FilesystemType.Fat32,
-		flags=[disk.PartitionFlag.Boot]
+		flags={disk.PartitionFlag.Boot]
 	)
 
 
