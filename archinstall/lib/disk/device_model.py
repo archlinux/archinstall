@@ -97,7 +97,7 @@ class DiskLayoutConfiguration:
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
 					type=PartitionType(partition['type']),
-					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
+					flags=[PartitionFlag[f] for f in partition.get('flags', {})],
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
 				)
 				# special 'invisible attr to internally identify the part mod
@@ -405,7 +405,7 @@ class SubvolumeModification:
 	def parse_args(cls, subvol_args: List[Dict[str, Any]]) -> List[SubvolumeModification]:
 		mods = []
 		for entry in subvol_args:
-			name = entry.get('name'),
+			name: Optional[Path] = entry.get('name'),
 			mountpoint = entry.get('mountpoint')
 			if not name:
 				debug(f'Subvolume arg is missing name: {entry}')
