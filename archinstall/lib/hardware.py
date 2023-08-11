@@ -134,16 +134,8 @@ class _SysInfo:
 		"""
 		Returns loaded kernel modules
 		"""
-		modules_path = Path('/proc/modules')
-		modules: List[str] = []
 
-		with modules_path.open() as file:
-			for line in file:
-				module = line.split(maxsplit=1)[0]
-				modules.append(module)
-
-		return modules
-
+		return [line.split(maxsplit=1)[0] for line in Path('/proc/modules').read_text().splitlines()]
 
 _sys_info = _SysInfo()
 
