@@ -307,7 +307,7 @@ def log(
 
 	text = orig_string = ' '.join([str(x) for x in msgs])
 
-	# Replace encryption password such that it 
+	# Replace encryption password such that it
 	# is not copied over to the target system log
 	search = r'(\"encryption_password\":\ )\"([^\"]+)\"'
 	replacement = r'\1"****************"'
