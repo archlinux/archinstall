@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import re
 from enum import Enum
 
 from pathlib import Path
@@ -305,6 +306,12 @@ def log(
 	_check_log_permissions()
 
 	text = orig_string = ' '.join([str(x) for x in msgs])
+
+	# Replace encryption password such that it 
+	# is not copied over to the target system log
+	search = r'(\"encryption_password\":\ )\"([^\"]+)\"'
+	replacement = r'\1"****************"'
+	orig_string = re.sub(search, replacement, orig_string)
 
 	# Attempt to colorize the output if supported
 	# Insert default colors and override with **kwargs
