@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import unicodedata
 from enum import Enum
 
 from pathlib import Path
@@ -326,3 +327,33 @@ def log(
 		if level != logging.DEBUG or storage.get('arguments', {}).get('verbose', False):
 			sys.stdout.write(f"{text}\n")
 			sys.stdout.flush()
+
+def _count_wchars(string: str) -> int:
+	"Count the total number of wide characters contained in a string"
+	return sum(unicodedata.east_asian_width(c) in 'FW' for c in string)
+
+def unicode_ljust(string: str, width: int, fillbyte: str = ' ') -> str:
+	"""Return a left-justified unicode string of length width.
+	>>> unicode_ljust('Hello', 15, '*')
+	'Hello**********'
+	>>> unicode_ljust('你好', 15, '*')
+	'你好***********'
+	>>> unicode_ljust('안녕하세요', 15, '*')
+	'안녕하세요*****'
+	>>> unicode_ljust('こんにちは', 15, '*')
+	'こんにちは*****'
+	"""
+	return string.ljust(width - _count_wchars(string), fillbyte)
+
+def unicode_rjust(string: str, width: int, fillbyte: str = ' ') -> str:
+	"""Return a right-justified unicode string of length width.
+	>>> unicode_rjust('Hello', 15, '*')
+	'**********Hello'
+	>>> unicode_rjust('你好', 15, '*')
+	'***********你好'
+	>>> unicode_rjust('안녕하세요', 15, '*')
+	'*****안녕하세요'
+	>>> unicode_rjust('こんにちは', 15, '*')
+	'*****こんにちは'
+	"""
+	return string.rjust(width - _count_wchars(string), fillbyte)
