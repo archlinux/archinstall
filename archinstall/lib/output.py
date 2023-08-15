@@ -84,7 +84,7 @@ class FormattedOutput:
 			if capitalize:
 				key = key.capitalize()
 
-			key_list.append(key.ljust(width))
+			key_list.append(unicode_ljust(key, width))
 
 		output += ' | '.join(key_list) + '\n'
 		output += '-' * len(output) + '\n'
@@ -100,9 +100,9 @@ class FormattedOutput:
 					value = '*' * width
 
 				if isinstance(value, (int, float)) or (isinstance(value, str) and value.isnumeric()):
-					obj_data.append(str(value).rjust(width))
+					obj_data.append(unicode_rjust(str(value), width))
 				else:
-					obj_data.append(str(value).ljust(width))
+					obj_data.append(unicode_ljust(str(value), width))
 
 			output += ' | '.join(obj_data) + '\n'
 
