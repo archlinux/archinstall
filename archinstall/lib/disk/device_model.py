@@ -788,20 +788,25 @@ class DeviceModification:
 	def get_efi_partition(self) -> Optional[PartitionModification]:
 		"""
 		Similar to get_boot_partition() but excludes XBOOTLDR partitions from it's candidates.
+		Also works with ESP flag.
 		"""
-		filtered = filter(lambda x: x.is_boot() and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
+		filtered = filter(lambda x: (x.is_boot() or PartitionFlag.ESP in x.flags) and x.fs_type == FilesystemType.Fat32 and PartitionFlag.XBOOTLDR not in x.flags, self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> Optional[PartitionModification]:
 		"""
 		Returns the first partition marked as XBOOTLDR (PARTTYPE id of bc13c2ff-...) or Boot and has a mountpoint.
 		Only returns XBOOTLDR if separate EFI is detected using self.get_efi_partition()
+		Will return None if no suitable partition is found.
 		"""
 		if efi_partition := self.get_efi_partition():
 			filtered = filter(lambda x: x.is_boot() and x != efi_partition and x.mountpoint, self.partitions)
 			if boot_partition := next(filtered, None):
 				return boot_partition
-			return efi_partition
+			if efi_partition.is_boot():
+				return efi_partition
+			else:
+				return None
 		else:
 			filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
 			return next(filtered, None)
