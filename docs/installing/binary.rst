@@ -6,7 +6,7 @@ Binary executable
 Archinstall can be compiled into a standalone executable.
 For Arch Linux based systems, there's a package for this called `archinstall <https://archlinux.org/packages/extra/any/archinstall/>`_.
 
-.. warning::
+.. *warning*::
     This is not required if you're running archinstall on a pre-built ISO. The installation is only required if you're creating your own scripted installations.
 
 Using pacman
