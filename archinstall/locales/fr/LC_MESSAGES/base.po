@@ -63,8 +63,8 @@ msgid ""
 "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr "
 "and optional profile packages are installed."
 msgstr ""
-"Seuls les packages tels que base, base-devel, linux, linux-firmware, "
-"efibootmgr et les packages de profil optionnels sont installés."
+"Seuls les paquets tels que base, base-devel, linux, linux-firmware, "
+"efibootmgr et les paquets de profil optionnels sont installés."
 
 msgid ""
 "If you desire a web browser, such as firefox or chromium, you may specify it "
@@ -243,7 +243,7 @@ msgstr "Sélectionner la disposition du clavier"
 
 msgid "Select one of the regions to download packages from"
 msgstr ""
-"Sélectionner l'une des régions depuis lesquelles télécharger les packages"
+"Sélectionner l'une des régions depuis lesquelles télécharger les paquets"
 
 msgid "Select one or more hard drives to use and configure"
 msgstr "Sélectionner un ou plusieurs disques durs à utiliser et à configurer"
@@ -317,7 +317,7 @@ msgid "Keyboard layout"
 msgstr "Disposition du clavier"
 
 msgid "Mirror region"
-msgstr "Région (miroir)"
+msgstr "Région miroir"
 
 msgid "Locale language"
 msgstr "Langue locale"
@@ -326,7 +326,7 @@ msgid "Locale encoding"
 msgstr "Encodage des paramètres régionaux"
 
 msgid "Drive(s)"
-msgstr "Disques durs"
+msgstr "Disques"
 
 msgid "Disk layout"
 msgstr "Disposition du disque"
@@ -359,7 +359,7 @@ msgid "Kernels"
 msgstr "Noyaux"
 
 msgid "Additional packages"
-msgstr "Packages supplémentaires"
+msgstr "Paquets supplémentaires"
 
 msgid "Network configuration"
 msgstr "Configurer le réseau"
@@ -461,7 +461,7 @@ msgstr "Mot de passe pour l'utilisateur \"{}\" : "
 msgid ""
 "Verifying that additional packages exist (this might take a few seconds)"
 msgstr ""
-"Vérifier que des packages supplémentaires existent (cela peut prendre "
+"Vérifier que des paquets supplémentaires existent (cela peut prendre "
 "quelques secondes)"
 
 msgid ""
@@ -545,7 +545,7 @@ msgstr ""
 "les sessions pacman existantes avant d'utiliser archinstall."
 
 msgid "Choose which optional additional repositories to enable"
-msgstr "Choisir les référentiels supplémentaires en option à activer"
+msgstr "Choisir les dépôts supplémentaires en option à activer"
 
 msgid "Add a user"
 msgstr "Ajouter un utilisateur"
@@ -624,7 +624,7 @@ msgid "are you sure you want to use it?"
 msgstr "êtes-vous sûr de vouloir l'utiliser ?"
 
 msgid "Optional repositories"
-msgstr "Référentiels supplémentaires"
+msgstr "Dépôts supplémentaires"
 
 msgid "Save configuration"
 msgstr "Enregistrer la configuration"
@@ -667,7 +667,7 @@ msgid "Subvolume options"
 msgstr "Options de sous-volume"
 
 msgid "Save"
-msgstr "Sauver"
+msgstr "Sauvegarder"
 
 msgid "Subvolume name :"
 msgstr "Nom du sous-volume :"
@@ -1353,7 +1353,7 @@ msgid "Mirrors"
 msgstr "Miroirs"
 
 msgid "Mirror regions"
-msgstr "Régions (miroir)"
+msgstr "Régions miroir"
 
 msgid ""
 " - Maximum value   : {} ( Allows {} parallel downloads, allows "
@@ -1368,7 +1368,7 @@ msgstr ""
 "désactiver]"
 
 msgid "Locales"
-msgstr "Locales"
+msgstr "Paramètres régionaux"
 
 msgid ""
 "Use NetworkManager (necessary to configure internet graphically in GNOME and "
