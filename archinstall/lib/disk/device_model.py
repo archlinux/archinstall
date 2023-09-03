@@ -95,6 +95,7 @@ class DiskLayoutConfiguration:
 					length=Size.parse_args(partition['length']),
 					mount_options=partition['mount_options'],
 					mountpoint=Path(partition['mountpoint']) if partition['mountpoint'] else None,
+					dev_path=Path(partition['dev_path']) if partition['dev_path'] else None,
 					type=PartitionType(partition['type']),
 					flags=[PartitionFlag[f] for f in partition.get('flags', [])],
 					btrfs_subvols=SubvolumeModification.parse_args(partition.get('btrfs', [])),
@@ -747,6 +748,7 @@ class PartitionModification:
 			'mountpoint': str(self.mountpoint) if self.mountpoint else None,
 			'mount_options': self.mount_options,
 			'flags': [f.name for f in self.flags],
+			'dev_path': str(self.dev_path) if self.dev_path else None,
 			'btrfs': [vol.__dump__() for vol in self.btrfs_subvols]
 		}
 
