@@ -880,27 +880,49 @@ class Installer:
 			self.pacman.strap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
 
 			try:
-				SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
+				SysCommand(
+					f'/usr/bin/arch-chroot {self.target} grub-install '
+					f'--debug '
+					f'--target=x86_64-efi '
+					f'--efi-directory={boot_partition.mountpoint} '
+					f'--bootloader-id=GRUB '
+					f'--removable',
+					peek_output=True
+				)
 			except SysCallError:
 				try:
-					SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --debug --target=x86_64-efi --efi-directory={boot_partition.mountpoint} --bootloader-id=GRUB --removable', peek_output=True)
+					SysCommand(
+						f'/usr/bin/arch-chroot {self.target} '
+						f'grub-install '
+						f'--debug '
+						f'--target=x86_64-efi '
+						f'--efi-directory={boot_partition.mountpoint} '
+						f'--bootloader-id=GRUB '
+						f'--removable',
+						peek_output=True
+					)
 				except SysCallError as err:
 					raise DiskError(f"Could not install GRUB to {self.target}{boot_partition.mountpoint}: {err}")
 		else:
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 			try:
 				cmd = f'/usr/bin/arch-chroot' \
 					f' {self.target}' \
 					f' grub-install' \
 					f' --debug' \
 					f' --target=i386-pc' \
-					f' --recheck {boot_partition.dev_path}'
+					f' --recheck {parent_dev_path}'
 
 				SysCommand(cmd, peek_output=True)
 			except SysCallError as err:
 				raise DiskError(f"Failed to install GRUB boot on {boot_partition.dev_path}: {err}")
 
 		try:
-			SysCommand(f'/usr/bin/arch-chroot {self.target} grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg')
+			SysCommand(
+				f'/usr/bin/arch-chroot {self.target} '
+				f'grub-mkconfig -o {boot_partition.mountpoint}/grub/grub.cfg'
+			)
 		except SysCallError as err:
 			raise DiskError(f"Could not configure GRUB: {err}")
 
@@ -1055,8 +1077,10 @@ TIMEOUT=5
 				debug(f'Root partition is an encrypted device identifying by PARTUUID: {root_partition.partuuid}')
 				kernel_parameters.append(f'root=PARTUUID={root_partition.partuuid} rw rootfstype={root_partition.safe_fs_type.value} {" ".join(self._kernel_params)}')
 
+			parent_dev_path = disk.device_handler.get_parent_device_path(boot_partition.safe_dev_path)
+
 			cmd = f'efibootmgr ' \
-				f'--disk {boot_partition.dev_path} ' \
+				f'--disk {parent_dev_path} ' \
 				f'--part {boot_partition.safe_dev_path} ' \
 				f'--create ' \
 				f'--label "{label}" ' \

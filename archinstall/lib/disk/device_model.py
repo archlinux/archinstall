@@ -1080,7 +1080,6 @@ def get_lsblk_info(dev_path: Union[Path, str]) -> LsblkInfo:
 def get_all_lsblk_info() -> List[LsblkInfo]:
 	return _fetch_lsblk_info()
 
-
 def get_lsblk_by_mountpoint(mountpoint: Path, as_prefix: bool = False) -> List[LsblkInfo]:
 	def _check(infos: List[LsblkInfo]) -> List[LsblkInfo]:
 		devices = []
